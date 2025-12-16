@@ -161,7 +161,7 @@ AFO_Kingdom/
 | 서비스 | 포트 | 설명 |
 |--------|------|------|
 | Soul Engine | 8010 | FastAPI 백엔드 |
-| Dashboard | 3002 | Next.js 프론트엔드 |
+| Dashboard | 3000 | Next.js 프론트엔드 |
 | Ollama | 11435 | LLM (영덕) |
 | Redis | 6379 | 캐시/세션 |
 | PostgreSQL | 15432 | 데이터베이스 |

@@ -1,5 +1,4 @@
 {
-  "$schema": "https://raw.githubusercontent.com/cursor-ai/cursor/main/mcp-schema.json",
   "mcpServers": {
     "memory": {
       "command": "npx",
@@ -32,17 +31,17 @@
   },
   "skills": {
     "calculate_trinity_score": {
-      "endpoint": "http://localhost:8010/api/trinity/calculate",
+      "endpoint": "${SOUL_ENGINE_URL:-http://localhost:8010}/api/trinity/calculate",
       "method": "POST",
       "description": "Calculate 眞善美孝永 5-pillar Trinity Score (SSOT weights: 35/35/20/8/2)"
     },
     "health_check": {
-      "endpoint": "http://localhost:8010/health",
+      "endpoint": "${SOUL_ENGINE_URL:-http://localhost:8010}/health",
       "method": "GET",
       "description": "Check system health and get real-time Trinity metrics"
     },
     "chancellor_invoke": {
-      "endpoint": "http://localhost:8010/chancellor/invoke",
+      "endpoint": "${SOUL_ENGINE_URL:-http://localhost:8010}/chancellor/invoke",
       "method": "POST",
       "description": "Invoke Chancellor with 3 strategists (제갈량/사마의/주유)"
     }
