@@ -1,0 +1,50 @@
+{
+  "$schema": "https://raw.githubusercontent.com/cursor-ai/cursor/main/mcp-schema.json",
+  "mcpServers": {
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"],
+      "description": "Knowledge graph memory for persistent context"
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/Users/brnestrm/AFO_Kingdom"],
+      "description": "File system access for AFO Kingdom"
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
+      "description": "Step-by-step reasoning"
+    },
+    "brave-search": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-brave-search"],
+      "env": {
+        "BRAVE_API_KEY": "${BRAVE_API_KEY}"
+      },
+      "description": "Web search via Brave"
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp"],
+      "description": "Library documentation context injection"
+    }
+  },
+  "skills": {
+    "calculate_trinity_score": {
+      "endpoint": "http://localhost:8010/api/trinity/calculate",
+      "method": "POST",
+      "description": "Calculate 眞善美孝永 5-pillar Trinity Score (SSOT weights: 35/35/20/8/2)"
+    },
+    "health_check": {
+      "endpoint": "http://localhost:8010/health",
+      "method": "GET",
+      "description": "Check system health and get real-time Trinity metrics"
+    },
+    "chancellor_invoke": {
+      "endpoint": "http://localhost:8010/chancellor/invoke",
+      "method": "POST",
+      "description": "Invoke Chancellor with 3 strategists (제갈량/사마의/주유)"
+    }
+  }
+}

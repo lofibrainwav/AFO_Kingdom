@@ -1,0 +1,45 @@
+{
+  "mcpServers": {
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"],
+      "description": "Knowledge graph memory"
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/Users/brnestrm/AFO_Kingdom"],
+      "description": "File system access"
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
+      "description": "Step-by-step reasoning"
+    },
+    "brave-search": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-brave-search"],
+      "env": {
+        "BRAVE_API_KEY": "${BRAVE_API_KEY}"
+      }
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp"]
+    }
+  },
+  "skills": {
+    "calculate_trinity_score": {
+      "endpoint": "http://localhost:8010/api/trinity/calculate",
+      "method": "POST"
+    },
+    "health_check": {
+      "endpoint": "http://localhost:8010/health", 
+      "method": "GET"
+    },
+    "chancellor_invoke": {
+      "endpoint": "http://localhost:8010/chancellor/invoke",
+      "method": "POST"
+    }
+  },
+  "systemPromptPath": ".gemini/GEMINI.md"
+}
