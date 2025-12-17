@@ -1,24 +1,52 @@
 # Dependabot configuration for AFO Kingdom
-# 眞善美孝永 철학: 선(善) - 윤리적 보안, 영(永) - 장기 유지보수
+# 眞善美孝永 철학: 善 (보안), 永 (장기 유지보수), 孝 (자동화)
 
 version: 2
 updates:
-  # Python dependencies (pip)
+  # Python pip 의존성
   - package-ecosystem: "pip"
     directory: "/"
     schedule:
-      interval: "weekly"
-      day: "monday"
+      interval: "daily"
       time: "09:00"
       timezone: "Asia/Seoul"
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 15
+    pull-request-branch-name:
+      separator: "-"
+    commit-message:
+      prefix: "deps"
+      prefix-development: "chore(deps)"
+      include: "scope"
     labels:
       - "dependencies"
-      - "security"
-    commit-message:
-      prefix: "chore(deps)"
+      - "automated"
+      - "python"
+    # 메이저 업데이트는 무시 (호환성 보호)
+    ignore:
+      - dependency-name: "fastapi"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "uvicorn"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "pydantic"
+        update-types: ["version-update:semver-major"]
+    # PR 그룹화 (PR 폭발 방지)
+    groups:
+      production-dependencies:
+        patterns:
+          - "*"
+        exclude-patterns:
+          - "pytest*"
+          - "mypy"
+          - "ruff"
+      development-dependencies:
+        patterns:
+          - "pytest*"
+          - "mypy"
+          - "ruff"
+          - "black"
+    rebase-strategy: "auto"
 
-  # GitHub Actions
+  # GitHub Actions 워크플로
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
@@ -26,10 +54,12 @@ updates:
       day: "monday"
       time: "09:00"
       timezone: "Asia/Seoul"
-    open-pull-requests-limit: 3
+    groups:
+      actions-updates:
+        patterns: ["*"]
     labels:
-      - "dependencies"
       - "ci"
+      - "dependencies"
     commit-message:
       prefix: "chore(actions)"
 
@@ -47,3 +77,6 @@ updates:
       - "frontend"
     commit-message:
       prefix: "chore(npm)"
+    groups:
+      npm-updates:
+        patterns: ["*"]

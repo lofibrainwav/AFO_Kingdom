@@ -33,6 +33,12 @@ security-scan:
 	@echo "🔒 보안 스캔..."
 	@which trivy > /dev/null && trivy fs . --severity HIGH,CRITICAL || echo "Trivy 미설치 - 스킵"
 
+security-local:
+	@echo "🔐 로컬 보안 스캔 (Trivy + Bandit)..."
+	@which trivy > /dev/null && trivy fs . --severity HIGH,CRITICAL --exit-code 1 || echo "Trivy 미설치 - 스킵"
+	@which bandit > /dev/null && bandit -r packages/ -ll || echo "Bandit 미설치 - 스킵"
+	@echo "✅ 보안 스캔 완료"
+
 scorecard:
 	@echo "📊 眞善美孝永 Scorecard..."
 	python scripts/automate_scorecard.py packages/afo-core || echo "Scorecard 스킵"

@@ -1,0 +1,72 @@
+# Mergify configuration for AFO Kingdom
+# 眞善美孝永 철학: 善 (보안), 美 (우아함), 孝 (효율), 永 (안정)
+
+pull_request_rules:
+  # 1. Dependabot 보안 패치 → 즉시 자동 병합 (최우선)
+  - name: "[보안] Dependabot security update → 즉시 자동 병합"
+    conditions:
+      - author=dependabot[bot]
+      - "title~=^\\[Security\\]"
+      - check-success~=test
+    actions:
+      merge:
+        method: squash
+        commit_message_template: "fix(security): {{ title }} (#{{ number }})"
+      comment:
+        message: "🔒 긴급 보안 취약점 자동 패치 완료! 왕국 안전 100% 확보!"
+
+  # 2. Dependabot 패치/마이너 → CI 통과 후 자동 병합
+  - name: "[의존성] Dependabot 패치/마이너 → 자동 병합"
+    conditions:
+      - author=dependabot[bot]
+      - "-title~=^\\[Major\\]"
+      - label=dependencies
+      - check-success~=test
+      - base=main
+      - -label=hold
+    actions:
+      merge:
+        method: squash
+        commit_message_template: "chore(deps): {{ title }} (#{{ number }})"
+      comment:
+        message: "📦 의존성 자동 업데이트 완료! 왕국 최신 상태 유지!"
+
+  # 3. CI 실패 시 자동 취소 + 알림
+  - name: "[안전] CI 실패 → PR 자동 취소"
+    conditions:
+      - check-failure~=test
+    actions:
+      comment:
+        message: "❌ CI에서 문제가 발견되었습니다. 확인 후 재실행 부탁드립니다."
+
+  # 4. Draft/WIP PR → 자동으로 hold 라벨 부여
+  - name: "[관리] Draft → hold 라벨 자동 부여"
+    conditions:
+      - draft
+      - -label=hold
+    actions:
+      label:
+        add: ["hold"]
+
+  # 5. 메이저 업데이트 → 리뷰 요청 + 라벨
+  - name: "[주의] 메이저 업데이트 → 리뷰 필요"
+    conditions:
+      - author=dependabot[bot]
+      - "title~=^\\[Major\\]"
+    actions:
+      label:
+        add: ["needs-review", "major"]
+      comment:
+        message: "⚠️ 메이저 버전 업데이트입니다. 직접 확인이 필요합니다."
+
+  # 6. 오래된 PR 자동 정리 (30일 이상)
+  - name: "[정리] 30일 이상된 PR → stale 라벨"
+    conditions:
+      - updated-at<30 days ago
+      - -label=stale
+      - -closed
+    actions:
+      label:
+        add: ["stale"]
+      comment:
+        message: "📅 이 PR이 30일 이상 업데이트되지 않았습니다. 진행 여부 확인 부탁드립니다."
