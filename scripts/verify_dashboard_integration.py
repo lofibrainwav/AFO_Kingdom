@@ -1,6 +1,8 @@
-import requests
 import json
 import sys
+
+import requests
+
 
 def verify_dashboard_integration():
     url = "http://localhost:8010/chancellor/invoke"
@@ -16,17 +18,17 @@ def verify_dashboard_integration():
 
     try:
         response = requests.post(url, json=payload, headers=headers, timeout=10)
-        
+
         print(f"Status Code: {response.status_code}")
-        
+
         if response.status_code == 200:
             data = response.json()
             print(f"Response: {json.dumps(data, indent=2)}")
-            
+
             # Verify Schema
             required_keys = ["response", "speaker", "full_history"]
             missing = [k for k in required_keys if k not in data]
-            
+
             if missing:
                 print(f"❌ Verification Failed: Missing keys {missing}")
                 sys.exit(1)

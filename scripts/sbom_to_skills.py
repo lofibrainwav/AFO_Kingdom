@@ -7,15 +7,15 @@ CycloneDX SBOM에서 컴포넌트를 파싱하여 Skills Registry에 등록합�
 
 import json
 import sys
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 
 
 def parse_cyclonedx_sbom(sbom_path: str) -> list[dict]:
     """CycloneDX JSON SBOM을 파싱하여 컴포넌트 목록 반환"""
-    with open(sbom_path, "r") as f:
+    with open(sbom_path) as f:
         sbom = json.load(f)
-    
+
     components = []
     for comp in sbom.get("components", []):
         components.append({
@@ -23,10 +23,10 @@ def parse_cyclonedx_sbom(sbom_path: str) -> list[dict]:
             "version": comp.get("version", "0.0.0"),
             "type": comp.get("type", "library"),
             "purl": comp.get("purl", ""),
-            "licenses": [lic.get("license", {}).get("id", "unknown") 
+            "licenses": [lic.get("license", {}).get("id", "unknown")
                         for lic in comp.get("licenses", [])],
         })
-    
+
     return components
 
 
@@ -34,22 +34,22 @@ def calculate_goodness_score(components: list[dict]) -> float:
     """善 (Goodness) 점수 계산 - 라이선스 준수 기반"""
     if not components:
         return 1.0
-    
+
     approved_licenses = {"MIT", "Apache-2.0", "BSD-3-Clause", "ISC", "Python-2.0"}
     compliant = sum(
-        1 for c in components 
+        1 for c in components
         if any(lic in approved_licenses for lic in c.get("licenses", []))
     )
-    
+
     return round(compliant / len(components), 2)
 
 
 def generate_skills_registry(components: list[dict]) -> dict:
     """Skills Registry 형식으로 변환"""
     goodness_score = calculate_goodness_score(components)
-    
+
     return {
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "total_dependencies": len(components),
         "goodness_score": goodness_score,
         "components": components[:50],  # Top 50
@@ -70,20 +70,20 @@ def main():
     if len(sys.argv) < 2:
         print("Usage: sbom_to_skills.py <sbom.cdx.json>")
         sys.exit(1)
-    
+
     sbom_path = sys.argv[1]
-    
+
     if not Path(sbom_path).exists():
         print(f"SBOM file not found: {sbom_path}")
         sys.exit(1)
-    
+
     components = parse_cyclonedx_sbom(sbom_path)
     registry = generate_skills_registry(components)
-    
+
     output_path = "skills_registry.json"
     with open(output_path, "w") as f:
         json.dump(registry, f, indent=2)
-    
+
     print(f"✅ Skills Registry 생성 완료: {output_path}")
     print(f"   - 총 컴포넌트: {registry['total_dependencies']}")
     print(f"   - 善 (Goodness) 점수: {registry['goodness_score']}")
