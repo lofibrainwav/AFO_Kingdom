@@ -22,6 +22,8 @@ jobs:
       # 眞 (Truth): SHA pinning for supply chain security
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full clone to avoid git warnings
 
       # 孝 (Serenity): Runtime security monitoring (CVE-2025-30066 lesson)
       - name: Harden runner
@@ -167,6 +169,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full clone to avoid git warnings
 
       - name: Generate CycloneDX SBOM
         uses: anchore/sbom-action@v0
