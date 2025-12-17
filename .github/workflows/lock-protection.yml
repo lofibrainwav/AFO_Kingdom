@@ -1,0 +1,27 @@
+# LOCK.md Protection Workflow
+# Prevents modifications to LOCK.md without explicit approval
+
+name: LOCK Protection
+
+on:
+  pull_request:
+    paths:
+      - 'LOCK.md'
+
+jobs:
+  check-lock:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: 🔒 LOCK.md 변경 감지
+        run: |
+          echo "⚠️ WARNING: LOCK.md 파일이 변경되었습니다!"
+          echo "이 파일은 AFO 왕국의 불변 원칙을 담고 있습니다."
+          echo ""
+          echo "변경 내용:"
+          git diff origin/main -- LOCK.md || true
+          echo ""
+          echo "🔒 LOCK.md 변경은 사령관의 명시적 승인이 필요합니다."
+          exit 1
