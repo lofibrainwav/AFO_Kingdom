@@ -127,3 +127,25 @@ jobs:
         uses: github/codeql-action/upload-sarif@48ab28a6f5dbc2a99bf1e0131198dd8f1df78169 # v3.28.0
         with:
           sarif_file: scorecard.sarif
+
+  # 永 (Eternity): SBOM generation for supply chain visibility
+  sbom:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Generate CycloneDX SBOM
+        uses: anchore/sbom-action@fc46e51e3f33f847e05bf73eb5ce85f21f6fefd2 # v0.17.9
+        with:
+          format: cyclonedx-json
+          output-file: sbom.cdx.json
+          artifact-name: AFO-Kingdom-SBOM
+
+      - name: Upload SBOM artifact
+        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4.4.3
+        with:
+          name: sbom
+          path: sbom.cdx.json
