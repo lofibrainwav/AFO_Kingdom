@@ -55,8 +55,8 @@ jobs:
 
       - name: Upload Trivy SARIF
         uses: github/codeql-action/upload-sarif@v3
-        continue-on-error: true  # May fail on private repos without Code Scanning
-        if: success() && hashFiles('trivy-results.sarif') != ''
+        continue-on-error: true
+        if: false  # Disabled: Code Scanning requires GitHub Advanced Security (not available on private free repos)
         with:
           sarif_file: 'trivy-results.sarif'
 
@@ -70,8 +70,8 @@ jobs:
 
       - name: Upload Snyk SARIF
         uses: github/codeql-action/upload-sarif@v3
-        continue-on-error: true  # May fail on private repos without Code Scanning
-        if: hashFiles('snyk.sarif') != ''
+        continue-on-error: true
+        if: false  # Disabled: Code Scanning requires GitHub Advanced Security
         with:
           sarif_file: 'snyk.sarif'
 
@@ -103,6 +103,7 @@ jobs:
 
       - name: Upload coverage
         uses: codecov/codecov-action@v4
+        continue-on-error: true  # May fail without CODECOV_TOKEN
         with:
           file: coverage.xml
 
