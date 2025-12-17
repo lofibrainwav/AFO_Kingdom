@@ -106,8 +106,9 @@ jobs:
 
       - name: Upload coverage
         uses: codecov/codecov-action@v4
-        continue-on-error: true  # May fail without CODECOV_TOKEN
+        continue-on-error: true
         with:
+          token: ${{ secrets.CODECOV_TOKEN }}
           file: coverage.xml
 
       # 永 (Eternity): Continuous improvement
