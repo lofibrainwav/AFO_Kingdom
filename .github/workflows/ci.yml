@@ -84,16 +84,17 @@ jobs:
         with:
           command: monitor
 
-      # 美 (Beauty): Code quality
+      # 眞 (Truth): Type safety first - 타입 안전성 우선
+      - name: MyPy type check
+        continue-on-error: true
+        run: mypy packages/afo-core --strict --ignore-missing-imports 2>/dev/null || echo 'MyPy check skipped'
+
+      # 美 (Beauty): Code quality - 코드 품질
       - name: Ruff lint
         run: ruff check packages/
 
       - name: Ruff format check
         run: ruff format --check packages/
-
-      - name: MyPy type check
-        continue-on-error: true
-        run: mypy packages/afo-core --strict --ignore-missing-imports 2>/dev/null || echo 'MyPy check skipped'
 
       # 孝 (Serenity): Testing
       - name: Run tests with coverage
