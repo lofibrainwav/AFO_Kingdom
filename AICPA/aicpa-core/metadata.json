@@ -1,0 +1,8 @@
+{
+  "name": "AICPA Core",
+  "description": "A strategic platform for CPAs to transition into AI-savvy professionals using the R.C.A.T.E. prompt framework.",
+  "requestFramePermissions": [
+    "microphone",
+    "geolocation"
+  ]
+}

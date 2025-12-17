@@ -1,0 +1,38 @@
+{
+  "jay": {
+    "truth": 0.97,
+    "goodness": 0.96,
+    "beauty": 0.96,
+    "serenity": 0.99,
+    "forever": 0.998,
+    "message": "오늘도 완벽합니다 👑",
+    "last_update": "2025-05-20T09:00:00"
+  },
+  "julie": {
+    "truth": 0.98,
+    "goodness": 0.98,
+    "beauty": 0.92,
+    "serenity": 0.97,
+    "forever": 0.99,
+    "message": "세무 마감 끝! 💼",
+    "last_update": "2025-05-20T09:00:00"
+  },
+  "jayden": {
+    "truth": 0.94,
+    "goodness": 0.95,
+    "beauty": 0.97,
+    "serenity": 0.98,
+    "forever": 0.97,
+    "message": "영어 100점! 🌟",
+    "last_update": "2025-05-20T09:00:00"
+  },
+  "형님": {
+    "truth": 0.99,
+    "goodness": 0.99,
+    "beauty": 0.99,
+    "serenity": 0.99,
+    "forever": 1.0,
+    "message": "Persistence Verified 🛡️",
+    "last_update": "2025-12-16T20:15:23.765067"
+  }
+}

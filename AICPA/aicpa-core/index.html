@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="description" content="AICPA Core - AI-powered Strategy Platform for CPAs" />
+    <meta property="og:title" content="AICPA Core" />
+    <meta property="og:description" content="Transforming CPAs into AI-savvy professionals with R.C.A.T.E. framework." />
+    <title>AICPA Core | AI Copilot for CPAs</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+      body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+        overscroll-behavior-y: none; /* Prevent pull-to-refresh on mobile */
+      }
+      
+      /* Emerald Themed Scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #d1fae5; /* emerald-100 */
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #34d399; /* emerald-400 */
+      }
+
+      /* Code Font for specific areas */
+      .font-mono {
+        font-family: 'JetBrains Mono', monospace;
+      }
+      
+      /* Animation Utilities */
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(5px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .animate-fade-in {
+        animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      }
+
+      @keyframes slideUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .animate-slide-up {
+        animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      }
+
+      @keyframes slideDown {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .animate-slide-down {
+        animation: slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      }
+      
+      .bg-grid-subtle {
+        background-size: 40px 40px;
+        background-image: 
+          linear-gradient(to right, rgba(16, 185, 129, 0.03) 1px, transparent 1px),
+          linear-gradient(to bottom, rgba(16, 185, 129, 0.03) 1px, transparent 1px);
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "@google/genai": "https://esm.sh/@google/genai@^1.33.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "lucide-react": "https://esm.sh/lucide-react@^0.561.0",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body class="bg-slate-50 text-slate-900 overflow-x-hidden antialiased h-screen flex flex-col">
+    <div id="root" class="flex-1 flex flex-col h-full"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>

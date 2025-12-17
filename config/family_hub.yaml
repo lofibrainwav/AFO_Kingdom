@@ -1,0 +1,38 @@
+family_hub:
+  name: "AFO Kingdom Family"
+  location: "Seoul, Korea"
+  timezone: "Asia/Seoul"
+  
+  members:
+    jay:
+      name: "형님"
+      role: "commander"
+      avatar: "👑"
+      permissions: ["admin", "approve_spending", "manage_tasks"]
+      default_tasks:
+        - "AFO 최적화"
+        - "가족 허브 구축"
+        
+    julie:
+      name: "Julie"
+      role: "cpa"
+      avatar: "💼"
+      permissions: ["view_finances", "manage_calendar"]
+      default_tasks:
+        - "세무 문서 정리"
+        - "클라이언트 미팅"
+        
+    jayden:
+      name: "Jayden"
+      role: "kid"
+      avatar: "⚾"
+      permissions: ["view_tasks", "submit_requests"]
+      default_tasks:
+        - "영어 학습"
+        - "야구 연습"
+        
+  modules:
+    - finance
+    - calendar
+    - tasks
+    - health
