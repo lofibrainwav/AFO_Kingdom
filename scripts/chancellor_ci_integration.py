@@ -51,11 +51,11 @@ def calculate_trinity_score(ci_results: dict) -> dict:
 
     # 종합 점수
     total = (
-        WEIGHTS["truth"] * truth +
-        WEIGHTS["goodness"] * goodness +
-        WEIGHTS["beauty"] * beauty +
-        WEIGHTS["serenity"] * serenity +
-        WEIGHTS["eternity"] * eternity
+        WEIGHTS["truth"] * truth
+        + WEIGHTS["goodness"] * goodness
+        + WEIGHTS["beauty"] * beauty
+        + WEIGHTS["serenity"] * serenity
+        + WEIGHTS["eternity"] * eternity
     )
 
     return {

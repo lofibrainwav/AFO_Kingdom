@@ -6,11 +6,7 @@ import requests
 
 def verify_dashboard_integration():
     url = "http://localhost:8010/chancellor/invoke"
-    payload = {
-        "query": "Status Report",
-        "trinity_score": 0.85,
-        "risk_score": 0.1
-    }
+    payload = {"query": "Status Report", "trinity_score": 0.85, "risk_score": 0.1}
     headers = {"Content-Type": "application/json"}
 
     print(f"Testing Dashboard API: {url}")
@@ -46,6 +42,7 @@ def verify_dashboard_integration():
     except Exception as e:
         print(f"❌ Verification Failed: {str(e)}")
         sys.exit(1)
+
 
 if __name__ == "__main__":
     verify_dashboard_integration()

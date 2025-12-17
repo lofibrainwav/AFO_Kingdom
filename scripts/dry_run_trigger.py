@@ -22,20 +22,17 @@ HIGH_RISK_PATTERNS = [
     ("requests.delete", "외부 API DELETE 호출"),
     ("httpx.post", "외부 API POST 호출"),
     ("aiohttp.ClientSession", "비동기 HTTP 클라이언트"),
-
     # DB 스키마
     ("ALTER TABLE", "데이터베이스 스키마 변경"),
     ("DROP TABLE", "테이블 삭제"),
     ("CREATE TABLE", "테이블 생성"),
     ("alembic.op.drop", "Alembic 마이그레이션 삭제"),
-
     # 인증/권한
     ("oauth", "OAuth 인증 변경"),
     ("jwt", "JWT 토큰 변경"),
     ("password", "비밀번호 관련 변경"),
     ("secret", "시크릿 관련 변경"),
     ("api_key", "API 키 변경"),
-
     # 핵심 설정
     ("PRODUCTION", "프로덕션 설정 변경"),
     ("DATABASE_URL", "데이터베이스 URL 변경"),
@@ -45,9 +42,7 @@ HIGH_RISK_PATTERNS = [
 def get_changed_files() -> list[str]:
     """Git에서 변경된 파일 목록 가져오기"""
     result = subprocess.run(
-        ["git", "diff", "--name-only", "HEAD~1"],
-        capture_output=True,
-        text=True
+        ["git", "diff", "--name-only", "HEAD~1"], capture_output=True, text=True
     )
     return result.stdout.strip().split("\n") if result.stdout.strip() else []
 
@@ -55,9 +50,7 @@ def get_changed_files() -> list[str]:
 def get_file_diff(file_path: str) -> str:
     """파일의 diff 내용 가져오기"""
     result = subprocess.run(
-        ["git", "diff", "HEAD~1", "--", file_path],
-        capture_output=True,
-        text=True
+        ["git", "diff", "HEAD~1", "--", file_path], capture_output=True, text=True
     )
     return result.stdout
 
@@ -76,12 +69,14 @@ def detect_high_risk_changes() -> list[dict]:
 
         for pattern, description in HIGH_RISK_PATTERNS:
             if pattern.lower() in diff.lower():
-                risks.append({
-                    "file": file_path,
-                    "pattern": pattern,
-                    "description": description,
-                    "recommendation": "DRY_RUN 필수",
-                })
+                risks.append(
+                    {
+                        "file": file_path,
+                        "pattern": pattern,
+                        "description": description,
+                        "recommendation": "DRY_RUN 필수",
+                    }
+                )
 
     return risks
 

@@ -18,6 +18,7 @@ from pathlib import Path
 @dataclass
 class ScoreResult:
     """점수 결과"""
+
     score: float
     max_score: float
     details: str
@@ -29,32 +30,28 @@ class AutomatedScorecard:
     def __init__(self, project_dir: str = "AFO/"):
         self.project_dir = Path(project_dir)
         self.weights = {
-            'truth': 0.35,
-            'goodness': 0.35,
-            'beauty': 0.30,
+            "truth": 0.35,
+            "goodness": 0.35,
+            "beauty": 0.30,
         }
 
     def run_all(self) -> dict:
         """모든 메트릭 실행"""
         results = {
-            'truth': self._calculate_truth(),
-            'goodness': self._calculate_goodness(),
-            'beauty': self._calculate_beauty(),
-            'serenity': self._calculate_serenity(),  # ε 메타 원리
-            'eternity': self._calculate_eternity(),  # ε 메타 원리
+            "truth": self._calculate_truth(),
+            "goodness": self._calculate_goodness(),
+            "beauty": self._calculate_beauty(),
+            "serenity": self._calculate_serenity(),  # ε 메타 원리
+            "eternity": self._calculate_eternity(),  # ε 메타 원리
         }
 
         # 가중 총점 (眞善美만)
         total = sum(
             results[k].score / results[k].max_score * self.weights.get(k, 0) * 100
-            for k in ['truth', 'goodness', 'beauty']
+            for k in ["truth", "goodness", "beauty"]
         )
 
-        return {
-            'scores': results,
-            'total': round(total, 1),
-            'max': 100
-        }
+        return {"scores": results, "total": round(total, 1), "max": 100}
 
     def _calculate_truth(self) -> ScoreResult:
         """眞 (Truth) - 타입 안전성, 테스트 커버리지"""
@@ -167,7 +164,7 @@ class AutomatedScorecard:
     def _parse_file(self, path: Path) -> ast.AST | None:
         """AST 파싱"""
         try:
-            return ast.parse(path.read_text(encoding='utf-8'))
+            return ast.parse(path.read_text(encoding="utf-8"))
         except (SyntaxError, UnicodeDecodeError):
             return None
 
@@ -175,10 +172,12 @@ class AutomatedScorecard:
         """MyPy 실행 (0-40점)"""
         try:
             result = subprocess.run(
-                ['mypy', str(self.project_dir), '--ignore-missing-imports'],
-                capture_output=True, text=True, timeout=60
+                ["mypy", str(self.project_dir), "--ignore-missing-imports"],
+                capture_output=True,
+                text=True,
+                timeout=60,
             )
-            error_count = result.stdout.count('error:')
+            error_count = result.stdout.count("error:")
             if error_count == 0:
                 return 40
             return max(0, 40 - error_count * 2)
@@ -233,8 +232,8 @@ class AutomatedScorecard:
         """로깅 패턴 (0-35점)"""
         logging_count = 0
         for path in self._get_python_files():
-            content = path.read_text(encoding='utf-8', errors='ignore')
-            logging_count += content.count('logging') + content.count('logger')
+            content = path.read_text(encoding="utf-8", errors="ignore")
+            logging_count += content.count("logging") + content.count("logger")
 
         return min(35, logging_count * 0.5)
 
@@ -242,10 +241,12 @@ class AutomatedScorecard:
         """검증 패턴 (0-25점)"""
         validation_count = 0
         for path in self._get_python_files():
-            content = path.read_text(encoding='utf-8', errors='ignore')
+            content = path.read_text(encoding="utf-8", errors="ignore")
             validation_count += (
-                content.count('pydantic') + content.count('BaseModel') +
-                content.count('validate') + content.count('dataclass')
+                content.count("pydantic")
+                + content.count("BaseModel")
+                + content.count("validate")
+                + content.count("dataclass")
             )
         return min(25, validation_count * 0.5)
 
@@ -258,7 +259,7 @@ class AutomatedScorecard:
             tree = self._parse_file(path)
             if not tree:
                 continue
-            content = path.read_text(encoding='utf-8', errors='ignore')
+            content = path.read_text(encoding="utf-8", errors="ignore")
             total_lines += len(content.splitlines())
             func_count += sum(1 for n in ast.walk(tree) if isinstance(n, ast.FunctionDef))
 
@@ -282,7 +283,7 @@ class AutomatedScorecard:
                 continue
             for node in ast.walk(tree):
                 if isinstance(node, ast.Name):
-                    if '_' in node.id and node.id.islower():
+                    if "_" in node.id and node.id.islower():
                         snake_case += 1
                     elif any(c.isupper() for c in node.id[1:]):
                         camel_case += 1
@@ -312,18 +313,20 @@ class AutomatedScorecard:
         """비동기 패턴 (0-50점)"""
         async_count = 0
         for path in self._get_python_files():
-            content = path.read_text(encoding='utf-8', errors='ignore')
-            async_count += content.count('async def') + content.count('await')
+            content = path.read_text(encoding="utf-8", errors="ignore")
+            async_count += content.count("async def") + content.count("await")
         return min(50, async_count * 0.5)
 
     def _check_automation(self) -> float:
         """자동화 패턴 (0-50점)"""
         auto_count = 0
         for path in self._get_python_files():
-            content = path.read_text(encoding='utf-8', errors='ignore')
+            content = path.read_text(encoding="utf-8", errors="ignore")
             auto_count += (
-                content.count('schedule') + content.count('automate') +
-                content.count('AntiGravity') + content.count('rollback')
+                content.count("schedule")
+                + content.count("automate")
+                + content.count("AntiGravity")
+                + content.count("rollback")
             )
         return min(50, auto_count * 2)
 
@@ -351,10 +354,10 @@ class AutomatedScorecard:
         comment_lines = 0
 
         for path in self._get_python_files():
-            content = path.read_text(encoding='utf-8', errors='ignore')
+            content = path.read_text(encoding="utf-8", errors="ignore")
             lines = content.splitlines()
             total_lines += len(lines)
-            comment_lines += sum(1 for line in lines if line.strip().startswith('#'))
+            comment_lines += sum(1 for line in lines if line.strip().startswith("#"))
 
         ratio = comment_lines / max(1, total_lines)
         # 10% 주석이면 만점
@@ -375,14 +378,14 @@ def main():
     print()
 
     pillar_names = {
-        'truth': ('眞 (Truth)', '타입 안전성, 정확성'),
-        'goodness': ('善 (Goodness)', '안전성, 윤리성'),
-        'beauty': ('美 (Beauty)', '코드 품질, 모듈화'),
-        'serenity': ('孝 (Serenity)', '운영 안정성 [ε]'),
-        'eternity': ('永 (Eternity)', '문서화 [ε]'),
+        "truth": ("眞 (Truth)", "타입 안전성, 정확성"),
+        "goodness": ("善 (Goodness)", "안전성, 윤리성"),
+        "beauty": ("美 (Beauty)", "코드 품질, 모듈화"),
+        "serenity": ("孝 (Serenity)", "운영 안정성 [ε]"),
+        "eternity": ("永 (Eternity)", "문서화 [ε]"),
     }
 
-    for key, result in results['scores'].items():
+    for key, result in results["scores"].items():
         name, desc = pillar_names[key]
         pct = result.score / result.max_score * 100
         bar = "█" * int(pct / 5) + "░" * (20 - int(pct / 5))

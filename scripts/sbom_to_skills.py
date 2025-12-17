@@ -7,7 +7,7 @@ CycloneDX SBOM에서 컴포넌트를 파싱하여 Skills Registry에 등록합�
 
 import json
 import sys
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
 
 
@@ -18,14 +18,17 @@ def parse_cyclonedx_sbom(sbom_path: str) -> list[dict]:
 
     components = []
     for comp in sbom.get("components", []):
-        components.append({
-            "name": comp.get("name", "unknown"),
-            "version": comp.get("version", "0.0.0"),
-            "type": comp.get("type", "library"),
-            "purl": comp.get("purl", ""),
-            "licenses": [lic.get("license", {}).get("id", "unknown")
-                        for lic in comp.get("licenses", [])],
-        })
+        components.append(
+            {
+                "name": comp.get("name", "unknown"),
+                "version": comp.get("version", "0.0.0"),
+                "type": comp.get("type", "library"),
+                "purl": comp.get("purl", ""),
+                "licenses": [
+                    lic.get("license", {}).get("id", "unknown") for lic in comp.get("licenses", [])
+                ],
+            }
+        )
 
     return components
 
@@ -37,8 +40,7 @@ def calculate_goodness_score(components: list[dict]) -> float:
 
     approved_licenses = {"MIT", "Apache-2.0", "BSD-3-Clause", "ISC", "Python-2.0"}
     compliant = sum(
-        1 for c in components
-        if any(lic in approved_licenses for lic in c.get("licenses", []))
+        1 for c in components if any(lic in approved_licenses for lic in c.get("licenses", []))
     )
 
     return round(compliant / len(components), 2)
@@ -49,7 +51,7 @@ def generate_skills_registry(components: list[dict]) -> dict:
     goodness_score = calculate_goodness_score(components)
 
     return {
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         "total_dependencies": len(components),
         "goodness_score": goodness_score,
         "components": components[:50],  # Top 50
