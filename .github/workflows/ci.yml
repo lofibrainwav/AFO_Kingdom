@@ -149,3 +149,14 @@ jobs:
         with:
           name: sbom
           path: sbom.cdx.json
+
+      # Dependency-Track 업로드 (optional - 서버 설정 시 활성화)
+      - name: Upload to Dependency-Track
+        if: vars.DEPENDENCY_TRACK_URL != ''
+        uses: DependencyTrack/gh-upload-sbom@0a13d4e27f7bc5cf4a77ef6a1c14f1b0c0c3b65a # v3.1.0
+        with:
+          serverhostname: ${{ vars.DEPENDENCY_TRACK_URL }}
+          apikey: ${{ secrets.DEPENDENCY_TRACK_API_KEY }}
+          project: afo-kingdom
+          version: ${{ github.sha }}
+          bomfilename: sbom.cdx.json
