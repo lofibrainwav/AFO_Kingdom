@@ -1,0 +1,204 @@
+"""System Health & Logs Routes."""
+
+from __future__ import annotations
+
+import asyncio
+import json
+import logging
+import os
+from datetime import datetime
+from typing import TYPE_CHECKING, Any, cast
+
+if TYPE_CHECKING:
+    from collections.abc import AsyncGenerator
+
+import psutil
+import redis
+from fastapi import APIRouter
+
+# Optional SSE import
+try:
+    from sse_starlette.sse import EventSourceResponse
+
+    SSE_AVAILABLE = True
+except ImportError:
+    # Define a dummy type for type checking if import fails
+    EventSourceResponse = Any  # type: ignore
+    SSE_AVAILABLE = False
+
+router = APIRouter(prefix="/api/system", tags=["System Health"])
+
+logger = logging.getLogger(__name__)
+
+ORGANS = [
+    "Brain",
+    "Heart",
+    "Lungs",
+    "Digestive",
+    "Immune",
+    "Musculoskeletal",
+    "Endocrine",
+    "Nervous",
+    "Reproductive",
+    "Circulatory",
+    "Integumentary",
+]
+
+
+def _get_redis_client() -> redis.Redis | None:
+    """Redis 클라이언트 생성 (Lazy Loading)"""
+    # Phase 2-4: settings 사용
+    try:
+        try:
+            from AFO.utils.redis_connection import get_redis_url
+
+            redis_url = get_redis_url()
+        except ImportError:
+            try:
+                from config.settings import get_settings
+
+                settings = get_settings()
+                redis_url = settings.get_redis_url()
+            except ImportError:
+                try:
+                    from AFO.config.settings import get_settings
+
+                    settings = get_settings()
+                    redis_url = settings.get_redis_url()
+                except ImportError:
+                    redis_url = os.getenv("REDIS_URL", "redis://localhost:6379")
+    except Exception:
+        redis_url = os.getenv("REDIS_URL", "redis://localhost:6379")
+
+    try:
+        # Explicitly cast to redis.Redis to satisfy mypy
+        client = cast(
+            "redis.Redis",
+            redis.from_url(
+                redis_url, decode_responses=True, socket_connect_timeout=2, socket_timeout=2
+            ),
+        )
+        client.ping()
+        return client
+    except Exception as e:
+        logger.warning(f"Redis connection failed in System Health: {e}")
+        return None
+
+
+@router.get("/metrics")
+async def get_system_metrics() -> dict[str, Any]:
+    """
+    CoreZen Dashboard를 위한 실시간 시스템 메트릭
+
+    Returns:
+        - memory_percent: 메모리 사용률 (0-100)
+        - swap_percent: 스왑 사용률 (0-100)
+        - containers_running: 실행 중인 컨테이너 수 (Redis 기반 추정)
+        - disk_percent: 디스크 사용률 (0-100)
+        - redis_connected: Redis 연결 상태
+        - langgraph_active: LangGraph 활성 상태 (항상 True로 가정 or Redis 체크)
+    """
+    try:
+        # 1. System Metrics via psutil (Cross-platform)
+        memory = psutil.virtual_memory()
+        swap = psutil.swap_memory()
+        disk = psutil.disk_usage("/")
+
+        memory_percent = memory.percent
+        swap_percent = swap.percent
+        disk_percent = disk.percent
+
+        # 2. Redis Connection & Service Status
+        redis_client = _get_redis_client()
+        redis_connected = redis_client is not None
+
+        containers_running = 0
+        if redis_client:
+            try:
+                # Count healthy services from Redis
+                # Explicitly cast to dict to avoid 'Awaitable' confusion in mypy
+                all_status = cast("dict", redis_client.hgetall("services:health"))
+
+                # Filter for services that are 'healthy'
+                containers_running = sum(
+                    1
+                    for data_json in all_status.values()
+                    if isinstance(data_json, str) and "healthy" in data_json
+                )
+            except Exception:
+                pass
+
+        # 3. LangGraph Active Status
+        # For now, we assume it's active if the API is running,
+        # or we could check a specific Redis key if needed.
+        langgraph_active = True
+
+        # 4. Bind System Metrics to Organs (11-오장육부 Metaphor)
+        # Score calculation: 100 - (Usage %)
+        # Healthy means Low Usage (high score)
+
+        # Brain (Memory)
+        brain_score = max(0, 100 - memory_percent)
+        # Digestive (Disk)
+        digestive_score = max(0, 100 - disk_percent)
+        # Heart (Redis - Connectivity)
+        heart_score = 100 if redis_connected else 0
+        # Lungs (Swap/CPU Proxy)
+        lungs_score = max(0, 100 - swap_percent)
+
+        # Others (Baseline high, slightly affected by total load)
+        avg_load = (memory_percent + disk_percent) / 2
+        general_score = max(50, 100 - (avg_load * 0.5))
+
+        organs_data = [
+            {"name": "Brain", "score": brain_score, "metric": f"Mem {memory_percent}%"},
+            {"name": "Heart", "score": heart_score, "metric": "Redis Connected"},
+            {"name": "Digestive", "score": digestive_score, "metric": f"Disk {disk_percent}%"},
+            {"name": "Lungs", "score": lungs_score, "metric": f"Swap {swap_percent}%"},
+            # Fill others with general health
+            {"name": "Immune", "score": general_score, "metric": "General Protection"},
+            {"name": "Musculoskeletal", "score": general_score, "metric": "Infrastructure"},
+            {"name": "Endocrine", "score": general_score, "metric": "Scheduling"},
+            {"name": "Nervous", "score": brain_score, "metric": "Network/API"},
+            {"name": "Reproductive", "score": 100, "metric": "Backups"},
+            {"name": "Circulatory", "score": heart_score, "metric": "Data Flow"},
+            {"name": "Integumentary", "score": general_score, "metric": "Firewall/API Gateway"},
+        ]
+
+        return {
+            "memory_percent": round(memory_percent, 1),
+            "swap_percent": round(swap_percent, 1),
+            "containers_running": containers_running,
+            "disk_percent": round(disk_percent, 1),
+            "redis_connected": redis_connected,
+            "langgraph_active": langgraph_active,
+            "organs": organs_data,
+            "timestamp": datetime.now().isoformat(),
+        }
+    except Exception as e:
+        logger.error(f"Error collecting system metrics: {e}")
+        return {"error": str(e), "timestamp": datetime.now().isoformat()}
+
+
+async def _log_stream(limit: int | None = None) -> AsyncGenerator[str, None]:
+    counter = 0
+    while True:
+        counter += 1
+        message = {
+            "timestamp": datetime.utcnow().isoformat(),
+            "message": f"[{counter}] 시스템 정상 동작 (Unified Health)",
+        }
+        yield json.dumps(message)  # Ensure JSON string for SSE data
+        await asyncio.sleep(1)
+        if limit and counter >= limit:
+            break
+
+
+@router.get("/logs/stream")
+async def stream_logs(limit: int = 0) -> Any:
+    """Logs streaming endpoint (SSE)"""
+    limit_val: int | None = limit if limit > 0 else None
+    if not SSE_AVAILABLE or EventSourceResponse is Any:
+        # Fallback: return JSON if SSE not available
+        return {"error": "SSE not available", "logs": []}
+    return EventSourceResponse(_log_stream(limit_val))

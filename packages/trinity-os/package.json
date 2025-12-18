@@ -1,0 +1,49 @@
+{
+  "name": "trinity-os",
+  "version": "1.0.0",
+  "description": "TRINITY-OS: AFO 왕국의 통합 자동화 운영체제",
+  "main": "run_trinity_os.sh",
+  "scripts": {
+    "init": "./init_trinity_os.sh",
+    "test": "./test_trinity_os.sh",
+    "run": "./run_trinity_os.sh",
+    "verify": "./scripts/verify_all_scripts.sh",
+    "detect": "python3 scripts/kingdom_problem_detector.py",
+    "health": "python3 scripts/kingdom_health_report.py",
+    "gate": "python3 scripts/autorun_gate_check.py",
+    "spirit": "python3 scripts/kingdom_spirit_integration.py",
+    "unified": "./scripts/kingdom_unified_autorun.sh",
+    "infinite": "./scripts/kingdom_infinite_autorun.sh"
+  },
+  "keywords": [
+    "automation",
+    "orchestration",
+    "ai",
+    "trinity",
+    "afo-kingdom",
+    "眞善美孝永"
+  ],
+  "author": "AFO Kingdom",
+  "license": "SEE LICENSE IN TRINITY_CONSTITUTION.md",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lofibrainwav/TRINITY-OS.git"
+  },
+  "bugs": {
+    "url": "https://github.com/lofibrainwav/TRINITY-OS/issues"
+  },
+  "homepage": "https://github.com/lofibrainwav/TRINITY-OS#readme",
+  "engines": {
+    "node": ">=16.0.0",
+    "python": ">=3.12.0"
+  },
+  "os": [
+    "linux",
+    "darwin",
+    "win32"
+  ],
+  "preferGlobal": true,
+  "bin": {
+    "trinity-os": "./run_trinity_os.sh"
+  }
+}

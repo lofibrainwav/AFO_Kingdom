@@ -1,0 +1,57 @@
+#!/bin/bash
+# TRINITY-OS 실행 스크립트 (단축 명령어용)
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR"
+
+# 명령어 인수 처리
+case "${1:-}" in
+    "init")
+        ./init_trinity_os.sh
+        ;;
+    "test")
+        ./test_trinity_os.sh
+        ;;
+    "run")
+        ./run_trinity_os.sh
+        ;;
+    "verify")
+        ./scripts/verify_all_scripts.sh
+        ;;
+    "detect")
+        python3 scripts/kingdom_problem_detector.py
+        ;;
+    "health")
+        python3 scripts/kingdom_health_report.py
+        ;;
+    "spirit")
+        python3 scripts/kingdom_spirit_integration.py
+        ;;
+    "unified")
+        ./scripts/kingdom_unified_autorun.sh
+        ;;
+    "infinite")
+        ./scripts/kingdom_infinite_autorun.sh
+        ;;
+    "help"|"-h"|"--help")
+        echo "TRINITY-OS 명령어 도움말"
+        echo ""
+        echo "사용법: ./TRINITY-OS <command>"
+        echo ""
+        echo "명령어:"
+        echo "  init     - 시스템 초기화"
+        echo "  test     - 시스템 테스트"
+        echo "  run      - 인터랙티브 실행"
+        echo "  verify   - 검증 실행"
+        echo "  detect   - 문제 감지"
+        echo "  health   - 건강 리포트"
+        echo "  spirit   - 정신 통합"
+        echo "  unified  - 통합 자동화"
+        echo "  infinite - 끝까지 오토런"
+        echo "  help     - 이 도움말"
+        echo ""
+        ;;
+    *)
+        ./run_trinity_os.sh
+        ;;
+esac

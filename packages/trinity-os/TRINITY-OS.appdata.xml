@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>com.trinity-os.desktop</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>TRINITY-OS License</project_license>
+  <name>TRINITY-OS</name>
+  <summary>AFO 왕국의 통합 자동화 운영체제</summary>
+
+  <description>
+    <p>
+      TRINITY-OS는 AFO 왕국의 통합 자동화 운영체제입니다.
+      眞善美孝永 철학을 기반으로 완전한 자동화와 최적화를 실현합니다.
+    </p>
+    <p>
+      주요 특징:
+    </p>
+    <ul>
+      <li>문제 감지 및 자동 복구</li>
+      <li>Trinity Score 기반 건강 모니터링</li>
+      <li>끝까지 오토런 자동화</li>
+      <li>모듈화된 아키텍처</li>
+      <li>실시간 시스템 최적화</li>
+    </ul>
+  </description>
+
+  <launchable type="desktop-id">TRINITY-OS.desktop</launchable>
+
+  <screenshots>
+    <screenshot type="default">
+      <caption>TRINITY-OS 메인 인터페이스</caption>
+      <image>https://raw.githubusercontent.com/lofibrainwav/TRINITY-OS/main/screenshots/main-interface.png</image>
+    </screenshot>
+  </screenshots>
+
+  <categories>
+    <category>System</category>
+    <category>Utility</category>
+  </categories>
+
+  <keywords>
+    <keyword>automation</keyword>
+    <keyword>orchestration</keyword>
+    <keyword>ai</keyword>
+    <keyword>眞善美孝永</keyword>
+  </keywords>
+
+  <url type="homepage">https://github.com/lofibrainwav/TRINITY-OS</url>
+  <url type="bugtracker">https://github.com/lofibrainwav/TRINITY-OS/issues</url>
+  <url type="help">https://trinity-os.readthedocs.io/</url>
+
+  <provides>
+    <binary>trinity-os</binary>
+  </provides>
+
+  <developer_name>AFO Kingdom</developer_name>
+  <update_contact>support@trinity-os.org</update_contact>
+</component>

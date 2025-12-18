@@ -1,0 +1,22 @@
+# TRINITY-OS Git Attributes
+
+# 스크립트 파일 실행 권한 유지
+*.sh text eol=lf
+*.py text eol=lf
+TRINITY-OS text eol=lf
+
+# 문서 파일
+*.md text eol=lf
+*.txt text eol=lf
+
+# 설정 파일
+*.json text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.toml text eol=lf
+
+# Python 파일
+*.py text eol=lf
+
+# 실행 파일
+TRINITY-OS eol=lf

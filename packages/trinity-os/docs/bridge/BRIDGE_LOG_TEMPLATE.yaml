@@ -1,0 +1,81 @@
+# Bridge Log Template v1.2 (TRINITY-OS Mirror)
+#
+# 목적: 모든 에이전트가 동일한 형식으로 "명장 로그"를 남겨
+#      왕국의 규범/정신/Truth Lens 결과를 SSOT처럼 동기화하기 위함.
+#
+# 작성 위치(권장):
+#   TRINITY-OS/docs/bridge/YYYY-MM-DD_task_name.yaml
+#
+# 핵심 원칙:
+# - 메타인지 필수: 사고 과정/불확실성/결정을 투명하게 기록
+# - 거짓 금지: 코드/로그/문서 2개 이상 교차검증 후만 서술
+# - Truth Lens는 레이더: 설정/공식은 절대 손대지 않음
+#   raw_result에는 Lens 출력 그대로만 붙여넣기(수정 금지)
+#
+task_id: "YYYY-MM-DD_task_name"
+who: "에이전트명(도구명)"
+intent: "작업 목적 (사령관 평온 기준)"
+
+# 철학적 기반 (야전교범/사서/철학)
+philosophical_foundation:
+  field_manual_principles:
+    - "[Rule #0] 지피지기: 2개 출처 비교 후 진행"
+    - "[DRY→WET] 시뮬레이션 후 승인"
+  trinity_pillars:
+    - "眞善美孝永 5 Pillars"
+  royal_library_influence:
+    - "손자병법 - 원칙명 (적용 내용)"
+    - "삼국지 - 원칙명 (적용 내용)"
+    - "군주론 - 원칙명 (적용 내용)"
+    - "전쟁론 - 원칙명 (적용 내용)"
+
+# 메타인지 (자기 사고 과정)
+metacognition:
+  thought_process:
+    - "초기 판단: 무엇을 문제로 인식했는가"
+    - "의사결정: 왜 이 방법을 선택했는가"
+    - "대안 고려: 배제한 대안과 이유"
+    - "불확실성: 불확실했던 지점과 해소 방법"
+  self_critique:
+    - "잘한 점"
+    - "개선점"
+    - "다음번에는 어떻게 할지"
+
+# Truth Lens 결과 (있는 그대로 인용)
+truth_lens_score:
+  source: "consult_the_lens / verify_kingdom_status.py / 기타 전용 스크립트"
+  execution_time: "언제 실행했는지"
+  raw_result: |
+    Truth Lens 출력 그대로 인용 (수정 금지)
+  metacognitive_interpretation:
+    - "眞 관점: 어떤 증거로 Truth를 확보했는가"
+    - "善 관점: 어떤 선택이 안정성/윤리를 확보했는가"
+    - "美 관점: 어떤 구조/표현이 아름다움을 만들었는가"
+  note: "Writer는 점수를 계산/선언하지 않음"
+
+# 지피지기 증거 체인
+truth_chain:
+  sources:
+    - "증거 1: 파일/명령/스크립트 실행 결과"
+    - "증거 2: 코드/테스트/문서 교차검증"
+  verdict: "증거가 모였을 때의 현재 판단(최종 선언 금지)"
+
+# 사용 도구/스킬
+tools_used:
+  - name: "도구/스킬명"
+    purpose: "사용 목적"
+  - name: "도구/스킬명"
+    purpose: "사용 목적"
+
+# 브릿지의 시선 (요약)
+bridges_view:
+  - "문제: 무엇이 문제였는가"
+  - "수정: 무엇을 어떻게 바꿨는가"
+  - "검증: 어떤 실제 명령/테스트로 확인했는가"
+  - "교훈: 다음에 재사용할 원칙/패턴"
+
+result:
+  baseline_verified: true/false
+  lint_clean: true/false
+  system_health: "PASS/BLOCK (전용 스크립트 출력 인용)"
+  git_status: "clean/modified"

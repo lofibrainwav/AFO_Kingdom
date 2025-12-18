@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=TRINITY-OS
+Comment=AFO 왕국의 통합 자동화 운영체제
+Exec=/usr/local/bin/trinity-os
+Icon=trinity-os
+Terminal=true
+Categories=System;Utility;
+Keywords=automation;orchestration;ai;眞善美孝永;
+StartupNotify=true

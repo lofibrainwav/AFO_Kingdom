@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# SixXon thin launcher (repo-local)
+# - Avoids PYTHONPATH friction
+# - Does not print or handle secrets
+
+REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+
+PY_BIN="python3.12"
+command -v "$PY_BIN" >/dev/null 2>&1 || PY_BIN="python3"
+
+if [ -d "${REPO_ROOT}/TRINITY-OS/trinity_os" ]; then
+  export PYTHONPATH="${REPO_ROOT}/TRINITY-OS:${REPO_ROOT}${PYTHONPATH:+:${PYTHONPATH}}"
+elif [ -d "${REPO_ROOT}/trinity_os" ]; then
+  export PYTHONPATH="${REPO_ROOT}:${REPO_ROOT}${PYTHONPATH:+:${PYTHONPATH}}"
+else
+  echo "sixxon: missing trinity_os package (expected TRINITY-OS/trinity_os or trinity_os)" >&2
+  exit 2
+fi
+
+exec "$PY_BIN" -m trinity_os.cli.sixxon "$@"
+

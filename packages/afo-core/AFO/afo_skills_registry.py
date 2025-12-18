@@ -1,0 +1,1 @@
+../afo_skills_registry.py

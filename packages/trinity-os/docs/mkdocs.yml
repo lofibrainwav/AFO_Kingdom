@@ -1,0 +1,58 @@
+site_name: TRINITY-OS Documentation
+site_description: AFO 왕국의 통합 자동화 운영체제 문서
+site_author: AFO Kingdom
+
+theme:
+  name: material
+  palette:
+    primary: deep-purple
+    accent: amber
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - toc.integrate
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+
+plugins:
+  - search
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          options:
+            docstring_style: google
+
+nav:
+  - Home: index.md
+  - 철학:
+    - 眞善美孝永: philosophy/TRINITY_PHILOSOPHY.md
+  - 헌법:
+    - 최고 헌법: constitution/TRINITY_CONSTITUTION_SUPREME.md
+    - 헌법 SSOT v1.0: constitution/AFO_TRINITY_OS_CONSTITUTION_V1_SSOT.md
+  - 유산:
+    - 왕국 유산: heritage/AFO_KINGDOM_HERITAGE.md
+  - 야전교범:
+    - 전략 매뉴얼: field-manual/TRINITY_FIELD_MANUAL.md
+  - 왕립 도서관:
+    - 4대 고전: royal-library/TRINITY_ROYAL_LIBRARY.md
+  - TRINITY-OS:
+    - 시스템 개요: trinity-os/TRINITY_OS_CORE.md
+    - 역할 분담 정본: trinity-os/TRINITY_OS_ROLES.md
+    - Agent Onboarding & Arsenal: trinity-os/TRINITY_OS_AGENT_ONBOARDING.md
+    - 부록: appendix/TRINITY_GRAPH_TOOLFLOW_V1.md
+    - Bridge Logs: bridge/index.md
+    - 사용 가이드: trinity-os/TRINITY_OS_GUIDE.md
+    - 개발 가이드: trinity-os/TRINITY_OS_DEVELOPMENT.md
+    - 운영 매뉴얼: trinity-os/TRINITY_OS_MANUAL.md
+    - API 레퍼런스: trinity-os/TRINITY_OS_REFERENCE.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/lofibrainwav/TRINITY-OS
+    - icon: fontawesome/brands/discord
+      link: https://discord.gg/trinity-os
+
+copyright: Copyright &copy; 2025 AFO Kingdom - 眞善美孝永

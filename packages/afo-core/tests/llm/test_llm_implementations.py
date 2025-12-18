@@ -1,0 +1,278 @@
+import os
+import sys
+from unittest.mock import AsyncMock, MagicMock, patch
+
+import pytest
+
+
+# --- Claude API Tests ---
+def test_claude_init_env():
+    # Test initialization with Env Var
+    with patch.dict(os.environ, {"ANTHROPIC_API_KEY": "sk-ant-test"}):
+        from AFO.llms.claude_api import ClaudeAPIWrapper
+
+        wrapper = ClaudeAPIWrapper()
+        assert wrapper.is_available()
+        assert wrapper.api_key == "sk-ant-test"
+        assert wrapper.available is True
+
+
+def test_claude_init_wallet_fallback():
+    # Test initialization with API Wallet
+    mock_wallet = MagicMock()
+    mock_wallet.get.return_value = "sk-ant-wallet"
+
+    with patch.dict(os.environ, {}, clear=True):
+        mock_api_wallet_mod = MagicMock()
+        mock_api_wallet_mod.create_wallet.return_value = mock_wallet
+
+        with patch.dict(sys.modules, {"AFO.api_wallet": mock_api_wallet_mod}):
+            from AFO.llms.claude_api import ClaudeAPIWrapper
+
+            wrapper = ClaudeAPIWrapper()
+            assert wrapper.api_key == "sk-ant-wallet"
+
+
+@pytest.mark.asyncio
+async def test_claude_generate_official():
+    mock_client = AsyncMock()
+    mock_client.post.return_value = MagicMock(
+        status_code=200,
+        json=lambda: {
+            "content": [{"text": "Hello Claude"}],
+            "model": "test-model",
+            "usage": {"input_tokens": 10, "output_tokens": 5},
+        },
+    )
+
+    with patch("httpx.AsyncClient", return_value=mock_client):
+        from AFO.llms.claude_api import ClaudeAPIWrapper
+
+        wrapper = ClaudeAPIWrapper()
+        wrapper.api_key = "sk-ant-test"
+        wrapper.client = mock_client
+        wrapper.available = True
+
+        result = await wrapper.generate("hi")
+        assert result["success"] is True
+        assert result["content"] == "Hello Claude"
+
+
+@pytest.mark.asyncio
+async def test_claude_generate_web():
+    mock_client = AsyncMock()
+    # Mock sequence: 1. Get Org -> Success
+    mock_client.get.return_value = MagicMock(
+        status_code=200, json=lambda: [{"uuid": "uid", "name": "org"}]
+    )
+
+    # Context manager mock
+    mock_client.__aenter__.return_value = mock_client
+    mock_client.__aexit__.return_value = None
+
+    with patch("httpx.AsyncClient", return_value=mock_client):
+        from AFO.llms.claude_api import ClaudeAPIWrapper
+
+        wrapper = ClaudeAPIWrapper()
+        wrapper.api_key = "sk-ant-sid-session-key"  # triggers web mode
+        wrapper.available = True
+
+        result = await wrapper.generate("hi")
+        assert result["success"] is True
+        assert "Claude Session Active" in result["content"]
+
+
+def test_claude_cost():
+    from AFO.llms.claude_api import ClaudeAPIWrapper
+
+    wrapper = ClaudeAPIWrapper()
+    cost = wrapper.get_cost_estimate(1000000)
+    assert cost > 0
+
+
+# --- Gemini API Tests ---
+def test_gemini_init():
+    with patch.dict(os.environ, {"GEMINI_API_KEY": "AIza-test"}):
+        from AFO.llms.gemini_api import GeminiAPIWrapper
+
+        wrapper = GeminiAPIWrapper()
+        assert wrapper.is_available()
+
+
+@pytest.mark.asyncio
+async def test_gemini_generate():
+    # Mock httpx (Gemini Wrapper uses REST)
+    mock_client = AsyncMock()
+    mock_client.post.return_value = MagicMock(
+        status_code=200,
+        json=lambda: {
+            "candidates": [
+                {"content": {"parts": [{"text": "Hello Gemini"}]}, "finishReason": "STOP"}
+            ],
+            "usageMetadata": {"totalTokenCount": 10},
+        },
+    )
+
+    with patch("httpx.AsyncClient", return_value=mock_client):
+        with patch.dict(os.environ, {"GEMINI_API_KEY": "AIza-test"}):
+            from AFO.llms.gemini_api import GeminiAPIWrapper
+
+            wrapper = GeminiAPIWrapper()
+            # Ensure client is our mock (re-init might call generic Client)
+            wrapper.client = mock_client
+
+            result = await wrapper.generate("hi")
+            assert result["success"] is True
+            assert result["content"] == "Hello Gemini"
+
+
+# --- OpenAI API Tests ---
+def test_openai_init():
+    with patch.dict(os.environ, {"OPENAI_API_KEY": "sk-test"}):
+        from AFO.llms.openai_api import OpenAIAPIWrapper
+
+        wrapper = OpenAIAPIWrapper()
+        assert wrapper.is_available()
+
+
+@pytest.mark.asyncio
+async def test_openai_generate():
+    # Mock httpx (OpenAI Wrapper uses REST)
+    mock_client = AsyncMock()
+    mock_client.post.return_value = MagicMock(
+        status_code=200,
+        json=lambda: {
+            "choices": [{"message": {"content": "Hello GPT"}, "finish_reason": "stop"}],
+            "usage": {"total_tokens": 10},
+            "model": "gpt-4",
+        },
+    )
+
+    with patch("httpx.AsyncClient", return_value=mock_client):
+        with patch.dict(os.environ, {"OPENAI_API_KEY": "sk-test"}):
+            from AFO.llms.openai_api import OpenAIAPIWrapper
+
+            wrapper = OpenAIAPIWrapper()
+            wrapper.client = mock_client
+
+            result = await wrapper.generate("hi")
+            assert result["success"] is True
+            assert result["content"] == "Hello GPT"
+
+
+# --- Additional Coverage Tests ---
+
+
+@pytest.mark.asyncio
+async def test_gemini_generate_with_context():
+    # Test conversational history
+    mock_client = AsyncMock()
+    mock_client.post.return_value = MagicMock(
+        status_code=200,
+        json=lambda: {
+            "candidates": [
+                {"content": {"parts": [{"text": "Conversational reply"}]}, "finishReason": "STOP"}
+            ],
+            "usageMetadata": {"totalTokenCount": 20},
+        },
+    )
+
+    with patch("httpx.AsyncClient", return_value=mock_client):
+        with patch.dict(os.environ, {"GEMINI_API_KEY": "AIza-test"}):
+            from AFO.llms.gemini_api import GeminiAPIWrapper
+
+            wrapper = GeminiAPIWrapper()
+            wrapper.client = mock_client
+
+            messages = [
+                {"role": "system", "content": "Be helpful"},
+                {"role": "user", "content": "Hi"},
+            ]
+            result = await wrapper.generate_with_context(messages)
+
+            assert result["success"] is True
+            assert result["content"] == "Conversational reply"
+
+            # Verify system instruction handling (merged to first user message or separate)
+            # Implementation details: Gemini REST API uses structured contents.
+            # We just verify `post` was called.
+            mock_client.post.assert_called_once()
+
+            # Test Close
+            await wrapper.close()
+            mock_client.aclose.assert_called_once()
+
+
+@pytest.mark.asyncio
+async def test_gemini_error_handling():
+    mock_client = AsyncMock()
+    mock_client.post.return_value = MagicMock(
+        status_code=400, text="Bad Request", json=lambda: {"error": {"message": "Invalid API Key"}}
+    )
+
+    with patch("httpx.AsyncClient", return_value=mock_client):
+        with patch.dict(os.environ, {"GEMINI_API_KEY": "AIza-test"}):
+            from AFO.llms.gemini_api import GeminiAPIWrapper
+
+            wrapper = GeminiAPIWrapper()
+            wrapper.client = mock_client
+
+            result = await wrapper.generate("fail")
+            assert "error" in result
+            assert "Invalid API Key" in result["error"]
+
+
+@pytest.mark.asyncio
+async def test_claude_generate_with_context_web():
+    # Claude generate_with_context is strictly for web session connectivity check in current implementation
+    mock_client = AsyncMock()
+    mock_client.get.return_value = MagicMock(
+        status_code=200, json=lambda: [{"uuid": "id", "name": "Org"}]
+    )
+    mock_client.__aenter__.return_value = mock_client
+    mock_client.__aexit__.return_value = None
+
+    with patch("httpx.AsyncClient", return_value=mock_client):
+        from AFO.llms.claude_api import ClaudeAPIWrapper
+
+        wrapper = ClaudeAPIWrapper()
+        wrapper.api_key = "sk-ant-sid-test"
+        wrapper.available = True
+
+        result = await wrapper.generate_with_context([{"role": "user", "content": "hi"}])
+        assert result["success"] is True
+        assert "Contextual Request Received" in result["content"]
+
+        # Test Close
+        wrapper.client = mock_client
+        await wrapper.close()
+        mock_client.aclose.assert_called_once()
+
+
+@pytest.mark.asyncio
+async def test_openai_generate_with_context():
+    mock_client = AsyncMock()
+    mock_client.post.return_value = MagicMock(
+        status_code=200,
+        json=lambda: {
+            "choices": [{"message": {"content": "GPT Reply"}, "finish_reason": "stop"}],
+            "usage": {"total_tokens": 15},
+            "model": "gpt-4",
+        },
+    )
+
+    with patch("httpx.AsyncClient", return_value=mock_client):
+        with patch.dict(os.environ, {"OPENAI_API_KEY": "sk-test"}):
+            from AFO.llms.openai_api import OpenAIAPIWrapper
+
+            wrapper = OpenAIAPIWrapper()
+            wrapper.client = mock_client
+
+            messages = [{"role": "user", "content": "Hello"}]
+            result = await wrapper.generate_with_context(messages)
+
+            assert result["success"] is True
+            assert result["content"] == "GPT Reply"
+
+            await wrapper.close()
+            mock_client.aclose.assert_called_once()

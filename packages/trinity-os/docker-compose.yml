@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  trinity-os:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: trinity-os
+    volumes:
+      - .:/app
+      - /tmp/trinity-logs:/app/logs
+    environment:
+      - PYTHONPATH=/app
+      - TRINITY_ENV=production
+    command: ["./run_trinity_os.sh"]
+    restart: unless-stopped
+
+  trinity-monitor:
+    build:
+      context: .
+      dockerfile: Dockerfile.monitor
+    container_name: trinity-monitor
+    volumes:
+      - .:/app
+    environment:
+      - PYTHONPATH=/app
+    command: ["python3", "scripts/kingdom_health_report.py"]
+    restart: unless-stopped
+    depends_on:
+      - trinity-os
+
+networks:
+  default:
+    name: trinity-network

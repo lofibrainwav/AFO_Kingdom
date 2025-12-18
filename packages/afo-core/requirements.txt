@@ -1,0 +1,57 @@
+# AFO Soul Engine - Core Dependencies
+# 최소한의 필수 패키지만 포함하여 빌드 안정성 확보
+
+# FastAPI Core
+fastapi>=0.121.2
+uvicorn[standard]>=0.20.0
+pydantic>=2.12.0
+pydantic-settings
+
+# Database & Vector Storage
+psycopg2-binary
+pgvector
+sqlalchemy[asyncpg]>=2.0.0
+asyncpg
+redis
+
+# LangGraph (Core Orchestration)
+langgraph>=1.0.1
+langgraph-checkpoint-redis>=0.1.2
+langchain-core
+langchain
+
+# HTTP & Async
+httpx
+aiohttp
+
+# Utilities
+python-dotenv
+python-multipart
+sse-starlette
+
+# Authentication & Security
+PyJWT[crypto]>=2.10.0  # Replaced python-jose (ecdsa CVE-2024-23342)
+passlib[bcrypt]>=1.7.4
+
+# Prometheus Monitoring
+prometheus-client
+prometheus-fastapi-instrumentator
+
+# Testing (Core)
+pytest
+pytest-asyncio
+
+# Data Science Core
+numpy
+pandas
+
+# GPU Acceleration (Optional - With CPU Fallback)
+numba>=0.60.0  # JIT compilation, auto-detects GPU
+# cupy-cuda12x  # Optional: Install manually if CUDA available
+
+# Optional AI/ML Libraries (can be installed separately if needed)
+# openai
+# anthropic
+
+# Ethereum typing (pytest-ethereum dependency requires ContractName)
+eth-typing==4.4.0

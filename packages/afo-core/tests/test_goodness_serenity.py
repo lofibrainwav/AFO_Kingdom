@@ -1,0 +1,113 @@
+"""
+善·孝 유틸리티 테스트
+"""
+
+import pytest
+
+from utils.automation import RetryConfig, auto_retry, cache_result
+from utils.error_handling import (
+    AFOError,
+    ValidationError,
+    log_and_return_error,
+    require_not_none,
+    safe_execute,
+    validate_input,
+)
+
+
+class TestErrorHandling:
+    """善 에러 처리 테스트"""
+
+    def test_safe_execute_success(self):
+        """정상 실행 테스트"""
+        result = safe_execute(lambda x: x * 2, 5, default=0)
+        assert result == 10
+
+    def test_safe_execute_failure_with_default(self):
+        """실패 시 기본값 반환 테스트"""
+
+        def failing_func():
+            raise ValueError("Test error")
+
+        result = safe_execute(failing_func, default="fallback", log_error=False)
+        assert result == "fallback"
+
+    def test_validate_input_success(self):
+        """입력 검증 성공 테스트"""
+        api_key = "sk-test123"
+        result = validate_input(api_key, "api_key", lambda k: k.startswith("sk-"))
+        assert result == api_key
+
+    def test_validate_input_failure(self):
+        """입력 검증 실패 테스트"""
+        with pytest.raises(ValidationError):
+            validate_input("invalid", "api_key", lambda k: k.startswith("sk-"))
+
+    def test_require_not_none_success(self):
+        """None 검증 성공 테스트"""
+        value = require_not_none("test", "param")
+        assert value == "test"
+
+    def test_require_not_none_failure(self):
+        """None 검증 실패 테스트"""
+        with pytest.raises(ValidationError):
+            require_not_none(None, "param")
+
+    def test_log_and_return_error(self):
+        """에러 응답 생성 테스트"""
+        error = AFOError("Test error", code="TEST_CODE")
+        result = log_and_return_error(error, "test_context")
+        assert result["success"] is False
+        assert result["error_code"] == "TEST_CODE"
+
+
+class TestAutomation:
+    """孝 자동화 테스트"""
+
+    def test_auto_retry_success(self):
+        """재시도 성공 테스트"""
+        call_count = 0
+
+        @auto_retry(RetryConfig(max_retries=3, base_delay=0.01))
+        def flaky_func():
+            nonlocal call_count
+            call_count += 1
+            if call_count < 3:
+                raise ValueError("Temporary error")
+            return "success"
+
+        result = flaky_func()
+        assert result == "success"
+        assert call_count == 3
+
+    def test_auto_retry_failure(self):
+        """재시도 실패 테스트"""
+
+        @auto_retry(RetryConfig(max_retries=2, base_delay=0.01))
+        def always_fails():
+            raise ValueError("Permanent error")
+
+        with pytest.raises(ValueError):
+            always_fails()
+
+    def test_cache_result(self):
+        """캐싱 테스트"""
+        call_count = 0
+
+        @cache_result(ttl_seconds=10.0)
+        def expensive_func(x):
+            nonlocal call_count
+            call_count += 1
+            return x * 2
+
+        # 첫 호출
+        result1 = expensive_func(5)
+        # 캐시 히트
+        result2 = expensive_func(5)
+        # 다른 인자
+        result3 = expensive_func(10)
+
+        assert result1 == 10
+        assert result2 == 10
+        assert result3 == 20
+        assert call_count == 2  # 5와 10 각각 한 번씩

@@ -1,0 +1,46 @@
+site_name: TRINITY-OS Documentation
+site_description: AFO 왕국의 통합 자동화 운영체제 문서
+site_author: AFO Kingdom
+
+theme:
+  name: material
+  palette:
+    primary: blue
+    accent: deep orange
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - toc.integrate
+    - search.suggest
+    - search.highlight
+
+plugins:
+  - search
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          options:
+            docstring_style: google
+
+nav:
+  - Home: index.md
+  - 시작하기:
+    - 설치: getting-started/installation.md
+    - 첫 실행: getting-started/first-run.md
+    - 설정: getting-started/configuration.md
+  - 사용자 가이드:
+    - 인터랙티브 모드: user-guide/interactive-mode.md
+    - 스크립트 실행: user-guide/running-scripts.md
+    - 모니터링: user-guide/monitoring.md
+  - 개발자 가이드:
+    - 아키텍처: developer/architecture.md
+    - API 레퍼런스: developer/api-reference.md
+    - 기여하기: developer/contributing.md
+  - 철학:
+    - 5대 기둥: philosophy/five-pillars.md
+    - 헌법: philosophy/constitution.md
+    - 원칙: philosophy/principles.md
+  - API 문서:
+    - Python API: api/python-api.md
+    - Bash API: api/bash-api.md
