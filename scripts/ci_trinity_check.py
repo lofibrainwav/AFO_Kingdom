@@ -133,15 +133,15 @@ def main():
                 suggestions.append("Run mypy/pyright to improve Truth (type safety)")
             if beauty < 100:
                 suggestions.append("Run ruff/eslint to improve Beauty (code style)")
-        
+
         for r in reasons:
             print(f"   ❌ Reason: {r}")
-        
+
         if suggestions:
             print("\n💡 [SUGGESTIONS]")
             for s in suggestions:
                 print(f"   → {s}")
-        
+
         passed = False
 
     # Output for GitHub Actions
