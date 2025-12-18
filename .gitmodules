@@ -10,3 +10,6 @@
 [submodule "packages/trinity-os"]
 	path = packages/trinity-os
 	url = https://github.com/lofibrainwav/AFO_Kingdom.git
+[submodule "trinity-dashboard"]
+	path = trinity-dashboard
+	url = https://github.com/lofibrainwav/AFO_Kingdom.git
