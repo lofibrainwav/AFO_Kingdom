@@ -23,7 +23,9 @@ The AFO Kingdom follows a strict **4-Layer Architecture** (Score: 100/100).
 
 The **AFO Kingdom** is a fully integrated, self-aware AI operating system built on the Trinity Philosophy (眞善美孝永). It has evolved from a simple text processor into a multi-organ organism with eyes, hands, soul, and a face.
 
-### The 5 Pillars of Harmony
+### The 5 Pillars of Harmony & Royal Library
+**Reference**: [📜 AFO 왕국의 사서 (Royal Library)](AFO_ROYAL_LIBRARY.md) - *The 41 Principles of Strategy*
+
 1.  **Truth (眞)**: `Context7` based Knowledge Injection. The system knows itself.
 2.  **Goodness (善)**: `TrinityScoreEngine` based Ethics & Safety Guardrails.
 3.  **Beauty (美)**: `Family Hub Dashboard` (Glassmorphism UI).
