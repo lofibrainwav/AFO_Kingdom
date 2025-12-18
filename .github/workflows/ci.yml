@@ -26,14 +26,6 @@ jobs:
           fetch-depth: 0  # Full clone to avoid git warnings
           submodules: recursive  # Initialize submodules automatically
 
-      # 善 (Goodness): Ensure submodules are properly initialized
-      - name: Update Git submodules
-        run: |
-          git submodule init
-          git submodule update --init --recursive
-          echo "Submodules initialized"
-          ls -la packages/
-
       # 孝 (Serenity): Runtime security monitoring (CVE-2025-30066 lesson)
       - name: Harden runner
         uses: step-security/harden-runner@v2
