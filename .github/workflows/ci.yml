@@ -101,6 +101,10 @@ jobs:
       # 孝 (Serenity): Testing
       - name: Setup AFO module symlinks
         run: |
+          # 디렉토리 생성 (없는 경우)
+          mkdir -p packages/afo-core/AFO
+          # __init__.py 생성
+          touch packages/afo-core/AFO/__init__.py
           cd packages/afo-core/AFO
           # 모듈 파일 심볼릭 링크
           ln -sf ../api_wallet.py api_wallet.py
