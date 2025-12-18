@@ -11,8 +11,9 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 # Import Sibling Modules (The Fragments)
 try:
     from afo_skills_mcp import AfoSkillsMCP
-    from trinity_score_mcp import TrinityScoreEngineHybrid
     from sequential_thinking_mcp import SequentialThinkingMCP
+    from trinity_score_mcp import TrinityScoreEngineHybrid
+    from context7_mcp import Context7MCP
 
     MODULES_LOADED = True
 except ImportError as e:
@@ -225,6 +226,20 @@ class AfoUltimateMCPServer:
                                 },
                             }
                         )
+                        tools.append(
+                            {
+                                "name": "retrieve_context",
+                                "description": "Retrieve pinned technical context (Context7 Knowledge Injector).",
+                                "inputSchema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "query": {"type": "string"},
+                                        "domain": {"type": "string"},
+                                    },
+                                    "required": ["query"],
+                                },
+                            }
+                        )
 
                     result = {"tools": tools}
 
@@ -307,14 +322,25 @@ class AfoUltimateMCPServer:
                                 args.get("thought", ""),
                                 args.get("thought_number", 1),
                                 args.get("total_thoughts", 1),
-                                args.get("next_thought_needed", False)
+                                args.get("next_thought_needed", False),
                             )
                             content = json.dumps(res, indent=2, ensure_ascii=False)
                             # Extract Trinity Metadata
                             if "metadata" in res:
                                 trinity_metadata = {
                                     "truth_impact": res["metadata"].get("truth_impact", 0),
-                                    "serenity_impact": res["metadata"].get("serenity_impact", 0)
+                                    "serenity_impact": res["metadata"].get("serenity_impact", 0),
+                                }
+
+                        elif tool_name == "retrieve_context":
+                            res = Context7MCP.retrieve_context(
+                                args.get("query", ""),
+                                args.get("domain", "general")
+                            )
+                            content = json.dumps(res, indent=2, ensure_ascii=False)
+                            if "metadata" in res:
+                                trinity_metadata = {
+                                    "truth_impact": res["metadata"].get("truth_impact", 0)
                                 }
 
                         else:
