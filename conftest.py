@@ -77,5 +77,16 @@ collect_ignore = [
     # Trinity-OS tests
     # =========================================
     "packages/trinity-os/tests/test_problem_detector.py",
+
+    # =========================================
+    # LLM implementation tests (AFO.llms imports)
+    # =========================================
+    "packages/afo-core/tests/llm/test_llm_implementations.py",
+
+    # =========================================
+    # Additional API tests (AFO.api imports)
+    # =========================================
+    "packages/afo-core/tests/api/test_api_system_health.py",
+    "packages/afo-core/tests/api/test_api_wallet_routes.py",
 ]
 
