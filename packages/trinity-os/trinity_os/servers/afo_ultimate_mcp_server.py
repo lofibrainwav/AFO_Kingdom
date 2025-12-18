@@ -263,7 +263,12 @@ class AfoUltimateMCPServer:
                             trinity_metadata = None
 
                     # 2. Advanced Tools (from siblings)
-                    if MODULES_LOADED and tool_name not in ["shell_execute", "read_file", "write_file", "kingdom_health"]:
+                    if MODULES_LOADED and tool_name not in [
+                        "shell_execute",
+                        "read_file",
+                        "write_file",
+                        "kingdom_health",
+                    ]:
                         if tool_name == "calculate_trinity_score":
                             # Convert args to kwargs
                             res = TrinityScoreEngineHybrid.evaluate(**args)
@@ -285,7 +290,12 @@ class AfoUltimateMCPServer:
                         content = f"Tool not available (Modules failed to load): {tool_name}"
 
                     # Core Tools에 대한 Trinity Score 계산 (眞善美孝永 5기둥)
-                    if mcp_tool_trinity_evaluator and tool_name in ["shell_execute", "read_file", "write_file", "kingdom_health"]:
+                    if mcp_tool_trinity_evaluator and tool_name in [
+                        "shell_execute",
+                        "read_file",
+                        "write_file",
+                        "kingdom_health",
+                    ]:
                         try:
                             trinity_eval = mcp_tool_trinity_evaluator.evaluate_execution_result(
                                 tool_name=tool_name,
@@ -302,17 +312,19 @@ class AfoUltimateMCPServer:
 
                     # Append Trinity Metadata if available (Serenity Injection)
                     if trinity_metadata:
-                        result_body.append({
-                            "type": "text",
-                            "text": f"\n\n[眞善美孝永 Trinity Score]\n"
-                            f"眞 (Truth): {trinity_metadata.get('truth', 0):.2%}\n"
-                            f"善 (Goodness): {trinity_metadata.get('goodness', 0):.2%}\n"
-                            f"美 (Beauty): {trinity_metadata.get('beauty', 0):.2%}\n"
-                            f"孝 (Serenity): {trinity_metadata.get('filial_serenity', 0):.2%}\n"
-                            f"永 (Eternity): {trinity_metadata.get('eternity', 0):.2%}\n"
-                            f"Trinity Score: {trinity_metadata.get('trinity_score', 0):.2%}\n"
-                            f"Balance: {trinity_metadata.get('balance_status', 'unknown')}",
-                        })
+                        result_body.append(
+                            {
+                                "type": "text",
+                                "text": f"\n\n[眞善美孝永 Trinity Score]\n"
+                                f"眞 (Truth): {trinity_metadata.get('truth', 0):.2%}\n"
+                                f"善 (Goodness): {trinity_metadata.get('goodness', 0):.2%}\n"
+                                f"美 (Beauty): {trinity_metadata.get('beauty', 0):.2%}\n"
+                                f"孝 (Serenity): {trinity_metadata.get('filial_serenity', 0):.2%}\n"
+                                f"永 (Eternity): {trinity_metadata.get('eternity', 0):.2%}\n"
+                                f"Trinity Score: {trinity_metadata.get('trinity_score', 0):.2%}\n"
+                                f"Balance: {trinity_metadata.get('balance_status', 'unknown')}",
+                            }
+                        )
 
                     result = {
                         "content": result_body,
