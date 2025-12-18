@@ -10,7 +10,7 @@
       "args": [
         "-y",
         "@modelcontextprotocol/server-filesystem",
-        "/Users/brnestrm/AFO_Kingdom"
+        "${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}"
       ],
       "description": "File system access for AFO Kingdom"
     },
@@ -35,33 +35,33 @@
     "afo-ultimate-mcp": {
       "command": "python3",
       "args": [
-        "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/servers/afo_ultimate_mcp_server.py"
+        "${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}/packages/trinity-os/trinity_os/servers/afo_ultimate_mcp_server.py"
       ],
       "env": {
-        "WORKSPACE_ROOT": "/Users/brnestrm/AFO_Kingdom",
-        "PYTHONPATH": "/Users/brnestrm/AFO_Kingdom/packages/afo-core:/Users/brnestrm/AFO_Kingdom/packages/trinity-os"
+        "WORKSPACE_ROOT": "${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}",
+        "PYTHONPATH": "${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}/packages/afo-core:${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}/packages/trinity-os"
       },
       "description": "AFO Ultimate MCP Server - Universal connector with Trinity Score evaluation (眞善美孝永). Tools: shell_execute, read_file, write_file, kingdom_health, calculate_trinity_score, verify_fact, cupy_weighted_sum"
     },
     "afo-skills-mcp": {
       "command": "python3",
       "args": [
-        "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/servers/afo_skills_mcp.py"
+        "${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}/packages/trinity-os/trinity_os/servers/afo_skills_mcp.py"
       ],
       "env": {
-        "WORKSPACE_ROOT": "/Users/brnestrm/AFO_Kingdom",
-        "PYTHONPATH": "/Users/brnestrm/AFO_Kingdom/packages/afo-core:/Users/brnestrm/AFO_Kingdom/packages/trinity-os"
+        "WORKSPACE_ROOT": "${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}",
+        "PYTHONPATH": "${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}/packages/afo-core:${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}/packages/trinity-os"
       },
       "description": "AFO Skills MCP Server - CuPy acceleration & fact verification with Trinity Score evaluation. Tools: cupy_weighted_sum, verify_fact"
     },
     "trinity-score-mcp": {
       "command": "python3",
       "args": [
-        "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/servers/trinity_score_mcp.py"
+        "${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}/packages/trinity-os/trinity_os/servers/trinity_score_mcp.py"
       ],
       "env": {
-        "WORKSPACE_ROOT": "/Users/brnestrm/AFO_Kingdom",
-        "PYTHONPATH": "/Users/brnestrm/AFO_Kingdom/packages/afo-core:/Users/brnestrm/AFO_Kingdom/packages/trinity-os"
+        "WORKSPACE_ROOT": "${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}",
+        "PYTHONPATH": "${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}/packages/afo-core:${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}/packages/trinity-os"
       },
       "description": "Trinity Score MCP Server - Calculate 眞善美孝永 5-pillar scores with GPU acceleration (CuPy)"
     }
@@ -84,3 +84,4 @@
     }
   }
 }
+

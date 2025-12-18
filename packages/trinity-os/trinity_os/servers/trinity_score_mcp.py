@@ -1,16 +1,34 @@
-import asyncio
 import json
 import sys
 from datetime import datetime
 from typing import Any
 
-try:
-    import cupy as cp
+# Lazy import for performance: CuPy/NumPy are only imported when needed
+_GPU_AVAILABLE: bool | None = None
+_cp = None
+_np = None
 
-    GPU_AVAILABLE = True
-except ImportError:
-    GPU_AVAILABLE = False
-    import numpy as np
+
+def _get_gpu_status() -> bool:
+    """Lazy check for GPU availability (CuPy)."""
+    global _GPU_AVAILABLE, _cp
+    if _GPU_AVAILABLE is None:
+        try:
+            import cupy as cp
+            _cp = cp
+            _GPU_AVAILABLE = True
+        except ImportError:
+            _GPU_AVAILABLE = False
+    return _GPU_AVAILABLE
+
+
+def _get_numpy():
+    """Lazy import NumPy only when needed."""
+    global _np
+    if _np is None:
+        import numpy as np
+        _np = np
+    return _np
 
 
 class TrinityScoreEngineHybrid:
@@ -25,17 +43,23 @@ class TrinityScoreEngineHybrid:
 
     @staticmethod
     def _hybrid_weighted_sum(weights: list[float], scores: list[float]) -> float:
+        """Lazy-loaded hybrid weighted sum with GPU acceleration if available."""
         n = len(weights)
-        if GPU_AVAILABLE and n > TrinityScoreEngineHybrid.THRESHOLD:
-            # CuPy GPU Acceleration
-            w_gpu = cp.array(weights)
-            s_gpu = cp.array(scores)
-            result = cp.sum(w_gpu * s_gpu)
+        gpu_available = _get_gpu_status()
+        
+        if gpu_available and n > TrinityScoreEngineHybrid.THRESHOLD:
+            # CuPy GPU Acceleration (only for large arrays)
+            w_gpu = _cp.array(weights)
+            s_gpu = _cp.array(scores)
+            result = _cp.sum(w_gpu * s_gpu)
             return float(result.get())
+        elif gpu_available and n <= TrinityScoreEngineHybrid.THRESHOLD:
+            # Small arrays: use NumPy even if CuPy is available (lower overhead)
+            np = _get_numpy()
+            return float(np.sum(np.array(weights) * np.array(scores)))
         else:
-            # NumPy/Python Fallback
-            if GPU_AVAILABLE:  # If cupy is installed but threshold not met, use it or numpy? fallback to numpy for small usually faster overhead
-                return float(cp.asnumpy(cp.sum(cp.array(weights) * cp.array(scores))))
+            # NumPy Fallback (CuPy not available)
+            np = _get_numpy()
             return float(np.sum(np.array(weights) * np.array(scores)))
 
     @classmethod
@@ -96,25 +120,27 @@ class TrinityScoreEngineHybrid:
         }
 
 
-async def main():
-    # Simple JSON-RPC 2.0 Loop over Stdin/Stdout
-    while True:
-        try:
-            line = await asyncio.to_thread(sys.stdin.readline)
-            if not line:
-                break
-            json.loads(line)
-            # Minimal implementation for "tools/list" and "tools/call"
-            # ... (Full Protocol would go here)
-            # For verification, we just print the Engine class existence proof
-            pass
-        except Exception:
-            break
-
-
 if __name__ == "__main__":
     # If run directly script-wise for testing
     if len(sys.argv) > 1 and sys.argv[1] == "evaluate":
         print(json.dumps(TrinityScoreEngineHybrid.evaluate(risk_score=5)))
     else:
+        # Lazy import asyncio only when needed (MCP server mode)
+        import asyncio
+        
+        async def main():
+            # Simple JSON-RPC 2.0 Loop over Stdin/Stdout
+            while True:
+                try:
+                    line = await asyncio.to_thread(sys.stdin.readline)
+                    if not line:
+                        break
+                    json.loads(line)
+                    # Minimal implementation for "tools/list" and "tools/call"
+                    # ... (Full Protocol would go here)
+                    # For verification, we just print the Engine class existence proof
+                    pass
+                except Exception:
+                    break
+        
         asyncio.run(main())

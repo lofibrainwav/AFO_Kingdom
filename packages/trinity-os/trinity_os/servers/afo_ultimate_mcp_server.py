@@ -289,23 +289,7 @@ class AfoUltimateMCPServer:
                     elif tool_name not in ["shell_execute", "read_file", "write_file", "kingdom_health"]:
                         content = f"Tool not available (Modules failed to load): {tool_name}"
 
-                    # Core Tools에 대한 Trinity Score 계산 (眞善美孝永 5기둥)
-                    if mcp_tool_trinity_evaluator and tool_name in [
-                        "shell_execute",
-                        "read_file",
-                        "write_file",
-                        "kingdom_health",
-                    ]:
-                        try:
-                            trinity_eval = mcp_tool_trinity_evaluator.evaluate_execution_result(
-                                tool_name=tool_name,
-                                execution_result=content,
-                                execution_time_ms=execution_time_ms,
-                                is_error=is_error,
-                            )
-                            trinity_metadata = trinity_eval["trinity_metrics"]
-                        except Exception:
-                            trinity_metadata = None
+
 
                     # Construct Response
                     result_body = [{"type": "text", "text": str(content)}]
