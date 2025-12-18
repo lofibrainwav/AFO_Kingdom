@@ -219,6 +219,9 @@ async def get_user(user_id: str) -> dict[str, Any]:
                 await conn.close()
                 # DB 오류 시 fallback
                 pass
+        except Exception:
+            # DB 연결 실패 등: fallback 진행
+            pass
     
     # Fallback: 기본 응답
     if not user_id or not user_id.startswith("user_"):
