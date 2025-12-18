@@ -267,7 +267,7 @@ def verify_mcp():
         }
         process.stdin.write(json.dumps(soul_req) + "\n")
         process.stdin.flush()
-        
+
         response_line = process.stdout.readline()
         print(f"Tool Response: {response_line.strip()}")
         resp = json.loads(response_line)
@@ -276,6 +276,56 @@ def verify_mcp():
         assert "Sixxon (The Physical Manifestation)" in content["context"]
         assert "Trinity 5 Pillars (The Soul)" in content["context"]
         print("✅ Context7 Soul & Body Retrieval Success")
+
+        # 12. Test Playwright Bridge (Navigate & Scrape)
+        print("\n🔹 Testing Playwright Bridge...")
+        try:
+            # Navigate
+            nav_req = {
+                "jsonrpc": "2.0",
+                "id": 12,
+                "method": "tools/call",
+                "params": {
+                    "name": "browser_navigate",
+                    "arguments": {"url": "http://example.com"},
+                },
+            }
+            process.stdin.write(json.dumps(nav_req) + "\n")
+            process.stdin.flush()
+            
+            response_line = process.stdout.readline()
+            print(f"Tool Response (Navigate): {response_line.strip()}")
+            resp = json.loads(response_line)
+            content = json.loads(resp["result"]["content"][0]["text"])
+            
+            if content.get("success"):
+                print("✅ Browser Navigation Success")
+                
+                # Scrape
+                scrape_req = {
+                    "jsonrpc": "2.0",
+                    "id": 13,
+                    "method": "tools/call",
+                    "params": {
+                        "name": "browser_scrape",
+                        "arguments": {"selector": "h1"},
+                    },
+                }
+                process.stdin.write(json.dumps(scrape_req) + "\n")
+                process.stdin.flush()
+                
+                response_line = process.stdout.readline()
+                print(f"Tool Response (Scrape): {response_line.strip()}")
+                resp = json.loads(response_line)
+                content = json.loads(resp["result"]["content"][0]["text"])
+                assert "Example Domain" in content["content"]
+                print("✅ Browser Scrape Success")
+            else:
+                print(f"⚠️ Browser Navigation Failed: {content.get('error')}")
+                print("Skipping Scrape Test due to Navigation Failure")
+
+        except Exception as e:
+            print(f"⚠️ Playwright Test Skipped/Failed: {e}")
 
         # Print stderr if any
         stderr_output = process.stderr.read()

@@ -44,7 +44,7 @@ class Context7MCP:
         MCP (Master Control Program) utilizes JSON-RPC 2.0 over stdio.
         Unified Server: afo_ultimate_mcp_server.py
         Tools: shell_execute, read_file, write_file, kingdom_health, calculate_trinity_score, verify_fact, cupy_weighted_sum, sequential_thinking, retrieve_context
-        """
+        """,
     }
 
     @staticmethod
