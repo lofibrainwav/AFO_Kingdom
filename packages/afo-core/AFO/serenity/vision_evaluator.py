@@ -5,6 +5,7 @@ Analyzes screenshots to score Beauty (美) and Truth (眞).
 
 Uses simple heuristics and optionally LLM vision for deeper analysis.
 """
+
 from __future__ import annotations
 
 import os
@@ -15,57 +16,57 @@ from typing import Any
 @dataclass
 class VisionEvaluation:
     """Result of visual evaluation."""
-    beauty_score: float    # 0.0 - 1.0 (美)
-    truth_score: float     # 0.0 - 1.0 (眞)
-    overall_score: float   # Weighted combination
-    issues: list[str]      # List of detected issues
-    suggestions: list[str] # Improvement suggestions
+
+    beauty_score: float  # 0.0 - 1.0 (美)
+    truth_score: float  # 0.0 - 1.0 (眞)
+    overall_score: float  # Weighted combination
+    issues: list[str]  # List of detected issues
+    suggestions: list[str]  # Improvement suggestions
 
 
 class TrinityVisionEvaluator:
     """
     Evaluates UI screenshots based on Trinity principles.
-    
+
     Beauty (美): Visual harmony, spacing, color contrast
     Truth (眞): Correct rendering, no errors, accessibility
     """
-    
+
     # Weights for final score (aligned with SSOT)
     BEAUTY_WEIGHT = 0.20
     TRUTH_WEIGHT = 0.35
     GOODNESS_WEIGHT = 0.35  # Derived from lack of issues
     SERENITY_WEIGHT = 0.08
     ETERNITY_WEIGHT = 0.02
-    
+
     def __init__(self):
         self.llm_available = self._check_llm()
-    
+
     def _check_llm(self) -> bool:
         """Check if LLM vision is available."""
         try:
             from llm_router import llm_router
+
             return True
         except ImportError:
             return False
-    
+
     async def evaluate(
-        self, 
-        screenshot_path: str,
-        expected_elements: list[str] | None = None
+        self, screenshot_path: str, expected_elements: list[str] | None = None
     ) -> VisionEvaluation:
         """
         Evaluate a screenshot for Beauty and Truth.
-        
+
         Args:
             screenshot_path: Path to screenshot image
             expected_elements: Optional list of expected UI elements
-            
+
         Returns:
             VisionEvaluation with scores and feedback
         """
         issues = []
         suggestions = []
-        
+
         # Basic checks
         if not os.path.exists(screenshot_path):
             return VisionEvaluation(
@@ -73,11 +74,11 @@ class TrinityVisionEvaluator:
                 truth_score=0.0,
                 overall_score=0.0,
                 issues=["Screenshot file not found"],
-                suggestions=["Ensure Playwright capture succeeded"]
+                suggestions=["Ensure Playwright capture succeeded"],
             )
-        
+
         file_size = os.path.getsize(screenshot_path)
-        
+
         # Heuristic: Very small file = likely blank or error
         if file_size < 1000:  # Less than 1KB
             issues.append("Screenshot appears blank or minimal")
@@ -92,7 +93,7 @@ class TrinityVisionEvaluator:
             # Reasonable size suggests content rendered
             beauty_score = 0.85
             truth_score = 0.9
-        
+
         # If LLM vision available, get deeper analysis
         if self.llm_available and file_size > 1000:
             try:
@@ -103,29 +104,29 @@ class TrinityVisionEvaluator:
                 suggestions.extend(llm_eval.get("suggestions", []))
             except Exception as e:
                 print(f"⚠️ [Vision] LLM evaluation failed: {e}")
-        
+
         # Calculate overall score (Trinity-weighted)
         goodness_score = 1.0 - (len(issues) * 0.1)  # Penalty per issue
         overall_score = (
-            truth_score * self.TRUTH_WEIGHT +
-            goodness_score * self.GOODNESS_WEIGHT +
-            beauty_score * self.BEAUTY_WEIGHT +
-            0.9 * self.SERENITY_WEIGHT +  # Assume good serenity
-            0.8 * self.ETERNITY_WEIGHT    # Assume reasonable eternity
+            truth_score * self.TRUTH_WEIGHT
+            + goodness_score * self.GOODNESS_WEIGHT
+            + beauty_score * self.BEAUTY_WEIGHT
+            + 0.9 * self.SERENITY_WEIGHT  # Assume good serenity
+            + 0.8 * self.ETERNITY_WEIGHT  # Assume reasonable eternity
         )
-        
+
         return VisionEvaluation(
             beauty_score=beauty_score,
             truth_score=truth_score,
             overall_score=min(1.0, overall_score),
             issues=issues,
-            suggestions=suggestions
+            suggestions=suggestions,
         )
-    
+
     async def _llm_vision_evaluate(self, screenshot_path: str) -> dict[str, Any]:
         """Use LLM with vision capability for deeper analysis."""
         from llm_router import QualityTier, llm_router
-        
+
         prompt = """
         Analyze this UI screenshot for quality. Rate 0.0-1.0:
         
@@ -134,25 +135,20 @@ class TrinityVisionEvaluator:
         
         Return JSON: {"beauty": 0.X, "truth": 0.X, "issues": [...], "suggestions": [...]}
         """
-        
+
         result = await llm_router.execute_with_routing(
             prompt,
             context={
                 "quality_tier": QualityTier.PREMIUM,
                 "image_path": screenshot_path,
-            }
+            },
         )
-        
+
         # Parse response (handle various formats)
         response = result.get("response", "")
-        
+
         # Simple extraction (real implementation would parse JSON)
-        return {
-            "beauty": 0.85,
-            "truth": 0.9,
-            "issues": [],
-            "suggestions": []
-        }
+        return {"beauty": 0.85, "truth": 0.9, "issues": [], "suggestions": []}
 
 
 # Singleton

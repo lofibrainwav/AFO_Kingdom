@@ -221,55 +221,61 @@ class Context7MCP:
         # Architecture queries
         if "ARCH" in query_upper or "STRUCT" in query_upper:
             results.append(Context7MCP.KNOWLEDGE_BASE["AFO_ARCHITECTURE"])
-        
+
         # Trinity Philosophy queries
         if "TRINITY" in query_upper or "PHILOSOPHY" in query_upper or "SCORE" in query_upper or "SOUL" in query_upper:
             results.append(Context7MCP.KNOWLEDGE_BASE["TRINITY_PHILOSOPHY"])
-        
+
         # Sixxon Body queries
         if "SIXXON" in query_upper or "BODY" in query_upper:
             results.append(Context7MCP.KNOWLEDGE_BASE["SIXXON_BODY"])
-        
+
         # MCP Protocol queries
         if "MCP" in query_upper or "TOOL" in query_upper:
             results.append(Context7MCP.KNOWLEDGE_BASE["MCP_PROTOCOL"])
-        
+
         # API Endpoints queries
         if "API" in query_upper or "ENDPOINT" in query_upper or "ROUTE" in query_upper:
             results.append(Context7MCP.KNOWLEDGE_BASE["API_ENDPOINTS"])
-        
+
         # Skills Registry queries
         if "SKILL" in query_upper or "REGISTRY" in query_upper:
             results.append(Context7MCP.KNOWLEDGE_BASE["SKILLS_REGISTRY"])
-        
+
         # Deployment queries
         deploy_keywords = ["DEPLOY", "DOCKER", "KUBERNETES", "배포", "컨테이너"]
         if any(kw in query_upper for kw in deploy_keywords) or any(kw in query for kw in ["배포", "컨테이너"]):
             results.append(Context7MCP.KNOWLEDGE_BASE["DEPLOYMENT"])
-        
+
         # Configuration queries
         config_keywords = ["CONFIG", "SETTING", "ENV", "환경", "설정"]
         if any(kw in query_upper for kw in config_keywords) or any(kw in query for kw in ["환경", "설정"]):
             results.append(Context7MCP.KNOWLEDGE_BASE["CONFIGURATION"])
-        
+
         # Troubleshooting queries
         troubleshoot_keywords = ["TROUBLESHOOT", "DEBUG", "ERROR", "문제", "해결", "디버그"]
-        if any(kw in query_upper for kw in troubleshoot_keywords) or any(kw in query for kw in ["문제", "해결", "디버그"]):
+        if any(kw in query_upper for kw in troubleshoot_keywords) or any(
+            kw in query for kw in ["문제", "해결", "디버그"]
+        ):
             results.append(Context7MCP.KNOWLEDGE_BASE["TROUBLESHOOTING"])
-        
+
         # Documentation queries
         doc_keywords = ["DOC", "DOCUMENT", "문서", "문서화"]
         if any(kw in query_upper for kw in doc_keywords) or any(kw in query for kw in ["문서", "문서화"]):
             results.append(Context7MCP.KNOWLEDGE_BASE["DOCUMENTATION"])
-        
+
         # Obsidian Librarian queries
         obsidian_keywords = ["OBSIDIAN", "LIBRARIAN", "사서", "옵시디언", "VAULT"]
-        if any(kw in query_upper for kw in obsidian_keywords) or any(kw in query for kw in ["옵시디언", "사서", "vault"]):
+        if any(kw in query_upper for kw in obsidian_keywords) or any(
+            kw in query for kw in ["옵시디언", "사서", "vault"]
+        ):
             results.append(Context7MCP.KNOWLEDGE_BASE["OBSIDIAN_LIBRARIAN"])
-        
+
         # Royal Library queries
         royal_keywords = ["ROYAL", "LIBRARY", "사서", "원칙", "헌법", "손자", "삼국지", "군주론", "전쟁론"]
-        if any(kw in query_upper for kw in royal_keywords) or any(kw in query for kw in ["사서", "원칙", "헌법", "손자병법", "삼국지", "군주론", "전쟁론"]):
+        if any(kw in query_upper for kw in royal_keywords) or any(
+            kw in query for kw in ["사서", "원칙", "헌법", "손자병법", "삼국지", "군주론", "전쟁론"]
+        ):
             results.append(Context7MCP.KNOWLEDGE_BASE["ROYAL_LIBRARY"])
 
         if not results:

@@ -6,6 +6,7 @@ Generates Playwright E2E tests when Trinity Score < 90.
 永 (Eternity): Ensures long-term quality through automated testing.
 眞 (Truth): Verifies correctness through test coverage.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -14,6 +15,7 @@ from dataclasses import dataclass
 @dataclass
 class GeneratedTest:
     """A generated test case."""
+
     name: str
     code: str
     test_type: str  # 'unit', 'integration', 'e2e'
@@ -22,51 +24,48 @@ class GeneratedTest:
 class AutoTestGenerator:
     """
     Generates tests to improve Trinity Score.
-    
+
     When Truth score is low, generates:
     - Unit tests for component logic
     - E2E tests for user flows
     - Accessibility tests for standards compliance
     """
-    
+
     async def generate_tests(
-        self,
-        component_code: str,
-        component_name: str,
-        issues: list[str]
+        self, component_code: str, component_name: str, issues: list[str]
     ) -> list[GeneratedTest]:
         """
         Generate tests based on detected issues.
-        
+
         Args:
             component_code: The React component code
             component_name: Name of the component
             issues: List of issues from Vision Evaluator
-            
+
         Returns:
             List of generated test cases
         """
         tests = []
-        
+
         # Always generate a basic render test
         tests.append(self._generate_render_test(component_name))
-        
+
         # Analyze issues and generate targeted tests
         for issue in issues:
             issue_lower = issue.lower()
-            
-            if 'accessibility' in issue_lower or 'a11y' in issue_lower:
+
+            if "accessibility" in issue_lower or "a11y" in issue_lower:
                 tests.append(self._generate_a11y_test(component_name))
-            
-            if 'interaction' in issue_lower or 'click' in issue_lower:
+
+            if "interaction" in issue_lower or "click" in issue_lower:
                 tests.append(self._generate_interaction_test(component_name))
-            
-            if 'responsive' in issue_lower or 'mobile' in issue_lower:
+
+            if "responsive" in issue_lower or "mobile" in issue_lower:
                 tests.append(self._generate_responsive_test(component_name))
-        
+
         print(f"🧪 [AutoTest] Generated {len(tests)} tests for {component_name}")
         return tests
-    
+
     def _generate_render_test(self, component_name: str) -> GeneratedTest:
         """Generate a basic render test."""
         return GeneratedTest(
@@ -85,15 +84,15 @@ test('{component_name} renders correctly', async ({{ page }}) => {{
   // Screenshot for visual regression
   await expect(page).toHaveScreenshot('{component_name.lower()}.png');
 }});
-'''
+''',
         )
-    
+
     def _generate_a11y_test(self, component_name: str) -> GeneratedTest:
         """Generate accessibility test."""
         return GeneratedTest(
             name=f"test_{component_name}_accessibility",
             test_type="e2e",
-            code=f'''
+            code=f"""
 import {{ test, expect }} from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
@@ -103,9 +102,9 @@ test('{component_name} passes accessibility checks', async ({{ page }}) => {{
   const accessibilityScanResults = await new AxeBuilder({{ page }}).analyze();
   expect(accessibilityScanResults.violations).toEqual([]);
 }});
-'''
+""",
         )
-    
+
     def _generate_interaction_test(self, component_name: str) -> GeneratedTest:
         """Generate interaction test."""
         return GeneratedTest(
@@ -125,9 +124,9 @@ test('{component_name} handles user interaction', async ({{ page }}) => {{
   // Verify state change (customize based on component)
   await expect(component).toHaveAttribute('aria-pressed', 'true');
 }});
-'''
+''',
         )
-    
+
     def _generate_responsive_test(self, component_name: str) -> GeneratedTest:
         """Generate responsive design test."""
         return GeneratedTest(
@@ -152,20 +151,20 @@ test('{component_name} is responsive', async ({{ page }}) => {{
   await page.setViewportSize({{ width: 1920, height: 1080 }});
   await expect(component).toBeVisible();
 }});
-'''
+''',
         )
-    
+
     async def run_tests(self, tests: list[GeneratedTest]) -> tuple[bool, float]:
         """
         Run generated tests (mock for now).
-        
+
         Returns:
             Tuple of (all_passed, truth_score_boost)
         """
         # In real implementation, would run playwright test
         passed = len(tests) > 0
         truth_boost = 0.05 * len(tests)  # 5% boost per test
-        
+
         print(f"✅ [AutoTest] Tests passed, Truth boost: +{truth_boost:.2%}")
         return passed, truth_boost
 

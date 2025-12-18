@@ -5,9 +5,8 @@ AFO Kingdom 문서를 Context7에 통합하는 스크립트
 Context7 MCP 서버를 통해 문서를 지식 기반에 추가합니다.
 """
 
-import os
-import sys
 import json
+import sys
 from pathlib import Path
 
 # 프로젝트 루트를 Python 경로에 추가
@@ -135,11 +134,10 @@ integration_status = {
 }
 
 status_file = project_root / "docs" / "context7_integration_status.json"
-with open(status_file, 'w', encoding='utf-8') as f:
+with open(status_file, "w", encoding="utf-8") as f:
     json.dump(integration_status, f, ensure_ascii=False, indent=2)
 
 print(f"\n✅ 통합 상태 저장 완료: {status_file}")
 print("\n" + "=" * 70)
 print("✅ Context7 통합 준비 완료")
 print("=" * 70)
-
