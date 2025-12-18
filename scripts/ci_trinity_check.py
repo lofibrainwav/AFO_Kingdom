@@ -116,6 +116,8 @@ def main():
 
     # 3. Decision Logic (The Shield)
     passed = False
+    reasons = []
+    suggestions = []
 
     if trinity_score >= 90.0 and risk <= 10.0:
         print("\n✅ [AUTO_MERGE_ELIGIBLE] The Shield is lowered. You may pass.")
@@ -123,9 +125,23 @@ def main():
     else:
         print("\n🛡️ [BLOCKED] The Shield is raised.")
         if risk > 10.0:
-            print(f"   ❌ Reason: High Risk ({risk} > 10)")
+            reasons.append(f"High Risk ({risk} > 10)")
+            suggestions.append("Remove hardcoded secrets, avoid os.system() calls")
         if trinity_score < 90.0:
-            print(f"   ❌ Reason: Low Trinity Score ({trinity_score:.2f} < 90)")
+            reasons.append(f"Low Trinity Score ({trinity_score:.2f} < 90)")
+            if truth < 100:
+                suggestions.append("Run mypy/pyright to improve Truth (type safety)")
+            if beauty < 100:
+                suggestions.append("Run ruff/eslint to improve Beauty (code style)")
+        
+        for r in reasons:
+            print(f"   ❌ Reason: {r}")
+        
+        if suggestions:
+            print("\n💡 [SUGGESTIONS]")
+            for s in suggestions:
+                print(f"   → {s}")
+        
         passed = False
 
     # Output for GitHub Actions
