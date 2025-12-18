@@ -9,11 +9,59 @@ import { SimulationWizard } from './components/SimulationWizard';
 import { GroupChatRoom } from './components/GroupChatRoom';
 import { CalculatorWidget } from './components/CalculatorWidget';
 import { AgentBrowser } from './components/AgentBrowser';
+import { CPADashboard } from './components/CPADashboard';
 import { Tab } from './types';
-import { LayoutDashboard, BookOpen, PenTool, Menu, X, FolderKanban, LogOut, MessageCircle, Calculator, Zap, AlertCircle, CheckCircle, Info, Trash2, Clock, Calendar, Bot } from 'lucide-react';
+import { LayoutDashboard, BookOpen, PenTool, Menu, X, FolderKanban, LogOut, MessageCircle, Calculator, Zap, AlertCircle, CheckCircle, Info, Trash2, Clock, Calendar, Bot, Shield } from 'lucide-react';
 import { AppProvider, useApp } from './context/AppContext';
 
-// --- Toast Component ---
+// ... (omitting intermediate code for brevity in tool call, focusing on changes)
+
+  const renderContent = () => {
+    return (
+      <div className="animate-fade-in relative z-0">
+        {currentTab === Tab.HOME && <HeroSection onNavigate={setCurrentTab} />}
+        {currentTab === Tab.FRAMEWORK && <FrameworkExplainer />}
+        {currentTab === Tab.GENERATOR && <PromptGenerator />}
+        {currentTab === Tab.KNOWLEDGE && (
+            <KnowledgeBase 
+                folders={knowledgeFolders}
+                setFolders={setKnowledgeFolders}
+                activeFolderId={activeFolderId}
+                setActiveFolderId={setActiveFolderId}
+                user={user}
+                onGenerateStrategy={(data) => {
+                    setRcateData(data);
+                    setCurrentTab(Tab.GENERATOR);
+                }}
+            />
+        )}
+        {currentTab === Tab.WIZARD && (
+            <SimulationWizard 
+                onComplete={(data) => {
+                    setRcateData(data);
+                    setCurrentTab(Tab.GENERATOR);
+                }}
+                onCancel={() => setCurrentTab(Tab.HOME)}
+            />
+        )}
+        {currentTab === Tab.COMMUNITY && (
+            <GroupChatRoom 
+                knowledgeFolders={knowledgeFolders}
+                setKnowledgeFolders={setKnowledgeFolders}
+            />
+        )}
+        {currentTab === Tab.CPA && <CPADashboard />}
+      </div>
+    );
+  };
+
+  const NAV_ITEMS = [
+      { t: Tab.HOME, l: 'Home', d: 'Dashboard', i: <LayoutDashboard size={18} /> },
+      { t: Tab.CPA, l: 'CPA Mode', d: 'Financial Health', i: <Shield size={18} /> },
+      { t: Tab.KNOWLEDGE, l: 'Clients', d: 'Documents', i: <FolderKanban size={18} /> },
+      { t: Tab.COMMUNITY, l: 'Team', d: 'Collaboration', i: <MessageCircle size={18} /> },
+      { t: Tab.GENERATOR, l: 'Prompt', d: 'Builder', i: <PenTool size={18} /> },
+  ];
 const ToastNotification = () => {
     const { notification, closeNotification } = useApp();
     if (!notification) return null;

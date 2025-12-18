@@ -45,6 +45,7 @@ export enum Tab {
   KNOWLEDGE = 'KNOWLEDGE',
   WIZARD = 'WIZARD',
   COMMUNITY = 'COMMUNITY', 
+  CPA = 'CPA',
 }
 
 export interface Collaborator {

@@ -50,6 +50,12 @@ class TrinityScoreEngineHybrid:
             "Eternity": min(100, metrics.get("eternity_base", 100)),
         }
 
+        # Calculate Weighted Sum using Hybrid Engine
+        keys = ["Truth", "Goodness", "Beauty", "Serenity", "Eternity"]
+        w_list = [float(cls.WEIGHTS[k]) for k in keys]
+        s_list = [float(scores[k]) for k in keys]
+        weighted_sum = cls._hybrid_weighted_sum(w_list, s_list)
+
         final_score = round(weighted_sum / cls.TOTAL_WEIGHT, 2)
 
         # [NEW] Audit Gate Logic (Auto-Block)

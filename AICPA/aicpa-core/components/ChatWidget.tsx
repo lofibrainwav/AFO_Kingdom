@@ -88,7 +88,7 @@ export const ChatWidget: React.FC = () => {
       setChatHistory(prev => [...prev, { role: 'model', text: '🔄 Processing via LLM Router (Ollama → API)...' }]);
       
       // === NEW: Call Backend LLM Router instead of direct Gemini SDK ===
-      const systemContext = parts.map(p => (p as any).text || '').join('\n');
+      const fullSystemPrompt = parts.map(p => (p as any).text || '').join('\n');
       try {
         const response = await fetch('http://localhost:8010/api/chat/message', {
           method: 'POST',
@@ -98,7 +98,7 @@ export const ChatWidget: React.FC = () => {
             provider: 'auto',  // Ollama-first, fallback to API
             quality_tier: 'standard',
             max_tokens: 2048,
-            system_prompt: systemContext,
+            system_prompt: fullSystemPrompt,
           }),
         });
         

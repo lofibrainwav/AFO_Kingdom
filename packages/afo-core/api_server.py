@@ -286,17 +286,19 @@ except Exception as exc:  # pragma: no cover - optional feature
 # except Exception as exc:
 #     graphrag_router = _fallback_router("GraphRAG", exc)
 
-try:
-    try:
-        from .api.routes.health import router as health_router
-    except ImportError:
-        try:
-            from api.routes.health import router as health_router  # type: ignore[no-redef]
-        except ImportError:
-            health_router = None  # type: ignore[assignment]
-            print("⚠️  Health router not available")
-except Exception as exc:  # pragma: no cover - optional feature
-    health_router = _fallback_router("Health", exc)
+# Health router는 이미 Line 31에서 import됨 (AFO.api.routers.health)
+# 중복 로드 방지: 이미 import된 health_router 사용
+# try:
+#     try:
+#         from .api.routes.health import router as health_router
+#     except ImportError:
+#         try:
+#             from api.routes.health import router as health_router  # type: ignore[no-redef]
+#         except ImportError:
+#             health_router = None  # type: ignore[assignment]
+#             print("⚠️  Health router not available")
+# except Exception as exc:  # pragma: no cover - optional feature
+#     health_router = _fallback_router("Health", exc)
 
 # Strangler Fig Pattern: Music Router (점진적 리팩터링)
 # music_router는 현재 사용되지 않음 (레거시)
@@ -479,12 +481,12 @@ except Exception as exc:  # pragma: no cover - optional feature
     trinity_router = _fallback_router("Trinity Router (Facade)", exc)
 
 try:
-    from .routers.auth import router as auth_router
+    from AFO.api.routers.auth import router as auth_router
 except Exception as exc:  # pragma: no cover - optional feature
     auth_router = _fallback_router("Auth Router (Heart)", exc)
 
 try:
-    from .routers.users import router as users_router
+    from AFO.api.routers.users import router as users_router
 except Exception as exc:  # pragma: no cover - optional feature
     users_router = _fallback_router("Users Router (Liver)", exc)
 
@@ -788,6 +790,18 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         query_expander = None
         print("⚠️  Query Expander 건너뜀 (Phase 2.3 구현 필요)")
 
+    # ============================================================================
+    # AntiGravity Phase 1: Initialization
+    # ============================================================================
+    from config.antigravity import antigravity
+    
+    if antigravity.AUTO_DEPLOY:
+        print(f"🚀 [AntiGravity] 활성화: {antigravity.ENVIRONMENT} 환경 자동 배포 준비 완료 (孝)")
+    
+    if antigravity.DRY_RUN_DEFAULT:
+        print("🛡️ [AntiGravity] DRY_RUN 모드 활성화 - 모든 위험 동작 시뮬레이션 (善)")
+    # ============================================================================
+
     # Initialize RAG engines - 각 LLM별로 on-demand 생성
     # (API 요청시마다 llm_provider에 따라 동적 생성)
     print("【RAG 엔진】 멀티-LLM 지원 준비 완료.")
@@ -994,7 +1008,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
             CLAUDE_CLIENT = Anthropic(api_key=claude_key)
             print("【Hybrid RAG】 Claude 클라이언트 준비 완료")
         else:
-            CLAUDE_CLIENT = None
+            # CLAUDE_CLIENT = None
             print("【Hybrid RAG】 ⚠️ Claude API 키가 없어 OpenAI로 대체합니다.")
     else:
         print("【Hybrid RAG】 ⚠️ Anthropic 라이브러리 없음 - OpenAI로 대체합니다.")
@@ -1223,13 +1237,29 @@ except ImportError as e:
     if health_router is not None:
         app.include_router(health_router)
         print("✅ Health 라우터 등록 완료 (Phase 2 리팩토링)")
+    if SKILLS_ROUTER_AVAILABLE and skills_router is not None:
+        # `skills_router` already has prefix="/api/skills"
+        app.include_router(skills_router)
+        print("✅ Skills API 라우터 등록 완료 (손발 연결)")
 
 # 제3계명: 5기둥 API 라우터 등록 (항상 시도)
+
+# 5기둥 API 라우터 (제3계명)
 if PILLARS_ROUTER_AVAILABLE:
     app.include_router(pillars_router)
     print("✅ 5기둥 API 라우터 등록 완료 - 제3계명")
 else:
     print("⚠️  5기둥 라우터 등록 건너뜀 (로드 실패)")
+
+# ============================================================================
+# Phase 8: Julie CPA AutoMate
+# ============================================================================
+try:
+    from api.routes.julie import router as julie_router
+    app.include_router(julie_router)
+    print("✅ Julie CPA AutoMate Engine activated (의(義))")
+except Exception as e:
+    print(f"⚠️ Julie CPA Engine load failed: {e}")
 
 # 향상된 헬스 체크 라우터 등록 (Phase 3 최적화)
 try:
@@ -1484,12 +1514,17 @@ except Exception as e:
 
 # 승상 API 라우터 등록 (LangGraph Phase 24)
 try:
-    from api.routers.chancellor_router import router as chancellor_router
+    from AFO.api.routers.chancellor_router import router as chancellor_router
 
     app.include_router(chancellor_router)
     print("✅ 승상 API 라우터 등록 완료 (LangGraph Optimized: Chancellor + 3 Strategists)")
 except ImportError as e:
-    print(f"⚠️  승상 라우터 등록 건너뜀 (로드 실패: {e})")
+    try:
+        from api.routers.chancellor_router import router as chancellor_router
+        app.include_router(chancellor_router)
+        print("✅ 승상 API 라우터 등록 완료 (LangGraph Optimized: Chancellor + 3 Strategists - fallback)")
+    except Exception as e2:
+        print(f"⚠️  승상 라우터 등록 건너뜀 (로드 실패: {e}, {e2})")
 except Exception as e:
     print(f"⚠️  승상 라우터 등록 건너뜀 (오류: {e})")
 
@@ -1512,7 +1547,7 @@ try:
     print("✅ Users API 라우터 등록 완료 (肝 시스템 - 사용자 관리)")
 except ImportError as e:
     try:
-        from .routers.users import router as users_router
+        from AFO.api.routers.users import router as users_router
 
         app.include_router(users_router)
         print("✅ Users API 라우터 등록 완료 (肝 시스템 - 사용자 관리 - fallback)")
@@ -1529,7 +1564,7 @@ try:
     print("✅ Auth API 라우터 등록 완료 (心 시스템 - 인증)")
 except ImportError as e:
     try:
-        from .routers.auth import router as auth_router
+        from AFO.api.routers.auth import router as auth_router
 
         app.include_router(auth_router)
         print("✅ Auth API 라우터 등록 완료 (心 시스템 - 인증 - fallback)")
@@ -1537,6 +1572,38 @@ except ImportError as e:
         print(f"⚠️  Auth API 라우터 등록 건너뜀 (로드 실패: {e}, {e2})")
 except Exception as e:
     print(f"⚠️  Auth API 라우터 등록 건너뜀 (오류: {e})")
+
+# Personas API 라우터 등록 (Phase 2: Family Hub OS - 페르소나 시스템)
+try:
+    from AFO.api.routers.personas import router as personas_router
+
+    app.include_router(personas_router)
+    print("✅ Personas API 라우터 등록 완료 (Phase 2: Family Hub OS - TRINITY-OS 페르소나 통합)")
+except ImportError as e:
+    try:
+        from api.routers.personas import router as personas_router
+        app.include_router(personas_router)
+        print("✅ Personas API 라우터 등록 완료 (Phase 2: Family Hub OS - fallback)")
+    except Exception as e2:
+        print(f"⚠️  Personas API 라우터 등록 건너뜀 (로드 실패: {e}, {e2})")
+except Exception as e:
+    print(f"⚠️  Personas API 라우터 등록 건너뜀 (오류: {e})")
+
+# Family Hub API 라우터 등록 (Phase 2: Family Hub OS - 가족 데이터 연결)
+try:
+    from AFO.api.routers.family import router as family_router
+
+    app.include_router(family_router)
+    print("✅ Family Hub API 라우터 등록 완료 (Phase 2: Family Hub OS - 美: 모듈화 + 일관 네이밍)")
+except ImportError as e:
+    try:
+        from api.routers.family import router as family_router
+        app.include_router(family_router)
+        print("✅ Family Hub API 라우터 등록 완료 (Phase 2: Family Hub OS - fallback)")
+    except Exception as e2:
+        print(f"⚠️  Family Hub API 라우터 등록 건너뜀 (로드 실패: {e}, {e2})")
+except Exception as e:
+    print(f"⚠️  Family Hub API 라우터 등록 건너뜀 (오류: {e})")
 
 # Intake API 라우터 등록 (위 이식 - Router Facade Pattern)
 try:
@@ -1968,8 +2035,36 @@ async def on_startup() -> None:
     except Exception as e:
         print(f"⚠️ Family data load failed: {e}")
 
+    # ============================================================================
+    # Phase 8: Julie CPA AutoMate
+    # ============================================================================
+
+
+# ============================================================================
+# AntiGravity Phase 4: Friction Status
+# ============================================================================
+@app.get("/api/antigravity/status", tags=["AntiGravity"])
+async def get_antigravity_status():
+    """
+    [AntiGravity] 왕국 평온 상태 조회 (Phase 4)
+    형님의 '신경 쓰임' 지수를 수치화하여 보고합니다.
+    """
+    from config.friction_calibrator import friction_calibrator
+    metrics = friction_calibrator.calculate_serenity()
+    return metrics
+@app.on_event("startup")
+async def debug_routes():
+    pass
+
+# ============================================================================
+
 
 if __name__ == "__main__":
+    print("🛣️  [Route Debug Debugger] Registered Routes (Main Block):")
+    for route in app.routes:
+        if hasattr(route, "path"):
+            print(f"   - {route.path}")
+
     import uvicorn
 
     # Phase 2-4: settings 사용
