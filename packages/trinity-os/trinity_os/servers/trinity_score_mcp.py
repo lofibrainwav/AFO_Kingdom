@@ -15,6 +15,7 @@ def _get_gpu_status() -> bool:
     if _GPU_AVAILABLE is None:
         try:
             import cupy as cp
+
             _cp = cp
             _GPU_AVAILABLE = True
         except ImportError:
@@ -27,6 +28,7 @@ def _get_numpy():
     global _np
     if _np is None:
         import numpy as np
+
         _np = np
     return _np
 
@@ -146,4 +148,3 @@ if __name__ == "__main__":
                     break
 
         asyncio.run(main())
-
