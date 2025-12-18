@@ -245,7 +245,7 @@ def verify_mcp():
         }
         process.stdin.write(json.dumps(ctx_req) + "\n")
         process.stdin.flush()
-        
+
         response_line = process.stdout.readline()
         print(f"Tool Response: {response_line.strip()}")
         resp = json.loads(response_line)
@@ -253,6 +253,29 @@ def verify_mcp():
         assert content["found"] is True
         assert "Chancellor" in content["context"]
         print("✅ Context7 Retrieval Success")
+
+        # 11. Test Context7 (Soul & Body)
+        print("\n🔹 Testing retrieve_context (Soul & Body)...")
+        soul_req = {
+            "jsonrpc": "2.0",
+            "id": 11,
+            "method": "tools/call",
+            "params": {
+                "name": "retrieve_context",
+                "arguments": {"query": "Sixxon Body Trinity Soul", "domain": "philosophy"},
+            },
+        }
+        process.stdin.write(json.dumps(soul_req) + "\n")
+        process.stdin.flush()
+        
+        response_line = process.stdout.readline()
+        print(f"Tool Response: {response_line.strip()}")
+        resp = json.loads(response_line)
+        content = json.loads(resp["result"]["content"][0]["text"])
+        assert content["found"] is True
+        assert "Sixxon (The Physical Manifestation)" in content["context"]
+        assert "Trinity 5 Pillars (The Soul)" in content["context"]
+        print("✅ Context7 Soul & Body Retrieval Success")
 
         # Print stderr if any
         stderr_output = process.stderr.read()
