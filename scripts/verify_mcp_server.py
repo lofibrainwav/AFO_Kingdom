@@ -292,15 +292,15 @@ def verify_mcp():
             }
             process.stdin.write(json.dumps(nav_req) + "\n")
             process.stdin.flush()
-            
+
             response_line = process.stdout.readline()
             print(f"Tool Response (Navigate): {response_line.strip()}")
             resp = json.loads(response_line)
             content = json.loads(resp["result"]["content"][0]["text"])
-            
+
             if content.get("success"):
                 print("✅ Browser Navigation Success")
-                
+
                 # Scrape
                 scrape_req = {
                     "jsonrpc": "2.0",
@@ -313,7 +313,7 @@ def verify_mcp():
                 }
                 process.stdin.write(json.dumps(scrape_req) + "\n")
                 process.stdin.flush()
-                
+
                 response_line = process.stdout.readline()
                 print(f"Tool Response (Scrape): {response_line.strip()}")
                 resp = json.loads(response_line)

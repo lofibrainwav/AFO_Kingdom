@@ -1,7 +1,6 @@
 import json
 import subprocess
-import sys
-import time
+
 
 def verify_playwright():
     cmd = ["python3", "packages/trinity-os/trinity_os/servers/afo_ultimate_mcp_server.py"]
@@ -11,11 +10,11 @@ def verify_playwright():
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         text=True,
-        bufsize=1
+        bufsize=1,
     )
 
     print("🔹 Testing Playwright Bridge (Dedicated)...")
-    
+
     # Navigate
     nav_req = {
         "jsonrpc": "2.0",
@@ -26,20 +25,20 @@ def verify_playwright():
             "arguments": {"url": "http://example.com"},
         },
     }
-    
+
     try:
         process.stdin.write(json.dumps(nav_req) + "\n")
         process.stdin.flush()
-        
+
         response_line = process.stdout.readline()
         print(f"Navigate Response: {response_line.strip()}")
         resp = json.loads(response_line)
         content = json.loads(resp["result"]["content"][0]["text"])
-        
+
         if content.get("success"):
             print("✅ Browser Navigation Success")
             print(f"   Title: {content.get('title')}")
-            
+
             # Scrape
             scrape_req = {
                 "jsonrpc": "2.0",
@@ -52,16 +51,16 @@ def verify_playwright():
             }
             process.stdin.write(json.dumps(scrape_req) + "\n")
             process.stdin.flush()
-            
+
             response_line = process.stdout.readline()
             print(f"Scrape Response: {response_line.strip()}")
             resp = json.loads(response_line)
             content = json.loads(resp["result"]["content"][0]["text"])
-            
+
             if content.get("success") and "Example Domain" in content.get("content", ""):
-                 print("✅ Browser Scrape Success")
+                print("✅ Browser Scrape Success")
             else:
-                 print(f"❌ Scrape Failed: {content}")
+                print(f"❌ Scrape Failed: {content}")
         else:
             print(f"❌ Navigation Failed: {content.get('error')}")
 
@@ -71,6 +70,7 @@ def verify_playwright():
         print(f"STDERR: {stderr}")
     finally:
         process.terminate()
+
 
 if __name__ == "__main__":
     verify_playwright()
