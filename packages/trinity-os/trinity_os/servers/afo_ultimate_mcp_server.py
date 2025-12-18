@@ -14,6 +14,7 @@ try:
     from context7_mcp import Context7MCP
     from sequential_thinking_mcp import SequentialThinkingMCP
     from trinity_score_mcp import TrinityScoreEngineHybrid
+    from playwright_bridge_mcp import PlaywrightBridgeMCP
 
     MODULES_LOADED = True
 except ImportError as e:
@@ -240,6 +241,62 @@ class AfoUltimateMCPServer:
                                 },
                             }
                         )
+                        # Browser Tools (Playwright Bridge)
+                        tools.append(
+                            {
+                                "name": "browser_navigate",
+                                "description": "Navigate to a URL using Playwright.",
+                                "inputSchema": {
+                                    "type": "object",
+                                    "properties": {"url": {"type": "string"}},
+                                    "required": ["url"],
+                                },
+                            }
+                        )
+                        tools.append(
+                            {
+                                "name": "browser_screenshot",
+                                "description": "Capture a screenshot of the current page.",
+                                "inputSchema": {
+                                    "type": "object",
+                                    "properties": {"path": {"type": "string"}},
+                                    "required": ["path"],
+                                },
+                            }
+                        )
+                        tools.append(
+                            {
+                                "name": "browser_click",
+                                "description": "Click an element on the current page.",
+                                "inputSchema": {
+                                    "type": "object",
+                                    "properties": {"selector": {"type": "string"}},
+                                    "required": ["selector"],
+                                },
+                            }
+                        )
+                        tools.append(
+                            {
+                                "name": "browser_type",
+                                "description": "Type text into an element on the current page.",
+                                "inputSchema": {
+                                    "type": "object",
+                                    "properties": {"selector": {"type": "string"}, "text": {"type": "string"}},
+                                    "required": ["selector", "text"],
+                                },
+                            }
+                        )
+                        tools.append(
+                            {
+                                "name": "browser_scrape",
+                                "description": "Scrape text content from a selector.",
+                                "inputSchema": {
+                                    "type": "object",
+                                    "properties": {"selector": {"type": "string"}},
+                                    "required": ["selector"],
+                                },
+                            }
+                        )
 
                     result = {"tools": tools}
 
@@ -337,6 +394,18 @@ class AfoUltimateMCPServer:
                             content = json.dumps(res, indent=2, ensure_ascii=False)
                             if "metadata" in res:
                                 trinity_metadata = {"truth_impact": res["metadata"].get("truth_impact", 0)}
+
+                        # Browser Bridge Tools
+                        elif tool_name == "browser_navigate":
+                            content = json.dumps(PlaywrightBridgeMCP.navigate(args.get("url")), indent=2)
+                        elif tool_name == "browser_screenshot":
+                            content = json.dumps(PlaywrightBridgeMCP.screenshot(args.get("path", "screenshot.png")), indent=2)
+                        elif tool_name == "browser_click":
+                            content = json.dumps(PlaywrightBridgeMCP.click(args.get("selector")), indent=2)
+                        elif tool_name == "browser_type":
+                            content = json.dumps(PlaywrightBridgeMCP.type_text(args.get("selector"), args.get("text")), indent=2)
+                        elif tool_name == "browser_scrape":
+                            content = json.dumps(PlaywrightBridgeMCP.scrape(args.get("selector")), indent=2)
 
                         else:
                             content = f"Unknown tool: {tool_name}"
