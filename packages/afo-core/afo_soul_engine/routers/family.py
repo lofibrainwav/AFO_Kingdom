@@ -10,4 +10,3 @@ router = APIRouter(prefix="/api/family", tags=["Family"])
 @router.get("/health")
 async def family_health() -> dict[str, Any]:
     return {"status": "healthy", "mode": "stateless"}
-

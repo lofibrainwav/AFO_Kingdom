@@ -4,4 +4,3 @@ from __future__ import annotations
 from api.services.skills_service import SkillsService
 
 __all__ = ["SkillsService"]
-

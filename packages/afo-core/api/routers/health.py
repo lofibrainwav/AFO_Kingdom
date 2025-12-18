@@ -17,8 +17,6 @@ except ImportError:
     import sys
 
     sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-    from AFO.services.database import get_db_connection
-    from AFO.utils.redis_connection import get_redis_url
 
 router = APIRouter(prefix="/health", tags=["Health"])
 
@@ -32,6 +30,7 @@ async def health_check() -> dict[str, Any]:
     # api_server.py의 health_check_legacy 함수를 재사용
     # 실제 구현은 api_server.py에 있음
     from datetime import datetime
+
     import httpx
     import redis.asyncio as redis
 
@@ -140,4 +139,3 @@ async def health_check() -> dict[str, Any]:
         },
         "timestamp": current_time,
     }
-

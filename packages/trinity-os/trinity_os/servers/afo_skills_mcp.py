@@ -1,6 +1,5 @@
 import sys
 import time
-from pathlib import Path
 from typing import Any
 
 try:
@@ -87,13 +86,9 @@ class AfoSkillsMCP:
 
                     try:
                         if tool_name == "cupy_weighted_sum":
-                            execution_result = cls.cupy_weighted_sum(
-                                args.get("data", []), args.get("weights", [])
-                            )
+                            execution_result = cls.cupy_weighted_sum(args.get("data", []), args.get("weights", []))
                         elif tool_name == "verify_fact":
-                            execution_result = cls.verify_fact(
-                                args.get("claim"), args.get("context", "")
-                            )
+                            execution_result = cls.verify_fact(args.get("claim"), args.get("context", ""))
                         else:
                             execution_result = f"Unknown tool: {tool_name}"
                             is_error = True

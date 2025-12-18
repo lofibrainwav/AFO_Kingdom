@@ -20,6 +20,7 @@ except ImportError:
             AUTO_DEPLOY = True
             DRY_RUN_DEFAULT = True
             ENVIRONMENT = "dev"
+
         antigravity = MockAntigravity()
 
 
@@ -55,7 +56,7 @@ def chancellor_router_node(state: ChancellorState):
     [Chancellor Node]
     The Supreme Orchestrator.
     Decides which Strategist should speak next or if the final answer is ready.
-    
+
     Antigravity 통합: DRY_RUN 모드 감지 및 auto_run_eligible 조정
     """
     print("👑 [Chancellor] Analyzing state...")
@@ -66,7 +67,7 @@ def chancellor_router_node(state: ChancellorState):
     context = state.get("kingdom_context", {}) or {}
     antigravity_config = context.get("antigravity", {})
     is_dry_run = antigravity_config.get("DRY_RUN_DEFAULT", antigravity.DRY_RUN_DEFAULT)
-    
+
     # DRY_RUN 모드일 때는 auto_run_eligible을 False로 강제 (善: 안전 우선)
     if is_dry_run and state.get("auto_run_eligible", False):
         print("🛡️ [Chancellor] DRY_RUN 모드 감지 - auto_run_eligible을 False로 조정 (善)")

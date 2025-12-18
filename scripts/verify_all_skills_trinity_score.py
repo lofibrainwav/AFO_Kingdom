@@ -13,7 +13,7 @@ project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root / "packages" / "afo-core"))
 
 try:
-    from afo_skills_registry import register_core_skills, PhilosophyScore
+    from afo_skills_registry import PhilosophyScore, register_core_skills
 except ImportError as e:
     print(f"❌ Import 실패: {e}")
     sys.exit(1)
@@ -41,7 +41,9 @@ def main():
         skill_info = {
             "skill_id": skill.skill_id,
             "name": skill.name,
-            "category": skill.category.value if hasattr(skill.category, "value") else str(skill.category),
+            "category": skill.category.value
+            if hasattr(skill.category, "value")
+            else str(skill.category),
             "has_philosophy": skill.philosophy_scores is not None,
         }
 
@@ -70,7 +72,7 @@ def main():
         if skill.philosophy_scores:
             print(f"   철학 점수: {skill.philosophy_scores.summary}")
         else:
-            print(f"   ⚠️  철학 점수 없음")
+            print("   ⚠️  철학 점수 없음")
 
         print()
 
@@ -102,4 +104,3 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
-

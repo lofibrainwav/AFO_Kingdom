@@ -22,5 +22,4 @@ async def read_root() -> dict[str, str]:
 
 
 # api_server.py의 read_root_legacy에서 사용하기 위해 함수 export
-__all__ = ["router", "read_root"]
-
+__all__ = ["read_root", "router"]

@@ -590,7 +590,9 @@ class LLMRouter:
         max_tokens = int((context or {}).get("max_tokens", config.max_tokens))
         temperature = float((context or {}).get("temperature", config.temperature))
         model = str((context or {}).get("ollama_model", config.model))
-        num_ctx = int((context or {}).get("ollama_num_ctx", getattr(config, "context_window", 4096)))
+        num_ctx = int(
+            (context or {}).get("ollama_num_ctx", getattr(config, "context_window", 4096))
+        )
         num_threads = (context or {}).get("ollama_num_thread")
 
         try:

@@ -103,4 +103,3 @@ class SkillStatsResponse(BaseModel):
     active_skills: int = 0
     categories: list[SkillCategoryStats] = Field(default_factory=list)
     execution_stats: dict[str, Any] = Field(default_factory=dict)
-

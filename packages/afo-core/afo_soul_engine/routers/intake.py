@@ -22,4 +22,3 @@ async def ingest(request: IntakeRequest) -> dict[str, Any]:
 @router.get("/health")
 async def intake_health() -> dict[str, Any]:
     return {"status": "healthy", "mode": "stateless"}
-

@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from fastapi import APIRouter
 
-
 try:
     from AFO.api.routers.users import router as router  # type: ignore
 except Exception:
@@ -14,4 +13,3 @@ except Exception:
             "status": "degraded",
             "message": "Users router fallback (no persistence connected)",
         }
-

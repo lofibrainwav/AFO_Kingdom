@@ -7,20 +7,21 @@ import os
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
 from .antigravity import antigravity
+
 
 class AFOSettings(BaseSettings):
     """
     AFO 왕국 중앙 설정 클래스
     모든 환경 변수와 기본값을 한 곳에서 관리
-    """ 
-    
+    """
+
     # ============================================================================
     # AntiGravity Integration (Phase 1)
     # ============================================================================
     antigravity_mode: bool = Field(
-        default=antigravity.AUTO_DEPLOY, 
-        description="AntiGravity 자동 배포 모드 (True: 활성화)"
+        default=antigravity.AUTO_DEPLOY, description="AntiGravity 자동 배포 모드 (True: 활성화)"
     )
 
     model_config = SettingsConfigDict(

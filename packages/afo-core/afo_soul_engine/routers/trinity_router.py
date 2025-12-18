@@ -10,4 +10,3 @@ router = APIRouter(prefix="/api/trinity", tags=["Trinity"])
 @router.get("/health")
 async def trinity_health() -> dict[str, Any]:
     return {"status": "healthy", "message": "Trinity router online"}
-

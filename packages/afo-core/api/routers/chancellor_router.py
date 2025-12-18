@@ -22,18 +22,19 @@ except ImportError:
         class MockAntigravity:
             AUTO_DEPLOY = True
             DRY_RUN_DEFAULT = True
+
         antigravity = MockAntigravity()
 
 # Chancellor Graph import
 try:
     import sys
     from pathlib import Path
-    
+
     # Add parent directory to path for chancellor_graph import
     _CORE_ROOT = Path(__file__).resolve().parent.parent.parent
     if str(_CORE_ROOT) not in sys.path:
         sys.path.insert(0, str(_CORE_ROOT))
-    
+
     from chancellor_graph import (
         ChancellorState,
         build_chancellor_graph,
@@ -50,11 +51,12 @@ router = APIRouter(prefix="/chancellor", tags=["Chancellor"])
 
 class ChancellorInvokeRequest(BaseModel):
     """Chancellor Graph 호출 요청 모델"""
+
     query: str = Field(..., description="사용자 쿼리")
     thread_id: str = Field(default="default", description="대화 스레드 ID")
     auto_run: bool = Field(
         default_factory=lambda: antigravity.AUTO_DEPLOY,
-        description="자동 실행 여부 (孝: Serenity) - Antigravity.AUTO_DEPLOY 기본값 사용"
+        description="자동 실행 여부 (孝: Serenity) - Antigravity.AUTO_DEPLOY 기본값 사용",
     )
     timeout_seconds: int = Field(default=30, ge=1, le=300, description="최대 실행 시간(초)")
     mode: Literal["auto", "offline", "fast", "lite", "full"] = Field(
@@ -92,6 +94,7 @@ class ChancellorInvokeRequest(BaseModel):
 
 class ChancellorInvokeResponse(BaseModel):
     """Chancellor Graph 호출 응답 모델"""
+
     response: str = Field(..., description="Chancellor 응답")
     thread_id: str = Field(..., description="대화 스레드 ID")
     trinity_score: float = Field(default=0.0, description="Trinity Score")
@@ -102,16 +105,16 @@ class ChancellorInvokeResponse(BaseModel):
 async def invoke_chancellor(request: ChancellorInvokeRequest) -> dict[str, Any]:
     """
     Chancellor Graph 호출 엔드포인트
-    
+
     3책사 (Zhuge Liang/Sima Yi/Zhou Yu)를 LangGraph로 연결하여
     사용자 쿼리에 대한 최적의 답변을 생성합니다.
-    
+
     Args:
         request: Chancellor 호출 요청
-        
+
     Returns:
         Chancellor 응답 (3책사 분석 결과 포함)
-        
+
     Raises:
         HTTPException: Chancellor Graph 초기화 실패 시
     """
@@ -184,7 +187,9 @@ async def invoke_chancellor(request: ChancellorInvokeRequest) -> dict[str, Any]:
             else:
                 # Give a minimally useful offline reply for common non-system queries.
                 q_lower = query.lower()
-                if any(k in q_lower for k in ["자기소개", "who are you", "너는 누구", "당신은 누구"]):
+                if any(
+                    k in q_lower for k in ["자기소개", "who are you", "너는 누구", "당신은 누구"]
+                ):
                     lines.append(
                         "- 오프라인 응답: 저는 AFO Kingdom의 승상(Chancellor)이며, 시스템 상태/전략/실행을 정리해 사령관의 결정을 돕습니다."
                     )
@@ -354,7 +359,7 @@ async def invoke_chancellor(request: ChancellorInvokeRequest) -> dict[str, Any]:
         # auto_run_eligible: request.auto_run과 antigravity.AUTO_DEPLOY를 모두 고려
         # DRY_RUN 모드일 때는 auto_run을 False로 강제 (善: 안전 우선)
         effective_auto_run = request.auto_run and not antigravity.DRY_RUN_DEFAULT
-        
+
         initial_state: ChancellorState = {
             "messages": [],
             "trinity_score": 0.0,
@@ -375,11 +380,12 @@ async def invoke_chancellor(request: ChancellorInvokeRequest) -> dict[str, Any]:
             "next_step": "chancellor",
             "analysis_results": {},
         }
-        
+
         # 사용자 메시지 추가
         from langchain_core.messages import HumanMessage
+
         initial_state["messages"].append(HumanMessage(content=request.query))
-        
+
         # Graph 실행
         #
         # NOTE:
@@ -410,23 +416,23 @@ async def invoke_chancellor(request: ChancellorInvokeRequest) -> dict[str, Any]:
                 "timed_out": True,
                 "system_metrics": metrics,
             }
-        
+
         # 응답 추출
         messages = result.get("messages", [])
         last_message = messages[-1] if messages else None
-        
+
         response_text = ""
         if last_message and hasattr(last_message, "content"):
             response_text = last_message.content
         elif isinstance(last_message, dict):
             response_text = last_message.get("content", "")
-        
+
         # 책사 목록 추출
         strategists_consulted = []
         analysis_results = result.get("analysis_results", {})
         if analysis_results:
             strategists_consulted = list(analysis_results.keys())
-        
+
         return {
             "response": response_text,
             "thread_id": request.thread_id,
@@ -437,7 +443,7 @@ async def invoke_chancellor(request: ChancellorInvokeRequest) -> dict[str, Any]:
             "fallback_used": False,
             "timed_out": False,
         }
-        
+
     except HTTPException:
         raise
     except BaseException as e:
@@ -452,7 +458,7 @@ async def invoke_chancellor(request: ChancellorInvokeRequest) -> dict[str, Any]:
 async def chancellor_health() -> dict[str, Any]:
     """
     Chancellor Graph 건강 상태 체크
-    
+
     Returns:
         Chancellor Graph 초기화 상태
     """
@@ -461,7 +467,7 @@ async def chancellor_health() -> dict[str, Any]:
             "status": "unavailable",
             "message": "Chancellor Graph가 초기화되지 않았습니다.",
         }
-    
+
     try:
         graph = chancellor_graph
         return {
@@ -472,5 +478,5 @@ async def chancellor_health() -> dict[str, Any]:
     except Exception as e:
         return {
             "status": "error",
-            "message": f"Chancellor Graph 초기화 실패: {str(e)}",
+            "message": f"Chancellor Graph 초기화 실패: {e!s}",
         }
