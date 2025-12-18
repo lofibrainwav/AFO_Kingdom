@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import FamilyMemberCard from '@/components/family/FamilyMemberCard';
 import HappinessChart from '@/components/family/HappinessChart';
 import FamilyTimeline from '@/components/family/FamilyTimeline';
+import CopilotTerminal from '@/components/copilot/CopilotTerminal';
 import { Sparkles, RefreshCw } from 'lucide-react';
 
 export default function FamilyPage() {
@@ -114,9 +115,14 @@ export default function FamilyPage() {
                     </div>
                 </div>
 
-                {/* Right: Timeline */}
-                <div className="lg:col-span-1">
-                    <FamilyTimeline activities={timeline} />
+                {/* Right: Timeline & Copilot */}
+                <div className="lg:col-span-1 space-y-6">
+                    <div className="h-[400px]">
+                        <FamilyTimeline activities={timeline} />
+                    </div>
+                    <div className="h-[300px]">
+                        <CopilotTerminal />
+                    </div>
                 </div>
             </div>
         </div>
