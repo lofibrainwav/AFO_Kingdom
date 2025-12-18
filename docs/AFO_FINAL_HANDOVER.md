@@ -26,11 +26,16 @@ The **AFO Kingdom** is a fully integrated, self-aware AI operating system built 
 ### The 5 Pillars of Harmony & Royal Library
 **Reference**: [📜 AFO 왕국의 사서 (Royal Library)](AFO_ROYAL_LIBRARY.md) - *The 41 Principles of Strategy*
 
-1.  **Truth (眞)**: `Context7` based Knowledge Injection. The system knows itself.
-2.  **Goodness (善)**: `TrinityScoreEngine` based Ethics & Safety Guardrails.
-3.  **Beauty (美)**: `Family Hub Dashboard` (Glassmorphism UI).
-4.  **Serenity (孝)**: `Playwright Bridge Node` (Automation) & `Family Hub` (Happiness Tracking).
-5.  **Eternity (永)**: `Next.js` + `FastAPI` (Scalable Architecture).
+1.  **Truth (眞)**: `Context7` based Knowledge Injection.
+2.  **Goodness (善)**: `TrinityScoreEngine` based Guardrails.
+3.  **Beauty (美)**: `Family Hub Dashboard` (Glassmorphism).
+4.  **Serenity (孝)**: `Julie CPA` (Royal Finance) & `Playwright Bridge`.
+5.  **Eternity (永)**: `Next.js` + `FastAPI` (Scalable Arch).
+
+### New Capabilities (Royal Upgrade)
+- **Julie CPA**: Refactored with Pydantic Strict Mode & Config SSOT.
+- **GenUI**: Self-Building Interface (Creator).
+- **Copilot**: Real-time System Observation (Observer).
 
 ---
 
