@@ -102,7 +102,13 @@ jobs:
       - name: Run tests with coverage
         env:
           ENV: test
-        run: pytest packages/*/tests --cov=packages --cov-report=xml 2>/dev/null || echo 'No tests found'
+          PYTHONPATH: ${{ github.workspace }}
+        run: |
+          echo "Current directory: $(pwd)"
+          echo "Listing packages:"
+          ls -la packages/
+          echo "Running pytest..."
+          pytest packages/afo-core/tests packages/trinity-os/tests -v --cov=packages --cov-report=xml --tb=short 2>&1 || echo 'Some tests failed'
 
       - name: Upload coverage
         uses: codecov/codecov-action@v4
