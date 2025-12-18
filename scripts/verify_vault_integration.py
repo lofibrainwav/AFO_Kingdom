@@ -1,6 +1,5 @@
-
-import sys
 import os
+import sys
 
 # Add package root to path
 sys.path.append(os.path.join(os.getcwd(), "packages/afo-core"))
@@ -13,7 +12,9 @@ print("-" * 40)
 
 # 1. Test Fetching a known key (ENV fallback likely active)
 openai_key = vault.get_secret("OPENAI_API_KEY")
-print(f"🔑 OPENAI_API_KEY: {'[FOUND]' if openai_key else '[MISSING]'} (Length: {len(openai_key) if openai_key else 0})")
+print(
+    f"🔑 OPENAI_API_KEY: {'[FOUND]' if openai_key else '[MISSING]'} (Length: {len(openai_key) if openai_key else 0})"
+)
 
 # 2. Test Fetching a non-existent key
 dummy_key = vault.get_secret("NON_EXISTENT_KEY_12345")
@@ -28,17 +29,17 @@ try:
     # Remove if exists first (cleanup)
     if vault.wallet:
         vault.wallet.delete(test_key_name)
-    
+
     vault.set_secret(test_key_name, test_val, service="test")
-    
+
     # Retrieve
     retrieved_val = vault.get_secret(test_key_name)
-    
+
     if retrieved_val == test_val:
         print(f"✅ Vault Priority Check PASSED: Retrieved '{retrieved_val}'")
     else:
         print(f"❌ Vault Priority Check FAILED: Expected '{test_val}', got '{retrieved_val}'")
-        
+
     # Cleanup
     if vault.wallet:
         vault.wallet.delete(test_key_name)

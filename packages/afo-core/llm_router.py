@@ -158,8 +158,9 @@ class LLMRouter:
 
         # Helper to get secret
         def get_secret(name):
-             if vault: return vault.get_secret(name)
-             return getattr(settings, name, None) if settings else os.getenv(name)
+            if vault:
+                return vault.get_secret(name)
+            return getattr(settings, name, None) if settings else os.getenv(name)
 
         # Anthropic (Claude)
         anthropic_key = get_secret("ANTHROPIC_API_KEY")
@@ -181,7 +182,7 @@ class LLMRouter:
         if gemini_key or google_key:
             self.llm_configs[LLMProvider.GEMINI] = LLMConfig(
                 provider=LLMProvider.GEMINI,
-                model="gemini-2.0-flash-exp", # Updated to latest model
+                model="gemini-2.0-flash-exp",  # Updated to latest model
                 api_key_env="GEMINI_API_KEY" if gemini_key else "GOOGLE_API_KEY",
                 temperature=0.7,
                 max_tokens=2048,
@@ -518,9 +519,10 @@ class LLMRouter:
         if vault:
             api_key = vault.get_secret(config.api_key_env)
         else:
-             # Fallback
+            # Fallback
             try:
                 from config.settings import get_settings
+
                 settings = get_settings()
                 api_key = getattr(settings, config.api_key_env, None)
             except ImportError:

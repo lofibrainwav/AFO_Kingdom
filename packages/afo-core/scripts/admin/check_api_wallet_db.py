@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import os
+
 """API Wallet PostgreSQL DB 확인 스크립트"""
 
 try:

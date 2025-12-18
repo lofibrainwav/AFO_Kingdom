@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+
 from AFO.julie_cpa.services.julie_service import JulieService
 
 # [Legacy Merger]
@@ -8,6 +9,7 @@ from AFO.julie_cpa.services.julie_service import JulieService
 router = APIRouter(prefix="/api/julie", tags=["Julie CPA (Royal)"])
 julie_service = JulieService()
 
+
 @router.get("/status")
 async def get_status():
     """
@@ -15,6 +17,7 @@ async def get_status():
     Used by: AICPA Julie Frontend (Port 3000)
     """
     return await julie_service.get_royal_status()
+
 
 @router.get("/dashboard")
 async def get_dashboard():
