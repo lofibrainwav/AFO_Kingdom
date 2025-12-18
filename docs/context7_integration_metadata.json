@@ -1,0 +1,153 @@
+{
+  "API_ENDPOINTS_REFERENCE": {
+    "file": "docs/API_ENDPOINTS_REFERENCE.md",
+    "title": "API 엔드포인트 참조 문서",
+    "category": "API Reference",
+    "description": "AFO Kingdom Soul Engine API의 모든 엔드포인트 통합 참조 문서 (49개 엔드포인트)",
+    "tags": [
+      "API",
+      "Endpoints",
+      "Reference",
+      "Documentation"
+    ],
+    "keywords": [
+      "API",
+      "엔드포인트",
+      "참조",
+      "문서화",
+      "FastAPI"
+    ]
+  },
+  "SKILLS_REGISTRY_REFERENCE": {
+    "file": "docs/SKILLS_REGISTRY_REFERENCE.md",
+    "title": "Skills Registry 참조 문서",
+    "category": "Skills Reference",
+    "description": "AFO Kingdom Skills Registry의 모든 스킬 목록 및 사용법 참조 문서 (19개 스킬)",
+    "tags": [
+      "Skills",
+      "Registry",
+      "Reference",
+      "Documentation"
+    ],
+    "keywords": [
+      "스킬",
+      "레지스트리",
+      "참조",
+      "문서화"
+    ]
+  },
+  "DEPLOYMENT_GUIDE": {
+    "file": "docs/DEPLOYMENT_GUIDE.md",
+    "title": "배포 가이드",
+    "category": "Operations",
+    "description": "AFO Kingdom 시스템의 프로덕션 배포 가이드 (Docker, Kubernetes)",
+    "tags": [
+      "Deployment",
+      "Docker",
+      "Kubernetes",
+      "Operations"
+    ],
+    "keywords": [
+      "배포",
+      "Docker",
+      "Kubernetes",
+      "운영"
+    ]
+  },
+  "CONFIGURATION_GUIDE": {
+    "file": "docs/CONFIGURATION_GUIDE.md",
+    "title": "설정 가이드",
+    "category": "Configuration",
+    "description": "AFO Kingdom 시스템의 설정 및 환경 변수 가이드",
+    "tags": [
+      "Configuration",
+      "Environment Variables",
+      "Settings"
+    ],
+    "keywords": [
+      "설정",
+      "환경 변수",
+      "구성"
+    ]
+  },
+  "TROUBLESHOOTING": {
+    "file": "docs/TROUBLESHOOTING.md",
+    "title": "문제 해결 가이드",
+    "category": "Operations",
+    "description": "AFO Kingdom 시스템의 일반적인 문제 및 해결 방법",
+    "tags": [
+      "Troubleshooting",
+      "Debugging",
+      "Operations"
+    ],
+    "keywords": [
+      "문제 해결",
+      "디버깅",
+      "트러블슈팅"
+    ]
+  },
+  "DOCUMENTATION_COMPLETE_VERIFICATION": {
+    "file": "docs/DOCUMENTATION_COMPLETE_VERIFICATION.md",
+    "title": "문서화 완료 검증 보고서",
+    "category": "Documentation",
+    "description": "AFO Kingdom 시스템의 문서화 완료 검증 보고서 (7단계 검증)",
+    "tags": [
+      "Documentation",
+      "Verification",
+      "Quality Assurance"
+    ],
+    "keywords": [
+      "문서화",
+      "검증",
+      "품질 보증"
+    ]
+  },
+  "DOCUMENTATION_VERIFICATION_SEQUENTIAL_ANALYSIS": {
+    "file": "docs/DOCUMENTATION_VERIFICATION_SEQUENTIAL_ANALYSIS.md",
+    "title": "문서화 검증 Sequential Thinking 분석 보고서",
+    "category": "Documentation",
+    "description": "Sequential Thinking을 통한 문서화 검증 분석 보고서",
+    "tags": [
+      "Documentation",
+      "Sequential Thinking",
+      "Analysis"
+    ],
+    "keywords": [
+      "문서화",
+      "Sequential Thinking",
+      "분석"
+    ]
+  },
+  "SYSTEM_DOCUMENTATION_AUDIT": {
+    "file": "docs/SYSTEM_DOCUMENTATION_AUDIT.md",
+    "title": "시스템 문서화 감사 보고서",
+    "category": "Documentation",
+    "description": "시스템 전체를 분석하고 코드-문서 간 일치성을 쌍방향으로 검증한 보고서",
+    "tags": [
+      "Documentation",
+      "Audit",
+      "Code-Document Mapping"
+    ],
+    "keywords": [
+      "문서화",
+      "감사",
+      "코드-문서 매핑"
+    ]
+  },
+  "SYSTEM_DOCUMENTATION_COMPLETE": {
+    "file": "docs/SYSTEM_DOCUMENTATION_COMPLETE.md",
+    "title": "시스템 문서화 완료 보고서",
+    "category": "Documentation",
+    "description": "시스템 문서화 완료 보고서 및 최종 검증 결과 요약",
+    "tags": [
+      "Documentation",
+      "Complete",
+      "Summary"
+    ],
+    "keywords": [
+      "문서화",
+      "완료",
+      "요약"
+    ]
+  }
+}

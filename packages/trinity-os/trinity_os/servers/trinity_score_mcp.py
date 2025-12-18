@@ -13,12 +13,12 @@ def _get_gpu_status() -> bool:
     """Lazy check for GPU availability (CuPy)."""
     global _GPU_AVAILABLE, _cp
     if _GPU_AVAILABLE is None:
-        try:
-            import cupy as cp
+try:
+    import cupy as cp
 
             _cp = cp
             _GPU_AVAILABLE = True
-        except ImportError:
+except ImportError:
             _GPU_AVAILABLE = False
     return _GPU_AVAILABLE
 
@@ -27,7 +27,7 @@ def _get_numpy():
     """Lazy import NumPy only when needed."""
     global _np
     if _np is None:
-        import numpy as np
+    import numpy as np
 
         _np = np
     return _np
@@ -134,19 +134,19 @@ if __name__ == "__main__":
         # Lazy import asyncio only when needed (MCP server mode)
         import asyncio
 
-        async def main():
-            # Simple JSON-RPC 2.0 Loop over Stdin/Stdout
-            while True:
-                try:
-                    line = await asyncio.to_thread(sys.stdin.readline)
-                    if not line:
-                        break
-                    json.loads(line)
-                    # Minimal implementation for "tools/list" and "tools/call"
-                    # ... (Full Protocol would go here)
-                    # For verification, we just print the Engine class existence proof
-                    pass
-                except Exception:
-                    break
+async def main():
+    # Simple JSON-RPC 2.0 Loop over Stdin/Stdout
+    while True:
+        try:
+            line = await asyncio.to_thread(sys.stdin.readline)
+            if not line:
+                break
+            json.loads(line)
+            # Minimal implementation for "tools/list" and "tools/call"
+            # ... (Full Protocol would go here)
+            # For verification, we just print the Engine class existence proof
+            pass
+        except Exception:
+            break
 
         asyncio.run(main())
