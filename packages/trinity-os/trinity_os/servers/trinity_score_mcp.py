@@ -15,6 +15,7 @@ def _get_gpu_status() -> bool:
     if _GPU_AVAILABLE is None:
         try:
             import cupy as cp
+
             _cp = cp
             _GPU_AVAILABLE = True
         except ImportError:
@@ -27,6 +28,7 @@ def _get_numpy():
     global _np
     if _np is None:
         import numpy as np
+
         _np = np
     return _np
 
@@ -37,8 +39,10 @@ class TrinityScoreEngineHybrid:
     Automatically switches to CuPy (GPU) for large-scale metrics if available.
     """
 
-    WEIGHTS = {"Truth": 30, "Goodness": 25, "Beauty": 15, "Serenity": 20, "Eternity": 10}
-    TOTAL_WEIGHT = sum(WEIGHTS.values())
+    # SSOT 가중치 (TRINITY_OS_PERSONAS.yaml)
+    # Truth: 0.35, Goodness: 0.35, Beauty: 0.20, Serenity: 0.08, Eternity: 0.02
+    WEIGHTS = {"Truth": 0.35, "Goodness": 0.35, "Beauty": 0.20, "Serenity": 0.08, "Eternity": 0.02}
+    TOTAL_WEIGHT = sum(WEIGHTS.values())  # Should be 1.0
     THRESHOLD = 100_000
 
     @staticmethod
@@ -46,7 +50,7 @@ class TrinityScoreEngineHybrid:
         """Lazy-loaded hybrid weighted sum with GPU acceleration if available."""
         n = len(weights)
         gpu_available = _get_gpu_status()
-        
+
         if gpu_available and n > TrinityScoreEngineHybrid.THRESHOLD:
             # CuPy GPU Acceleration (only for large arrays)
             w_gpu = _cp.array(weights)
@@ -74,13 +78,15 @@ class TrinityScoreEngineHybrid:
             "Eternity": min(100, metrics.get("eternity_base", 100)),
         }
 
-        # Calculate Weighted Sum using Hybrid Engine
+        # Calculate Weighted Sum using Hybrid Engine (SSOT 가중치)
+        # Convert scores to 0.0~1.0 scale for SSOT weights
         keys = ["Truth", "Goodness", "Beauty", "Serenity", "Eternity"]
         w_list = [float(cls.WEIGHTS[k]) for k in keys]
-        s_list = [float(scores[k]) for k in keys]
+        s_list = [float(scores[k]) / 100.0 for k in keys]  # Convert to 0.0~1.0 scale
         weighted_sum = cls._hybrid_weighted_sum(w_list, s_list)
 
-        final_score = round(weighted_sum / cls.TOTAL_WEIGHT, 2)
+        # SSOT weights already sum to 1.0, so no division needed
+        final_score = round(weighted_sum * 100, 2)  # Convert back to 0~100 scale
 
         # [NEW] Audit Gate Logic (Auto-Block)
         # Truth Requirement: < 70 is blocked.
@@ -127,7 +133,7 @@ if __name__ == "__main__":
     else:
         # Lazy import asyncio only when needed (MCP server mode)
         import asyncio
-        
+
         async def main():
             # Simple JSON-RPC 2.0 Loop over Stdin/Stdout
             while True:
@@ -142,5 +148,5 @@ if __name__ == "__main__":
                     pass
                 except Exception:
                     break
-        
+
         asyncio.run(main())

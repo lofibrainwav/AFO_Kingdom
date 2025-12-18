@@ -12,6 +12,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 try:
     from afo_skills_mcp import AfoSkillsMCP
     from trinity_score_mcp import TrinityScoreEngineHybrid
+    from sequential_thinking_mcp import SequentialThinkingMCP
 
     MODULES_LOADED = True
 except ImportError as e:
@@ -208,6 +209,22 @@ class AfoUltimateMCPServer:
                                 },
                             }
                         )
+                        tools.append(
+                            {
+                                "name": "sequential_thinking",
+                                "description": "Execute sequential thinking step (Step-by-Step Reasoning).",
+                                "inputSchema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "thought": {"type": "string"},
+                                        "thought_number": {"type": "integer"},
+                                        "total_thoughts": {"type": "integer"},
+                                        "next_thought_needed": {"type": "boolean"},
+                                    },
+                                    "required": ["thought", "thought_number", "total_thoughts", "next_thought_needed"],
+                                },
+                            }
+                        )
 
                     result = {"tools": tools}
 
@@ -284,12 +301,26 @@ class AfoUltimateMCPServer:
                         elif tool_name == "cupy_weighted_sum":
                             res = AfoSkillsMCP.cupy_weighted_sum(args.get("data", []), args.get("weights", []))
                             content = str(res)
+
+                        elif tool_name == "sequential_thinking":
+                            res = SequentialThinkingMCP.process_thought(
+                                args.get("thought", ""),
+                                args.get("thought_number", 1),
+                                args.get("total_thoughts", 1),
+                                args.get("next_thought_needed", False)
+                            )
+                            content = json.dumps(res, indent=2, ensure_ascii=False)
+                            # Extract Trinity Metadata
+                            if "metadata" in res:
+                                trinity_metadata = {
+                                    "truth_impact": res["metadata"].get("truth_impact", 0),
+                                    "serenity_impact": res["metadata"].get("serenity_impact", 0)
+                                }
+
                         else:
                             content = f"Unknown tool: {tool_name}"
                     elif tool_name not in ["shell_execute", "read_file", "write_file", "kingdom_health"]:
                         content = f"Tool not available (Modules failed to load): {tool_name}"
-
-
 
                     # Construct Response
                     result_body = [{"type": "text", "text": str(content)}]
