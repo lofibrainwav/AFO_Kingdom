@@ -11,9 +11,9 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 # Import Sibling Modules (The Fragments)
 try:
     from afo_skills_mcp import AfoSkillsMCP
+    from context7_mcp import Context7MCP
     from sequential_thinking_mcp import SequentialThinkingMCP
     from trinity_score_mcp import TrinityScoreEngineHybrid
-    from context7_mcp import Context7MCP
 
     MODULES_LOADED = True
 except ImportError as e:
@@ -333,15 +333,10 @@ class AfoUltimateMCPServer:
                                 }
 
                         elif tool_name == "retrieve_context":
-                            res = Context7MCP.retrieve_context(
-                                args.get("query", ""),
-                                args.get("domain", "general")
-                            )
+                            res = Context7MCP.retrieve_context(args.get("query", ""), args.get("domain", "general"))
                             content = json.dumps(res, indent=2, ensure_ascii=False)
                             if "metadata" in res:
-                                trinity_metadata = {
-                                    "truth_impact": res["metadata"].get("truth_impact", 0)
-                                }
+                                trinity_metadata = {"truth_impact": res["metadata"].get("truth_impact", 0)}
 
                         else:
                             content = f"Unknown tool: {tool_name}"
