@@ -11,19 +11,22 @@ from pydantic import BaseModel, Field
 
 # Database and auth utilities import
 try:
-    from AFO.services.database import get_db_connection
     from AFO.api.utils.auth import hash_password, verify_password
+    from AFO.services.database import get_db_connection
+
     DB_AVAILABLE = True
     AUTH_UTILS_AVAILABLE = True
 except ImportError:
     try:
         import sys
         from pathlib import Path
+
         _CORE_ROOT = Path(__file__).resolve().parent.parent.parent
         if str(_CORE_ROOT) not in sys.path:
             sys.path.insert(0, str(_CORE_ROOT))
-        from services.database import get_db_connection
         from api.utils.auth import hash_password, verify_password
+        from services.database import get_db_connection
+
         DB_AVAILABLE = True
         AUTH_UTILS_AVAILABLE = True
     except ImportError:
@@ -38,7 +41,7 @@ router = APIRouter(prefix="/api/users", tags=["Users"])
 async def users_health() -> dict[str, Any]:
     """
     사용자 관리 시스템 건강 상태 체크
-    
+
     Returns:
         사용자 관리 시스템 상태
     """
@@ -58,6 +61,7 @@ async def users_health() -> dict[str, Any]:
 
 class UserCreateRequest(BaseModel):
     """사용자 생성 요청 모델"""
+
     username: str = Field(..., min_length=1, max_length=50, description="사용자명")
     email: str = Field(..., description="이메일 주소")
     password: str = Field(..., min_length=8, description="비밀번호 (최소 8자)")
@@ -65,6 +69,7 @@ class UserCreateRequest(BaseModel):
 
 class UserResponse(BaseModel):
     """사용자 응답 모델"""
+
     id: str = Field(..., description="사용자 ID")
     username: str = Field(..., description="사용자명")
     email: str = Field(..., description="이메일 주소")
@@ -73,6 +78,7 @@ class UserResponse(BaseModel):
 
 class UserUpdateRequest(BaseModel):
     """사용자 업데이트 요청 모델"""
+
     email: str | None = Field(default=None, description="이메일 주소")
     password: str | None = Field(default=None, min_length=8, description="비밀번호 (최소 8자)")
 
@@ -81,29 +87,26 @@ class UserUpdateRequest(BaseModel):
 async def create_user(request: UserCreateRequest) -> dict[str, Any]:
     """
     새 사용자 생성
-    
+
     Args:
         request: 사용자 생성 요청
-        
+
     Returns:
         생성된 사용자 정보
-        
+
     Raises:
         HTTPException: 사용자명 중복 또는 유효성 검증 실패 시
     """
     # 간단한 검증
     if not request.username or not request.email:
-        raise HTTPException(
-            status_code=400,
-            detail="사용자명과 이메일은 필수입니다."
-        )
-    
+        raise HTTPException(status_code=400, detail="사용자명과 이메일은 필수입니다.")
+
     # 비밀번호 해시 처리
     if AUTH_UTILS_AVAILABLE:
         hashed_password = hash_password(request.password)
     else:
         hashed_password = f"hashed_{hash(request.password)}"
-    
+
     # DB에 저장 (가능한 경우)
     if DB_AVAILABLE:
         try:
@@ -114,13 +117,11 @@ async def create_user(request: UserCreateRequest) -> dict[str, Any]:
                     "SELECT id FROM users WHERE username = $1", request.username
                 )
                 if existing:
-                    raise HTTPException(
-                        status_code=409,
-                        detail="이미 존재하는 사용자명입니다."
-                    )
-                
+                    raise HTTPException(status_code=409, detail="이미 존재하는 사용자명입니다.")
+
                 # 사용자 생성
                 from datetime import datetime
+
                 user_id = await conn.fetchval(
                     """
                     INSERT INTO users (username, email, hashed_password, created_at)
@@ -132,15 +133,15 @@ async def create_user(request: UserCreateRequest) -> dict[str, Any]:
                     hashed_password,
                     datetime.utcnow(),
                 )
-                
+
                 # 생성된 사용자 정보 조회
                 user = await conn.fetchrow(
                     "SELECT id, username, email, created_at FROM users WHERE id = $1",
                     user_id,
                 )
-                
+
                 await conn.close()
-                
+
                 return {
                     "id": str(user["id"]),
                     "username": user["username"],
@@ -157,11 +158,12 @@ async def create_user(request: UserCreateRequest) -> dict[str, Any]:
         except Exception:
             # DB 연결 실패 등: fallback 진행
             pass
-    
+
     # Fallback: DB 없이 임시 사용자 ID 생성
     user_id = f"user_{hash(request.username)}"
-    
+
     from datetime import datetime
+
     return {
         "id": user_id,
         "username": request.username,
@@ -174,13 +176,13 @@ async def create_user(request: UserCreateRequest) -> dict[str, Any]:
 async def get_user(user_id: str) -> dict[str, Any]:
     """
     사용자 정보 조회
-    
+
     Args:
         user_id: 사용자 ID
-        
+
     Returns:
         사용자 정보
-        
+
     Raises:
         HTTPException: 사용자를 찾을 수 없을 때
     """
@@ -193,15 +195,12 @@ async def get_user(user_id: str) -> dict[str, Any]:
                     "SELECT id, username, email, created_at FROM users WHERE id = $1",
                     int(user_id) if user_id.isdigit() else user_id,
                 )
-                
+
                 await conn.close()
-                
+
                 if not user:
-                    raise HTTPException(
-                        status_code=404,
-                        detail="사용자를 찾을 수 없습니다."
-                    )
-                
+                    raise HTTPException(status_code=404, detail="사용자를 찾을 수 없습니다.")
+
                 return {
                     "id": str(user["id"]),
                     "username": user["username"],
@@ -222,14 +221,11 @@ async def get_user(user_id: str) -> dict[str, Any]:
         except Exception:
             # DB 연결 실패 등: fallback 진행
             pass
-    
+
     # Fallback: 기본 응답
     if not user_id or not user_id.startswith("user_"):
-        raise HTTPException(
-            status_code=404,
-            detail="사용자를 찾을 수 없습니다."
-        )
-    
+        raise HTTPException(status_code=404, detail="사용자를 찾을 수 없습니다.")
+
     return {
         "id": user_id,
         "username": "example_user",
@@ -242,26 +238,23 @@ async def get_user(user_id: str) -> dict[str, Any]:
 async def update_user(user_id: str, request: UserUpdateRequest) -> dict[str, Any]:
     """
     사용자 정보 업데이트
-    
+
     Args:
         user_id: 사용자 ID
         request: 업데이트 요청
-        
+
     Returns:
         업데이트된 사용자 정보
-        
+
     Raises:
         HTTPException: 사용자를 찾을 수 없을 때
     """
     # TODO: 실제 사용자 업데이트 로직 구현
     # 현재는 기본 구현 (Phase 3 이후 확장 예정)
-    
+
     if not user_id or not user_id.startswith("user_"):
-        raise HTTPException(
-            status_code=404,
-            detail="사용자를 찾을 수 없습니다."
-        )
-    
+        raise HTTPException(status_code=404, detail="사용자를 찾을 수 없습니다.")
+
     return {
         "id": user_id,
         "username": "example_user",
@@ -274,27 +267,23 @@ async def update_user(user_id: str, request: UserUpdateRequest) -> dict[str, Any
 async def delete_user(user_id: str) -> dict[str, Any]:
     """
     사용자 삭제
-    
+
     Args:
         user_id: 사용자 ID
-        
+
     Returns:
         삭제 결과
-        
+
     Raises:
         HTTPException: 사용자를 찾을 수 없을 때
     """
     # TODO: 실제 사용자 삭제 로직 구현
     # 현재는 기본 구현 (Phase 3 이후 확장 예정)
-    
+
     if not user_id or not user_id.startswith("user_"):
-        raise HTTPException(
-            status_code=404,
-            detail="사용자를 찾을 수 없습니다."
-        )
-    
+        raise HTTPException(status_code=404, detail="사용자를 찾을 수 없습니다.")
+
     return {
         "message": "사용자가 삭제되었습니다.",
         "user_id": user_id,
     }
-
