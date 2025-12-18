@@ -45,6 +45,7 @@ exclude = [
     ".venv",
     "__pycache__",
     "node_modules",
+        "packages",
 ]
 
 [tool.ruff.lint]
