@@ -1,0 +1,75 @@
+# AFO Kingdom Alertmanager Rules
+# 眞善美孝永 - Perpetual Governance Alerts
+
+groups:
+  - name: trinity_governance
+    rules:
+      # 善 (Goodness) - Trinity Score Critical
+      - alert: TrinityScoreCritical
+        expr: trinity_score < 80
+        for: 1m
+        labels:
+          severity: critical
+          pillar: "善"
+        annotations:
+          summary: "Trinity Score Critical ({{ $value }}%)"
+          description: "Trinity Score has dropped below 80%. Immediate review required."
+          discord_message: "🛑 **CRITICAL**: Trinity Score {{ $value }}% - 善 (Goodness) Violation"
+
+      # 善 (Goodness) - Risk Score Alert
+      - alert: RiskScoreHigh
+        expr: risk_score > 20
+        for: 30s
+        labels:
+          severity: critical
+          pillar: "善"
+        annotations:
+          summary: "Risk Score High ({{ $value }}%)"
+          description: "Risk Score exceeds 20%. Security review required."
+          discord_message: "🚨 **RISK ALERT**: Risk Score {{ $value }}% - Immediate action required"
+
+      # 孝 (Serenity) - Latency Warning
+      - alert: HighLatency
+        expr: http_request_duration_seconds{quantile="0.95"} > 2
+        for: 2m
+        labels:
+          severity: warning
+          pillar: "孝"
+        annotations:
+          summary: "High Latency Detected ({{ $value }}s)"
+          description: "95th percentile latency exceeds 2 seconds. Performance degradation."
+          discord_message: "⚠️ **WARNING**: High latency {{ $value }}s - 孝 (Serenity) affected"
+
+      # 孝 (Serenity) - Cache Hit Rate
+      - alert: LowCacheHitRate
+        expr: cache_hit_rate < 0.5
+        for: 5m
+        labels:
+          severity: warning
+          pillar: "孝"
+        annotations:
+          summary: "Low Cache Hit Rate ({{ $value }})"
+          description: "Cache hit rate below 50%. Consider cache optimization."
+
+      # 永 (Eternity) - Service Down
+      - alert: ServiceDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+          pillar: "永"
+        annotations:
+          summary: "Service {{ $labels.job }} is Down"
+          description: "Service has been down for more than 1 minute."
+          discord_message: "💀 **SERVICE DOWN**: {{ $labels.job }} - 永 (Eternity) compromised"
+
+      # 眞 (Truth) - Test Failure
+      - alert: TestFailure
+        expr: test_success_rate < 0.95
+        for: 5m
+        labels:
+          severity: warning
+          pillar: "眞"
+        annotations:
+          summary: "Test Success Rate Low ({{ $value }})"
+          description: "Test success rate below 95%. Code quality may be affected."
