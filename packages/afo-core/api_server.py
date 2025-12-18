@@ -794,10 +794,10 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     # AntiGravity Phase 1: Initialization
     # ============================================================================
     from config.antigravity import antigravity
-    
+
     if antigravity.AUTO_DEPLOY:
         print(f"🚀 [AntiGravity] 활성화: {antigravity.ENVIRONMENT} 환경 자동 배포 준비 완료 (孝)")
-    
+
     if antigravity.DRY_RUN_DEFAULT:
         print("🛡️ [AntiGravity] DRY_RUN 모드 활성화 - 모든 위험 동작 시뮬레이션 (善)")
     # ============================================================================
@@ -1256,6 +1256,7 @@ else:
 # ============================================================================
 try:
     from api.routes.julie import router as julie_router
+
     app.include_router(julie_router)
     print("✅ Julie CPA AutoMate Engine activated (의(義))")
 except Exception as e:
@@ -1521,8 +1522,11 @@ try:
 except ImportError as e:
     try:
         from api.routers.chancellor_router import router as chancellor_router
+
         app.include_router(chancellor_router)
-        print("✅ 승상 API 라우터 등록 완료 (LangGraph Optimized: Chancellor + 3 Strategists - fallback)")
+        print(
+            "✅ 승상 API 라우터 등록 완료 (LangGraph Optimized: Chancellor + 3 Strategists - fallback)"
+        )
     except Exception as e2:
         print(f"⚠️  승상 라우터 등록 건너뜀 (로드 실패: {e}, {e2})")
 except Exception as e:
@@ -1582,6 +1586,7 @@ try:
 except ImportError as e:
     try:
         from api.routers.personas import router as personas_router
+
         app.include_router(personas_router)
         print("✅ Personas API 라우터 등록 완료 (Phase 2: Family Hub OS - fallback)")
     except Exception as e2:
@@ -1598,6 +1603,7 @@ try:
 except ImportError as e:
     try:
         from api.routers.family import router as family_router
+
         app.include_router(family_router)
         print("✅ Family Hub API 라우터 등록 완료 (Phase 2: Family Hub OS - fallback)")
     except Exception as e2:
@@ -2050,11 +2056,15 @@ async def get_antigravity_status():
     형님의 '신경 쓰임' 지수를 수치화하여 보고합니다.
     """
     from config.friction_calibrator import friction_calibrator
+
     metrics = friction_calibrator.calculate_serenity()
     return metrics
+
+
 @app.on_event("startup")
 async def debug_routes():
     pass
+
 
 # ============================================================================
 

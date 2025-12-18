@@ -13,6 +13,7 @@ from pydantic import BaseModel, Field
 
 class PersonaType(str, Enum):
     """페르소나 타입 (眞善美孝永)"""
+
     COMMANDER = "commander"  # 사령관 (전략·통제)
     FAMILY_HEAD = "family_head"  # 가장 (인·따뜻함)
     CREATOR = "creator"  # 창작자 (美·몰입)
@@ -25,10 +26,11 @@ class PersonaType(str, Enum):
 class Persona(BaseModel):
     """
     형님의 각 역할을 디지털로 구현한 페르소나 모델 (眞善美孝永)
-    
+
     PDF 페이지 4: "TRINITY-OS의 페르소나(Personas) 시스템"
     PDF 페이지 3: 로그 브릿지 연계
     """
+
     id: str = Field(..., description="페르소나 ID")
     type: PersonaType = Field(..., description="페르소나 타입")
     name: str = Field(..., description="페르소나 이름 (예: '불굴의 사령관', '따뜻한 가장')")
@@ -40,19 +42,18 @@ class Persona(BaseModel):
             "serenity": 100.0,
             "eternity": 100.0,
         },
-        description="眞善美孝永 점수 (PDF 페이지 3: 5대 기둥 적용)"
+        description="眞善美孝永 점수 (PDF 페이지 3: 5대 기둥 적용)",
     )
     active: bool = Field(default=False, description="활성 상태")
     last_switched: datetime | None = Field(default=None, description="마지막 전환 시간")
     context_memory: list[dict[str, Any]] = Field(
-        default_factory=list,
-        description="최근 10개 대화 (로그 브릿지 연계)"
+        default_factory=list, description="최근 10개 대화 (로그 브릿지 연계)"
     )
-    
+
     def switch_to(self) -> None:
         """
         페르소나 전환 - TRINITY-OS와 실시간 동기화
-        
+
         PDF 페이지 3: 로그 브릿지
         """
         self.active = True
@@ -60,13 +61,15 @@ class Persona(BaseModel):
         # 메모리 제한 (孝: 인지 마찰 제거)
         self.context_memory = self.context_memory[-10:]
         print(f"[TRINITY-OS] 페르소나 전환 → {self.name} (활성화)")
-    
+
     def add_context(self, context: dict[str, Any]) -> None:
         """맥락 정보 추가 (로그 브릿지용)"""
-        self.context_memory.append({
-            **context,
-            "timestamp": datetime.utcnow().isoformat(),
-        })
+        self.context_memory.append(
+            {
+                **context,
+                "timestamp": datetime.utcnow().isoformat(),
+            }
+        )
         # 최대 10개 유지
         if len(self.context_memory) > 10:
             self.context_memory = self.context_memory[-10:]
@@ -154,4 +157,3 @@ juyu = Persona(
 # 현재 활성화된 페르소나 (기본: 사령관)
 current_persona: Persona = commander
 current_persona.switch_to()
-

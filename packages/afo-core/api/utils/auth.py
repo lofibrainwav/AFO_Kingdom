@@ -13,6 +13,7 @@ from typing import Any
 # JWT 라이브러리 (PyJWT 사용, 없으면 기본 구현)
 try:
     import jwt
+
     JWT_AVAILABLE = True
 except ImportError:
     JWT_AVAILABLE = False
@@ -20,6 +21,7 @@ except ImportError:
 # 비밀번호 해시 라이브러리 (passlib 사용, 없으면 기본 구현)
 try:
     from passlib.context import CryptContext
+
     PASSWORD_HASH_AVAILABLE = True
 except ImportError:
     PASSWORD_HASH_AVAILABLE = False
@@ -41,10 +43,10 @@ else:
 def hash_password(password: str) -> str:
     """
     비밀번호 해시 생성
-    
+
     Args:
         password: 평문 비밀번호
-        
+
     Returns:
         해시된 비밀번호
     """
@@ -59,11 +61,11 @@ def hash_password(password: str) -> str:
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """
     비밀번호 검증
-    
+
     Args:
         plain_password: 평문 비밀번호
         hashed_password: 해시된 비밀번호
-        
+
     Returns:
         검증 결과
     """
@@ -82,11 +84,11 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 def create_access_token(data: dict[str, Any], expires_delta: timedelta | None = None) -> str:
     """
     JWT 액세스 토큰 생성
-    
+
     Args:
         data: 토큰에 포함할 데이터 (예: {"sub": username})
         expires_delta: 만료 시간 (None이면 기본값 사용)
-        
+
     Returns:
         JWT 토큰 문자열
     """
@@ -96,9 +98,9 @@ def create_access_token(data: dict[str, Any], expires_delta: timedelta | None = 
             expire = datetime.utcnow() + expires_delta
         else:
             expire = datetime.utcnow() + timedelta(hours=JWT_EXPIRATION_HOURS)
-        
+
         to_encode.update({"exp": expire, "iat": datetime.utcnow()})
-        
+
         encoded_jwt = jwt.encode(to_encode, JWT_SECRET_KEY, algorithm=JWT_ALGORITHM)
         return encoded_jwt
     else:
@@ -113,13 +115,13 @@ def create_access_token(data: dict[str, Any], expires_delta: timedelta | None = 
 def verify_token(token: str) -> dict[str, Any] | None:
     """
     JWT 토큰 검증 (眞: Truth - 정확한 예외 처리)
-    
+
     Args:
         token: JWT 토큰 문자열
-        
+
     Returns:
         토큰 페이로드 (검증 성공 시) 또는 None (실패 시)
-        
+
     Raises:
         None (예외는 내부에서 처리하여 None 반환)
     """
@@ -133,12 +135,14 @@ def verify_token(token: str) -> dict[str, Any] | None:
         except jwt.InvalidTokenError as e:
             # 善: 잘못된 토큰 에러 처리 (디버깅용 로깅)
             import logging
+
             logger = logging.getLogger(__name__)
             logger.warning(f"Invalid token error: {e}")
             return None
         except Exception as e:
             # 善: 예상치 못한 에러 처리 (디버깅용 로깅)
             import logging
+
             logger = logging.getLogger(__name__)
             logger.error(f"Token verification error: {e}")
             return None
@@ -147,25 +151,24 @@ def verify_token(token: str) -> dict[str, Any] | None:
         try:
             if not token.startswith("fallback_token_"):
                 return None
-            
+
             parts = token.replace("fallback_token_", "").split("_")
             if len(parts) < 2:
                 return None
-            
+
             username = parts[0]
             timestamp = int(parts[1])
-            
+
             # 토큰 만료 시간 체크 (24시간)
             if time.time() - timestamp > JWT_EXPIRATION_HOURS * 3600:
                 return None
-            
+
             # 토큰 해시 검증
             token_data = f"{username}:{timestamp}:{JWT_SECRET_KEY}"
             expected_hash = hashlib.sha256(token_data.encode()).hexdigest()[:16]
             if parts[2] != expected_hash:
                 return None
-            
+
             return {"sub": username, "exp": timestamp + JWT_EXPIRATION_HOURS * 3600}
         except Exception:
             return None
-

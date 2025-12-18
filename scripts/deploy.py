@@ -1,7 +1,6 @@
 # scripts/deploy.py (Phase 2 - 로컬/CI 통합 실행)
 # PDF 페이지 1: AntiGravity 배포 자동화
 import sys
-import os
 from pathlib import Path
 
 # Add package root to path to verify imports
@@ -15,15 +14,17 @@ except ImportError:
     print("⚠️ AntiGravity 모듈을 찾을 수 없습니다. (PYTHONPATH 확인 필요)")
     sys.exit(1)
 
+
 def deploy():
     print(f"🚀 [AntiGravity] 배포 시퀀스 시작: {antigravity.ENVIRONMENT}")
-    
+
     if antigravity.DRY_RUN_DEFAULT:
-        print(f"🛡️ [AntiGravity] {antigravity.ENVIRONMENT} 배포 시뮬레이션 완료 - 실제 실행 없음 (善: 안전 위주)")
+        print(
+            f"🛡️ [AntiGravity] {antigravity.ENVIRONMENT} 배포 시뮬레이션 완료 - 실제 실행 없음 (善: 안전 위주)"
+        )
         print("   -> Helm upgrade command skipped.")
         return
 
-    import subprocess
     try:
         # Actual command would go here
         # subprocess.run([
@@ -34,6 +35,7 @@ def deploy():
     except Exception as e:
         print(f"❌ [AntiGravity] 배포 실패: {e}")
         sys.exit(1)
+
 
 if __name__ == "__main__":
     deploy()

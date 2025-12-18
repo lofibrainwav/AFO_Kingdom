@@ -1,36 +1,104 @@
 {
-  "timestamp": 1766040296.550559,
+  "timestamp": 1766040352.224043,
   "summary": {
     "total_tested": 11,
-    "total_passed": 7,
-    "pass_rate": 63.63636363636363
+    "total_passed": 11,
+    "pass_rate": 100.0
   },
   "results": [
     {
       "server": "AFO Ultimate MCP",
       "status": "success",
       "tools_tested": 4,
-      "tools_passed": 0,
+      "tools_passed": 4,
       "tool_results": [
         {
           "tool": "shell_execute",
-          "status": "failed",
-          "trinity_score": null
+          "status": "passed",
+          "trinity_score": {
+            "truth": 0.895,
+            "goodness": 0.86,
+            "beauty": 0.705,
+            "filial_serenity": 0.93,
+            "eternity": 0.5,
+            "serenity_core": 0.8156,
+            "trinity_score": 0.8397,
+            "balance_delta": 0.43,
+            "balance_status": "warning",
+            "weights": {
+              "truth": 0.35,
+              "goodness": 0.35,
+              "beauty": 0.2,
+              "filial_serenity": 0.08,
+              "eternity": 0.02
+            }
+          }
         },
         {
           "tool": "read_file",
-          "status": "failed",
-          "trinity_score": null
+          "status": "passed",
+          "trinity_score": {
+            "truth": 0.895,
+            "goodness": 0.86,
+            "beauty": 0.765,
+            "filial_serenity": 0.93,
+            "eternity": 0.8,
+            "serenity_core": 0.8382,
+            "trinity_score": 0.8577,
+            "balance_delta": 0.165,
+            "balance_status": "balanced",
+            "weights": {
+              "truth": 0.35,
+              "goodness": 0.35,
+              "beauty": 0.2,
+              "filial_serenity": 0.08,
+              "eternity": 0.02
+            }
+          }
         },
         {
           "tool": "write_file",
-          "status": "failed",
-          "trinity_score": null
+          "status": "passed",
+          "trinity_score": {
+            "truth": 0.895,
+            "goodness": 0.86,
+            "beauty": 0.705,
+            "filial_serenity": 0.93,
+            "eternity": 1.0,
+            "serenity_core": 0.8156,
+            "trinity_score": 0.8497,
+            "balance_delta": 0.295,
+            "balance_status": "balanced",
+            "weights": {
+              "truth": 0.35,
+              "goodness": 0.35,
+              "beauty": 0.2,
+              "filial_serenity": 0.08,
+              "eternity": 0.02
+            }
+          }
         },
         {
           "tool": "kingdom_health",
-          "status": "failed",
-          "trinity_score": null
+          "status": "passed",
+          "trinity_score": {
+            "truth": 0.895,
+            "goodness": 0.86,
+            "beauty": 0.705,
+            "filial_serenity": 0.93,
+            "eternity": 0.5,
+            "serenity_core": 0.8156,
+            "trinity_score": 0.8397,
+            "balance_delta": 0.43,
+            "balance_status": "warning",
+            "weights": {
+              "truth": 0.35,
+              "goodness": 0.35,
+              "beauty": 0.2,
+              "filial_serenity": 0.08,
+              "eternity": 0.02
+            }
+          }
         }
       ]
     },

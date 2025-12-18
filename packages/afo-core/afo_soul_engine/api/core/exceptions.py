@@ -25,7 +25,9 @@ def afo_exception_handler(_request: Request, exc: AFOException) -> Response:
 def http_exception_handler(_request: Request, exc: Exception) -> Response:
     status_code = getattr(exc, "status_code", 500)
     detail = getattr(exc, "detail", str(exc))
-    return JSONResponse(status_code=status_code, content={"error": "HTTPException", "detail": detail})
+    return JSONResponse(
+        status_code=status_code, content={"error": "HTTPException", "detail": detail}
+    )
 
 
 def validation_exception_handler(_request: Request, exc: Exception) -> Response:
@@ -33,10 +35,15 @@ def validation_exception_handler(_request: Request, exc: Exception) -> Response:
     errors = getattr(exc, "errors", None)
     return JSONResponse(
         status_code=status_code,
-        content={"error": "ValidationError", "detail": getattr(exc, "detail", str(exc)), "errors": errors},
+        content={
+            "error": "ValidationError",
+            "detail": getattr(exc, "detail", str(exc)),
+            "errors": errors,
+        },
     )
 
 
 def general_exception_handler(_request: Request, exc: Exception) -> Response:
-    return JSONResponse(status_code=500, content={"error": "UnhandledException", "detail": str(exc)})
-
+    return JSONResponse(
+        status_code=500, content={"error": "UnhandledException", "detail": str(exc)}
+    )

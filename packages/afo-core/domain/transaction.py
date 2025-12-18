@@ -1,14 +1,15 @@
 # packages/afo-core/domain/transaction.py
-from pydantic import BaseModel
-from typing import Optional
 from datetime import datetime
+
+from pydantic import BaseModel
+
 
 class Transaction(BaseModel):
     id: str
     amount: float
     description: str
     date: datetime
-    category: Optional[str] = None
+    category: str | None = None
     source: str = "manual"
 
     @classmethod
@@ -19,7 +20,7 @@ class Transaction(BaseModel):
             description="점심 식사 (Mock)",
             date=datetime.now(),
             category="식비",
-            source="dry_run"
+            source="dry_run",
         )
 
     @classmethod

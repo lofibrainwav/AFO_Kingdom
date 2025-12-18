@@ -17,13 +17,13 @@ import json
 import re
 from typing import Any
 
-from AFO.domain.metrics.trinity import TrinityInputs, TrinityMetrics, calculate_trinity
+from AFO.domain.metrics.trinity import calculate_trinity
 
 
 class MCPToolTrinityEvaluator:
     """
     MCP Tool 실행 결과를 분석하여 동적 Trinity Score를 계산하는 평가기
-    
+
     실행 결과의 특성을 분석하여 眞善美孝永 5기둥 점수를 동적으로 계산합니다.
     """
 
@@ -37,14 +37,14 @@ class MCPToolTrinityEvaluator:
     ) -> dict[str, Any]:
         """
         MCP Tool 실행 결과를 분석하여 Trinity Score 계산
-        
+
         Args:
             tool_name: 실행된 MCP Tool 이름
             execution_result: 실행 결과 텍스트
             execution_time_ms: 실행 시간 (밀리초)
             is_error: 에러 발생 여부
             base_philosophy_scores: 기본 철학 점수 (정적 점수, 선택적)
-            
+
         Returns:
             Trinity Score 계산 결과 (眞善美孝永 5기둥 + 총점)
         """
@@ -61,9 +61,7 @@ class MCPToolTrinityEvaluator:
             serenity_base = 0.90
 
         # 眞 (Truth): 실행 성공 여부, 검증 가능한 결과
-        truth_score = MCPToolTrinityEvaluator._evaluate_truth(
-            execution_result, is_error, tool_name
-        )
+        truth_score = MCPToolTrinityEvaluator._evaluate_truth(execution_result, is_error, tool_name)
         truth_final = min(1.0, truth_base * 0.7 + truth_score * 0.3)
 
         # 善 (Goodness): 안전성, 리스크 없음
@@ -73,9 +71,7 @@ class MCPToolTrinityEvaluator:
         goodness_final = min(1.0, goodness_base * 0.7 + goodness_score * 0.3)
 
         # 美 (Beauty): 결과의 구조화, 명확성
-        beauty_score = MCPToolTrinityEvaluator._evaluate_beauty(
-            execution_result, tool_name
-        )
+        beauty_score = MCPToolTrinityEvaluator._evaluate_beauty(execution_result, tool_name)
         beauty_final = min(1.0, beauty_base * 0.7 + beauty_score * 0.3)
 
         # 孝 (Serenity): 마찰 없음, 자동화 가능
@@ -85,9 +81,7 @@ class MCPToolTrinityEvaluator:
         serenity_final = min(1.0, serenity_base * 0.7 + serenity_score * 0.3)
 
         # 永 (Eternity): 영속성, 재사용 가능성
-        eternity_score = MCPToolTrinityEvaluator._evaluate_eternity(
-            execution_result, tool_name
-        )
+        eternity_score = MCPToolTrinityEvaluator._evaluate_eternity(execution_result, tool_name)
         eternity_final = min(1.0, eternity_score)
 
         # Trinity Metrics 계산 (SSOT 가중치 적용)
@@ -121,7 +115,7 @@ class MCPToolTrinityEvaluator:
     def _evaluate_truth(result: str, is_error: bool, tool_name: str) -> float:
         """
         眞 (Truth) 평가: 실행 성공, 검증 가능한 결과
-        
+
         - 성공: 1.0
         - 에러: 0.3
         - 검증 가능한 구조 (JSON, 숫자 등): +0.2
@@ -145,7 +139,7 @@ class MCPToolTrinityEvaluator:
     def _evaluate_goodness(result: str, is_error: bool, tool_name: str) -> float:
         """
         善 (Goodness) 평가: 안전성, 리스크 없음
-        
+
         - 에러 없음: 1.0
         - 위험한 명령어 (rm, delete 등): -0.5
         - 예외 처리 메시지: +0.1
@@ -178,7 +172,7 @@ class MCPToolTrinityEvaluator:
     def _evaluate_beauty(result: str, tool_name: str) -> float:
         """
         美 (Beauty) 평가: 결과의 구조화, 명확성
-        
+
         - JSON 구조: 1.0
         - 구조화된 텍스트: 0.8
         - 단순 텍스트: 0.6
@@ -210,7 +204,7 @@ class MCPToolTrinityEvaluator:
     ) -> float:
         """
         孝 (Serenity) 평가: 마찰 없음, 자동화 가능
-        
+
         - 빠른 실행 (< 1초): 1.0
         - 중간 실행 (1-5초): 0.8
         - 느린 실행 (> 5초): 0.6
@@ -239,7 +233,7 @@ class MCPToolTrinityEvaluator:
     def _evaluate_eternity(result: str, tool_name: str) -> float:
         """
         永 (Eternity) 평가: 영속성, 재사용 가능성
-        
+
         - 파일 쓰기 작업: 1.0
         - 읽기 작업: 0.8
         - 쿼리/조회: 0.7
@@ -258,9 +252,9 @@ class MCPToolTrinityEvaluator:
     @staticmethod
     def _is_structured_result(result: str) -> bool:
         """결과가 구조화되어 있는지 확인"""
-        return MCPToolTrinityEvaluator._is_json(result) or MCPToolTrinityEvaluator._is_structured_text(
+        return MCPToolTrinityEvaluator._is_json(
             result
-        )
+        ) or MCPToolTrinityEvaluator._is_structured_text(result)
 
     @staticmethod
     def _is_json(result: str) -> bool:
@@ -294,4 +288,3 @@ class MCPToolTrinityEvaluator:
 
 # 싱글톤 인스턴스
 mcp_tool_trinity_evaluator = MCPToolTrinityEvaluator()
-

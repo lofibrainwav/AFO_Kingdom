@@ -154,6 +154,9 @@ async def create_user(request: UserCreateRequest) -> dict[str, Any]:
                 await conn.close()
                 # 테이블이 없을 수 있으므로 fallback 사용
                 pass
+        except Exception:
+            # DB 연결 실패 등: fallback 진행
+            pass
     
     # Fallback: DB 없이 임시 사용자 ID 생성
     user_id = f"user_{hash(request.username)}"

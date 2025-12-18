@@ -10,8 +10,9 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 # Import Sibling Modules (The Fragments)
 try:
-    from trinity_score_mcp import TrinityScoreEngineHybrid
     from afo_skills_mcp import AfoSkillsMCP
+    from trinity_score_mcp import TrinityScoreEngineHybrid
+
     MODULES_LOADED = True
 except ImportError as e:
     MODULES_LOADED = False
@@ -94,7 +95,7 @@ class AfoUltimateMCPServer:
         """Runs the verify_kingdom_core protocol."""
         script_path = os.path.join(WORKSPACE_ROOT, "scripts", "verify_kingdom_core.py")
         if not os.path.exists(script_path):
-             # Fallback to status script if core script missing
+            # Fallback to status script if core script missing
             script_path = os.path.join(WORKSPACE_ROOT, "scripts", "verify_kingdom_status.py")
             if not os.path.exists(script_path):
                 return "Error: Health Script Missing"
@@ -160,50 +161,53 @@ class AfoUltimateMCPServer:
                             "inputSchema": {"type": "object", "properties": {}},
                         },
                     ]
-                    
+
                     if MODULES_LOADED:
                         # Trinity Tools
-                        tools.append({
-                            "name": "calculate_trinity_score",
-                             "description": "Calculate the 5-Pillar Trinity Score (Truth, Goodness, Beauty, Serenity, Eternity).",
-                             "inputSchema": {
-                                 "type": "object",
-                                 "properties": {
-                                     "truth_base": {"type": "integer"},
-                                     "goodness_base": {"type": "integer"},
-                                     "beauty_base": {"type": "integer"},
-                                     "risk_score": {"type": "integer"},
-                                     "friction": {"type": "integer"},
-                                     "eternity_base": {"type": "integer"}
-                                 },
-                                 "required": []
-                             }
-                        })
-                         # Skills Tools
-                        tools.append({
-                            "name": "verify_fact",
-                             "description": "Verify a factual claim against context (Hallucination Defense).",
-                             "inputSchema": {
-                                 "type": "object",
-                                 "properties": {
-                                     "claim": {"type": "string"},
-                                     "context": {"type": "string"}
-                                 },
-                                 "required": ["claim"]
-                             }
-                        })
-                        tools.append({
-                            "name": "cupy_weighted_sum",
-                             "description": "Calculate weighted sum (GPU accelerated if available).",
-                             "inputSchema": {
-                                 "type": "object",
-                                 "properties": {
-                                     "data": {"type": "array", "items": {"type": "number"}},
-                                     "weights": {"type": "array", "items": {"type": "number"}}
-                                 },
-                                 "required": ["data", "weights"]
-                             }
-                        })
+                        tools.append(
+                            {
+                                "name": "calculate_trinity_score",
+                                "description": "Calculate the 5-Pillar Trinity Score (Truth, Goodness, Beauty, Serenity, Eternity).",
+                                "inputSchema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "truth_base": {"type": "integer"},
+                                        "goodness_base": {"type": "integer"},
+                                        "beauty_base": {"type": "integer"},
+                                        "risk_score": {"type": "integer"},
+                                        "friction": {"type": "integer"},
+                                        "eternity_base": {"type": "integer"},
+                                    },
+                                    "required": [],
+                                },
+                            }
+                        )
+                        # Skills Tools
+                        tools.append(
+                            {
+                                "name": "verify_fact",
+                                "description": "Verify a factual claim against context (Hallucination Defense).",
+                                "inputSchema": {
+                                    "type": "object",
+                                    "properties": {"claim": {"type": "string"}, "context": {"type": "string"}},
+                                    "required": ["claim"],
+                                },
+                            }
+                        )
+                        tools.append(
+                            {
+                                "name": "cupy_weighted_sum",
+                                "description": "Calculate weighted sum (GPU accelerated if available).",
+                                "inputSchema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {"type": "array", "items": {"type": "number"}},
+                                        "weights": {"type": "array", "items": {"type": "number"}},
+                                    },
+                                    "required": ["data", "weights"],
+                                },
+                            }
+                        )
 
                     result = {"tools": tools}
 
@@ -217,7 +221,7 @@ class AfoUltimateMCPServer:
                     is_error = False
                     content = ""
                     trinity_metadata = None
-                    
+
                     try:
                         # 1. Core Tools
                         if tool_name == "shell_execute":
@@ -228,17 +232,57 @@ class AfoUltimateMCPServer:
                             content = cls.write_file(args.get("path"), args.get("content"))
                         elif tool_name == "kingdom_health":
                             content = cls.kingdom_health()
-                        
+
                         # 에러 메시지 확인
                         if "Error" in content or "error" in content.lower():
                             is_error = True
-                            
+
                     except Exception as e:
                         content = f"Execution Error: {str(e)}"
                         is_error = True
 
                     # 실행 시간 계산
                     execution_time_ms = (time.time() - start_time) * 1000
+
+                    # Core Tools에 대한 Trinity Score 계산 (眞善美孝永 5기둥)
+                    if mcp_tool_trinity_evaluator and tool_name in [
+                        "shell_execute",
+                        "read_file",
+                        "write_file",
+                        "kingdom_health",
+                    ]:
+                        try:
+                            trinity_eval = mcp_tool_trinity_evaluator.evaluate_execution_result(
+                                tool_name=tool_name,
+                                execution_result=content,
+                                execution_time_ms=execution_time_ms,
+                                is_error=is_error,
+                            )
+                            trinity_metadata = trinity_eval["trinity_metrics"]
+                        except Exception:
+                            trinity_metadata = None
+
+                    # 2. Advanced Tools (from siblings)
+                    if MODULES_LOADED and tool_name not in ["shell_execute", "read_file", "write_file", "kingdom_health"]:
+                        if tool_name == "calculate_trinity_score":
+                            # Convert args to kwargs
+                            res = TrinityScoreEngineHybrid.evaluate(**args)
+                            content = json.dumps(res, indent=2, ensure_ascii=False)
+                            trinity_metadata = res  # Use result as metadata itself
+
+                        elif tool_name == "verify_fact":
+                            res = AfoSkillsMCP.verify_fact(args.get("claim"), args.get("context", ""))
+                            content = json.dumps(res, indent=2, ensure_ascii=False)
+                            # Implied Trinity Score for fact verification
+                            trinity_metadata = {"truth_impact": 10 if res["verdict"] == "PLAUSIBLE" else -10}
+
+                        elif tool_name == "cupy_weighted_sum":
+                            res = AfoSkillsMCP.cupy_weighted_sum(args.get("data", []), args.get("weights", []))
+                            content = str(res)
+                        else:
+                            content = f"Unknown tool: {tool_name}"
+                    elif tool_name not in ["shell_execute", "read_file", "write_file", "kingdom_health"]:
+                        content = f"Tool not available (Modules failed to load): {tool_name}"
 
                     # Core Tools에 대한 Trinity Score 계산 (眞善美孝永 5기둥)
                     if mcp_tool_trinity_evaluator and tool_name in ["shell_execute", "read_file", "write_file", "kingdom_health"]:
@@ -252,41 +296,29 @@ class AfoUltimateMCPServer:
                             trinity_metadata = trinity_eval["trinity_metrics"]
                         except Exception:
                             trinity_metadata = None
-                    
-                    # 2. Advanced Tools (from siblings)
-                    elif MODULES_LOADED:
-                        if tool_name == "calculate_trinity_score":
-                            # Convert args to kwargs
-                            res = TrinityScoreEngineHybrid.evaluate(**args)
-                            content = json.dumps(res, indent=2, ensure_ascii=False)
-                            trinity_metadata = res # Use result as metadata itself
-                            
-                        elif tool_name == "verify_fact":
-                            res = AfoSkillsMCP.verify_fact(args.get("claim"), args.get("context", ""))
-                            content = json.dumps(res, indent=2, ensure_ascii=False)
-                            # Implied Trinity Score for fact verification
-                            trinity_metadata = {"truth_impact": 10 if res["verdict"] == "PLAUSIBLE" else -10}
-
-                        elif tool_name == "cupy_weighted_sum":
-                            res = AfoSkillsMCP.cupy_weighted_sum(args.get("data", []), args.get("weights", []))
-                            content = str(res)
-                        else:
-                            content = f"Unknown tool: {tool_name}"
-
-                    else:
-                        content = f"Tool not available (Modules failed to load): {tool_name}"
 
                     # Construct Response
                     result_body = [{"type": "text", "text": str(content)}]
-                    
+
                     # Append Trinity Metadata if available (Serenity Injection)
                     if trinity_metadata:
-                         result_body.append({
-                             "type": "text",
-                             "text": json.dumps(trinity_metadata, ensure_ascii=False)
-                         })
+                        result_body.append({
+                            "type": "text",
+                            "text": f"\n\n[眞善美孝永 Trinity Score]\n"
+                            f"眞 (Truth): {trinity_metadata.get('truth', 0):.2%}\n"
+                            f"善 (Goodness): {trinity_metadata.get('goodness', 0):.2%}\n"
+                            f"美 (Beauty): {trinity_metadata.get('beauty', 0):.2%}\n"
+                            f"孝 (Serenity): {trinity_metadata.get('filial_serenity', 0):.2%}\n"
+                            f"永 (Eternity): {trinity_metadata.get('eternity', 0):.2%}\n"
+                            f"Trinity Score: {trinity_metadata.get('trinity_score', 0):.2%}\n"
+                            f"Balance: {trinity_metadata.get('balance_status', 'unknown')}",
+                        })
 
-                    result = {"content": result_body, "isError": False}
+                    result = {
+                        "content": result_body,
+                        "isError": is_error,
+                        "trinity_score": trinity_metadata,  # 메타데이터를 직접 포함
+                    }
 
                 else:
                     # Ignore other messages or return error?

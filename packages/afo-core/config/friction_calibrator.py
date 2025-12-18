@@ -1,29 +1,31 @@
-
 # config/friction_calibrator.py (Phase 4 핵심 - 마찰 제거 진단)
 # 목표: 시스템의 '재(Ash)'와 '마찰(Friction)'을 측정하여 형님의 평온(Serenity) 수치화
 
 from dataclasses import dataclass
 from datetime import datetime
+
 from config.antigravity import antigravity
 from config.vault_manager import vault_manager
 
+
 @dataclass
 class SerenityMetrics:
-    score: int                  # 평온 점수 (0-100)
-    friction_level: str         # LOW, MEDIUM, HIGH
-    mode: str                   # AntiGravity Mode
-    vault_status: str           # SECURE (Mock/Live)
+    score: int  # 평온 점수 (0-100)
+    friction_level: str  # LOW, MEDIUM, HIGH
+    mode: str  # AntiGravity Mode
+    vault_status: str  # SECURE (Mock/Live)
     timestamp: str
+
 
 class FrictionCalibrator:
     """
     마찰 보정기 (Friction Calibrator)
-    
+
     Truth (眞): 객관적 수치로 시스템 상태 진단
     Goodness (善): 문제 요소를 '마찰'로 정의하여 개선 유도
     Beauty (美): 복잡한 상태를 단 하나의 '점수'로 우아하게 표현
     """
-    
+
     def calculate_serenity(self) -> SerenityMetrics:
         score = 100
         friction_reasons = []
@@ -61,21 +63,22 @@ class FrictionCalibrator:
 
         # 점수 보정
         score = max(0, score)
-        
+
         # 레벨 판정
         if score >= 90:
-            level = "LOW"     # 평온
+            level = "LOW"  # 평온
         elif score >= 70:
             level = "MEDIUM"  # 약간의 신경 쓰임
         else:
-            level = "HIGH"    # 형님의 개입 필요 (마찰 높음)
+            level = "HIGH"  # 형님의 개입 필요 (마찰 높음)
 
         return SerenityMetrics(
             score=score,
             friction_level=level,
             mode="AntiGravity v1.0",
             vault_status=vault_status,
-            timestamp=datetime.now().isoformat()
+            timestamp=datetime.now().isoformat(),
         )
+
 
 friction_calibrator = FrictionCalibrator()

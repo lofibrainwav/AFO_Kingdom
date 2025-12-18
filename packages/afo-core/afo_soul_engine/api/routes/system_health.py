@@ -4,4 +4,3 @@ from __future__ import annotations
 from api.routes.system_health import router
 
 __all__ = ["router"]
-

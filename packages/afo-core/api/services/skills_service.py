@@ -29,6 +29,7 @@ from afo_soul_engine.api.models.skills import (
 # Trinity Score Evaluator (동적 점수 계산)
 try:
     from AFO.services.mcp_tool_trinity_evaluator import mcp_tool_trinity_evaluator
+
     TRINITY_EVALUATOR_AVAILABLE = True
 except ImportError:
     mcp_tool_trinity_evaluator = None
@@ -371,7 +372,7 @@ class SkillsService(BaseService):
             # 동적 Trinity Score 계산 (眞善美孝永 5기둥)
             dynamic_trinity_score = None
             base_philosophy_scores = None
-            
+
             # 기본 철학 점수 추출 (정적 점수)
             if skill.philosophy and hasattr(skill.philosophy, "truth"):
                 base_philosophy_scores = {
@@ -408,12 +409,20 @@ class SkillsService(BaseService):
             # 동적 점수가 없으면 정적 점수 사용
             final_philosophy_score = dynamic_trinity_score
             if final_philosophy_score is None:
-                final_philosophy_score = PhilosophyScores(
-                    truth=base_philosophy_scores["truth"] if base_philosophy_scores else 85.0,
-                    goodness=base_philosophy_scores["goodness"] if base_philosophy_scores else 80.0,
-                    beauty=base_philosophy_scores["beauty"] if base_philosophy_scores else 75.0,
-                    serenity=base_philosophy_scores["serenity"] if base_philosophy_scores else 90.0,
-                ) if base_philosophy_scores else None
+                final_philosophy_score = (
+                    PhilosophyScores(
+                        truth=base_philosophy_scores["truth"] if base_philosophy_scores else 85.0,
+                        goodness=base_philosophy_scores["goodness"]
+                        if base_philosophy_scores
+                        else 80.0,
+                        beauty=base_philosophy_scores["beauty"] if base_philosophy_scores else 75.0,
+                        serenity=base_philosophy_scores["serenity"]
+                        if base_philosophy_scores
+                        else 90.0,
+                    )
+                    if base_philosophy_scores
+                    else None
+                )
 
             # 실행 결과 생성
             execution_result = SkillExecutionResult(
