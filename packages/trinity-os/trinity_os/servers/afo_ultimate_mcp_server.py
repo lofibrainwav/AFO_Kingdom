@@ -12,9 +12,9 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 try:
     from afo_skills_mcp import AfoSkillsMCP
     from context7_mcp import Context7MCP
+    from playwright_bridge_mcp import PlaywrightBridgeMCP
     from sequential_thinking_mcp import SequentialThinkingMCP
     from trinity_score_mcp import TrinityScoreEngineHybrid
-    from playwright_bridge_mcp import PlaywrightBridgeMCP
 
     MODULES_LOADED = True
 except ImportError as e:
@@ -399,11 +399,15 @@ class AfoUltimateMCPServer:
                         elif tool_name == "browser_navigate":
                             content = json.dumps(PlaywrightBridgeMCP.navigate(args.get("url")), indent=2)
                         elif tool_name == "browser_screenshot":
-                            content = json.dumps(PlaywrightBridgeMCP.screenshot(args.get("path", "screenshot.png")), indent=2)
+                            content = json.dumps(
+                                PlaywrightBridgeMCP.screenshot(args.get("path", "screenshot.png")), indent=2
+                            )
                         elif tool_name == "browser_click":
                             content = json.dumps(PlaywrightBridgeMCP.click(args.get("selector")), indent=2)
                         elif tool_name == "browser_type":
-                            content = json.dumps(PlaywrightBridgeMCP.type_text(args.get("selector"), args.get("text")), indent=2)
+                            content = json.dumps(
+                                PlaywrightBridgeMCP.type_text(args.get("selector"), args.get("text")), indent=2
+                            )
                         elif tool_name == "browser_scrape":
                             content = json.dumps(PlaywrightBridgeMCP.scrape(args.get("selector")), indent=2)
 
