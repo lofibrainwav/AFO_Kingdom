@@ -99,48 +99,44 @@ jobs:
         run: ruff format --check packages/
 
       # 孝 (Serenity): Testing
-      - name: Create test exclusions
+      - name: Setup AFO module symlinks
+        run: |
+          cd packages/afo-core/AFO
+          # 모듈 파일 심볼릭 링크
+          ln -sf ../api_wallet.py api_wallet.py
+          ln -sf ../llm_router.py llm_router.py
+          ln -sf ../input_server.py input_server.py
+          ln -sf ../afo_skills_registry.py afo_skills_registry.py
+          ln -sf ../api_server.py api_server.py
+          ln -sf ../chancellor_graph.py chancellor_graph.py
+          # 디렉토리 심볼릭 링크
+          rm -rf config 2>/dev/null || true
+          ln -sf ../config config
+          ln -sf ../kms kms
+          ln -sf ../scholars scholars
+          ln -sf ../services services
+          ln -sf ../utils utils
+          ln -sf ../api api
+          ln -sf ../llms llms
+          ln -sf ../domain domain
+          echo "Created AFO module symlinks"
+          ls -la
+
+      - name: Create conftest
         run: |
           cat > packages/afo-core/conftest.py << 'EOF'
-          # Auto-generated conftest.py for CI
-          collect_ignore = [
-              "tests/api/test_wallet_routers_comprehensive.py",
-              "tests/api/test_api_chat.py",
-              "tests/api/test_api_health.py",
-              "tests/api/test_api_pillars.py",
-              "tests/api/test_api_skills.py",
-              "tests/api/test_api_system_health.py",
-              "tests/api/test_api_wallet_routes.py",
-              "tests/test_api_wallet_advanced.py",
-              "tests/test_api_wallet_cli.py",
-              "tests/test_api_wallet_db_mock.py",
-              "tests/test_api_wallet_imports.py",
-              "tests/test_api_wallet_vault_fallback.py",
-              "tests/test_hybrid_rag_advanced.py",
-              "tests/test_input_server.py",
-              "tests/test_input_server_advanced.py",
-              "tests/test_kms_advanced.py",
-              "tests/test_llm_router_advanced.py",
-              "tests/llm/test_llm_implementations.py",
-              "tests/test_redis_optimized.py",
-              "tests/test_scholars.py",
-              "tests/test_settings.py",
-              "tests/test_skills_registry.py",
-              "tests/test_utils_advanced.py",
-              "tests/test_utils.py",
-              "tests/test_api_server.py",
-              "tests/test_api_server_lifespan.py",
-          ]
+          # Empty conftest - all tests enabled
+          collect_ignore = []
           EOF
-          echo "Created conftest.py for test exclusions"
 
       - name: Run tests with coverage
         working-directory: packages/afo-core
         env:
           ENV: test
-          PYTHONPATH: ${{ github.workspace }}
+          PYTHONPATH: ${{ github.workspace }}/packages/afo-core
         run: |
           echo "Running tests from: $(pwd)"
+          echo "PYTHONPATH: $PYTHONPATH"
           pytest tests/ -v --cov=. --cov-report=xml --tb=short || echo 'Some tests failed'
           ls -la coverage.xml 2>/dev/null || echo "coverage.xml not found"
           
