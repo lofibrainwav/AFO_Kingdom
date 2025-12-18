@@ -20,6 +20,7 @@ class AntiGravitySettings(BaseSettings):
     DRY_RUN_DEFAULT: bool = True  # 기본 DRY_RUN (善: 안전 우선)
     CENTRAL_CONFIG_SYNC: bool = True  # 중앙 설정 동기화 (永: 영속성)
     AUTO_SYNC: bool = True  # 자동 동기화 활성화 (孝: 설정 마찰 제거)
+    SELF_EXPANDING_MODE: bool = True  # 자율 확장 모드 (永: 창조자 트랙 활성화)
 
     class Config:
         env_file = ".env.antigravity"  # 별도 env 파일로 마찰 최소화

@@ -5,6 +5,14 @@ import Link from 'next/link';
 import BrowserAuthModal from '@/components/wallet/BrowserAuthModal';
 import { ArrowLeft, Trash2, Plus, Key, CheckCircle, AlertCircle, Globe } from 'lucide-react';
 
+interface APIKey {
+  name: string;
+  key: string; // Not typically returned but here for safety if API sends it masked
+  service: string;
+  key_type: string; // inferred from usage
+  access_count: number;
+}
+
 export default function WalletPage() {
   const [keys, setKeys] = useState<APIKey[]>([]);
   const [loading, setLoading] = useState(true);

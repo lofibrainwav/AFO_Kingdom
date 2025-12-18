@@ -1,0 +1,52 @@
+name: Trinity Guard (Shield of Goodness)
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches: [main, develop]
+
+jobs:
+  trinity-guard:
+    name: 🛡️ Trinity Guard Check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write # Needed to add labels
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run Trinity Score Analysis
+        id: trinity
+        run: python scripts/ci_trinity_check.py .
+
+      - name: Apply Status Label (Auto-Merge)
+        if: steps.trinity.outputs.passed == 'true' && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              labels: ['trinity-approved', 'auto-merge-eligible']
+            })
+
+      - name: Apply Status Label (Blocked)
+        if: steps.trinity.outputs.passed == 'false' && github.event_name == 'pull_request' && failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              labels: ['trinity-blocked']
+            })

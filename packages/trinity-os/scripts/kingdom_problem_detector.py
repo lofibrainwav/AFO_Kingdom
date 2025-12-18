@@ -355,7 +355,7 @@ class ProblemDetector:
         try:
             # Python 파일만 체크 (venv 제외)
             result = subprocess.run(
-                "grep -rn 'password=' --include='*.py' . 2>/dev/null | grep -v venv | grep -v '.env' | wc -l",
+                "grep -rn 'password=' --include='*.py' . 2>/dev/null | grep -v venv | grep -v '.env' | wc -l",  # nosec
                 shell=True,
                 capture_output=True,
                 text=True,

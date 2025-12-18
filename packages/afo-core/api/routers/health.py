@@ -125,17 +125,53 @@ async def health_check() -> dict[str, Any]:
     healthy_count = sum(1 for o in organs if o["healthy"])
     total_organs = len(organs)
 
-    # Trinity 계산 (간단한 버전)
-    trinity_score = healthy_count / total_organs if total_organs > 0 else 0.0
+    # Calculate organ health ratio for base check (System Stability)
+    system_health_ratio = healthy_count / total_organs if total_organs > 0 else 0.0
+    
+    # [Dynamic Trinity Integration]
+    # Import Manager (Singleton)
+    try:
+        from AFO.domain.metrics.trinity_manager import trinity_manager
+        
+        # Apply System Health trigger if perfect (rewards Serenity)
+        if system_health_ratio == 1.0:
+            # We don't want to spam delta every request, but for V1 let's assume Manager handles accumulation.
+            # Ideally, trigger should be event-based, not poll-based.
+            # But we can assume "High Stability" maintains Serenity.
+            pass 
+            
+        metrics = trinity_manager.get_current_metrics()
+        trinity_data = metrics.to_dict()
+        
+        # Override `trinity_score` in response if needed, or use the one from manager
+        # The frontend expects flattened keys or nested? The current `trinity_breakdown` was flat keys + `trinity_score`.
+        # metrics.to_dict() returns flat keys + `trinity_score`.
+        
+    except ImportError:
+         # Fallback
+         trinity_data = {
+            "truth": system_health_ratio,
+            "goodness": system_health_ratio,
+            "beauty": system_health_ratio,
+            "filial_serenity": system_health_ratio,
+            "eternity": 1.0,
+            "trinity_score": system_health_ratio
+         }
+
+    # Decide
+    final_score = trinity_data.get("trinity_score", 0.0)
+    decision = "AUTO_RUN" if final_score >= 0.9 else "ASK_COMMANDER"
 
     return {
-        "status": "balanced" if trinity_score >= 0.8 else "imbalanced",
-        "health_percentage": round(trinity_score * 100, 2),
+        "status": "balanced" if final_score >= 0.8 else "imbalanced",
+        "health_percentage": round(final_score * 100, 2),
         "healthy_organs": healthy_count,
         "total_organs": total_organs,
         "organs": {
             o["organ"]: {"status": o["status"], "output": str(o.get("output", ""))[:100]}
             for o in organs
         },
+        "trinity": trinity_data,
+        "decision": decision,
         "timestamp": current_time,
     }

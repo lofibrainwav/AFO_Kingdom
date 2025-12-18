@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8010';
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8011';
 
 export async function GET() {
   try {
-    const res = await fetch(`${API_BASE}/api/5pillars/family/hub`, {
+    const res = await fetch(`${API_BASE}/family/`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

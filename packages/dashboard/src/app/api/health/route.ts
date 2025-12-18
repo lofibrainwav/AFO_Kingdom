@@ -4,7 +4,7 @@
 import { NextResponse } from 'next/server';
 
 // Server-side: use environment variable or default to localhost
-const API_BASE = process.env.SOUL_ENGINE_URL || process.env.API_BASE_URL || process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8010';
+const API_BASE = process.env.SOUL_ENGINE_URL || process.env.API_BASE_URL || process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8011';
 
 export async function GET() {
   try {

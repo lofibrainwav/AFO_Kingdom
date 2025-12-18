@@ -11,9 +11,9 @@ from AFO.llm_router import LLMConfig, LLMProvider, LLMRouter, QualityTier, Routi
 def test_router_initialization_env_vars():
     # Mock get_settings to return an object with keys
     mock_settings = MagicMock()
-    mock_settings.ANTHROPIC_API_KEY = "sk-ant-test"
-    mock_settings.OPENAI_API_KEY = "sk-proj-test"
-    mock_settings.GEMINI_API_KEY = "AIza-test"
+    mock_settings.ANTHROPIC_API_KEY = os.getenv("TEST_ANT_KEY", "mock-ant-key")
+    mock_settings.OPENAI_API_KEY = os.getenv("TEST_OPENAI_KEY", "mock-openai-key")
+    mock_settings.GEMINI_API_KEY = os.getenv("TEST_GEMINI_KEY", "mock-gemini-key")
     mock_settings.GOOGLE_API_KEY = None
     mock_settings.OLLAMA_MODEL = "test-model"
     mock_settings.OLLAMA_BASE_URL = "http://localhost:11434"

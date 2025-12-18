@@ -79,6 +79,54 @@ def calculate_happiness_impact(activity_type: str) -> float:
 # --- Endpoints ---
 
 
+@router.get("/")
+async def get_family_hub_status() -> dict[str, Any]:
+    """
+    Family Hub 상태 종합 조회 (Frontend: fetchFamilyStatus)
+    Returns: FamilyHubResponse structure
+    """
+    data = load_family_data()
+    members_list = data.get("members", [])
+    
+    # Convert members list to dict for frontend Record<string, FamilyMember>
+    # Key by 'id' if available, else 'name'
+    members_dict = {}
+    total_trinity = 0.0
+    member_count_with_score = 0
+    
+    for m in members_list:
+        key = m.get("id", m.get("name", "unknown"))
+        members_dict[key] = m
+        
+        # Calculate average trinity if pillars exist
+        pillars = m.get("pillars", {})
+        if pillars:
+            # Average of 5 pillars
+            score = sum(pillars.values()) / 5.0
+            total_trinity += score
+            member_count_with_score += 1
+            
+    # System happiness as fallback or component
+    system_happiness = data.get("system", {}).get("overall_happiness", 50.0)
+    
+    # If no members have scores, use system happiness as proxy (normalized 0-1)
+    if member_count_with_score > 0:
+        avg_score = total_trinity / member_count_with_score
+        # Normalize to 0-1 if assumes 100 scale? 
+        # Pillars usually 0-100.
+        # Frontend trinity_score usually 0.0-1.0. Let's assume 0-100 and divide by 100.
+        avg_trinity_score = avg_score / 100.0
+    else:
+        avg_trinity_score = system_happiness / 100.0
+
+    return {
+        "members": members_dict,
+        "total_members": len(members_list),
+        "average_trinity_score": avg_trinity_score
+    }
+
+
+
 @router.get("/members")
 async def list_members() -> dict[str, Any]:
     """가족 구성원 목록 조회"""

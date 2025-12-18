@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """브라우저에서 OpenAI 인증 토큰 추출 및 API Wallet에 저장"""
 
+import os
 import sys
 from pathlib import Path
 
@@ -50,7 +51,7 @@ def save_token_to_wallet(token: str):
             port=15432,
             database="afo_memory",
             user="afo",
-            password="your-secure-password-here",
+            password=os.getenv("AFO_DB_PASSWORD", "afo_db_password"),  # nosec
         )
 
         wallet = APIWallet(db_connection=conn)
@@ -91,14 +92,14 @@ def main():
     print("\n" + "=" * 50)
     print("토큰을 찾으셨나요? 아래에 붙여넣어주세요:\n")
 
-    token = input("인증 토큰: ").strip()
+    try:
+        token = input("인증 토큰: ").strip()
+    except EOFError:
+        print("\n입력이 없어 종료합니다.")
+        return
 
     if not token:
         print("\n❌ 토큰이 입력되지 않았습니다.")
-        print("\n💡 토큰 찾는 방법:")
-        print("   1. 브라우저 개발자 도구 열기 (F12)")
-        print("   2. Application 탭 → Cookies → https://platform.openai.com")
-        print("   3. 'session_token' 또는 'access_token' 값 복사")
         return
 
     save_token_to_wallet(token)

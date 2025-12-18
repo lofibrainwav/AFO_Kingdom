@@ -27,23 +27,16 @@ class ClaudeAPIWrapper:
         # 1순위: ANTHROPIC_API_KEY (직접 API 키)
         # 2순위: API Wallet (암호화 저장소)
         # 3순위: CURSOR_ACCESS_TOKEN (Cursor 세션에서 추출)
-        self.api_key = os.getenv("ANTHROPIC_API_KEY")
-
-        # API Wallet 연동
-        if not self.api_key:
+        # Vault Manager Integration (Zero Config)
+        try:
+            from ..security.vault_manager import vault
+        except (ImportError, ValueError):
             try:
-                # Try relative import first
-                try:
-                    from ..api_wallet import create_wallet
-                except ImportError:
-                    from AFO.api_wallet import create_wallet
-
-                wallet = create_wallet()
-                self.api_key = wallet.get("anthropic", decrypt=True)
-                if self.api_key:
-                    logger.info("✅ API Wallet에서 Anthropic 키 로드 성공")
-            except Exception as e:
-                logger.debug(f"API Wallet 연동 실패 (무시됨): {e}")
+                from AFO.security.vault_manager import vault
+            except ImportError:
+                vault = None
+        
+        self.api_key = vault.get_secret("ANTHROPIC_API_KEY") if vault else os.getenv("ANTHROPIC_API_KEY")
 
         self.cursor_token = os.getenv("CURSOR_ACCESS_TOKEN")
         self.base_url = "https://api.anthropic.com"

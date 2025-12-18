@@ -1,8 +1,9 @@
 import asyncio
 import random
-from typing import Dict, Any, Optional
+from typing import Any
 
 from AFO.julie_cpa.config import julie_config
+
 
 class FinancialConnector:
     """
@@ -10,13 +11,13 @@ class FinancialConnector:
     Resilient Connector for External Financial APIs (Mocked).
     Implements Retry (Three Visits) and Circuit Breaker (Bitter Meat).
     """
-    
+
     def __init__(self):
         self._circuit_open = False
         self._failure_count = 0
         self._threshold = julie_config.MAX_RETRIES
-    
-    async def fetch_bank_data(self, account_id: str) -> Dict[str, Any]:
+
+    async def fetch_bank_data(self, account_id: str) -> dict[str, Any]:
         """
         [Three Kingdoms #14: Three Visits]
         Retries up to 3 times before giving up.
@@ -27,28 +28,27 @@ class FinancialConnector:
 
         for attempt in range(1, julie_config.MAX_RETRIES + 1):
             try:
-                print(f"🔄 [Attempt {attempt}/{julie_config.MAX_RETRIES}] Connecting to Bank for {account_id}...")
+                print(
+                    f"🔄 [Attempt {attempt}/{julie_config.MAX_RETRIES}] Connecting to Bank for {account_id}..."
+                )
                 data = await self._mock_api_call(account_id)
                 self._success()
                 return data
             except Exception as e:
                 print(f"⚠️ Connection Failed: {e}")
-                await asyncio.sleep(julie_config.RETRY_BACKOFF_FACTOR * attempt) # Exponential Backoff
-        
+                await asyncio.sleep(
+                    julie_config.RETRY_BACKOFF_FACTOR * attempt
+                )  # Exponential Backoff
+
         self._record_failure()
         return {"error": "Max Retries Exceeded"}
 
-    async def _mock_api_call(self, account_id: str) -> Dict[str, Any]:
+    async def _mock_api_call(self, account_id: str) -> dict[str, Any]:
         # Simulate Network Flakiness (Fog of War)
         if random.random() < 0.3:
             raise ConnectionError("Network Glitch")
-        
-        return {
-            "account_id": account_id,
-            "balance": 1000000,
-            "currency": "KRW",
-            "status": "ACTIVE"
-        }
+
+        return {"account_id": account_id, "balance": 1000000, "currency": "KRW", "status": "ACTIVE"}
 
     def _record_failure(self):
         self._failure_count += 1

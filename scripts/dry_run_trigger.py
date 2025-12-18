@@ -23,9 +23,9 @@ HIGH_RISK_PATTERNS = [
     ("httpx.post", "외부 API POST 호출"),
     ("aiohttp.ClientSession", "비동기 HTTP 클라이언트"),
     # DB 스키마
-    ("ALTER TABLE", "데이터베이스 스키마 변경"),
-    ("DROP TABLE", "테이블 삭제"),
-    ("CREATE TABLE", "테이블 생성"),
+    ("ALTER TABLE", "데이터베이스 스키마 변경"),  # nosec
+    ("DROP TABLE", "테이블 삭제"),  # nosec
+    ("CREATE TABLE", "테이블 생성"),  # nosec
     ("alembic.op.drop", "Alembic 마이그레이션 삭제"),
     # 인증/권한
     ("oauth", "OAuth 인증 변경"),
