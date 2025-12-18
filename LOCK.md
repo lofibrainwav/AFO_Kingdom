@@ -61,3 +61,17 @@
 ---
 
 > **원칙**: 이 LOCK 위에만 쌓아 올립니다. 해제 불가.
+
+---
+
+## 🏛️ Confirmed Stable Paths & Ports (The Royal Foundation)
+
+> **이 경로와 포트는 왕국의 물리적 실체입니다. 임의 변경을 금지합니다.**
+
+| Component | Port | Path (`/Users/brnestrm/AFO_Kingdom/...`) | Status |
+|-----------|------|-----------------------------------------|--------|
+| **Trinity Dashboard** | `3000` | `packages/dashboard` | ✅ LOCKED |
+| **AICPA Julie** | `3005` | `AICPA/aicpa-core` | ✅ LOCKED |
+| **AFO Backend** | `8011` | `packages/afo-core` | ✅ LOCKED |
+
+---

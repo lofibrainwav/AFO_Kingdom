@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import os
 """API Wallet PostgreSQL DB 확인 스크립트"""
 
 try:
@@ -23,7 +24,7 @@ def check_postgres():
             port=15432,
             database="postgres",
             user="postgres",
-            password="postgres",  # 기본 비밀번호, 필요시 변경
+            password=os.getenv("DB_PASSWORD", "postgres"),  # nosec
         )
 
         with conn.cursor(cursor_factory=RealDictCursor) as cur:

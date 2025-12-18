@@ -20,14 +20,14 @@ export default function FamilyPage() {
         const memRes = await fetch('/api/proxy/family/members');
         if (memRes.ok) {
             const data = await memRes.json();
-            setMembers(data);
+            setMembers(data.members || []);
         }
 
         // Fetch Happiness
         const happyRes = await fetch('/api/proxy/family/happiness');
         if (happyRes.ok) {
             const data = await happyRes.json();
-            setHappiness(data.current_score);
+            setHappiness(data.happiness_score || 0);
         }
 
         // Fetch Timeline (Mock or if API supports it later)

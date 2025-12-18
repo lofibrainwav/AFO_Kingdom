@@ -2,6 +2,7 @@ import os
 import sys
 
 sys.path.append(os.path.join(os.getcwd(), "packages/afo-core"))
+sys.path.append(os.path.join(os.getcwd(), "packages/trinity-os"))
 
 from AFO.genui.genui_orchestrator import GenUIOrchestrator
 

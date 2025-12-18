@@ -24,27 +24,16 @@ class OpenAIAPIWrapper:
     """
 
     def __init__(self):
-        # 1순위: OPENAI_API_KEY (직접 API 키)
-        # 2순위: API Wallet (암호화 저장소)
-        # 3순위: CHATGPT_SESSION_TOKEN (Web Session - API 불가)
-        self.api_key = os.getenv("OPENAI_API_KEY")
-
-        # API Wallet 연동
-        if not self.api_key:
+        # Vault Manager Integration (Zero Config)
+        try:
+            from ..security.vault_manager import vault
+        except (ImportError, ValueError):
             try:
-                # Try relative import first (module context)
-                try:
-                    from ..api_wallet import create_wallet
-                except ImportError:
-                    # Fallback to absolute import (script context)
-                    from AFO.api_wallet import create_wallet
-
-                wallet = create_wallet()
-                self.api_key = wallet.get("openai", decrypt=True)
-                if self.api_key:
-                    logger.info("✅ API Wallet에서 OpenAI 키 로드 성공")
-            except Exception as e:
-                logger.debug(f"API Wallet 연동 실패 (무시됨): {e}")
+                from AFO.security.vault_manager import vault
+            except ImportError:
+                vault = None
+        
+        self.api_key = vault.get_secret("OPENAI_API_KEY") if vault else os.getenv("OPENAI_API_KEY")
 
         self.chatgpt_token = (
             os.getenv("CHATGPT_SESSION_TOKEN_1")

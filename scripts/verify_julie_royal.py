@@ -1,12 +1,13 @@
-import sys
-import os
 import asyncio
+import os
+import sys
 from decimal import Decimal
 
 # Ensure pythonpath includes afo-core
 sys.path.append(os.path.join(os.getcwd(), "packages/afo-core"))
 
 from AFO.julie_cpa.services.julie_service import JulieService
+
 
 async def verify_julie_royal():
     print("🔹 Initializing Julie CPA (Royal Edition) Verification...")
@@ -19,7 +20,7 @@ async def verify_julie_royal():
         "amount": Decimal("50000"),
         "currency": "KRW",
         "category": "Food",
-        "description": "Family Dinner"
+        "description": "Family Dinner",
     }
     # [Refactor] Passing dynamic account_id
     res1 = await service.process_transaction(valid_data, account_id="ACC-ROYAL-001", dry_run=True)
@@ -40,12 +41,12 @@ async def verify_julie_royal():
     # Scenario 3: The Prince (Strict Validation)
     print("\n🔹 [Scenario 3] Strict Validation (Zero Amount)")
     bad_data = valid_data.copy()
-    bad_data["amount"] = Decimal("0") # Invalid
+    bad_data["amount"] = Decimal("0")  # Invalid
     res3 = await service.process_transaction(bad_data, account_id="ACC-ROYAL-001")
     if not res3["success"] and "cannot be zero" in res3["reason"]:
-         print("✅ Scenario 3 PASS (Blocked by Pydantic Validator)")
+        print("✅ Scenario 3 PASS (Blocked by Pydantic Validator)")
     else:
-         print(f"❌ Scenario 3 FAIL: {res3}")
+        print(f"❌ Scenario 3 FAIL: {res3}")
 
     # Scenario 4: Three Kingdoms (Live Connect)
     print("\n🔹 [Scenario 4] Live Execution & Resilience")
@@ -57,6 +58,7 @@ async def verify_julie_royal():
         print(f"❌ Scenario 4 FAIL: {res4}")
 
     print("\n✨ Julie CPA Royal Verification Complete.")
+
 
 if __name__ == "__main__":
     asyncio.run(verify_julie_royal())

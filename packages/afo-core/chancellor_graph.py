@@ -44,56 +44,81 @@ class ChancellorState(TypedDict):
 
     # Operational fields
     current_speaker: str  # "user", "chancellor", "jegalryang", "samaui", "juyu"
-    next_step: str  # Next node to visit
-    analysis_results: dict[str, str]  # Store individual strategist outputs
+    steps_taken: int
+    complexity: str # "Low", "Medium", "High"
+    
+    # Reducer for analysis results (Merge dicts)
+    analysis_results: Annotated[dict[str, str], lambda a, b: {**(a or {}), **b}]
 
-
-# --- 2. Node Definitions (The Personas) ---
-
+def calculate_complexity(query: str) -> str:
+    """
+    Heuristic Complexity Analysis (Phase 4.1)
+    TODO: Upgrade to LLM-based complexity classifier in Phase 5.
+    """
+    length = len(query)
+    keywords = ["analyze", "compare", "strategy", "architecture", "solve", "design"]
+    keyword_count = sum(1 for k in keywords if k in query.lower())
+    
+    if length > 200 or keyword_count >= 2:
+        return "High"
+    elif length > 50 or keyword_count >= 1:
+        return "Medium"
+    else:
+        return "Low"
 
 def chancellor_router_node(state: ChancellorState):
     """
     [Chancellor Node]
-    The Supreme Orchestrator.
-    Decides which Strategist should speak next or if the final answer is ready.
-
-    Antigravity 통합: DRY_RUN 모드 감지 및 auto_run_eligible 조정
+    The Supreme Orchestrator with Tree-of-Thoughts (ToT) capability.
     """
-    print("👑 [Chancellor] Analyzing state...")
+    print("👑 [Chancellor] Analyzing state & Complexity...")
     messages = state["messages"]
-    messages[-1]
+    
+    # Init State Variables
+    steps = state.get("steps_taken", 0)
+    state["steps_taken"] = steps + 1
+    
+    # Analyze Query Complexity
+    query = messages[0].content
+    complexity = state.get("complexity")
+    if not complexity:
+        complexity = calculate_complexity(query)
+        state["complexity"] = complexity
+        print(f"🧠 [Chancellor] Query Complexity: {complexity}")
 
-    # Antigravity 설정 확인 (kingdom_context에서 가져오거나 전역 설정 사용)
+    # Antigravity Config
     context = state.get("kingdom_context", {}) or {}
     antigravity_config = context.get("antigravity", {})
     is_dry_run = antigravity_config.get("DRY_RUN_DEFAULT", antigravity.DRY_RUN_DEFAULT)
-
-    # DRY_RUN 모드일 때는 auto_run_eligible을 False로 강제 (善: 안전 우선)
-    if is_dry_run and state.get("auto_run_eligible", False):
-        print("🛡️ [Chancellor] DRY_RUN 모드 감지 - auto_run_eligible을 False로 조정 (善)")
-        state["auto_run_eligible"] = False
-
-    # Simple heuristic routing for now (Upgrade to LLM-based later)
-    # If this is the start (Human message), we might want to trigger all three or specific ones.
-    # For V1, let's trigger Jegalryang (Truth) first if no analysis exists.
-
+    
     analysis = state.get("analysis_results", {})
+    
+    # 1. Always start with Jegalryang (Truth)
+    if "jegalryang" not in analysis:
+        return {"next_step": "jegalryang", "current_speaker": "chancellor", "steps_taken": steps + 1, "complexity": complexity}
 
-    strategist_order = context.get("strategist_order") or ["jegalryang", "samaui", "juyu"]
-    max_strategists = context.get("max_strategists")
-    try:
-        max_n = int(max_strategists) if max_strategists is not None else len(strategist_order)
-    except Exception:
-        max_n = len(strategist_order)
+    # 2. Complexity-based Paths
+    if complexity == "Low":
+        # simple: Truth -> Finalize
+        return {"next_step": "finalize", "current_speaker": "chancellor"}
+        
+    elif complexity == "Medium":
+        # standard: Truth -> Goodness -> Finalize
+        if "samaui" not in analysis:
+             return {"next_step": "samaui", "current_speaker": "chancellor"}
+        return {"next_step": "finalize", "current_speaker": "chancellor"}
+        
+    elif complexity == "High":
+        # complex: Truth -> Goodness -> Beauty -> Finalize (Sequential for V1 stability)
+        # In V2, we can loop Truth <-> Goodness if disagreement is high.
+        if "samaui" not in analysis:
+             return {"next_step": "samaui", "current_speaker": "chancellor"}
+        if "juyu" not in analysis:
+             return {"next_step": "juyu", "current_speaker": "chancellor"}
+             
+        return {"next_step": "finalize", "current_speaker": "chancellor"}
 
-    strategist_order = list(strategist_order)[: max(0, min(3, max_n))]
-
-    # Visit strategists in requested order, up to max_strategists.
-    for strategist in strategist_order:
-        if strategist not in analysis:
-            return {"next_step": strategist, "current_speaker": "chancellor"}
-
-    # If all requested strategists have spoken, Chancellor synthesizes the final answer.
+    # Fallback
     return {"next_step": "finalize", "current_speaker": "chancellor"}
 
 
@@ -124,8 +149,10 @@ async def jegalryang_node(state: ChancellorState):
 
     content = response_data.get("response", "분석 실패")
 
+
+    # Rely on Reducer to merge this delta
     return {
-        "analysis_results": {**state.get("analysis_results", {}), "jegalryang": content},
+        "analysis_results": {"jegalryang": content},
         "messages": [AIMessage(content=f"[제갈량] {content}", name="jegalryang")],
     }
 
@@ -153,8 +180,9 @@ async def samaui_node(state: ChancellorState):
 
     content = response_data.get("response", "검토 실패")
 
+
     return {
-        "analysis_results": {**state.get("analysis_results", {}), "samaui": content},
+        "analysis_results": {"samaui": content},
         "messages": [AIMessage(content=f"[사마의] {content}", name="samaui")],
     }
 
@@ -183,8 +211,9 @@ async def juyu_node(state: ChancellorState):
 
     content = response_data.get("response", "정리 실패")
 
+
     return {
-        "analysis_results": {**state.get("analysis_results", {}), "juyu": content},
+        "analysis_results": {"juyu": content},
         "messages": [AIMessage(content=f"[주유] {content}", name="juyu")],
     }
 

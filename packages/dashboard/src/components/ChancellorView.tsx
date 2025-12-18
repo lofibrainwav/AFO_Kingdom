@@ -91,11 +91,31 @@ export default function ChancellorView() {
 
   const activePersona = response ? getPersona(response.speaker) : PERSONAS['chancellor'];
 
+  const [thinkingStep, setThinkingStep] = useState<string>('');
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim()) return;
 
     setLoading(true);
+    setThinkingStep('🧠 Initializing Trinity Thought Process...');
+    
+    // Simulate Thinking Steps (The Beauty of Transparency)
+    const steps = [
+        "⚔️ JEGALRYANG: Analyzing Architecture...",
+        "🛡️ SAMAUI: Evaluating Risk & Stability...",
+        "🌉 JUYU: Polishing User Experience...", 
+        "👑 CHANCELLOR: Synthesizing Final Report..."
+    ];
+    
+    let stepIndex = 0;
+    const interval = setInterval(() => {
+        if (stepIndex < steps.length) {
+            setThinkingStep(steps[stepIndex]);
+            stepIndex++;
+        }
+    }, 800); // Change step every 800ms
+
     try {
       // Use real trinity score from health API
       const trinityScore = health?.trinity?.trinity_score ?? 0.9;
@@ -112,7 +132,9 @@ export default function ChancellorView() {
         full_history: []
       } as ChancellorResponse);
     } finally {
+      clearInterval(interval);
       setLoading(false);
+      setThinkingStep('');
     }
   };
 
@@ -122,10 +144,35 @@ export default function ChancellorView() {
     return `${(value * 100).toFixed(1)}%`;
   };
 
+  // Dynamic Glow Logic (Wisdom Visualization)
+  const getDynamicGlow = () => {
+    if (!health?.trinity) return 'shadow-[0_0_15px_rgba(0,0,0,0.5)]';
+    const score = health.trinity.trinity_score || 0;
+    
+    // Beauty (Pink/White High Pulse)
+    if (score >= 0.9) return 'shadow-[0_0_30px_rgba(236,72,153,0.6)] animate-pulse';
+    // Serenity (Green Stable Glow)
+    if (score >= 0.7) return 'shadow-[0_0_20px_rgba(34,197,94,0.4)]';
+    // Goodness/Warning (Amber/Yellow)
+    if (score >= 0.5) return 'shadow-[0_0_20px_rgba(234,179,8,0.4)]';
+    // Risk (Red Dark Aura)
+    return 'shadow-[0_0_40px_rgba(239,68,68,0.6)] animate-pulse';
+  };
+
+  // Audio Trigger Logic (Serenity Voice)
+  useEffect(() => {
+    if (!health?.trinity) return;
+    const score = health.trinity.trinity_score || 0;
+    
+    // Simple console log for now, can be replaced with actual Audio() calls
+    if (score >= 0.9) console.log("🔔 [Audio] Playing: Clear Bell (Trinity Rise)");
+    else if (score < 0.5) console.log("⚠️ [Audio] Playing: Low Hum (Risk Rise)");
+  }, [health?.trinity?.trinity_score]);
+
   return (
     <div className="w-full max-w-4xl mx-auto p-4 space-y-6">
       {/* Header / Status Cartridge */}
-      <div className={`bg-black/90 border-2 ${activePersona.border} rounded-lg p-4 shadow-[0_0_15px_rgba(0,0,0,0.5)] transition-colors duration-500`}>
+      <div className={`bg-black/90 border-2 ${activePersona.border} rounded-lg p-4 ${getDynamicGlow()} transition-all duration-1000`}>
         <div className="flex items-center justify-between mb-3">
           <h2 className={`${activePersona.color} font-mono text-xl tracking-wider flex items-center gap-2`}>
             <span className="animate-pulse">●</span> {activePersona.icon}
@@ -234,7 +281,19 @@ export default function ChancellorView() {
       <div className={`bg-black border-2 ${activePersona.border} rounded-lg min-h-[400px] p-6 relative overflow-hidden transition-colors duration-500`}>
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-green-500/50 to-transparent opacity-50"></div>
         
-        {response ? (
+        {loading ? (
+            <div className="h-full flex flex-col items-center justify-center space-y-4 animate-in fade-in zoom-in duration-300">
+                <div className="relative w-20 h-20">
+                     <div className="absolute inset-0 border-4 border-cyan-500/30 rounded-full animate-ping"></div>
+                     <div className="absolute inset-2 border-4 border-amber-500/30 rounded-full animate-spin"></div>
+                     <div className="absolute inset-4 border-4 border-pink-500/30 rounded-full animate-pulse"></div>
+                </div>
+                <div className="text-center">
+                    <p className="font-mono text-lg text-green-400 animate-pulse">{thinkingStep}</p>
+                    <p className="text-xs text-gray-600 mt-2 font-mono">CALCULATING TRINITY PATH...</p>
+                </div>
+            </div>
+        ) : response ? (
           <div className="space-y-4">
             <div className={`flex items-center gap-2 ${activePersona.color} font-mono text-sm border-b border-white/10 pb-2`}>
               <span className={`${activePersona.bg} px-2 py-0.5 rounded text-xs border ${activePersona.border} bg-opacity-20`}>

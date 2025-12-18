@@ -147,39 +147,51 @@ class LLMRouter:
             context_window=8192,  # Qwen3-VL-8B supports larger context
         )
 
+        # Vault Integration
+        try:
+            from .security.vault_manager import vault
+        except (ImportError, ValueError):
+            try:
+                from AFO.security.vault_manager import vault
+            except ImportError:
+                vault = None
+
+        # Helper to get secret
+        def get_secret(name):
+             if vault: return vault.get_secret(name)
+             return getattr(settings, name, None) if settings else os.getenv(name)
+
         # Anthropic (Claude)
-        anthropic_key = settings.ANTHROPIC_API_KEY if settings else os.getenv("ANTHROPIC_API_KEY")
+        anthropic_key = get_secret("ANTHROPIC_API_KEY")
         if anthropic_key:
             self.llm_configs[LLMProvider.ANTHROPIC] = LLMConfig(
                 provider=LLMProvider.ANTHROPIC,
                 model="claude-3-sonnet-20240229",
-                api_key_env="ANTHROPIC_API_KEY",  # Changed to api_key_env
+                api_key_env="ANTHROPIC_API_KEY",
                 temperature=0.7,
                 max_tokens=4096,
-                cost_per_token=0.000015,  # 입력 토큰당 $0.015 (추정) -> per token
+                cost_per_token=0.000015,
                 latency_ms=2000,
                 quality_tier=QualityTier.ULTRA,
             )
 
         # Google Gemini
-        gemini_key = settings.GEMINI_API_KEY if settings else os.getenv("GEMINI_API_KEY")
-        google_key = settings.GOOGLE_API_KEY if settings else os.getenv("GOOGLE_API_KEY")
+        gemini_key = get_secret("GEMINI_API_KEY")
+        google_key = get_secret("GOOGLE_API_KEY")
         if gemini_key or google_key:
             self.llm_configs[LLMProvider.GEMINI] = LLMConfig(
                 provider=LLMProvider.GEMINI,
-                model="gemini-2.5-flash",  # 2025년 11월 기준 현역 주력
-                api_key_env="GEMINI_API_KEY"
-                if gemini_key
-                else "GOOGLE_API_KEY",  # Phase 2-4: settings 사용
+                model="gemini-2.0-flash-exp", # Updated to latest model
+                api_key_env="GEMINI_API_KEY" if gemini_key else "GOOGLE_API_KEY",
                 temperature=0.7,
                 max_tokens=2048,
-                cost_per_token=0.0000005,  # 0.0005 per 1k tokens -> per token
+                cost_per_token=0.0000005,
                 latency_ms=500,
                 quality_tier=QualityTier.PREMIUM,
             )
 
         # OpenAI GPT
-        openai_key = settings.OPENAI_API_KEY if settings else os.getenv("OPENAI_API_KEY")
+        openai_key = get_secret("OPENAI_API_KEY")
         if openai_key:
             self.llm_configs[LLMProvider.OPENAI] = LLMConfig(
                 provider=LLMProvider.OPENAI,
@@ -496,28 +508,23 @@ class LLMRouter:
 
         # Phase 2-4: settings 사용
         try:
-            from config.settings import get_settings
-
-            settings = get_settings()
-            if config.api_key_env == "GEMINI_API_KEY":
-                api_key = settings.GEMINI_API_KEY
-            elif config.api_key_env == "GOOGLE_API_KEY":
-                api_key = settings.GOOGLE_API_KEY
-            else:
-                api_key = None
+            from .security.vault_manager import vault
         except ImportError:
             try:
-                from AFO.config.settings import get_settings
-
-                settings = get_settings()
-                if config.api_key_env == "GEMINI_API_KEY":
-                    api_key = settings.GEMINI_API_KEY
-                elif config.api_key_env == "GOOGLE_API_KEY":
-                    api_key = settings.GOOGLE_API_KEY
-                else:
-                    api_key = None
+                from AFO.security.vault_manager import vault
             except ImportError:
-                api_key = os.getenv(config.api_key_env) if config.api_key_env else None
+                vault = None
+
+        if vault:
+            api_key = vault.get_secret(config.api_key_env)
+        else:
+             # Fallback
+            try:
+                from config.settings import get_settings
+                settings = get_settings()
+                api_key = getattr(settings, config.api_key_env, None)
+            except ImportError:
+                api_key = os.getenv(config.api_key_env)
 
         if not api_key:
             raise ValueError(f"API Key not found for env var: {config.api_key_env}")
