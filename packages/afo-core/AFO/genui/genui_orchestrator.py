@@ -1,8 +1,6 @@
 import os
 import time
-import json
-from pathlib import Path
-from typing import Optional, Dict, Any
+from typing import Any
 
 # Assuming PlaywrightBridgeMCP is available in the path or imports
 try:
@@ -10,6 +8,7 @@ try:
 except ImportError:
     # Fallback or mock if running isolation
     PlaywrightBridgeMCP = None
+
 
 class GenUIOrchestrator:
     """
@@ -25,31 +24,31 @@ class GenUIOrchestrator:
         self.sandbox_path = os.path.join(workspace_root, "packages/dashboard/src/app/genui")
         os.makedirs(self.sandbox_path, exist_ok=True)
 
-    def create_project(self, project_id: str, prompt: str) -> Dict[str, Any]:
+    def create_project(self, project_id: str, prompt: str) -> dict[str, Any]:
         """
         Initiates a GenUI project creation loop.
         """
         project_dir = os.path.join(self.sandbox_path, project_id)
         os.makedirs(project_dir, exist_ok=True)
-        
+
         # 1. Draft (Mocking LLM generation for now)
         # In a real scenario, this calls 'Bangtong' (Codex)
         page_code = self._generate_draft(prompt, project_id)
-        
+
         # 2. Write
         file_path = os.path.join(project_dir, "page.tsx")
         with open(file_path, "w") as f:
             f.write(page_code)
-            
+
         print(f"✨ [GenUI] Wrote code to {file_path}")
 
         # 3. Render Wait (Simulate Hot Reload)
-        time.sleep(2) 
+        time.sleep(2)
 
         # 4. See (Screenshot)
         screenshot_path = os.path.join(self.workspace_root, "artifacts", f"genui_{project_id}.png")
         vision_result = {"success": False, "message": "Playwright not loaded"}
-        
+
         if PlaywrightBridgeMCP:
             target_url = f"http://localhost:3000/genui/{project_id}"
             print(f"👀 [GenUI] Navigating to {target_url}...")
@@ -57,12 +56,12 @@ class GenUIOrchestrator:
             nav_res = PlaywrightBridgeMCP.navigate(url=target_url)
             if nav_res.get("success"):
                 vision_result = PlaywrightBridgeMCP.screenshot(path=screenshot_path)
-        
+
         return {
             "project_id": project_id,
             "status": "DRAFT_CREATED",
             "code_path": file_path,
-            "vision_result": vision_result
+            "vision_result": vision_result,
         }
 
     def _generate_draft(self, prompt: str, project_id: str) -> str:
@@ -72,7 +71,7 @@ class GenUIOrchestrator:
         """
         title = f"GenUI Project: {project_id}"
         content = "Generated Content"
-        
+
         if "calculator" in prompt.lower():
             content = """
             <div className="p-4 bg-gray-800 rounded-xl border border-gray-700 max-w-sm mx-auto mt-10">
@@ -115,6 +114,7 @@ export default function GenUIPage() {{
   );
 }}
 """
+
 
 if __name__ == "__main__":
     orchestrator = GenUIOrchestrator()

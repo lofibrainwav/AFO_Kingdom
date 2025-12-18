@@ -6,6 +6,19 @@
 
 ---
 
+## 0. Architecture (The Body)
+
+The AFO Kingdom follows a strict **4-Layer Architecture** (Score: 100/100).
+
+| Layer | Responsibility | Components |
+|:---|:---|:---|
+| **1. Presentation** | Entry Point & Type Safety | `api/routers`, `api/models` (Pydantic) |
+| **2. Application** | Business Logic & Strategy | `chancellor_graph`, `llm_router`, `skills` |
+| **3. Domain** | Core Concepts & State | `domain/`, `5 Pillars`, `Skill Cards` |
+| **4. Infrastructure** | Persistence & External I/O | `PostgreSQL`, `Redis`, `Qdrant`, `External APIs` |
+
+---
+
 ## Ⅰ. System Overview
 
 The **AFO Kingdom** is a fully integrated, self-aware AI operating system built on the Trinity Philosophy (眞善美孝永). It has evolved from a simple text processor into a multi-organ organism with eyes, hands, soul, and a face.
