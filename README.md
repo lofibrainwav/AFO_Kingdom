@@ -38,10 +38,16 @@ mypy packages/afo-core --strict
 
 ## Documentation
 
+- **[Final Handover Report (MUST READ)](docs/AFO_FINAL_HANDOVER.md)**
 - [CI/CD Pipeline](docs/CI_CD_PIPELINE.md)
 - [OSS Strategy (세종대왕 정신)](docs/OSS_STRATEGY.md)
 - [Security Policy](SECURITY.md)
 - [Contributing](CONTRIBUTING.md)
+
+## Key Features (New)
+- **Family Hub**: Dashboard for Happiness Tracking (`/family`).
+- **Playwright Bridge**: Browser Automation Node.
+- **Context7**: Self-Awareness Knowledge Base.
 
 ## License
 
