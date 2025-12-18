@@ -114,6 +114,123 @@ def verify_mcp():
         content = json.loads(resp["result"]["content"][0]["text"])
         assert content["verdict"] == "PLAUSIBLE"
         print("✅ Fact Verification Success")
+
+        # 5. Test Shell Execute
+        print("\n🔹 Testing shell_execute...")
+        shell_req = {
+            "jsonrpc": "2.0",
+            "id": 5,
+            "method": "tools/call",
+            "params": {
+                "name": "shell_execute",
+                "arguments": {"command": "echo 'Hello AFO'"},
+            },
+        }
+        process.stdin.write(json.dumps(shell_req) + "\n")
+        process.stdin.flush()
+        
+        response_line = process.stdout.readline()
+        print(f"Tool Response: {response_line.strip()}")
+        resp = json.loads(response_line)
+        content = resp["result"]["content"][0]["text"]
+        assert "Hello AFO" in content
+        print("✅ Shell Execute Success")
+
+        # 6. Test Write File
+        print("\n🔹 Testing write_file...")
+        test_file_path = "temp_test_mcp.txt"
+        write_req = {
+            "jsonrpc": "2.0",
+            "id": 6,
+            "method": "tools/call",
+            "params": {
+                "name": "write_file",
+                "arguments": {"path": test_file_path, "content": "AFO Verification Content"},
+            },
+        }
+        process.stdin.write(json.dumps(write_req) + "\n")
+        process.stdin.flush()
+        
+        response_line = process.stdout.readline()
+        print(f"Tool Response: {response_line.strip()}")
+        resp = json.loads(response_line)
+        assert not resp["result"]["isError"]
+        print("✅ Write File Success")
+
+        # 7. Test Read File
+        print("\n🔹 Testing read_file...")
+        read_req = {
+            "jsonrpc": "2.0",
+            "id": 7,
+            "method": "tools/call",
+            "params": {
+                "name": "read_file",
+                "arguments": {"path": test_file_path},
+            },
+        }
+        process.stdin.write(json.dumps(read_req) + "\n")
+        process.stdin.flush()
+        
+        response_line = process.stdout.readline()
+        print(f"Tool Response: {response_line.strip()}")
+        resp = json.loads(response_line)
+        content = resp["result"]["content"][0]["text"]
+        assert "AFO Verification Content" in content
+        print("✅ Read File Success")
+        
+        # Cleanup temp file
+        import os
+        if os.path.exists(test_file_path):
+            os.remove(test_file_path)
+
+        # 8. Test CuPy Weighted Sum
+        print("\n🔹 Testing cupy_weighted_sum...")
+        math_req = {
+            "jsonrpc": "2.0",
+            "id": 8,
+            "method": "tools/call",
+            "params": {
+                "name": "cupy_weighted_sum",
+                "arguments": {"data": [1.0, 2.0, 3.0], "weights": [0.5, 0.5, 0.5]},
+            },
+        }
+        process.stdin.write(json.dumps(math_req) + "\n")
+        process.stdin.flush()
+        
+        response_line = process.stdout.readline()
+        print(f"Tool Response: {response_line.strip()}")
+        resp = json.loads(response_line)
+        # Result should be 1*0.5 + 2*0.5 + 3*0.5 = 0.5 + 1.0 + 1.5 = 3.0
+        content = resp["result"]["content"][0]["text"]
+        assert float(content) == 3.0
+        print("✅ CuPy Weighted Sum Success")
+
+        # 9. Test Sequential Thinking
+        print("\n🔹 Testing sequential_thinking...")
+        think_req = {
+            "jsonrpc": "2.0",
+            "id": 9,
+            "method": "tools/call",
+            "params": {
+                "name": "sequential_thinking",
+                "arguments": {
+                    "thought": "Analysis of Trinity Score architecture shows hybrid engine is optimal.",
+                    "thought_number": 1,
+                    "total_thoughts": 3,
+                    "next_thought_needed": True
+                },
+            },
+        }
+        process.stdin.write(json.dumps(think_req) + "\n")
+        process.stdin.flush()
+        
+        response_line = process.stdout.readline()
+        print(f"Tool Response: {response_line.strip()}")
+        resp = json.loads(response_line)
+        content = json.loads(resp["result"]["content"][0]["text"])
+        assert content["status"] == "THINKING"
+        print("✅ Sequential Thinking Success")
+
         # Print stderr if any
         stderr_output = process.stderr.read()
         if stderr_output:
