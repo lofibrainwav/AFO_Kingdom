@@ -128,7 +128,7 @@ def verify_mcp():
         }
         process.stdin.write(json.dumps(shell_req) + "\n")
         process.stdin.flush()
-        
+
         response_line = process.stdout.readline()
         print(f"Tool Response: {response_line.strip()}")
         resp = json.loads(response_line)
@@ -150,7 +150,7 @@ def verify_mcp():
         }
         process.stdin.write(json.dumps(write_req) + "\n")
         process.stdin.flush()
-        
+
         response_line = process.stdout.readline()
         print(f"Tool Response: {response_line.strip()}")
         resp = json.loads(response_line)
@@ -170,16 +170,17 @@ def verify_mcp():
         }
         process.stdin.write(json.dumps(read_req) + "\n")
         process.stdin.flush()
-        
+
         response_line = process.stdout.readline()
         print(f"Tool Response: {response_line.strip()}")
         resp = json.loads(response_line)
         content = resp["result"]["content"][0]["text"]
         assert "AFO Verification Content" in content
         print("✅ Read File Success")
-        
+
         # Cleanup temp file
         import os
+
         if os.path.exists(test_file_path):
             os.remove(test_file_path)
 
@@ -196,7 +197,7 @@ def verify_mcp():
         }
         process.stdin.write(json.dumps(math_req) + "\n")
         process.stdin.flush()
-        
+
         response_line = process.stdout.readline()
         print(f"Tool Response: {response_line.strip()}")
         resp = json.loads(response_line)
@@ -217,19 +218,41 @@ def verify_mcp():
                     "thought": "Analysis of Trinity Score architecture shows hybrid engine is optimal.",
                     "thought_number": 1,
                     "total_thoughts": 3,
-                    "next_thought_needed": True
+                    "next_thought_needed": True,
                 },
             },
         }
         process.stdin.write(json.dumps(think_req) + "\n")
         process.stdin.flush()
-        
+
         response_line = process.stdout.readline()
         print(f"Tool Response: {response_line.strip()}")
         resp = json.loads(response_line)
         content = json.loads(resp["result"]["content"][0]["text"])
         assert content["status"] == "THINKING"
         print("✅ Sequential Thinking Success")
+
+        # 10. Test Context7 (Retrieve Context)
+        print("\n🔹 Testing retrieve_context...")
+        ctx_req = {
+            "jsonrpc": "2.0",
+            "id": 10,
+            "method": "tools/call",
+            "params": {
+                "name": "retrieve_context",
+                "arguments": {"query": "AFO Architecture", "domain": "technical"},
+            },
+        }
+        process.stdin.write(json.dumps(ctx_req) + "\n")
+        process.stdin.flush()
+        
+        response_line = process.stdout.readline()
+        print(f"Tool Response: {response_line.strip()}")
+        resp = json.loads(response_line)
+        content = json.loads(resp["result"]["content"][0]["text"])
+        assert content["found"] is True
+        assert "Chancellor" in content["context"]
+        print("✅ Context7 Retrieval Success")
 
         # Print stderr if any
         stderr_output = process.stderr.read()

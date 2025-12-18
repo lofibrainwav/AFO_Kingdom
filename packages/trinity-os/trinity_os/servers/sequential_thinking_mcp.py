@@ -1,6 +1,3 @@
-import json
-import time
-
 class SequentialThinkingMCP:
     """
     Sequential Thinking Tool
@@ -9,22 +6,17 @@ class SequentialThinkingMCP:
     """
 
     @staticmethod
-    def process_thought(
-        thought: str,
-        thought_number: int,
-        total_thoughts: int,
-        next_thought_needed: bool
-    ) -> dict:
+    def process_thought(thought: str, thought_number: int, total_thoughts: int, next_thought_needed: bool) -> dict:
         """
         Process a thinking step and return analysis metadata.
         """
         if not thought:
-             return {"status": "INVALID", "message": "Thought cannot be empty"}
+            return {"status": "INVALID", "message": "Thought cannot be empty"}
 
         # Logic Analysis (Simple Heuristics)
         complexity = len(thought.split())
         is_final = not next_thought_needed
-        
+
         # Calculate Mock Impact Metrics for Trinity Score
         # Deep thinking (long thoughts) increases Truth & Serenity
         truth_impact = min(10, complexity // 5)
@@ -34,9 +26,5 @@ class SequentialThinkingMCP:
             "thought_processed": True,
             "step": f"{thought_number}/{total_thoughts}",
             "status": "THINKING" if next_thought_needed else "CONCLUSION",
-            "metadata": {
-                "complexity": complexity,
-                "truth_impact": truth_impact,
-                "serenity_impact": serenity_impact
-            }
+            "metadata": {"complexity": complexity, "truth_impact": truth_impact, "serenity_impact": serenity_impact},
         }
