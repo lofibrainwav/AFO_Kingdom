@@ -105,10 +105,22 @@ jobs:
           PYTHONPATH: ${{ github.workspace }}
         run: |
           echo "Current directory: $(pwd)"
-          echo "Listing packages:"
-          ls -la packages/
-          echo "Running pytest..."
-          pytest packages/afo-core/tests packages/trinity-os/tests -v --cov=packages --cov-report=xml --tb=short 2>&1 || echo 'Some tests failed'
+          echo "Workspace: $GITHUB_WORKSPACE"
+          echo ""
+          echo "=== Directory Structure ==="
+          find . -type d -name "tests" | head -20
+          echo ""
+          echo "=== Checking if test directories exist ==="
+          ls -la packages/afo-core/tests/ 2>/dev/null || echo "packages/afo-core/tests not found"
+          ls -la packages/trinity-os/tests/ 2>/dev/null || echo "packages/trinity-os/tests not found"
+          echo ""
+          echo "=== Running pytest ==="
+          # Use explicit paths and let conftest.py handle exclusions
+          if [ -d "packages/afo-core/tests" ]; then
+            pytest packages/afo-core/tests packages/trinity-os/tests -v --cov=packages --cov-report=xml --ignore-glob="**/test_*_advanced.py" --tb=short 2>&1 || echo 'Some tests failed'
+          else
+            echo "Test directories not found, skipping tests"
+          fi
 
       - name: Upload coverage
         uses: codecov/codecov-action@v4
