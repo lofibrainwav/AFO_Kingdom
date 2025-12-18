@@ -165,7 +165,7 @@ class CircuitBreaker:
                     self.failures = 0
                     logger.info(f"[孝] 서킷 브레이커 CLOSED: {func.__name__}")
                 return result
-            except Exception as e:
+            except Exception:
                 self.failures += 1
                 self.last_failure_time = time.time()
                 if self.failures >= self.failure_threshold:

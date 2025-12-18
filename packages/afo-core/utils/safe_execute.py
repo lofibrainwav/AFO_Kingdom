@@ -1,0 +1,63 @@
+"""
+Safe Execute Utility
+善 (Goodness): DRY_RUN, 권한 검증, 폴백
+PDF 페이지 3: DRY_RUN, 권한 검증, 폴백
+"""
+
+import logging
+from functools import wraps
+from typing import Any, Callable
+
+from AFO.config.antigravity import antigravity
+
+logger = logging.getLogger(__name__)
+
+
+def safe_execute(func: Callable) -> Callable:
+    """
+    안전한 실행 데코레이터 (善: Goodness)
+    
+    PDF 페이지 3: DRY_RUN, 권한 검증, 폴백
+    - DRY_RUN 모드: 실제 실행 없이 시뮬레이션
+    - try-except 폴백: 에러 발생 시 안전한 폴백 반환
+    
+    Args:
+        func: 실행할 함수
+        
+    Returns:
+        래핑된 함수
+    """
+    @wraps(func)
+    async def async_wrapper(*args: Any, **kwargs: Any) -> dict[str, Any]:
+        """비동기 함수 래퍼"""
+        if antigravity.DRY_RUN_DEFAULT:
+            logger.info(f"[善: DRY_RUN] {func.__name__} - 실제 실행 없이 시뮬레이션 완료")
+            return {"status": "safe_simulation", "function": func.__name__}
+        
+        try:
+            result = await func(*args, **kwargs)
+            return {"status": "success", "result": result}
+        except Exception as e:
+            logger.warning(f"[善: 폴백] {func.__name__} - 에러 발생, 안전 폴백: {e}")
+            return {"status": "fallback", "error": str(e), "function": func.__name__}
+    
+    @wraps(func)
+    def sync_wrapper(*args: Any, **kwargs: Any) -> dict[str, Any]:
+        """동기 함수 래퍼"""
+        if antigravity.DRY_RUN_DEFAULT:
+            logger.info(f"[善: DRY_RUN] {func.__name__} - 실제 실행 없이 시뮬레이션 완료")
+            return {"status": "safe_simulation", "function": func.__name__}
+        
+        try:
+            result = func(*args, **kwargs)
+            return {"status": "success", "result": result}
+        except Exception as e:
+            logger.warning(f"[善: 폴백] {func.__name__} - 에러 발생, 안전 폴백: {e}")
+            return {"status": "fallback", "error": str(e), "function": func.__name__}
+    
+    # 비동기 함수인지 확인
+    import asyncio
+    if asyncio.iscoroutinefunction(func):
+        return async_wrapper
+    return sync_wrapper
+

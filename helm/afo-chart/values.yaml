@@ -1,0 +1,17 @@
+# helm/afo-chart/values.yaml (Phase 2 - K8s 배포)
+# PDF 페이지 4: Kubernetes Helm Charts, 환경별 설정 지원
+replicaCount: 2  # 고가용성 (永: 복원력)
+
+image:
+  repository: ghcr.io/afo-kingdom/api
+  tag: "latest"  # Placeholder
+
+antigravity:
+  environment: "prod"  # antigravity.py에서 동적 오버라이드
+  autoDeploy: true
+  dryRun: false  # 프로덕션 기본 off (善: 실제 실행)
+
+resources:
+  limits:
+    cpu: "500m"
+    memory: "512Mi"  # PDF 페이지 4: 성능 최적화

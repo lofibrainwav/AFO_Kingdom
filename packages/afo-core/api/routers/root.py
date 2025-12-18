@@ -1,41 +1,26 @@
 """
 Root Router
 Phase 2 리팩토링: Root 엔드포인트 분리
-Phase 3: 타입 힌트 강화
 """
-
-from typing import Any
 
 from fastapi import APIRouter
 
-router = APIRouter(tags=["Root"])
+router = APIRouter()
 
 
 @router.get("/")
-async def read_root() -> dict[str, Any]:
+async def read_root() -> dict[str, str]:
     """
-    Root endpoint - Expose API metadata for dashboards and automated checks.
-
-    Returns:
-        dict[str, Any]: API 메타데이터 (name, version, status, message)
+    루트 엔드포인트 - API 정보 반환
     """
-    try:
-        from config.settings import get_settings
-
-        settings = get_settings()
-        version: str = settings.AFO_API_VERSION
-    except ImportError:
-        try:
-            from AFO.config.settings import get_settings
-
-            settings = get_settings()
-            version = settings.AFO_API_VERSION
-        except ImportError:
-            version = "v1"
-
     return {
-        "name": "AFO Soul Engine API",
-        "version": version,
-        "status": "operational",
-        "message": "AFO Ultimate General Command Post is operational!",
+        "name": "AFO Kingdom Soul Engine API",
+        "version": "6.3.0",
+        "description": "眞善美孝永 (Truth, Goodness, Beauty, Serenity, Eternity)",
+        "status": "running",
     }
+
+
+# api_server.py의 read_root_legacy에서 사용하기 위해 함수 export
+__all__ = ["router", "read_root"]
+

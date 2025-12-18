@@ -7,6 +7,7 @@
 from __future__ import annotations
 
 import asyncio
+import json
 import time
 from collections import defaultdict
 from datetime import datetime
@@ -24,6 +25,14 @@ from afo_soul_engine.api.models.skills import (
     SkillResponse,
     SkillStatsResponse,
 )
+
+# Trinity Score Evaluator (동적 점수 계산)
+try:
+    from AFO.services.mcp_tool_trinity_evaluator import mcp_tool_trinity_evaluator
+    TRINITY_EVALUATOR_AVAILABLE = True
+except ImportError:
+    mcp_tool_trinity_evaluator = None
+    TRINITY_EVALUATOR_AVAILABLE = False
 
 # Import skill registry components for runtime
 try:
@@ -359,20 +368,60 @@ class SkillsService(BaseService):
             # 실행 통계 업데이트
             self.skill_registry.increment_execution_count(request.skill_id)
 
+            # 동적 Trinity Score 계산 (眞善美孝永 5기둥)
+            dynamic_trinity_score = None
+            base_philosophy_scores = None
+            
+            # 기본 철학 점수 추출 (정적 점수)
+            if skill.philosophy and hasattr(skill.philosophy, "truth"):
+                base_philosophy_scores = {
+                    "truth": getattr(skill.philosophy, "truth", 85),
+                    "goodness": getattr(skill.philosophy, "goodness", 80),
+                    "beauty": getattr(skill.philosophy, "beauty", 75),
+                    "serenity": getattr(skill.philosophy, "serenity", 90),
+                }
+
+            # 실행 결과를 문자열로 변환하여 분석
+            result_str = json.dumps(result) if isinstance(result, dict) else str(result)
+            is_error = False
+
+            # 동적 Trinity Score 계산
+            if TRINITY_EVALUATOR_AVAILABLE and mcp_tool_trinity_evaluator:
+                try:
+                    trinity_eval = mcp_tool_trinity_evaluator.evaluate_execution_result(
+                        tool_name=request.skill_id,
+                        execution_result=result_str,
+                        execution_time_ms=execution_time,
+                        is_error=is_error,
+                        base_philosophy_scores=base_philosophy_scores,
+                    )
+                    dynamic_trinity_score = PhilosophyScores(
+                        truth=trinity_eval["trinity_scores"]["truth"] * 100,
+                        goodness=trinity_eval["trinity_scores"]["goodness"] * 100,
+                        beauty=trinity_eval["trinity_scores"]["beauty"] * 100,
+                        serenity=trinity_eval["trinity_scores"]["filial_serenity"] * 100,
+                    )
+                except Exception as e:
+                    self.logger.warning("Trinity Score 계산 실패, 정적 점수 사용: %s", e)
+                    dynamic_trinity_score = None
+
+            # 동적 점수가 없으면 정적 점수 사용
+            final_philosophy_score = dynamic_trinity_score
+            if final_philosophy_score is None:
+                final_philosophy_score = PhilosophyScores(
+                    truth=base_philosophy_scores["truth"] if base_philosophy_scores else 85.0,
+                    goodness=base_philosophy_scores["goodness"] if base_philosophy_scores else 80.0,
+                    beauty=base_philosophy_scores["beauty"] if base_philosophy_scores else 75.0,
+                    serenity=base_philosophy_scores["serenity"] if base_philosophy_scores else 90.0,
+                ) if base_philosophy_scores else None
+
             # 실행 결과 생성
             execution_result = SkillExecutionResult(
                 skill_id=request.skill_id,
                 status="success",
                 result=result,
                 execution_time_ms=execution_time,
-                philosophy_score=PhilosophyScores(
-                    truth=getattr(skill.philosophy, "truth", 85.0),
-                    goodness=getattr(skill.philosophy, "goodness", 80.0),
-                    beauty=getattr(skill.philosophy, "beauty", 75.0),
-                    serenity=getattr(skill.philosophy, "serenity", 90.0),
-                )
-                if skill.philosophy and hasattr(skill.philosophy, "truth")
-                else None,
+                philosophy_score=final_philosophy_score,
                 error=None,
             )
 

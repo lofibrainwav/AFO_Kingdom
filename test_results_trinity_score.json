@@ -1,0 +1,154 @@
+{
+  "timestamp": 1766040296.550559,
+  "summary": {
+    "total_tested": 11,
+    "total_passed": 7,
+    "pass_rate": 63.63636363636363
+  },
+  "results": [
+    {
+      "server": "AFO Ultimate MCP",
+      "status": "success",
+      "tools_tested": 4,
+      "tools_passed": 0,
+      "tool_results": [
+        {
+          "tool": "shell_execute",
+          "status": "failed",
+          "trinity_score": null
+        },
+        {
+          "tool": "read_file",
+          "status": "failed",
+          "trinity_score": null
+        },
+        {
+          "tool": "write_file",
+          "status": "failed",
+          "trinity_score": null
+        },
+        {
+          "tool": "kingdom_health",
+          "status": "failed",
+          "trinity_score": null
+        }
+      ]
+    },
+    {
+      "server": "AFO Skills MCP",
+      "status": "success",
+      "tools_tested": 2,
+      "tools_passed": 2,
+      "tool_results": [
+        {
+          "tool": "cupy_weighted_sum",
+          "status": "passed",
+          "trinity_score": {
+            "truth": 0.895,
+            "goodness": 0.86,
+            "beauty": 0.825,
+            "filial_serenity": 0.93,
+            "eternity": 0.5,
+            "serenity_core": 0.8595,
+            "trinity_score": 0.8637,
+            "balance_delta": 0.43,
+            "balance_status": "warning",
+            "weights": {
+              "truth": 0.35,
+              "goodness": 0.35,
+              "beauty": 0.2,
+              "filial_serenity": 0.08,
+              "eternity": 0.02
+            }
+          }
+        },
+        {
+          "tool": "read_file",
+          "status": "skipped",
+          "reason": "Not available",
+          "trinity_score": null
+        },
+        {
+          "tool": "verify_fact",
+          "status": "passed",
+          "trinity_score": {
+            "truth": 0.895,
+            "goodness": 0.86,
+            "beauty": 0.825,
+            "filial_serenity": 0.93,
+            "eternity": 0.5,
+            "serenity_core": 0.8595,
+            "trinity_score": 0.8637,
+            "balance_delta": 0.43,
+            "balance_status": "warning",
+            "weights": {
+              "truth": 0.35,
+              "goodness": 0.35,
+              "beauty": 0.2,
+              "filial_serenity": 0.08,
+              "eternity": 0.02
+            }
+          }
+        }
+      ]
+    },
+    {
+      "server": "Skills Registry",
+      "status": "success",
+      "tools_tested": 5,
+      "tools_passed": 5,
+      "tool_results": [
+        {
+          "tool": "skill_001_youtube_spec_gen",
+          "status": "passed",
+          "philosophy_scores": {
+            "truth": 95,
+            "goodness": 90,
+            "beauty": 92,
+            "serenity": 88
+          }
+        },
+        {
+          "tool": "skill_002_ultimate_rag",
+          "status": "passed",
+          "philosophy_scores": {
+            "truth": 98,
+            "goodness": 95,
+            "beauty": 90,
+            "serenity": 92
+          }
+        },
+        {
+          "tool": "skill_003_health_monitor",
+          "status": "passed",
+          "philosophy_scores": {
+            "truth": 100,
+            "goodness": 100,
+            "beauty": 95,
+            "serenity": 100
+          }
+        },
+        {
+          "tool": "skill_004_ragas_evaluator",
+          "status": "passed",
+          "philosophy_scores": {
+            "truth": 99,
+            "goodness": 92,
+            "beauty": 88,
+            "serenity": 85
+          }
+        },
+        {
+          "tool": "skill_005_strategy_engine",
+          "status": "passed",
+          "philosophy_scores": {
+            "truth": 96,
+            "goodness": 94,
+            "beauty": 93,
+            "serenity": 95
+          }
+        }
+      ]
+    }
+  ]
+}

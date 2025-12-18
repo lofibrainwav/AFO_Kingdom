@@ -7,13 +7,21 @@ import os
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
-
+from .antigravity import antigravity
 
 class AFOSettings(BaseSettings):
     """
     AFO 왕국 중앙 설정 클래스
     모든 환경 변수와 기본값을 한 곳에서 관리
-    """
+    """ 
+    
+    # ============================================================================
+    # AntiGravity Integration (Phase 1)
+    # ============================================================================
+    antigravity_mode: bool = Field(
+        default=antigravity.AUTO_DEPLOY, 
+        description="AntiGravity 자동 배포 모드 (True: 활성화)"
+    )
 
     model_config = SettingsConfigDict(
         env_file=os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env"),
@@ -113,6 +121,9 @@ class AFOSettings(BaseSettings):
     API_WALLET_ENCRYPTION_KEY: str | None = Field(
         default=None, description="API Wallet 암호화 키 (Fernet, 44자)"
     )
+    # Vault Settings (Phase 3)
+    VAULT_URL: str = Field(default="http://localhost:8200", description="Vault 서버 URL")
+    VAULT_TOKEN: str | None = Field(default=None, description="Vault 액세스 토큰")
     TAVILY_API_KEY: str | None = Field(default=None, description="Tavily API 키 (웹 검색)")
     REDIS_RAG_INDEX: str = Field(default="rag_docs", description="Redis RAG 인덱스 이름")
     AFO_HOME: str | None = Field(default=None, description="AFO 홈 디렉토리 경로")

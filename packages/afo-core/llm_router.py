@@ -562,7 +562,9 @@ class LLMRouter:
             raise last_error
         raise RuntimeError("All Gemini models failed and no error was captured")
 
-    async def _call_ollama(self, query: str, config: LLMConfig) -> str:
+    async def _call_ollama(
+        self, query: str, config: LLMConfig, context: dict[str, Any] | None = None
+    ) -> str:
         """Ollama API 호출"""
         import httpx
 
@@ -582,19 +584,35 @@ class LLMRouter:
                 except ImportError:
                     base_url = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 
+        timeout_seconds = float(
+            (context or {}).get("ollama_timeout_seconds", os.getenv("OLLAMA_TIMEOUT_SECONDS", "30"))
+        )
+        max_tokens = int((context or {}).get("max_tokens", config.max_tokens))
+        temperature = float((context or {}).get("temperature", config.temperature))
+        model = str((context or {}).get("ollama_model", config.model))
+        num_ctx = int((context or {}).get("ollama_num_ctx", getattr(config, "context_window", 4096)))
+        num_threads = (context or {}).get("ollama_num_thread")
+
         try:
-            async with httpx.AsyncClient(timeout=300.0) as client:  # 5 min timeout for slow models
+            async with httpx.AsyncClient(timeout=httpx.Timeout(timeout_seconds)) as client:
+                options: dict[str, Any] = {
+                    "temperature": temperature,
+                    "num_predict": max_tokens,
+                    "num_ctx": num_ctx,
+                }
+                if num_threads is not None:
+                    try:
+                        options["num_thread"] = int(num_threads)
+                    except Exception:
+                        pass
+
                 response = await client.post(
                     f"{base_url}/api/generate",
                     json={
-                        "model": config.model,
+                        "model": model,
                         "prompt": query,
                         "stream": False,
-                        "options": {
-                            "temperature": config.temperature,
-                            "num_predict": config.max_tokens,
-                            "num_ctx": getattr(config, "context_window", 4096),  # Explicit Config
-                        },
+                        "options": options,
                     },
                 )
                 response.raise_for_status()
@@ -614,7 +632,7 @@ class LLMRouter:
             if provider == LLMProvider.OLLAMA:
                 config = self.llm_configs.get(LLMProvider.OLLAMA)
                 if config:
-                    return await self._call_ollama(query, config)
+                    return await self._call_ollama(query, config, context)
                 return "[Ollama Error] 설정이 없습니다."
 
             elif provider == LLMProvider.ANTHROPIC and API_WRAPPERS_AVAILABLE:
@@ -651,7 +669,7 @@ class LLMRouter:
 
         except Exception as e:
             logger.error(f"LLM 호출 중 예외: {e}")
-            return f"[{provider.value} Error] {e!s}"
+            raise
 
     async def _try_fallback(
         self, fallback_provider: LLMProvider, query: str, context: dict[str, Any] | None

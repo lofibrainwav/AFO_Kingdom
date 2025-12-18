@@ -56,3 +56,5 @@ numba>=0.60.0  # JIT compilation, auto-detects GPU
 # Ethereum typing (pytest-ethereum dependency requires ContractName)
 eth-typing==4.4.0
 cryptography>=41.0.0
+hvac>=1.1.0
+google-generativeai
