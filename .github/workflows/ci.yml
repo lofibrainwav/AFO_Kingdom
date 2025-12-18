@@ -24,7 +24,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Full clone to avoid git warnings
-          submodules: recursive  # Initialize submodules automatically
+
+      - name: Update Git submodules
+        run: |
+          git submodule init
+          git submodule update --init --recursive
 
       # 孝 (Serenity): Runtime security monitoring (CVE-2025-30066 lesson)
       - name: Harden runner
