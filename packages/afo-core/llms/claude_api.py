@@ -35,8 +35,10 @@ class ClaudeAPIWrapper:
                 from AFO.security.vault_manager import vault
             except ImportError:
                 vault = None
-        
-        self.api_key = vault.get_secret("ANTHROPIC_API_KEY") if vault else os.getenv("ANTHROPIC_API_KEY")
+
+        self.api_key = (
+            vault.get_secret("ANTHROPIC_API_KEY") if vault else os.getenv("ANTHROPIC_API_KEY")
+        )
 
         self.cursor_token = os.getenv("CURSOR_ACCESS_TOKEN")
         self.base_url = "https://api.anthropic.com"

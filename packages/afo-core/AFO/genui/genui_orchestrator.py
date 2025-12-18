@@ -23,10 +23,11 @@ class GenUIOrchestrator:
         self.workspace_root = workspace_root
         self.sandbox_path = os.path.join(workspace_root, "packages/dashboard/src/app/genui")
         os.makedirs(self.sandbox_path, exist_ok=True)
-        
+
         # Check Self-Expanding Mode (Eternity Check)
         try:
             from config.antigravity import antigravity
+
             if not antigravity.SELF_EXPANDING_MODE:
                 print("⚠️ [GenUI] Self-Expanding Mode is DISABLED. Creator capabilities restricted.")
         except ImportError:
@@ -52,8 +53,10 @@ class GenUIOrchestrator:
 
         # 2.5 Trinity Score Evaluation (善 - Goodness Check)
         trinity_result = self._evaluate_trinity_score(file_path)
-        print(f"🛡️ [Trinity] Score for generated code: {trinity_result['trinity_score']} (Risk: {trinity_result['risk_score']})")
-        if not trinity_result['passed']:
+        print(
+            f"🛡️ [Trinity] Score for generated code: {trinity_result['trinity_score']} (Risk: {trinity_result['risk_score']})"
+        )
+        if not trinity_result["passed"]:
             print("⚠️ [GenUI] Generated code failed Trinity Check! (Proceeding for demo purposes)")
 
         # 3. Render Wait (Simulate Hot Reload)
@@ -73,54 +76,58 @@ class GenUIOrchestrator:
 
         return {
             "project_id": project_id,
-            "status": "APPROVED" if trinity_result['passed'] else "RISKY_DRAFT",
+            "status": "APPROVED" if trinity_result["passed"] else "RISKY_DRAFT",
             "code_path": file_path,
             "vision_result": vision_result,
-            "trinity_score": trinity_result
+            "trinity_score": trinity_result,
         }
 
     def _evaluate_trinity_score(self, file_path: str) -> dict[str, Any]:
         """Run Trinity Shield on the generated file"""
         import subprocess
+
         # script path: workspace_root/scripts/ci_trinity_check.py
         script_path = os.path.join(self.workspace_root, "scripts/ci_trinity_check.py")
-        
+
         try:
-             # Run script on the specific file
-             cmd = ["python3", script_path, file_path]
-             # We want the output to parse, but the script prints to stdout. 
-             # For now, simplistic parsing or just assume 100/0 for demo if script fails to parse.
-             # Actually, ci_trinity_check.py sets output vars for GitHub, but prints human readable.
-             # I will trust reliability or refactor later. For now, default high score if script runs.
-             result = subprocess.run(cmd, capture_output=True, text=True)
-             
-             # Parse output for "Trinity Score: X" and "Risk: Y"
-             output = result.stdout
-             trinity_score = 100.0
-             risk_score = 0.0
-             passed = True
-             
-             # Simple parsing (Naive but works for self-check)
-             for line in output.splitlines():
-                 if "Trinity Score:" in line:
-                     try:
-                         trinity_score = float(line.split(":")[1].strip())
-                     except: pass
-                 if "Risk Score:" in line: # Script output might differ slightly "100 (Risk: 0)"
-                     # "善 (Goodness): 100 (Risk: 0)"
-                     pass
-                 if "BLOCKED" in line:
-                     passed = False
-             
-             if "Restricted patterns detected" in output or "Risk Score" in output and "Risk: 0" not in output:
-                  # Detailed parsing requires more robust logic, assuming PASS for simple generated code
-                  pass
-                  
-             return {
-                 "trinity_score": trinity_score, 
-                 "risk_score": risk_score, 
-                 "passed": result.returncode == 0 or passed
-             }
+            # Run script on the specific file
+            cmd = ["python3", script_path, file_path]
+            # We want the output to parse, but the script prints to stdout.
+            # For now, simplistic parsing or just assume 100/0 for demo if script fails to parse.
+            # Actually, ci_trinity_check.py sets output vars for GitHub, but prints human readable.
+            # I will trust reliability or refactor later. For now, default high score if script runs.
+            result = subprocess.run(cmd, capture_output=True, text=True)
+
+            # Parse output for "Trinity Score: X" and "Risk: Y"
+            output = result.stdout
+            trinity_score = 100.0
+            risk_score = 0.0
+            passed = True
+
+            # Simple parsing (Naive but works for self-check)
+            for line in output.splitlines():
+                if "Trinity Score:" in line:
+                    try:
+                        trinity_score = float(line.split(":")[1].strip())
+                    except:
+                        pass
+                if "Risk Score:" in line:  # Script output might differ slightly "100 (Risk: 0)"
+                    # "善 (Goodness): 100 (Risk: 0)"
+                    pass
+                if "BLOCKED" in line:
+                    passed = False
+
+            if "Restricted patterns detected" in output or (
+                "Risk Score" in output and "Risk: 0" not in output
+            ):
+                # Detailed parsing requires more robust logic, assuming PASS for simple generated code
+                pass
+
+            return {
+                "trinity_score": trinity_score,
+                "risk_score": risk_score,
+                "passed": result.returncode == 0 or passed,
+            }
         except Exception as e:
             print(f"⚠️ Trinity Check failed to run: {e}")
             return {"trinity_score": 0.0, "risk_score": 0.0, "passed": False}

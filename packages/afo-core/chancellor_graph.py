@@ -8,6 +8,15 @@ from langgraph.graph.message import add_messages
 # Import existing LLM Router logic for model execution
 from llm_router import QualityTier, llm_router
 
+# Import TrinityManager for Dynamic Score-based Routing (Phase 5)
+try:
+    from AFO.domain.metrics.trinity_manager import trinity_manager
+except ImportError:
+    try:
+        from domain.metrics.trinity_manager import trinity_manager
+    except ImportError:
+        trinity_manager = None  # Fallback: no dynamic scoring
+
 # Antigravity 통합 (眞: 명시적 설정 전달)
 try:
     from AFO.config.antigravity import antigravity
@@ -45,10 +54,11 @@ class ChancellorState(TypedDict):
     # Operational fields
     current_speaker: str  # "user", "chancellor", "jegalryang", "samaui", "juyu"
     steps_taken: int
-    complexity: str # "Low", "Medium", "High"
-    
+    complexity: str  # "Low", "Medium", "High"
+
     # Reducer for analysis results (Merge dicts)
     analysis_results: Annotated[dict[str, str], lambda a, b: {**(a or {}), **b}]
+
 
 def calculate_complexity(query: str) -> str:
     """
@@ -58,13 +68,14 @@ def calculate_complexity(query: str) -> str:
     length = len(query)
     keywords = ["analyze", "compare", "strategy", "architecture", "solve", "design"]
     keyword_count = sum(1 for k in keywords if k in query.lower())
-    
+
     if length > 200 or keyword_count >= 2:
         return "High"
     elif length > 50 or keyword_count >= 1:
         return "Medium"
     else:
         return "Low"
+
 
 def chancellor_router_node(state: ChancellorState):
     """
@@ -73,11 +84,11 @@ def chancellor_router_node(state: ChancellorState):
     """
     print("👑 [Chancellor] Analyzing state & Complexity...")
     messages = state["messages"]
-    
+
     # Init State Variables
     steps = state.get("steps_taken", 0)
     state["steps_taken"] = steps + 1
-    
+
     # Analyze Query Complexity
     query = messages[0].content
     complexity = state.get("complexity")
@@ -90,32 +101,37 @@ def chancellor_router_node(state: ChancellorState):
     context = state.get("kingdom_context", {}) or {}
     antigravity_config = context.get("antigravity", {})
     is_dry_run = antigravity_config.get("DRY_RUN_DEFAULT", antigravity.DRY_RUN_DEFAULT)
-    
+
     analysis = state.get("analysis_results", {})
-    
+
     # 1. Always start with Jegalryang (Truth)
     if "jegalryang" not in analysis:
-        return {"next_step": "jegalryang", "current_speaker": "chancellor", "steps_taken": steps + 1, "complexity": complexity}
+        return {
+            "next_step": "jegalryang",
+            "current_speaker": "chancellor",
+            "steps_taken": steps + 1,
+            "complexity": complexity,
+        }
 
     # 2. Complexity-based Paths
     if complexity == "Low":
         # simple: Truth -> Finalize
         return {"next_step": "finalize", "current_speaker": "chancellor"}
-        
+
     elif complexity == "Medium":
         # standard: Truth -> Goodness -> Finalize
         if "samaui" not in analysis:
-             return {"next_step": "samaui", "current_speaker": "chancellor"}
+            return {"next_step": "samaui", "current_speaker": "chancellor"}
         return {"next_step": "finalize", "current_speaker": "chancellor"}
-        
+
     elif complexity == "High":
         # complex: Truth -> Goodness -> Beauty -> Finalize (Sequential for V1 stability)
         # In V2, we can loop Truth <-> Goodness if disagreement is high.
         if "samaui" not in analysis:
-             return {"next_step": "samaui", "current_speaker": "chancellor"}
+            return {"next_step": "samaui", "current_speaker": "chancellor"}
         if "juyu" not in analysis:
-             return {"next_step": "juyu", "current_speaker": "chancellor"}
-             
+            return {"next_step": "juyu", "current_speaker": "chancellor"}
+
         return {"next_step": "finalize", "current_speaker": "chancellor"}
 
     # Fallback
@@ -149,7 +165,6 @@ async def jegalryang_node(state: ChancellorState):
 
     content = response_data.get("response", "분석 실패")
 
-
     # Rely on Reducer to merge this delta
     return {
         "analysis_results": {"jegalryang": content},
@@ -180,7 +195,6 @@ async def samaui_node(state: ChancellorState):
 
     content = response_data.get("response", "검토 실패")
 
-
     return {
         "analysis_results": {"samaui": content},
         "messages": [AIMessage(content=f"[사마의] {content}", name="samaui")],
@@ -210,7 +224,6 @@ async def juyu_node(state: ChancellorState):
     )
 
     content = response_data.get("response", "정리 실패")
-
 
     return {
         "analysis_results": {"juyu": content},
@@ -253,6 +266,39 @@ async def chancellor_finalize_node(state: ChancellorState):
     return {"messages": [AIMessage(content=content, name="chancellor")]}
 
 
+def trinity_decision_gate(state: ChancellorState):
+    """
+    [Decision Gate] - Trinity-Driven Routing (Phase 5)
+    Evaluates Trinity Score to determine AUTO_RUN eligibility.
+
+    Conditions for AUTO_RUN:
+    - Trinity Score >= 0.9 (90%)
+    - Risk Score <= 0.1 (10%)
+
+    Otherwise: ASK_COMMANDER (Human-in-the-loop)
+    """
+    if trinity_manager:
+        metrics = trinity_manager.get_current_metrics()
+        trinity_score = metrics.trinity_score
+        # Risk = inverse of Goodness (善 protects against risk)
+        risk_score = 1.0 - metrics.goodness
+    else:
+        # Fallback if TrinityManager unavailable
+        trinity_score = state.get("trinity_score", 0.85)
+        risk_score = state.get("risk_score", 0.15)
+
+    auto_run_eligible = trinity_score >= 0.9 and risk_score <= 0.1
+    decision = "AUTO_RUN" if auto_run_eligible else "ASK_COMMANDER"
+
+    print(f"⚖️ [Decision Gate] Trinity: {trinity_score:.2f}, Risk: {risk_score:.2f} → {decision}")
+
+    return {
+        "trinity_score": trinity_score,
+        "risk_score": risk_score,
+        "auto_run_eligible": auto_run_eligible,
+    }
+
+
 # --- 3. Graph Construction ---
 
 
@@ -265,6 +311,7 @@ def build_chancellor_graph():
     workflow.add_node("samaui", samaui_node)
     workflow.add_node("juyu", juyu_node)
     workflow.add_node("finalize", chancellor_finalize_node)
+    workflow.add_node("decision_gate", trinity_decision_gate)  # Phase 5: Trinity Routing
 
     # Add Edges
     workflow.set_entry_point("chancellor")
@@ -283,7 +330,10 @@ def build_chancellor_graph():
     workflow.add_edge("jegalryang", "chancellor")
     workflow.add_edge("samaui", "chancellor")
     workflow.add_edge("juyu", "chancellor")
-    workflow.add_edge("finalize", END)
+
+    # Phase 5: Finalize → Decision Gate → END
+    workflow.add_edge("finalize", "decision_gate")
+    workflow.add_edge("decision_gate", END)
 
     # Persistence Strategy (Dev: Memory, Prod: Postgres)
     # Using MemorySaver for current verification as per V2 Constitution (Dev Mode)

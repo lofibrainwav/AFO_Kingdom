@@ -127,36 +127,36 @@ async def health_check() -> dict[str, Any]:
 
     # Calculate organ health ratio for base check (System Stability)
     system_health_ratio = healthy_count / total_organs if total_organs > 0 else 0.0
-    
+
     # [Dynamic Trinity Integration]
     # Import Manager (Singleton)
     try:
         from AFO.domain.metrics.trinity_manager import trinity_manager
-        
+
         # Apply System Health trigger if perfect (rewards Serenity)
         if system_health_ratio == 1.0:
             # We don't want to spam delta every request, but for V1 let's assume Manager handles accumulation.
             # Ideally, trigger should be event-based, not poll-based.
             # But we can assume "High Stability" maintains Serenity.
-            pass 
-            
+            pass
+
         metrics = trinity_manager.get_current_metrics()
         trinity_data = metrics.to_dict()
-        
+
         # Override `trinity_score` in response if needed, or use the one from manager
         # The frontend expects flattened keys or nested? The current `trinity_breakdown` was flat keys + `trinity_score`.
         # metrics.to_dict() returns flat keys + `trinity_score`.
-        
+
     except ImportError:
-         # Fallback
-         trinity_data = {
+        # Fallback
+        trinity_data = {
             "truth": system_health_ratio,
             "goodness": system_health_ratio,
             "beauty": system_health_ratio,
             "filial_serenity": system_health_ratio,
             "eternity": 1.0,
-            "trinity_score": system_health_ratio
-         }
+            "trinity_score": system_health_ratio,
+        }
 
     # Decide
     final_score = trinity_data.get("trinity_score", 0.0)

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 import os
-import sys
 import re
-import json
+import sys
+
 
 def analyze_risk(directory: str) -> float:
     """
@@ -17,27 +17,42 @@ def analyze_risk(directory: str) -> float:
         (r"subprocess\.call\(", 10, "Subprocess call detected"),
         (r"API_KEY\s*=\s*['\"]sk-", 50, "Hardcoded API Key detected"),
         (r"password\s*=\s*['\"]", 30, "Hardcoded password detected"),
-        (r"DROP TABLE", 50, "Destructive SQL detected")
+        (r"DROP TABLE", 50, "Destructive SQL detected"),
     ]
-    
+
     # Simple recursive scan
     for root, dirs, files in os.walk(directory):
         # Exclude hidden and dependency directories
-        dirs[:] = [d for d in dirs if d not in [
-            "node_modules", ".git", "__pycache__", "venv", ".venv", 
-            ".next", "dist", "build", "site-packages", "lib"
-        ]]
-        
-        if any(ex in root for ex in ["node_modules", ".git", "__pycache__", "venv", ".venv", ".next"]):
+        dirs[:] = [
+            d
+            for d in dirs
+            if d
+            not in [
+                "node_modules",
+                ".git",
+                "__pycache__",
+                "venv",
+                ".venv",
+                ".next",
+                "dist",
+                "build",
+                "site-packages",
+                "lib",
+            ]
+        ]
+
+        if any(
+            ex in root for ex in ["node_modules", ".git", "__pycache__", "venv", ".venv", ".next"]
+        ):
             continue
-            
+
         for file in files:
-            if not file.endswith(('.py', '.js', '.ts', '.tsx', '.sh')):
+            if not file.endswith((".py", ".js", ".ts", ".tsx", ".sh")):
                 continue
-                
+
             path = os.path.join(root, file)
             try:
-                with open(path, "r", errors="ignore") as f:
+                with open(path, errors="ignore") as f:
                     content = f.read()
                     for pattern, weight, msg in risk_patterns:
                         if re.search(pattern, content):
@@ -48,8 +63,9 @@ def analyze_risk(directory: str) -> float:
                             risk_score += weight
             except Exception:
                 pass
-                
+
     return risk_score
+
 
 def analyze_truth_beauty() -> tuple[float, float]:
     """
@@ -60,50 +76,47 @@ def analyze_truth_beauty() -> tuple[float, float]:
     # For now, we assume a baseline of high quality unless 'FAIL' marker file exists
     truth_score = 100.0
     beauty_score = 100.0
-    
+
     if os.path.exists("FORCE_FAIL_TRUTH"):
         truth_score = 50.0
     if os.path.exists("FORCE_FAIL_BEAUTY"):
         beauty_score = 60.0
-        
+
     return truth_score, beauty_score
+
 
 def main():
     print("==================================================")
     print(" 🛡️  Shield of Goodness: Trinity CI Guard")
     print("==================================================")
-    
+
     workspace = sys.argv[1] if len(sys.argv) > 1 else "."
-    
+
     # 1. Evaluate Columns
     truth, beauty = analyze_truth_beauty()
     risk = analyze_risk(workspace)
-    goodness = max(0, 100 - risk) # Goodness is inverse of Risk
-    
+    goodness = max(0, 100 - risk)  # Goodness is inverse of Risk
+
     # 2. Calculate Weighted Trinity Score (SSOT)
     # Truth(35) + Goodness(35) + Beauty(20) + Serenity(8) + Eternity(2)
     # Mocking Serenity/Eternity as 100 for static check context
     serenity = 100.0
     eternity = 100.0
-    
+
     trinity_score = (
-        (truth * 0.35) +
-        (goodness * 0.35) + 
-        (beauty * 0.20) +
-        (serenity * 0.08) +
-        (eternity * 0.02)
+        (truth * 0.35) + (goodness * 0.35) + (beauty * 0.20) + (serenity * 0.08) + (eternity * 0.02)
     )
-    
-    print(f"\n📊 [Scorecard]")
+
+    print("\n📊 [Scorecard]")
     print(f"   - 眞 (Truth): {truth}")
     print(f"   - 善 (Goodness): {goodness} (Risk: {risk})")
     print(f"   - 美 (Beauty): {beauty}")
-    print(f"   -----------------------------")
+    print("   -----------------------------")
     print(f"   🏆 Trinity Score: {trinity_score:.2f}")
-    
+
     # 3. Decision Logic (The Shield)
     passed = False
-    
+
     if trinity_score >= 90.0 and risk <= 10.0:
         print("\n✅ [AUTO_MERGE_ELIGIBLE] The Shield is lowered. You may pass.")
         passed = True
@@ -114,7 +127,7 @@ def main():
         if trinity_score < 90.0:
             print(f"   ❌ Reason: Low Trinity Score ({trinity_score:.2f} < 90)")
         passed = False
-        
+
     # Output for GitHub Actions
     if os.environ.get("GITHUB_OUTPUT"):
         with open(os.environ["GITHUB_OUTPUT"], "a") as f:
@@ -124,6 +137,7 @@ def main():
 
     if not passed:
         sys.exit(1)
+
 
 if __name__ == "__main__":
     main()

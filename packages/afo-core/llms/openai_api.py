@@ -32,7 +32,7 @@ class OpenAIAPIWrapper:
                 from AFO.security.vault_manager import vault
             except ImportError:
                 vault = None
-        
+
         self.api_key = vault.get_secret("OPENAI_API_KEY") if vault else os.getenv("OPENAI_API_KEY")
 
         self.chatgpt_token = (
