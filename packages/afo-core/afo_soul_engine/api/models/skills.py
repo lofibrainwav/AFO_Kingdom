@@ -52,6 +52,7 @@ class SkillFilterRequest(BaseModel):
 
     category: str | None = None
     status: str | None = None
+    tags: list[str] | None = None
     search: str | None = None
     min_philosophy_avg: float | None = Field(default=None, ge=0.0, le=100.0)
     execution_mode: str | None = None
@@ -84,9 +85,11 @@ class SkillExecutionResult(BaseModel):
     success: bool
     result: dict[str, Any] | None = None
     error: str | None = None
-    execution_time_ms: int = 0
+    execution_time_ms: float = 0.0
     timestamp: datetime = Field(default_factory=datetime.utcnow)
-    philosophy_impact: PhilosophyScores | None = None
+    philosophy_score: PhilosophyScores | None = None
+    philosophy_impact: PhilosophyScores | None = None  # Legacy support
+    status: str = "unknown"
 
 
 class SkillCategoryStats(BaseModel):
@@ -94,6 +97,9 @@ class SkillCategoryStats(BaseModel):
 
     category: str
     count: int
+    avg_philosophy: float = 0.0
+    execution_count: int = 0
+    description: str = ""
 
 
 class SkillStatsResponse(BaseModel):
@@ -102,4 +108,7 @@ class SkillStatsResponse(BaseModel):
     total_skills: int = 0
     active_skills: int = 0
     categories: list[SkillCategoryStats] = Field(default_factory=list)
+    recent_executions: int = 0
+    avg_execution_time: float = 0.0
+    philosophy_distribution: dict[str, int] = Field(default_factory=dict)
     execution_stats: dict[str, Any] = Field(default_factory=dict)

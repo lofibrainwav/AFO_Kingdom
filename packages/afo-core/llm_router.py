@@ -26,15 +26,15 @@ from typing import Any
 try:
     # Try relative imports first (if run as module)
     try:
-        from .llms.claude_api import claude_api
-        from .llms.gemini_api import gemini_api
-        from .llms.openai_api import openai_api
+        from AFO.llms.claude_api import claude_api  # type: ignore[assignment]
+        from AFO.llms.gemini_api import gemini_api  # type: ignore[assignment]
+        from AFO.llms.openai_api import openai_api  # type: ignore[assignment]
     except ImportError:
         try:
             # Fallback to AFO package imports (if run from root)
-            from AFO.llms.claude_api import claude_api
-            from AFO.llms.gemini_api import gemini_api
-            from AFO.llms.openai_api import openai_api
+            from AFO.llms.claude_api import claude_api  # type: ignore[assignment]
+            from AFO.llms.gemini_api import gemini_api  # type: ignore[assignment]
+            from AFO.llms.openai_api import openai_api  # type: ignore[assignment]
         except ImportError:
             # Fallback to direct imports (if AFO is in path)
             from llms.claude_api import claude_api
