@@ -8,6 +8,9 @@ from __future__ import annotations
 
 from typing import Any
 
+from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi.responses import JSONResponse
+
 from afo_soul_engine.api.models.skills import (
     SkillExecuteRequest,
     SkillExecutionResult,
@@ -18,8 +21,6 @@ from afo_soul_engine.api.models.skills import (
     SkillStatsResponse,
 )
 from afo_soul_engine.api.services.skills_service import SkillsService
-from fastapi import APIRouter, Depends, HTTPException, Query
-from fastapi.responses import JSONResponse
 
 # Create router
 router = APIRouter(prefix="/api/skills", tags=["Skill Registry"])

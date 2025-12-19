@@ -144,15 +144,31 @@ Trinity Score = 0.35×眞 + 0.35×善 + 0.20×美 + 0.08×孝 + 0.02×永
 
 ```
 AFO_Kingdom/
-├── AFO/                        # 백엔드 (FastAPI, Python)
-│   ├── api_server.py           # 메인 API (8010)
-│   ├── domain/metrics/trinity.py # Trinity 5기둥 계산
-│   └── docker-compose.yml
-├── TRINITY-OS/                 # 오케스트레이션 계층
-│   └── TRINITY_OS_PERSONAS.yaml # SSOT 정본
-├── trinity-dashboard/          # 프론트엔드 (Next.js, 3002)
-└── .gemini/GEMINI.md          # 이 파일
+├── packages/
+│   ├── afo-core/                   # 백엔드 (FastAPI, Python)
+│   │   ├── AFO/
+│   │   │   ├── api_server.py       # 메인 API (8010)
+│   │   │   ├── chancellor_graph.py # LangGraph 오케스트레이션
+│   │   │   ├── domain/
+│   │   │   │   ├── metrics/trinity.py  # Trinity 5기둥 계산
+│   │   │   │   └── audit/trail.py      # PostgreSQL 감사 추적
+│   │   │   └── serenity/           # GenUI 자율 창조
+│   │   ├── k8s/                    # Kubernetes 보안 매니페스트
+│   │   │   ├── rbac/               # RBAC + PSS restricted
+│   │   │   ├── policies/           # Kyverno PSS
+│   │   │   └── network/            # Zero Trust NetworkPolicy
+│   │   └── docker-compose.hardened.yml  # CIS Level 2 보안
+│   ├── trinity-os/                 # 오케스트레이션 계층
+│   │   ├── TRINITY_OS_PERSONAS.yaml # SSOT 정본
+│   │   └── alertmanager/rules.yml  # Trinity 알림 규칙
+│   └── dashboard/                  # 프론트엔드 (Next.js, 3000)
+│       └── src/components/
+│           ├── AFOPantheon.tsx     # 통합 관제탑
+│           ├── TrinityGlowCard.tsx # Trinity Glow UI
+│           └── VoiceReactivePanel.tsx
+└── .gemini/GEMINI.md              # 이 파일
 ```
+
 
 ---
 
