@@ -1,6 +1,7 @@
 from unittest.mock import MagicMock, patch
 
 import pytest
+
 from AFO.services.hybrid_rag import (
     blend_results,
     generate_answer,
