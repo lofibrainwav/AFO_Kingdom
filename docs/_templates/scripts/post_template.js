@@ -164,8 +164,40 @@ class TemplatePostProcessor {
         // 백업 생성
         await this.createBackup();
 
+        // Context7에 자동 등록
+        await this.registerToContext7();
+
         // 알림 전송
         await this.sendNotification();
+    }
+
+    async registerToContext7() {
+        // Context7에 문서 자동 등록
+        try {
+            const filePath = this.file.path;
+            const projectRoot = this.app.vault.adapter.basePath || '/Users/brnestrm/AFO_Kingdom';
+            const scriptPath = `${projectRoot}/scripts/register_obsidian_doc_to_context7.py`;
+            const fullPath = `${projectRoot}/docs/${filePath}`;
+
+            // Templater의 system command를 통해 Python 스크립트 실행
+            // 주의: Templater의 enable_system_commands가 true여야 함
+            const { exec } = require('child_process');
+            
+            exec(`python3 "${scriptPath}" "${fullPath}"`, (error, stdout, stderr) => {
+                if (error) {
+                    console.warn(`⚠️  Context7 등록 실패: ${error.message}`);
+                    return;
+                }
+                if (stdout) {
+                    console.log(`✅ Context7 등록: ${stdout.trim()}`);
+                }
+                if (stderr) {
+                    console.warn(`⚠️  Context7 등록 경고: ${stderr.trim()}`);
+                }
+            });
+        } catch (error) {
+            console.warn(`⚠️  Context7 등록 중 오류: ${error.message}`);
+        }
     }
 
     async createProjectStructure() {
