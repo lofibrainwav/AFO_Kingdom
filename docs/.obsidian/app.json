@@ -21,5 +21,8 @@
   "newLinkFormat": "shortest",
   "showRibbon": true,
   "showStatusBar": true,
-  "showTabs": true
+  "showTabs": true,
+  "rightToLeft": false,
+  "vimMode": false,
+  "promptDelete": true
 }
