@@ -21,7 +21,10 @@ from pathlib import Path
 from typing import Any
 
 from trinity_os.adapters.afo_ultimate_mcp_deps_v1 import build_deps_v1
-from trinity_os.graphs.trinity_toolflow_graph_v1 import build_trinity_toolflow_graph, run_trinity_toolflow
+from trinity_os.graphs.trinity_toolflow_graph_v1 import (
+    build_trinity_toolflow_graph,
+    run_trinity_toolflow,
+)
 
 
 def _print_three_lines(final_card: dict[str, Any]) -> None:
@@ -1114,7 +1117,7 @@ def _verify_run(
             "decision": "FAILED",
             "mode": "DEEP" if deep else "STANDARD",
             "truth_score": 0,
-            "error": f"Universe Teacher unavailable: {str(e)}",
+            "error": f"Universe Teacher unavailable: {e!s}",
             "evidence": ["Universe Teacher engine failed to load"],
         }
 
@@ -1191,7 +1194,10 @@ def _toolflow_run(
         # Legacy V1 Flow
         try:
             from trinity_os.adapters.afo_ultimate_mcp_deps_v1 import build_deps_v1
-            from trinity_os.graphs.trinity_toolflow_graph_v1 import build_trinity_toolflow_graph, run_trinity_toolflow
+            from trinity_os.graphs.trinity_toolflow_graph_v1 import (
+                build_trinity_toolflow_graph,
+                run_trinity_toolflow,
+            )
 
             # Local import to avoid top-level crashes if V1 is broken
             graph_data = build_trinity_toolflow_graph(build_deps_v1())

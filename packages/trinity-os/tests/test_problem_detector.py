@@ -29,7 +29,7 @@ def test_problem_detector():
         assert "summary" in data, "Missing summary in output"
         assert isinstance(data["total_problems"], int), "total_problems should be integer"
     except json.JSONDecodeError as e:
-        raise AssertionError(f"Invalid JSON output: {e}")
+        raise AssertionError(f"Invalid JSON output: {e}") from e
 
     print("✅ Problem detector test passed")
 
@@ -50,7 +50,7 @@ def test_health_report():
         assert "balanced" in data, "Missing balanced in output"
         assert isinstance(data["overall_score"], (int, float)), "overall_score should be numeric"
     except json.JSONDecodeError as e:
-        raise AssertionError(f"Invalid JSON output: {e}")
+        raise AssertionError(f"Invalid JSON output: {e}") from e
 
     print("✅ Health report test passed")
 
@@ -69,7 +69,7 @@ def test_spirit_integration():
         data = json.loads(result.stdout.strip())
         assert "constitution_status" in data, "Missing constitution_status in output"
     except json.JSONDecodeError as e:
-        raise AssertionError(f"Invalid JSON output: {e}")
+        raise AssertionError(f"Invalid JSON output: {e}") from e
 
     print("✅ Spirit integration test passed")
 

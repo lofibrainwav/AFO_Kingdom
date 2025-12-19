@@ -40,7 +40,7 @@ def verify_dashboard_integration():
         print("❌ Verification Failed: Connection Refused. Is the backend running on port 8000?")
         sys.exit(1)
     except Exception as e:
-        print(f"❌ Verification Failed: {str(e)}")
+        print(f"❌ Verification Failed: {e!s}")
         sys.exit(1)
 
 

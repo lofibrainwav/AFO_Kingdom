@@ -1,17 +1,11 @@
-from datetime import datetime
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
-
 from AFO.afo_skills_registry import (
     AFOSkillCard,
-    MCPConfig,
     PhilosophyScore,
     SkillCategory,
-    SkillIOSchema,
-    SkillParameter,
     SkillRegistry,
-    SkillStatus,
 )
 
 

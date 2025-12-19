@@ -13,8 +13,8 @@ from pydantic import BaseModel, Field
 
 if TYPE_CHECKING:
     from chancellor_graph import (
-            ChancellorState,  # Singleton instance
-        )
+        ChancellorState,  # Singleton instance
+    )
 
 # Antigravity import (통합)
 try:
@@ -232,7 +232,7 @@ async def invoke_chancellor(request: ChancellorInvokeRequest) -> dict[str, Any]:
                     timeout=max(0.5, budget_seconds),
                 )
                 return result.get("response", ""), result.get("routing"), timed_out
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 timed_out = True
                 return "", None, timed_out
 
@@ -243,7 +243,15 @@ async def invoke_chancellor(request: ChancellorInvokeRequest) -> dict[str, Any]:
             if routing and routing.get("is_fallback") is True:
                 return False
             lowered = text.lower()
-            return not (text.lstrip().startswith("[") and (" error" in lowered or lowered.startswith("[fallback") or "unavailable" in lowered or "api wrapper unavailable" in lowered))
+            return not (
+                text.lstrip().startswith("[")
+                and (
+                    " error" in lowered
+                    or lowered.startswith("[fallback")
+                    or "unavailable" in lowered
+                    or "api wrapper unavailable" in lowered
+                )
+            )
 
         # Decide mode based on timeout/query
         mode_used: Literal["offline", "fast", "lite", "full"]
@@ -395,7 +403,7 @@ async def invoke_chancellor(request: ChancellorInvokeRequest) -> dict[str, Any]:
                 graph.ainvoke(initial_state, config),  # type: ignore[arg-type]
                 timeout=float(request.timeout_seconds),
             )
-        except asyncio.TimeoutError as e:
+        except TimeoutError as e:
             if not request.fallback_on_timeout:
                 raise HTTPException(
                     status_code=504,

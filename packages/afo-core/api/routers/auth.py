@@ -181,7 +181,7 @@ async def verify_token_endpoint(
         logger.error(f"Token verification endpoint error: {e}")
 
         # 美: 우아한 에러 응답
-        raise HTTPException(status_code=500, detail=f"토큰 검증 중 서버 오류가 발생했습니다: {e!s}")
+        raise HTTPException(status_code=500, detail=f"토큰 검증 중 서버 오류가 발생했습니다: {e!s}") from e
 
 
 @router.get("/health")

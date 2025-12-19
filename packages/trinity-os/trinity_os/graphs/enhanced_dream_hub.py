@@ -62,7 +62,7 @@ def dream_initiator(state: EnhancedAgentState) -> dict[str, Any]:
 def dream_planner(state: EnhancedAgentState) -> dict[str, Any]:
     """AI-powered dream analysis and planning"""
     dream_id = state["dream_id"]
-    state["messages"][0].content
+    _ = state["messages"][0].content  # Access for validation
 
     # Enhanced planning with multiple perspectives
     execution_plan = [
@@ -86,7 +86,7 @@ def dream_planner(state: EnhancedAgentState) -> dict[str, Any]:
 
 def dream_executor(state: EnhancedAgentState) -> dict[str, Any]:
     """Execute dream with safe operations"""
-    state["dream_id"]
+    _ = state["dream_id"]  # Access for validation
     current_plan = state.get("execution_plan", [])
 
     # Simulate safe execution (no actual external calls)

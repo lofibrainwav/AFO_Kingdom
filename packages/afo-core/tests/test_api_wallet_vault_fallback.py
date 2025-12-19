@@ -5,8 +5,6 @@ Uses direct mocking for deterministic behavior.
 
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 from AFO.api_wallet import APIWallet
 
 

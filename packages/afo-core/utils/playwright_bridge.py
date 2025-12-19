@@ -4,11 +4,10 @@ import logging
 from dataclasses import dataclass
 from typing import Any
 
+from config.antigravity import antigravity
 from fastapi import HTTPException
 from playwright.async_api import Browser, Playwright, Route, async_playwright
 from playwright.async_api import TimeoutError as PlaywrightTimeout
-
-from config.antigravity import antigravity
 
 logger = logging.getLogger(__name__)
 
@@ -138,12 +137,12 @@ class PlaywrightBridgeMCP:
             if enable_tracing:
                 trace_path = screenshot_path.replace(".png", "_error_trace.zip")
                 await context.tracing.stop(path=trace_path)
-            raise HTTPException(status_code=500, detail="UI 로드 타임아웃 - 재시도 필요 (孝)")
+            raise HTTPException(status_code=500, detail="UI 로드 타임아웃 - 재시도 필요 (孝)") from None
         except Exception as e:
             if enable_tracing:
                 trace_path = screenshot_path.replace(".png", "_error_trace.zip")
                 await context.tracing.stop(path=trace_path)
-            raise HTTPException(status_code=500, detail=f"UI 검증 실패: {e!s}")
+            raise HTTPException(status_code=500, detail=f"UI 검증 실패: {e!s}") from e
         finally:
             # 모킹 정리 (일회성 시나리오라면)
             if mock_scenarios:

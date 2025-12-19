@@ -13,7 +13,7 @@ import sys
 import requests
 
 
-def invoke_ollama(prompt: str, model: str = None) -> str:
+def invoke_ollama(prompt: str, model: str | None = None) -> str:
     """
     Ollama CLI를 통한 LLM 호출 (4단계 트리아지 2단계: 로컬 정예병)
 
@@ -41,7 +41,7 @@ def invoke_ollama(prompt: str, model: str = None) -> str:
     except requests.exceptions.Timeout:
         return json.dumps({"error": "Ollama API 호출 시간 초과"})
     except Exception as e:
-        return json.dumps({"error": f"Ollama API 오류: {str(e)}"})
+        return json.dumps({"error": f"Ollama API 오류: {e!s}"})
 
 
 def main():

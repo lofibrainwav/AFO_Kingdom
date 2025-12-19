@@ -54,7 +54,7 @@ class ChromaMCP:
                 }
             )
         except Exception as e:
-            return json.dumps({"success": False, "error": f"컬렉션 생성 실패: {str(e)}"})
+            return json.dumps({"success": False, "error": f"컬렉션 생성 실패: {e!s}"})
 
     def get_or_create_collection(self, name: str) -> str:
         """컬렉션 가져오기 또는 생성"""
@@ -64,7 +64,7 @@ class ChromaMCP:
                 {"success": True, "collection_name": name, "message": f"컬렉션 '{name}'이(가) 준비되었습니다."}
             )
         except Exception as e:
-            return json.dumps({"success": False, "error": f"컬렉션 가져오기 실패: {str(e)}"})
+            return json.dumps({"success": False, "error": f"컬렉션 가져오기 실패: {e!s}"})
 
     def add_documents(
         self,
@@ -110,7 +110,7 @@ class ChromaMCP:
                 }
             )
         except Exception as e:
-            return json.dumps({"success": False, "error": f"문서 추가 실패: {str(e)}"})
+            return json.dumps({"success": False, "error": f"문서 추가 실패: {e!s}"})
 
     def query_collection(
         self,
@@ -145,7 +145,7 @@ class ChromaMCP:
                 }
             )
         except Exception as e:
-            return json.dumps({"success": False, "error": f"쿼리 실패: {str(e)}"})
+            return json.dumps({"success": False, "error": f"쿼리 실패: {e!s}"})
 
     def get_document(self, collection_name: str, doc_id: str) -> str:
         """특정 문서 가져오기"""
@@ -166,7 +166,7 @@ class ChromaMCP:
             else:
                 return json.dumps({"success": False, "error": f"문서 ID '{doc_id}'를 찾을 수 없습니다."})
         except Exception as e:
-            return json.dumps({"success": False, "error": f"문서 조회 실패: {str(e)}"})
+            return json.dumps({"success": False, "error": f"문서 조회 실패: {e!s}"})
 
     def delete_collection(self, name: str) -> str:
         """컬렉션 삭제"""
@@ -176,7 +176,7 @@ class ChromaMCP:
                 {"success": True, "collection_name": name, "message": f"컬렉션 '{name}'이(가) 삭제되었습니다."}
             )
         except Exception as e:
-            return json.dumps({"success": False, "error": f"컬렉션 삭제 실패: {str(e)}"})
+            return json.dumps({"success": False, "error": f"컬렉션 삭제 실패: {e!s}"})
 
     def list_collections(self) -> str:
         """모든 컬렉션 목록"""
@@ -193,7 +193,7 @@ class ChromaMCP:
                 }
             )
         except Exception as e:
-            return json.dumps({"success": False, "error": f"컬렉션 목록 조회 실패: {str(e)}"})
+            return json.dumps({"success": False, "error": f"컬렉션 목록 조회 실패: {e!s}"})
 
 
 def main():

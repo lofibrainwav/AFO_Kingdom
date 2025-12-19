@@ -3,7 +3,6 @@ Tests for api/routes/chat.py
 Chat API 엔드포인트 테스트
 """
 
-from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 from fastapi.testclient import TestClient

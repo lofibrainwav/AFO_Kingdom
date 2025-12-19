@@ -24,5 +24,6 @@
   "showTabs": true,
   "rightToLeft": false,
   "vimMode": false,
-  "promptDelete": true
+  "promptDelete": true,
+  "templateFolderPath": "_templates"
 }

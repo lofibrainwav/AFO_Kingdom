@@ -100,7 +100,7 @@ class AfoSkillsMCP:
                             is_error = True
 
                     except Exception as e:
-                        execution_result = f"Execution Error: {str(e)}"
+                        execution_result = f"Execution Error: {e!s}"
                         is_error = True
 
                     execution_time_ms = (time.time() - start_time) * 1000

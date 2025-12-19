@@ -162,7 +162,7 @@ class AfoSkillsRegistryMCP:
                                 "content": [
                                     {
                                         "type": "text",
-                                        "text": f"❌ 스킬 실행 오류: {str(e)}",
+                                        "text": f"❌ 스킬 실행 오류: {e!s}",
                                     }
                                 ],
                                 "isError": True,

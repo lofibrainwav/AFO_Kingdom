@@ -246,10 +246,7 @@ def build_deps_v1():
         if ts is not None:
             age_min = (datetime.now(UTC) - ts).total_seconds() / 60.0
             # 미래 timestamp는 stale로 간주(시간 불일치/조작 방지)
-            if age_min < -1.0:
-                is_stale = True
-            else:
-                is_stale = age_min > float(max_age_min)
+            is_stale = True if age_min < -1.0 else age_min > float(max_age_min)
 
         gate_status = None
         try:

@@ -140,7 +140,7 @@ def validate_input(
     return value
 
 
-def require_not_none(value: T | None, name: str) -> T:
+def require_not_none[T](value: T | None, name: str) -> T:
     """
     None 검증 (善 패턴)
 

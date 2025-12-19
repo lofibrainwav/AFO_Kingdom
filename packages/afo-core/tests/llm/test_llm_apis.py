@@ -3,9 +3,7 @@ Tests for llms/ modules (Claude, Gemini, OpenAI APIs)
 LLM API 테스트
 """
 
-from unittest.mock import MagicMock, patch
 
-import pytest
 
 
 class TestClaudeAPI:

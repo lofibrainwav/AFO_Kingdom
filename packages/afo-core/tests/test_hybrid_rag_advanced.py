@@ -1,13 +1,9 @@
 from unittest.mock import MagicMock, patch
 
 import pytest
-
 from AFO.services.hybrid_rag import (
-    HybridQueryRequest,
-    HybridQueryResponse,
     blend_results,
     generate_answer,
-    generate_answer_async,
     get_embedding,
     get_embedding_async,
     query_pgvector,

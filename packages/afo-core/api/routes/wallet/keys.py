@@ -62,7 +62,7 @@ async def list_keys():
             for k in keys
         ]
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @keys_router.post("/keys")
@@ -96,7 +96,7 @@ async def add_key(request: AddKeyRequest):
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to add key: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to add key: {e}") from e
 
 
 @keys_router.delete("/keys/{name}")
@@ -120,4 +120,4 @@ async def delete_key(name: str):
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to delete key: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to delete key: {e}") from e

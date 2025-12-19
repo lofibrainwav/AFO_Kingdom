@@ -330,6 +330,14 @@ graph LR
 > - [⚙️ 설정 가이드](./CONFIGURATION_GUIDE.md)
 > - [🔧 문제 해결](./TROUBLESHOOTING.md)
 
+### 옵시디언 시스템
+
+> [!note] 옵시디언 확장
+> - [📋 템플릿 시스템](./_templates/README.md) - 8개 전문 템플릿
+> - [✅ 템플릿 검증 보고서](./OBSIDIAN_TEMPLATE_SYSTEM_FINAL_VERIFICATION.md) - Trinity Score: 94/100 🌟
+> - [🔧 Vault 설정 가이드](./OBSIDIAN_VAULT_SETUP.md)
+> - [📊 확장 작업 상태](./OBSIDIAN_EXTENSION_STATUS.md)
+
 ---
 
 ## 🔗 빠른 링크
@@ -366,6 +374,7 @@ graph LR
 > - ✅ Skills Registry MCP 통합 완료
 > - ✅ 시스템 시각화 HTML 생성
 > - ✅ 옵시디언 최적화 완료
+> - ✅ 옵시디언 확장 템플릿 시스템 완료 (Trinity Score: 94/100 🌟)
 
 ---
 
@@ -374,5 +383,10 @@ graph LR
 > **담당**: 승상 (丞相) - AFO Kingdom  
 > **상태**: 🟢 Operational (Harmony)  
 > **버전**: 1.0.0  
-> **검증**: [옵시디언 도서관 완벽 검증 보고서](./OBSIDIAN_LIBRARY_COMPLETE_VERIFICATION.md) ✅
+> **Vault 위치**: `/Users/brnestrm/AFO_Kingdom/docs`  
+> **검증**: [옵시디언 도서관 완벽 검증 보고서](./OBSIDIAN_LIBRARY_COMPLETE_VERIFICATION.md) ✅  
+> **Vault 설정**: [옵시디언 Vault 설정 가이드](./OBSIDIAN_VAULT_SETUP.md) ✅  
+> **확장 작업**: [옵시디언 확장 작업 상태](./OBSIDIAN_EXTENSION_STATUS.md) ✅  
+> **템플릿**: [템플릿 가이드](./_templates/README.md) ✅  
+> **템플릿 검증**: [템플릿 시스템 최종 검증](./OBSIDIAN_TEMPLATE_SYSTEM_FINAL_VERIFICATION.md) - Trinity Score: 94/100 🌟 ✅
 
