@@ -176,3 +176,222 @@ async def get_risk_alerts():
         "alerts": alerts,
         "summary": "금고 문제? Julie가 자동 복구 중 – 조금만 기다려주세요!" if alerts else "✅ 모든 예산 안정",
     }
+
+
+# ============================================================
+# Phase 12-3: Smart Suggestions (Rule-Based)
+# ============================================================
+
+@router.get("/suggestions")
+async def get_budget_suggestions():
+    """
+    Julie CPA의 스마트 제안
+    
+    룰 기반 알고리즘으로 예산 최적화 제안 생성
+    - 지출율 50% 이상: 절감 제안
+    - 지출율 80% 이상: 긴급 제안
+    - 카테고리별 맞춤 제안
+    """
+    total_allocated = sum(b.allocated for b in MOCK_BUDGETS)
+    total_spent = sum(b.spent for b in MOCK_BUDGETS)
+    spend_rate = (total_spent / total_allocated * 100) if total_allocated > 0 else 0
+    
+    suggestions = []
+    
+    # 전체 지출율 기반 제안
+    if spend_rate > 80:
+        suggestions.append({
+            "priority": "critical",
+            "icon": "🚨",
+            "title": "긴급 예산 조정 필요",
+            "message": f"전체 지출율 {spend_rate:.1f}%! 예산 추가 배정 또는 지출 동결을 권장합니다.",
+            "action": "예산 재검토",
+            "expected_saving": 0,
+        })
+    elif spend_rate > 50:
+        estimated_saving = int(total_spent * 0.1)  # 10% 절감 예상
+        suggestions.append({
+            "priority": "warning",
+            "icon": "💡",
+            "title": "지출 최적화 기회",
+            "message": f"지출율 {spend_rate:.1f}% – 10% 절감 시 약 ₩{estimated_saving:,} 절약 가능!",
+            "action": "지출 패턴 분석",
+            "expected_saving": estimated_saving,
+        })
+    
+    # 카테고리별 제안
+    for budget in MOCK_BUDGETS:
+        util = (budget.spent / budget.allocated * 100) if budget.allocated > 0 else 0
+        
+        if util >= 90:
+            suggestions.append({
+                "priority": "critical",
+                "icon": "🔥",
+                "title": f"{budget.category} 예산 위기",
+                "message": f"사용률 {util:.1f}% – 잔여 ₩{budget.remaining:,}만 남음",
+                "action": "즉시 점검",
+                "expected_saving": 0,
+            })
+        elif util >= 70 and util < 90:
+            potential = int(budget.spent * 0.15)
+            suggestions.append({
+                "priority": "info",
+                "icon": "📊",
+                "title": f"{budget.category} 효율화 제안",
+                "message": f"15% 최적화 시 ₩{potential:,} 절약 예상",
+                "action": "분석 보기",
+                "expected_saving": potential,
+            })
+    
+    # 제안이 없으면 긍정 메시지
+    if not suggestions:
+        suggestions.append({
+            "priority": "success",
+            "icon": "✨",
+            "title": "예산 상태 양호!",
+            "message": "모든 카테고리가 안정적입니다. 계속 잘 관리하고 계세요!",
+            "action": None,
+            "expected_saving": 0,
+        })
+    
+    total_potential_saving = sum(s["expected_saving"] for s in suggestions)
+    
+    return {
+        "spend_rate": round(spend_rate, 2),
+        "suggestion_count": len(suggestions),
+        "suggestions": suggestions,
+        "total_potential_saving": total_potential_saving,
+        "summary": f"Julie CPA 분석 완료 – {len(suggestions)}개 제안, 잠재 절감 ₩{total_potential_saving:,}",
+        "timestamp": datetime.now().isoformat(),
+    }
+
+
+# ============================================================
+# Phase 12-4: ML Predictions (LinearRegression - Lightweight)
+# ============================================================
+
+# Mock historical data for prediction (simulate 6 months)
+MOCK_HISTORY = [
+    {"month": "2024-07", "spent": 680000},
+    {"month": "2024-08", "spent": 720000},
+    {"month": "2024-09", "spent": 695000},
+    {"month": "2024-10", "spent": 750000},
+    {"month": "2024-11", "spent": 710000},
+    {"month": "2024-12", "spent": 735000},  # Current
+]
+
+
+def predict_next_month_spending(history: list[dict]) -> dict:
+    """
+    간단 선형회귀로 다음 달 지출 예측
+    
+    sklearn 없이 구현 (순수 Python)
+    y = mx + b (Linear Regression)
+    """
+    n = len(history)
+    if n < 2:
+        return {
+            "predicted_spending": history[-1]["spent"] if history else 0,
+            "confidence": 0.0,
+            "trend": "insufficient_data",
+        }
+    
+    # x = 월 인덱스, y = 지출액
+    x = list(range(n))
+    y = [h["spent"] for h in history]
+    
+    # 평균 계산
+    x_mean = sum(x) / n
+    y_mean = sum(y) / n
+    
+    # 기울기 (m) 계산: m = Σ(xi - x̄)(yi - ȳ) / Σ(xi - x̄)²
+    numerator = sum((x[i] - x_mean) * (y[i] - y_mean) for i in range(n))
+    denominator = sum((x[i] - x_mean) ** 2 for i in range(n))
+    
+    if denominator == 0:
+        m = 0
+    else:
+        m = numerator / denominator
+    
+    # y절편 (b) 계산: b = ȳ - m * x̄
+    b = y_mean - m * x_mean
+    
+    # 다음 달 예측 (x = n)
+    next_month_prediction = m * n + b
+    
+    # R² 계산 (결정계수 = 신뢰도)
+    ss_res = sum((y[i] - (m * x[i] + b)) ** 2 for i in range(n))
+    ss_tot = sum((y[i] - y_mean) ** 2 for i in range(n))
+    r_squared = 1 - (ss_res / ss_tot) if ss_tot != 0 else 0
+    
+    # 추세 판단
+    if m > 1000:
+        trend = "increasing"
+    elif m < -1000:
+        trend = "decreasing"
+    else:
+        trend = "stable"
+    
+    return {
+        "predicted_spending": max(0, int(next_month_prediction)),
+        "confidence": round(max(0, min(1, r_squared)), 2),
+        "trend": trend,
+        "slope": round(m, 2),  # 월별 변화량
+    }
+
+
+@router.get("/prediction")
+async def get_budget_prediction():
+    """
+    Julie CPA의 미래 예측
+    
+    LinearRegression으로 다음 달 지출 예측
+    - 6개월 과거 데이터 기반
+    - 신뢰도 (R²) 포함
+    - 추세 분석 (증가/감소/안정)
+    """
+    prediction = predict_next_month_spending(MOCK_HISTORY)
+    
+    current_spending = MOCK_HISTORY[-1]["spent"]
+    predicted = prediction["predicted_spending"]
+    
+    # 예측 vs 현재 비교
+    diff = predicted - current_spending
+    diff_percent = (diff / current_spending * 100) if current_spending > 0 else 0
+    
+    # 제안 메시지 생성
+    if prediction["trend"] == "increasing":
+        advice = "📈 지출 증가 추세 – 예산 추가 배정 또는 지출 조절을 고려하세요."
+        risk_level = "warning" if diff_percent > 5 else "info"
+    elif prediction["trend"] == "decreasing":
+        advice = "📉 지출 감소 추세 – 잘 관리하고 계세요! 여유 예산 활용 가능."
+        risk_level = "safe"
+    else:
+        advice = "📊 지출 안정 추세 – 현재 패턴 유지하면 예산 내 관리 가능."
+        risk_level = "safe"
+    
+    # 신뢰도 기반 메시지 조정
+    confidence = prediction["confidence"]
+    if confidence < 0.5:
+        confidence_note = "(데이터 부족 – 예측 정확도 낮음)"
+    elif confidence < 0.8:
+        confidence_note = "(중간 신뢰도)"
+    else:
+        confidence_note = "(높은 신뢰도 ✓)"
+    
+    return {
+        "current_month_spending": current_spending,
+        "next_month_predicted": predicted,
+        "difference": diff,
+        "difference_percent": round(diff_percent, 1),
+        "confidence": confidence,
+        "confidence_note": confidence_note,
+        "trend": prediction["trend"],
+        "trend_slope": prediction["slope"],
+        "risk_level": risk_level,
+        "advice": advice,
+        "history": MOCK_HISTORY,
+        "summary": f"Julie CPA 예측: 다음 달 예상 ₩{predicted:,} ({'+' if diff > 0 else ''}{diff_percent:.1f}%)",
+        "timestamp": datetime.now().isoformat(),
+    }
+
