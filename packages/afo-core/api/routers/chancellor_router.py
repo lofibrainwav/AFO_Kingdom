@@ -21,14 +21,15 @@ try:
     from AFO.config.antigravity import antigravity
 except ImportError:
     try:
-        from config.antigravity import antigravity
+        from config.antigravity import antigravity  # type: ignore[assignment]
     except ImportError:
         # Fallback: 기본값 사용
         class MockAntigravity:
             AUTO_DEPLOY = True
             DRY_RUN_DEFAULT = True
+            ENVIRONMENT = "dev"
 
-        antigravity = MockAntigravity()
+        antigravity = MockAntigravity()  # type: ignore[assignment]
 
 # Chancellor Graph import
 try:
@@ -383,6 +384,8 @@ async def invoke_chancellor(request: ChancellorInvokeRequest) -> dict[str, Any]:
             "persistent_memory": {},
             "current_speaker": "user",
             "next_step": "chancellor",
+            "steps_taken": 0,
+            "complexity": "Low",
             "analysis_results": {},
         }
 
