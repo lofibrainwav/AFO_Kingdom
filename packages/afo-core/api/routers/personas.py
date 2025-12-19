@@ -14,19 +14,8 @@ try:
 
     PERSONA_SERVICE_AVAILABLE = True
 except ImportError:
-    try:
-        import sys
-        from pathlib import Path
-
-        _CORE_ROOT = Path(__file__).resolve().parent.parent.parent
-        if str(_CORE_ROOT) not in sys.path:
-            sys.path.insert(0, str(_CORE_ROOT))
-        from services.persona_service import get_current_persona, persona_service, switch_persona
-
-        PERSONA_SERVICE_AVAILABLE = True
-    except ImportError:
-        PERSONA_SERVICE_AVAILABLE = False
-        print("⚠️  Persona service not available - using fallback")
+    PERSONA_SERVICE_AVAILABLE = False
+    print("⚠️  Persona service not available - using fallback")
 
 # Persona models import
 try:
@@ -40,25 +29,8 @@ try:
 
     PERSONA_MODELS_AVAILABLE = True
 except ImportError:
-    try:
-        import sys
-        from pathlib import Path
-
-        _CORE_ROOT = Path(__file__).resolve().parent.parent.parent
-        if str(_CORE_ROOT) not in sys.path:
-            sys.path.insert(0, str(_CORE_ROOT))
-        from api.models.persona import (
-            Persona,
-            PersonaContext,
-            PersonaResponse,
-            PersonaSwitchRequest,
-            PersonaTrinityScore,
-        )
-
-        PERSONA_MODELS_AVAILABLE = True
-    except ImportError:
-        PERSONA_MODELS_AVAILABLE = False
-        print("⚠️  Persona models not available - using fallback")
+    PERSONA_MODELS_AVAILABLE = False
+    print("⚠️  Persona models not available - using fallback")
 
 router = APIRouter(prefix="/api/personas", tags=["Personas"])
 
@@ -272,7 +244,7 @@ async def switch_persona(request: PersonaSwitchRequest) -> dict[str, Any]:
         # to avoid async complexity in this snippet if not strictly needed.
         # Actually, let's use the BackgroundTasks pattern properly if passed,
         # but since we are inside a function, we'll do a direct lightweight update.
-        from api.routers.family import (
+        from AFO.api.routers.family import (
             BackgroundTasks,
             calculate_happiness_impact,
             load_family_data,

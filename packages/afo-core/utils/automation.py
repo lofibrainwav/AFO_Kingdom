@@ -11,6 +11,8 @@ import time
 from collections.abc import Callable
 from typing import Any, TypeVar
 
+from typing import Any, Awaitable, TypeVar
+
 logger = logging.getLogger(__name__)
 
 T = TypeVar("T")
@@ -80,7 +82,7 @@ def auto_retry(config: RetryConfig | None = None) -> Callable[[Callable[..., T]]
 
 def async_auto_retry(
     config: RetryConfig | None = None,
-) -> Callable[[Callable[..., T]], Callable[..., T]]:
+) -> Callable[[Callable[..., Awaitable[T]]], Callable[..., Awaitable[T]]]:
     """
     비동기 자동 재시도 데코레이터 (孝 패턴)
 
@@ -97,7 +99,7 @@ def async_auto_retry(
     if config is None:
         config = RetryConfig()
 
-    def decorator(func: Callable[..., T]) -> Callable[..., T]:
+    def decorator(func: Callable[..., Awaitable[T]]) -> Callable[..., Awaitable[T]]:
         @functools.wraps(func)
         async def wrapper(*args: Any, **kwargs: Any) -> T:
             last_exception: Exception | None = None
@@ -188,7 +190,7 @@ def cache_result(ttl_seconds: float = 300.0) -> Callable[[Callable[..., T]], Cal
     Returns:
         데코레이터
     """
-    cache: dict[str, tuple[T, float]] = {}
+    cache: dict[str, tuple[Any, float]] = {}
 
     def decorator(func: Callable[..., T]) -> Callable[..., T]:
         @functools.wraps(func)
@@ -200,7 +202,9 @@ def cache_result(ttl_seconds: float = 300.0) -> Callable[[Callable[..., T]], Cal
                 result, cached_time = cache[key]
                 if now - cached_time < ttl_seconds:
                     logger.debug(f"[孝] 캐시 히트: {func.__name__}")
-                    return result
+                    # Cast Any back to T since we stored T
+                    from typing import cast
+                    return cast(T, result)
 
             result = func(*args, **kwargs)
             cache[key] = (result, now)
