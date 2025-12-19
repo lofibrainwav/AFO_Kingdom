@@ -102,6 +102,11 @@ def chancellor_router_node(state: ChancellorState):
     antigravity_config = context.get("antigravity", {})
     is_dry_run = antigravity_config.get("DRY_RUN_DEFAULT", antigravity.DRY_RUN_DEFAULT)
 
+    # DRY_RUN 모드일 때는 auto_run_eligible을 False로 강제 (善: 안전 우선)
+    if is_dry_run and state.get("auto_run_eligible", False):
+        print("🛡️ [Chancellor] DRY_RUN 모드 감지 - auto_run_eligible을 False로 조정 (善)")
+        state["auto_run_eligible"] = False
+
     analysis = state.get("analysis_results", {})
 
     # 1. Always start with Jegalryang (Truth)
