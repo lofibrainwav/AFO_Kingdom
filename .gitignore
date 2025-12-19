@@ -42,3 +42,4 @@ htmlcov/
 
 # AFO Specific Debug
 AFO/scripts/debug/
+mypy_report.txt
