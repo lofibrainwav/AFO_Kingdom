@@ -7,6 +7,8 @@ export { SandboxCanvas } from './SandboxCanvas';
 export { AICPAJulieWidget } from './AICPAJulieWidget';
 export { KingdomChronicleTimeline } from './KingdomChronicleTimeline';
 export { JulieCPAWidget } from './JulieCPAWidget';
+export { BudgetDashboard } from './BudgetDashboard';
+
 
 
 

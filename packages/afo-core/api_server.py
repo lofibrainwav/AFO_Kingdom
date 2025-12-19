@@ -778,6 +778,14 @@ app.include_router(finance_router) # Prefix is defined in the router itself
 from AFO.api.routers.ssot import router as ssot_router
 app.include_router(ssot_router) # Prefix is defined in the router itself
 
+# Phase 12 Extension: Budget Tracking
+try:
+    from AFO.api.routers.budget import router as budget_router
+    app.include_router(budget_router)  # Prefix /api/julie/budget
+    print("✅ Budget Router 등록 완료 (Phase 12 확장)")
+except Exception as e:
+    print(f"⚠️ Budget Router 등록 실패: {e}")
+
 # ============================================================
 # 전역 예외 처리 (FastAPI 베스트 프랙티스)
 # ============================================================
