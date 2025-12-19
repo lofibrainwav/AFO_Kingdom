@@ -64,6 +64,18 @@ AFO Kingdom의 모든 MCP (Model Context Protocol) 서버가 Cursor IDE에 등�
 - **경로**: `/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/servers/trinity_score_mcp.py`
 - **기능**: 眞善美孝永 5기둥 점수 계산 (GPU 가속 지원)
 
+#### afo-obsidian-mcp
+- **설명**: AFO Obsidian MCP Server - 옵시디언 템플릿 시스템 및 Context7 통합
+- **경로**: `/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/servers/obsidian_mcp.py`
+- **도구**:
+  - `read_note`: 옵시디언 노트 읽기
+  - `write_note`: 옵시디언 노트 쓰기 (Context7 자동 등록)
+  - `list_templates`: 템플릿 목록 조회
+  - `apply_template`: 템플릿 적용
+  - `search_notes`: 옵시디언 vault 검색
+  - `search_context7`: Context7 지식 베이스 검색
+- **특징**: 모든 도구 실행 시 **眞善美孝永 Trinity Score 자동 계산 및 반환**
+
 ---
 
 ## 🎯 Skills (API Endpoints)

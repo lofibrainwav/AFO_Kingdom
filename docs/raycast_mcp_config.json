@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "afo-obsidian-mcp": {
+      "command": "python3",
+      "args": [
+        "-u",
+        "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/servers/obsidian_mcp.py"
+      ],
+      "env": {
+        "WORKSPACE_ROOT": "/Users/brnestrm/AFO_Kingdom",
+        "PYTHONPATH": "/Users/brnestrm/AFO_Kingdom/packages/afo-core:/Users/brnestrm/AFO_Kingdom/packages/trinity-os",
+        "PYTHONUNBUFFERED": "1"
+      },
+      "description": "AFO Obsidian MCP Server - 옵시디언 템플릿 시스템 및 Context7 통합 (眞善美孝永 Trinity Score 포함). Tools: read_note, write_note, list_templates, apply_template, search_notes, search_context7"
+    }
+  }
+}
