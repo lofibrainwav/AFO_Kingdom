@@ -4,7 +4,6 @@ CRAG 테스트
 """
 
 
-
 class TestCRAGConfig:
     """CRAG 설정 테스트"""
 

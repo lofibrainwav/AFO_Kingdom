@@ -4,8 +4,6 @@ Tests for services layer
 """
 
 
-
-
 class TestDatabaseService:
     """Database 서비스 테스트"""
 

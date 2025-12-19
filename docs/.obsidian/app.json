@@ -25,5 +25,17 @@
   "rightToLeft": false,
   "vimMode": false,
   "promptDelete": true,
-  "templateFolderPath": "_templates"
+  "templateFolderPath": "_templates",
+  "mobile": {
+    "enabled": true,
+    "sync": true,
+    "offline_editing": true,
+    "conflict_resolution": "last-writer-wins"
+  },
+  "accessibility": {
+    "enabled": true,
+    "high_contrast": false,
+    "reduced_motion": false,
+    "screen_reader_support": true
+  }
 }
