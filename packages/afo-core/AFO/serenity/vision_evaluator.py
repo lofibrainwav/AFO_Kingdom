@@ -129,10 +129,10 @@ class TrinityVisionEvaluator:
 
         prompt = """
         Analyze this UI screenshot for quality. Rate 0.0-1.0:
-        
+
         1. Beauty (美): Visual harmony, spacing, typography, colors
         2. Truth (眞): Correct rendering, no visual bugs, accessibility
-        
+
         Return JSON: {"beauty": 0.X, "truth": 0.X, "issues": [...], "suggestions": [...]}
         """
 
@@ -145,7 +145,7 @@ class TrinityVisionEvaluator:
         )
 
         # Parse response (handle various formats)
-        response = result.get("response", "")
+        result.get("response", "")
 
         # Simple extraction (real implementation would parse JSON)
         return {"beauty": 0.85, "truth": 0.9, "issues": [], "suggestions": []}

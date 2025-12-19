@@ -57,7 +57,7 @@ class VaultManager:
             cls._instance = cls()
         return cls._instance
 
-    def get_secret(self, key_name: str, default: str = None) -> str:
+    def get_secret(self, key_name: str, default: str | None = None) -> str:
         """
         KV v2 Secret 동적 조회 (PDF 페이지 3: 암호화 키 관리)
         우선순위: Vault -> Environment Variable -> Default
@@ -76,7 +76,7 @@ class VaultManager:
                 # response = self.client.secrets.kv.v2.read_secret_version(path='afo-config')
                 # return response['data']['data'][key_name]
                 pass
-            except Exception as e:
+            except Exception:
                 # Vault 오류 시 조용히 Fallback
                 pass
 

@@ -280,10 +280,7 @@ class MCPToolTrinityEvaluator:
                 return True
 
         # 테이블 패턴 (|로 구분된 열)
-        if "|" in result and result.count("|") >= 3:
-            return True
-
-        return False
+        return bool("|" in result and result.count("|") >= 3)
 
 
 # 싱글톤 인스턴스

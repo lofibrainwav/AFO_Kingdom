@@ -30,7 +30,7 @@ def check_endpoint(url, expected_code=200):
             try:
                 data = response.json()
                 print(f"   Preview: {str(data)[:100]}...")
-            except:
+            except Exception:
                 pass
             return True
         else:

@@ -6,10 +6,15 @@ LangGraph 기반 3책사 (Zhuge Liang/Sima Yi/Zhou Yu) 시스템
 
 from __future__ import annotations
 
-from typing import Any, Literal
+from typing import TYPE_CHECKING, Any, Literal
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
+
+if TYPE_CHECKING:
+    from chancellor_graph import (
+            ChancellorState,  # Singleton instance
+        )
 
 # Antigravity import (통합)
 try:
@@ -36,7 +41,6 @@ try:
         sys.path.insert(0, str(_CORE_ROOT))
 
     from chancellor_graph import (
-        ChancellorState,
         build_chancellor_graph,
         chancellor_graph,  # Singleton instance
     )
@@ -239,14 +243,7 @@ async def invoke_chancellor(request: ChancellorInvokeRequest) -> dict[str, Any]:
             if routing and routing.get("is_fallback") is True:
                 return False
             lowered = text.lower()
-            if text.lstrip().startswith("[") and (
-                " error" in lowered
-                or lowered.startswith("[fallback")
-                or "unavailable" in lowered
-                or "api wrapper unavailable" in lowered
-            ):
-                return False
-            return True
+            return not (text.lstrip().startswith("[") and (" error" in lowered or lowered.startswith("[fallback") or "unavailable" in lowered or "api wrapper unavailable" in lowered))
 
         # Decide mode based on timeout/query
         mode_used: Literal["offline", "fast", "lite", "full"]
@@ -469,7 +466,6 @@ async def chancellor_health() -> dict[str, Any]:
         }
 
     try:
-        graph = chancellor_graph
         return {
             "status": "healthy",
             "message": "Chancellor Graph 정상 작동 중",

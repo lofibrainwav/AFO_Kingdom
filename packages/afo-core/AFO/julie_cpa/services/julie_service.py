@@ -57,7 +57,7 @@ class JulieService:
         Uses LLM Router for dynamic advice (Server-Side AI Shift).
         """
         # 1. Fetch real-time bank data (Mock for now)
-        bank_data = await self.connector.fetch_bank_data("KB-1234")
+        await self.connector.fetch_bank_data("KB-1234")
 
         # 2. Risk Analysis
         friction_score = 15.0

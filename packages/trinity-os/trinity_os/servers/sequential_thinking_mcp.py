@@ -15,7 +15,6 @@ class SequentialThinkingMCP:
 
         # Logic Analysis (Simple Heuristics)
         complexity = len(thought.split())
-        is_final = not next_thought_needed
 
         # Calculate Mock Impact Metrics for Trinity Score
         # Deep thinking (long thoughts) increases Truth & Serenity

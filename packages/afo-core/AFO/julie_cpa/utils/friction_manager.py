@@ -29,7 +29,7 @@ class FrictionManager:
             return score
 
         # 2. Type Uncertainty
-        for key, value in data.items():
+        for _key, value in data.items():
             if value is None:
                 score += 10.0  # Missing field
             elif isinstance(value, str) and len(value) == 0:

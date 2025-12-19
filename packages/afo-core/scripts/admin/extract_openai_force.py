@@ -67,7 +67,7 @@ def decrypt_value(encrypted_value, safe_password):
                 # OpenAI session token usually starts with some structure, checking len > 20
                 if len(val) > 20:
                     return val
-            except:
+            except Exception:
                 # If standard decode fails, try ignore and search
                 val = decrypted.decode("utf-8", errors="ignore")
                 if len(val) > 20:
@@ -102,7 +102,7 @@ def main():
         if any(k["name"] == "openai" for k in wallet.list_keys()):
             wallet.delete("openai")
             print("🗑️ Deleted existing openai key")
-    except:
+    except Exception:
         pass
 
     captured = False

@@ -12,6 +12,7 @@ Ollama (내부 지력) + API LLM (외부 무력) 간 동적 라우팅
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import logging
 import os
 import time
@@ -612,10 +613,8 @@ class LLMRouter:
                     "num_ctx": num_ctx,
                 }
                 if num_threads is not None:
-                    try:
+                    with contextlib.suppress(Exception):
                         options["num_thread"] = int(num_threads)
-                    except Exception:
-                        pass
 
                 response = await client.post(
                     f"{base_url}/api/generate",
