@@ -1,45 +1,59 @@
-# System
-.DS_Store
-.AppleDouble
-.LSOverride
-
-# Logs
-*.log
-*.log.*
-logs/
-
-# Secrets & Config
-.env
-.env.*
-*.pem
-*.key
-debug_token.txt
-token_clean.txt
-debug_cookies.db
-debug_cookies_default.db
-debug_cookies_profile1.db
-
-# Node
-node_modules/
-npm-debug.log
-yarn-error.log
+# .gitignore - AFO Kingdom
 
 # Python
 __pycache__/
-*.py[cod]
-*$py.class
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
 venv/
-.venv/
-.pytest_cache/
-.mypy_cache/
-.ruff_cache/
-.coverage
+.env
+.env.*
+!.env.example
 htmlcov/
+.pytest_cache/
+.coverage
+coverage.xml
 
-# Editor
+# Node/JS
+node_modules/
+npm-debug.log
+yarn-error.log
+.next/
+dist/
+build/
+
+# IDE
 .vscode/
 .idea/
+.DS_Store
 
-# AFO Specific Debug
-AFO/scripts/debug/
-mypy_report.txt
+# Browsers / Testing
+AFO_Stealth_Profile/
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+
+# Artifacts
+*.log
+*.pma
+api_server.log
+api_server_manual.log
+dashboard_final.log
+mypy_report*.txt
+
+# Local Data
+data/
+packages/data/
+*.csv
+*.json
+!package.json
+!tsconfig.json
+!manifest.json
+!*.schema.json
+!docs/*.json
+
+# Secrets
+debug_token.txt

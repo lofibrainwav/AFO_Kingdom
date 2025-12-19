@@ -11,7 +11,29 @@ export default function FamilyPage() {
   const [members, setMembers] = useState<any[]>([]);
   const [happiness, setHappiness] = useState<number>(0);
   const [timeline, setTimeline] = useState<any[]>([]);
+  const [memories, setMemories] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // SSE: Matrix Thought Stream
+  useEffect(() => {
+    const eventSource = new EventSource('/api/mcp/thoughts');
+    eventSource.onmessage = (event) => {
+        try {
+            const data = JSON.parse(event.data);
+            const logLine = `[${new Date().toLocaleTimeString()}] ${data.agent || 'SYSTEM'}: ${data.message || 'Processing...'}`;
+            setMemories((prev) => [logLine, ...prev].slice(0, 50)); // Keep last 50 lines
+        } catch (e) {
+            console.error("SSE Parse Error", e);
+        }
+    };
+    eventSource.onerror = (err) => {
+        console.error("SSE Error", err);
+        eventSource.close();
+    };
+    return () => {
+        eventSource.close();
+    };
+  }, []);
 
   const fetchData = async () => {
     setLoading(true);
@@ -120,8 +142,16 @@ export default function FamilyPage() {
                     <div className="h-[400px]">
                         <FamilyTimeline activities={timeline} />
                     </div>
-                    <div className="h-[300px]">
-                        <CopilotTerminal />
+                    <div className="h-[300px] bg-black border border-green-900/50 rounded-lg p-4 font-mono text-xs overflow-hidden relative shadow-[0_0_15px_rgba(0,255,0,0.1)]">
+                        <div className="absolute top-0 left-0 w-full h-8 bg-gradient-to-b from-green-900/20 to-transparent pointer-events-none"></div>
+                        <div className="h-full overflow-y-auto space-y-1 text-green-400/80">
+                            {memories.length === 0 && <span className="animate-pulse">Waiting for Neural Link...</span>}
+                            {memories.map((log, i) => (
+                                <div key={i} className="border-l-2 border-green-800 pl-2 hover:bg-green-900/20 transition-colors">
+                                    {log}
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
             </div>

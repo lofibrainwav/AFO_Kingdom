@@ -139,17 +139,57 @@ exclude = [
 
 # 모듈별 설정
 [[tool.mypy.overrides]]
+# 【老子】道生一一生二 - 외부 의존성은 격리하여 왕국의 진실을 보호함
 module = [
     "redis.*",
     "qdrant_client.*",
     "langchain.*",
     "langchain_openai.*",
     "langchain_community.*",
+    "langchain_core.*",
     "langgraph.*",
     "fastapi.*",
     "uvicorn.*",
     "pydantic.*",
     "pydantic_settings.*",
+    "sentry_sdk.*",
+    "psycopg2.*",
+    "sse_starlette.*",
+    "google.*",
+    "httpx.*",
+    "hvac.*",
+    "passlib.*",
+    "psutil.*",
+    "asyncpg.*",
+    "pgvector.*",
+    "watchdog.*",
+    "prometheus_fastapi_instrumentator.*",
+    "prometheus_client.*",
+    "anthropic.*",
+    "openai.*",
+    "sentence_transformers.*",
+    "ragas.*",
+]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+# 【莊子】無用之用 - 내부 phantom 모듈 (미구현 계획 모듈)
+module = [
+    "strategy_engine",
+    "query_expansion_advanced",
+    "multimodal_rag_engine",
+    "multimodal_rag_cache",
+    "memory_system.*",
+    "input_storage",
+    "services.llm_router",
+    "security.vault_manager",
+    "afo_soul_engine.*",
+    "api.middleware.*",
+    "api.routes.*",
+    "api.routers.*",
+    "api.fig_overlay.*",
+    "config.antigravity",
+    "config.settings",
 ]
 ignore_missing_imports = true
 

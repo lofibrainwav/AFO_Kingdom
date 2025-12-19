@@ -6,10 +6,7 @@ from pydantic import BaseModel
 try:
     from AFO.api_wallet import APIWallet
 except ImportError:
-    try:
-        from api_wallet import APIWallet
-    except ImportError:
-        APIWallet = None
+    APIWallet = None  # type: ignore
 
 router = APIRouter(prefix="/browser", tags=["Browser Bridge"])
 

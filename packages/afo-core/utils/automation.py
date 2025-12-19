@@ -8,10 +8,8 @@ import asyncio
 import functools
 import logging
 import time
-from collections.abc import Callable
+from collections.abc import Awaitable, Callable
 from typing import Any, TypeVar
-
-from typing import Any, Awaitable, TypeVar
 
 logger = logging.getLogger(__name__)
 
@@ -204,7 +202,8 @@ def cache_result(ttl_seconds: float = 300.0) -> Callable[[Callable[..., T]], Cal
                     logger.debug(f"[孝] 캐시 히트: {func.__name__}")
                     # Cast Any back to T since we stored T
                     from typing import cast
-                    return cast(T, result)
+
+                    return cast("T", result)
 
             result = func(*args, **kwargs)
             cache[key] = (result, now)

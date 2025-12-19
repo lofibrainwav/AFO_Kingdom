@@ -68,7 +68,7 @@ class YuksonScholar:
         )
 
         if result.get("success"):
-            return result["content"]
+            return str(result["content"])
         else:
             error = result.get("error", "Unknown error")
             logger.error(f"❌ [Yukson] Strategy planning failed: {error}")

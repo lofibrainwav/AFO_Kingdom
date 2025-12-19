@@ -51,7 +51,7 @@ def hash_password(password: str) -> str:
         해시된 비밀번호
     """
     if pwd_context:
-        return pwd_context.hash(password)
+        return str(pwd_context.hash(password))
     else:
         # Fallback: SHA-256 + salt (프로덕션에서는 사용하지 말 것)
         salt = secrets.token_hex(16)
@@ -70,7 +70,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
         검증 결과
     """
     if pwd_context:
-        return pwd_context.verify(plain_password, hashed_password)
+        return bool(pwd_context.verify(plain_password, hashed_password))
     else:
         # Fallback: SHA-256 검증
         try:
@@ -102,7 +102,7 @@ def create_access_token(data: dict[str, Any], expires_delta: timedelta | None = 
         to_encode.update({"exp": expire, "iat": datetime.utcnow()})
 
         encoded_jwt = jwt.encode(to_encode, JWT_SECRET_KEY, algorithm=JWT_ALGORITHM)
-        return encoded_jwt
+        return str(encoded_jwt)
     else:
         # Fallback: 간단한 토큰 생성 (프로덕션에서는 사용하지 말 것)
         username = data.get("sub", "unknown")
@@ -127,7 +127,7 @@ def verify_token(token: str) -> dict[str, Any] | None:
     """
     if JWT_AVAILABLE:
         try:
-            payload = jwt.decode(token, JWT_SECRET_KEY, algorithms=[JWT_ALGORITHM])
+            payload: dict[str, Any] = jwt.decode(token, JWT_SECRET_KEY, algorithms=[JWT_ALGORITHM])
             return payload
         except jwt.ExpiredSignatureError:
             # 善: 명확한 만료 에러 처리

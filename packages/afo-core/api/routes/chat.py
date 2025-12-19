@@ -14,14 +14,14 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
 # LLM Router import
+# [大學]修身齊家 - 내부를 먼저 정돈함
+LLMRouter: Any = None
+llm_router: Any = None
+route_and_execute: Any = None
 try:
-    from llm_router import llm_router, route_and_execute
+    from AFO.llm_router import LLMRouter, llm_router, route_and_execute
 except ImportError:
-    try:
-        from AFO.llm_router import llm_router, route_and_execute
-    except ImportError:
-        llm_router = None
-        route_and_execute = None
+    pass
 
 logger = logging.getLogger(__name__)
 

@@ -1,4 +1,6 @@
+
 from typing import Annotated, Any, TypedDict
+from datetime import datetime
 
 from langchain_core.messages import AIMessage, BaseMessage
 from langgraph.checkpoint.memory import MemorySaver
@@ -8,14 +10,10 @@ from langgraph.graph.message import add_messages
 # Import existing LLM Router logic for model execution
 from llm_router import QualityTier, llm_router
 
-# Import TrinityManager for Dynamic Score-based Routing (Phase 5)
 try:
-    from AFO.domain.metrics.trinity_manager import trinity_manager
+    from AFO.domain.metrics.trinity_manager import TrinityManager, trinity_manager
 except ImportError:
-    try:
-        from domain.metrics.trinity_manager import trinity_manager  # type: ignore[assignment]
-    except ImportError:
-        trinity_manager = None  # Fallback: no dynamic scoring
+    trinity_manager: TrinityManager | None = None  # type: ignore
 
 # Antigravity 통합 (眞: 명시적 설정 전달)
 try:
@@ -31,6 +29,26 @@ except ImportError:
             ENVIRONMENT = "dev"
 
         antigravity = MockAntigravity()  # type: ignore[assignment]
+
+# Redis for Matrix Stream (Track B)
+from AFO.utils.redis_connection import get_shared_async_redis_client
+import json
+
+async def publish_thought(agent: str, message: str, type: str = "thought") -> None:
+    """
+    [Matrix Stream] Publish internal monologue to Redis for frontend visualization.
+    """
+    try:
+        redis = await get_shared_async_redis_client()
+        payload = {
+            "source": agent,
+            "message": message,
+            "type": type,
+            "timestamp": datetime.now().strftime("%H:%M:%S")
+        }
+        await redis.publish("chancellor_thought_stream", json.dumps(payload))
+    except Exception as e:
+        print(f"⚠️ [Matrix Stream] Failed to publish: {e}")
 
 
 # --- 1. State Definition (Chancellor's Memory - V2 Constitution) ---
@@ -78,23 +96,26 @@ def calculate_complexity(query: str) -> str:
         return "Low"
 
 
-def chancellor_router_node(state: ChancellorState):
+
+async def chancellor_router_node(state: ChancellorState) -> dict[str, Any]:
     """
-    [Chancellor Node]
-    The Supreme Orchestrator with Tree-of-Thoughts (ToT) capability.
+    [Chancellor Node] - Async Upgrade for Matrix Stream
     """
     print("👑 [Chancellor] Analyzing state & Complexity...")
+    await publish_thought("Chancellor", "Analyzing state & Complexity... [Rule #0]", "thought")
+    
     messages = state["messages"]
 
     # Init State Variables
     steps = state.get("steps_taken", 0)
     state["steps_taken"] = steps + 1
 
-    # Analyze Query Complexity
-    query = messages[0].content
+    # Analyze Query Complexity - [논어] 지지위지지 = 아는 것과 모르는 것을 구분
+    query_content = messages[0].content
+    query_str: str = query_content if isinstance(query_content, str) else str(query_content)
     complexity = state.get("complexity")
     if not complexity:
-        complexity = calculate_complexity(query)
+        complexity = calculate_complexity(query_str)
         state["complexity"] = complexity
         print(f"🧠 [Chancellor] Query Complexity: {complexity}")
 
@@ -144,12 +165,13 @@ def chancellor_router_node(state: ChancellorState):
     return {"next_step": "finalize", "current_speaker": "chancellor"}
 
 
-async def jegalryang_node(state: ChancellorState):
+async def jegalryang_node(state: ChancellorState) -> dict[str, Any]:
     """
     [Jegalryang Node] - Truth (矛)
     Focus: Architecture, Strategy, Technical Certainty.
     """
     print("⚔️ [Jegalryang] Analyzing Truth...")
+    await publish_thought("Jegalryang", "Analyzing Truth... (Checking Architecture)", "thought")
     query = state["messages"][-1].content
 
     # Use LLM Router to call a "Smart" model (Truth requires intelligence)
@@ -178,28 +200,31 @@ async def jegalryang_node(state: ChancellorState):
     }
 
 
-async def samaui_node(state: ChancellorState):
+
+# Import Yeongdeok for Sage Consultations
+from AFO.scholars.yeongdeok import yeongdeok
+
+async def samaui_node(state: ChancellorState) -> dict[str, Any]:
     """
     [Samaui Node] - Goodness (盾)
     Focus: Ethics, Stability, Risk Management.
+    Uses: Samahwi (Qwen3-30B Pure MoE)
     """
-    print("🛡️ [Samaui] Checking Risks...")
-    query = state["messages"][0].content  # Analyze original query
+    print("🛡️ [Samaui] Consulting Samahwi (Backend/Risk)...")
+    await publish_thought("Samaui", "Consulting Samahwi for Stability Check...", "thought")
+    query = state["messages"][0].content
     truth_analysis = state["analysis_results"].get("jegalryang", "")
 
-    base_context = (state.get("kingdom_context") or {}).get("llm_context") or {}
-    context = {
-        **base_context,
-        "quality_tier": base_context.get("quality_tier", QualityTier.STANDARD),
-        "max_tokens": base_context.get("max_tokens", 512),
-    }
-
-    response_data = await llm_router.execute_with_routing(
-        f"당신은 사마의(Goodness)입니다. 제갈량의 분석('{truth_analysis[:200]}...')과 원본 질문('{query}')을 보고 윤리적/안전 리스크를 검토하시오.",
-        context=context,
+    # Construct rigid prompt for the Sage
+    sage_prompt = (
+        f"Original Query: {query}\n"
+        f"Truth Analysis: {truth_analysis[:500]}...\n\n"
+        "Analyze this from a Security & Stability (Goodness) perspective. "
+        "Highlight any risks, side effects, or ethical concerns."
     )
 
-    content = response_data.get("response", "검토 실패")
+    # Call Samahwi via Yeongdeok
+    content = await yeongdeok.consult_samahwi(sage_prompt)
 
     return {
         "analysis_results": {"samaui": content},
@@ -207,37 +232,43 @@ async def samaui_node(state: ChancellorState):
     }
 
 
-async def juyu_node(state: ChancellorState):
+async def juyu_node(state: ChancellorState) -> dict[str, Any]:
     """
     [Juyu Node] - Beauty (橋)
     Focus: Narrative, UX, User Experience.
+    Uses: Jwaja (DeepSeek-R1 Frontend) & Hwata (Qwen3-VL UX)
     """
-    print("🌉 [Juyu] Polishing UX...")
-    _ = state["messages"][0].content
+    print("桥 [Juyu] Consulting Jwaja (Frontend) & Hwata (UX)...")
+    await publish_thought("Juyu", "Consulting Jwaja & Hwata for Beauty & Serenity...", "thought")
+    original_query = state["messages"][0].content
     truth = state["analysis_results"].get("jegalryang", "")
-    goodness = state["analysis_results"].get("samaui", "")
-
-    base_context = (state.get("kingdom_context") or {}).get("llm_context") or {}
-    context = {
-        **base_context,
-        "quality_tier": base_context.get("quality_tier", QualityTier.PREMIUM),
-        "max_tokens": base_context.get("max_tokens", 512),
-    }
-
-    response_data = await llm_router.execute_with_routing(
-        f"당신은 주유(Beauty)입니다. 기술({truth[:100]}...)과 안전({goodness[:100]}...)을 종합하여 사용자에게 가장 아름답고 쉬운 서사로 정리하시오.",
-        context=context,
+    
+    # 1. Frontend Architecture (Jwaja)
+    jwaja_prompt = (
+        f"Query: {original_query}\n"
+        f"Technical Context: {truth[:300]}\n"
+        "Propose a UI/UX logic or Component structure that is Beautiful & Serene."
     )
+    jwaja_content = await yeongdeok.consult_jwaja(jwaja_prompt)
+    
+    # 2. UX Tone/Copy (Hwata) - Optional but adds flavor
+    # We can combine or append. For now, let's use Hwata to refine Jwaja's output.
+    hwata_prompt = (
+        f"Refine this UI logic into a user-friendly narrative:\n{jwaja_content[:500]}\n"
+        "Focus on comfort (Serenity) and clear guidance."
+    )
+    hwata_content = await yeongdeok.consult_hwata(hwata_prompt)
 
-    content = response_data.get("response", "정리 실패")
+    # Combine for final Juyu output
+    final_content = f"**UI Strategy (Jwaja)**:\n{jwaja_content}\n\n**UX Narrative (Hwata)**:\n{hwata_content}"
 
     return {
-        "analysis_results": {"juyu": content},
-        "messages": [AIMessage(content=f"[주유] {content}", name="juyu")],
+        "analysis_results": {"juyu": final_content},
+        "messages": [AIMessage(content=f"[주유] {final_content}", name="juyu")],
     }
 
 
-async def chancellor_finalize_node(state: ChancellorState):
+async def chancellor_finalize_node(state: ChancellorState) -> dict[str, Any]:
     """
     [Finalize]
     Chancellor synthesizes the final report.
@@ -272,7 +303,7 @@ async def chancellor_finalize_node(state: ChancellorState):
     return {"messages": [AIMessage(content=content, name="chancellor")]}
 
 
-def trinity_decision_gate(state: ChancellorState):
+def trinity_decision_gate(state: ChancellorState) -> dict[str, Any]:
     """
     [Decision Gate] - Trinity-Driven Routing (Phase 5)
     Evaluates Trinity Score to determine AUTO_RUN eligibility.
@@ -304,11 +335,65 @@ def trinity_decision_gate(state: ChancellorState):
         "auto_run_eligible": auto_run_eligible,
     }
 
+async def historian_node(state: ChancellorState) -> dict[str, Any]:
+    """
+    [Historian Node] - Autonomous Archiving (Genesis Project)
+    Records the session state into the Royal Chronicles (Obsidian).
+    """
+    print("📜 [Historian] Recording Session Chronicle...")
+    await publish_thought("Historian", "Recording Session Chronicle... (Project Genesis)", "info")
+    
+    # Extract essence
+    messages = state["messages"]
+    analysis = state["analysis_results"]
+    
+    # Format the content
+    content = "# Royal Council Chronicle\n\n"
+    content += f"**Date**: {datetime.now().strftime('%Y-%m-%d %H:%M')}\n"
+    content += f"**Trinity Score**: {state.get('trinity_score', 0.0):.2f}\n"
+    content += f"**Risk Score**: {state.get('risk_score', 0.0):.2f}\n\n"
+    
+    content += "## The Query\n"
+    if messages:
+        content += f"{messages[0].content}\n\n"
+        
+    content += "## The Council's Wisdom\n"
+    for sage, advice in analysis.items():
+        content += f"### {sage.capitalize()}\n{advice}\n\n"
+        
+    content += "## The Verdict\n"
+    content += f"Final Decision: {state.get('next_step', 'Unknown')}\n"
+
+    # Invoke Yeongdeok's Hand
+    try:
+        from AFO.scholars.yeongdeok import yeongdeok
+        res = await yeongdeok.use_tool(
+            "skill_013_obsidian_librarian",
+            action="append_daily_log",
+            content=f"Council Session Recorded.\nQuery: {messages[0].content[:50]}...",
+            tag="chronicle"
+        )
+        # Also save full note
+        full_note_path = f"journals/chronicles/session_{int(datetime.now().timestamp())}.md"
+        await yeongdeok.use_tool(
+            "skill_013_obsidian_librarian",
+            action="write_note",
+            note_path=full_note_path,
+            content=content,
+            metadata={"type": "chronicle", "participants": list(analysis.keys())}
+        )
+        print(f"✅ [Historian] Chronicle saved: {res}")
+    except Exception as e:
+        print(f"❌ [Historian] Failed to record: {e}")
+        
+    # Pass through state
+    return {}
+
 
 # --- 3. Graph Construction ---
 
 
-def build_chancellor_graph():
+def build_chancellor_graph() -> Any:
     workflow = StateGraph(ChancellorState)
 
     # Add Nodes
@@ -318,12 +403,13 @@ def build_chancellor_graph():
     workflow.add_node("juyu", juyu_node)
     workflow.add_node("finalize", chancellor_finalize_node)
     workflow.add_node("decision_gate", trinity_decision_gate)  # Phase 5: Trinity Routing
+    workflow.add_node("historian", historian_node) # Genesis Project
 
     # Add Edges
     workflow.set_entry_point("chancellor")
 
     # Conditional Edge from Chancellor
-    def route_logic(state):
+    def route_logic(state: ChancellorState) -> str:
         return state["next_step"]
 
     workflow.add_conditional_edges(
@@ -337,9 +423,10 @@ def build_chancellor_graph():
     workflow.add_edge("samaui", "chancellor")
     workflow.add_edge("juyu", "chancellor")
 
-    # Phase 5: Finalize → Decision Gate → END
+    # Phase 5: Finalize → Decision Gate → Historian -> END
     workflow.add_edge("finalize", "decision_gate")
-    workflow.add_edge("decision_gate", END)
+    workflow.add_edge("decision_gate", "historian")
+    workflow.add_edge("historian", END)
 
     # Persistence Strategy (Dev: Memory, Prod: Postgres)
     # Using MemorySaver for current verification as per V2 Constitution (Dev Mode)

@@ -32,7 +32,7 @@ class ContainerDetector:
     def detect_redis_container(self) -> str:
         """Redis 컨테이너 이름 자동 감지"""
         if "redis" in self._cache:
-            return self._cache["redis"]
+            return str(self._cache["redis"])
 
         try:
             result = subprocess.run(
@@ -44,8 +44,8 @@ class ContainerDetector:
             )
             container_name = result.stdout.strip()
             if container_name:
-                self._cache["redis"] = container_name
-                return container_name
+                self._cache["redis"] = str(container_name)
+                return str(container_name)
         except Exception:
             pass
 
@@ -57,7 +57,7 @@ class ContainerDetector:
     def detect_postgres_container(self) -> str:
         """PostgreSQL 컨테이너 이름 자동 감지"""
         if "postgres" in self._cache:
-            return self._cache["postgres"]
+            return str(self._cache["postgres"])
 
         try:
             result = subprocess.run(
@@ -82,26 +82,19 @@ class ContainerDetector:
     def detect_api_wallet_path(self) -> str:
         """API Wallet 파일 경로 자동 감지"""
         if "api_wallet_path" in self._cache:
-            return self._cache["api_wallet_path"]
+            return str(self._cache["api_wallet_path"])
 
         # 여러 가능한 경로 시도
         # Phase 2-4: settings 사용
         try:
-            from config.settings import get_settings
+            from AFO.config.settings import get_settings
 
             settings = get_settings()
             afo_home = settings.AFO_HOME or ""
             afo_soul_engine_home = settings.AFO_SOUL_ENGINE_HOME or ""
-        except ImportError:
-            try:
-                from AFO.config.settings import get_settings
-
-                settings = get_settings()
-                afo_home = settings.AFO_HOME or ""
-                afo_soul_engine_home = settings.AFO_SOUL_ENGINE_HOME or ""
-            except ImportError:
-                afo_home = os.getenv("AFO_HOME", "")
-                afo_soul_engine_home = os.getenv("AFO_SOUL_ENGINE_HOME", "")
+        except Exception:
+            afo_home = os.getenv("AFO_HOME", "")
+            afo_soul_engine_home = os.getenv("AFO_SOUL_ENGINE_HOME", "")
 
         possible_paths = [
             Path(afo_home) / "afo_soul_engine" / "api_wallet_storage.json" if afo_home else Path(),
@@ -152,5 +145,4 @@ def get_postgres_container() -> str:
 
 def get_api_wallet_path() -> str:
     """API Wallet 파일 경로 반환 (편의 함수)"""
-    """ChromaDB 파일 경로 반환 (편의 함수)"""
-    return _default_detector.detect_chromadb_path()
+    return _default_detector.detect_api_wallet_path()

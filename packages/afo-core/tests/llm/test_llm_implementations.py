@@ -6,7 +6,7 @@ import pytest
 
 
 # --- Claude API Tests ---
-def test_claude_init_env():
+def test_claude_init_env() -> None:
     # Test initialization with Env Var
     with patch.dict(os.environ, {"ANTHROPIC_API_KEY": "sk-ant-test"}):
         from AFO.llms.claude_api import ClaudeAPIWrapper
@@ -18,7 +18,7 @@ def test_claude_init_env():
 
 
 @pytest.mark.skip(reason="Module caching makes wallet mock unreliable in test suite")
-def test_claude_init_wallet_fallback():
+def test_claude_init_wallet_fallback() -> None:
     # Test initialization with API Wallet
     mock_wallet = MagicMock()
     mock_wallet.get.return_value = "sk-ant-wallet"
@@ -35,7 +35,7 @@ def test_claude_init_wallet_fallback():
 
 
 @pytest.mark.asyncio
-async def test_claude_generate_official():
+async def test_claude_generate_official() -> None:
     mock_client = AsyncMock()
     mock_client.post.return_value = MagicMock(
         status_code=200,
@@ -60,7 +60,7 @@ async def test_claude_generate_official():
 
 
 @pytest.mark.asyncio
-async def test_claude_generate_web():
+async def test_claude_generate_web() -> None:
     mock_client = AsyncMock()
     # Mock sequence: 1. Get Org -> Success
     mock_client.get.return_value = MagicMock(
@@ -83,7 +83,7 @@ async def test_claude_generate_web():
         assert "Claude Session Active" in result["content"]
 
 
-def test_claude_cost():
+def test_claude_cost() -> None:
     from AFO.llms.claude_api import ClaudeAPIWrapper
 
     wrapper = ClaudeAPIWrapper()
@@ -92,7 +92,7 @@ def test_claude_cost():
 
 
 # --- Gemini API Tests ---
-def test_gemini_init():
+def test_gemini_init() -> None:
     with patch.dict(os.environ, {"GEMINI_API_KEY": "AIza-test"}):
         from AFO.llms.gemini_api import GeminiAPIWrapper
 
@@ -101,7 +101,7 @@ def test_gemini_init():
 
 
 @pytest.mark.asyncio
-async def test_gemini_generate():
+async def test_gemini_generate() -> None:
     # Mock httpx (Gemini Wrapper uses REST)
     mock_client = AsyncMock()
     mock_client.post.return_value = MagicMock(
@@ -128,7 +128,7 @@ async def test_gemini_generate():
 
 
 # --- OpenAI API Tests ---
-def test_openai_init():
+def test_openai_init() -> None:
     with patch.dict(os.environ, {"OPENAI_API_KEY": "sk-test"}):
         from AFO.llms.openai_api import OpenAIAPIWrapper
 
@@ -137,7 +137,7 @@ def test_openai_init():
 
 
 @pytest.mark.asyncio
-async def test_openai_generate():
+async def test_openai_generate() -> None:
     # Mock httpx (OpenAI Wrapper uses REST)
     mock_client = AsyncMock()
     mock_client.post.return_value = MagicMock(
@@ -165,7 +165,7 @@ async def test_openai_generate():
 
 
 @pytest.mark.asyncio
-async def test_gemini_generate_with_context():
+async def test_gemini_generate_with_context() -> None:
     # Test conversational history
     mock_client = AsyncMock()
     mock_client.post.return_value = MagicMock(
@@ -205,7 +205,7 @@ async def test_gemini_generate_with_context():
 
 
 @pytest.mark.asyncio
-async def test_gemini_error_handling():
+async def test_gemini_error_handling() -> None:
     mock_client = AsyncMock()
     mock_client.post.return_value = MagicMock(
         status_code=400, text="Bad Request", json=lambda: {"error": {"message": "Invalid API Key"}}
@@ -224,7 +224,7 @@ async def test_gemini_error_handling():
 
 
 @pytest.mark.asyncio
-async def test_claude_generate_with_context_web():
+async def test_claude_generate_with_context_web() -> None:
     # Claude generate_with_context is strictly for web session connectivity check in current implementation
     mock_client = AsyncMock()
     mock_client.get.return_value = MagicMock(
@@ -251,7 +251,7 @@ async def test_claude_generate_with_context_web():
 
 
 @pytest.mark.asyncio
-async def test_openai_generate_with_context():
+async def test_openai_generate_with_context() -> None:
     mock_client = AsyncMock()
     mock_client.post.return_value = MagicMock(
         status_code=200,

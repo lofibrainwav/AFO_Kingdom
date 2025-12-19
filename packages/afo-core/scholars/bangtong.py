@@ -18,7 +18,8 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from AFO.llms.openai_api import OpenAIAPIWrapper, openai_api
+# [정기구독] CLI 기반 연동 (API 키 불필요)  
+from AFO.llms.codex_cli import CodexCLIWrapper, codex_cli
 
 logger = logging.getLogger(__name__)
 
@@ -26,7 +27,7 @@ logger = logging.getLogger(__name__)
 class BangtongScholar:
     """
     방통 (Bangtong) - 구현 및 프로토타이핑 담당 학자
-    GPT-4o 기반의 코딩 전문가
+    Codex CLI 기반의 코딩 전문가 (정기구독)
     """
 
     SYSTEM_PROMPT = """
@@ -42,9 +43,9 @@ class BangtongScholar:
     당신은 제갈량(전략)의 설계를 바탕으로 실질적인 결과물을 만들어냅니다.
     """
 
-    def __init__(self, api_wrapper: OpenAIAPIWrapper | None = None):
-        self.api = api_wrapper or openai_api
-        self.model = "gpt-4o"
+    def __init__(self, api_wrapper: CodexCLIWrapper | None = None):
+        self.api = api_wrapper or codex_cli
+        self.model = "codex-cli"  # CLI 모드 사용
 
     async def implement(self, request: str, context: dict[str, Any] | None = None) -> str:
         """
@@ -68,7 +69,7 @@ class BangtongScholar:
         )
 
         if result.get("success"):
-            return result["content"]
+            return str(result["content"])
         else:
             error = result.get("error", "Unknown error")
             logger.error(f"❌ [Bangtong] Implementation failed: {error}")
@@ -91,7 +92,7 @@ class BangtongScholar:
         )
 
         if result.get("success"):
-            return result["content"]
+            return str(result["content"])
         else:
             return f"리뷰 실패: {result.get('error')}"
 

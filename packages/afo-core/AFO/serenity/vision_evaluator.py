@@ -33,11 +33,14 @@ class TrinityVisionEvaluator:
     """
 
     # Weights for final score (aligned with SSOT)
-    BEAUTY_WEIGHT = 0.20
-    TRUTH_WEIGHT = 0.35
-    GOODNESS_WEIGHT = 0.35  # Derived from lack of issues
-    SERENITY_WEIGHT = 0.08
-    ETERNITY_WEIGHT = 0.02
+    # Weights for final score (aligned with SSOT)
+    from AFO.domain.metrics.trinity_ssot import TrinityWeights
+
+    BEAUTY_WEIGHT = TrinityWeights.BEAUTY
+    TRUTH_WEIGHT = TrinityWeights.TRUTH
+    GOODNESS_WEIGHT = TrinityWeights.GOODNESS
+    SERENITY_WEIGHT = TrinityWeights.SERENITY
+    ETERNITY_WEIGHT = TrinityWeights.ETERNITY
 
     def __init__(self):
         self.llm_available = self._check_llm()

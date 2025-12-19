@@ -36,10 +36,11 @@ class VaultKMS:
 
     def get_encryption_key(self) -> str | None:
         """Retrieve encryption key from Vault."""
-        if not self.is_available():
+        if not self.is_available() or self.client is None:
             return None
 
         try:
+            # [논어] 지지위지지 - 아는 것을 안다고 하며 접근
             # Adjust read method based on KV version (assuming v2 for modern Vault)
             response = self.client.secrets.kv.v2.read_secret_version(
                 mount_point=self.mount_point, path=self.secret_path
@@ -52,10 +53,11 @@ class VaultKMS:
 
     def set_encryption_key(self, key: str) -> bool:
         """Store encryption key in Vault."""
-        if not self.is_available():
+        if not self.is_available() or self.client is None:
             return False
 
         try:
+            # [대학] 성의정심 - 뜻을 성실히 하고 마음을 바르게 함
             self.client.secrets.kv.v2.create_or_update_secret(
                 mount_point=self.mount_point, path=self.secret_path, secret={"encryption_key": key}
             )

@@ -3,6 +3,10 @@
 import { useEffect, useState, useCallback } from 'react';
 import { TrinityGlowCard } from './TrinityGlowCard';
 import { VoiceReactivePanel } from './VoiceReactivePanel';
+
+import { SandboxCanvas } from './genui/SandboxCanvas';
+import { AICPAJulieWidget } from './genui/AICPAJulieWidget';
+import { SSOTMonitor } from './genui/SSOTMonitor';
 import { useSpatialAudio } from '../hooks/useSpatialAudio';
 
 interface PantheonState {
@@ -12,19 +16,17 @@ interface PantheonState {
   servicesOnline: number;
   totalServices: number;
   lastUpdate: string;
+  breakdown?: {
+      truth: number;
+      goodness: number;
+      beauty: number;
+      filial_serenity: number;
+      eternity: number;
+  };
 }
 
-/**
- * AFOPantheon - Phase 8 Perpetual Governance
- * 
- * Unified Control Tower integrating:
- * - Trinity Score with Glow/Dark Aura
- * - System Health (11 오장육부)
- * - Real-time alerts
- * - Voice Reaction overlay
- * 
- * 永 (Eternity): The ultimate governance interface
- */
+// ... (omitted)
+
 export function AFOPantheon() {
   const [state, setState] = useState<PantheonState>({
     trinityScore: 1.0,
@@ -34,23 +36,71 @@ export function AFOPantheon() {
     totalServices: 11,
     lastUpdate: new Date().toISOString(),
   });
+
   const [showVoicePanel, setShowVoicePanel] = useState(false);
+  const [showCreativeCanvas, setShowCreativeCanvas] = useState(false);
   const [alerts, setAlerts] = useState<string[]>([]);
+  const [thoughts, setThoughts] = useState<string[]>([]);
+  const [isMatrixActive, setIsMatrixActive] = useState(false);
   
   const { playTrinityUp, playRiskUp, initAudio } = useSpatialAudio();
+
+  // Matrix Stream Connection (SSE)
+  useEffect(() => {
+    const eventSource = new EventSource('/api/mcp/thoughts/sse');
+
+    eventSource.onmessage = (event) => {
+      try {
+        if (event.data === 'keep-alive') return;
+        const thoughtData = JSON.parse(event.data);
+        const timestamp = new Date().toLocaleTimeString();
+        let thoughtText = `[${timestamp}] `;
+
+        if (thoughtData.source) thoughtText += `[${thoughtData.source}] `;
+        if (thoughtData.content) thoughtText += thoughtData.content;
+        else thoughtText += JSON.stringify(thoughtData).slice(0, 100);
+
+        setThoughts(prev => [thoughtText, ...prev].slice(0, 50)); // Keep last 50
+        setIsMatrixActive(true);
+        setTimeout(() => setIsMatrixActive(false), 2000); // Blink effect
+      } catch (e) {
+        console.warn('Matrix Parse Error:', e);
+      }
+    };
+
+    eventSource.onerror = (e) => {
+       console.warn('Matrix Stream Disconnected. Reconnecting...', e);
+       eventSource.close();
+    };
+
+    return () => {
+      eventSource.close();
+    };
+  }, []);
 
   // Fetch system state periodically
   const fetchState = useCallback(async () => {
     try {
-      const res = await fetch('/api/health');
+      const res = await fetch('/api/health'); // Ensure this hits the correct router
       if (res.ok) {
         const data = await res.json();
+        // Handle nested structure: data.trinity.trinity_score
+        const trinityData = data.trinity || {};
+        
         setState(prev => ({
           ...prev,
-          trinityScore: data.trinity_score ?? prev.trinityScore,
-          riskScore: data.risk_score ?? prev.riskScore,
+          trinityScore: trinityData.trinity_score ?? data.health_percentage/100 ?? prev.trinityScore,
+          riskScore: data.risk_score ?? 0.0,
           healthStatus: data.status ?? prev.healthStatus,
-          servicesOnline: data.services_online ?? prev.servicesOnline,
+          servicesOnline: data.healthy_organs ?? prev.servicesOnline,
+          totalServices: data.total_organs ?? prev.totalServices,
+          breakdown: {
+              truth: trinityData.truth ?? 1.0,
+              goodness: trinityData.goodness ?? 1.0,
+              beauty: trinityData.beauty ?? 1.0,
+              filial_serenity: trinityData.filial_serenity ?? 1.0,
+              eternity: trinityData.eternity ?? 1.0,
+          },
           lastUpdate: new Date().toISOString(),
         }));
       }
@@ -59,93 +109,14 @@ export function AFOPantheon() {
     }
   }, []);
 
-  useEffect(() => {
-    fetchState();
-    const interval = setInterval(fetchState, 10000);
-    return () => clearInterval(interval);
-  }, [fetchState]);
+  // ... (omitted)
 
-  // Alert when Trinity drops
-  useEffect(() => {
-    if (state.trinityScore < 0.8) {
-      setAlerts(prev => [...prev, `⚠️ Trinity Score Critical: ${(state.trinityScore * 100).toFixed(0)}%`]);
-      playRiskUp();
-    }
-    if (state.riskScore > 0.2) {
-      setAlerts(prev => [...prev, `🛑 Risk Alert: ${(state.riskScore * 100).toFixed(0)}%`]);
-      playRiskUp();
-    }
-  }, [state.trinityScore, state.riskScore, playRiskUp]);
-
-  const getStatusColor = () => {
-    switch (state.healthStatus) {
-      case 'excellent': return '#22c55e';
-      case 'good': return '#84cc16';
-      case 'warning': return '#eab308';
-      case 'critical': return '#ef4444';
-    }
-  };
-
-  return (
-    <div style={{
-      minHeight: '100vh',
-      background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%)',
-      padding: '2rem',
-      fontFamily: "'Inter', sans-serif",
-    }}>
-      {/* Header */}
-      <header style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: '2rem',
-        padding: '1rem 1.5rem',
-        background: 'rgba(255,255,255,0.05)',
-        borderRadius: '16px',
-        border: '1px solid rgba(255,255,255,0.1)',
-      }}>
-        <div>
-          <h1 style={{ color: 'white', fontSize: '1.5rem', fontWeight: 'bold', margin: 0 }}>
-            👑 AFO Pantheon
-          </h1>
-          <p style={{ color: '#9ca3af', fontSize: '0.75rem', margin: '0.25rem 0 0' }}>
-            眞善美孝永 • Perpetual Governance
-          </p>
-        </div>
-        <div style={{ display: 'flex', gap: '0.75rem' }}>
-          <button
-            onClick={() => { initAudio(); setShowVoicePanel(!showVoicePanel); }}
-            style={{
-              padding: '0.5rem 1rem',
-              background: showVoicePanel ? '#7c3aed' : 'rgba(255,255,255,0.1)',
-              border: 'none',
-              borderRadius: '8px',
-              color: 'white',
-              cursor: 'pointer',
-            }}
-          >
-            🎙️ Voice
-          </button>
-          <div style={{
-            padding: '0.5rem 1rem',
-            background: 'rgba(255,255,255,0.1)',
-            borderRadius: '8px',
-            color: '#9ca3af',
-            fontSize: '0.75rem',
-          }}>
-            {new Date(state.lastUpdate).toLocaleTimeString()}
-          </div>
-        </div>
-      </header>
-
-      {/* Main Grid */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-        gap: '1.5rem',
-      }}>
         {/* Trinity Score Card */}
-        <TrinityGlowCard trinityScore={state.trinityScore} riskScore={state.riskScore}>
+        <TrinityGlowCard 
+            trinityScore={state.trinityScore} 
+            riskScore={state.riskScore}
+            breakdown={state.breakdown}
+        >
           <div style={{ textAlign: 'center' }}>
             <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>⚖️</div>
             <h2 style={{ color: 'white', margin: 0 }}>Trinity Score</h2>
@@ -213,7 +184,58 @@ export function AFOPantheon() {
             </div>
           )}
         </div>
-      </div>
+
+
+
+
+        {/* Matrix Stream Card (The Soul) */}
+        <div style={{
+          gridColumn: '1 / -1', // Span full width
+          padding: '1.5rem',
+          background: 'rgba(0,0,0,0.8)',
+          borderRadius: '16px',
+          border: `1px solid ${isMatrixActive ? '#22c55e' : 'rgba(34,197,94,0.3)'}`,
+          boxShadow: isMatrixActive ? '0 0 15px rgba(34,197,94,0.3)' : 'none',
+          transition: 'all 0.3s ease'
+        }}>
+           <h3 style={{ color: '#22c55e', margin: '0 0 1rem', fontFamily: 'monospace', display: 'flex', justifyContent: 'space-between' }}>
+             <span>👁️ MATRIX STREAM (OBSERVABILITY)</span>
+             <span style={{ fontSize: '0.8rem', opacity: isMatrixActive ? 1 : 0.5 }}>{isMatrixActive ? '● RECEIVING' : '○ IDLE'}</span>
+           </h3>
+           <div style={{
+             height: '150px',
+             overflowY: 'auto',
+             fontFamily: 'monospace',
+             fontSize: '0.75rem',
+             color: '#4ade80',
+             display: 'flex',
+             flexDirection: 'column-reverse' // Scroll from bottom
+           }}>
+             {thoughts.length === 0 ? (
+                <div style={{ color: '#166534' }}>Waiting for system thoughts...</div>
+             ) : (
+                thoughts.map((t, i) => (
+                  <div key={i} style={{ marginBottom: '0.25rem', borderBottom: '1px solid rgba(34,197,94,0.1)' }}>
+                    {t}
+                  </div>
+                ))
+             )}
+           </div>
+        </div>
+        
+        {/* Julie CPA (Financial Guardian) */}
+        <div style={{ gridColumn: '1 / -1', marginTop: '1rem' }}>
+             <AICPAJulieWidget />
+        </div>
+        
+        {/* SSOT Monitor (Compass) */}
+        <div style={{ gridColumn: '1 / -1', marginTop: '1rem' }}>
+             <SSOTMonitor />
+        </div>
+
+        </div>
+      )}
+
 
       {/* Voice Panel Overlay */}
       {showVoicePanel && (

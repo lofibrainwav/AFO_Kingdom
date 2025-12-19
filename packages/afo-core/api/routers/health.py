@@ -35,10 +35,10 @@ async def health_check() -> dict[str, Any]:
     import redis.asyncio as redis
 
     current_time = datetime.now().isoformat()
-    organs: list[dict] = []
+    organs: list[dict[str, Any]] = []
 
     # === 실제 서비스 체크 함수들 ===
-    async def check_redis() -> dict:
+    async def check_redis() -> dict[str, Any]:
         try:
             from AFO.utils.redis_connection import get_redis_url
 
@@ -49,7 +49,7 @@ async def health_check() -> dict[str, Any]:
         except Exception as e:
             return {"healthy": False, "output": f"Error: {str(e)[:50]}"}
 
-    async def check_postgres() -> dict:
+    async def check_postgres() -> dict[str, Any]:
         try:
             from AFO.services.database import get_db_connection
 
@@ -60,7 +60,7 @@ async def health_check() -> dict[str, Any]:
         except Exception as e:
             return {"healthy": False, "output": f"Error: {str(e)[:50]}"}
 
-    async def check_ollama() -> dict:
+    async def check_ollama() -> dict[str, Any]:
         try:
             async with httpx.AsyncClient(timeout=5.0) as client:
                 from AFO.config.settings import get_settings
@@ -73,7 +73,7 @@ async def health_check() -> dict[str, Any]:
         except Exception as e:
             return {"healthy": False, "output": f"Error: {str(e)[:50]}"}
 
-    async def check_self() -> dict:
+    async def check_self() -> dict[str, Any]:
         return {"healthy": True, "output": "Self-check: API responding"}
 
     # === 병렬 실행 ===
@@ -109,8 +109,18 @@ async def health_check() -> dict[str, Any]:
             else {"healthy": False, "output": str(results[3])},
         ),
     ]
+    
+    # Cast results to dict for MyPy
+    final_checks = []
+    for organ_name, res in organ_checks:
+        if isinstance(res, Exception):
+             final_res = {"healthy": False, "output": str(res)}
+        else:
+             from typing import cast
+             final_res = cast(dict[str, Any], res)
+        final_checks.append((organ_name, final_res))
 
-    for organ_name, result in organ_checks:
+    for organ_name, result in final_checks:
         organs.append(
             {
                 "organ": organ_name,

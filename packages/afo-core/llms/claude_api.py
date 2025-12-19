@@ -23,30 +23,33 @@ class ClaudeAPIWrapper:
     월 구독제 CLI 대신 REST API 사용
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         # 1순위: ANTHROPIC_API_KEY (직접 API 키)
         # 2순위: API Wallet (암호화 저장소)
         # 3순위: CURSOR_ACCESS_TOKEN (Cursor 세션에서 추출)
         # Vault Manager Integration (Zero Config)
+        vault_client: Any = None
         try:
-            from ..security.vault_manager import vault
+            from ..security.vault_manager import vault as v1
+            vault_client = v1
         except (ImportError, ValueError):
             try:
-                from AFO.security.vault_manager import vault
+                from AFO.security.vault_manager import vault as v2
+                vault_client = v2
             except ImportError:
-                vault = None
+                pass
 
-        self.api_key = (
-            vault.get_secret("ANTHROPIC_API_KEY") if vault else os.getenv("ANTHROPIC_API_KEY")
+        self.api_key: str | None = (
+            vault_client.get_secret("ANTHROPIC_API_KEY") if vault_client else os.getenv("ANTHROPIC_API_KEY")
         )
 
-        self.cursor_token = os.getenv("CURSOR_ACCESS_TOKEN")
+        self.cursor_token: str | None = os.getenv("CURSOR_ACCESS_TOKEN")
         self.base_url = "https://api.anthropic.com"
         self.cursor_api_url = "https://api.cursor.sh"  # Cursor API (가정)
 
         # API 키 우선 사용, 없으면 Cursor 토큰 시도
-        self.available = bool(self.api_key) or bool(self.cursor_token)
-        self.client = None
+        self.available: bool = bool(self.api_key) or bool(self.cursor_token)
+        self.client: httpx.AsyncClient | None = None
         self.use_cursor_api = False
 
         if self.api_key:
@@ -71,18 +74,20 @@ class ClaudeAPIWrapper:
             )
             self.available = False
         else:
-            logger.warning(
-                "⚠️ ANTHROPIC_API_KEY 또는 API Wallet 'anthropic' 키 없음 - Claude API 비활성화"
+            # CLI 정기구독 사용 시 API 키 불필요 - 경고 대신 debug
+            logger.debug(
+                "ANTHROPIC_API_KEY 없음 - Claude API 비활성화 (CLI 사용 시 무시)"
             )
 
-    async def generate(self, prompt: str, **kwargs) -> dict[str, Any]:
+    async def generate(self, prompt: str, **kwargs: Any) -> dict[str, Any]:
         """
         Claude API로 텍스트 생성 (Hybrid: Official API or Web Session)
         """
         if not self.available:
             return {"error": "Claude Access (Token) not available"}
 
-        is_session = self.api_key.startswith("sk-ant-sid")
+        # [論語]思無邪 - 생각에 사사로움이 없음
+        is_session = self.api_key is not None and self.api_key.startswith("sk-ant-sid")
 
         if is_session:
             # --- Web Session Mode ---
@@ -91,7 +96,7 @@ class ClaudeAPIWrapper:
             # --- Official API Mode ---
             return await self._generate_official(prompt, **kwargs)
 
-    async def _generate_official(self, prompt: str, **kwargs) -> dict[str, Any]:
+    async def _generate_official(self, prompt: str, **kwargs: Any) -> dict[str, Any]:
         if not self.client:
             # Re-init client if needed or just return error
             return {"error": "Official Client not initialized"}
@@ -128,7 +133,7 @@ class ClaudeAPIWrapper:
             logger.error(f"Claude API exception: {e}")
             return {"error": f"Claude API exception: {e!s}"}
 
-    async def _generate_web(self, prompt: str, **kwargs) -> dict[str, Any]:
+    async def _generate_web(self, prompt: str, **kwargs: Any) -> dict[str, Any]:
         """
         Web Session (Reverse Engineered) - Experimental
         """
@@ -164,7 +169,7 @@ class ClaudeAPIWrapper:
             return {"error": f"Web API Error: {e}"}
 
     async def generate_with_context(
-        self, messages: list[dict[str, str]], **kwargs
+        self, messages: list[dict[str, str]], **kwargs: Any
     ) -> dict[str, Any]:
         """
         대화 맥락을 포함한 생성 (Claude Web Session)
@@ -203,7 +208,7 @@ class ClaudeAPIWrapper:
             logger.error(f"Claude API context exception: {e}")
             return {"error": f"Claude API exception: {e!s}"}
 
-    async def close(self):
+    async def close(self) -> None:
         """리소스 정리"""
         if self.client:
             await self.client.aclose()
@@ -244,7 +249,7 @@ class ClaudeAPIWrapper:
 claude_api = ClaudeAPIWrapper()
 
 
-async def generate_with_claude(prompt: str, **kwargs) -> dict[str, Any]:
+async def generate_with_claude(prompt: str, **kwargs: Any) -> dict[str, Any]:
     """
     Claude API로 텍스트 생성 인터페이스
     """
@@ -253,7 +258,7 @@ async def generate_with_claude(prompt: str, **kwargs) -> dict[str, Any]:
 
 if __name__ == "__main__":
     # 테스트
-    async def test_claude_api():
+    async def test_claude_api() -> None:
         print("🤖 Claude API Wrapper 테스트")
         print("=" * 50)
 

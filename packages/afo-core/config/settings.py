@@ -63,7 +63,7 @@ class AFOSettings(BaseSettings):
     # Ollama Settings
     # ============================================================================
     OLLAMA_BASE_URL: str = Field(
-        default="http://localhost:11434", description="Ollama LLM 서버 URL"
+        default="http://localhost:11435", description="Ollama LLM 서버 URL"
     )
     OLLAMA_MODEL: str = Field(default="qwen3-vl:8b", description="Ollama 기본 모델")
 
@@ -177,6 +177,8 @@ def get_settings(env: str | None = None) -> AFOSettings:
         env = os.getenv("AFO_ENV", "dev").lower()
 
     # 환경별 설정 클래스 로드
+    settings_class: type[AFOSettings]
+
     if env == "prod" or env == "production":
         try:
             from .settings_prod import AFOSettingsProd

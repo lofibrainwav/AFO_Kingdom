@@ -7,6 +7,9 @@ from __future__ import annotations
 
 from prometheus_client import REGISTRY, Counter, Gauge, Histogram
 
+from AFO.domain.metrics.trinity_ssot import TrinityWeights
+
+
 # ============================================================
 # VibeCoding Metrics (Phase 3.2)
 # ============================================================
@@ -340,6 +343,6 @@ health_percentage.set(100.0)
 health_organ_status.labels(organ_name="all", organ_korean="전체").set(1.0)
 vibecoding_compliance.labels(principle="all").set(1.0)
 
-trinity_strategist_score.labels(strategist="제갈량", aspect="眞", weight="0.35").set(0.95)
-trinity_strategist_score.labels(strategist="사마의", aspect="善", weight="0.35").set(0.92)
-trinity_strategist_score.labels(strategist="주유", aspect="美", weight="0.30").set(0.88)
+trinity_strategist_score.labels(strategist="제갈량", aspect="眞", weight=str(TrinityWeights.TRUTH)).set(0.95)
+trinity_strategist_score.labels(strategist="사마의", aspect="善", weight=str(TrinityWeights.GOODNESS)).set(0.92)
+trinity_strategist_score.labels(strategist="주유", aspect="美", weight=str(TrinityWeights.BEAUTY)).set(0.88)

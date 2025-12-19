@@ -20,6 +20,8 @@ Input Server - 사령관의 입력 통로 (input.brnestrm.com)
 
 from __future__ import annotations
 
+from typing import Any
+
 import hashlib
 import os
 import re
@@ -50,14 +52,7 @@ try:
     settings = get_settings()
     API_WALLET_URL = settings.API_WALLET_URL
 except ImportError:
-    # Phase 2-4: settings 사용 (fallback)
-    try:
-        from config.settings import get_settings
-
-        settings = get_settings()
-        API_WALLET_URL = settings.API_WALLET_URL
-    except ImportError:
-        API_WALLET_URL = os.getenv("API_WALLET_URL", "http://localhost:8000")
+    API_WALLET_URL = os.getenv("API_WALLET_URL", "http://localhost:8000")
 
 # 환경 변수 파싱 패턴
 ENV_PATTERNS = [
@@ -110,13 +105,13 @@ def parse_env_text(text: str) -> list[tuple[str, str, str]]:
 
 # Health check endpoint
 @app.get("/health")
-async def health_check():
+async def health_check() -> dict[str, str]:
     """Health check endpoint"""
     return {"status": "healthy", "service": "AFO Input Server", "organ": "胃 (Stomach)"}
 
 
 @app.get("/", response_class=HTMLResponse)
-async def home_page(request: Request, success: str | None = None, error: str | None = None):
+async def home_page(request: Request, success: str | None = None, error: str | None = None) -> HTMLResponse:
     """
     홈페이지 - API 키 입력 폼
 
@@ -415,7 +410,7 @@ async def add_api_key(
     provider: str = Form(...),
     key: str = Form(...),
     description: str | None = Form(None),
-):
+) -> RedirectResponse | JSONResponse:
     """
     API 키 추가 (API Wallet으로 전송 + PostgreSQL 저장)
 
@@ -484,7 +479,7 @@ async def add_api_key(
 
 
 @app.get("/api/status")
-async def api_status():
+async def api_status() -> dict[str, Any]:
     """
     Input Server 상태 조회
 
@@ -502,7 +497,7 @@ async def api_status():
 
     # PostgreSQL 연결 확인
     postgres_connected = False
-    input_stats = {}
+    input_stats: dict[str, Any] = {}
     if INPUT_STORAGE_AVAILABLE:
         try:
             stats = get_input_statistics()
@@ -526,7 +521,7 @@ async def api_status():
 
 
 @app.post("/bulk_import")
-async def bulk_import(bulk_text: str = Form(...)):
+async def bulk_import(bulk_text: str = Form(...)) -> RedirectResponse:
     """
     대량 환경 변수 임포트
 
@@ -668,7 +663,7 @@ async def bulk_import(bulk_text: str = Form(...)):
 
 
 @app.get("/api/history")
-async def get_history(category: str | None = None, limit: int = 100):
+async def get_history(category: str | None = None, limit: int = 100) -> dict[str, Any] | JSONResponse:
     """
     Input 히스토리 조회
 
@@ -695,7 +690,7 @@ if __name__ == "__main__":
 
     # Phase 2-4: settings 사용
     try:
-        from config.settings import get_settings
+        from AFO.config.settings import get_settings
 
         settings = get_settings()
         port = settings.INPUT_SERVER_PORT

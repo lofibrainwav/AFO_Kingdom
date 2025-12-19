@@ -9,7 +9,10 @@ try:
     from trinity_os.servers.playwright_bridge_mcp import PlaywrightBridgeMCP
 except ImportError:
     # Fallback or mock if running isolation
-    PlaywrightBridgeMCP = None
+    PlaywrightBridgeMCP = None  # type: ignore
+
+from AFO.api.compat import get_antigravity_control
+
 
 
 class GenUIOrchestrator:
@@ -26,19 +29,28 @@ class GenUIOrchestrator:
         self.sandbox_path = os.path.join(workspace_root, "packages/dashboard/src/app/genui")
         os.makedirs(self.sandbox_path, exist_ok=True)
 
-        # Check Self-Expanding Mode (Eternity Check)
-        try:
-            from config.antigravity import antigravity
+        # Check Self-Expanding Mode (Eternity Check via Governance)
+        self.antigravity = get_antigravity_control()
+        if self.antigravity:
+             # Just logging here, actual gate is in create_project
+             if not self.antigravity.check_governance("genui_create"):
+                 print("⚠️ [GenUI] 'genui_create' Governance Check: DISABLED. Creator capabilities restricted.")
+        else:
+             print("⚠️ [GenUI] Antigravity Control unavailable.")
 
-            if not antigravity.SELF_EXPANDING_MODE:
-                print("⚠️ [GenUI] Self-Expanding Mode is DISABLED. Creator capabilities restricted.")
-        except ImportError:
-            pass  # Running in isolation or dev mode without full config context
 
     def create_project(self, project_id: str, prompt: str) -> dict[str, Any]:
         """
         Initiates a GenUI project creation loop.
         """
+        # 0. Governance Check (Pure Antigravity 2.0)
+        if self.antigravity and not self.antigravity.check_governance("genui_create"):
+            return {
+                "project_id": project_id,
+                "status": "BLOCKED_BY_GOVERNANCE",
+                "message": "GenUI creation blocked by Antigravity Governance (check flags/risk)."
+            }
+
         project_dir = os.path.join(self.sandbox_path, project_id)
         os.makedirs(project_dir, exist_ok=True)
 
@@ -64,17 +76,23 @@ class GenUIOrchestrator:
         # 3. Render Wait (Simulate Hot Reload)
         time.sleep(2)
 
-        # 4. See (Screenshot)
+        # 4. See (Screenshot) - Governance Gated (Vision)
         screenshot_path = os.path.join(self.workspace_root, "artifacts", f"genui_{project_id}.png")
-        vision_result = {"success": False, "message": "Playwright not loaded"}
+        vision_result = {"success": False, "message": "Playwright not loaded or blocked"}
 
-        if PlaywrightBridgeMCP:
-            target_url = f"http://localhost:3000/genui/{project_id}"
-            print(f"👀 [GenUI] Navigating to {target_url}...")
-            # Note: This assumes the dashboard is running
-            nav_res = PlaywrightBridgeMCP.navigate(url=target_url)
-            if nav_res.get("success"):
-                vision_result = PlaywrightBridgeMCP.screenshot(path=screenshot_path)
+        # Check 'genui_vision' governance
+        if self.antigravity and self.antigravity.check_governance("genui_vision"):
+            if PlaywrightBridgeMCP:
+                target_url = f"http://localhost:3000/genui/{project_id}"
+                print(f"👀 [GenUI] Navigating to {target_url}...")
+                # Note: This assumes the dashboard is running
+                nav_res = PlaywrightBridgeMCP.navigate(url=target_url)
+                if nav_res.get("success"):
+                    vision_result = PlaywrightBridgeMCP.screenshot(path=screenshot_path)
+            else:
+                 print("⚠️ [GenUI] PlaywrightBridgeMCP not available despite governance approval.")
+        else:
+            print("🛡️ [GenUI] Vision verification blocked by Governance ('genui_vision').")
 
         return {
             "project_id": project_id,

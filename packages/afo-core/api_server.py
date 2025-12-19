@@ -29,61 +29,32 @@ if _AFO_ROOT not in sys.path:
 
 from AFO.api.routers.health import router as health_router
 from AFO.api.routers.root import router as root_router
+from AFO.api.routes.streams import router as streams_router
+
+# ============================================================================
+# IMPORTS via Strangler Fig Facade (AFO.api.compat)
+# ============================================================================
+from AFO.api.compat import HybridRAG, LazyModules, get_settings_safe, load_dotenv_safe
 
 if TYPE_CHECKING:
     from collections.abc import AsyncIterator, Callable
-
-try:
-    from dotenv import load_dotenv
-except ImportError:  # pragma: no cover - optional dependency
-    load_dotenv = None  # type: ignore[assignment]
-
-if TYPE_CHECKING:
     from AFO.config.settings import AFOSettings
 
-get_settings: Callable[[], AFOSettings] | None = None
+# Alias for compatibility with existing code
+get_settings = get_settings_safe
+anthropic = LazyModules.anthropic
+chromadb = LazyModules.chromadb
+crewai = LazyModules.crewai
+langchain = LazyModules.langchain
+qdrant_client = LazyModules.qdrant_client
 
-try:
-    from AFO.config.settings import get_settings as _real_get_settings
-
-    get_settings = _real_get_settings
-except ImportError:
-    try:
-        from config.settings import (
-            get_settings as _fallback_get_settings,  # type: ignore[import, assignment]
-        )
-
-        get_settings = _fallback_get_settings  # type: ignore[assignment]
-    except ImportError:
-        pass
-
-try:
-    from afo_soul_engine.utils.lazy_imports import (
-        anthropic,
-        chromadb,
-        crewai,
-        langchain,
-        qdrant_client,
-    )
-except ImportError:  # pragma: no cover - optional tooling
-    anthropic = None
-    chromadb = None
-    crewai = None
-    langchain = None
-    qdrant_client = None
-
-try:
-    from AFO.services.hybrid_rag import (
-        blend_results_async,
-        generate_answer_async,
-        get_embedding_async,
-        query_pgvector_async,
-        query_redis_async,
-        select_context,
-    )
-except ImportError as exc:  # pragma: no cover - local execution fallback
-    print("⚠️  Hybrid RAG services unavailable:", exc)
-    raise
+# Hybrid RAG Aliases
+blend_results_async = HybridRAG.blend_results_async
+generate_answer_async = HybridRAG.generate_answer_async
+get_embedding_async = HybridRAG.get_embedding_async
+query_pgvector_async = HybridRAG.query_pgvector_async
+query_redis_async = HybridRAG.query_redis_async
+select_context = HybridRAG.select_context
 
 
 # 백색 소음 제거: Pydantic UserWarning 완전 박멸
@@ -95,8 +66,8 @@ warnings.filterwarnings("ignore", category=UserWarning, module="pydantic")
 
 settings: Any | None = None
 
-if load_dotenv is not None:
-    env_loaded = load_dotenv(dotenv_path=str(Path.cwd() / ".env"), override=True)
+if load_dotenv_safe():
+    env_loaded = True
     if env_loaded:
         print("✅ 환경 변수 로드 완료 (.env)")
     else:
@@ -104,7 +75,7 @@ if load_dotenv is not None:
 else:
     print("⚠️ python-dotenv가 설치되지 않아 .env 파일을 로드할 수 없습니다")
 
-if get_settings:
+if get_settings is not None:
     try:
         settings = get_settings()
     except Exception:
@@ -117,18 +88,15 @@ else:
     print("⚠️ GEMINI_API_KEY가 .env에 설정되지 않았습니다")
 
 sentinel_dsn = getattr(settings, "SENTRY_DSN", None) if settings else os.getenv("SENTRY_DSN")
-if sentinel_dsn:
-    try:
-        import sentry_sdk
-
-        sentry_sdk.init(
-            dsn=sentinel_dsn,
-            traces_sample_rate=1.0,
-            profiles_sample_rate=1.0,
-        )
-        print("✅ Sentry 모니터링 활성화")
-    except ImportError:
-        print("⚠️  sentry_sdk not installed, skipping Sentry integration")
+if sentinel_dsn and LazyModules.sentry_sdk:
+    LazyModules.sentry_sdk.init(
+        dsn=sentinel_dsn,
+        traces_sample_rate=1.0,
+        profiles_sample_rate=1.0,
+    )
+    print("✅ Sentry 모니터링 활성화")
+elif sentinel_dsn:
+    print("⚠️  sentry_sdk not installed, skipping Sentry integration")
 else:
     print("⚠️ SENTRY_DSN 설정 없음")
 
@@ -192,14 +160,15 @@ except ImportError:
     pass
 
 # Optional SSE imports (현재 사용되지 않음 - 필요시 주석 해제)
-# try:
-#     from sse_starlette.sse import EventSourceResponse
-#     SSE_AVAILABLE = True
-# except ImportError:
-#     EventSourceResponse = None
-#     SSE_AVAILABLE = False
-#     print("⚠️  sse-starlette not available (SSE support disabled)")
-SSE_AVAILABLE = False
+# [노자] 유무상생 - 있음과 없음은 서로 생성함
+EventSourceResponse: Any = None
+try:
+    from sse_starlette.sse import EventSourceResponse
+    SSE_AVAILABLE = True
+except ImportError:
+    SSE_AVAILABLE = False
+    print("⚠️  sse-starlette not available (SSE support disabled)")
+# SSE_AVAILABLE = False
 
 MODULAR_ROUTERS_AVAILABLE = True
 
@@ -220,13 +189,13 @@ def _fallback_router(name: str, exc: Exception, essential: bool = False) -> APIR
 
 # api_wallet_router는 레거시 - wallet_router로 대체됨 (Strangler Fig)
 # try:
-#     from .api.routers.api_wallet import router as api_wallet_router
+#     from api.routers.api_wallet import router as api_wallet_router
 # except Exception as exc:
 #     api_wallet_router = _fallback_router("API Wallet", exc)
 
 # obsidian_router는 현재 사용되지 않음 (레거시)
 # try:
-#     from .api.routes.obsidian import router as obsidian_router
+#     from api.routes.obsidian import router as obsidian_router
 # except Exception as exc:
 #     obsidian_router = _fallback_router("Obsidian", exc)
 
@@ -256,14 +225,12 @@ from AFO.api.compat import (
     trinity_router,
     trinity_sbt_router,
     users_router,
+    users_router,
     wallet_router,
+    thoughts_router,
 )
-from AFO.api.compat import (
-    get_settings as get_settings_import,
-)
-
-# Alias get_settings to resolve type conflict if necessary
-get_settings = get_settings_import  # type: ignore[assignment]
+# get_settings aliases are handled at the top
+pass
 
 # Print availability status (optional, kept for logs)
 print(f"✅ 5기둥 API 라우터 로드 상태: {pillars_router is not None}")
@@ -295,15 +262,15 @@ except ImportError:
     pass
 
 # Import the LangGraph blueprint and the ASYNC memory context manager
+# [대학] 격물치지 - 사물을 궁구하여 지식을 얻음
+memory_context: Any = None
+workflow: Any = None
 try:
-    from .strategy_engine import memory_context, workflow
+    from strategy_engine import memory_context as _mc, workflow as _wf
+    memory_context = _mc
+    workflow = _wf
 except ImportError:
-    try:
-        from strategy_engine import memory_context, workflow  # type: ignore[no-redef]
-    except ImportError:
-        memory_context = None
-        workflow = None  # type: ignore[assignment]
-        print("⚠️  Strategy engine not available")
+    print("⚠️  Strategy engine not available")
 
 # Import RAG engines (Phase 2.3 - Optional until implemented)
 # CRAGEngine, HybridCRAGSelfRAG는 현재 사용되지 않음 (레거시)
@@ -320,25 +287,29 @@ except ImportError:
 #     print("⚠️  HybridCRAGSelfRAG not available (Phase 2.3 pending)")
 
 # Import Query Expansion (Phase 2.3 - Optional)
+# [색즉시공] - 없음도 있음의 한 형태
+QueryExpander: Any = None
 try:
-    from .query_expansion_advanced import QueryExpander
+    from query_expansion_advanced import QueryExpander as _QE
+    QueryExpander = _QE
 except ImportError:
-    QueryExpander = None  # type: ignore[assignment, misc]
     print("⚠️  QueryExpander not available (Phase 2.3 pending)")
 
 # Import Multimodal RAG Engine (Phase 2 - Multimodal RAG)
+MultimodalRAGEngine: Any = None
 try:
-    from .multimodal_rag_engine import MultimodalRAGEngine
+    from multimodal_rag_engine import MultimodalRAGEngine as _MRAE
+    MultimodalRAGEngine = _MRAE
 except ImportError:
-    MultimodalRAGEngine: Any = None  # type: ignore[no-redef]
     print("⚠️  MultimodalRAGEngine not available (Multimodal RAG Phase 2 pending)")
 
 # Import Multimodal RAG Cache (Phase 5 - Optimization)
 # set_redis_client만 사용됨, 나머지는 레거시
+set_redis_client: Any = None
 try:
-    from .multimodal_rag_cache import set_redis_client
+    from multimodal_rag_cache import set_redis_client as _src
+    set_redis_client = _src
 except ImportError:
-    set_redis_client: Any = None  # type: ignore[no-redef]
     print("⚠️  Multimodal RAG Cache not available (Multimodal RAG Phase 5 pending)")
 
 # Multimodal RAG Utils, Suno-Style Music RAG, LangChainRAGSystem는 현재 사용되지 않음 (레거시)
@@ -395,10 +366,12 @@ except ImportError:
 
 # Import Skill Registry (Phase 2.5 - Optional)
 # register_core_skills만 사용됨, 나머지는 레거시 (skills_router로 대체)
+# [무위자연] - 있으면 쓰고 없으면 자연스레 넘김
+register_core_skills: Any = None
 try:
-    from afo_skills_registry import register_core_skills
+    from afo_skills_registry import register_core_skills as _rcs
+    register_core_skills = _rcs
 except ImportError:
-    register_core_skills = None
     print("⚠️  afo_skills_registry not available (Phase 2.5 pending)")
 
 # This global variable will hold the compiled, runnable LangGraph app.
@@ -459,33 +432,35 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         query_expander, \
         skill_registry
     global PG_POOL, REDIS_CLIENT, OPENAI_CLIENT, multimodal_rag_engine
-    print("【지휘소 v6 - 최종】 API 서버 가동 준비 (완전 비동기)...")
+    print("[지휘소 v6 - 최종】 API 서버 가동 준비 (완전 비동기)...")
 
     # Initialize Query Expander (Phase 2.3 - Optional)
     if QueryExpander is not None:
-        print("【Query Expander】 쿼리 확장 시스템 초기화 중...")
+        print("[Query Expander] 쿼리 확장 시스템 초기화 중...")
         query_expander = QueryExpander()
-        print("【Query Expander】 WordNet + ChromaDB 하이브리드 확장 준비 완료")
+        print("[Query Expander] WordNet + ChromaDB 하이브리드 확장 준비 완료")
     else:
         query_expander = None
         print("⚠️  Query Expander 건너뜀 (Phase 2.3 구현 필요)")
 
     # ============================================================================
-    # AntiGravity Phase 1: Initialization
+    # AntiGravity Phase 1: Initialization (Via Facade)
     # ============================================================================
-    from config.antigravity import antigravity
+    from AFO.api.compat import get_antigravity_control
+    
+    antigravity = get_antigravity_control()
 
-    if antigravity.AUTO_DEPLOY:
+    if antigravity and antigravity.AUTO_DEPLOY:
         print(f"🚀 [AntiGravity] 활성화: {antigravity.ENVIRONMENT} 환경 자동 배포 준비 완료 (孝)")
 
-    if antigravity.DRY_RUN_DEFAULT:
+    if antigravity and antigravity.DRY_RUN_DEFAULT:
         print("🛡️ [AntiGravity] DRY_RUN 모드 활성화 - 모든 위험 동작 시뮬레이션 (善)")
     # ============================================================================
 
     # Initialize RAG engines - 각 LLM별로 on-demand 생성
     # (API 요청시마다 llm_provider에 따라 동적 생성)
-    print("【RAG 엔진】 멀티-LLM 지원 준비 완료.")
-    print("【RAG 엔진】 지원 LLM: claude, gemini, codex, ollama, lmstudio")
+    print("[RAG 엔진] 멀티-LLM 지원 준비 완료.")
+    print("[RAG 엔진] 지원 LLM: claude, gemini, codex, ollama, lmstudio")
 
     # 초기화는 생략 (첫 요청시 생성)
     crag_engine = None
@@ -493,7 +468,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
     # Initialize Multimodal RAG Engine (Phase 2 - Multimodal RAG)
     if MultimodalRAGEngine is not None:
-        print("【Multimodal RAG】 멀티모달 RAG 엔진 초기화 중...")
+        print("[Multimodal RAG] 멀티모달 RAG 엔진 초기화 중...")
         # Phase 2-4: settings 사용
         from config.settings import get_settings
 
@@ -505,7 +480,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
             use_reranking=False,  # Phase 3에서 활성화
             mock_mode=mock_mode,
         )
-        print("【Multimodal RAG】 멀티모달 RAG 엔진 준비 완료 (텍스트+이미지 통합 검색)")
+        print("[Multimodal RAG] 멀티모달 RAG 엔진 준비 완료 (텍스트+이미지 통합 검색)")
     else:
         multimodal_rag_engine = None
         print("⚠️  Multimodal RAG Engine 건너뜀 (Multimodal RAG Phase 2 구현 필요)")
@@ -513,11 +488,12 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     # Initialize Multimodal RAG Cache (Phase 5 - Optimization)
     if set_redis_client is not None and REDIS_CLIENT is not None:
         set_redis_client(REDIS_CLIENT)
-        print("【Multimodal RAG Cache】 캐시 시스템 초기화 완료 (Redis 통합)")
+        print("[Multimodal RAG Cache] 캐시 시스템 초기화 완료 (Redis 통합)")
     else:
         print("⚠️  Multimodal RAG Cache 건너뜀 (Redis 또는 캐시 모듈 없음)")
 
     # Initialize Skill Registry (Phase 2.5 - Optional)
+    # [색즉시공] - 없음도 있음의 한 형태
     if register_core_skills is not None:
         skill_registry = register_core_skills()
         skill_count = (
@@ -525,12 +501,11 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         )
         print(f"ℹ️ [INFO] {skill_count} Skills loaded in simulation mode")
     else:
-        get_skill_registry = None  # type: ignore[assignment]
         print("⚠️  Skill Registry not available (Phase 2.5 pending)")
 
     # Initialize Yeongdeok Complete (Phase 2.5 - Optional)
     if YeongdeokComplete is not None:
-        print("【영덕】 영덕 완전체 초기화 중...")
+        print("[영덕] 영덕 완전체 초기화 중...")
         # Phase 2-4: settings 사용
         try:
             from config.settings import get_settings
@@ -548,16 +523,16 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
             enable_llm_brain=False,  # LLM 없어도 작동 (RAG Memory만 사용)
             neural_event_queue=neural_event_queue,  # 신경 흐름 이벤트 큐 연결
         )
-        print("【영덕】 영덕 완전체 준비 완료 - 뇌/눈/귀/팔 모두 연결됨")
+        print("[영덕] 영덕 완전체 준비 완료 - 뇌/눈/귀/팔 모두 연결됨")
     else:
         yeongdeok = None
         print("⚠️  Yeongdeok Complete 건너뜀 (Phase 2.5 구현 필요)")
 
     # Compile with MemorySaver (no context manager needed)
-    print("【지휘소 v6】 LangGraph 설계도를 컴파일하여 '두뇌'를 완성합니다...")
+    print("[지휘소 v6】 LangGraph 설계도를 컴파일하여 '두뇌'를 완성합니다...")
     if workflow is not None and memory_context is not None:
         strategy_app_runnable = workflow.compile(checkpointer=memory_context)
-        print("【지휘소 v6】 '두뇌' 가동 준비 완료. 명령을 수신할 수 있습니다.")
+        print("[지휘소 v6】 '두뇌' 가동 준비 완료. 명령을 수신할 수 있습니다.")
     else:
         strategy_app_runnable = None
         print("⚠️  Strategy workflow 또는 memory_context 없음 - LangGraph 컴파일 건너뜀")
@@ -578,7 +553,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     # PostgreSQL 연결 (Optional - API Wallet은 JSON 폴백 가능)
     if PSYCOPG2_AVAILABLE and SimpleConnectionPool is not None:
         try:
-            print("【Hybrid RAG】 PostgreSQL 풀 초기화 중...")
+            print("[Hybrid RAG] PostgreSQL 풀 초기화 중...")
             PG_POOL = SimpleConnectionPool(
                 1,
                 5,
@@ -600,22 +575,26 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     # 로컬 실행 시 localhost 사용, Docker 네트워크에서는 redis 사용
     # get_settings handled via compat/alias
     pass
+    # get_settings is available globally via compat
     try:
-        from AFO.config.settings import get_settings
-
-        redis_settings = get_settings()
-        redis_host = redis_settings.REDIS_HOST
-    except ImportError:
-        # Phase 2-4: settings 사용
-        from config.settings import get_settings
-
-        settings = get_settings()
-        redis_host = settings.REDIS_HOST
-    redis_port = settings.REDIS_PORT
-    redis_password = settings.REDIS_PASSWORD
+        if get_settings is not None:
+             redis_settings = get_settings()
+             if redis_settings:
+                 redis_host = redis_settings.REDIS_HOST
+                 redis_port = redis_settings.REDIS_PORT
+                 redis_password = redis_settings.REDIS_PASSWORD
+             else:
+                 raise ValueError("Settings not loaded")
+        else:
+             raise ValueError("get_settings not available")
+    except Exception:
+        # Fallback to env
+        redis_host = os.getenv("REDIS_HOST", "localhost")
+        redis_port = int(os.getenv("REDIS_PORT", "6379"))
+        redis_password = os.getenv("REDIS_PASSWORD", None)
 
     try:
-        print(f"【Hybrid RAG】 Redis 클라이언트 연결 중... ({redis_host}:{redis_port})")
+        print(f"[Hybrid RAG] Redis 클라이언트 연결 중... ({redis_host}:{redis_port})")
         REDIS_CLIENT = redis.Redis(
             host=redis_host,
             port=redis_port,
@@ -663,7 +642,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     # Imported at top level
 
     # Cleanup
-    print("【영덕】 영덕 완전체 종료 중...")
+    print("[영덕] 영덕 완전체 종료 중...")
     if yeongdeok and yeongdeok.browser:
         await yeongdeok.close_eyes()
 
@@ -673,7 +652,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         with suppress(Exception):
             REDIS_CLIENT.close()
 
-    print("【지휘소 v6】 API 서버 가동 중지.")
+    print("[지휘소 v6】 API 서버 가동 중지.")
 
 
 # 중앙 설정 사용 (Phase 1 리팩토링)
@@ -767,6 +746,10 @@ tags_metadata = [
         "name": "Skills Registry",
         "description": "AFO skill execution system. Register, discover, and execute modular skills.",
     },
+    {
+        "name": "GenUI",
+        "description": "Phase 9: Self-Expanding Kingdom. Autonomous UI generation via Samahwi.",
+    },
 ]
 
 # Create the FastAPI app with the lifespan manager
@@ -779,6 +762,21 @@ app = FastAPI(
     license_info=API_LICENSE,
     openapi_tags=tags_metadata,
 )
+
+# [Matrix Stream] Explicit Mount (Global)
+# Must be mounted here to ensure route is registered on startup
+app.include_router(streams_router, prefix="/api/stream", tags=["Matrix Stream"])
+from AFO.api.routers.matrix import router as matrix_router
+app.include_router(matrix_router, prefix="/api", tags=["Matrix Stream (Phase 10)"])
+
+from AFO.api.routers.rag_query import router as rag_query_router
+app.include_router(rag_query_router, prefix="/api", tags=["RAG (Phase 12)"])
+
+from AFO.api.routers.finance import router as finance_router
+app.include_router(finance_router) # Prefix is defined in the router itself
+
+from AFO.api.routers.ssot import router as ssot_router
+app.include_router(ssot_router) # Prefix is defined in the router itself
 
 # ============================================================
 # 전역 예외 처리 (FastAPI 베스트 프랙티스)
@@ -813,8 +811,9 @@ app.add_middleware(
 )
 
 # 성능 모니터링 미들웨어 추가 (Phase 3 최적화)
+# [노자] 천리지행시어족하 - 천리 길도 한 걸음부터
 try:
-    from .api.middleware.performance import PerformanceMiddleware, RequestLoggingMiddleware
+    from api.middleware.performance import PerformanceMiddleware, RequestLoggingMiddleware
 
     app.add_middleware(PerformanceMiddleware)
     app.add_middleware(RequestLoggingMiddleware)
@@ -824,7 +823,7 @@ except ImportError as e:
 
 # Rate Limiting 미들웨어 (Phase 9: Trinity EaaS API)
 try:
-    from .api.middleware.rate_limit import RateLimitMiddleware
+    from api.middleware.rate_limit import RateLimitMiddleware
 
     app.add_middleware(RateLimitMiddleware, requests_per_minute=100)
     print("✅ Rate limiting middleware enabled (100 req/min)")
@@ -869,6 +868,7 @@ except ImportError as e:
         print("✅ Root 라우터 등록 완료 (Phase 2 리팩토링)")
     if health_router is not None:
         app.include_router(health_router)
+        app.include_router(streams_router, prefix="/api", tags=["Streams"])
         print("✅ Health 라우터 등록 완료 (Phase 2 리팩토링)")
     if skills_router is not None:
         # `skills_router` already has prefix="/api/skills"
@@ -889,17 +889,28 @@ else:
 # ============================================================================
 # Phase 8: Julie CPA AutoMate
 # ============================================================================
-try:
-    from api.routes.julie import router as julie_router
+# try:
+#     from api.routes.julie import router as julie_router
+#
+#     app.include_router(julie_router)
+#     print("✅ Julie CPA AutoMate Engine activated (의(義))")
+# except Exception as e:
+#     print(f"⚠️ Julie CPA Engine load failed: {e}")
 
-    app.include_router(julie_router)
-    print("✅ Julie CPA AutoMate Engine activated (의(義))")
+# ============================================================================
+# Phase 9: Self-Expanding Kingdom (GenUI)
+# ============================================================================
+try:
+    from AFO.api.routers.gen_ui import router as gen_ui_router
+
+    app.include_router(gen_ui_router)
+    print("✅ GenUI Engine activated (Phase 9: Serenity)")
 except Exception as e:
-    print(f"⚠️ Julie CPA Engine load failed: {e}")
+    print(f"⚠️ GenUI Engine load failed: {e}")
 
 # 향상된 헬스 체크 라우터 등록 (Phase 3 최적화)
 try:
-    from .api.routers.health import router as enhanced_health_router
+    from api.routers.health import router as enhanced_health_router
 
     app.include_router(enhanced_health_router, prefix="/api", tags=["Health"])
     print("✅ 향상된 헬스 체크 라우터 등록 완료")
@@ -965,7 +976,7 @@ if trinity_policy_router is not None:
 
     # Trinity Metrics Router (새로운 수학 공식 기반)
     # try:
-    #     from .api.routes.trinity_metrics import router as trinity_metrics_router
+    #     from api.routes.trinity_metrics import router as trinity_metrics_router
     #
     #     app.include_router(trinity_metrics_router, tags=["trinity"])
     #     print("✅ Trinity Metrics router 등록 완료")
@@ -997,7 +1008,7 @@ else:
 
 # WatchTower 라우터 등록 (Phase 23-D - 와치타워 시스템)
 try:
-    from .api.routes.watchtower import router as watchtower_router
+    from api.routes.watchtower import router as watchtower_router
 
     app.include_router(watchtower_router, tags=["WatchTower"])
     print("✅ WatchTower API 라우터 등록 완료 (미래 예측 관측소)")
@@ -1008,7 +1019,7 @@ except Exception as e:
 
 # Sejong Spirit 라우터 등록 (Phase 23-D - 세종대왕 정신)
 try:
-    from .api.routes.sejong import router as sejong_router
+    from api.routes.sejong import router as sejong_router
 
     app.include_router(sejong_router, tags=["Sejong Spirit"])
     print("✅ Sejong Spirit API 라우터 등록 완료 (홍익인간 정신)")
@@ -1019,7 +1030,7 @@ except Exception as e:
 
 # Creative Beauty 라우터 등록 (Phase 23-D - 창조미 평가)
 try:
-    from .api.routes.beauty import router as beauty_router
+    from api.routes.beauty import router as beauty_router
 
     app.include_router(beauty_router, tags=["Creative Beauty"])
     print("✅ Creative Beauty API 라우터 등록 완료 (창제급 창조미)")
@@ -1030,7 +1041,7 @@ except Exception as e:
 
 # 지피지기 시스템 라우터 등록
 try:
-    from .api.routes.jipijigi import router as jipijigi_router
+    from api.routes.jipijigi import router as jipijigi_router
 
     app.include_router(jipijigi_router, tags=["Jipijigi"])
     print("✅ Jipijigi API 라우터 등록 완료 (지피지기 지금! 시스템)")
@@ -1041,7 +1052,7 @@ except Exception as e:
 
 # Redis 테스트 라우터 등록 (프로덕션급 연결 풀 검증)
 try:
-    from .api.routers.redis_test import router as redis_test_router
+    from api.routers.redis_test import router as redis_test_router
 
     app.include_router(redis_test_router)
     print("✅ Redis 테스트 API 라우터 등록 완료 (프로덕션급 연결 풀)")
@@ -1052,7 +1063,7 @@ except Exception as e:
 
 # 재해 복구 시스템 라우터 등록
 try:
-    from .api.routes.disaster_recovery import router as dr_router
+    from api.routes.disaster_recovery import router as dr_router
 
     app.include_router(dr_router, tags=["Disaster Recovery"])
     print("✅ Disaster Recovery API 라우터 등록 완료 (형님 한 마디면 30초 복구)")
@@ -1063,7 +1074,7 @@ except Exception as e:
 
 # 데이터 암호화 시스템 라우터 등록
 try:
-    from .api.routes.encryption import router as encryption_router
+    from api.routes.encryption import router as encryption_router
 
     app.include_router(encryption_router, tags=["Encryption"])
     print("✅ Encryption API 라우터 등록 완료 (형님 한 마디면 3초 암호화)")
@@ -1074,7 +1085,7 @@ except Exception as e:
 
 # 키 관리 시스템 라우터 등록
 try:
-    from .api.routes.key_management import router as key_management_router
+    from api.routes.key_management import router as key_management_router
 
     app.include_router(key_management_router, tags=["Key Management"])
     print("✅ Key Management API 라우터 등록 완료 (형님 한 마디면 5초 키 관리)")
@@ -1085,7 +1096,7 @@ except Exception as e:
 
 # 인증서 자동 갱신 시스템 라우터 등록
 try:
-    from .api.routes.certificate_management import router as certificate_router
+    from api.routes.certificate_management import router as certificate_router
 
     app.include_router(certificate_router, tags=["Certificate Management"])
     print("✅ Certificate Management API 라우터 등록 완료 (형님 한 마디면 10초 인증서 갱신)")
@@ -1096,7 +1107,7 @@ except Exception as e:
 
 # Certbot 디버깅 시스템 라우터 등록
 try:
-    from .api.routes.certbot_debugging import router as certbot_debug_router
+    from api.routes.certbot_debugging import router as certbot_debug_router
 
     app.include_router(certbot_debug_router, tags=["Certbot Debugging"])
     print("✅ Certbot Debugging API 라우터 등록 완료 (형님 한 마디면 10초 원인 파악)")
@@ -1107,7 +1118,7 @@ except Exception as e:
 
 # Certbot 로그 분석 시스템 라우터 등록
 try:
-    from .api.routes.certbot_log_analyzer import router as log_analyzer_router
+    from api.routes.certbot_log_analyzer import router as log_analyzer_router
 
     app.include_router(log_analyzer_router, tags=["Certbot Log Analysis"])
     print("✅ Certbot Log Analyzer API 라우터 등록 완료 (형님 한 마디면 5초 원인 파악)")
@@ -1118,7 +1129,7 @@ except Exception as e:
 
 # TLS 베스트 프랙티스 시스템 라우터 등록
 try:
-    from .api.routes.tls_best_practices import router as tls_bp_router
+    from api.routes.tls_best_practices import router as tls_bp_router
 
     app.include_router(tls_bp_router, tags=["TLS Best Practices"])
     print("✅ TLS Best Practices API 라우터 등록 완료 (형님 한 마디면 10초 세계 최고 수준)")
@@ -1129,7 +1140,7 @@ except Exception as e:
 
 # Certificate Transparency 시스템 라우터 등록
 try:
-    from .api.routes.certificate_transparency import router as ct_router
+    from api.routes.certificate_transparency import router as ct_router
 
     app.include_router(ct_router, tags=["Certificate Transparency"])
     print("✅ Certificate Transparency API 라우터 등록 완료 (형님 한 마디면 5초 CT 로그 확인)")
@@ -1138,7 +1149,7 @@ except ImportError as e:
 
 # CRAG Self-Correction 라우터 등록 (Phase 4 - n8n 통합)
 try:
-    from .api.routes.crag import router as crag_router
+    from api.routes.crag import router as crag_router
 
     app.include_router(crag_router)
     print("✅ CRAG API 라우터 등록 완료 (에이전트가 스스로 반성하며 답변 보강)")
@@ -1308,21 +1319,21 @@ pass
 
 
 async def _get_embedding_async_adapter(text: str) -> list[float]:
-    return await get_embedding_async(text, OPENAI_CLIENT)
+    return cast(list[float], await get_embedding_async(text, OPENAI_CLIENT))
 
 
 async def _query_pgvector_async_adapter(embedding: list[float], top_k: int) -> list[dict]:
-    return await query_pgvector_async(embedding, top_k, PG_POOL)
+    return cast(list[dict], await query_pgvector_async(embedding, top_k, PG_POOL))
 
 
 async def _query_redis_async_adapter(embedding: list[float], top_k: int) -> list[dict]:
-    return await query_redis_async(embedding, top_k, REDIS_CLIENT)
+    return cast(list[dict], await query_redis_async(embedding, top_k, REDIS_CLIENT))
 
 
 async def _blend_results_async_adapter(
     pg_rows: list[dict], redis_rows: list[dict], top_k: int
 ) -> list[dict]:
-    return await blend_results_async(pg_rows, redis_rows, top_k)
+    return cast(list[dict], await blend_results_async(pg_rows, redis_rows, top_k))
 
 
 async def _generate_answer_async_adapter(
@@ -1333,7 +1344,7 @@ async def _generate_answer_async_adapter(
     additional_instructions: str,
     llm_provider: str = "openai",
 ) -> str | dict:
-    return await generate_answer_async(
+    return cast(str | dict, await generate_answer_async(
         query,
         contexts,
         temperature,
@@ -1341,7 +1352,7 @@ async def _generate_answer_async_adapter(
         additional_instructions,
         llm_provider,
         openai_client=OPENAI_CLIENT,
-    )
+    ))
 
 
 # Alias for compatibility with existing code
@@ -1473,6 +1484,14 @@ async def health_check_legacy() -> dict[str, Any]:
                 "timestamp": current_time,
             }
         )
+
+    # M. Thoughts Router (Matrix Stream)
+    if thoughts_router:
+        # NOTE: Including router inside a function is bad practice. 
+        # But keeping legacy logic if it was intended for dynamic loading, 
+        # usually checks if already mounted. 
+        # However, for streams_router, we moved it to global scope.
+        pass
 
     # === 眞善美孝永 5기둥 계산 (SSOT: TRINITY_OS_PERSONAS.yaml) ===
     # 가중치: 眞35% 善35% 美20% 孝8% 永2%
@@ -1612,7 +1631,7 @@ try:
 except Exception:
     try:
         # 폴백: 상대 import 시도
-        from .api.fig_overlay.auto_inject import auto_include_all_routers
+        from api.fig_overlay.auto_inject import auto_include_all_routers
 
         auto_include_all_routers(app)
         print("✅ 동적 라우터 자동 등록 완료 (Strangler Fig 확장 - fallback)")
@@ -1690,11 +1709,16 @@ if __name__ == "__main__":
     import uvicorn
 
     # Phase 2-4: settings 사용 (via compat layer)
+    # Phase 2-4: settings 사용 (via compat layer)
     try:
-        if get_settings:
+        if get_settings is not None:
             main_settings = get_settings()
-            api_port = main_settings.API_SERVER_PORT
-            api_host = main_settings.API_SERVER_HOST
+            if main_settings:
+                api_port = main_settings.API_SERVER_PORT
+                api_host = main_settings.API_SERVER_HOST
+            else:
+                 api_port = int(os.getenv("API_SERVER_PORT", "8011"))
+                 api_host = os.getenv("API_SERVER_HOST", "0.0.0.0")
         else:
             raise ImportError("get_settings not available")
     except ImportError:

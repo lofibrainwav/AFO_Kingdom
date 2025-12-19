@@ -1,67 +1,46 @@
-# scripts/verify_sse_stream.py
-"""
-SSE Stream Verification for Trinity Score real-time updates.
-Tests connection to /api/trinity/stream endpoint.
-"""
-
 import asyncio
-import os
-import sys
+import aiohttp
+import json
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../packages/afo-core")))
+STREAM_URL = "http://localhost:8011/api/stream/mcp/thoughts"
 
-
-async def test_sse_stream():
-    """Test SSE streaming endpoint."""
-    print("=== SSE Stream Verification ===")
-
+async def verify_sse():
+    print(f"🔌 Connecting to Neural Stream: {STREAM_URL}")
     try:
-        import httpx
-    except ImportError:
-        print("❌ httpx not installed. Run: pip install httpx")
-        return False
+        async with aiohttp.ClientSession() as session:
+            async with session.get(STREAM_URL) as response:
+                print(f"   Status: {response.status}")
+                if response.status != 200:
+                    print("❌ Connection failed")
+                    return
 
-    # Backend URL
-    api_url = os.getenv("API_URL", "http://localhost:8010")
-    stream_endpoint = f"{api_url}/api/trinity/stream"
-
-    print(f"[Action] Connecting to {stream_endpoint}...")
-
-    try:
-        async with httpx.AsyncClient(timeout=10.0) as client:
-            # Test if endpoint exists
-            async with client.stream("GET", stream_endpoint) as response:
-                if response.status_code != 200:
-                    print(f"❌ Endpoint returned {response.status_code}")
-                    print("   SSE endpoint may not be implemented yet.")
-                    return False
-
-                # Read first few events
-                event_count = 0
-                async for line in response.aiter_lines():
-                    if line.startswith("data:"):
-                        event_count += 1
-                        print(f"  ✅ Event {event_count}: {line[:50]}...")
-                        if event_count >= 3:
-                            break
-
-                if event_count > 0:
-                    print(f"\n✅ SSE Stream Active: {event_count} events received")
-                    return True
-                else:
-                    print("⚠️ No events received (stream may be idle)")
-                    return True  # Endpoint exists but no events
-
-    except httpx.ConnectError:
-        print("❌ Cannot connect to API server")
-        print(f"   Is the server running at {api_url}?")
-        return False
+                print("✅ Connected! Listening for events...")
+                
+                # Consume line by line
+                async for line in response.content:
+                    decoded = line.decode('utf-8').strip()
+                    if not decoded:
+                        continue
+                        
+                    if decoded.startswith("data: "):
+                        data_str = decoded[6:]
+                        try:
+                            # It might be double encoded based on my implementation
+                            # Payload: json.dumps({...})
+                            # Stream sends: data: "{\"source\": ...}"
+                            # Let's see
+                            payload = json.loads(data_str)
+                            print(f"📩 Event Received: {payload}")
+                            # Close after first hello message or shortly after
+                            if payload.get("source") == "System" and "Neural Link" in payload.get("message", ""):
+                                print("✅ Handshake confirmed. Stream is ALIVE.")
+                                break
+                        except Exception as e:
+                            print(f"⚠️ Parse Error: {e} | Raw: {data_str}")
+                            
     except Exception as e:
-        print(f"⚠️ SSE test incomplete: {e}")
-        print("   (Server may not support SSE streaming yet)")
-        return False
-
+        print(f"❌ Verification Failed: {e}")
+        print("💡 Hint: Ensure 'api_server.py' is running on port 8011.")
 
 if __name__ == "__main__":
-    result = asyncio.run(test_sse_stream())
-    print("\n" + ("✅ PASS" if result else "⚠️ SSE requires implementation"))
+    asyncio.run(verify_sse())

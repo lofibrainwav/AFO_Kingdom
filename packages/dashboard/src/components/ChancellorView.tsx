@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { invokeChancellor, fetchHealthStatus, fetchFamilyStatus, ChancellorResponse, HealthResponse, FamilyHubResponse } from '@/lib/api';
-
+import CopilotTerminal from './copilot/CopilotTerminal';
 // Persona Definitions
 const PERSONAS: Record<string, { color: string; bg: string; border: string; icon: string }> = {
   jegalryang: {
@@ -277,6 +277,10 @@ export default function ChancellorView() {
          </div>
       )}
 
+      {/* MATRIX LOG STREAM (Project Genesis) */}
+      <div className="h-64 mb-4">
+        <CopilotTerminal />
+      </div>
       {/* Main Display Area */}
       <div className={`bg-black border-2 ${activePersona.border} rounded-lg min-h-[400px] p-6 relative overflow-hidden transition-colors duration-500`}>
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-green-500/50 to-transparent opacity-50"></div>

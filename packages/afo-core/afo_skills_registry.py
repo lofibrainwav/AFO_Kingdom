@@ -427,21 +427,16 @@ class SkillRegistry:
 def _get_mcp_server_url() -> str | None:
     """Helper to get MCP server URL from environment"""
     # Phase 2-4: settings 사용
+    # Phase 2-4: settings 사용
     try:
-        from config.settings import get_settings
+        from AFO.config.settings import get_settings
 
         settings = get_settings()
         return settings.MCP_SERVER_URL
-    except ImportError:
-        try:
-            from AFO.config.settings import get_settings
+    except Exception:
+        import os
 
-            settings = get_settings()
-            return settings.MCP_SERVER_URL
-        except ImportError:
-            import os
-
-            return os.getenv("MCP_SERVER_URL")
+        return os.getenv("MCP_SERVER_URL")
 
 
 def register_core_skills() -> SkillRegistry:
@@ -464,7 +459,8 @@ def register_core_skills() -> SkillRegistry:
         ],
         dependencies=["openai_api", "transcript_mcp"],
         execution_mode=ExecutionMode.ASYNC,
-        endpoint=None,  # type: ignore  # 중앙 설정에서 동적으로 설정
+        # [노자] 무위이치 - 동적 설정은 무위자연의 원리로
+        endpoint=None,
         estimated_duration_ms=15000,
         input_schema=SkillIOSchema(
             parameters=[
@@ -975,55 +971,9 @@ def register_core_skills() -> SkillRegistry:
 
     return registry
 
-    # Skill 15: AFO Vibe Coder (Self-Evolution Engine)
-    skill_015 = AFOSkillCard(
-        skill_id="skill_015_vibe_coder",
-        name="AFO Vibe Coder",
-        description="The Engine of Self-Evolution. Analyzes codebase, proposes improvements, generates tests, and applies 'Vibe Checks' based on Kingdom philosophy.",
-        category=SkillCategory.METACOGNITION,
-        tags=["vibe_coding", "self_evolution", "refactoring", "testing", "analysis"],
-        version="1.0.0",
-        capabilities=[
-            "analyze_codebase",
-            "propose_improvement",
-            "apply_vibe_check",
-            "generate_test",
-            "self_heal",
-            "evolve_system",
-        ],
-        dependencies=["llm", "git", "ast"],
-        execution_mode=ExecutionMode.ASYNC,
-        estimated_duration_ms=5000,
-        philosophy_scores=PhilosophyScore(
-            truth=99,  # Code that works is Truth
-            goodness=99,  # Code that helps is Goodness
-            beauty=99,  # Code that is elegant is Beauty
-            serenity=99,  # Code that maintains itself is Serenity
-        ),
-    )
 
-    # Register all skills (5 core + 10 new)
-    for skill in [
-        skill_001,
-        skill_002,
-        skill_003,
-        skill_004,
-        skill_005,
-        skill_006,
-        skill_007,
-        skill_008,
-        skill_009,
-        skill_010,
-        skill_011,
-        skill_012,
-        skill_013,
-        skill_014,
-        skill_015,
-    ]:
-        registry.register(skill)
-
-    # print(f"✅ Registered {registry.count()} AFO skills (5 core + 10 new)")
-    return registry
+# [논어] 과유불급 - 지나침은 모자람과 같으니, 중복된 코드는 제거함
+# (Removed duplicate skill_015 definition and second registration loop - unreachable code after return)
 
 
 # ============================================================================

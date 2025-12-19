@@ -10,7 +10,7 @@ from fastapi import APIRouter, HTTPException
 
 # Persona service import
 try:
-    from AFO.services.persona_service import get_current_persona, persona_service, switch_persona
+    from AFO.services.persona_service import get_current_persona, persona_service, switch_persona as switch_persona_service
 
     PERSONA_SERVICE_AVAILABLE = True
 except ImportError:
@@ -59,7 +59,7 @@ async def personas_health() -> dict[str, Any]:
 
 
 # 기본 페르소나 정의 (TRINITY-OS 연동)
-DEFAULT_PERSONAS = {
+DEFAULT_PERSONAS: dict[str, dict[str, Any]] = {
     "commander": {
         "id": "commander",
         "name": "사령관",
@@ -245,10 +245,8 @@ async def switch_persona(request: PersonaSwitchRequest) -> dict[str, Any]:
         # Actually, let's use the BackgroundTasks pattern properly if passed,
         # but since we are inside a function, we'll do a direct lightweight update.
         from AFO.api.routers.family import (
-            BackgroundTasks,
             calculate_happiness_impact,
             load_family_data,
-            log_activity,
             save_family_data,
         )
 

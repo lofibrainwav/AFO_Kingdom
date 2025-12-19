@@ -31,25 +31,33 @@ except ImportError:
 
         antigravity = MockAntigravity()  # type: ignore[assignment]
 
-# Chancellor Graph import
-try:
-    import sys
-    from pathlib import Path
+# Chancellor Graph import - [장자] 무용지용 = 없음도 쓰임이 있음
+build_chancellor_graph: Any = None
+chancellor_graph: Any = None
+_chancellor_import_error: str | None = None
 
-    # Add parent directory to path for chancellor_graph import
-    _CORE_ROOT = Path(__file__).resolve().parent.parent.parent
-    if str(_CORE_ROOT) not in sys.path:
-        sys.path.insert(0, str(_CORE_ROOT))
+def _import_chancellor_graph() -> None:
+    global build_chancellor_graph, chancellor_graph, _chancellor_import_error
+    try:
+        import sys
+        from pathlib import Path
 
-    from chancellor_graph import (
-        build_chancellor_graph,
-        chancellor_graph,  # Singleton instance
-    )
-except ImportError as e:
-    # Fallback: Create a mock router if import fails
-    print(f"⚠️  Chancellor Graph import 실패: {e}")
-    build_chancellor_graph = None
-    chancellor_graph = None
+        # Add parent directory to path for chancellor_graph import
+        _CORE_ROOT = Path(__file__).resolve().parent.parent.parent
+        if str(_CORE_ROOT) not in sys.path:
+            sys.path.insert(0, str(_CORE_ROOT))
+
+        from chancellor_graph import (
+            build_chancellor_graph as _bcg,
+            chancellor_graph as _cg,
+        )
+        build_chancellor_graph = _bcg
+        chancellor_graph = _cg
+    except ImportError as e:
+        print(f"⚠️  Chancellor Graph import 실패: {e}")
+        _chancellor_import_error = str(e)
+
+_import_chancellor_graph()
 
 router = APIRouter(prefix="/chancellor", tags=["Chancellor"])
 
@@ -155,7 +163,8 @@ async def invoke_chancellor(request: ChancellorInvokeRequest) -> dict[str, Any]:
                 from api.routes.system_health import get_system_metrics
             except Exception:
                 try:
-                    from AFO.api.routes.system_health import get_system_metrics  # type: ignore
+                    # [주역] 천행건군자이자강불식 - 진실된 경로를 인내하며 찾음
+                    from AFO.api.routes.system_health import get_system_metrics
                 except Exception:
                     return {"error": "system metrics route not available"}
             try:
@@ -266,7 +275,8 @@ async def invoke_chancellor(request: ChancellorInvokeRequest) -> dict[str, Any]:
             else:
                 mode_used = "full"
         else:
-            mode_used = request.mode  # type: ignore[assignment]
+            # [논어]言必信行必果 - 사용자 명시적 모드를 존중함
+            mode_used = request.mode
 
         # Build shared LLM context overrides
         llm_context: dict[str, Any] = {}
@@ -402,8 +412,9 @@ async def invoke_chancellor(request: ChancellorInvokeRequest) -> dict[str, Any]:
         # - 안전하게 별도 스레드에서 sync `invoke()`를 실행하고, 타임아웃은 event loop에서 관리합니다.
         config = {"configurable": {"thread_id": request.thread_id}}
         try:
+            # [孫子]兵者詭道 - 시간제한 내에서 최선의 결과를 얻음
             result = await asyncio.wait_for(
-                graph.ainvoke(initial_state, config),  # type: ignore[arg-type]
+                graph.ainvoke(initial_state, config),
                 timeout=float(request.timeout_seconds),
             )
         except TimeoutError as e:
