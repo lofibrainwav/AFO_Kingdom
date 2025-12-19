@@ -58,7 +58,7 @@ async def test_bulk_import_via_http_api():
     # try:
     #     from api_wallet import APIWallet
     #     wallet = APIWallet()
-    # except: wallet = None
+    # except Exception: wallet = None
 
     # We can mock `api_wallet.APIWallet` to raise an exception upon instantiation
     # This assumes `api_wallet` module IS importable (mocked or real)

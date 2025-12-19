@@ -44,8 +44,8 @@ async def test_connection():
 
         # 테이블 확인
         tables = await conn.fetch("""
-            SELECT table_name 
-            FROM information_schema.tables 
+            SELECT table_name
+            FROM information_schema.tables
             WHERE table_schema = 'public'
             ORDER BY table_name;
         """)

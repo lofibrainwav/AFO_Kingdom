@@ -117,7 +117,7 @@ class GeminiAPIWrapper:
                 try:
                     error_json = response.json()
                     error_msg = error_json.get("error", {}).get("message", error_msg)
-                except:
+                except Exception:
                     pass
 
                 logger.error(f"Gemini API error: {error_msg}")

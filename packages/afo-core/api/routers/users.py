@@ -151,7 +151,7 @@ async def create_user(request: UserCreateRequest) -> dict[str, Any]:
             except HTTPException:
                 await conn.close()
                 raise
-            except Exception as e:
+            except Exception:
                 await conn.close()
                 # 테이블이 없을 수 있으므로 fallback 사용
                 pass

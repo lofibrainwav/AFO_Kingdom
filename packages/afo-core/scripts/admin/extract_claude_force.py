@@ -78,7 +78,7 @@ def decrypt_value(encrypted_value, safe_password):
                 if "sk-ant" in val or "session" in val:
                     print(f"🔓 Decrypted with iter={iters}, iv={iv_char}")
                     return val
-            except:
+            except Exception:
                 # If standard decode fails, try ignore and search
                 val = decrypted.decode("utf-8", errors="ignore")
                 if "sk-ant" in val:

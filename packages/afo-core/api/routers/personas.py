@@ -156,7 +156,7 @@ async def get_current_persona_endpoint() -> dict[str, Any]:
     if PERSONA_SERVICE_AVAILABLE:
         try:
             return await get_current_persona()
-        except Exception as e:
+        except Exception:
             # Fallback
             pass
 

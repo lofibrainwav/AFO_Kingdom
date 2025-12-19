@@ -1,3 +1,5 @@
+import builtins
+import contextlib
 import os
 import time
 from typing import Any
@@ -107,10 +109,8 @@ class GenUIOrchestrator:
             # Simple parsing (Naive but works for self-check)
             for line in output.splitlines():
                 if "Trinity Score:" in line:
-                    try:
+                    with contextlib.suppress(builtins.BaseException):
                         trinity_score = float(line.split(":")[1].strip())
-                    except:
-                        pass
                 if "Risk Score:" in line:  # Script output might differ slightly "100 (Risk: 0)"
                     # "善 (Goodness): 100 (Risk: 0)"
                     pass
@@ -137,7 +137,6 @@ class GenUIOrchestrator:
         Mock LLM Code Generator.
         Returns a simple Next.js page based on prompt keywords.
         """
-        title = f"GenUI Project: {project_id}"
         content = "Generated Content"
 
         if "calculator" in prompt.lower():

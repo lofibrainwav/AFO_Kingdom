@@ -124,7 +124,7 @@ class AuditTrail:
 
                 await conn.execute(
                     f"""
-                    INSERT INTO {self.TABLE_NAME} 
+                    INSERT INTO {self.TABLE_NAME}
                     (decision_id, trinity_score, risk_score, action, timestamp, context)
                     VALUES ($1, $2, $3, $4, $5, $6)
                 """,
@@ -176,7 +176,7 @@ class AuditTrail:
         conn = await self._get_connection()
         if conn:
             stats = await conn.fetchrow(f"""
-                SELECT 
+                SELECT
                     COUNT(*) as total_decisions,
                     AVG(trinity_score) as avg_trinity,
                     AVG(risk_score) as avg_risk,

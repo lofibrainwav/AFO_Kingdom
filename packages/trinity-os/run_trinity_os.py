@@ -127,7 +127,7 @@ class TrinityOS:
                             }
                         )
                 return sorted(masters, key=lambda x: x["trinity_score"], reverse=True)
-        except:
+        except Exception:
             return []
 
 

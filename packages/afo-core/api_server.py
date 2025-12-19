@@ -1005,7 +1005,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
                 print("【Hybrid RAG】 💡 Cursor 세션에서 ANTHROPIC_API_KEY 추출을 권장합니다")
 
         if claude_key and Anthropic is not None:
-            CLAUDE_CLIENT = Anthropic(api_key=claude_key)
+            Anthropic(api_key=claude_key)
             print("【Hybrid RAG】 Claude 클라이언트 준비 완료")
         else:
             # CLAUDE_CLIENT = None

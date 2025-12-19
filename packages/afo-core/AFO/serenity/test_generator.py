@@ -76,11 +76,11 @@ import {{ test, expect }} from '@playwright/test';
 
 test('{component_name} renders correctly', async ({{ page }}) => {{
   await page.goto('/');
-  
+
   // Wait for component to load
   const component = page.locator('[data-testid="{component_name.lower()}"]');
   await expect(component).toBeVisible();
-  
+
   // Screenshot for visual regression
   await expect(page).toHaveScreenshot('{component_name.lower()}.png');
 }});
@@ -98,7 +98,7 @@ import AxeBuilder from '@axe-core/playwright';
 
 test('{component_name} passes accessibility checks', async ({{ page }}) => {{
   await page.goto('/');
-  
+
   const accessibilityScanResults = await new AxeBuilder({{ page }}).analyze();
   expect(accessibilityScanResults.violations).toEqual([]);
 }});
@@ -115,12 +115,12 @@ import {{ test, expect }} from '@playwright/test';
 
 test('{component_name} handles user interaction', async ({{ page }}) => {{
   await page.goto('/');
-  
+
   const component = page.locator('[data-testid="{component_name.lower()}"]');
-  
+
   // Test click interaction
   await component.click();
-  
+
   // Verify state change (customize based on component)
   await expect(component).toHaveAttribute('aria-pressed', 'true');
 }});
@@ -139,14 +139,14 @@ test('{component_name} is responsive', async ({{ page }}) => {{
   // Test mobile viewport
   await page.setViewportSize({{ width: 375, height: 667 }});
   await page.goto('/');
-  
+
   const component = page.locator('[data-testid="{component_name.lower()}"]');
   await expect(component).toBeVisible();
-  
+
   // Test tablet viewport
   await page.setViewportSize({{ width: 768, height: 1024 }});
   await expect(component).toBeVisible();
-  
+
   // Test desktop viewport
   await page.setViewportSize({{ width: 1920, height: 1080 }});
   await expect(component).toBeVisible();
