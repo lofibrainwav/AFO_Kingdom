@@ -18,13 +18,8 @@ try:
 
     MODELS_AVAILABLE = True
 except ImportError:
-    try:
-        from api.models.family import Activity, FamilyHubSystem, FamilyMember
-
-        MODELS_AVAILABLE = True
-    except ImportError:
-        MODELS_AVAILABLE = False
-        print("⚠️ Family Models not available")
+    MODELS_AVAILABLE = False
+    print("⚠️ Family Models not available")
 
 router = APIRouter(prefix="/family", tags=["Family Hub"])
 

@@ -22,7 +22,7 @@ except ImportError:
     sys.exit(1)
 
 
-def extract_frontmatter(file_path: Path) -> Dict[str, Any]:
+def extract_frontmatter(file_path: Path) -> dict[str, Any]:
     """옵시디언 문서의 Frontmatter를 추출합니다."""
     try:
         content = file_path.read_text(encoding="utf-8")
@@ -67,7 +67,7 @@ def extract_frontmatter(file_path: Path) -> Dict[str, Any]:
     return metadata
 
 
-def generate_context7_entry(file_path: Path, metadata: Dict[str, Any]) -> str:
+def generate_context7_entry(file_path: Path, metadata: dict[str, Any]) -> str:
     """Context7에 등록할 항목을 생성합니다."""
     file_name = file_path.stem
     file_dir = file_path.parent.relative_to(project_root / "docs")
@@ -161,4 +161,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
