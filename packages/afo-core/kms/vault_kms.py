@@ -30,7 +30,7 @@ class VaultKMS:
         if not self.client:
             return False
         try:
-            return self.client.is_authenticated()
+            return bool(self.client.is_authenticated())
         except Exception:
             return False
 
@@ -44,7 +44,8 @@ class VaultKMS:
             response = self.client.secrets.kv.v2.read_secret_version(
                 mount_point=self.mount_point, path=self.secret_path
             )
-            return response["data"]["data"].get("encryption_key")
+            val = response["data"]["data"].get("encryption_key")
+            return str(val) if val is not None else None
         except Exception as e:
             logging.warning(f"Failed to read from Vault: {e}")
             return None

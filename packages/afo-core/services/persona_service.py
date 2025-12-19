@@ -17,10 +17,12 @@ from AFO.domain.persona import (
     samaui,
 )
 
+from datetime import datetime
+
 logger = logging.getLogger(__name__)
 
 # 페르소나 매핑 (PDF 페이지 4: Personas 시스템)
-PERSONA_MAPPING: dict[str, Persona] = {
+PERSONA_MAPPING: dict[str, Persona | None] = {
     "commander": commander,
     "family": family_head,
     "family_head": family_head,
@@ -41,7 +43,7 @@ class PersonaService:
     """
 
     def __init__(self):
-        self._current_persona = current_persona
+        self._current_persona: Persona = current_persona
 
     @property
     def current_persona(self) -> Persona:
