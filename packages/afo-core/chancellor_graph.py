@@ -13,7 +13,7 @@ try:
     from AFO.domain.metrics.trinity_manager import trinity_manager
 except ImportError:
     try:
-        from domain.metrics.trinity_manager import trinity_manager
+        from domain.metrics.trinity_manager import trinity_manager  # type: ignore[assignment]
     except ImportError:
         trinity_manager = None  # Fallback: no dynamic scoring
 
@@ -22,7 +22,7 @@ try:
     from AFO.config.antigravity import antigravity
 except ImportError:
     try:
-        from config.antigravity import antigravity
+        from config.antigravity import antigravity  # type: ignore[assignment]
     except ImportError:
         # Fallback: 기본값 사용
         class MockAntigravity:
@@ -30,7 +30,7 @@ except ImportError:
             DRY_RUN_DEFAULT = True
             ENVIRONMENT = "dev"
 
-        antigravity = MockAntigravity()
+        antigravity = MockAntigravity()  # type: ignore[assignment]
 
 
 # --- 1. State Definition (Chancellor's Memory - V2 Constitution) ---
@@ -58,6 +58,7 @@ class ChancellorState(TypedDict):
 
     # Reducer for analysis results (Merge dicts)
     analysis_results: Annotated[dict[str, str], lambda a, b: {**(a or {}), **b}]
+    next_step: str
 
 
 def calculate_complexity(query: str) -> str:
