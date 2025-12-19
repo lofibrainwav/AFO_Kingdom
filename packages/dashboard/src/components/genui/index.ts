@@ -8,6 +8,9 @@ export { AICPAJulieWidget } from './AICPAJulieWidget';
 export { KingdomChronicleTimeline } from './KingdomChronicleTimeline';
 export { JulieCPAWidget } from './JulieCPAWidget';
 export { BudgetDashboard } from './BudgetDashboard';
+export { JulieSuggestions } from './JulieSuggestions';
+export { JuliePrediction } from './JuliePrediction';
+
 
 
 
