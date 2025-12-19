@@ -34,7 +34,9 @@ def http_exception_handler(_request: Request, exc: Exception) -> Response:
 
 def validation_exception_handler(_request: Request, exc: Exception) -> Response:
     status_code = getattr(exc, "status_code", 422)
-    errors = getattr(exc, "errors", None)
+    errors_attr = getattr(exc, "errors", None)
+    # FastAPI's RequestValidationError.errors is a method, call it if callable
+    errors = errors_attr() if callable(errors_attr) else errors_attr
     return JSONResponse(
         status_code=status_code,
         content={

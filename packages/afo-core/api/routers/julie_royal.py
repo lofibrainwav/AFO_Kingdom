@@ -1,5 +1,6 @@
-from AFO.julie_cpa.services.julie_service import JulieService
 from fastapi import APIRouter
+
+from AFO.julie_cpa.services.julie_service import JulieService
 
 # [Legacy Merger]
 # This router exposes the same endpoints as the legacy 'julie.py'

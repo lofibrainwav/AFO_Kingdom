@@ -4,10 +4,11 @@ import logging
 from dataclasses import dataclass
 from typing import Any
 
-from config.antigravity import antigravity
 from fastapi import HTTPException
 from playwright.async_api import Browser, Playwright, Route, async_playwright
 from playwright.async_api import TimeoutError as PlaywrightTimeout
+
+from config.antigravity import antigravity
 
 logger = logging.getLogger(__name__)
 
