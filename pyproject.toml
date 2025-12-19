@@ -66,6 +66,8 @@ python_version = "3.12"
 warn_return_any = true
 warn_unused_configs = true
 ignore_missing_imports = true
+mypy_path = "packages/afo-core:packages/trinity-os"
+explicit_package_bases = true
 
 [tool.pytest.ini_options]
 testpaths = ["packages/*/tests"]

@@ -208,6 +208,32 @@ class Context7MCP:
 
         상세 참조: docs/AFO_ROYAL_LIBRARY.md
         """,
+        "OBSIDIAN_TEMPLATES": """
+        AFO Kingdom 옵시디언 템플릿 시스템:
+        - 템플릿 위치: docs/_templates/
+        - 템플릿 수: 8개 (7개 마크다운 + 1개 HTML)
+        - 자동화: Templater 플러그인 통합
+        - 후처리: post_template.js 자동 실행
+        
+        주요 템플릿:
+        1. project_doc.md - 프로젝트 문서 템플릿
+        2. system_component.md - 시스템 컴포넌트 템플릿
+        3. api_endpoint.md - API 엔드포인트 템플릿
+        4. dataview_queries.md - Dataview 쿼리 템플릿
+        5. collaboration_guide.md - 협업 워크플로우 가이드
+        6. ai_integration_guide.md - AI 통합 가이드
+        7. publish_template.html - 웹 퍼블리시 템플릿
+        8. README.md - 템플릿 시스템 설명서
+        
+        자동화 기능:
+        - 폴더별 자동 템플릿 적용
+        - 템플릿 변수 자동 완성
+        - Context7 자동 등록 (register_obsidian_doc_to_context7.py)
+        - Trinity Score 자동 계산
+        - 관련 문서 자동 링크 추가
+        
+        상세 참조: docs/_templates/README.md
+        """,
     }
 
     @staticmethod
@@ -277,6 +303,14 @@ class Context7MCP:
             kw in query for kw in ["사서", "원칙", "헌법", "손자병법", "삼국지", "군주론", "전쟁론"]
         ):
             results.append(Context7MCP.KNOWLEDGE_BASE["ROYAL_LIBRARY"])
+
+        # Obsidian Templates queries
+        template_keywords_upper = ["TEMPLATE", "TEMPLATER"]
+        template_keywords_korean = ["템플릿", "옵시디언 템플릿", "프로젝트 템플릿", "컴포넌트 템플릿", "API 템플릿"]
+        if any(kw in query_upper for kw in template_keywords_upper) or any(
+            kw in query for kw in template_keywords_korean
+        ):
+            results.append(Context7MCP.KNOWLEDGE_BASE["OBSIDIAN_TEMPLATES"])
 
         if not results:
             return {
