@@ -64,7 +64,7 @@ class ProblemDetector:
                     "type": "python_cache_check_failed",
                     "severity": "medium",
                     "priority": 3,
-                    "description": f"Python 캐시 체크 실패: {str(e)}",
+                    "description": f"Python 캐시 체크 실패: {e!s}",
                 }
             )
 
@@ -98,7 +98,7 @@ class ProblemDetector:
                     "type": "node_modules_check_failed",
                     "severity": "medium",
                     "priority": 3,
-                    "description": f"Node.js 모듈 체크 실패: {str(e)}",
+                    "description": f"Node.js 모듈 체크 실패: {e!s}",
                 }
             )
 
@@ -133,7 +133,7 @@ class ProblemDetector:
                     "type": "disk_usage_check_failed",
                     "severity": "medium",
                     "priority": 3,
-                    "description": f"디스크 사용량 체크 실패: {str(e)}",
+                    "description": f"디스크 사용량 체크 실패: {e!s}",
                 }
             )
 
@@ -183,7 +183,7 @@ class ProblemDetector:
                     "type": "redis_check_failed",
                     "severity": "high",
                     "priority": 2,
-                    "description": f"Redis 체크 실패: {str(e)}",
+                    "description": f"Redis 체크 실패: {e!s}",
                 }
             )
 
@@ -225,7 +225,7 @@ class ProblemDetector:
                     "type": "postgresql_check_failed",
                     "severity": "high",
                     "priority": 2,
-                    "description": f"PostgreSQL 체크 실패: {str(e)}",
+                    "description": f"PostgreSQL 체크 실패: {e!s}",
                 }
             )
 
@@ -258,7 +258,7 @@ class ProblemDetector:
                     "type": "api_server_check_failed",
                     "severity": "medium",
                     "priority": 3,
-                    "description": f"API 서버 체크 실패: {str(e)}",
+                    "description": f"API 서버 체크 실패: {e!s}",
                 }
             )
 
@@ -313,7 +313,7 @@ class ProblemDetector:
                         "type": "cookie_check_failed",
                         "severity": "medium",
                         "priority": 3,
-                        "description": f"쿠키 파일 체크 실패 ({pattern}): {str(e)}",
+                        "description": f"쿠키 파일 체크 실패 ({pattern}): {e!s}",
                     }
                 )
 
@@ -396,7 +396,7 @@ class ProblemDetector:
             else:
                 return {"error": "Health check failed", "output": result.stderr[:200]}
         except Exception as e:
-            return {"error": f"Health check exception: {str(e)}"}
+            return {"error": f"Health check exception: {e!s}"}
 
     def calculate_priority(self, problem: dict[str, Any]) -> int:
         """문제 우선순위 계산"""

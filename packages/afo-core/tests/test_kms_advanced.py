@@ -2,8 +2,6 @@ import os
 import sys
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 # We need to control 'hvac' import availability
 from AFO.kms.vault_kms import VaultKMS
 

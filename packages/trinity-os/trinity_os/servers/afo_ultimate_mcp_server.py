@@ -69,7 +69,7 @@ class AfoUltimateMCPServer:
             else:
                 return f"Exit {result.returncode}\nstderr: {result.stderr.strip()}\nstdout: {result.stdout.strip()}"
         except Exception as e:
-            return f"Execution Failure: {str(e)}"
+            return f"Execution Failure: {e!s}"
 
     @staticmethod
     def read_file(path: str) -> str:
@@ -80,7 +80,7 @@ class AfoUltimateMCPServer:
                 return f"Error: File not found ({path})"
             return target.read_text(encoding="utf-8")
         except Exception as e:
-            return f"Read Error: {str(e)}"
+            return f"Read Error: {e!s}"
 
     @staticmethod
     def write_file(path: str, content: str) -> str:
@@ -91,7 +91,7 @@ class AfoUltimateMCPServer:
             target.write_text(content, encoding="utf-8")
             return f"Success: Wrote {len(content)} chars to {path}"
         except Exception as e:
-            return f"Write Error: {str(e)}"
+            return f"Write Error: {e!s}"
 
     @staticmethod
     def kingdom_health() -> str:
@@ -327,7 +327,7 @@ class AfoUltimateMCPServer:
                             is_error = True
 
                     except Exception as e:
-                        content = f"Execution Error: {str(e)}"
+                        content = f"Execution Error: {e!s}"
                         is_error = True
 
                     # 실행 시간 계산

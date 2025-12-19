@@ -1,1 +1,11 @@
-[]
+[
+  "dataview",
+  "kanban",
+  "calendar",
+  "advanced-tables",
+  "mermaid-tools",
+  "projects",
+  "review",
+  "version-history",
+  "conflict-resolution"
+]

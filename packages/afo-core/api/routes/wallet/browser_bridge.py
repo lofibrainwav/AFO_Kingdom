@@ -60,7 +60,7 @@ async def save_browser_token(request: BrowserTokenRequest):
         }
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @router.get("/extraction-script")

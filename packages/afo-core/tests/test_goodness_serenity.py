@@ -3,7 +3,6 @@
 """
 
 import pytest
-
 from utils.automation import RetryConfig, auto_retry, cache_result
 from utils.error_handling import (
     AFOError,

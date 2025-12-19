@@ -4,9 +4,6 @@ API Wallet 테스트 - Phase 4
 """
 
 import os
-from unittest.mock import AsyncMock, MagicMock, patch
-
-import pytest
 
 
 class TestAPIWalletConfig:

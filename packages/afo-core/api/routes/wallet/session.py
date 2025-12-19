@@ -40,9 +40,9 @@ async def get_wallet_session(session_id: str):
         }
 
     except ImportError:
-        raise HTTPException(status_code=503, detail="Wallet session not available")
+        raise HTTPException(status_code=503, detail="Wallet session not available") from None
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to get wallet session: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to get wallet session: {e}") from e
 
 
 @session_router.post("/extract")
@@ -83,4 +83,4 @@ async def extract_wallet_session(request: WalletSessionRequest):
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to extract wallet session: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to extract wallet session: {e}") from e

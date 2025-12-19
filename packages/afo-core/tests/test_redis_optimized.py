@@ -1,15 +1,13 @@
-import asyncio
-import json
 import sys
 import unittest
 from pathlib import Path
-from unittest.mock import AsyncMock, MagicMock, call, patch
+from unittest.mock import AsyncMock, MagicMock
 
 # Add root directory to sys.path
 root_dir = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(root_dir))
 
-from AFO.utils.redis_optimized import OptimizedRedisCache, get_redis_cache
+from AFO.utils.redis_optimized import OptimizedRedisCache
 
 
 class TestOptimizedRedis(unittest.IsolatedAsyncioTestCase):

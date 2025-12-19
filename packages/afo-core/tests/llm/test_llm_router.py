@@ -3,9 +3,7 @@ Tests for llm_router.py
 LLM Router 테스트 - Phase 2
 """
 
-from unittest.mock import AsyncMock, MagicMock, patch
 
-import pytest
 
 
 class TestLLMRouterConfig:

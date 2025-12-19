@@ -1,7 +1,6 @@
 import sys
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import MagicMock, patch
 
-import pytest
 from fastapi.testclient import TestClient
 
 # Mock dependencies BEFORE importing input_server to ensure they exist
@@ -12,7 +11,6 @@ sys.modules["input_storage"] = mock_storage
 sys.modules["api_wallet"] = mock_wallet_module
 
 # Now import the app
-import AFO.input_server
 from AFO.input_server import app, parse_env_text
 
 client = TestClient(app)

@@ -3,7 +3,6 @@ Tests for api/routes/pillars.py
 5기둥 API 엔드포인트 테스트
 """
 
-from unittest.mock import MagicMock, patch
 
 import pytest
 from fastapi.testclient import TestClient

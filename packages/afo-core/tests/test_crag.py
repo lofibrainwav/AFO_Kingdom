@@ -3,7 +3,6 @@ Tests for CRAG (Corrective RAG) functionality
 CRAG 테스트
 """
 
-import pytest
 
 
 class TestCRAGConfig:

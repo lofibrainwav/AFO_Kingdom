@@ -387,26 +387,3 @@ async def get_persona_trinity_score(persona_id: str) -> dict[str, Any]:
         "eternity": 80.0,
         "total_score": 82.0,
     }
-
-
-@router.get("/health")
-async def personas_health() -> dict[str, Any]:
-    """
-    페르소나 시스템 건강 상태 체크
-
-    Returns:
-        페르소나 시스템 상태
-    """
-    return {
-        "status": "healthy",
-        "message": "페르소나 시스템 정상 작동 중",
-        "features": {
-            "list_personas": "available",
-            "get_persona": "available",
-            "switch_persona": "available",
-            "trinity_score": "available",
-            "trinity_os_integration": "pending",  # Phase 2 확장
-            "log_bridge": "pending",  # Phase 2 확장
-        },
-        "personas_count": len(DEFAULT_PERSONAS),
-    }

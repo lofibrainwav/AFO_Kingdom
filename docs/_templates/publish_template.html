@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{page_title}} - AFO Kingdom</title>
+    <meta name="description" content="{{page_description}}">
+
+    <!-- AFO Kingdom 브랜딩 -->
+    <meta name="author" content="승상 (丞相) - AFO Kingdom">
+    <meta name="keywords" content="{{page_keywords}}, AFO Kingdom, Trinity Score, 옵시디언">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+
+    <!-- CSS 스타일 -->
+    <style>
+        /* AFO Kingdom 색상 팔레트 */
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --info-color: #17a2b8;
+            --light-bg: #f8f9fa;
+            --dark-text: #212529;
+            --light-text: #6c757d;
+            --border-color: #dee2e6;
+            --shadow: 0 2px 4px rgba(0,0,0,0.1);
+            --border-radius: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: var(--dark-text);
+            background-color: #ffffff;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* 헤더 */
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            border-radius: var(--border-radius);
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .header .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        /* 네비게이션 */
+        .nav {
+            background-color: var(--light-bg);
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .nav-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        /* 메인 콘텐츠 */
+        .content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+
+        /* 제목 스타일 */
+        h1, h2, h3, h4, h5, h6 {
+            color: var(--dark-text);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        h1 { font-size: 2.2rem; border-bottom: 3px solid var(--primary-color); padding-bottom: 0.5rem; }
+        h2 { font-size: 1.8rem; border-bottom: 2px solid var(--info-color); padding-bottom: 0.3rem; }
+        h3 { font-size: 1.5rem; color: var(--primary-color); }
+        h4 { font-size: 1.3rem; color: var(--secondary-color); }
+
+        /* 단락 */
+        p {
+            margin-bottom: 1rem;
+            text-align: justify;
+        }
+
+        /* 코드 블록 */
+        pre {
+            background-color: #f8f9fa;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9rem;
+        }
+
+        code {
+            background-color: #f1f3f4;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.85rem;
+        }
+
+        /* 목록 */
+        ul, ol {
+            margin: 1rem 0;
+            padding-left: 2rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* 테이블 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        tr:hover {
+            background-color: #e9ecef;
+        }
+
+        /* Callout blocks (옵시디언 스타일) */
+        .callout {
+            border-left: 4px solid var(--primary-color);
+            background-color: #f8f9fa;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+        }
+
+        .callout.abstract { border-left-color: var(--primary-color); }
+        .callout.info { border-left-color: var(--info-color); }
+        .callout.success { border-left-color: var(--success-color); }
+        .callout.warning { border-left-color: var(--warning-color); }
+        .callout.error { border-left-color: var(--danger-color); }
+
+        .callout-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Mermaid 다이어그램 컨테이너 */
+        .mermaid-container {
+            background-color: white;
+            border: 2px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            margin: 1rem 0;
+            text-align: center;
+        }
+
+        /* 버튼 */
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--info-color), var(--primary-color));
+        }
+
+        /* 카드 레이아웃 */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .card {
+            background-color: white;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        /* 푸터 */
+        .footer {
+            margin-top: 3rem;
+            padding: 2rem 0;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+            color: var(--light-text);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        /* 반응형 디자인 */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .nav-links {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+
+            table {
+                font-size: 0.9rem;
+            }
+
+            th, td {
+                padding: 0.5rem;
+            }
+        }
+
+        /* 다크 모드 지원 */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --light-bg: #2d3748;
+                --dark-text: #e2e8f0;
+                --light-text: #a0aec0;
+                --border-color: #4a5568;
+            }
+
+            body {
+                background-color: #1a202c;
+                color: var(--dark-text);
+            }
+
+            .content, .nav {
+                background-color: #2d3748;
+                border-color: #4a5568;
+            }
+
+            pre, code {
+                background-color: #1a202c;
+                border-color: #4a5568;
+            }
+
+            .callout {
+                background-color: #4a5568;
+            }
+        }
+
+        /* 프린트 스타일 */
+        @media print {
+            .nav, .footer {
+                display: none;
+            }
+
+            .content {
+                box-shadow: none;
+                border: none;
+            }
+
+            .btn {
+                display: none;
+            }
+        }
+    </style>
+
+    <!-- Mermaid 라이브러리 -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#667eea',
+                primaryTextColor: '#fff',
+                primaryBorderColor: '#764ba2',
+                lineColor: '#667eea',
+                secondaryColor: '#f8f9fa',
+                tertiaryColor: '#fff'
+            }
+        });
+    </script>
+</head>
+<body>
+    <!-- 헤더 -->
+    <header class="header">
+        <h1>{{page_title}}</h1>
+        <p class="subtitle">{{page_subtitle}}</p>
+    </header>
+
+    <!-- 네비게이션 -->
+    <nav class="nav">
+        <div class="nav-links">
+            <a href="/" class="nav-link">🏛️ 왕국 대문</a>
+            <a href="/docs" class="nav-link">📚 문서 라이브러리</a>
+            <a href="/api" class="nav-link">🌐 API 참조</a>
+            <a href="/system" class="nav-link">⚙️ 시스템 상태</a>
+            <a href="/contact" class="nav-link">📞 연락처</a>
+        </div>
+    </nav>
+
+    <!-- 메인 콘텐츠 -->
+    <main class="content">
+        {{content}}
+
+        <!-- 액션 버튼 -->
+        <div style="text-align: center; margin-top: 3rem;">
+            <a href="/" class="btn">🏛️ 왕국 대문으로 돌아가기</a>
+            <a href="/docs" class="btn btn-secondary" style="margin-left: 1rem;">📚 전체 문서 보기</a>
+        </div>
+    </main>
+
+    <!-- 푸터 -->
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="/about">AFO Kingdom 소개</a>
+            <a href="/philosophy">Trinity 철학</a>
+            <a href="/contribute">기여하기</a>
+            <a href="/license">라이선스</a>
+        </div>
+        <p>&copy; 2025 AFO Kingdom. Powered by 승상 (丞相) 시스템.</p>
+        <p style="font-size: 0.9rem; margin-top: 0.5rem;">
+            "지혜가 곧 코드이며, 철학이 곧 시스템이다."
+        </p>
+    </footer>
+
+    <!-- 분석 스크립트 (선택사항) -->
+    <script>
+        // 페이지뷰 추적
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'page_view', {
+                page_title: '{{page_title}}',
+                page_location: window.location.href
+            });
+        }
+
+        // Mermaid 다이어그램 초기화 확인
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('AFO Kingdom 페이지 로드 완료');
+        });
+    </script>
+</body>
+</html>

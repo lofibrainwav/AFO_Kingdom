@@ -17,9 +17,9 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent / "trinity-os"))
 # Import all Dream Hub components
 try:
     import contracts.dream_contract as dream_contract_module
-    import graphs.dream_protocol as dream_protocol_module
+    import graphs.dream_protocol as dream_protocol_module  # noqa: F401
     import graphs.enhanced_dream_hub as enhanced_dream_hub_module
-    from sixxon import _calculate_trinity_score
+    from sixxon import _calculate_trinity_score  # noqa: F401
 except ImportError as e:
     print(f"❌ Import error: {e}")
     print("Please ensure all Dream Hub components are installed")

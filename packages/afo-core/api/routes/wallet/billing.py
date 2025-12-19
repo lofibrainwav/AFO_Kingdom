@@ -40,9 +40,9 @@ async def get_api_usage(api_id: str):
         }
 
     except ImportError:
-        raise HTTPException(status_code=503, detail="Wallet billing not available")
+        raise HTTPException(status_code=503, detail="Wallet billing not available") from None
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to get API usage: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to get API usage: {e}") from e
 
 
 @billing_router.get("/summary")
@@ -68,6 +68,6 @@ async def get_billing_summary():
         }
 
     except ImportError:
-        raise HTTPException(status_code=503, detail="Wallet billing not available")
+        raise HTTPException(status_code=503, detail="Wallet billing not available") from None
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to get billing summary: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to get billing summary: {e}") from e
