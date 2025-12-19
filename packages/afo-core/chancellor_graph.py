@@ -212,7 +212,7 @@ async def juyu_node(state: ChancellorState):
     Focus: Narrative, UX, User Experience.
     """
     print("🌉 [Juyu] Polishing UX...")
-    _ = state["messages"][0].content  # noqa: F841
+    _ = state["messages"][0].content
     truth = state["analysis_results"].get("jegalryang", "")
     goodness = state["analysis_results"].get("samaui", "")
 

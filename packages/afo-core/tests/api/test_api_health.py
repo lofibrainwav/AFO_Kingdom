@@ -3,7 +3,6 @@ Test API Health Endpoints
 테스트 커버리지 향상 Phase 1
 """
 
-
 import pytest
 from fastapi.testclient import TestClient
 

@@ -2,7 +2,6 @@
 AFO 설정 테스트
 """
 
-
 from AFO.config.settings import get_settings
 
 

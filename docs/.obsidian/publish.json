@@ -1,0 +1,47 @@
+{
+  "siteTitle": "AFO Kingdom 문서 라이브러리",
+  "description": "Trinity 철학 기반의 AFO Kingdom 프로젝트 문서화 시스템",
+  "author": "승상 (丞相) - AFO Kingdom",
+  "siteUrl": "https://afo-kingdom-docs.netlify.app",
+  "ghUsername": "lofibrainwav",
+  "ghRepo": "AFO_Kingdom",
+  "canonicalUrl": "https://afo-kingdom-docs.netlify.app",
+  "faviconPath": "/favicon.ico",
+  "logoPath": "/logo.png",
+  "accentColor": "#667eea",
+  "enableSearch": true,
+  "enableSiteMap": true,
+  "enableRSS": true,
+  "enableShareButtons": true,
+  "enableDarkMode": true,
+  "enableComments": false,
+  "enableNewsletter": false,
+  "customCSS": "/assets/custom.css",
+  "customJS": "/assets/custom.js",
+  "analytics": {
+    "googleAnalytics": "",
+    "plausibleAnalytics": "",
+    "customAnalytics": ""
+  },
+  "social": {
+    "twitter": "@afo_kingdom",
+    "github": "lofibrainwav",
+    "linkedin": "",
+    "youtube": ""
+  },
+  "excludePaths": [
+    "_templates/",
+    ".obsidian/",
+    "scripts/",
+    "*.md.bak"
+  ],
+  "includePaths": [
+    "docs/",
+    "README.md",
+    "CONTRIBUTING.md"
+  ],
+  "slugOverrides": {
+    "AFO_KINGDOM_MAIN.md": "/",
+    "README.md": "/about"
+  }
+}

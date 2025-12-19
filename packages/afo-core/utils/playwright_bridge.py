@@ -137,7 +137,9 @@ class PlaywrightBridgeMCP:
             if enable_tracing:
                 trace_path = screenshot_path.replace(".png", "_error_trace.zip")
                 await context.tracing.stop(path=trace_path)
-            raise HTTPException(status_code=500, detail="UI 로드 타임아웃 - 재시도 필요 (孝)") from None
+            raise HTTPException(
+                status_code=500, detail="UI 로드 타임아웃 - 재시도 필요 (孝)"
+            ) from None
         except Exception as e:
             if enable_tracing:
                 trace_path = screenshot_path.replace(".png", "_error_trace.zip")
