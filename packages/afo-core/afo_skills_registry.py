@@ -210,6 +210,9 @@ class AFOSkillCard(BaseModel):
     estimated_duration_ms: int | None = Field(
         default=None, ge=0, description="Estimated execution time in milliseconds"
     )
+    parameters: dict[str, Any] = Field(
+        default_factory=dict, description="Default configuration parameters"
+    )
 
     # Input/Output Schemas
     input_schema: SkillIOSchema = Field(

@@ -147,8 +147,9 @@ class SkillsService(BaseService):
                 description=request.description,
                 category=category_enum,
                 execution_mode=execution_mode_enum,
+                version="1.0.0",
                 parameters=request.parameters or {},
-                philosophy=RegistryPhilosophyScores(
+                philosophy_scores=RegistryPhilosophyScores(
                     truth=85.0,
                     goodness=80.0,
                     beauty=75.0,
@@ -427,6 +428,7 @@ class SkillsService(BaseService):
             # 실행 결과 생성
             execution_result = SkillExecutionResult(
                 skill_id=request.skill_id,
+                success=True,
                 status="success",
                 result=result,
                 execution_time_ms=execution_time,
@@ -447,6 +449,7 @@ class SkillsService(BaseService):
 
             execution_result = SkillExecutionResult(
                 skill_id=request.skill_id,
+                success=False,
                 status="error",
                 result={},
                 execution_time_ms=execution_time,
