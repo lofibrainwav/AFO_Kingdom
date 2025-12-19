@@ -7,6 +7,7 @@ import { VoiceReactivePanel } from './VoiceReactivePanel';
 import { SandboxCanvas } from './genui/SandboxCanvas';
 import { AICPAJulieWidget } from './genui/AICPAJulieWidget';
 import { SSOTMonitor } from './genui/SSOTMonitor';
+import { JulieCPAWidget } from './genui/JulieCPAWidget';
 import { useSpatialAudio } from '../hooks/useSpatialAudio';
 
 interface PantheonState {
@@ -44,6 +45,17 @@ export function AFOPantheon() {
   const [isMatrixActive, setIsMatrixActive] = useState(false);
   
   const { playTrinityUp, playRiskUp, initAudio } = useSpatialAudio();
+
+  // Helper function for status color
+  const getStatusColor = () => {
+    switch (state.healthStatus) {
+      case 'excellent': return '#22c55e';
+      case 'good': return '#84cc16';
+      case 'warning': return '#eab308';
+      case 'critical': return '#ef4444';
+      default: return '#6b7280';
+    }
+  };
 
   // Matrix Stream Connection (SSE)
   useEffect(() => {
@@ -89,7 +101,7 @@ export function AFOPantheon() {
         
         setState(prev => ({
           ...prev,
-          trinityScore: trinityData.trinity_score ?? data.health_percentage/100 ?? prev.trinityScore,
+          trinityScore: trinityData.trinity_score ?? (data.health_percentage ? data.health_percentage/100 : prev.trinityScore),
           riskScore: data.risk_score ?? 0.0,
           healthStatus: data.status ?? prev.healthStatus,
           servicesOnline: data.healthy_organs ?? prev.servicesOnline,
@@ -109,8 +121,38 @@ export function AFOPantheon() {
     }
   }, []);
 
-  // ... (omitted)
+  // Initial fetch on mount
+  useEffect(() => {
+    fetchState();
+    const interval = setInterval(fetchState, 15000); // Refresh every 15s
+    return () => clearInterval(interval);
+  }, [fetchState]);
 
+  return (
+    <div style={{
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #0f0f23, #1a1a2e)',
+      padding: '2rem',
+    }}>
+      {/* Header */}
+      <h1 style={{
+        color: 'white',
+        textAlign: 'center',
+        fontSize: '2rem',
+        marginBottom: '2rem',
+        fontFamily: 'system-ui',
+      }}>
+        🏰 AFO Pantheon - Command Center
+      </h1>
+
+      {/* Main Grid */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+        gap: '1.5rem',
+        maxWidth: '1400px',
+        margin: '0 auto',
+      }}>
         {/* Trinity Score Card */}
         <TrinityGlowCard 
             trinityScore={state.trinityScore} 
@@ -223,19 +265,16 @@ export function AFOPantheon() {
            </div>
         </div>
         
-        {/* Julie CPA (Financial Guardian) */}
+        {/* Julie CPA (Financial Guardian - Phase 12) */}
         <div style={{ gridColumn: '1 / -1', marginTop: '1rem' }}>
-             <AICPAJulieWidget />
+             <JulieCPAWidget />
         </div>
         
         {/* SSOT Monitor (Compass) */}
         <div style={{ gridColumn: '1 / -1', marginTop: '1rem' }}>
              <SSOTMonitor />
         </div>
-
-        </div>
-      )}
-
+      </div>
 
       {/* Voice Panel Overlay */}
       {showVoicePanel && (
