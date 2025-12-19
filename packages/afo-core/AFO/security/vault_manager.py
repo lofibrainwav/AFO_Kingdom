@@ -10,8 +10,11 @@ Principles:
 - 眞 (Truth): 모든 접근에 대한 감사 로그 (Audit)
 """
 
+
+from __future__ import annotations
 import os
 import sys
+
 
 # 프로젝트 루트 경로 확보
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
@@ -30,7 +33,7 @@ class VaultManager:
 
     _instance = None
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.client = None
         # hvac 라이브러리가 없거나 설정이 없으면 초기화 스킵 (Graceful Degradation)
         if hvac and hasattr(settings, "VAULT_URL") and settings.VAULT_URL:
@@ -52,12 +55,12 @@ class VaultManager:
                 print("⚠️ 'hvac' 라이브러리가 설치되지 않았습니다. Env Fallback 모드 사용.")
 
     @classmethod
-    def get_instance(cls):
+    def get_instance(cls) -> VaultManager:
         if cls._instance is None:
             cls._instance = cls()
         return cls._instance
 
-    def get_secret(self, key_name: str, default: str | None = None) -> str:
+    def get_secret(self, key_name: str, default: str | None = None) -> str | None:
         """
         KV v2 Secret 동적 조회 (PDF 페이지 3: 암호화 키 관리)
         우선순위: Vault -> Environment Variable -> Default

@@ -27,9 +27,9 @@ async def get_api_usage(api_id: str):
     try:
         import sys
 
-        api_server_module = sys.modules.get("afo_soul_engine.api_server")
+        api_server_module = sys.modules.get("AFO.api_server")
         if api_server_module is None:
-            from afo_soul_engine import api_server as api_server_module
+            from AFO import api_server as api_server_module
 
         # 사용량 조회 로직
         # TODO: 실제 사용량 조회 구현
@@ -55,9 +55,9 @@ async def get_billing_summary():
     try:
         import sys
 
-        api_server_module = sys.modules.get("afo_soul_engine.api_server")
+        api_server_module = sys.modules.get("AFO.api_server")
         if api_server_module is None:
-            from afo_soul_engine import api_server as api_server_module
+            from AFO import api_server as api_server_module
 
         # 청구 요약 로직
         # TODO: 실제 청구 요약 구현

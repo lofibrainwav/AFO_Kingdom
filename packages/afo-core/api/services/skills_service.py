@@ -32,12 +32,12 @@ try:
 
     TRINITY_EVALUATOR_AVAILABLE = True
 except ImportError:
-    mcp_tool_trinity_evaluator = None
+    mcp_tool_trinity_evaluator = None  # type: ignore
     TRINITY_EVALUATOR_AVAILABLE = False
 
 # Import skill registry components for runtime
 try:
-    from ...afo_skills_registry import (
+    from AFO.afo_skills_registry import (
         ExecutionMode,
         SkillCategory,
         SkillFilterParams,
@@ -45,26 +45,26 @@ try:
         SkillStatus,
         register_core_skills,
     )
-    from ...afo_skills_registry import PhilosophyScores as RegistryPhilosophyScores
+    from AFO.afo_skills_registry import PhilosophyScore as RegistryPhilosophyScores
 
     SKILL_REGISTRY_AVAILABLE = True
 except ImportError:
-    SkillRegistry = None
-    SkillFilterParams = None
-    SkillCategory = None
-    ExecutionMode = None
-    SkillStatus = None
-    RegistryPhilosophyScores = None
-    register_core_skills = None
+    SkillRegistry = None  # type: ignore
+    SkillFilterParams = None  # type: ignore
+    SkillCategory = None  # type: ignore
+    ExecutionMode = None  # type: ignore
+    SkillStatus = None  # type: ignore
+    RegistryPhilosophyScores = None  # type: ignore
+    register_core_skills = None  # type: ignore
     SKILL_REGISTRY_AVAILABLE = False
 
 # Import types for type checking only
 if TYPE_CHECKING:
-    from afo_skills_registry import AFOSkillCard
+    from AFO.afo_skills_registry import AFOSkillCard
 else:
     # Runtime fallback
     try:
-        from afo_skills_registry import AFOSkillCard
+        from AFO.afo_skills_registry import AFOSkillCard
     except ImportError:
         AFOSkillCard = None  # type: ignore
 
@@ -82,13 +82,8 @@ class SkillsService(BaseService):
         """Skill Registry 초기화"""
         # 직접 스킬 레지스트리 초기화
         try:
-            # 상대 경로 대신 절대 경로로 임포트 시도
-            import os
-            import sys
-
-            sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
-
-            from afo_soul_engine.afo_skills_registry import register_core_skills
+            # 직접 스킬 레지스트리 초기화
+            from AFO.afo_skills_registry import register_core_skills
 
             self.skill_registry = register_core_skills()
             skill_count = (
@@ -150,10 +145,10 @@ class SkillsService(BaseService):
                 version="1.0.0",
                 parameters=request.parameters or {},
                 philosophy_scores=RegistryPhilosophyScores(
-                    truth=85.0,
-                    goodness=80.0,
-                    beauty=75.0,
-                    serenity=90.0,  # 기본값
+                    truth=int(85),
+                    goodness=int(80),
+                    beauty=int(75),
+                    serenity=int(90),
                 ),
             )
 
@@ -177,10 +172,10 @@ class SkillsService(BaseService):
             elif registry_philosophy and hasattr(registry_philosophy, "truth"):
                 # 이미 인스턴스인 경우
                 api_philosophy = PhilosophyScores(
-                    truth=registry_philosophy.truth,
-                    goodness=registry_philosophy.goodness,
-                    beauty=registry_philosophy.beauty,
-                    serenity=registry_philosophy.serenity,
+                    truth=float(registry_philosophy.truth),
+                    goodness=float(registry_philosophy.goodness),
+                    beauty=float(registry_philosophy.beauty),
+                    serenity=float(registry_philosophy.serenity),
                 )
             else:
                 api_philosophy = PhilosophyScores(
@@ -288,7 +283,7 @@ class SkillsService(BaseService):
                     status=status_enum,
                     tags=filters.tags,
                     search=filters.search,
-                    min_philosophy_avg=filters.min_philosophy_avg,
+                    min_philosophy_avg=int(filters.min_philosophy_avg) if filters.min_philosophy_avg else None,
                     execution_mode=execution_mode_enum,
                     offset=filters.offset,
                     limit=filters.limit,

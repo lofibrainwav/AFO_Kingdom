@@ -32,7 +32,7 @@ except ImportError:
 
 # AFO LLM Router 사용 (Ollama → Gemini → Claude → OpenAI fallback)
 try:
-    from afo_soul_engine.llm_router import LLMRouter
+    from AFO.llm_router import LLMRouter
 
     LLM_ROUTER_AVAILABLE = True
     llm_router: LLMRouter | None = LLMRouter()
@@ -59,18 +59,12 @@ web_search = None
 if TAVILY_AVAILABLE:
     # Phase 2-4: settings 사용
     try:
-        from config.settings import get_settings
+        from AFO.config.settings import get_settings
 
         settings = get_settings()
         tavily_key = settings.TAVILY_API_KEY
     except ImportError:
-        try:
-            from AFO.config.settings import get_settings
-
-            settings = get_settings()
-            tavily_key = settings.TAVILY_API_KEY
-        except ImportError:
-            tavily_key = os.getenv("TAVILY_API_KEY")
+        tavily_key = os.getenv("TAVILY_API_KEY")
 
     if tavily_key:
         try:
@@ -232,7 +226,7 @@ async def generate_answer(question: str, context: str) -> str:
             },
         )
 
-        answer_text = result.get("response", "").strip()
+        answer_text = str(result.get("response", "")).strip()
 
         if not answer_text:
             answer_text = "I could not generate an answer. Please try rephrasing your question."

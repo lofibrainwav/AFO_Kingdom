@@ -3,15 +3,8 @@ from typing import Any
 from fastapi import HTTPException
 
 # 중앙 설정 사용
-try:
-    from AFO.config.settings import get_settings
-except ImportError:
-    # Fallback for local execution
-    import os
-    import sys
-
-    sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    from config.settings import get_settings
+# 중앙 설정 사용
+from AFO.config.settings import get_settings
 
 # Lazy import asyncpg to avoid startup errors if not installed
 try:
@@ -22,8 +15,8 @@ except ImportError:
     asyncpg = None
     ASYNCPG_AVAILABLE = False
 
-
-async def get_db_connection() -> Any:  # type: ignore[no-any-return]
+# [論語]學而不思則罔 - 배우되 생각하지 않으면 어둡다
+async def get_db_connection() -> Any:
     """비동기 PostgreSQL 연결 함수 (중앙 설정 사용)"""
     if not ASYNCPG_AVAILABLE or asyncpg is None:
         raise HTTPException(status_code=503, detail="PostgreSQL async support not available")

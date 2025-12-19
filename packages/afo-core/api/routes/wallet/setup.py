@@ -39,9 +39,9 @@ async def set_api_key(request: WalletAPIKeyRequest):
         # API 키 저장 로직 (기존 로직 재사용)
         import sys
 
-        api_server_module = sys.modules.get("afo_soul_engine.api_server")
+        api_server_module = sys.modules.get("AFO.api_server")
         if api_server_module is None:
-            from afo_soul_engine import api_server as api_server_module
+            from AFO import api_server as api_server_module
 
         # TODO: 실제 API 키 저장 구현
         return {
@@ -68,9 +68,9 @@ async def get_wallet_status():
     try:
         import sys
 
-        api_server_module = sys.modules.get("afo_soul_engine.api_server")
+        api_server_module = sys.modules.get("AFO.api_server")
         if api_server_module is None:
-            from afo_soul_engine import api_server as api_server_module
+            from AFO import api_server as api_server_module
 
         # Wallet 상태 조회 로직
         # TODO: 실제 wallet 상태 조회 구현

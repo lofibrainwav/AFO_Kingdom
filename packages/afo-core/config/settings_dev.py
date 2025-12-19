@@ -13,7 +13,7 @@ class AFOSettingsDev(AFOSettings):
     """
 
     # Development 환경 기본값
-    MOCK_MODE: bool = True  # 개발 시 Mock 모드 활성화
+    MOCK_MODE: bool = False  # CLI 정기구독 사용 - Mock 불필요
     ASYNC_QUERY_ENABLED: bool = True
 
     # Development 환경 로깅

@@ -38,3 +38,27 @@
 ---
 
 **"왕국은 이제 스스로 자라납니다."**
+
+## 🛡️ Evolution Event: The Sandbox & The Lock (Phase 9-1)
+
+**일시**: 2025-12-19
+**시공자**: 승상 (Antigravity)
+
+### 📌 Milestone: Sandbox Activated (9.1)
+
+1.  **Architecture Secured (LOCK)**
+    - **Truth**: All GenUI modules passed `mypy --strict` (0 Errors).
+    - **Beauty**: Code style verified by `ruff` (Clean).
+    - **Goodness**: Fallback Simulation Mode tested.
+
+2.  **Sandbox Deployed**
+    - **Location**: `packages/dashboard/src/components/genui/`
+    - **Mechanism**: `/api/gen-ui/preview` endpoint auto-deploys generated code.
+    - **Integration**: Backend (GenUI) writes directly to Frontend (Dashboard) source tree.
+
+### 📌 Milestone: The Eyes (9.2)
+- **Service**: `VisionVerifier` (Playwright Bridge).
+- **Mechanism**: Auto-triggered via BackgroundTasks in GenUI Router.
+- **Capability**: Autonomous screenshot capture of deployed components.
+
+**"The Kingdom now has a safe playground for its dreams."**

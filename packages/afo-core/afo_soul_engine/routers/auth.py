@@ -4,7 +4,8 @@ from fastapi import APIRouter
 
 try:
     # Prefer the canonical implementation if present.
-    from AFO.api.routers.auth import router as router  # type: ignore
+    # [논어] 군자화이부동 - 조화롭되 다름을 인정함
+    from AFO.api.routers.auth import router as router
 except Exception:
     router = APIRouter(prefix="/api/auth", tags=["Auth"])
 

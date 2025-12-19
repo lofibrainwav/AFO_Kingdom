@@ -18,23 +18,36 @@ import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from AFO.genui.genui_orchestrator import GenUIOrchestrator as GenUIOrchestratorType
+    from AFO.utils.playwright_bridge import PlaywrightBridgeMCP as PlaywrightBridgeMCPType
+    from AFO.domain.metrics.trinity_manager import TrinityManager
+
 # GenUI Orchestrator
+_GenUIOrchestrator: Any = None
 try:
     from AFO.genui.genui_orchestrator import GenUIOrchestrator
+    _GenUIOrchestrator = GenUIOrchestrator
 except ImportError:
-    GenUIOrchestrator = None
+    pass
 
 # Playwright Bridge
+_PlaywrightBridgeMCP: Any = None
 try:
     from AFO.utils.playwright_bridge import PlaywrightBridgeMCP
+    _PlaywrightBridgeMCP = PlaywrightBridgeMCP
 except ImportError:
-    PlaywrightBridgeMCP = None
+    pass
 
 # Trinity Manager
+trinity_manager: Any = None
 try:
-    from AFO.domain.metrics.trinity_manager import trinity_manager
+    from AFO.domain.metrics.trinity_manager import trinity_manager as tm
+    trinity_manager = tm
 except ImportError:
-    trinity_manager = None
+    pass
 
 
 @dataclass
@@ -64,8 +77,8 @@ class SerenityCreationLoop:
 
     def __init__(self, sandbox_dir: str | None = None):
         self.sandbox_dir = sandbox_dir or tempfile.mkdtemp(prefix="serenity_")
-        self.genui = GenUIOrchestrator() if GenUIOrchestrator else None
-        self.playwright = PlaywrightBridgeMCP() if PlaywrightBridgeMCP else None
+        self.genui = _GenUIOrchestrator() if _GenUIOrchestrator else None
+        self.playwright = _PlaywrightBridgeMCP() if _PlaywrightBridgeMCP else None
 
     async def create_ui(self, prompt: str) -> CreationResult:
         """
@@ -160,7 +173,7 @@ export function GeneratedComponent() {{
 
         try:
             result = await self.genui.generate(full_prompt)
-            return result.get("code", "")
+            return str(result.get("code", ""))
         except Exception as e:
             print(f"❌ [Serenity] GenUI error: {e}")
             return ""
@@ -206,7 +219,7 @@ export function GeneratedComponent() {{
 
             # Use Playwright Bridge to capture
             result = await self.playwright.verify_ui(
-                url=f"file://{html_path}", screenshot_path=screenshot_path, wait_for="body"
+                url=f"file://{html_path}", screenshot_path=screenshot_path
             )
 
             if result.get("success"):

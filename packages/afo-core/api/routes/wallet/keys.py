@@ -36,10 +36,7 @@ class AddKeyRequest(BaseModel):
 async def list_keys():
     """List all stored API keys (metadata only)"""
     try:
-        try:
-            from AFO.api_wallet import APIWallet
-        except ImportError:
-            from api_wallet import APIWallet
+        from AFO.api_wallet import APIWallet
 
         wallet = APIWallet()
 
@@ -69,10 +66,7 @@ async def list_keys():
 async def add_key(request: AddKeyRequest):
     """Add a new API key"""
     try:
-        try:
-            from AFO.api_wallet import APIWallet
-        except ImportError:
-            from api_wallet import APIWallet
+        from AFO.api_wallet import APIWallet
 
         wallet = APIWallet()
 
@@ -103,10 +97,7 @@ async def add_key(request: AddKeyRequest):
 async def delete_key(name: str):
     """Delete an API key"""
     try:
-        try:
-            from AFO.api_wallet import APIWallet
-        except ImportError:
-            from api_wallet import APIWallet
+        from AFO.api_wallet import APIWallet
 
         wallet = APIWallet()
 

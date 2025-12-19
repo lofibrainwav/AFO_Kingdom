@@ -27,9 +27,9 @@ async def get_wallet_session(session_id: str):
     try:
         import sys
 
-        api_server_module = sys.modules.get("afo_soul_engine.api_server")
+        api_server_module = sys.modules.get("AFO.api_server")
         if api_server_module is None:
-            from afo_soul_engine import api_server as api_server_module
+            from AFO import api_server as api_server_module
 
         # 세션 조회 로직
         # TODO: 실제 세션 조회 구현
@@ -66,9 +66,9 @@ async def extract_wallet_session(request: WalletSessionRequest):
 
         import sys
 
-        api_server_module = sys.modules.get("afo_soul_engine.api_server")
+        api_server_module = sys.modules.get("AFO.api_server")
         if api_server_module is None:
-            from afo_soul_engine import api_server as api_server_module
+            from AFO import api_server as api_server_module
 
         # 세션 추출 로직
         # TODO: 실제 세션 추출 구현

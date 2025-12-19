@@ -48,26 +48,12 @@ ORGANS = [
 def _get_redis_client() -> redis.Redis | None:
     """Redis 클라이언트 생성 (Lazy Loading)"""
     # Phase 2-4: settings 사용
+    # Phase 2-4: settings 사용
     try:
-        try:
-            from AFO.utils.redis_connection import get_redis_url
+        from AFO.utils.redis_connection import get_redis_url
 
-            redis_url = get_redis_url()
-        except ImportError:
-            try:
-                from config.settings import get_settings
-
-                settings = get_settings()
-                redis_url = settings.get_redis_url()
-            except ImportError:
-                try:
-                    from AFO.config.settings import get_settings
-
-                    settings = get_settings()
-                    redis_url = settings.get_redis_url()
-                except ImportError:
-                    redis_url = os.getenv("REDIS_URL", "redis://localhost:6379")
-    except Exception:
+        redis_url = get_redis_url()
+    except ImportError:
         redis_url = os.getenv("REDIS_URL", "redis://localhost:6379")
 
     try:
@@ -198,7 +184,8 @@ async def _log_stream(limit: int | None = None) -> AsyncGenerator[str, None]:
 async def stream_logs(limit: int = 0) -> Any:
     """Logs streaming endpoint (SSE)"""
     limit_val: int | None = limit if limit > 0 else None
-    if not SSE_AVAILABLE or EventSourceResponse is Any:
+    # [莊子]用之則行舍之則藏 - 사용 가능하면 사용하고 아니면 숨김
+    if not SSE_AVAILABLE:
         # Fallback: return JSON if SSE not available
         return {"error": "SSE not available", "logs": []}
     return EventSourceResponse(_log_stream(limit_val))

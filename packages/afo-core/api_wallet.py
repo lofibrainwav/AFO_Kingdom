@@ -28,18 +28,12 @@ from typing import Any
 
 # Phase 8.3.3: Vault KMS 통합
 try:
-    try:
-        from kms.vault_kms import VaultKMS
-    except ImportError:
-        try:
-            from .kms.vault_kms import VaultKMS
-        except ImportError:
-            from AFO.kms.vault_kms import VaultKMS
+    from AFO.kms.vault_kms import VaultKMS
 
     VAULT_AVAILABLE = True
-except ImportError as e:
+except ImportError:
     VAULT_AVAILABLE = False
-    print(f"⚠️  Vault KMS 사용 불가: {e}")
+    print("⚠️  Vault KMS 사용 불가 (ImportError)")
 
 # PostgreSQL support
 try:
@@ -52,18 +46,12 @@ except ImportError:
 
 # Phase 2-4: settings 사용
 try:
-    from config.settings import get_settings
+    from AFO.config.settings import get_settings
 
     settings = get_settings()
     FORCE_MOCK = settings.MOCK_MODE
 except ImportError:
-    try:
-        from AFO.config.settings import get_settings
-
-        settings = get_settings()
-        FORCE_MOCK = settings.MOCK_MODE
-    except ImportError:
-        FORCE_MOCK = os.getenv("MOCK_MODE", "false").lower() == "true"
+    FORCE_MOCK = os.getenv("MOCK_MODE", "false").lower() == "true"
 
 # Try to import cryptography, fallback to mock mode
 if not FORCE_MOCK:
@@ -133,18 +121,12 @@ class APIWallet:
         # Phase 8.3.3: Vault KMS 초기화
         # Phase 2-4: settings 사용
         try:
-            from config.settings import get_settings
+            from AFO.config.settings import get_settings
 
             settings = get_settings()
             vault_enabled_default = settings.VAULT_ENABLED
         except ImportError:
-            try:
-                from AFO.config.settings import get_settings
-
-                settings = get_settings()
-                vault_enabled_default = settings.VAULT_ENABLED
-            except ImportError:
-                vault_enabled_default = os.getenv("VAULT_ENABLED", "false").lower() == "true"
+            vault_enabled_default = os.getenv("VAULT_ENABLED", "false").lower() == "true"
 
         self.use_vault = use_vault if use_vault is not None else vault_enabled_default
         self.vault_kms = None
@@ -171,47 +153,18 @@ class APIWallet:
                 self.encryption_key = vault_key
                 print("✅ Vault에서 암호화 키 로드 완료")
             else:
-                # Vault에 키가 없으면 settings 또는 기본값 사용
-                # Phase 2-4: settings 사용
-                try:
-                    from config.settings import get_settings
-
-                    settings = get_settings()
-                    encryption_key_from_settings = settings.API_WALLET_ENCRYPTION_KEY
-                except ImportError:
-                    try:
-                        from AFO.config.settings import get_settings
-
-                        settings = get_settings()
-                        encryption_key_from_settings = settings.API_WALLET_ENCRYPTION_KEY
-                    except ImportError:
-                        encryption_key_from_settings = None
-
-                self.encryption_key = encryption_key_from_settings or os.getenv(
+                key_from_settings = self._get_encryption_key_from_settings()
+                self.encryption_key = key_from_settings or os.getenv(
                     "API_WALLET_ENCRYPTION_KEY", self._generate_default_key()
-                )
+                ) or ""
                 # Vault에 저장 시도
                 if self.vault_kms.is_available():
                     self.vault_kms.set_encryption_key(self.encryption_key)
         else:
-            # Phase 2-4: settings 사용
-            try:
-                from config.settings import get_settings
-
-                settings = get_settings()
-                encryption_key_from_settings = settings.API_WALLET_ENCRYPTION_KEY
-            except ImportError:
-                try:
-                    from AFO.config.settings import get_settings
-
-                    settings = get_settings()
-                    encryption_key_from_settings = settings.API_WALLET_ENCRYPTION_KEY
-                except ImportError:
-                    encryption_key_from_settings = None
-
-            self.encryption_key = encryption_key_from_settings or os.getenv(
+            key_from_settings = self._get_encryption_key_from_settings()
+            self.encryption_key = key_from_settings or os.getenv(
                 "API_WALLET_ENCRYPTION_KEY", self._generate_default_key()
-            )
+            ) or ""
 
         # Validate key (only in real crypto mode)
         if CRYPTO_AVAILABLE and len(self.encryption_key) != 44:
@@ -241,6 +194,14 @@ class APIWallet:
 
         # Audit log
         self.audit_log_path = Path(__file__).parent / "api_wallet_audit.log"
+
+    def _get_encryption_key_from_settings(self) -> str | None:
+        """Helper to get encryption key from settings with fallback"""
+        try:
+            from AFO.config.settings import get_settings
+            return get_settings().API_WALLET_ENCRYPTION_KEY
+        except ImportError:
+            return None
 
     def _generate_default_key(self) -> str:
         """Generate a default key for development (NOT for production!)"""
@@ -275,11 +236,13 @@ class APIWallet:
         if not self.storage_path.exists():
             self.storage_path.write_text(json.dumps({"keys": []}, indent=2))
 
-    def _load_storage(self) -> dict[str, list[dict]]:
+    def _load_storage(self) -> dict[str, list[dict[str, Any]]]:
         """Load from JSON storage"""
-        return json.loads(self.storage_path.read_text())  # type: ignore
+        # Explicit type cast for MyPy
+        data: dict[str, list[dict[str, Any]]] = json.loads(self.storage_path.read_text())
+        return data
 
-    def _save_storage(self, data: dict) -> None:
+    def _save_storage(self, data: dict[str, Any]) -> None:
         """Save to JSON storage"""
         self.storage_path.write_text(json.dumps(data, indent=2))
 
@@ -405,7 +368,7 @@ class APIWallet:
             # Return encrypted key
             return str(key_data["encrypted_key"])
 
-    def list_keys(self, include_encrypted: bool = False) -> list[dict]:
+    def list_keys(self, include_encrypted: bool = False) -> list[dict[str, Any]]:
         """
         List all keys in wallet
 
@@ -562,7 +525,7 @@ class APIWallet:
             print(f"⚠️  Failed to track token usage in Redis: {e}")
 
     # Additional API methods for compatibility
-    def get_summary(self) -> dict:
+    def get_summary(self) -> dict[str, Any]:
         """Get wallet summary"""
         keys = self.list_keys(include_encrypted=False)
         return {
@@ -570,15 +533,15 @@ class APIWallet:
             "keys": [{"name": k["name"], "service": k.get("service", "unknown")} for k in keys],
         }
 
-    def get_all(self) -> list[dict]:
+    def get_all(self) -> list[dict[str, Any]]:
         """Get all APIs (alias for list_keys)"""
         return self.list_keys(include_encrypted=False)
 
-    def get_all_apis(self) -> list[dict]:
+    def get_all_apis(self) -> list[dict[str, Any]]:
         """Get all APIs (alias for list_keys)"""
         return self.list_keys(include_encrypted=False)
 
-    def get_api(self, api_id: str) -> dict | None:
+    def get_api(self, api_id: str) -> dict[str, Any] | None:
         """Get specific API by ID"""
         if self.use_db:
             # PostgreSQL storage
@@ -609,7 +572,7 @@ class APIWallet:
             if key:
                 os.environ[f"API_{name.upper()}"] = key
 
-    def test_api(self, api_id: str) -> dict:
+    def test_api(self, api_id: str) -> dict[str, Any]:
         """Test API connection"""
         api_info = self.get_api(api_id)
         if not api_info:
@@ -667,7 +630,7 @@ class APIWallet:
             if conn:
                 self._release_connection(conn)
 
-    def _add_to_database(self, key_data: dict) -> int:
+    def _add_to_database(self, key_data: dict[str, Any]) -> int:
         """Add key to PostgreSQL"""
         sql = """
         INSERT INTO api_keys (
@@ -694,7 +657,7 @@ class APIWallet:
             if conn:
                 self._release_connection(conn)
 
-    def _get_from_database(self, name: str) -> dict | None:
+    def _get_from_database(self, name: str) -> dict[str, Any] | None:
         """Get key from PostgreSQL"""
         sql = "SELECT * FROM api_keys WHERE name = %s;"
         conn = None
@@ -716,7 +679,7 @@ class APIWallet:
             if conn:
                 self._release_connection(conn)
 
-    def _list_from_database(self) -> list[dict]:
+    def _list_from_database(self) -> list[dict[str, Any]]:
         """List keys from PostgreSQL"""
         sql = "SELECT * FROM api_keys;"
         conn = None
@@ -766,7 +729,7 @@ def create_wallet(encryption_key: str | None = None) -> APIWallet:
 
 
 # CLI for testing
-def main():
+def main() -> None:
     import sys
 
     wallet = create_wallet()
@@ -800,7 +763,7 @@ def main():
             sys.exit(1)
 
         name = sys.argv[2]
-        key = wallet.get(name)
+        key = wallet.get(name) or ""
         if key:
             print(f"🔑 Key '{name}': {key}")
         else:

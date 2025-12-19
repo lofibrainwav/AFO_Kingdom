@@ -23,7 +23,7 @@ class GeminiAPIWrapper:
     월 구독제 CLI 대신 REST API 사용
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         # 1순위: GEMINI_API_KEY (직접 API 키)
         # 2순위: API Wallet (암호화 저장소)
         self.api_key = os.getenv("GEMINI_API_KEY")
@@ -47,8 +47,8 @@ class GeminiAPIWrapper:
                 logger.debug(f"API Wallet 연동 실패 (무시됨): {e}")
 
         self.base_url = "https://generativelanguage.googleapis.com"
-        self.available = bool(self.api_key)
-        self.client = None
+        self.available: bool = bool(self.api_key)
+        self.client: httpx.AsyncClient | None = None
 
         if self.available:
             self.client = httpx.AsyncClient(timeout=30.0)
@@ -63,11 +63,12 @@ class GeminiAPIWrapper:
                 # 서버 시작 시에는 로깅하지 않음
                 pass
             else:
-                logger.warning(
-                    "⚠️ GEMINI_API_KEY 또는 API Wallet 'gemini'/'google' 키 없음 - Gemini API 비활성화"
+                # CLI 정기구독 사용 시 API 키 불필요
+                logger.debug(
+                    "GEMINI_API_KEY 없음 - Gemini API 비활성화 (CLI 사용 시 무시)"
                 )
 
-    async def generate(self, prompt: str, **kwargs) -> dict[str, Any]:
+    async def generate(self, prompt: str, **kwargs: Any) -> dict[str, Any]:
         """
         Gemini API로 텍스트 생성
         """
@@ -132,7 +133,7 @@ class GeminiAPIWrapper:
             return {"error": f"Gemini API exception: {e!s}"}
 
     async def generate_with_context(
-        self, messages: list[dict[str, str]], **kwargs
+        self, messages: list[dict[str, str]], **kwargs: Any
     ) -> dict[str, Any]:
         """
         대화 맥락을 포함한 생성
@@ -148,8 +149,8 @@ class GeminiAPIWrapper:
             url = f"{self.base_url}/v1beta/models/{model}:generateContent"
 
             # 메시지 변환 (OpenAI 스타일 → Gemini 스타일)
-            contents = []
-            current_content = {"parts": []}
+            contents: list[dict[str, Any]] = []
+            current_content: dict[str, list[dict[str, str]]] = {"parts": []}
 
             for msg in messages:
                 role = msg["role"]
@@ -212,7 +213,7 @@ class GeminiAPIWrapper:
             logger.error(f"Gemini API context exception: {e}")
             return {"error": f"Gemini API exception: {e!s}"}
 
-    async def close(self):
+    async def close(self) -> None:
         """리소스 정리"""
         if self.client:
             await self.client.aclose()
@@ -253,7 +254,7 @@ class GeminiAPIWrapper:
 gemini_api = GeminiAPIWrapper()
 
 
-async def generate_with_gemini(prompt: str, **kwargs) -> dict[str, Any]:
+async def generate_with_gemini(prompt: str, **kwargs: Any) -> dict[str, Any]:
     """
     Gemini API로 텍스트 생성 인터페이스
     """
@@ -262,7 +263,7 @@ async def generate_with_gemini(prompt: str, **kwargs) -> dict[str, Any]:
 
 if __name__ == "__main__":
     # 테스트
-    async def test_gemini_api():
+    async def test_gemini_api() -> None:
         print("🤖 Gemini API Wrapper 테스트")
         print("=" * 50)
 

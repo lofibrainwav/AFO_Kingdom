@@ -10,8 +10,7 @@ from AFO.julie_cpa.utils.friction_manager import FrictionManager
 try:
     from AFO.llm_router import llm_router
 except ImportError:
-    # Fallback for direct testing
-    from llm_router import llm_router
+    llm_router = None  # type: ignore
 
 logger = logging.getLogger(__name__)
 

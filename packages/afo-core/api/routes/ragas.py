@@ -43,24 +43,13 @@ async def _get_redis_client() -> redis.Redis | None:
     """Redis 클라이언트 생성 (Lazy Loading, Async)"""
     try:
         # Phase 2-4: settings 사용
+        # Phase 2-4: settings 사용
         try:
             from AFO.utils.redis_connection import get_redis_url
 
             redis_url = get_redis_url()
         except ImportError:
-            try:
-                from config.settings import get_settings
-
-                settings = get_settings()
-                redis_url = settings.get_redis_url()
-            except ImportError:
-                try:
-                    from AFO.config.settings import get_settings
-
-                    settings = get_settings()
-                    redis_url = settings.get_redis_url()
-                except ImportError:
-                    redis_url = os.getenv("REDIS_URL", "redis://localhost:6379")
+            redis_url = os.getenv("REDIS_URL", "redis://localhost:6379")
         # Explicitly cast to redis.asyncio.Redis
         client = cast(
             "redis.Redis",
@@ -133,7 +122,7 @@ async def evaluate_ragas(request: RagasEvalRequest) -> RagasEvalResponse:
             # Ragas 평가 실행 (Blocking -> Async)
             loop = asyncio.get_running_loop()
             results = await loop.run_in_executor(
-                executor, lambda: evaluate(dataset=request.dataset, metrics=metrics_to_use)
+                executor, lambda: evaluate(dataset=request.dataset, metrics=cast(Any, metrics_to_use))
             )
 
             # 점수 추출 및 정규화

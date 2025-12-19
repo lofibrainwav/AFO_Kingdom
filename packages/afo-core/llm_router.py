@@ -22,24 +22,11 @@ from enum import Enum
 from typing import Any
 
 # API wrapper imports
-# API wrapper imports
+# [장자] 무용지용 - 불필요한 주석은 제거하여 진실을 드러냄
 try:
-    # Try relative imports first (if run as module)
-    try:
-        from AFO.llms.claude_api import claude_api  # type: ignore[assignment]
-        from AFO.llms.gemini_api import gemini_api  # type: ignore[assignment]
-        from AFO.llms.openai_api import openai_api  # type: ignore[assignment]
-    except ImportError:
-        try:
-            # Fallback to AFO package imports (if run from root)
-            from AFO.llms.claude_api import claude_api  # type: ignore[assignment]
-            from AFO.llms.gemini_api import gemini_api  # type: ignore[assignment]
-            from AFO.llms.openai_api import openai_api  # type: ignore[assignment]
-        except ImportError:
-            # Fallback to direct imports (if AFO is in path)
-            from llms.claude_api import claude_api
-            from llms.gemini_api import gemini_api  # noqa: F401
-            from llms.openai_api import openai_api
+    from AFO.llms.claude_api import claude_api
+    from AFO.llms.gemini_api import gemini_api
+    from AFO.llms.openai_api import openai_api
 
     API_WRAPPERS_AVAILABLE = True
 except ImportError as e:
@@ -102,25 +89,26 @@ class LLMRouter:
     Ollama 우선 → API LLM fallback
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.llm_configs: dict[LLMProvider, LLMConfig] = {}
         self._initialize_configs()
         self.routing_history: list[dict[str, Any]] = []
         # Simple LRU Cache
-        self._response_cache: OrderedDict = OrderedDict()
+        self._response_cache: OrderedDict[str, dict[str, Any]] = OrderedDict()
         self._cache_max_size = 100
         self._cache_ttl = 300  # 5 minutes
 
-    def _initialize_configs(self):
+    def _initialize_configs(self) -> None:
         """LLM 설정 초기화"""
         # Phase 2-4: settings 사용
         try:
-            from config.settings import get_settings
+            from AFO.config.settings import get_settings
 
             settings = get_settings()
         except ImportError:
             try:
-                from AFO.config.settings import get_settings
+                # [맹자] 득도다조 = 여러 길을 시도하여 도움을 구함
+                from config.settings import get_settings  # type: ignore[assignment]
 
                 settings = get_settings()
             except ImportError:
@@ -148,19 +136,24 @@ class LLMRouter:
             context_window=8192,  # Qwen3-VL-8B supports larger context
         )
 
-        # Vault Integration
+        # Vault Integration - [손자] 지피지기 - 비밀을 아는 자가 승리함
+        vault: Any = None
         try:
-            from .security.vault_manager import vault
+            from AFO.security.vault_manager import vault as _vault
+            vault = _vault
         except (ImportError, ValueError):
             try:
-                from AFO.security.vault_manager import vault
+                from security.vault_manager import vault as _v2
+                vault = _v2
             except ImportError:
                 vault = None
 
         # Helper to get secret
-        def get_secret(name):
+        def get_secret(name: str) -> str | None:
             if vault:
-                return vault.get_secret(name)
+                # Type safe call
+                res = vault.get_secret(name)
+                return res if isinstance(res, str) else None
             return getattr(settings, name, None) if settings else os.getenv(name)
 
         # Anthropic (Claude)
@@ -434,6 +427,8 @@ class LLMRouter:
         """
         라우팅 결정 후 실제 실행
         """
+        # Explicitly return dict[str, Any]
+        result: dict[str, Any]
         """
         라우팅 결정 후 실제 실행 (w/ Caching)
         """
@@ -445,7 +440,9 @@ class LLMRouter:
                 # Move to end (LRU)
                 self._response_cache.move_to_end(cache_key)
                 logger.info("⚡️ Cache Hit! Returning cached response.")
-                return entry["data"]
+                # Cast Any to expected dict type for MyPy
+                cached_data: dict[str, Any] = entry["data"]
+                return cached_data
             else:
                 # Expired
                 del self._response_cache[cache_key]
@@ -496,7 +493,7 @@ class LLMRouter:
             else:
                 return {"success": False, "error": str(e), "routing": routing_decision.__dict__}
 
-    def _get_google_module(self):
+    def _get_google_module(self) -> Any:
         """Helper for testability"""
         import google.generativeai as genai
 
@@ -509,25 +506,29 @@ class LLMRouter:
         genai = self._get_google_module()
 
         # Phase 2-4: settings 사용
+        vault_client = None
         try:
-            from .security.vault_manager import vault
+            from AFO.security.vault_manager import vault as v1_client
+            vault_client = v1_client
         except ImportError:
             try:
-                from AFO.security.vault_manager import vault
+                # [맹자] 득도다조 - 진실된 경로를 찾으면 도움이 따름
+                from security.vault_manager import vault as v2_client
+                vault_client = v2_client
             except ImportError:
-                vault = None
+                vault_client = None
 
-        if vault:
-            api_key = vault.get_secret(config.api_key_env)
+        if vault_client and config.api_key_env:
+            api_key = vault_client.get_secret(config.api_key_env)
         else:
             # Fallback
             try:
-                from config.settings import get_settings
+                from AFO.config.settings import get_settings
 
                 settings = get_settings()
-                api_key = getattr(settings, config.api_key_env, None)
+                api_key = getattr(settings, config.api_key_env or "", None)
             except ImportError:
-                api_key = os.getenv(config.api_key_env)
+                api_key = os.getenv(config.api_key_env or "")
 
         if not api_key:
             raise ValueError(f"API Key not found for env var: {config.api_key_env}")
@@ -543,7 +544,7 @@ class LLMRouter:
                 model = genai.GenerativeModel(model_name)
 
                 # 안전 설정 완화
-                safety_settings: list = [
+                safety_settings: list[dict[str, str]] = [
                     {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
                     {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
                     {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
@@ -561,7 +562,7 @@ class LLMRouter:
                     safety_settings=safety_settings,
                 )
 
-                return response.text
+                return str(response.text)
             except Exception as e:
                 print(f"⚠️ Gemini 모델({model_name}) 실패: {e}")
                 last_error = e  # Update with the actual error
@@ -583,12 +584,12 @@ class LLMRouter:
             base_url = config.base_url
         else:
             try:
-                from config.settings import get_settings
+                from AFO.config.settings import get_settings
 
                 base_url = get_settings().OLLAMA_BASE_URL
             except ImportError:
                 try:
-                    from AFO.config.settings import get_settings
+                    from config.settings import get_settings  # type: ignore
 
                     base_url = get_settings().OLLAMA_BASE_URL
                 except ImportError:
@@ -627,7 +628,7 @@ class LLMRouter:
                 )
                 response.raise_for_status()
                 result = response.json()
-                return result.get("response", "")
+                return str(result.get("response", ""))
         except Exception as e:
             logger.error(f"Ollama 호출 실패: {e}")
             raise
@@ -649,7 +650,7 @@ class LLMRouter:
                 if claude_api.is_available():
                     result = await claude_api.generate(query, max_tokens=1024)
                     if result.get("success"):
-                        return result["content"]
+                        return str(result["content"])
                     else:
                         return f"[Claude Error] {result.get('error', 'Unknown error')}"
                 else:
@@ -667,7 +668,7 @@ class LLMRouter:
                 if openai_api.is_available():
                     result = await openai_api.generate(query, max_tokens=1024)
                     if result.get("success"):
-                        return result["content"]
+                        return str(result["content"])
                     else:
                         return f"[OpenAI Error] {result.get('error', 'Unknown error')}"
                 else:
@@ -744,7 +745,7 @@ async def route_and_execute(query: str, context: dict[str, Any] | None = None) -
 
 if __name__ == "__main__":
     # 테스트
-    async def test_router():
+    async def test_router() -> None:
         router = LLMRouter()
 
         test_queries = [

@@ -4,6 +4,7 @@ Persona Service
 """
 
 import logging
+from datetime import datetime
 from typing import Any
 
 from AFO.domain.persona import (
@@ -16,8 +17,6 @@ from AFO.domain.persona import (
     juyu,
     samaui,
 )
-
-from datetime import datetime
 
 logger = logging.getLogger(__name__)
 

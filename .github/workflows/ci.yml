@@ -91,19 +91,28 @@ jobs:
         with:
           command: monitor
 
-      # 眞 (Truth): Type safety first - 타입 안전성 우선
+      # 眞 (Truth): Type safety first - 타입 안전성 우선 (Blocking)
       - name: MyPy type check
-        continue-on-error: true
-        run: mypy packages/afo-core --strict --ignore-missing-imports 2>/dev/null || echo 'MyPy check skipped'
+        run: mypy packages/afo-core --strict --ignore-missing-imports
 
-      # 美 (Beauty): Code quality - 코드 품질
+      # 美 (Beauty): Code quality - 코드 품질 (Blocking)
       - name: Ruff lint
-        continue-on-error: true
         run: ruff check packages/
 
       - name: Ruff format check
-        continue-on-error: true
         run: ruff format --check packages/
+
+      # 永 (Eternity): Supply Chain Visibility (SBOM)
+      - name: Generate SBOM
+        run: |
+          pip install cyclonedx-bom
+          cyclonedx-py environment --output-file sbom.json
+
+      - name: Upload SBOM artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom-json
+          path: sbom.json
 
       # 孝 (Serenity): Testing
       - name: Setup AFO module symlinks

@@ -23,19 +23,24 @@ class OpenAIAPIWrapper:
     월 구독제 CLI 대신 REST API 사용
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         # Vault Manager Integration (Zero Config)
+        vault_client: Any = None
         try:
-            from ..security.vault_manager import vault
+            from ..security.vault_manager import vault as v1
+            vault_client = v1
         except (ImportError, ValueError):
             try:
-                from AFO.security.vault_manager import vault
+                from AFO.security.vault_manager import vault as v2
+                vault_client = v2
             except ImportError:
-                vault = None
+                pass
 
-        self.api_key = vault.get_secret("OPENAI_API_KEY") if vault else os.getenv("OPENAI_API_KEY")
+        self.api_key: str | None = (
+            vault_client.get_secret("OPENAI_API_KEY") if vault_client else os.getenv("OPENAI_API_KEY")
+        )
 
-        self.chatgpt_token = (
+        self.chatgpt_token: str | None = (
             os.getenv("CHATGPT_SESSION_TOKEN_1")
             or os.getenv("CHATGPT_SESSION_TOKEN_2")
             or os.getenv("CHATGPT_SESSION_TOKEN_3")
@@ -44,8 +49,8 @@ class OpenAIAPIWrapper:
         self.chatgpt_web_url = "https://chat.openai.com/api"  # ChatGPT 웹 API
 
         # API 키 우선 사용
-        self.available = bool(self.api_key)
-        self.client = None
+        self.available: bool = bool(self.api_key)
+        self.client: httpx.AsyncClient | None = None
         self.use_chatgpt_web = False
 
         if self.api_key:
@@ -70,11 +75,12 @@ class OpenAIAPIWrapper:
             )
             self.available = False
         else:
-            logger.warning(
-                "⚠️ OPENAI_API_KEY 또는 API Wallet 'openai' 키 없음 - OpenAI API 비활성화"
+            # CLI 정기구독 사용 시 API 키 불필요 - 경고 대신 debug
+            logger.debug(
+                "OPENAI_API_KEY 없음 - OpenAI API 비활성화 (CLI 사용 시 무시)"
             )
 
-    async def generate(self, prompt: str, **kwargs) -> dict[str, Any]:
+    async def generate(self, prompt: str, **kwargs: Any) -> dict[str, Any]:
         """
         OpenAI API로 텍스트 생성
         """
@@ -131,7 +137,7 @@ class OpenAIAPIWrapper:
             return {"error": f"OpenAI API exception: {e!s}"}
 
     async def generate_with_context(
-        self, messages: list[dict[str, str]], **kwargs
+        self, messages: list[dict[str, str]], **kwargs: Any
     ) -> dict[str, Any]:
         """
         대화 맥락을 포함한 생성
@@ -195,7 +201,7 @@ class OpenAIAPIWrapper:
             logger.error(f"OpenAI API context exception: {e}")
             return {"error": f"OpenAI API exception: {e!s}"}
 
-    async def close(self):
+    async def close(self) -> None:
         """리소스 정리"""
         if self.client:
             await self.client.aclose()
@@ -238,7 +244,7 @@ class OpenAIAPIWrapper:
 openai_api = OpenAIAPIWrapper()
 
 
-async def generate_with_openai(prompt: str, **kwargs) -> dict[str, Any]:
+async def generate_with_openai(prompt: str, **kwargs: Any) -> dict[str, Any]:
     """
     OpenAI API로 텍스트 생성 인터페이스
     """
@@ -247,7 +253,7 @@ async def generate_with_openai(prompt: str, **kwargs) -> dict[str, Any]:
 
 if __name__ == "__main__":
     # 테스트
-    async def test_openai_api():
+    async def test_openai_api() -> None:
         print("🤖 OpenAI API Wrapper 테스트")
         print("=" * 50)
 

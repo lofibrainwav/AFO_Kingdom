@@ -17,7 +17,15 @@ from __future__ import annotations
 
 import logging
 
-from AFO.llms.claude_api import ClaudeAPIWrapper, claude_api
+# [정기구독] CLI 기반 연동 (API 키 불필요)
+from AFO.llms.claude_cli import ClaudeCLIWrapper, claude_cli
+from AFO.api.compat import get_antigravity_control
+# Start with mock/stub import, handle failure gracefully
+try:
+    from AFO.skills.skill_019 import skill_019
+except ImportError:
+    skill_019 = None
+
 
 logger = logging.getLogger(__name__)
 
@@ -41,17 +49,67 @@ class JaryongScholar:
     당신은 방통(구현)이 작성한 코드를 검토하고 더욱 견고하게 만듭니다.
     """
 
-    def __init__(self, api_wrapper: ClaudeAPIWrapper | None = None):
-        self.api = api_wrapper or claude_api
-        self.model = "claude-3-5-sonnet-latest"
+    def __init__(self, api_wrapper: ClaudeCLIWrapper | None = None):
+        self.api = api_wrapper or claude_cli
+        self.model = "claude-code-cli"  # CLI 모드 사용
+        self.antigravity = get_antigravity_control()
+        self.knowledge_skill = skill_019
+
+    def _check_governance(self, action: str, code_context: str = "") -> bool:
+        """Central Governance Check"""
+        if not self.antigravity:
+             logger.warning("⚠️ [Jaryong] Governance control missing! Proceeding with CAUTION.")
+             return True # Fail open if system core missing (or fail closed depending on policy? Safe=Closed)
+             # Let's Fail Closed for safety in Pure Antigravity
+             # return False 
+        
+        # 1. Flag Check
+        if not self.antigravity.check_governance(f"scholar_{action}"):
+            logger.warning(f"🛡️ [Jaryong] Action '{action}' blocked by Governance Flag.")
+            return False
+
+        # 2. Risk Brake (Simple Heuristic Check on Code)
+        # In a real scenario, we might calculate trinity score here or use a specialized model
+        # For now, quick keyword check as part of Governance
+        if "eval(" in code_context or "exec(" in code_context:
+             logger.error("🛡️ [Jaryong] Risk Brake: High Risk Code Pattern Detected (eval/exec). Blocked.")
+             return False
+             
+        return True
+
+    async def retrieve_knowledge(self, query: str) -> str:
+        """
+        [Context7] Retrieve relevant knowledge context
+        """
+        if not self.knowledge_skill:
+            return ""
+            
+        try:
+            results = await self.knowledge_skill.query(query)
+            return "\n".join(results)
+        except Exception as e:
+            logger.warning(f"⚠️ [Jaryong] RAG retrieval failed: {e}")
+            return ""
+
 
     async def verify_logic(self, code: str, context: str | None = None) -> str:
         """
         코드 논리 검증 및 취약점 분석
         """
+        # 0. Governance Check
+        if not self._check_governance("jaryong", code):
+            return "❌ [Blocked] Governance Denied: Verification Request Blocked."
+
+        # 0.5 Retrieve Knowledge
+        knowledge = await self.retrieve_knowledge("security performance style")
+        
         request_msg = f"다음 코드의 논리적 결함과 잠재적 버그를 분석하시오:\n```python\n{code}\n```"
         if context:
             request_msg += f"\n\n[Context]\n{context}"
+        
+        if knowledge:
+            request_msg += f"\n\n[Royal Library Guidelines]\n{knowledge}"
+
 
         messages = [
             {"role": "system", "content": self.SYSTEM_PROMPT},
@@ -65,7 +123,7 @@ class JaryongScholar:
         )
 
         if result.get("success"):
-            return result["content"]
+            return str(result["content"])
         else:
             error = result.get("error", "Unknown error")
             logger.error(f"❌ [Jaryong] Verification failed: {error}")
@@ -75,20 +133,30 @@ class JaryongScholar:
         """
         리팩터링 제안 (Clean Code)
         """
+        # 0. Governance Check
+        if not self._check_governance("jaryong", code):
+             return "❌ [Blocked] Governance Denied: Refactoring Request Blocked."
+
+        request_context = ""
+        knowledge = await self.retrieve_knowledge("style performance")
+        if knowledge:
+             request_context = f"\n\n[Royal Library Guidelines]\n{knowledge}"
+             
         messages = [
             {"role": "system", "content": self.SYSTEM_PROMPT},
             {
                 "role": "user",
-                "content": f"다음 코드를 더 깨끗하고 안전하게 리팩터링하시오:\n```python\n{code}\n```",
+                "content": f"다음 코드를 더 깨끗하고 안전하게 리팩터링하시오:\n```python\n{code}\n```{request_context}",
             },
         ]
+
 
         result = await self.api.generate_with_context(
             messages=messages, model=self.model, temperature=0.3
         )
 
         if result.get("success"):
-            return result["content"]
+            return str(result["content"])
         else:
             return f"리팩터링 제안 실패: {result.get('error')}"
 

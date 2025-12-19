@@ -62,7 +62,7 @@ class PlaywrightBridgeMCP:
             async def handle_route(route: Route):
                 await route.fulfill(
                     status=scenario.status,
-                    contentType=scenario.content_type,
+                    content_type=scenario.content_type,
                     body=str(scenario.response_body).replace("'", '"'),  # 단순 JSON 변환
                 )
 
@@ -86,6 +86,8 @@ class PlaywrightBridgeMCP:
             await self.setup()
 
         # 새로운 컨텍스트 생성 (Tracing을 위해 필요)
+        if not self.browser:
+            raise RuntimeError("Browser not initialized")
         context = await self.browser.new_context()
 
         # Tracing 시작 (美: 투명한 디버깅)
@@ -116,8 +118,11 @@ class PlaywrightBridgeMCP:
                 raise ValueError("DOM 콘텐츠 비어 있음")
 
             # 접근성 점수 (예시)
-            accessibility = await page.accessibility.snapshot()
-            score = len(accessibility.get("children", [])) / 10 if accessibility else 0
+            if hasattr(page, "accessibility"):
+                accessibility = await page.accessibility.snapshot()
+                score = len(accessibility.get("children", [])) / 10 if accessibility else 0
+            else:
+                score = 0
 
             result = {
                 "status": "PASS",
@@ -164,7 +169,7 @@ class PlaywrightBridgeMCP:
         try:
             # 1. AI로 테스트 코드 생성 (眞: 정확성 - llm_router 사용)
             # 순환 참조 방지를 위해 메서드 내부에서 import
-            from llm_router import llm_router
+            from AFO.llm_router import llm_router
 
             prompt = (
                 f"Use Playwright (async) to create a Python function 'async def test_scenario(page):' "
@@ -193,7 +198,7 @@ class PlaywrightBridgeMCP:
 
             # 2. 동적 코드 실행 (善: 안전한 샌드박스 실행)
             # 보안상 매우 위험할 수 있으므로 제한된 환경에서 실행해야 함 (현재는 데모)
-            exec_globals = {}
+            exec_globals: dict[str, Any] = {}
             exec(test_code, exec_globals)
             test_func = exec_globals.get("test_scenario")
 
@@ -204,6 +209,8 @@ class PlaywrightBridgeMCP:
             if not self.browser:
                 await self.setup()
 
+            if not self.browser:
+                raise RuntimeError("Browser not initialized")
             page = await self.browser.new_page()
             try:
                 # 함수 실행

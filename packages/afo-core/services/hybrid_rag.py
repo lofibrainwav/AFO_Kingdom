@@ -70,7 +70,7 @@ def get_embedding(text: str, openai_client: Any) -> list[float]:
         )
         return cast("list[float]", response.data[0].embedding)
     except Exception as exc:
-        print(f"【Hybrid RAG】 Embedding 생성 실패, 난수로 대체합니다: {exc}")
+        print(f"[Hybrid RAG] Embedding 생성 실패, 난수로 대체합니다: {exc}")
         return random_embedding()
 
 
@@ -94,7 +94,7 @@ def query_pgvector(embedding: list[float], top_k: int, pg_pool: Any) -> list[dic
             )
             rows = cur.fetchall() if cur else []
     except Exception as e:
-        print(f"【Hybrid RAG】 PGVector query failed: {e}")
+        print(f"[Hybrid RAG] PGVector query failed: {e}")
         return []
     finally:
         pg_pool.putconn(conn)
@@ -146,20 +146,12 @@ def query_redis(embedding: list[float], top_k: int, redis_client: Any) -> list[d
         return []
 
     # Phase 2-4: settings 사용
+    # Phase 2-4: settings 사용
     try:
-        try:
-            from config.settings import get_settings
+        from AFO.config.settings import get_settings
 
-            settings = get_settings()
-            index_name = settings.REDIS_RAG_INDEX
-        except ImportError:
-            try:
-                from AFO.config.settings import get_settings
-
-                settings = get_settings()
-                index_name = settings.REDIS_RAG_INDEX
-            except ImportError:
-                index_name = os.getenv("REDIS_RAG_INDEX", "rag_docs")
+        settings = get_settings()
+        index_name = settings.REDIS_RAG_INDEX
     except Exception:
         index_name = os.getenv("REDIS_RAG_INDEX", "rag_docs")
 
@@ -171,7 +163,7 @@ def query_redis(embedding: list[float], top_k: int, redis_client: Any) -> list[d
             query, query_params={"vector": vector_blob}
         )
     except Exception as exc:
-        print(f"【Hybrid RAG】 Redis 검색 실패: {exc}")
+        print(f"[Hybrid RAG] Redis 검색 실패: {exc}")
         return []
 
     docs = getattr(search_result, "docs", getattr(search_result, "documents", []))

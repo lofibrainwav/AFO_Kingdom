@@ -18,6 +18,9 @@ from dataclasses import dataclass
 from math import isclose, prod
 from typing import Literal
 
+from AFO.domain.metrics.trinity_ssot import TrinityWeights
+
+
 
 @dataclass
 class TrinityInputs:
@@ -88,12 +91,12 @@ class TrinityMetrics:
         balance_status: 균형 상태 ("balanced" | "warning" | "imbalanced")
     """
 
-    # SSOT 가중치 (TRINITY_OS_PERSONAS.yaml)
-    WEIGHT_TRUTH = 0.35
-    WEIGHT_GOODNESS = 0.35
-    WEIGHT_BEAUTY = 0.20
-    WEIGHT_SERENITY = 0.08
-    WEIGHT_ETERNITY = 0.02
+    # SSOT 가중치 (TRINITY_OS_PERSONAS.yaml -> trinity_ssot.py)
+    WEIGHT_TRUTH = TrinityWeights.TRUTH
+    WEIGHT_GOODNESS = TrinityWeights.GOODNESS
+    WEIGHT_BEAUTY = TrinityWeights.BEAUTY
+    WEIGHT_SERENITY = TrinityWeights.SERENITY
+    WEIGHT_ETERNITY = TrinityWeights.ETERNITY
 
     truth: float
     goodness: float

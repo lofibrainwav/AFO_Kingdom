@@ -327,7 +327,7 @@ def retry_with_exponential_backoff(
     max_delay: float = 60.0,
     jitter: bool = True,
     retryable_exceptions: tuple[type[BaseException], ...] = (Exception,),
-    on_retry: Callable[[int, Exception], None] | None = None,
+    on_retry: Callable[[int, BaseException], None] | None = None,
 ):
     """
     지수 백오프 재시도 데코레이터

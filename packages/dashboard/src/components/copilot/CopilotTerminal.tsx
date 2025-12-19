@@ -13,31 +13,54 @@ const CopilotTerminal: React.FC = () => {
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Mock Data Stream (Simulating MCP Stream)
+  // SSE Connection for Matrix Stream
   useEffect(() => {
-    const mockLogs = [
-        { source: "Brain", message: "Analyzing user request: 'Create GenUI'", type: "thought" },
-        { source: "MCP", message: "Calling tool: write_to_file", type: "tool" },
-        { source: "GenUI", message: "Drafting code for Project Genesis...", type: "info" },
-        { source: "Trinity", message: "Truth Score: 98% | Serenity: 100%", type: "thought" },
-    ];
+    // Determine API Base URL (Default to localhost:8011 if not proxied)
+    const apiBase = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8011';
+    const streamUrl = `${apiBase}/api/stream/mcp/thoughts`;
     
-    let i = 0;
-    const interval = setInterval(() => {
-        if (i < mockLogs.length) {
-            const log = mockLogs[i];
-            setLogs(prev => [...prev, {
-                id: Date.now().toString(),
-                source: log.source,
-                message: log.message,
-                timestamp: new Date().toLocaleTimeString(),
-                type: log.type as any
-            }]);
-            i++;
-        }
-    }, 1500);
+    console.log(`🔌 [Matrix] Connecting to Neural Stream: ${streamUrl}`);
+    const eventSource = new EventSource(streamUrl);
 
-    return () => clearInterval(interval);
+    eventSource.onmessage = (event) => {
+        try {
+            // Backend sends data as JSON string inside data field
+            const payload = JSON.parse(event.data);
+            
+            setLogs(prev => {
+                const newLogs = [...prev, {
+                    id: Date.now().toString() + Math.random().toString(),
+                    source: payload.source || 'System',
+                    message: payload.message || JSON.stringify(payload),
+                    timestamp: payload.timestamp || new Date().toLocaleTimeString(),
+                    type: (payload.type as any) || 'info'
+                }];
+                // Keep only last 100 logs to prevent memory leak
+                return newLogs.slice(-100);
+            });
+        } catch (e) {
+            console.error('Failed to parse stream message:', event.data);
+        }
+    };
+
+    eventSource.onerror = (err) => {
+        console.error('Stream Error:', err);
+        // Add error log
+        setLogs(prev => [...prev, {
+             id: Date.now().toString(),
+             source: 'System',
+             message: 'Neural Link Interrupted. Retrying...',
+             timestamp: new Date().toLocaleTimeString(),
+             type: 'error'
+        }]);
+        eventSource.close();
+        // Simple retry logic could go here (e.g. setTimeout to reconnect)
+    };
+
+    return () => {
+        console.log('🔌 [Matrix] Disconnecting Stream');
+        eventSource.close();
+    };
   }, []);
 
   useEffect(() => {

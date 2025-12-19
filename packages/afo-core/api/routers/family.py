@@ -29,20 +29,21 @@ DATA_FILE = Path("data/family_data.json")
 # --- Persistence Layer (永: Eternity) ---
 
 
-def load_family_data() -> dict:
+def load_family_data() -> dict[str, Any]:
     """JSON 파일에서 가족 데이터 로드"""
     if not DATA_FILE.exists():
         return {"members": [], "activities": [], "system": {"overall_happiness": 50.0}}
 
     try:
         with open(DATA_FILE, encoding="utf-8") as f:
-            return json.load(f)
+            data: dict[str, Any] = json.load(f)
+            return data
     except Exception as e:
         print(f"⚠️ Failed to load family data: {e}")
         return {"members": [], "activities": [], "system": {"overall_happiness": 50.0}}
 
 
-def save_family_data(data: dict):
+def save_family_data(data: dict[str, Any]) -> None:
     """JSON 파일에 가족 데이터 저장 (비동기 처리 권장)"""
     try:
         # Ensure directory exists
@@ -129,7 +130,7 @@ async def list_members() -> dict[str, Any]:
 
 
 @router.post("/members")
-async def update_member(member: dict) -> dict[str, Any]:
+async def update_member(member: dict[str, Any]) -> dict[str, Any]:
     """가족 구성원 추가/업데이트"""
     data = load_family_data()
     members = data.get("members", [])
@@ -152,7 +153,7 @@ async def update_member(member: dict) -> dict[str, Any]:
 
 
 @router.post("/activity")
-async def log_activity(activity: dict, background_tasks: BackgroundTasks) -> dict[str, Any]:
+async def log_activity(activity: dict[str, Any], background_tasks: BackgroundTasks) -> dict[str, Any]:
     """
     새로운 활동 로그 기록 (孝: Serenity - 기록을 통한 안심)
     활동에 따라 행복 지수가 변동됨.
