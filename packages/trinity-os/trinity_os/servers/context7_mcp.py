@@ -26,7 +26,7 @@ class Context7MCP:
         3. Beauty (美, 20%): Aesthetics, UX, Simplicity. (Scholar: Juyu)
         4. Serenity (孝, 8%): Peace of Mind, Friction Reduction. (Role: Chancellor)
         5. Eternity (永, 2%): Sustainability, Legacy, Long-term view. (Role: Chancellor)
-        
+
         Governance:
         - Trinity Score = Weighted Sum of 5 Pillars.
         - Auto-Run Gate: Requires Score > 90 AND Risk < 10.
@@ -59,7 +59,7 @@ class Context7MCP:
         - Chat: POST /message, GET /providers, GET /stats
         - Julie CPA: GET /api/julie/status, GET /api/julie/dashboard
         - Wallet: POST /browser/save-token, GET /browser/extraction-script
-        
+
         모든 엔드포인트는 실행 시 眞善美孝永 Trinity Score를 반환합니다.
         상세 참조: docs/API_ENDPOINTS_REFERENCE.md
         """,
@@ -73,7 +73,7 @@ class Context7MCP:
         - Analysis Evaluation: skill_004_ragas_evaluator, skill_006_ml_metacognition, skill_008_soul_refine, skill_009_advanced_cosine
         - Integration: skill_007_multi_cloud, skill_012_mcp_tool_bridge, skill_014_strangler_integrator, skill_016_web3_manager
         - Metacognition: skill_015_vibe_coder
-        
+
         모든 스킬은 眞善美孝 철학 점수를 가지며, API를 통해 실행 가능합니다.
         상세 참조: docs/SKILLS_REGISTRY_REFERENCE.md
         """,
@@ -84,14 +84,14 @@ class Context7MCP:
         - 환경 변수: .env 파일 또는 환경 변수로 설정
         - 헬스 체크: GET /health 엔드포인트 사용
         - 모니터링: Prometheus 메트릭, 로그 스트리밍
-        
+
         주요 서비스:
         - Backend (Soul Engine): Port 8010
         - Frontend (Dashboard): Port 3000
         - PostgreSQL: Port 15432
         - Redis: Port 6379
         - Qdrant: Port 6333
-        
+
         상세 참조: docs/DEPLOYMENT_GUIDE.md
         """,
         "CONFIGURATION": """
@@ -103,7 +103,7 @@ class Context7MCP:
         - AntiGravity: ENVIRONMENT, AUTO_DEPLOY, DRY_RUN_DEFAULT
         - MCP: MCP_SERVER_URL, WORKSPACE_ROOT
         - Soul Engine: SOUL_ENGINE_URL, API_PORT
-        
+
         설정 우선순위: 환경 변수 > 환경별 설정 파일 > 기본값
         상세 참조: docs/CONFIGURATION_GUIDE.md
         """,
@@ -115,7 +115,7 @@ class Context7MCP:
         - 의존성 설치 실패: pip install -r requirements.txt 재실행
         - MCP 서버 연결 실패: Cursor MCP 설정 확인, PYTHONPATH 확인
         - Trinity Score 계산 오류: SSOT 파일 확인, Trinity Score 엔진 확인
-        
+
         디버깅: 로그 확인, 헬스 체크, 환경 변수 확인
         상세 참조: docs/TROUBLESHOOTING.md
         """,
@@ -126,14 +126,14 @@ class Context7MCP:
         - 운영 가이드: 100% 완료 (3개 가이드)
         - 총 문서 수: 37개
         - 새로 생성된 문서: 9개 (2,796줄, 55.3 KB)
-        
+
         주요 문서:
         - API_ENDPOINTS_REFERENCE.md: 49개 엔드포인트 문서화
         - SKILLS_REGISTRY_REFERENCE.md: 19개 스킬 문서화
         - DEPLOYMENT_GUIDE.md: Docker, Kubernetes 배포 가이드
         - CONFIGURATION_GUIDE.md: 환경 변수 및 설정 가이드
         - TROUBLESHOOTING.md: 문제 해결 가이드
-        
+
         검증 완료: Sequential Thinking 10단계 분석 완료
         상세 참조: docs/DOCUMENTATION_COMPLETE_VERIFICATION.md
         """,
@@ -144,19 +144,19 @@ class Context7MCP:
         - Daily Notes 관리
         - 양방향 링크 생성
         - 철학 점수: 眞 96%, 善 98%, 美 95%, 孝 99%
-        
+
         옵시디언 RAG 시스템:
         - ObsidianLoader: Markdown 문서 로드 및 메타데이터 파싱
         - Qdrant 벡터 DB 인덱싱
         - LangGraph RAG 파이프라인
         - 자동 동기화 (sync_obsidian_vault.py)
-        
+
         경로: packages/afo-core/scripts/rag/
         상세 참조: packages/afo-core/docs/afo/OBSIDIAN_RAG_GOT_COMPLETE.md
         """,
         "ROYAL_LIBRARY": """
         AFO 왕국의 사서 (Royal Library) - 41가지 원칙:
-        
+
         제1서: 손자병법 (12선) - 眞 70% / 孝 30%
         1. 지피지기 (Rule #0): Context7과 DB 조회 필수
         2. 상병벌모: 기존 라이브러리 활용 우선
@@ -170,7 +170,7 @@ class Context7MCP:
         10. 화공: confirm_dangerous_action() 게이트
         11. 졸속: MVP 배포 우선
         12. 부전이굴: Cron Job, Background Service
-        
+
         제2서: 삼국지 (12선) - 永 60% / 善 40%
         13. 도원결의: Interface 통일, Shared Context
         14. 삼고초려: Retry(max_attempts=3, backoff=exponential)
@@ -184,7 +184,7 @@ class Context7MCP:
         22. 한실 부흥: Linting, Convention Check
         23. 천하삼분: Modular Architecture
         24. 백제성 탁고: Checkpoint Saving, State Persistence
-        
+
         제3서: 군주론 (9선) - 善 50% / 眞 50%
         25. 사랑보다 두려움: Strict Typing, Validation
         26. 비르투와 포르투나: Exception Handling
@@ -195,7 +195,7 @@ class Context7MCP:
         31. 국가 유지: Health Checks, High Availability
         32. 현명한 조언자: Model Router
         33. 결과가 수단을 정당화: Creative Solution w/ High Safety
-        
+
         제4서: 전쟁론 (8선) - 眞 60% / 孝 40%
         34. 전장의 안개: Null Check, Data Validation
         35. 마찰: Complexity Estimation
@@ -205,7 +205,7 @@ class Context7MCP:
         39. 병력 절약: Token/Compute Optimization
         40. 전쟁의 목적: Clear Objectives
         41. 평화의 조건: Stable State
-        
+
         상세 참조: docs/AFO_ROYAL_LIBRARY.md
         """,
     }

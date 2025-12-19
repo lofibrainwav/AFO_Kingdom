@@ -13,7 +13,7 @@ project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root / "packages" / "afo-core"))
 
 try:
-    from afo_skills_registry import PhilosophyScore, register_core_skills
+    from afo_skills_registry import register_core_skills
 except ImportError as e:
     print(f"❌ Import 실패: {e}")
     sys.exit(1)
