@@ -82,7 +82,9 @@ skip-magic-trailing-comma = false
 line-ending = "auto"
 
 [tool.ruff.lint.isort]
-known-first-party = ["AFO", "afo_soul_engine", "trinity_os"]
+known-first-party = ["AFO", "afo_soul_engine", "trinity_os", "sixXon"]
+combine-as-imports = true     # as imports 결합 (美: 우아함)
+lines-after-imports = 2       # import 후 2줄 공백
 
 [tool.ruff.lint.pylint]
 max-args = 10          # 함수 인자 상한 (기본 5)
