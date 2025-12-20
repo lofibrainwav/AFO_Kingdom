@@ -89,7 +89,21 @@ skip-magic-trailing-comma = false
 line-ending = "auto"
 
 [tool.ruff.lint.isort]
-known-first-party = ["AFO", "afo_soul_engine"]
+known-first-party = ["AFO", "afo_soul_engine", "trinity_os"]
+
+[tool.ruff.lint.pylint]
+max-args = 10          # 함수 인자 상한 (기본 5)
+max-branches = 15      # 분기 상한 (기본 12)
+max-statements = 60    # 문장 상한 (기본 50)
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"  # Google 문서화 스타일 (眞: 일관성)
+
+[tool.ruff.lint.flake8-bugbear]
+extend-immutable-calls = ["fastapi.Depends", "fastapi.Query", "pydantic.Field"]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 15    # 복잡도 상한 (기본 10)
 
 
 [tool.mypy]
