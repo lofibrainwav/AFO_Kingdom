@@ -105,6 +105,14 @@ extend-immutable-calls = ["fastapi.Depends", "fastapi.Query", "pydantic.Field"]
 [tool.ruff.lint.mccabe]
 max-complexity = 15    # 복잡도 상한 (기본 10)
 
+[tool.ruff.lint.flake8-type-checking]
+runtime-evaluated-base-classes = ["pydantic.BaseModel", "sqlalchemy.orm.DeclarativeBase"]
+
+[tool.ruff.lint.flake8-annotations]
+suppress-none-returning = true  # None 반환 함수 타입 힌트 완화
+
+[tool.ruff.lint.flake8-unused-arguments]
+ignore-variadic-names = true    # *args, **kwargs 무시
 
 [tool.mypy]
 python_version = "3.12"
