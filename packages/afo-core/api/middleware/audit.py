@@ -1,0 +1,30 @@
+"""
+Audit Middleware for AFO Kingdom (Phase 22)
+Logs privileged actions (POST/PUT/DELETE) for security auditing.
+"""
+from fastapi import Request
+import time
+import logging
+
+logger = logging.getLogger("AFO.Audit")
+
+async def audit_middleware(request: Request, call_next):
+    # Only audit state-changing methods
+    if request.method in ["POST", "PUT", "DELETE", "PATCH"]:
+        user_agent = request.headers.get("user-agent", "unknown")
+        client_ip = request.client.host
+        path = request.url.path
+        
+        logger.info(f"🛡️ [AUDIT] method={request.method} path={path} ip={client_ip} agent={user_agent} status=PENDING")
+        
+        start_time = time.time()
+        try:
+            response = await call_next(request)
+            duration = time.time() - start_time
+            logger.info(f"✅ [AUDIT] method={request.method} path={path} status={response.status_code} duration={duration:.3f}s")
+            return response
+        except Exception as e:
+            logger.error(f"🚨 [AUDIT] method={request.method} path={path} status=ERROR error={str(e)}")
+            raise e
+    else:
+        return await call_next(request)
