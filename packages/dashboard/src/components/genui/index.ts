@@ -11,7 +11,10 @@ export { BudgetDashboard } from './BudgetDashboard';
 export { JulieSuggestions } from './JulieSuggestions';
 export { JuliePrediction } from './JuliePrediction';
 
+// Phase 13: AICPA Agent Army Integration
+export { TaxSimulationWidget } from '../aicpa/TaxSimulationWidget';
+export { AICPAControlPanel } from '../aicpa/AICPAControlPanel';
+export { RothLadderSimulator } from '../aicpa/RothLadderSimulator';
 
-
-
-
+// Phase 14: Prophet Prediction
+export { BudgetPredictionWidget } from '../aicpa/BudgetPredictionWidget';
