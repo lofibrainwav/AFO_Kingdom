@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import os
+import pathlib
 import re
 import sys
 
@@ -52,7 +53,7 @@ def analyze_risk(directory: str) -> float:
 
             path = os.path.join(root, file)
             try:
-                with open(path, errors="ignore") as f:
+                with pathlib.Path(path).open(errors="ignore") as f:
                     content = f.read()
                     for pattern, weight, msg in risk_patterns:
                         if re.search(pattern, content):
@@ -77,9 +78,9 @@ def analyze_truth_beauty() -> tuple[float, float]:
     truth_score = 100.0
     beauty_score = 100.0
 
-    if os.path.exists("FORCE_FAIL_TRUTH"):
+    if pathlib.Path("FORCE_FAIL_TRUTH").exists():
         truth_score = 50.0
-    if os.path.exists("FORCE_FAIL_BEAUTY"):
+    if pathlib.Path("FORCE_FAIL_BEAUTY").exists():
         beauty_score = 60.0
 
     return truth_score, beauty_score
@@ -146,7 +147,7 @@ def main():
 
     # Output for GitHub Actions
     if os.environ.get("GITHUB_OUTPUT"):
-        with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+        with pathlib.Path(os.environ["GITHUB_OUTPUT"]).open("a") as f:
             f.write(f"trinity_score={trinity_score}\n")
             f.write(f"risk_score={risk}\n")
             f.write(f"passed={str(passed).lower()}\n")

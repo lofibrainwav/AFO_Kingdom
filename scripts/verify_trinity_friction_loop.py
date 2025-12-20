@@ -1,7 +1,7 @@
 import asyncio
 import os
 import sys
-from decimal import Decimal
+
 
 # Setup path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../packages")))
@@ -10,10 +10,11 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../pack
 from config.friction_calibrator import friction_calibrator
 from services.trinity_calculator import trinity_calculator
 
+
 try:
     from julie_cpa.core.julie_engine import julie
 except ImportError:
-    from packages.afo_core.julie_cpa.core.julie_engine import julie
+    pass
 
 
 async def verify_loop():

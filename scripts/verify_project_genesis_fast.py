@@ -1,13 +1,16 @@
 import asyncio
-import os
 import sys
 from datetime import datetime
+
 
 # Setup Path
 sys.path.append("/Users/brnestrm/AFO_Kingdom/packages/afo-core")
 
+import pathlib
+
+from langchain_core.messages import HumanMessage
+
 from AFO.chancellor_graph import historian_node
-from langchain_core.messages import AIMessage, HumanMessage
 
 
 async def verify_genesis_fast():
@@ -36,9 +39,9 @@ async def verify_genesis_fast():
     today = datetime.now().strftime("%Y-%m-%d")
     daily_log = f"{bridge_path}/journals/daily/{today}.md"
 
-    if os.path.exists(daily_log):
+    if pathlib.Path(daily_log).exists():
         print(f"\n✅ Daily Log Found: {daily_log}")
-        with open(daily_log) as f:
+        with pathlib.Path(daily_log).open() as f:
             content = f.read()
             if "Council Session Recorded" in content:
                 print("   -> 'Council Session Recorded' signature found!")

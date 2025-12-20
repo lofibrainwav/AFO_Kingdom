@@ -3,10 +3,7 @@ Phase 11: Evolution Engine
 Trains a Custom BERT model on AFO thoughts.
 """
 
-import json
-import os
-import random
-import sys
+import pathlib
 import time
 
 
@@ -29,7 +26,7 @@ def run_simulation(data_file):
     print("💾 Model saved to ./models/bert-afo-evolved")
 
     # Write log
-    with open("AFO_EVOLUTION_LOG.md", "a") as f:
+    with pathlib.Path("AFO_EVOLUTION_LOG.md").open("a") as f:
         f.write(
             f"\n- **2025-12-19 Phase 11**: BERT fine-tune with 500 samples. Accuracy: {final_acc:.4f}\n"
         )

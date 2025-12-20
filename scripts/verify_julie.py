@@ -1,7 +1,7 @@
-import json
 import sys
 
 import requests
+
 
 BASE_URL = "http://localhost:8011/api/finance"
 

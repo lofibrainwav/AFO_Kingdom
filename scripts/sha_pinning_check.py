@@ -5,8 +5,10 @@ Scans GitHub Actions workflows to ensure Actions are pinned to SHA-1 hashes, not
 """
 
 import os
+import pathlib
 import re
 import sys
+
 
 WORKFLOW_DIR = ".github/workflows"
 SHA_PATTERN = re.compile(r"uses:\s+[^@]+@[a-f0-9]{40}")
@@ -14,7 +16,7 @@ SHA_PATTERN = re.compile(r"uses:\s+[^@]+@[a-f0-9]{40}")
 
 def scan_workflows():
     print("🛡️  [Antigravity] Starting SHA Pinning Check...")
-    if not os.path.exists(WORKFLOW_DIR):
+    if not pathlib.Path(WORKFLOW_DIR).exists():
         print(f"⚠️  Directory {WORKFLOW_DIR} not found. Skipping.")
         return
 
@@ -26,7 +28,7 @@ def scan_workflows():
         filepath = os.path.join(WORKFLOW_DIR, filename)
         print(f"🔍 Scanning {filename}...")
 
-        with open(filepath) as f:
+        with pathlib.Path(filepath).open() as f:
             lines = f.readlines()
 
         for i, line in enumerate(lines):

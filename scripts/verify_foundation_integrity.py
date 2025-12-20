@@ -1,5 +1,4 @@
-import importlib.util
-import os
+import pathlib
 import sys
 
 import requests
@@ -8,7 +7,7 @@ import requests
 def check_truth():
     print("Checking 眞 (Truth)...")
     # Check mypy.ini/pyproject.toml for strict mode (File presence)
-    if os.path.exists("pyproject.toml") or os.path.exists("mypy.ini"):
+    if pathlib.Path("pyproject.toml").exists() or pathlib.Path("mypy.ini").exists():
         print("✅ Type Configuration Found")
     else:
         print("❌ Type Configuration Missing")
@@ -28,7 +27,7 @@ def check_goodness():
             return False
     except ImportError:
         # Manually check file content if import fails due to path issues in script
-        with open("packages/afo-core/AFO/config/antigravity.py") as f:
+        with pathlib.Path("packages/afo-core/AFO/config/antigravity.py").open() as f:
             if "DRY_RUN_DEFAULT: bool = True" in f.read():
                 print("✅ AntiGravity DRY_RUN_DEFAULT = True (Static Check)")
             else:
@@ -47,7 +46,7 @@ def check_beauty():
     ]
     all_exist = True
     for l in layers:
-        if os.path.exists(l):
+        if pathlib.Path(l).exists():
             print(f"✅ Layer Exists: {l}")
         else:
             print(f"❌ Layer Missing: {l}")
@@ -98,7 +97,7 @@ def check_eternity():
             return False
     except ImportError:
         # Static check
-        with open("packages/afo-core/AFO/domain/metrics/trinity_ssot.py") as f:
+        with pathlib.Path("packages/afo-core/AFO/domain/metrics/trinity_ssot.py").open() as f:
             content = f.read()
             if (
                 "TRUTH: Final[float] = 0.35" in content

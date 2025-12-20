@@ -1,12 +1,12 @@
 # scripts/verify_phase_4.py
-import os
+import pathlib
 import sys
 
 
 def verify_graph_naming():
     print("[Phase 4 Verification] Checking Chancellor Graph Naming...")
     try:
-        with open("packages/afo-core/chancellor_graph.py") as f:
+        with pathlib.Path("packages/afo-core/chancellor_graph.py").open() as f:
             content = f.read()
 
         required_names = [
@@ -45,7 +45,7 @@ def verify_graph_naming():
 
 def verify_base_module():
     print("[Phase 4 Verification] Checking Base Module...")
-    if os.path.exists("packages/afo-core/strategists/base.py"):
+    if pathlib.Path("packages/afo-core/strategists/base.py").exists():
         print("✅ base.py exists.")
     else:
         print("❌ base.py missing.")

@@ -8,6 +8,7 @@ import asyncio
 import os
 import sys
 
+
 # Ensure AFO package is importable
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../packages/afo-core")))
 
@@ -66,9 +67,8 @@ async def verify_dashboard():
             if all_passed:
                 print("\n✅ Browser Integration Test PASSED")
                 return True
-            else:
-                print("\n⚠️ Some checks failed (Dashboard may not be running)")
-                return False
+            print("\n⚠️ Some checks failed (Dashboard may not be running)")
+            return False
 
         except Exception as e:
             print(f"❌ Navigation failed: {e}")

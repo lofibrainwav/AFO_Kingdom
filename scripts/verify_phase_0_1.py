@@ -1,5 +1,6 @@
-import os
+import pathlib
 import sys
+
 
 # Check AntiGravity Configuration
 try:
@@ -30,11 +31,11 @@ except Exception as e:
 
 # Check AGENTS.md
 agents_md_path = "/Users/brnestrm/AFO_Kingdom/AGENTS.md"
-if not os.path.exists(agents_md_path):
+if not pathlib.Path(agents_md_path).exists():
     print("❌ FAIL: AGENTS.md not found")
     sys.exit(1)
 
-with open(agents_md_path, encoding="utf-8") as f:
+with pathlib.Path(agents_md_path).open(encoding="utf-8") as f:
     lines = f.readlines()
 
     # 3. Check Line Count

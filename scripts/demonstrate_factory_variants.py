@@ -1,5 +1,3 @@
-import os
-import sys
 from abc import ABC, abstractmethod
 
 
@@ -30,10 +28,9 @@ class SimpleSkillFactory:
     def create_skill(skill_type: str) -> Skill:
         if skill_type == "youtube":
             return YoutubeSkill()
-        elif skill_type == "rag":
+        if skill_type == "rag":
             return RAGSkill()
-        else:
-            raise ValueError("Unknown Skill")
+        raise ValueError("Unknown Skill")
 
 
 # ==========================================

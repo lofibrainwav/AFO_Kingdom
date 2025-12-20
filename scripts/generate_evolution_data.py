@@ -1,6 +1,7 @@
 import csv
-import os
+import pathlib
 import random
+
 
 OUTPUT_FILE = "data/afo_thoughts_500.csv"
 
@@ -76,24 +77,22 @@ def generate_data():
     for pillar, phrases in PILLARS.items():
         for _ in range(100):
             phrase = random.choice(phrases)
-            context = random.choice(
-                [
-                    f"Executing {phrase} for system stability.",
-                    f"Applying {phrase} to the codebase.",
-                    f"System is optimizing {phrase} now.",
-                    f"Checking {phrase} status...",
-                    f"Refining {phrase} based on feedback.",
-                    f"Integration of {phrase} complete.",
-                    f"Analyzing {phrase} metrics.",
-                ]
-            )
+            context = random.choice([
+                f"Executing {phrase} for system stability.",
+                f"Applying {phrase} to the codebase.",
+                f"System is optimizing {phrase} now.",
+                f"Checking {phrase} status...",
+                f"Refining {phrase} based on feedback.",
+                f"Integration of {phrase} complete.",
+                f"Analyzing {phrase} metrics.",
+            ])
             data.append([context, pillar])
 
     # Shuffle
     random.shuffle(data)
 
     # Write to CSV
-    with open(OUTPUT_FILE, "w", newline="", encoding="utf-8") as f:
+    with pathlib.Path(OUTPUT_FILE).open("w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
         writer.writerow(["text", "label"])
         writer.writerows(data)

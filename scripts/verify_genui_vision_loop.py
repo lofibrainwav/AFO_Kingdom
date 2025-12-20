@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import os
+import pathlib
 import sys
+
 
 # Add package root to path
 sys.path.append(os.path.abspath("packages/afo-core"))
@@ -20,7 +22,7 @@ def main():
     print(" 👁️  Operation Creator: GenUI Vision Loop Verification")
     print("==================================================")
 
-    orchestrator = GenUIOrchestrator(workspace_root=os.getcwd())
+    orchestrator = GenUIOrchestrator(workspace_root=pathlib.Path.cwd())
 
     # Define a test project
     project_id = "verification_genui_v1"
@@ -47,7 +49,7 @@ def main():
             )
 
         # Verify file existence
-        if os.path.exists(result["code_path"]):
+        if pathlib.Path(result["code_path"]).exists():
             print(f"   ✅ Verified: Source code file exists at {result['code_path']}")
         else:
             print("   ❌ Error: Source code file missing!")

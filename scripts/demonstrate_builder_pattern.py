@@ -1,6 +1,6 @@
 import os
 import sys
-from abc import ABC, abstractmethod
+
 
 # Add package root to sys.path for direct imports if needed
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../packages")))
@@ -14,7 +14,7 @@ except ImportError:
         os.path.abspath(os.path.join(os.path.dirname(__file__), "../packages/afo-core"))
     )
     from builders.trinity_query_builder import TrinityQueryBuilder
-    from factories.skill_factory import AFO_SkillFactory, Skill
+    from factories.skill_factory import AFO_SkillFactory
 
 
 def demonstrate_builder():

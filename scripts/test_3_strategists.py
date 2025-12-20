@@ -3,6 +3,7 @@ import asyncio
 import os
 import sys
 
+
 # Ensure packages/afo-core is in python path
 sys.path.append(os.path.abspath("packages/afo-core"))
 
@@ -13,7 +14,6 @@ try:
     # We should have named it 'three_strategists.py' but user requested '3_strategists.py'.
     # We will use importlib.util to load it.
     import importlib.util
-    from importlib import import_module
 
     file_path = "packages/afo-core/3_strategists.py"
     module_name = "three_strategists"

@@ -14,6 +14,7 @@ DRY_RUN 자동 트리거 스크립트
 import subprocess
 import sys
 
+
 # 고위험 패턴 정의
 HIGH_RISK_PATTERNS = [
     # 외부 API
@@ -42,7 +43,7 @@ HIGH_RISK_PATTERNS = [
 def get_changed_files() -> list[str]:
     """Git에서 변경된 파일 목록 가져오기"""
     result = subprocess.run(
-        ["git", "diff", "--name-only", "HEAD~1"], capture_output=True, text=True
+        ["git", "diff", "--name-only", "HEAD~1"], check=False, capture_output=True, text=True
     )
     return result.stdout.strip().split("\n") if result.stdout.strip() else []
 
@@ -50,7 +51,7 @@ def get_changed_files() -> list[str]:
 def get_file_diff(file_path: str) -> str:
     """파일의 diff 내용 가져오기"""
     result = subprocess.run(
-        ["git", "diff", "HEAD~1", "--", file_path], capture_output=True, text=True
+        ["git", "diff", "HEAD~1", "--", file_path], check=False, capture_output=True, text=True
     )
     return result.stdout
 
@@ -69,14 +70,12 @@ def detect_high_risk_changes() -> list[dict]:
 
         for pattern, description in HIGH_RISK_PATTERNS:
             if pattern.lower() in diff.lower():
-                risks.append(
-                    {
-                        "file": file_path,
-                        "pattern": pattern,
-                        "description": description,
-                        "recommendation": "DRY_RUN 필수",
-                    }
-                )
+                risks.append({
+                    "file": file_path,
+                    "pattern": pattern,
+                    "description": description,
+                    "recommendation": "DRY_RUN 필수",
+                })
 
     return risks
 

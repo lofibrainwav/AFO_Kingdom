@@ -12,6 +12,7 @@ import time
 from pathlib import Path
 from typing import Any
 
+
 # 테스트할 MCP 서버 목록
 MCP_SERVERS = [
     {
@@ -113,14 +114,12 @@ def test_mcp_server(server_config: dict[str, Any]) -> dict[str, Any]:
         for tool_name in server_config["tools"]:
             if tool_name not in available_tools:
                 print(f"  ⚠️  {tool_name}: Not available in server")
-                results["tool_results"].append(
-                    {
-                        "tool": tool_name,
-                        "status": "skipped",
-                        "reason": "Not available",
-                        "trinity_score": None,
-                    }
-                )
+                results["tool_results"].append({
+                    "tool": tool_name,
+                    "status": "skipped",
+                    "reason": "Not available",
+                    "trinity_score": None,
+                })
                 continue
 
             results["tools_tested"] += 1
@@ -155,9 +154,11 @@ def test_mcp_server(server_config: dict[str, Any]) -> dict[str, Any]:
             response_line = process.stdout.readline()
             if not response_line:
                 print("    ❌ No response")
-                results["tool_results"].append(
-                    {"tool": tool_name, "status": "error", "trinity_score": None}
-                )
+                results["tool_results"].append({
+                    "tool": tool_name,
+                    "status": "error",
+                    "trinity_score": None,
+                })
                 continue
 
             try:
@@ -172,24 +173,26 @@ def test_mcp_server(server_config: dict[str, Any]) -> dict[str, Any]:
                     print(f"    ✅ Trinity Score: {trinity_score.get('trinity_score', 0):.2%}")
                     print(f"       Balance: {trinity_score.get('balance_status', 'unknown')}")
                     results["tools_passed"] += 1
-                    results["tool_results"].append(
-                        {
-                            "tool": tool_name,
-                            "status": "passed",
-                            "trinity_score": trinity_score,
-                        }
-                    )
+                    results["tool_results"].append({
+                        "tool": tool_name,
+                        "status": "passed",
+                        "trinity_score": trinity_score,
+                    })
                 else:
                     print("    ❌ No Trinity Score in response")
-                    results["tool_results"].append(
-                        {"tool": tool_name, "status": "failed", "trinity_score": None}
-                    )
+                    results["tool_results"].append({
+                        "tool": tool_name,
+                        "status": "failed",
+                        "trinity_score": None,
+                    })
 
             except json.JSONDecodeError as e:
                 print(f"    ❌ Invalid JSON response: {e}")
-                results["tool_results"].append(
-                    {"tool": tool_name, "status": "error", "trinity_score": None}
-                )
+                results["tool_results"].append({
+                    "tool": tool_name,
+                    "status": "error",
+                    "trinity_score": None,
+                })
 
     except Exception as e:
         results["status"] = "error"
@@ -239,23 +242,23 @@ def test_skills_registry() -> dict[str, Any]:
             if skill.philosophy_scores:
                 print(f"    ✅ Has Philosophy Scores: {skill.philosophy_scores.summary}")
                 results["tools_passed"] += 1
-                results["tool_results"].append(
-                    {
-                        "tool": skill.skill_id,
-                        "status": "passed",
-                        "philosophy_scores": {
-                            "truth": skill.philosophy_scores.truth,
-                            "goodness": skill.philosophy_scores.goodness,
-                            "beauty": skill.philosophy_scores.beauty,
-                            "serenity": skill.philosophy_scores.serenity,
-                        },
-                    }
-                )
+                results["tool_results"].append({
+                    "tool": skill.skill_id,
+                    "status": "passed",
+                    "philosophy_scores": {
+                        "truth": skill.philosophy_scores.truth,
+                        "goodness": skill.philosophy_scores.goodness,
+                        "beauty": skill.philosophy_scores.beauty,
+                        "serenity": skill.philosophy_scores.serenity,
+                    },
+                })
             else:
                 print("    ❌ No Philosophy Scores")
-                results["tool_results"].append(
-                    {"tool": skill.skill_id, "status": "failed", "philosophy_scores": None}
-                )
+                results["tool_results"].append({
+                    "tool": skill.skill_id,
+                    "status": "failed",
+                    "philosophy_scores": None,
+                })
 
         return results
 
@@ -346,9 +349,8 @@ def main():
     if total_passed == total_tested and total_tested > 0:
         print("\n✅ 모든 테스트 통과!")
         return 0
-    else:
-        print("\n⚠️  일부 테스트 실패")
-        return 1
+    print("\n⚠️  일부 테스트 실패")
+    return 1
 
 
 if __name__ == "__main__":

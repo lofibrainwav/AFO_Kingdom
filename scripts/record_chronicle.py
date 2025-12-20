@@ -11,6 +11,7 @@ AFO 왕국의 역사를 영원히 기록합니다.
 from datetime import datetime
 from pathlib import Path
 
+
 CHRONICLE_SUMMARY = """
 ---
 
@@ -65,7 +66,7 @@ def record_chronicle() -> None:
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M")
     footer = f"\n*기록일: {timestamp} by Chancellor (Antigravity)*\n"
 
-    with open(log_path, "a", encoding="utf-8") as f:
+    with Path(log_path).open("a", encoding="utf-8") as f:
         f.write(CHRONICLE_SUMMARY)
         f.write(footer)
 

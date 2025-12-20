@@ -1,7 +1,7 @@
 # scripts/test_modular_architecture.py
-import asyncio
 import os
 import sys
+
 
 # Ensure packages/afo-core is in python path
 sys.path.append(os.path.abspath("packages/afo-core"))
