@@ -4,6 +4,10 @@ import React, { useState, useEffect, useCallback } from 'react';
 import FinancialHealthDial from '@/components/julie/FinancialHealthDial';
 import TransactionLedger from '@/components/julie/TransactionLedger';
 import ApprovalQueue from '@/components/julie/ApprovalQueue';
+import { BudgetPredictionWidget } from '@/components/aicpa/BudgetPredictionWidget';
+import { GrokInsightWidget } from '@/components/aicpa/GrokInsightWidget';
+import { TrinityScoreWidget } from '@/components/aicpa/TrinityScoreWidget';
+import { PillarsDetailedWidget } from '@/components/aicpa/PillarsDetailedWidget';
 import { Briefcase, Building2, Coins, AlertTriangle, RefreshCw } from 'lucide-react';
 
 interface CPADashboardProps {
@@ -97,6 +101,9 @@ export default function CPADashboard({}: CPADashboardProps) {
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
                     {/* Left Column: Metrics */}
                     <div className="lg:col-span-1 space-y-6">
+                        {/* Phase 16.5: Trinity Score - Strategic Compass */}
+                        <TrinityScoreWidget />
+
                         <FinancialHealthDial 
                             score={displayData.financial_health_score} 
                             trend={displayData.financial_health_score > 80 ? "up" : "down"}
@@ -113,22 +120,21 @@ export default function CPADashboard({}: CPADashboardProps) {
                                 <div className="text-xl font-mono text-emerald-400 tracking-wider">₩ {displayData.budget_remaining?.toLocaleString()}</div>
                             </div>
                         </div>
-
-                        {/* Approvals (Mock for now as backend endpoint might verify in future) */}
-                         <div className="bg-[#0A0F1C] border border-gray-800 rounded-2xl p-4 shadow-lg">
-                            <h3 className="text-sm font-bold text-gray-400 mb-3 border-b border-gray-800 pb-2">Pending Approvals</h3>
-                            <div className="space-y-2">
-                                <div className="p-3 bg-gray-900/50 rounded-lg border border-gray-800 text-xs hover:border-gray-700 transition-colors cursor-pointer">
-                                    <div className="flex justify-between text-gray-300 font-bold mb-1">GPU Server</div>
-                                    <div className="text-right text-gray-500 font-mono">₩ 1.2M</div>
-                                </div>
-                            </div>
-                         </div>
                     </div>
 
-                    {/* Right Column: Ledger */}
-                    <div className="lg:col-span-3">
+                    {/* Middle/Right Column: Ledger + Prediction */}
+                    <div className="lg:col-span-3 space-y-6">
+                        {/* Phase 14: Prophet + ARIMA Hybrid Prediction Widget */}
+                        {/* Phase 15: Grok Insight Widget */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <BudgetPredictionWidget />
+                            <GrokInsightWidget />
+                        </div>
+                        
                         <TransactionLedger transactions={displayData.recent_transactions || []} />
+                        
+                        {/* Phase 16.5: Detailed Pillars */}
+                        <PillarsDetailedWidget />
                     </div>
                 </div>
             </div>

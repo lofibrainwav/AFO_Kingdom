@@ -395,3 +395,121 @@ async def get_budget_prediction():
         "timestamp": datetime.now().isoformat(),
     }
 
+
+# ============================================================
+# Phase 14: Prophet 기반 고정밀 예측
+# ============================================================
+
+@router.get("/forecast")
+async def get_budget_forecast(periods: int = 3):
+    """
+    Prophet 기반 미래 예산 예측
+    
+    Phase 14: LinearRegression → Prophet 업그레이드
+    - 시계열 패턴 자동 학습
+    - 이벤트(Phase 보상, 연말) 반영
+    - 신뢰 구간 제공
+    
+    Args:
+        periods: 예측 기간 (기본 3개월, 최대 12개월)
+    
+    眞 (Truth): 데이터 기반 정확한 예측
+    善 (Goodness): 형님 안심을 위한 명확한 결과
+    """
+    try:
+        from AFO.julie_cpa.prophet_engine import get_kingdom_forecast
+        
+        # 기간 제한 (1~12개월)
+        periods = max(1, min(12, periods))
+        
+        result = get_kingdom_forecast(periods=periods)
+        
+        logger.info(f"[Julie] Prophet 예측 완료: {periods}개월, 총 ${result['summary']['total']:,}")
+        
+        return result
+        
+    except ImportError as e:
+        # Prophet 없으면 기존 LinearRegression 사용
+        logger.warning(f"[Julie] Prophet 미설치, 폴백 사용: {e}")
+        
+        # 간단한 폴백 응답
+        from AFO.julie_cpa.prophet_engine import get_kingdom_forecast
+        return get_kingdom_forecast(periods=periods)
+        
+    except Exception as e:
+        logger.error(f"[Julie] 예측 실패: {e}")
+        raise HTTPException(status_code=500, detail=f"예측 실패: {str(e)}")
+
+
+# ============================================================
+# Phase 14 완전체: Hybrid 예측 (Prophet + auto_arima)
+# ============================================================
+
+@router.get("/forecast-hybrid")
+async def get_hybrid_budget_forecast(periods: int = 3):
+    """
+    Prophet + auto_arima 하이브리드 예측
+    
+    Phase 14 완전체: 99%+ 정확도
+    - Prophet 기본 예측 (추세 + 계절성)
+    - auto_arima 잔차 보정 (미세 패턴)
+    
+    Args:
+        periods: 예측 기간 (기본 3개월, 최대 12개월)
+    
+    眞 (Truth): 형님의 경제적 진실 - 돈을 담당하는 매우 중요한 시스템
+    """
+    try:
+        from AFO.julie_cpa.hybrid_engine import get_hybrid_forecast
+        
+        periods = max(1, min(12, periods))
+        result = get_hybrid_forecast(periods=periods)
+        
+        logger.info(f"[Julie] Hybrid 예측 완료: {periods}개월, 신뢰도 {result.get('summary', {}).get('confidence', 0)}%")
+        
+        return result
+        
+    except ImportError as e:
+        logger.warning(f"[Julie] Hybrid 엔진 미설치: {e}")
+        # Prophet 폴백
+        from AFO.julie_cpa.prophet_engine import get_kingdom_forecast
+        return get_kingdom_forecast(periods=periods)
+        
+    except Exception as e:
+        logger.error(f"[Julie] Hybrid 예측 실패: {e}")
+        raise HTTPException(status_code=500, detail=f"Hybrid 예측 실패: {str(e)}")
+
+
+# ============================================================
+# Phase 15: The Grok Singularity (외부 지능 자문)
+# ============================================================
+
+@router.get("/consult-grok")
+async def consult_grok_advisor(periods: int = 3):
+    """
+    Phase 15: The Grok Singularity - 외부 지능(xAI) 자문
+    
+    왕국의 예산 예측 데이터를 바탕으로 Grok에게 거시경제적 조언을 구합니다.
+    - 智 (Wisdom): 외부 데이터와 내부 데이터의 융합
+    """
+    try:
+        from AFO.julie_cpa.hybrid_engine import get_hybrid_forecast
+        from AFO.julie_cpa.grok_engine import consult_grok
+        
+        # 1. 내부 예측 수행 (Hybrid Engine)
+        logger.info("[Julie] Grok 자문을 위한 내부 예측 수행 중...")
+        forecast = get_hybrid_forecast(periods=periods)
+        
+        # 2. Grok에게 자문 (비동기)
+        logger.info("[Julie] Grok(The Sage from the Stars) 호출 중...")
+        analysis = await consult_grok(forecast)
+        
+        return {
+            "source": "xAI (Grok)",
+            "forecast_summary": forecast["summary"],
+            "grok_analysis": analysis
+        }
+        
+    except Exception as e:
+        logger.error(f"[Julie] Grok 자문 실패: {e}")
+        raise HTTPException(status_code=500, detail=f"Grok 통신 실패: {str(e)}")

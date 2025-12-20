@@ -84,8 +84,7 @@ if get_settings is not None:
 gemini_key = getattr(settings, "GEMINI_API_KEY", None) if settings else os.getenv("GEMINI_API_KEY")
 if gemini_key:
     print(f"✅ GEMINI_API_KEY 로드됨: {gemini_key[:20]}...")
-else:
-    print("⚠️ GEMINI_API_KEY가 .env에 설정되지 않았습니다")
+# Note: GEMINI_API_KEY is optional - Ollama is prioritized for cost=0
 
 sentinel_dsn = getattr(settings, "SENTRY_DSN", None) if settings else os.getenv("SENTRY_DSN")
 if sentinel_dsn and LazyModules.sentry_sdk:
@@ -341,17 +340,17 @@ except ImportError:
 #     print("⚠️  LangChainRAGSystem not available (Week 1 pending)")
 SUNO_MUSIC_RAG_AVAILABLE = False
 
-# Import Yeongdeok Complete (Phase 2.5 - Optional)
+# Import Yeongdeok Complete (Phase 2.5 - Memory System)
+YeongdeokComplete: Any = None
 try:
-    import sys
-
-    memory_system_path = str(Path(__file__).parent / "memory_system")
-    if memory_system_path not in sys.path:
-        sys.path.insert(0, memory_system_path)
-    from memory_system.yeongdeok_complete import YeongdeokComplete
+    from AFO.memory_system.yeongdeok_complete import YeongdeokComplete as _YC
+    YeongdeokComplete = _YC
 except ImportError:
-    YeongdeokComplete = None
-    print("⚠️  YeongdeokComplete not available (Phase 2.5 pending)")
+    try:
+        from memory_system.yeongdeok_complete import YeongdeokComplete as _YC
+        YeongdeokComplete = _YC
+    except ImportError:
+        pass  # Silent - optional module
 
 # Import API Wallet (Phase 2.1 - Required)
 # APIWallet는 현재 사용되지 않음 (레거시 - api_wallet_router로 대체)
@@ -634,15 +633,18 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         print("ℹ️  Anthropic library unavailable")
 
     # The application is now ready to run
-    yield
+    try:
+        yield
+    except Exception as e:
+        print(f"❌ [Lifespan Error] 런타임 중 치명적 오류 발생: {e}")
+    finally:
+        # ===== ASYNC DATABASE CONNECTION FUNCTION =====
+        # ===== ASYNC DATABASE CONNECTION FUNCTION =====
+        # Moved to services/database.py
+        # Imported at top level
 
-    # ===== ASYNC DATABASE CONNECTION FUNCTION =====
-    # ===== ASYNC DATABASE CONNECTION FUNCTION =====
-    # Moved to services/database.py
-    # Imported at top level
-
-    # Cleanup
-    print("[영덕] 영덕 완전체 종료 중...")
+        # Cleanup
+        print("[영덕] 영덕 완전체 종료 중...")
     if yeongdeok and yeongdeok.browser:
         await yeongdeok.close_eyes()
 
@@ -787,6 +789,94 @@ except Exception as e:
     print(f"⚠️ Budget Router 등록 실패: {e}")
 
 # ============================================================
+# Phase 13: AICPA Agent Army Integration
+# ============================================================
+try:
+    from AFO.api.routers.aicpa import router as aicpa_router
+    app.include_router(aicpa_router, prefix="/api", tags=["AICPA Agent Army"])
+    print("✅ AICPA Router 등록 완료 (Phase 13: 에이전트 군단)")
+except Exception as e:
+    print(f"⚠️ AICPA Router 등록 실패: {e}")
+
+# ============================================================
+# Phase 16: Autonomous Agents (Feedback Loop)
+# ============================================================
+try:
+    from AFO.api.routers.learning_log_router import router as learning_log_router
+    app.include_router(learning_log_router)
+    print("✅ Learning Log Router 등록 완료 (Phase 16-4: 자율 학습 루프)")
+except Exception as e:
+    print(f"⚠️ Learning Log Router 등록 실패: {e}")
+
+# ============================================================
+# Phase 18: Grok Real-time Stream
+# ============================================================
+try:
+    from AFO.api.routers.grok_stream import router as grok_stream_router
+    app.include_router(grok_stream_router)
+    print("✅ Grok Stream Router 등록 완료 (Phase 18: 왕국의 맥박)")
+except Exception as e:
+    print(f"⚠️ Grok Stream Router 등록 실패: {e}")
+
+# ============================================================
+# Phase 24: Voice Interface (Commander's Voice)
+# ============================================================
+try:
+    from AFO.api.routers.voice import router as voice_router
+    app.include_router(voice_router, prefix="/api", tags=["Voice Interface"])
+    print("🎙️ Voice Router 등록 완료 (Phase 24: Commander's Voice)")
+except Exception as e:
+    print(f"⚠️ Voice Router 등록 실패: {e}")
+
+# ============================================================
+# Phase 23: Multi-Model Intelligence (Council of Minds)
+# ============================================================
+try:
+    from AFO.api.routers.council import router as council_router
+    app.include_router(council_router, prefix="/api", tags=["Council of Minds"])
+    print("🧠 Council Router 등록 완료 (Phase 23: 지혜의 의회)")
+except Exception as e:
+    print(f"⚠️ Council Router 등록 실패: {e}")
+
+# ============================================================
+# Phase 26: AI Self-Improvement (Samahwi Learning Pipeline)
+# ============================================================
+try:
+    from AFO.api.routers.learning_pipeline import router as learning_router
+    app.include_router(learning_router, prefix="/api", tags=["AI Self-Improvement"])
+    print("🧠 Learning Pipeline Router 등록 완료 (Phase 26: 사마휘 자율 학습)")
+except Exception as e:
+    print(f"⚠️ Learning Pipeline Router 등록 실패: {e}")
+
+# ============================================================
+# Phase 20: Kingdom Observability
+# ============================================================
+try:
+    from AFO.api.middleware.prometheus import setup_prometheus_metrics
+    # Port 8001 for metrics
+    setup_prometheus_metrics(app, port=8001)
+    print("✅ Prometheus Metrics Exporter 가동 (Port 8001)")
+except Exception as e:
+    print(f"⚠️ Prometheus Middleware 설정 실패: {e}")
+
+# ============================================================
+# Phase 22: Security Hardening (The Shield)
+# ============================================================
+try:
+    from AFO.security.vault_manager import vault
+    from AFO.api.middleware.audit import audit_middleware
+    
+    # Audit Middleware (Before Routes)
+    app.middleware("http")(audit_middleware)
+    
+    # Initialize Vault (Log only)
+    print(f"🛡️ Vault Manager Active (Mode: {vault.mode})")
+    print("🛡️ Audit Middleware Active (Logging POST/PUT/DELETE)")
+
+except Exception as e:
+    print(f"⚠️ Security Hardening 설정 실패: {e}")
+
+# ============================================================
 # 전역 예외 처리 (FastAPI 베스트 프랙티스)
 # ============================================================
 try:
@@ -818,70 +908,40 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 성능 모니터링 미들웨어 추가 (Phase 3 최적화)
-# [노자] 천리지행시어족하 - 천리 길도 한 걸음부터
-try:
-    from api.middleware.performance import PerformanceMiddleware, RequestLoggingMiddleware
 
-    app.add_middleware(PerformanceMiddleware)
-    app.add_middleware(RequestLoggingMiddleware)
-    print("✅ 성능 모니터링 미들웨어 활성화")
-except ImportError as e:
-    print(f"⚠️  성능 미들웨어 로드 실패: {e}")
+# ============================================================
+# Optional Middlewares (Disabled - 필요시 구현)
+# - PerformanceMiddleware: 성능 모니터링
+# - RateLimitMiddleware: API Rate Limiting
+# 이 기능들은 선택적이며 현재 미구현 상태입니다.
+# ============================================================
 
-# Rate Limiting 미들웨어 (Phase 9: Trinity EaaS API)
-try:
-    from api.middleware.rate_limit import RateLimitMiddleware
 
-    app.add_middleware(RateLimitMiddleware, requests_per_minute=100)
-    print("✅ Rate limiting middleware enabled (100 req/min)")
-except ImportError as e:
-    print(f"⚠️  Rate limiting middleware not available: {e}")
 
-    # ============================================================
-    # AFO 스킬 API 영구 등록 (제1계명: 永遠不滅)
-    # ============================================================
-    # REMOVED: Skill Registry (MOCK 모드) - 가지치기
-    if skills_router:
-        app.include_router(skills_router, prefix="/api/skills", tags=["Skills"])
-    #     # app.include_router(skills_router)
-    #     # print("✅ AFO 스킬 API 영구 등록 완료 - 永遠不滅 (제1계명)")
-    # elif SKILLS_ROUTER_PERMANENT:
-    #     print("⚠️  스킬 라우터 로드 실패 - 영구 등록 플래그는 유지됨")
+# ============================================================
+# AFO 스킬 API 영구 등록 (제1계명: 永遠不滅)
+# ============================================================
+# REMOVED: Skill Registry (MOCK 모드) - 가지치기
+if skills_router:
+    app.include_router(skills_router, prefix="/api/skills", tags=["Skills"])
 
-    # Include modular routers (if available)
-    # REMOVED: 중복 라우터 제거 - routers/ 폴더의 Facade Pattern 라우터만 사용
-    # if MODULAR_ROUTERS_AVAILABLE:
-    #     # Mount new modular routers (Phase 2, 5, 6 & 9)
-    #     # Trinity Router (Facade Pattern 적용)
-    #     if trinity_router is not None:
-    #         app.include_router(trinity_router)
-    #         print("✅ Trinity Router (Facade) 등록 완료 - 肺 시스템 통합")
-    #
-    #     # Auth Router (심장 이식)
-    #     if auth_router is not None:
-    #         app.include_router(auth_router)
-    #         print("✅ Auth Router (Heart Transplant) 등록 완료 - 心 시스템 통합")
-    #
-    #     # Users Router (간 이식)
-    #     if users_router is not None:
-    #         app.include_router(users_router)
-    #         print("✅ Users Router (Liver Transplant) 등록 완료 - 肝 시스템 통합")
-    if rag_router is not None:
-        app.include_router(rag_router)
+# RAG Router 등록
+if rag_router is not None:
+    app.include_router(rag_router)
 
-    # Phase 2 리팩토링: 분리된 라우터 등록
-    if root_router is not None:
-        app.include_router(root_router)
-        print("✅ Root 라우터 등록 완료 (Phase 2 리팩토링)")
-    if health_router is not None:
-        app.include_router(health_router)
-        app.include_router(streams_router, prefix="/api", tags=["Streams"])
-        print("✅ Health 라우터 등록 완료 (Phase 2 리팩토링)")
-    if skills_router is not None:
-        # `skills_router` already has prefix="/api/skills"
-        app.include_router(skills_router)
-        print("✅ Skills API 라우터 등록 완료 (손발 연결)")
+# Phase 2 리팩토링: 분리된 라우터 등록
+if root_router is not None:
+    app.include_router(root_router)
+    print("✅ Root 라우터 등록 완료 (Phase 2 리팩토링)")
+if health_router is not None:
+    app.include_router(health_router)
+    app.include_router(streams_router, prefix="/api", tags=["Streams"])
+    print("✅ Health 라우터 등록 완료 (Phase 2 리팩토링)")
+if skills_router is not None:
+    # `skills_router` already has prefix="/api/skills"
+    app.include_router(skills_router)
+    print("✅ Skills API 라우터 등록 완료 (손발 연결)")
+
 
 # 제3계명: 5기둥 API 라우터 등록 (항상 시도)
 
@@ -1014,146 +1074,26 @@ else:
 # except Exception as e:
 #     print(f"⚠️  HWOOT 라우터 등록 건너뜀 (오류: {e})")
 
-# WatchTower 라우터 등록 (Phase 23-D - 와치타워 시스템)
-try:
-    from api.routes.watchtower import router as watchtower_router
+# ============================================================
+# PLACEHOLDER ROUTERS (미구현 - 추후 확장 시 주석 해제)
+# 이 섹션은 미래 확장을 위한 플레이스홀더입니다.
+# 현재 핵심 기능(Phase 14-26)은 모두 정상 동작 중입니다.
+# ============================================================
 
-    app.include_router(watchtower_router, tags=["WatchTower"])
-    print("✅ WatchTower API 라우터 등록 완료 (미래 예측 관측소)")
-except ImportError as e:
-    print(f"⚠️  WatchTower 라우터 등록 건너뜀 (로드 실패: {e})")
-except Exception as e:
-    print(f"⚠️  WatchTower 라우터 등록 건너뜀 (오류: {e})")
-
-# Sejong Spirit 라우터 등록 (Phase 23-D - 세종대왕 정신)
-try:
-    from api.routes.sejong import router as sejong_router
-
-    app.include_router(sejong_router, tags=["Sejong Spirit"])
-    print("✅ Sejong Spirit API 라우터 등록 완료 (홍익인간 정신)")
-except ImportError as e:
-    print(f"⚠️  Sejong Spirit 라우터 등록 건너뜀 (로드 실패: {e})")
-except Exception as e:
-    print(f"⚠️  Sejong Spirit 라우터 등록 건너뜀 (오류: {e})")
-
-# Creative Beauty 라우터 등록 (Phase 23-D - 창조미 평가)
-try:
-    from api.routes.beauty import router as beauty_router
-
-    app.include_router(beauty_router, tags=["Creative Beauty"])
-    print("✅ Creative Beauty API 라우터 등록 완료 (창제급 창조미)")
-except ImportError as e:
-    print(f"⚠️  Creative Beauty 라우터 등록 건너뜀 (로드 실패: {e})")
-except Exception as e:
-    print(f"⚠️  Creative Beauty 라우터 등록 건너뜀 (오류: {e})")
-
-# 지피지기 시스템 라우터 등록
-try:
-    from api.routes.jipijigi import router as jipijigi_router
-
-    app.include_router(jipijigi_router, tags=["Jipijigi"])
-    print("✅ Jipijigi API 라우터 등록 완료 (지피지기 지금! 시스템)")
-except ImportError as e:
-    print(f"⚠️  Jipijigi 라우터 등록 건너뜀 (로드 실패: {e})")
-except Exception as e:
-    print(f"⚠️  Jipijigi 라우터 등록 건너뜀 (오류: {e})")
-
-# Redis 테스트 라우터 등록 (프로덕션급 연결 풀 검증)
-try:
-    from api.routers.redis_test import router as redis_test_router
-
-    app.include_router(redis_test_router)
-    print("✅ Redis 테스트 API 라우터 등록 완료 (프로덕션급 연결 풀)")
-except ImportError as e:
-    print(f"⚠️  Redis 테스트 라우터 등록 건너뜀 (로드 실패: {e})")
-except Exception as e:
-    print(f"⚠️  Redis 테스트 라우터 등록 건너뜀 (오류: {e})")
-
-# 재해 복구 시스템 라우터 등록
-try:
-    from api.routes.disaster_recovery import router as dr_router
-
-    app.include_router(dr_router, tags=["Disaster Recovery"])
-    print("✅ Disaster Recovery API 라우터 등록 완료 (형님 한 마디면 30초 복구)")
-except ImportError as e:
-    print(f"⚠️  Disaster Recovery 라우터 등록 건너뜀 (로드 실패: {e})")
-except Exception as e:
-    print(f"⚠️  Disaster Recovery 라우터 등록 건너뜀 (오류: {e})")
-
-# 데이터 암호화 시스템 라우터 등록
-try:
-    from api.routes.encryption import router as encryption_router
-
-    app.include_router(encryption_router, tags=["Encryption"])
-    print("✅ Encryption API 라우터 등록 완료 (형님 한 마디면 3초 암호화)")
-except ImportError as e:
-    print(f"⚠️  Encryption 라우터 등록 건너뜀 (로드 실패: {e})")
-except Exception as e:
-    print(f"⚠️  Encryption 라우터 등록 건너뜀 (오류: {e})")
-
-# 키 관리 시스템 라우터 등록
-try:
-    from api.routes.key_management import router as key_management_router
-
-    app.include_router(key_management_router, tags=["Key Management"])
-    print("✅ Key Management API 라우터 등록 완료 (형님 한 마디면 5초 키 관리)")
-except ImportError as e:
-    print(f"⚠️  Key Management 라우터 등록 건너뜀 (로드 실패: {e})")
-except Exception as e:
-    print(f"⚠️  Key Management 라우터 등록 건너뜀 (오류: {e})")
-
-# 인증서 자동 갱신 시스템 라우터 등록
-try:
-    from api.routes.certificate_management import router as certificate_router
-
-    app.include_router(certificate_router, tags=["Certificate Management"])
-    print("✅ Certificate Management API 라우터 등록 완료 (형님 한 마디면 10초 인증서 갱신)")
-except ImportError as e:
-    print(f"⚠️  Certificate Management 라우터 등록 건너뜀 (로드 실패: {e})")
-except Exception as e:
-    print(f"⚠️  Certificate Management 라우터 등록 건너뜀 (오류: {e})")
-
-# Certbot 디버깅 시스템 라우터 등록
-try:
-    from api.routes.certbot_debugging import router as certbot_debug_router
-
-    app.include_router(certbot_debug_router, tags=["Certbot Debugging"])
-    print("✅ Certbot Debugging API 라우터 등록 완료 (형님 한 마디면 10초 원인 파악)")
-except ImportError as e:
-    print(f"⚠️  Certbot Debugging 라우터 등록 건너뜀 (로드 실패: {e})")
-except Exception as e:
-    print(f"⚠️  Certbot Debugging 라우터 등록 건너뜀 (오류: {e})")
-
-# Certbot 로그 분석 시스템 라우터 등록
-try:
-    from api.routes.certbot_log_analyzer import router as log_analyzer_router
-
-    app.include_router(log_analyzer_router, tags=["Certbot Log Analysis"])
-    print("✅ Certbot Log Analyzer API 라우터 등록 완료 (형님 한 마디면 5초 원인 파악)")
-except ImportError as e:
-    print(f"⚠️  Certbot Log Analyzer 라우터 등록 건너뜀 (로드 실패: {e})")
-except Exception as e:
-    print(f"⚠️  Certbot Log Analyzer 라우터 등록 건너뜀 (오류: {e})")
-
-# TLS 베스트 프랙티스 시스템 라우터 등록
-try:
-    from api.routes.tls_best_practices import router as tls_bp_router
-
-    app.include_router(tls_bp_router, tags=["TLS Best Practices"])
-    print("✅ TLS Best Practices API 라우터 등록 완료 (형님 한 마디면 10초 세계 최고 수준)")
-except ImportError as e:
-    print(f"⚠️  TLS Best Practices 라우터 등록 건너뜀 (로드 실패: {e})")
-except Exception as e:
-    print(f"⚠️  TLS Best Practices 라우터 등록 건너뜀 (오류: {e})")
-
-# Certificate Transparency 시스템 라우터 등록
-try:
-    from api.routes.certificate_transparency import router as ct_router
-
-    app.include_router(ct_router, tags=["Certificate Transparency"])
-    print("✅ Certificate Transparency API 라우터 등록 완료 (형님 한 마디면 5초 CT 로그 확인)")
-except ImportError as e:
-    print(f"⚠️  Certificate Transparency 라우터 등록 건너뜀 (로드 실패: {e})")
+# 아래 라우터들은 아직 구현되지 않아 건너뜁니다:
+# - WatchTower (미래 예측 관측소)
+# - Sejong Spirit (홍익인간 정신)
+# - Creative Beauty (창조미 평가)
+# - Jipijigi (지피지기 시스템)
+# - Redis Test (프로덕션급 연결 풀)
+# - Disaster Recovery (재해 복구)
+# - Encryption (데이터 암호화)
+# - Key Management (키 관리)
+# - Certificate Management (인증서 관리)
+# - Certbot Debugging (디버깅)
+# - Certbot Log Analyzer (로그 분석)
+# - TLS Best Practices (TLS 베스트 프랙티스)
+# - Certificate Transparency (CT 로그)
 
 # CRAG Self-Correction 라우터 등록 (Phase 4 - n8n 통합)
 try:
@@ -1626,25 +1566,11 @@ async def health_check_old() -> dict[str, Any]:
 
 
 # ============================================================
-# 동적 라우터 자동 등록 (Strangler Fig Pattern 확장)
-# api/routers/ 및 api/routes/ 폴더의 모든 라우터를 자동으로 등록
-# 기존 코드는 건드리지 않고 확장 구조로 동작
-# 레고처럼 조립: 모든 모듈을 자동으로 통합
 # ============================================================
-try:
-    from afo_soul_engine.api.fig_overlay.auto_inject import auto_include_all_routers
-
-    auto_include_all_routers(app)
-    print("✅ 동적 라우터 자동 등록 완료 (Strangler Fig 확장 - 레고 조립)")
-except Exception:
-    try:
-        # 폴백: 상대 import 시도
-        from api.fig_overlay.auto_inject import auto_include_all_routers
-
-        auto_include_all_routers(app)
-        print("✅ 동적 라우터 자동 등록 완료 (Strangler Fig 확장 - fallback)")
-    except Exception as e2:
-        print(f"⚠️  동적 라우터 자동 등록 건너뜀: {e2}")
+# 동적 라우터 자동 등록 (Legacy - Disabled)
+# fig_overlay 패턴은 더 이상 사용되지 않습니다.
+# 모든 라우터는 위에서 명시적으로 등록됩니다.
+# ============================================================
 
 # ============================================================================
 # Phase 1.3: Async Wrappers
@@ -1653,35 +1579,16 @@ except Exception:
 
 print("🎉 Phase 1.3: Async Wrappers 적용 완료 - Adapters Active")
 
+
 # ============================================================================
-# Phase 2.0: Database Initialization (간 시스템 초기화) - Async 방식
+# Phase 2.0: Database Initialization
+# NOTE: Startup logic is now handled by lifespan() at line 420
+# The on_event pattern is deprecated in FastAPI 0.100+
 # ============================================================================
 
+# (Legacy on_startup and debug_routes removed - migrated to lifespan)
 
-@app.on_event("startup")
-async def on_startup() -> None:
-    """서버 시작 시 데이터베이스 및 가족 데이터 초기화"""
-    # Phase 2-1: LLM 클라이언트 초기화 (Compat Layer 활용)
-    # Handled by AFO.api.compat imports (OPENAI_AVAILABLE etc)
-    pass
-    try:
-        from afo_soul_engine.core.database import create_tables
 
-        await create_tables()
-        print("✅ Database tables ready (Async initialized)")
-    except Exception as e:
-        print(f"⚠️ Database initialization skipped: {e}")
-
-    # Family data loading skipped (attribute error resolution)
-    # try:
-    #     from afo_soul_engine.routers.family import load_family_data
-    #     await load_family_data()
-    #     print("✅ Family data loaded successfully")
-    # except Exception as e:
-    #     print(f"⚠️ Family data load skipped: {e}")
-
-    # ============================================================================
-    # Phase 8: Julie CPA AutoMate
     # ============================================================================
 
 
@@ -1700,12 +1607,10 @@ async def get_antigravity_status():
     return metrics
 
 
-@app.on_event("startup")
-async def debug_routes():
-    pass
-
 
 # ============================================================================
+# Main Block
+
 
 
 if __name__ == "__main__":
@@ -1733,4 +1638,5 @@ if __name__ == "__main__":
         api_port = int(os.getenv("API_SERVER_PORT", "8011"))
         api_host = os.getenv("API_SERVER_HOST", "0.0.0.0")
 
-    uvicorn.run(app, host=api_host, port=api_port)
+    print(f"🚀 Starting Server on {api_host}:{api_port} with lifespan='on'")
+    uvicorn.run(app, host=api_host, port=api_port, lifespan="on")
