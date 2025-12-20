@@ -63,6 +63,7 @@ ignore = [
     "D212",    # Google style과 충돌 (multi-line docstring)
     "COM812",  # trailing comma → Ruff format이 더 우아하게 처리
     "B008",    # function calls in defaults (FastAPI Depends)
+    "B904",    # raise without from (FastAPI HTTPException unchained)
     "RUF001",  # ambiguous unicode (allow 眞善美孝永)
     "RUF002",  # ambiguous unicode
     "RUF003",  # ambiguous unicode
@@ -106,12 +107,20 @@ max-complexity = 15    # 복잡도 상한 (기본 10)
 
 [tool.ruff.lint.flake8-type-checking]
 runtime-evaluated-base-classes = ["pydantic.BaseModel", "sqlalchemy.orm.DeclarativeBase"]
+runtime-evaluated-decorators = [
+    "pydantic.field_validator",
+    "pydantic.model_validator",
+    "pydantic.validator",
+]
 
 [tool.ruff.lint.flake8-annotations]
 suppress-none-returning = true  # None 반환 함수 타입 힌트 완화
 
 [tool.ruff.lint.flake8-unused-arguments]
 ignore-variadic-names = true    # *args, **kwargs 무시
+
+[tool.ruff.lint.pyupgrade]
+keep-runtime-typing = true      # Pydantic v1 호환 유지 (眞: 안전)
 
 [tool.mypy]
 python_version = "3.12"
