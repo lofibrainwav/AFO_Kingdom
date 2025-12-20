@@ -18,6 +18,7 @@ import sys
 from datetime import UTC, datetime
 from pathlib import Path
 
+
 # Trinity 가중치 (SSOT)
 WEIGHTS = {
     "truth": 0.35,
@@ -32,7 +33,7 @@ def calculate_trinity_score(ci_results: dict) -> dict:
     """CI 결과로부터 Trinity Score 계산"""
 
     # 眞 (Truth): 테스트 통과
-    truth = 1.0 if ci_results.get("tests_passed", False) else 0.5
+    truth = 1.0 if ci_results.get("tests_passed") else 0.5
 
     # 善 (Goodness): 보안 스캔
     security_issues = ci_results.get("security_issues", 0)
@@ -78,10 +79,9 @@ def recommend_mode(trinity_score: dict) -> str:
 
     if total >= 0.9:
         return "AUTO"  # 자동 실행 가능
-    elif total >= 0.7:
+    if total >= 0.7:
         return "CONFIRM"  # 확인 후 실행
-    else:
-        return "ASK"  # 사령관 승인 필요
+    return "ASK"  # 사령관 승인 필요
 
 
 def main():
@@ -121,7 +121,7 @@ def main():
 
     # 결과 저장
     output_path = Path("trinity_score.json")
-    with open(output_path, "w") as f:
+    with Path(output_path).open("w") as f:
         json.dump({"trinity": trinity, "mode": mode}, f, indent=2)
 
     print(f"\n✅ 저장됨: {output_path}")

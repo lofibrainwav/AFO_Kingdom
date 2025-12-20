@@ -4,7 +4,9 @@ Verify AFO Ultimate MCP Server via JSON-RPC 2.0 (stdio)
 """
 
 import json
+import pathlib
 import subprocess
+
 
 SERVER_PATH = "packages/trinity-os/trinity_os/servers/afo_ultimate_mcp_server.py"
 
@@ -179,10 +181,9 @@ def verify_mcp():
         print("✅ Read File Success")
 
         # Cleanup temp file
-        import os
 
-        if os.path.exists(test_file_path):
-            os.remove(test_file_path)
+        if pathlib.Path(test_file_path).exists():
+            pathlib.Path(test_file_path).unlink()
 
         # 8. Test CuPy Weighted Sum
         print("\n🔹 Testing cupy_weighted_sum...")

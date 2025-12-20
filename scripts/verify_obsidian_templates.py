@@ -280,7 +280,7 @@ class ObsidianTemplateValidator:
         app_config_path = self.obsidian_path / "app.json"
         if app_config_path.exists():
             try:
-                with open(app_config_path, encoding="utf-8") as f:
+                with Path(app_config_path).open(encoding="utf-8") as f:
                     config = json.load(f)
 
                 # 템플릿 폴더 설정 확인
@@ -321,7 +321,7 @@ class ObsidianTemplateValidator:
         plugins_path = self.obsidian_path / "community-plugins.json"
         if plugins_path.exists():
             try:
-                with open(plugins_path, encoding="utf-8") as f:
+                with Path(plugins_path).open(encoding="utf-8") as f:
                     plugins = json.load(f)
 
                 required_plugins = ["dataview", "kanban", "calendar", "advanced-tables"]
@@ -466,9 +466,8 @@ def main():
         if summary["system_status"] in ["excellent", "good"]:
             print("\n🎉 옵시디언 템플릿 시스템 검증 완료!")
             return 0
-        else:
-            print("\n⚠️ 옵시디언 템플릿 시스템 검증 실패 - 개선 필요")
-            return 1
+        print("\n⚠️ 옵시디언 템플릿 시스템 검증 실패 - 개선 필요")
+        return 1
 
     except Exception as e:
         print(f"\n🔴 검증 중 오류 발생: {e!s}")

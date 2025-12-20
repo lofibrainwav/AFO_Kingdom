@@ -3,8 +3,6 @@ Phase 12: Eternal Memory Engine (LangChain RAG)
 Integrates Custom BERT + ChromaDB for Kingdom Knowledge Retrieval.
 """
 
-import json
-import os
 import sys
 import time
 

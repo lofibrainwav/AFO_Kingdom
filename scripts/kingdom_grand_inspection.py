@@ -3,6 +3,7 @@ import logging
 import os
 import sys
 
+
 # Setup Logger
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger("AFO.GrandInspection")
@@ -19,7 +20,7 @@ try:
     from scripts.verify_full_pillars_metrics import verify_full_pillars
     from scripts.verify_sejong_research import verify_sejong_system
 except ImportError as e:
-    logger.error(f"❌ Metacognition Fail: Could not import verification modules. {e}")
+    logger.error("❌ Metacognition Fail: Could not import verification modules. %s", e)
     sys.exit(1)
 
 

@@ -2,6 +2,7 @@ import asyncio
 import os
 import sys
 
+
 # Set path to allow imports
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../packages/afo-core")))
 

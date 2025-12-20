@@ -5,11 +5,10 @@
 템플릿 사용 시 자동으로 호출되어 문서 메타데이터를 Context7에 등록합니다.
 """
 
-import json
-import os
 import sys
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any
+
 
 # 프로젝트 루트를 Python 경로에 추가
 project_root = Path(__file__).parent.parent

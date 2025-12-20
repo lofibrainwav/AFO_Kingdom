@@ -13,22 +13,20 @@ from pathlib import Path
 
 def parse_cyclonedx_sbom(sbom_path: str) -> list[dict]:
     """CycloneDX JSON SBOM을 파싱하여 컴포넌트 목록 반환"""
-    with open(sbom_path) as f:
+    with Path(sbom_path).open() as f:
         sbom = json.load(f)
 
     components = []
     for comp in sbom.get("components", []):
-        components.append(
-            {
-                "name": comp.get("name", "unknown"),
-                "version": comp.get("version", "0.0.0"),
-                "type": comp.get("type", "library"),
-                "purl": comp.get("purl", ""),
-                "licenses": [
-                    lic.get("license", {}).get("id", "unknown") for lic in comp.get("licenses", [])
-                ],
-            }
-        )
+        components.append({
+            "name": comp.get("name", "unknown"),
+            "version": comp.get("version", "0.0.0"),
+            "type": comp.get("type", "library"),
+            "purl": comp.get("purl", ""),
+            "licenses": [
+                lic.get("license", {}).get("id", "unknown") for lic in comp.get("licenses", [])
+            ],
+        })
 
     return components
 
@@ -83,7 +81,7 @@ def main():
     registry = generate_skills_registry(components)
 
     output_path = "skills_registry.json"
-    with open(output_path, "w") as f:
+    with Path(output_path).open("w") as f:
         json.dump(registry, f, indent=2)
 
     print(f"✅ Skills Registry 생성 완료: {output_path}")

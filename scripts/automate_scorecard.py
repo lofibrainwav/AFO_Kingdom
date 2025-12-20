@@ -184,6 +184,7 @@ class AutomatedScorecard:
                 cmd = f"source {venv_activate} && mypy {mypy_path} --ignore-missing-imports"
                 result = subprocess.run(
                     cmd,
+                    check=False,
                     shell=True,
                     executable="/bin/bash",
                     capture_output=True,
@@ -195,6 +196,7 @@ class AutomatedScorecard:
                 # Fallback to system mypy
                 result = subprocess.run(
                     ["mypy", str(mypy_path), "--ignore-missing-imports"],
+                    check=False,
                     capture_output=True,
                     text=True,
                     timeout=120,

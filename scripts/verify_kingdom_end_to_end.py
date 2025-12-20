@@ -1,7 +1,7 @@
 import asyncio
 import os
 import sys
-from typing import Any, Dict, List
+
 
 # Add package root to sys.path
 core_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../packages/afo-core"))
@@ -31,13 +31,13 @@ class MockYeongdeok:
 # Patching modules before importing chancellor_graph
 import chancellor_graph as graph_module
 
+
 # Inject Mocks
 graph_module.llm_router = MockLLMRouter()
 graph_module.yeongdeok = MockYeongdeok()
 
 # Mock State
-from langchain_core.messages import AIMessage, HumanMessage
-from langgraph.graph import END, StateGraph
+from langchain_core.messages import HumanMessage
 
 
 async def run_end_to_end_test():
@@ -65,7 +65,7 @@ async def run_end_to_end_test():
         "results": {},
         "actions": [],
         "search_results": [],
-        "multimodal_slots": {}
+        "multimodal_slots": {},
     }
 
     print(f"\n📨 Incoming Query: '{user_query}'")
@@ -93,12 +93,12 @@ async def run_end_to_end_test():
     zhuge_res = await graph_module.zhuge_node(state)
     sima_res = await graph_module.sima_node(state)
     zhou_res = await graph_module.zhou_node(state)
-    
+
     # Correctly update analysis_results (state definition uses reducer for messages, but analysis_results is dict)
     state["analysis_results"].update(zhuge_res.get("analysis_results", {}))
     state["analysis_results"].update(sima_res.get("analysis_results", {}))
     state["analysis_results"].update(zhou_res.get("analysis_results", {}))
-    
+
     print(f"✅ Zhuge (眞): {state['analysis_results'].get('zhuge_liang', 0)}")
     print(f"✅ Sima (善): {state['analysis_results'].get('sima_yi', 0)}")
     print(f"✅ Zhou (美): {state['analysis_results'].get('zhou_yu', 0)}")
@@ -107,7 +107,7 @@ async def run_end_to_end_test():
     print("\n--- Step 4: Trinity Node ---")
     trinity_res = await graph_module.trinity_node(state)
     state.update(trinity_res)
-    print(f"⚖️ Final Trinity Score: {state['trinity_score']*100:.1f}%")
+    print(f"⚖️ Final Trinity Score: {state['trinity_score'] * 100:.1f}%")
 
     # Step 5: Historian (永)
     print("\n--- Step 5: Historian/Finalize ---")

@@ -3,6 +3,7 @@ import os
 import sys
 from pathlib import Path
 
+
 # Add project root to path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../packages/afo-core")))
 
@@ -10,6 +11,7 @@ from AFO.config.settings import settings
 from AFO.schemas.gen_ui import GenUIRequest
 from AFO.services.gen_ui import gen_ui_service
 from AFO.services.vision_verifier import vision_verifier
+
 
 # Ensure we are in Mock Mode if LLM is down, but ideally we'd try real LLM if available.
 # User mentioned "Dry_Run PASS" implying we can go for real, but if Ollama is 404, we stick to Mock.

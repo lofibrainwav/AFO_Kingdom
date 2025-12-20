@@ -1,8 +1,12 @@
 import os
+import pathlib
 import sys
 
-sys.path.append(os.path.join(os.getcwd(), "packages/afo-core"))
-sys.path.append(os.path.join(os.getcwd(), "packages/trinity-os"))
+
+sys.path.append(os.path.join(pathlib.Path.cwd(), "packages/afo-core"))
+sys.path.append(os.path.join(pathlib.Path.cwd(), "packages/trinity-os"))
+
+import pathlib
 
 from AFO.genui.genui_orchestrator import GenUIOrchestrator
 
@@ -26,9 +30,9 @@ def verify_genui():
         print(f"   Code Path: {result['code_path']}")
 
         # Check if file exists
-        if os.path.exists(result["code_path"]):
+        if pathlib.Path(result["code_path"]).exists():
             print("✅ File System Check: PASS")
-            with open(result["code_path"]) as f:
+            with pathlib.Path(result["code_path"]).open() as f:
                 content = f.read()
                 if "calculator" in content.lower():
                     print("✅ Content Logic Check: PASS")

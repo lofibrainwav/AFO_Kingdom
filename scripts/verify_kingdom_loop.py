@@ -1,13 +1,15 @@
 import asyncio
-import json
 import os
+import pathlib
 import sys
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
-sys.path.append(os.path.join(os.getcwd(), "packages/afo-core"))
+
+sys.path.append(os.path.join(pathlib.Path.cwd(), "packages/afo-core"))
 
 from AFO.config.antigravity import antigravity
+
 
 # We will mock the graph and router logic to test the flow "Commander -> Action"
 

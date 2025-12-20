@@ -1,5 +1,6 @@
-import sys
 import os
+import sys
+
 
 # packages/afo-core를 경로에 추가
 core_path = os.path.abspath("packages/afo-core")
@@ -11,15 +12,18 @@ print(f"Checking path: {core_path}")
 try:
     # 1. 5 Tigers Verification
     import tigers
+
     print("✅ Tigers package found")
     from tigers import guan_yu
+
     print("✅ Guan Yu found")
 
     # 2. Chancellor Graph Verification
     from chancellor_graph import chancellor_graph
+
     print("✅ Chancellor Graph imported successfully")
     print(f"   - Type: {type(chancellor_graph)}")
-    
+
     # Check if compiled
     if hasattr(chancellor_graph, "invoke"):
         print("✅ Graph is compiled (Runnable)")

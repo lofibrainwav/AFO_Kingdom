@@ -8,6 +8,7 @@ Skills Registry의 모든 스킬이 Trinity Score를 가지고 있는지 검증
 import sys
 from pathlib import Path
 
+
 # 프로젝트 루트를 경로에 추가
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root / "packages" / "afo-core"))
@@ -97,9 +98,8 @@ def main():
     if results["without_philosophy"] == 0:
         print("\n✅ 모든 스킬이 철학 점수를 가지고 있습니다!")
         return 0
-    else:
-        print(f"\n⚠️  {results['without_philosophy']}개 스킬에 철학 점수가 없습니다.")
-        return 1
+    print(f"\n⚠️  {results['without_philosophy']}개 스킬에 철학 점수가 없습니다.")
+    return 1
 
 
 if __name__ == "__main__":

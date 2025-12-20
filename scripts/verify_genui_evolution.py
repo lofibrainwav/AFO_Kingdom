@@ -1,10 +1,12 @@
 import os
+import pathlib
 import sys
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
+
 
 # Path setup to ensure imports work
-sys.path.append(os.path.join(os.getcwd(), "packages/afo-core"))
+sys.path.append(os.path.join(pathlib.Path.cwd(), "packages/afo-core"))
 
 from AFO.config.antigravity import antigravity
 from AFO.genui.genui_orchestrator import GenUIOrchestrator

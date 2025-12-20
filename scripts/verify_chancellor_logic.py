@@ -4,6 +4,7 @@ import sys
 
 from langchain_core.messages import AIMessage
 
+
 # Add package root to path
 sys.path.append(os.path.abspath("packages/afo-core"))
 
@@ -48,9 +49,8 @@ def test_routing(trinity: float, risk: float, dry_run: bool):
         if is_auto == should_be_auto:
             print("   ✅ PASS: Logic matches expectation")
             return True
-        else:
-            print(f"   ❌ FAIL: Expected {should_be_auto}, got {is_auto}")
-            return False
+        print(f"   ❌ FAIL: Expected {should_be_auto}, got {is_auto}")
+        return False
 
     print("   ✅ PASS: Dry Run safety check passed")
     return True

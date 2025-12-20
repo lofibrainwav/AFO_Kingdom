@@ -9,6 +9,7 @@ import json
 import sys
 from pathlib import Path
 
+
 # 프로젝트 루트를 Python 경로에 추가
 project_root = Path(__file__).resolve().parent.parent
 if str(project_root) not in sys.path:
@@ -134,7 +135,7 @@ integration_status = {
 }
 
 status_file = project_root / "docs" / "context7_integration_status.json"
-with open(status_file, "w", encoding="utf-8") as f:
+with Path(status_file).open("w", encoding="utf-8") as f:
     json.dump(integration_status, f, ensure_ascii=False, indent=2)
 
 print(f"\n✅ 통합 상태 저장 완료: {status_file}")

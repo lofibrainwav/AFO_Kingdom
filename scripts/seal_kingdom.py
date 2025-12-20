@@ -1,4 +1,6 @@
 import datetime
+import pathlib
+
 
 timestamp = datetime.datetime.now().isoformat()
 log_entry = f"""
@@ -9,7 +11,7 @@ log_entry = f"""
 - Commander Brnestrm has ascended.
 """
 
-with open("AFO_EVOLUTION_LOG.md", "a") as f:
+with pathlib.Path("AFO_EVOLUTION_LOG.md").open("a") as f:
     f.write(log_entry)
 
 print(f"✅ AFO Kingdom Sealed at {timestamp}.")

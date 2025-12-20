@@ -2,12 +2,14 @@ import asyncio
 import os
 import sys
 
+
 # 프로젝트 루트 경로 추가
 sys.path.append(
     os.path.abspath(os.path.join(os.path.dirname(__file__), "../packages/afo-core/AFO"))
 )
 
 from utils.playwright_bridge import MockScenario, bridge
+
 
 # Force DRY_RUN off for this test if possible, or handle simulation
 # antigravity.DRY_RUN_DEFAULT = False # We will respect the default, but check for simulation
@@ -68,7 +70,6 @@ async def verify_advanced_features():
         # Actually playwright route fulfills the request, so no actual network connection is made to the server
         # IF the routing matches. However, browser still needs to resolve DNS or similar unless fully intercepted.
         # 'http://localhost' usually is fine.
-        pass
 
     await bridge.teardown()
     print("\n=== Verification Complete ===")

@@ -1,10 +1,12 @@
 import asyncio
 import os
+import pathlib
 import sys
 from decimal import Decimal
 
+
 # Ensure pythonpath includes afo-core
-sys.path.append(os.path.join(os.getcwd(), "packages/afo-core"))
+sys.path.append(os.path.join(pathlib.Path.cwd(), "packages/afo-core"))
 
 from AFO.julie_cpa.services.julie_service import JulieService
 
@@ -17,7 +19,7 @@ async def verify_julie_royal():
     print("\n🔹 [Scenario 1] Happy Path (Dry Run)")
     valid_data = {
         "transaction_id": "TX-1234567890",
-        "amount": Decimal("50000"),
+        "amount": Decimal(50000),
         "currency": "KRW",
         "category": "Food",
         "description": "Family Dinner",
@@ -41,7 +43,7 @@ async def verify_julie_royal():
     # Scenario 3: The Prince (Strict Validation)
     print("\n🔹 [Scenario 3] Strict Validation (Zero Amount)")
     bad_data = valid_data.copy()
-    bad_data["amount"] = Decimal("0")  # Invalid
+    bad_data["amount"] = Decimal(0)  # Invalid
     res3 = await service.process_transaction(bad_data, account_id="ACC-ROYAL-001")
     if not res3["success"] and "cannot be zero" in res3["reason"]:
         print("✅ Scenario 3 PASS (Blocked by Pydantic Validator)")
