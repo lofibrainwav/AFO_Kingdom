@@ -51,7 +51,7 @@ class YeongdeokScholar:
     - **Rule #1 선확인 후보고**: 행동하기 전에 상태를 먼저 파악한다.
     - **Rule #3 속도보다 정확성**: "빠른 오답은 최악이다." 느리더라도 정확한 정보를 제공한다.
 
-    당신은 이 원칙에 따라 시스템을 감시하고, 
+    당신은 이 원칙에 따라 시스템을 감시하고,
     3명의 선인(사마휘, 좌자, 화타)이 왕국의 규율을 어기지 않도록 중재합니다.
     """
 
@@ -225,7 +225,7 @@ class YeongdeokScholar:
                 # Allow if path exists locally OR if it looks like a HF Hub ID (contains '/')
                 if os.path.exists(samahwi_sage.model_path) or "/" in samahwi_sage.model_path:
                     # Logic is valid
-                    async def _samahwi_mlx_logic(req: SageRequest) -> str:
+                    async def _samahwi_mlx_logic(req: Any) -> str:
                         import asyncio
 
                         return await asyncio.to_thread(
@@ -264,7 +264,7 @@ class YeongdeokScholar:
         """
         from AFO.schemas.sage import SageType
 
-        async def _jwaja_mlx_logic(req: SageRequest) -> str:
+        async def _jwaja_mlx_logic(req: Any) -> str:
             import asyncio
 
             from AFO.llms.mlx_adapter import jwaja_sage

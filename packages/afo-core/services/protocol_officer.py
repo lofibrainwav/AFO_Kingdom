@@ -7,10 +7,14 @@ Ensures all outputs are dignified, respectful, and constitutionally compliant.
 import logging
 
 # Lazy import to avoid circular dependency if constitution imports services later
+try:
+    from AFO.constitution.constitutional_ai import AFOConstitution
 except ImportError:
     # Fallback for compilation if constitution module structure is different in env
     try:
-        from packages.afo_core.AFO.constitution.constitutional_ai import AFOConstitution  # type: ignore
+        from packages.afo_core.AFO.constitution.constitutional_ai import (
+            AFOConstitution,  # type: ignore
+        )
     except ImportError:
         AFOConstitution = None  # type: ignore
 
