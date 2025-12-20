@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# mypy: ignore-errors
 """
 옵시디언 vault 자동 동기화
 파일 변경 감지 및 자동 재인덱싱

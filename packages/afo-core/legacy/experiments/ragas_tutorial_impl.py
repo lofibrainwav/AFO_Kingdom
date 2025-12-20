@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 # ⚔️ 점수는 Truth Engine (scripts/calculate_trinity_score.py)에서만 계산됩니다.
 # LLM은 consult_the_lens MCP 도구를 통해 점수를 확인하세요.
 

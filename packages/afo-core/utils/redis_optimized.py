@@ -27,7 +27,7 @@ class OptimizedRedisCache:
     Pipeline + Lua Script + 모니터링 통합
     """
 
-    def __init__(self, client: redis.Redis | None = None):
+    def __init__(self, client: redis.Redis | None = None) -> None:
         self.client = client
         self.hit_count = 0
         self.miss_count = 0
@@ -36,7 +36,7 @@ class OptimizedRedisCache:
         # Lua Script 등록 (GET-OR-COMPUTE 패턴)
         self._register_lua_scripts()
 
-    def _register_lua_scripts(self):
+    def _register_lua_scripts(self) -> None:
         """Lua 스크립트 등록"""
         if not self.client:
             return
@@ -92,7 +92,7 @@ class OptimizedRedisCache:
 
         try:
             # Lua Script 실행
-            result = await self.get_or_compute_script.execute([key], [ttl_seconds])
+            result = await self.get_or_compute_script(keys=[key], args=[ttl_seconds]) # type: ignore
 
             if result[0] == "hit":
                 self.hit_count += 1
@@ -126,7 +126,7 @@ class OptimizedRedisCache:
 
         try:
             # Lua Script로 배치 조회
-            results = await self.batch_get_script.execute(keys)
+            results = await self.batch_get_script(keys=keys) # type: ignore
 
             self.pipeline_count += 1
             sum(1 for r in results if r is not False)
@@ -140,7 +140,7 @@ class OptimizedRedisCache:
             print(f"Redis 배치 GET 실패: {e}")
             return {}
 
-    async def batch_set(self, key_values: dict[str, Any], ttl_seconds: int = 300):
+    async def batch_set(self, key_values: dict[str, Any], ttl_seconds: int = 300) -> None:
         """
         배치 SET 작업
 
@@ -200,7 +200,7 @@ async def cached_batch_get(keys: list[str]) -> dict[str, Any]:
     return await cache.batch_get(keys)
 
 
-async def cached_batch_set(key_values: dict[str, Any], ttl_seconds: int = 300):
+async def cached_batch_set(key_values: dict[str, Any], ttl_seconds: int = 300) -> None:
     """편의 함수 - 캐시된 배치 SET"""
     cache = get_redis_cache()
     return await cache.batch_set(key_values, ttl_seconds)
@@ -225,7 +225,7 @@ if __name__ == "__main__":
         await asyncio.sleep(0.1)  # 계산 시뮬레이션
         return x * 2
 
-    async def main():
+    async def main() -> None:
         print("🧪 Redis 최적화 모듈 테스트 시작...")
 
         # 캐시 인스턴스 생성 (Redis 연결 없이 테스트)

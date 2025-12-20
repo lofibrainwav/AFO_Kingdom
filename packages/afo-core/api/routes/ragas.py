@@ -122,7 +122,8 @@ async def evaluate_ragas(request: RagasEvalRequest) -> RagasEvalResponse:
             # Ragas 평가 실행 (Blocking -> Async)
             loop = asyncio.get_running_loop()
             results = await loop.run_in_executor(
-                executor, lambda: evaluate(dataset=request.dataset, metrics=cast(Any, metrics_to_use))
+                executor,
+                lambda: evaluate(dataset=request.dataset, metrics=cast("Any", metrics_to_use)),
             )
 
             # 점수 추출 및 정규화

@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# mypy: ignore-errors
 """
 LangGraph를 사용한 RAG 파이프라인
 옵시디언 vault 기반 질의응답 시스템

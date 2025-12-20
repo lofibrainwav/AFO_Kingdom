@@ -18,7 +18,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-# [정기구독] CLI 기반 연동 (API 키 불필요)  
+# [정기구독] CLI 기반 연동 (API 키 불필요)
 from AFO.llms.codex_cli import CodexCLIWrapper, codex_cli
 
 logger = logging.getLogger(__name__)

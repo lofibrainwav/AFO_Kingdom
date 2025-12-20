@@ -12,7 +12,7 @@ class FinancialConnector:
     Implements Retry (Three Visits) and Circuit Breaker (Bitter Meat).
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._circuit_open = False
         self._failure_count = 0
         self._threshold = julie_config.MAX_RETRIES
@@ -50,12 +50,12 @@ class FinancialConnector:
 
         return {"account_id": account_id, "balance": 1000000, "currency": "KRW", "status": "ACTIVE"}
 
-    def _record_failure(self):
+    def _record_failure(self) -> None:
         self._failure_count += 1
         if self._failure_count >= self._threshold:
             self._circuit_open = True
             print("💥 [Circuit Breaker] Threshold reached. Opening Circuit.")
 
-    def _success(self):
+    def _success(self) -> None:
         self._failure_count = 0
         self._circuit_open = False

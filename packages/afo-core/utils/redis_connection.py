@@ -3,13 +3,12 @@ Redis 연결 통합 모듈
 Phase 1 리팩토링: 중복 Redis 연결 로직 통합
 """
 
-import os
+# 중앙 설정 사용
+from typing import cast
 
 import redis
 from redis.asyncio import Redis as AsyncRedis
 
-# 중앙 설정 사용
-from typing import cast
 from AFO.config.settings import get_settings
 
 
@@ -25,7 +24,7 @@ def get_redis_client() -> redis.Redis:
         client = redis.from_url(redis_url)
         # 연결 테스트
         client.ping()
-        return cast(redis.Redis, client)
+        return cast("redis.Redis", client)
     except Exception as e:
         raise ConnectionError(f"Redis 연결 실패: {e}") from e
 
@@ -42,7 +41,7 @@ async def get_async_redis_client() -> AsyncRedis:
         client = AsyncRedis.from_url(redis_url)
         # 연결 테스트
         await client.ping()
-        return cast(AsyncRedis, client)
+        return cast("AsyncRedis", client)
     except Exception as e:
         raise ConnectionError(f"Redis 비동기 연결 실패: {e}") from e
 

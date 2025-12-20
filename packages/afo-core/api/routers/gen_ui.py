@@ -16,6 +16,7 @@ from AFO.services.vision_verifier import vision_verifier
 
 router = APIRouter(prefix="/api/gen-ui", tags=["GenUI"])
 
+
 @router.post("/create", response_model=GenUIResponse)
 async def create_component(request: GenUIRequest) -> GenUIResponse:
     """
@@ -28,10 +29,10 @@ async def create_component(request: GenUIRequest) -> GenUIResponse:
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e)) from e
 
+
 @router.post("/preview", response_model=GenUIResponse)
 async def preview_component(
-    request: GenUIRequest,
-    background_tasks: BackgroundTasks
+    request: GenUIRequest, background_tasks: BackgroundTasks
 ) -> GenUIResponse:
     """
     Generate and deploy a component to the Sandbox.
@@ -58,6 +59,7 @@ async def preview_component(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e)) from e
 
+
 @router.get("/health")
 async def gen_ui_health() -> dict[str, Any]:
     """
@@ -67,5 +69,5 @@ async def gen_ui_health() -> dict[str, Any]:
         "status": "online",
         "service": "GenUI (Self-Expansion Engine)",
         "scholar": "Samahwi (Qwen2.5)",
-        "mode": "Phase 9"
+        "mode": "Phase 9",
     }

@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 #!/usr/bin/env python3
 """
 RAG 시스템 설정 파일

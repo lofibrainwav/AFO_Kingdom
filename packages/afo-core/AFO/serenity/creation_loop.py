@@ -17,18 +17,13 @@ import os
 import tempfile
 from dataclasses import dataclass
 from pathlib import Path
-
-from typing import TYPE_CHECKING, Any
-
-if TYPE_CHECKING:
-    from AFO.genui.genui_orchestrator import GenUIOrchestrator as GenUIOrchestratorType
-    from AFO.utils.playwright_bridge import PlaywrightBridgeMCP as PlaywrightBridgeMCPType
-    from AFO.domain.metrics.trinity_manager import TrinityManager
+from typing import Any
 
 # GenUI Orchestrator
 _GenUIOrchestrator: Any = None
 try:
     from AFO.genui.genui_orchestrator import GenUIOrchestrator
+
     _GenUIOrchestrator = GenUIOrchestrator
 except ImportError:
     pass
@@ -37,6 +32,7 @@ except ImportError:
 _PlaywrightBridgeMCP: Any = None
 try:
     from AFO.utils.playwright_bridge import PlaywrightBridgeMCP
+
     _PlaywrightBridgeMCP = PlaywrightBridgeMCP
 except ImportError:
     pass
@@ -45,6 +41,7 @@ except ImportError:
 trinity_manager: Any = None
 try:
     from AFO.domain.metrics.trinity_manager import trinity_manager as tm
+
     trinity_manager = tm
 except ImportError:
     pass

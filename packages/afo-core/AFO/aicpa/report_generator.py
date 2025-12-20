@@ -10,104 +10,79 @@ AICPA Report Generator - 문서 생성기
 
 import csv
 import io
-from datetime import datetime
-from typing import Optional
 import logging
+from datetime import datetime
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
 # python-docx는 선택적 의존성
 try:
     from docx import Document
-    from docx.shared import Pt, RGBColor, Inches
     from docx.enum.text import WD_ALIGN_PARAGRAPH
+    from docx.shared import Inches, Pt, RGBColor
+
     DOCX_AVAILABLE = True
 except ImportError:
     DOCX_AVAILABLE = False
     logger.warning("[ReportGenerator] python-docx not installed. Word generation disabled.")
 
 
-def generate_strategy_report(
-    client_name: str,
-    tax_result: dict,
-    roth_simulation: Optional[dict] = None,
-    output_path: Optional[str] = None
-) -> str:
-    """
-    세금 전략 보고서 생성 (Word .docx)
-    
-    美 (Beauty): 전문적인 레이아웃
-    眞 (Truth): 정확한 데이터 기반
-    
-    Returns:
-        저장된 파일 경로 또는 에러 메시지
-    """
-    if not DOCX_AVAILABLE:
-        return "Error: python-docx not installed. Run: pip install python-docx"
-    
-    doc = Document()
-    
-    # ========================================
-    # 1. 헤더
-    # ========================================
-    header = doc.add_heading('AFO AICPA Tax Strategy Report', 0)
+def _add_report_header(doc: Any, client_name: str) -> None:
+    """Step 1: 보고서 헤더 추가"""
+    header = doc.add_heading("AFO AICPA Tax Strategy Report", 0)
     header.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    
     doc.add_paragraph(f"Date: {datetime.now().strftime('%Y-%m-%d')}")
     doc.add_paragraph(f"Client: {client_name}")
-    doc.add_paragraph(f"Prepared by: Julie CPA | AFO Kingdom")
+    doc.add_paragraph("Prepared by: Julie CPA | AFO Kingdom")
     doc.add_paragraph("-" * 50)
-    
-    # ========================================
-    # 2. 요약 (Executive Summary)
-    # ========================================
-    doc.add_heading('Executive Summary', level=1)
-    
+
+
+def _add_executive_summary(doc: Any, tax_result: dict) -> None:
+    """Step 2: 요약 섹션 추가"""
+    doc.add_heading("Executive Summary", level=1)
     summary_text = f"""
 Based on the 2025 OBBBA tax regulations, we have analyzed your financial situation 
 and prepared personalized recommendations to optimize your tax position.
 
-Filing Status: {tax_result.get('filing_status', 'N/A').upper()}
-Gross Income: ${tax_result.get('gross_income', 0):,}
-Total Tax Liability: ${tax_result.get('total_tax', 0):,}
-Effective Tax Rate: {tax_result.get('effective_federal_rate', 0):.2f}%
+Filing Status: {tax_result.get("filing_status", "N/A").upper()}
+Gross Income: ${tax_result.get("gross_income", 0):,}
+Total Tax Liability: ${tax_result.get("total_tax", 0):,}
+Effective Tax Rate: {tax_result.get("effective_federal_rate", 0):.2f}%
 """
     doc.add_paragraph(summary_text)
-    
-    # ========================================
-    # 3. 세금 분석 테이블
-    # ========================================
-    doc.add_heading('Tax Analysis', level=1)
-    
+
+
+def _add_tax_analysis_table(doc: Any, tax_result: dict) -> None:
+    """Step 3: 세금 분석 테이블 추가"""
+    doc.add_heading("Tax Analysis", level=1)
     table = doc.add_table(rows=1, cols=2)
-    table.style = 'Table Grid'
-    
+    table.style = "Table Grid"
     hdr_cells = table.rows[0].cells
-    hdr_cells[0].text = 'Item'
-    hdr_cells[1].text = 'Amount'
-    
+    hdr_cells[0].text = "Item"
+    hdr_cells[1].text = "Amount"
+
     tax_items = [
-        ('Gross Income', f"${tax_result.get('gross_income', 0):,}"),
-        ('Taxable Income', f"${tax_result.get('taxable_income', 0):,}"),
-        ('Federal Tax', f"${tax_result.get('federal_tax', 0):,}"),
-        ('CA State Tax', f"${tax_result.get('state_tax', 0):,}"),
-        ('Total Tax', f"${tax_result.get('total_tax', 0):,}"),
-        ('After-Tax Income', f"${tax_result.get('after_tax_income', 0):,}"),
+        ("Gross Income", f"${tax_result.get('gross_income', 0):,}"),
+        ("Taxable Income", f"${tax_result.get('taxable_income', 0):,}"),
+        ("Federal Tax", f"${tax_result.get('federal_tax', 0):,}"),
+        ("CA State Tax", f"${tax_result.get('state_tax', 0):,}"),
+        ("Total Tax", f"${tax_result.get('total_tax', 0):,}"),
+        ("After-Tax Income", f"${tax_result.get('after_tax_income', 0):,}"),
     ]
-    
+
     for item, amount in tax_items:
         row = table.add_row().cells
         row[0].text = item
         row[1].text = amount
-    
-    # ========================================
-    # 4. OBBBA Sweet Spot 분석
-    # ========================================
-    doc.add_heading('OBBBA Sweet Spot Analysis', level=1)
-    
-    headroom = tax_result.get('sweet_spot_headroom', 0)
-    roth_rec = tax_result.get('roth_conversion_recommendation', 0)
-    
+
+
+def _add_sweet_spot_analysis(doc: Any, tax_result: dict) -> None:
+    """Step 4: OBBBA Sweet Spot 분석 추가"""
+    doc.add_heading("OBBBA Sweet Spot Analysis", level=1)
+    headroom = tax_result.get("sweet_spot_headroom", 0)
+    roth_rec = tax_result.get("roth_conversion_recommendation", 0)
+
     if headroom > 0:
         doc.add_paragraph(f"""
 ✅ OPPORTUNITY IDENTIFIED
@@ -122,178 +97,204 @@ in the future when Required Minimum Distributions (RMDs) begin.
 """)
     else:
         doc.add_paragraph("No additional Sweet Spot opportunity available at current income level.")
-    
-    # ========================================
-    # 5. Roth Ladder 시뮬레이션 (선택)
-    # ========================================
-    if roth_simulation:
-        doc.add_heading('Roth Ladder Strategy (Multi-Year)', level=1)
-        
-        doc.add_paragraph(f"""
+
+
+def _add_roth_simulation(doc: Any, roth_simulation: dict) -> None:
+    """Step 5: Roth Ladder 시뮬레이션 테이블 추가"""
+    doc.add_heading("Roth Ladder Strategy (Multi-Year)", level=1)
+    doc.add_paragraph(f"""
 Based on the OBBBA provisions (2025-2028), we recommend a phased Roth Conversion strategy:
 
-Estimated Total Savings: ${roth_simulation.get('estimated_savings', 0):,}
+Estimated Total Savings: ${roth_simulation.get("estimated_savings", 0):,}
 """)
-        
-        # 연도별 테이블
-        ladder_table = doc.add_table(rows=1, cols=4)
-        ladder_table.style = 'Table Grid'
-        
-        headers = ['Year', 'Conversion', 'Tax Paid', 'Remaining IRA']
-        for i, h in enumerate(headers):
-            ladder_table.rows[0].cells[i].text = h
-        
-        for year_data in roth_simulation.get('years', []):
-            row = ladder_table.add_row().cells
-            row[0].text = str(year_data['year'])
-            row[1].text = f"${year_data['conversion_amount']:,}"
-            row[2].text = f"${year_data['tax_paid']:,}"
-            row[3].text = f"${year_data['remaining_ira']:,}"
-    
-    # ========================================
-    # 6. 리스크 경고
-    # ========================================
-    if tax_result.get('irmaa_warning'):
-        doc.add_heading('⚠️ Risk Alert: IRMAA', level=1)
+    ladder_table = doc.add_table(rows=1, cols=4)
+    ladder_table.style = "Table Grid"
+    headers = ["Year", "Conversion", "Tax Paid", "Remaining IRA"]
+    for i, h in enumerate(headers):
+        ladder_table.rows[0].cells[i].text = h
+
+    for year_data in roth_simulation.get("years", []):
+        row = ladder_table.add_row().cells
+        row[0].text = str(year_data["year"])
+        row[1].text = f"${year_data['conversion_amount']:,}"
+        row[2].text = f"${year_data['tax_paid']:,}"
+        row[3].text = f"${year_data['remaining_ira']:,}"
+
+
+def _add_risk_alerts(doc: Any, tax_result: dict) -> None:
+    """Step 6: 리스크 경고 추가"""
+    if tax_result.get("irmaa_warning"):
+        doc.add_heading("⚠️ Risk Alert: IRMAA", level=1)
         doc.add_paragraph("""
 WARNING: Your Modified Adjusted Gross Income (MAGI) may trigger 
 Income-Related Monthly Adjustment Amount (IRMAA) surcharges for Medicare Part B and D.
 
 Consider income smoothing strategies to avoid crossing IRMAA thresholds.
 """)
-    
-    # ========================================
-    # 7. 조언 및 마무리
-    # ========================================
+
+
+def _add_advice_and_closing(doc: Any, tax_result: dict) -> None:
+    """Step 7: 조언 및 마무리 추가"""
     doc.add_heading("Julie's Advice", level=1)
-    
     advice_p = doc.add_paragraph()
-    advice_p.add_run(tax_result.get('advice', 'No additional advice at this time.'))
-    
+    advice_p.add_run(tax_result.get("advice", "No additional advice at this time."))
     doc.add_paragraph("-" * 50)
     doc.add_paragraph("Generated by AFO Kingdom | AICPA Agent Army")
-    doc.add_paragraph(f"眞善美孝永 - Truth, Goodness, Beauty, Serenity, Forever")
-    
-    # 저장
-    if not output_path:
-        safe_name = client_name.replace(' ', '_')
-        output_path = f"/tmp/{safe_name}_Tax_Strategy_Report.docx"
-    
-    doc.save(output_path)
-    logger.info(f"[ReportGenerator] Word 보고서 생성: {output_path}")
-    
-    return output_path
+    doc.add_paragraph("眞善美孝永 - Truth, Goodness, Beauty, Serenity, Forever")
 
 
-def generate_turbotax_csv(
+def generate_strategy_report(
     client_name: str,
-    tax_data: dict,
-    output_path: Optional[str] = None
+    tax_result: dict,
+    roth_simulation: dict | None = None,
+    output_path: str | None = None,
 ) -> str:
+    """세금 전략 보고서 생성 (Word .docx) - Refactored"""
+    if not DOCX_AVAILABLE:
+        return "Error: python-docx not installed. Run: pip install python-docx"
+
+    try:
+        doc = Document()
+        _add_report_header(doc, client_name)
+        _add_executive_summary(doc, tax_result)
+        _add_tax_analysis_table(doc, tax_result)
+        _add_sweet_spot_analysis(doc, tax_result)
+        
+        if roth_simulation:
+            _add_roth_simulation(doc, roth_simulation)
+            
+        _add_risk_alerts(doc, tax_result)
+        _add_advice_and_closing(doc, tax_result)
+
+        if not output_path:
+            safe_name = client_name.replace(" ", "_")
+            output_path = f"/tmp/{safe_name}_Tax_Strategy_Report.docx"
+
+        doc.save(output_path)
+        logger.info(f"[ReportGenerator] Word 보고서 생성 완료: {output_path}")
+        return output_path
+    except Exception as e:
+        logger.error(f"[ReportGenerator] 보고서 생성 실패: {e}")
+        return f"Error: {str(e)}"
+
+
+def generate_turbotax_csv(client_name: str, tax_data: dict, output_path: str | None = None) -> str:
     """
     TurboTax 입력용 CSV 생성
-    
+
     孝 (Serenity): 수동 입력 제거
     """
     output = io.StringIO()
     writer = csv.writer(output)
-    
+
     # 헤더
-    writer.writerow(['Field Name', 'Value', 'Source', 'Note'])
-    
+    writer.writerow(["Field Name", "Value", "Source", "Note"])
+
     # 데이터 매핑
     rows = [
-        ['Taxpayer Name', client_name, 'System', ''],
-        ['Filing Status', tax_data.get('filing_status', 'Single').upper(), 'Client Input', ''],
-        ['Gross Income (AGI)', tax_data.get('gross_income', 0), 'W-2/1099', 'Verify with documents'],
-        ['Taxable Income', tax_data.get('taxable_income', 0), 'AFO Calc', 'After deductions'],
-        ['Federal Tax', tax_data.get('federal_tax', 0), 'AFO Calc', '2025 OBBBA rates'],
-        ['State Tax (CA)', tax_data.get('state_tax', 0), 'AFO Calc', ''],
-        ['Roth Conversion', tax_data.get('roth_conversion_recommendation', 0), 'AFO Strategy', 'Recommended'],
-        ['Tax Year', '2025', 'System', 'OBBBA in effect'],
+        ["Taxpayer Name", client_name, "System", ""],
+        ["Filing Status", tax_data.get("filing_status", "Single").upper(), "Client Input", ""],
+        [
+            "Gross Income (AGI)",
+            tax_data.get("gross_income", 0),
+            "W-2/1099",
+            "Verify with documents",
+        ],
+        ["Taxable Income", tax_data.get("taxable_income", 0), "AFO Calc", "After deductions"],
+        ["Federal Tax", tax_data.get("federal_tax", 0), "AFO Calc", "2025 OBBBA rates"],
+        ["State Tax (CA)", tax_data.get("state_tax", 0), "AFO Calc", ""],
+        [
+            "Roth Conversion",
+            tax_data.get("roth_conversion_recommendation", 0),
+            "AFO Strategy",
+            "Recommended",
+        ],
+        ["Tax Year", "2025", "System", "OBBBA in effect"],
     ]
-    
+
     for row in rows:
         writer.writerow(row)
-    
+
     content = output.getvalue()
-    
+
     if output_path:
-        with open(output_path, 'w') as f:
+        with open(output_path, "w") as f:
             f.write(content)
         logger.info(f"[ReportGenerator] TurboTax CSV 생성: {output_path}")
         return output_path
-    
+
     return content
 
 
 def generate_quickbooks_csv(
-    client_name: str,
-    transaction_data: dict,
-    output_path: Optional[str] = None
+    client_name: str, transaction_data: dict, output_path: str | None = None
 ) -> str:
     """
     QuickBooks Online 입력용 CSV 생성
-    
+
     포맷: Batch Enter Transactions 호환
     """
     output = io.StringIO()
     writer = csv.writer(output)
-    
+
     # QuickBooks 표준 헤더
-    writer.writerow(['Date', 'Description', 'Debit Account', 'Credit Account', 'Amount', 'Class'])
-    
+    writer.writerow(["Date", "Description", "Debit Account", "Credit Account", "Amount", "Class"])
+
     # 세금 납부 트랜잭션
-    date = datetime.now().strftime('%m/%d/%Y')
-    tax_amount = transaction_data.get('total_tax', 0)
-    
-    writer.writerow([
-        date,
-        f'Tax Payment - {client_name}',
-        'Tax Expense',
-        'Bank Account',
-        tax_amount,
-        'Personal'
-    ])
-    
-    # Roth Conversion 트랜잭션 (있는 경우)
-    roth_amount = transaction_data.get('roth_conversion_recommendation', 0)
-    if roth_amount > 0:
-        writer.writerow([
+    date = datetime.now().strftime("%m/%d/%Y")
+    tax_amount = transaction_data.get("total_tax", 0)
+
+    writer.writerow(
+        [
             date,
-            f'Roth Conversion - {client_name}',
-            'Roth IRA',
-            'Traditional IRA',
-            roth_amount,
-            'Retirement'
-        ])
-    
+            f"Tax Payment - {client_name}",
+            "Tax Expense",
+            "Bank Account",
+            tax_amount,
+            "Personal",
+        ]
+    )
+
+    # Roth Conversion 트랜잭션 (있는 경우)
+    roth_amount = transaction_data.get("roth_conversion_recommendation", 0)
+    if roth_amount > 0:
+        writer.writerow(
+            [
+                date,
+                f"Roth Conversion - {client_name}",
+                "Roth IRA",
+                "Traditional IRA",
+                roth_amount,
+                "Retirement",
+            ]
+        )
+
     content = output.getvalue()
-    
+
     if output_path:
-        with open(output_path, 'w') as f:
+        with open(output_path, "w") as f:
             f.write(content)
         logger.info(f"[ReportGenerator] QuickBooks CSV 생성: {output_path}")
         return output_path
-    
+
     return content
 
 
 def generate_email_draft(
     client_name: str,
     tax_result: dict,
-    next_steps: str = "Please review and let me know if you have questions."
+    next_steps: str = "Please review and let me know if you have questions.",
 ) -> str:
     """
     고객 이메일 초안 생성
-    
+
     美 (Beauty): 전문적이면서 친근한 톤
     """
     subject = f"Tax Strategy Update for {client_name} - 2025 OBBBA Analysis"
-    
-    savings = tax_result.get('roth_conversion_recommendation', 0)
-    sweet_spot = tax_result.get('sweet_spot_headroom', 0)
-    
+
+    savings = tax_result.get("roth_conversion_recommendation", 0)
+    sweet_spot = tax_result.get("sweet_spot_headroom", 0)
+
     body = f"""Subject: {subject}
 
 Dear {client_name},
@@ -303,12 +304,12 @@ I hope this email finds you well.
 Based on my analysis of the 2025 OBBBA tax regulations, I have prepared a personalized tax strategy report for you.
 
 [KEY FINDINGS]
-- Your current effective tax rate: {tax_result.get('effective_federal_rate', 0):.2f}%
-- Total estimated tax liability: ${tax_result.get('total_tax', 0):,}
+- Your current effective tax rate: {tax_result.get("effective_federal_rate", 0):.2f}%
+- Total estimated tax liability: ${tax_result.get("total_tax", 0):,}
 - OBBBA Sweet Spot opportunity: ${sweet_spot:,}
 
 [RECOMMENDED ACTION]
-{tax_result.get('advice', 'No immediate action required.')}
+{tax_result.get("advice", "No immediate action required.")}
 
 I have attached the detailed report to this email. {next_steps}
 
@@ -319,6 +320,6 @@ AFO AICPA Group
 ---
 Powered by AFO Kingdom | 眞善美孝永
 """
-    
+
     logger.info(f"[ReportGenerator] Email draft generated for {client_name}")
     return body

@@ -1,8 +1,10 @@
 import asyncio
-import aiohttp
 import json
 
+import aiohttp
+
 STREAM_URL = "http://localhost:8011/api/stream/mcp/thoughts"
+
 
 async def verify_sse():
     print(f"🔌 Connecting to Neural Stream: {STREAM_URL}")
@@ -15,13 +17,13 @@ async def verify_sse():
                     return
 
                 print("✅ Connected! Listening for events...")
-                
+
                 # Consume line by line
                 async for line in response.content:
-                    decoded = line.decode('utf-8').strip()
+                    decoded = line.decode("utf-8").strip()
                     if not decoded:
                         continue
-                        
+
                     if decoded.startswith("data: "):
                         data_str = decoded[6:]
                         try:
@@ -32,15 +34,18 @@ async def verify_sse():
                             payload = json.loads(data_str)
                             print(f"📩 Event Received: {payload}")
                             # Close after first hello message or shortly after
-                            if payload.get("source") == "System" and "Neural Link" in payload.get("message", ""):
+                            if payload.get("source") == "System" and "Neural Link" in payload.get(
+                                "message", ""
+                            ):
                                 print("✅ Handshake confirmed. Stream is ALIVE.")
                                 break
                         except Exception as e:
                             print(f"⚠️ Parse Error: {e} | Raw: {data_str}")
-                            
+
     except Exception as e:
         print(f"❌ Verification Failed: {e}")
         print("💡 Hint: Ensure 'api_server.py' is running on port 8011.")
+
 
 if __name__ == "__main__":
     asyncio.run(verify_sse())

@@ -64,9 +64,7 @@ class GeminiAPIWrapper:
                 pass
             else:
                 # CLI 정기구독 사용 시 API 키 불필요
-                logger.debug(
-                    "GEMINI_API_KEY 없음 - Gemini API 비활성화 (CLI 사용 시 무시)"
-                )
+                logger.debug("GEMINI_API_KEY 없음 - Gemini API 비활성화 (CLI 사용 시 무시)")
 
     async def generate(self, prompt: str, **kwargs: Any) -> dict[str, Any]:
         """

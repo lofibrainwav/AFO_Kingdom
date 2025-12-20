@@ -3,8 +3,9 @@
 # AntiGravity: 비용 최적화(Truth), 권한 검증(Goodness), 지속 아키텍처(Eternity)
 
 
-from config.antigravity import antigravity
 from config.vault_manager import vault_manager
+
+from config.antigravity import antigravity
 
 # Assuming llm_router is in services.llm_router based on typical structure,
 # but will use a safe import or mock if not found during runtime to prevent crash.

@@ -4,17 +4,16 @@ Phase 12 Extension: 실시간 예산 추적 및 리스크 알림
 
 "금고 안전! Julie CPA가 왕국 부를 지켜요" 🛡️💰
 """
+
+import logging
 from datetime import datetime
+
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from typing import Optional
-import logging
 
 from AFO.julie_cpa.models.budget import (
-    BudgetCategory,
-    BudgetSummary,
-    BudgetUpdate,
     MOCK_BUDGETS,
+    BudgetSummary,
 )
 
 router = APIRouter(prefix="/api/julie/budget", tags=["Julie CPA - Budget"])
@@ -24,7 +23,7 @@ logger = logging.getLogger(__name__)
 def calculate_risk_score(total_remaining: int, total_allocated: int) -> tuple[float, str]:
     """
     SSOT 연동 리스크 점수 계산
-    
+
     善 (Goodness): 예산 잔여율에 따른 리스크 평가
     - 잔여율 > 30%: safe (risk 0-5)
     - 잔여율 20-30%: warning (risk 6-10)
@@ -32,9 +31,9 @@ def calculate_risk_score(total_remaining: int, total_allocated: int) -> tuple[fl
     """
     if total_allocated == 0:
         return 0.0, "safe"
-    
+
     remaining_rate = (total_remaining / total_allocated) * 100
-    
+
     if remaining_rate >= 30:
         risk = 5.0 - (remaining_rate - 30) * 0.1  # 잔여 많을수록 낮은 리스크
         risk = max(0.0, min(5.0, risk))
@@ -61,17 +60,17 @@ def generate_summary(risk_level: str, utilization_rate: float) -> str:
 async def get_budget_summary():
     """
     예산 현황 조회
-    
+
     Returns:
         BudgetSummary: 전체 예산 현황 및 리스크 점수
     """
     total_allocated = sum(b.allocated for b in MOCK_BUDGETS)
     total_spent = sum(b.spent for b in MOCK_BUDGETS)
     total_remaining = sum(b.remaining for b in MOCK_BUDGETS)
-    
+
     utilization_rate = (total_spent / total_allocated * 100) if total_allocated > 0 else 0.0
     risk_score, risk_level = calculate_risk_score(total_remaining, total_allocated)
-    
+
     return BudgetSummary(
         budgets=MOCK_BUDGETS,
         total_allocated=total_allocated,
@@ -97,7 +96,7 @@ async def get_category_budget(category_name: str):
 class SpendRequest(BaseModel):
     category: str
     amount: int
-    description: Optional[str] = None
+    description: str | None = None
     dry_run: bool = True
 
 
@@ -105,14 +104,14 @@ class SpendRequest(BaseModel):
 async def record_spending(request: SpendRequest):
     """
     지출 기록 (DRY_RUN 기본)
-    
+
     善 (Goodness): 안전 우선 - dry_run=True가 기본값
     """
     for budget in MOCK_BUDGETS:
         if budget.category.lower() == request.category.lower():
             new_spent = budget.spent + request.amount
             new_remaining = budget.allocated - new_spent
-            
+
             # 리스크 체크
             if new_remaining < 0:
                 return {
@@ -121,7 +120,7 @@ async def record_spending(request: SpendRequest):
                     "reason": f"예산 초과! 잔여: ₩{budget.remaining:,}, 요청: ₩{request.amount:,}",
                     "suggestion": "예산 재할당 또는 지출 조정 필요",
                 }
-            
+
             if request.dry_run:
                 return {
                     "success": True,
@@ -145,7 +144,7 @@ async def record_spending(request: SpendRequest):
                     "updated": budget.dict(),
                     "message": f"지출 기록 완료: {request.description or '(설명 없음)'}",
                 }
-    
+
     raise HTTPException(status_code=404, detail=f"카테고리 '{request.category}' 없음")
 
 
@@ -153,28 +152,32 @@ async def record_spending(request: SpendRequest):
 async def get_risk_alerts():
     """
     리스크 알림 조회
-    
+
     SSOT 연동: 위험 카테고리만 반환
     """
     alerts = []
-    
+
     for budget in MOCK_BUDGETS:
         utilization = (budget.spent / budget.allocated * 100) if budget.allocated > 0 else 0
-        
+
         if utilization >= 80:
             level = "critical" if utilization >= 90 else "warning"
-            alerts.append({
-                "level": level,
-                "category": budget.category,
-                "utilization": round(utilization, 1),
-                "remaining": budget.remaining,
-                "message": f"🚨 {budget.category}: {utilization:.1f}% 사용 (잔여 ₩{budget.remaining:,})",
-            })
-    
+            alerts.append(
+                {
+                    "level": level,
+                    "category": budget.category,
+                    "utilization": round(utilization, 1),
+                    "remaining": budget.remaining,
+                    "message": f"🚨 {budget.category}: {utilization:.1f}% 사용 (잔여 ₩{budget.remaining:,})",
+                }
+            )
+
     return {
         "count": len(alerts),
         "alerts": alerts,
-        "summary": "금고 문제? Julie가 자동 복구 중 – 조금만 기다려주세요!" if alerts else "✅ 모든 예산 안정",
+        "summary": "금고 문제? Julie가 자동 복구 중 – 조금만 기다려주세요!"
+        if alerts
+        else "✅ 모든 예산 안정",
     }
 
 
@@ -182,11 +185,12 @@ async def get_risk_alerts():
 # Phase 12-3: Smart Suggestions (Rule-Based)
 # ============================================================
 
+
 @router.get("/suggestions")
 async def get_budget_suggestions():
     """
     Julie CPA의 스마트 제안
-    
+
     룰 기반 알고리즘으로 예산 최적화 제안 생성
     - 지출율 50% 이상: 절감 제안
     - 지출율 80% 이상: 긴급 제안
@@ -195,67 +199,77 @@ async def get_budget_suggestions():
     total_allocated = sum(b.allocated for b in MOCK_BUDGETS)
     total_spent = sum(b.spent for b in MOCK_BUDGETS)
     spend_rate = (total_spent / total_allocated * 100) if total_allocated > 0 else 0
-    
+
     suggestions = []
-    
+
     # 전체 지출율 기반 제안
     if spend_rate > 80:
-        suggestions.append({
-            "priority": "critical",
-            "icon": "🚨",
-            "title": "긴급 예산 조정 필요",
-            "message": f"전체 지출율 {spend_rate:.1f}%! 예산 추가 배정 또는 지출 동결을 권장합니다.",
-            "action": "예산 재검토",
-            "expected_saving": 0,
-        })
+        suggestions.append(
+            {
+                "priority": "critical",
+                "icon": "🚨",
+                "title": "긴급 예산 조정 필요",
+                "message": f"전체 지출율 {spend_rate:.1f}%! 예산 추가 배정 또는 지출 동결을 권장합니다.",
+                "action": "예산 재검토",
+                "expected_saving": 0,
+            }
+        )
     elif spend_rate > 50:
         estimated_saving = int(total_spent * 0.1)  # 10% 절감 예상
-        suggestions.append({
-            "priority": "warning",
-            "icon": "💡",
-            "title": "지출 최적화 기회",
-            "message": f"지출율 {spend_rate:.1f}% – 10% 절감 시 약 ₩{estimated_saving:,} 절약 가능!",
-            "action": "지출 패턴 분석",
-            "expected_saving": estimated_saving,
-        })
-    
+        suggestions.append(
+            {
+                "priority": "warning",
+                "icon": "💡",
+                "title": "지출 최적화 기회",
+                "message": f"지출율 {spend_rate:.1f}% – 10% 절감 시 약 ₩{estimated_saving:,} 절약 가능!",
+                "action": "지출 패턴 분석",
+                "expected_saving": estimated_saving,
+            }
+        )
+
     # 카테고리별 제안
     for budget in MOCK_BUDGETS:
         util = (budget.spent / budget.allocated * 100) if budget.allocated > 0 else 0
-        
+
         if util >= 90:
-            suggestions.append({
-                "priority": "critical",
-                "icon": "🔥",
-                "title": f"{budget.category} 예산 위기",
-                "message": f"사용률 {util:.1f}% – 잔여 ₩{budget.remaining:,}만 남음",
-                "action": "즉시 점검",
-                "expected_saving": 0,
-            })
+            suggestions.append(
+                {
+                    "priority": "critical",
+                    "icon": "🔥",
+                    "title": f"{budget.category} 예산 위기",
+                    "message": f"사용률 {util:.1f}% – 잔여 ₩{budget.remaining:,}만 남음",
+                    "action": "즉시 점검",
+                    "expected_saving": 0,
+                }
+            )
         elif util >= 70 and util < 90:
             potential = int(budget.spent * 0.15)
-            suggestions.append({
-                "priority": "info",
-                "icon": "📊",
-                "title": f"{budget.category} 효율화 제안",
-                "message": f"15% 최적화 시 ₩{potential:,} 절약 예상",
-                "action": "분석 보기",
-                "expected_saving": potential,
-            })
-    
+            suggestions.append(
+                {
+                    "priority": "info",
+                    "icon": "📊",
+                    "title": f"{budget.category} 효율화 제안",
+                    "message": f"15% 최적화 시 ₩{potential:,} 절약 예상",
+                    "action": "분석 보기",
+                    "expected_saving": potential,
+                }
+            )
+
     # 제안이 없으면 긍정 메시지
     if not suggestions:
-        suggestions.append({
-            "priority": "success",
-            "icon": "✨",
-            "title": "예산 상태 양호!",
-            "message": "모든 카테고리가 안정적입니다. 계속 잘 관리하고 계세요!",
-            "action": None,
-            "expected_saving": 0,
-        })
-    
+        suggestions.append(
+            {
+                "priority": "success",
+                "icon": "✨",
+                "title": "예산 상태 양호!",
+                "message": "모든 카테고리가 안정적입니다. 계속 잘 관리하고 계세요!",
+                "action": None,
+                "expected_saving": 0,
+            }
+        )
+
     total_potential_saving = sum(s["expected_saving"] for s in suggestions)
-    
+
     return {
         "spend_rate": round(spend_rate, 2),
         "suggestion_count": len(suggestions),
@@ -284,7 +298,7 @@ MOCK_HISTORY = [
 def predict_next_month_spending(history: list[dict]) -> dict:
     """
     간단 선형회귀로 다음 달 지출 예측
-    
+
     sklearn 없이 구현 (순수 Python)
     y = mx + b (Linear Regression)
     """
@@ -295,35 +309,35 @@ def predict_next_month_spending(history: list[dict]) -> dict:
             "confidence": 0.0,
             "trend": "insufficient_data",
         }
-    
+
     # x = 월 인덱스, y = 지출액
     x = list(range(n))
     y = [h["spent"] for h in history]
-    
+
     # 평균 계산
     x_mean = sum(x) / n
     y_mean = sum(y) / n
-    
+
     # 기울기 (m) 계산: m = Σ(xi - x̄)(yi - ȳ) / Σ(xi - x̄)²
     numerator = sum((x[i] - x_mean) * (y[i] - y_mean) for i in range(n))
     denominator = sum((x[i] - x_mean) ** 2 for i in range(n))
-    
+
     if denominator == 0:
         m = 0
     else:
         m = numerator / denominator
-    
+
     # y절편 (b) 계산: b = ȳ - m * x̄
     b = y_mean - m * x_mean
-    
+
     # 다음 달 예측 (x = n)
     next_month_prediction = m * n + b
-    
+
     # R² 계산 (결정계수 = 신뢰도)
     ss_res = sum((y[i] - (m * x[i] + b)) ** 2 for i in range(n))
     ss_tot = sum((y[i] - y_mean) ** 2 for i in range(n))
     r_squared = 1 - (ss_res / ss_tot) if ss_tot != 0 else 0
-    
+
     # 추세 판단
     if m > 1000:
         trend = "increasing"
@@ -331,7 +345,7 @@ def predict_next_month_spending(history: list[dict]) -> dict:
         trend = "decreasing"
     else:
         trend = "stable"
-    
+
     return {
         "predicted_spending": max(0, int(next_month_prediction)),
         "confidence": round(max(0, min(1, r_squared)), 2),
@@ -344,21 +358,21 @@ def predict_next_month_spending(history: list[dict]) -> dict:
 async def get_budget_prediction():
     """
     Julie CPA의 미래 예측
-    
+
     LinearRegression으로 다음 달 지출 예측
     - 6개월 과거 데이터 기반
     - 신뢰도 (R²) 포함
     - 추세 분석 (증가/감소/안정)
     """
     prediction = predict_next_month_spending(MOCK_HISTORY)
-    
+
     current_spending = MOCK_HISTORY[-1]["spent"]
     predicted = prediction["predicted_spending"]
-    
+
     # 예측 vs 현재 비교
     diff = predicted - current_spending
     diff_percent = (diff / current_spending * 100) if current_spending > 0 else 0
-    
+
     # 제안 메시지 생성
     if prediction["trend"] == "increasing":
         advice = "📈 지출 증가 추세 – 예산 추가 배정 또는 지출 조절을 고려하세요."
@@ -369,7 +383,7 @@ async def get_budget_prediction():
     else:
         advice = "📊 지출 안정 추세 – 현재 패턴 유지하면 예산 내 관리 가능."
         risk_level = "safe"
-    
+
     # 신뢰도 기반 메시지 조정
     confidence = prediction["confidence"]
     if confidence < 0.5:
@@ -378,7 +392,7 @@ async def get_budget_prediction():
         confidence_note = "(중간 신뢰도)"
     else:
         confidence_note = "(높은 신뢰도 ✓)"
-    
+
     return {
         "current_month_spending": current_spending,
         "next_month_predicted": predicted,
@@ -400,116 +414,123 @@ async def get_budget_prediction():
 # Phase 14: Prophet 기반 고정밀 예측
 # ============================================================
 
+
 @router.get("/forecast")
 async def get_budget_forecast(periods: int = 3):
     """
     Prophet 기반 미래 예산 예측
-    
+
     Phase 14: LinearRegression → Prophet 업그레이드
     - 시계열 패턴 자동 학습
     - 이벤트(Phase 보상, 연말) 반영
     - 신뢰 구간 제공
-    
+
     Args:
         periods: 예측 기간 (기본 3개월, 최대 12개월)
-    
+
     眞 (Truth): 데이터 기반 정확한 예측
     善 (Goodness): 형님 안심을 위한 명확한 결과
     """
     try:
         from AFO.julie_cpa.prophet_engine import get_kingdom_forecast
-        
+
         # 기간 제한 (1~12개월)
         periods = max(1, min(12, periods))
-        
+
         result = get_kingdom_forecast(periods=periods)
-        
+
         logger.info(f"[Julie] Prophet 예측 완료: {periods}개월, 총 ${result['summary']['total']:,}")
-        
+
         return result
-        
+
     except ImportError as e:
         # Prophet 없으면 기존 LinearRegression 사용
         logger.warning(f"[Julie] Prophet 미설치, 폴백 사용: {e}")
-        
+
         # 간단한 폴백 응답
         from AFO.julie_cpa.prophet_engine import get_kingdom_forecast
+
         return get_kingdom_forecast(periods=periods)
-        
+
     except Exception as e:
         logger.error(f"[Julie] 예측 실패: {e}")
-        raise HTTPException(status_code=500, detail=f"예측 실패: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"예측 실패: {e!s}")
 
 
 # ============================================================
 # Phase 14 완전체: Hybrid 예측 (Prophet + auto_arima)
 # ============================================================
 
+
 @router.get("/forecast-hybrid")
 async def get_hybrid_budget_forecast(periods: int = 3):
     """
     Prophet + auto_arima 하이브리드 예측
-    
+
     Phase 14 완전체: 99%+ 정확도
     - Prophet 기본 예측 (추세 + 계절성)
     - auto_arima 잔차 보정 (미세 패턴)
-    
+
     Args:
         periods: 예측 기간 (기본 3개월, 최대 12개월)
-    
+
     眞 (Truth): 형님의 경제적 진실 - 돈을 담당하는 매우 중요한 시스템
     """
     try:
         from AFO.julie_cpa.hybrid_engine import get_hybrid_forecast
-        
+
         periods = max(1, min(12, periods))
         result = get_hybrid_forecast(periods=periods)
-        
-        logger.info(f"[Julie] Hybrid 예측 완료: {periods}개월, 신뢰도 {result.get('summary', {}).get('confidence', 0)}%")
-        
+
+        logger.info(
+            f"[Julie] Hybrid 예측 완료: {periods}개월, 신뢰도 {result.get('summary', {}).get('confidence', 0)}%"
+        )
+
         return result
-        
+
     except ImportError as e:
         logger.warning(f"[Julie] Hybrid 엔진 미설치: {e}")
         # Prophet 폴백
         from AFO.julie_cpa.prophet_engine import get_kingdom_forecast
+
         return get_kingdom_forecast(periods=periods)
-        
+
     except Exception as e:
         logger.error(f"[Julie] Hybrid 예측 실패: {e}")
-        raise HTTPException(status_code=500, detail=f"Hybrid 예측 실패: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Hybrid 예측 실패: {e!s}")
 
 
 # ============================================================
 # Phase 15: The Grok Singularity (외부 지능 자문)
 # ============================================================
 
+
 @router.get("/consult-grok")
 async def consult_grok_advisor(periods: int = 3):
     """
     Phase 15: The Grok Singularity - 외부 지능(xAI) 자문
-    
+
     왕국의 예산 예측 데이터를 바탕으로 Grok에게 거시경제적 조언을 구합니다.
     - 智 (Wisdom): 외부 데이터와 내부 데이터의 융합
     """
     try:
-        from AFO.julie_cpa.hybrid_engine import get_hybrid_forecast
         from AFO.julie_cpa.grok_engine import consult_grok
-        
+        from AFO.julie_cpa.hybrid_engine import get_hybrid_forecast
+
         # 1. 내부 예측 수행 (Hybrid Engine)
         logger.info("[Julie] Grok 자문을 위한 내부 예측 수행 중...")
         forecast = get_hybrid_forecast(periods=periods)
-        
+
         # 2. Grok에게 자문 (비동기)
         logger.info("[Julie] Grok(The Sage from the Stars) 호출 중...")
         analysis = await consult_grok(forecast)
-        
+
         return {
             "source": "xAI (Grok)",
             "forecast_summary": forecast["summary"],
-            "grok_analysis": analysis
+            "grok_analysis": analysis,
         }
-        
+
     except Exception as e:
         logger.error(f"[Julie] Grok 자문 실패: {e}")
-        raise HTTPException(status_code=500, detail=f"Grok 통신 실패: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Grok 통신 실패: {e!s}")

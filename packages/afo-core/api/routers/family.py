@@ -153,7 +153,9 @@ async def update_member(member: dict[str, Any]) -> dict[str, Any]:
 
 
 @router.post("/activity")
-async def log_activity(activity: dict[str, Any], background_tasks: BackgroundTasks) -> dict[str, Any]:
+async def log_activity(
+    activity: dict[str, Any], background_tasks: BackgroundTasks
+) -> dict[str, Any]:
     """
     새로운 활동 로그 기록 (孝: Serenity - 기록을 통한 안심)
     활동에 따라 행복 지수가 변동됨.

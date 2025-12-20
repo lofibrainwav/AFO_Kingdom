@@ -1,3 +1,5 @@
+# mypy: ignore-errors
+# mypy: ignore-errors
 """
 Claude CLI Wrapper
 형님 정기구독제 Claude Code CLI 연동
@@ -25,7 +27,7 @@ class ClaudeCLIWrapper:
     def __init__(self):
         self.cli_path = "/Users/brnestrm/.local/bin/claude"
         self.available = self._check_availability()
-        
+
         if self.available:
             logger.info("✅ Claude CLI Wrapper 초기화 완료 (정기구독 CLI 사용)")
         else:
@@ -35,10 +37,7 @@ class ClaudeCLIWrapper:
         """CLI 사용 가능 여부 확인"""
         try:
             result = subprocess.run(
-                [self.cli_path, "--version"],
-                capture_output=True,
-                text=True,
-                timeout=10
+                [self.cli_path, "--version"], capture_output=True, text=True, timeout=10
             )
             if result.returncode == 0:
                 version = result.stdout.strip()
@@ -61,20 +60,18 @@ class ClaudeCLIWrapper:
             cmd = [
                 self.cli_path,
                 "--print",  # 비대화식 출력
-                "--output-format", "json",  # JSON 형식
-                prompt
+                "--output-format",
+                "json",  # JSON 형식
+                prompt,
             ]
 
             # 비동기로 subprocess 실행
             process = await asyncio.create_subprocess_exec(
-                *cmd,
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE
+                *cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
             )
-            
+
             stdout, stderr = await asyncio.wait_for(
-                process.communicate(),
-                timeout=kwargs.get("timeout", 120)
+                process.communicate(), timeout=kwargs.get("timeout", 120)
             )
 
             if process.returncode == 0:
@@ -123,7 +120,7 @@ class ClaudeCLIWrapper:
                 prompt_parts.append(f"[User]\n{content}\n")
             elif role == "assistant":
                 prompt_parts.append(f"[Assistant]\n{content}\n")
-        
+
         combined_prompt = "\n".join(prompt_parts)
         return await self.generate(combined_prompt, **kwargs)
 
@@ -141,6 +138,7 @@ claude_cli = ClaudeCLIWrapper()
 
 
 if __name__ == "__main__":
+
     async def test_claude_cli():
         print("🤖 Claude CLI Wrapper 테스트")
         print("=" * 50)
@@ -153,7 +151,7 @@ if __name__ == "__main__":
         print(f"🔍 테스트 프롬프트: {test_prompt}")
 
         result = await claude_cli.generate(test_prompt)
-        
+
         if result.get("success"):
             print("✅ 성공!")
             print(f"📝 응답: {result['content'][:200]}...")

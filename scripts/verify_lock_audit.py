@@ -1,11 +1,11 @@
-
 """
 Operation LOCK: Foundation Restoration
 Geepi-Jigi Audit Script
 """
-import sys
-import os
+
 import asyncio
+import os
+import sys
 
 # Setup Path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../packages/afo-core")))
@@ -14,9 +14,10 @@ from AFO.config.antigravity import antigravity
 from AFO.domain.metrics.trinity_ssot import TrinityWeights
 from AFO.services.vision_verifier import vision_verifier
 
+
 async def run_audit():
     print("🔒 [Operation LOCK] Starting Geepi-Jigi Audit...")
-    
+
     # 1. Check AntiGravity (Goodness/Safety)
     print("\n[1] Checking AntiGravity (Safety Lock)...")
     if antigravity.DRY_RUN_DEFAULT:
@@ -28,7 +29,9 @@ async def run_audit():
     # 2. Check Trinity Scores (Truth)
     print("\n[2] Checking Trinity Pillars (Truth)...")
     if TrinityWeights.validate():
-        print(f"✅ Trinity Weights Validated: 眞{TrinityWeights.TRUTH} 善{TrinityWeights.GOODNESS} 美{TrinityWeights.BEAUTY} 孝{TrinityWeights.SERENITY} 永{TrinityWeights.ETERNITY}")
+        print(
+            f"✅ Trinity Weights Validated: 眞{TrinityWeights.TRUTH} 善{TrinityWeights.GOODNESS} 美{TrinityWeights.BEAUTY} 孝{TrinityWeights.SERENITY} 永{TrinityWeights.ETERNITY}"
+        )
     else:
         print("❌ Trinity Weights Invalid!")
         sys.exit(1)
@@ -47,6 +50,7 @@ async def run_audit():
         print(f"⚠️ Bridge Check Error: {e}")
 
     print("\n🏁 [Audit Complete] Foundation is SECURE. Ready for Expansion.")
+
 
 if __name__ == "__main__":
     asyncio.run(run_audit())

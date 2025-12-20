@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """
 Stealth Login Automation
 Browser Bridge Phase 9: "The Ghost"

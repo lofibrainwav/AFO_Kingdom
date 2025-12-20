@@ -4,6 +4,7 @@ Phase 9: Self-Expanding Kingdom
 
 Autonomous visual inspection of generated UI components.
 """
+
 import logging
 from pathlib import Path
 from typing import Any
@@ -11,6 +12,7 @@ from typing import Any
 from AFO.utils.playwright_bridge import bridge
 
 logger = logging.getLogger("afo.services.vision_verifier")
+
 
 class VisionVerifier:
     """
@@ -40,7 +42,7 @@ class VisionVerifier:
         # Actually, let's implement a 'dedicated preview' URL logic on frontend side later.
         # For now, we verify the generic sandbox.
 
-        target_url = f"http://localhost:3000/sandbox/{component_name}" # Hypothetical route
+        target_url = f"http://localhost:3000/sandbox/{component_name}"  # Hypothetical route
 
         logger.info(f"👁️ [Vision] Verifying {component_name} at {target_url}...")
 
@@ -49,28 +51,22 @@ class VisionVerifier:
             path = str(self.screenshot_dir / filename)
 
             # Using the bridge to capture
-            result = await bridge.verify_ui(
-                url=target_url,
-                screenshot_path=path
-            )
+            result = await bridge.verify_ui(url=target_url, screenshot_path=path)
 
             if result.get("status") == "PASS":
                 logger.info(f"✅ [Vision] Captured screenshot: {path}")
-                return {
-                    "success": True,
-                    "screenshot_path": path,
-                    "details": result
-                }
+                return {"success": True, "screenshot_path": path, "details": result}
             else:
-                 logger.warning(f"⚠️ [Vision] Verification simulation or failure: {result}")
-                 return {
-                     "success": False,
-                     "error": "Verification failed or simulated",
-                     "details": result
-                 }
+                logger.warning(f"⚠️ [Vision] Verification simulation or failure: {result}")
+                return {
+                    "success": False,
+                    "error": "Verification failed or simulated",
+                    "details": result,
+                }
 
         except Exception as e:
             logger.error(f"❌ [Vision] Verification error: {e}")
             return {"success": False, "error": str(e)}
+
 
 vision_verifier = VisionVerifier()

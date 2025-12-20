@@ -100,121 +100,139 @@ class LLMRouter:
 
     def _initialize_configs(self) -> None:
         """LLM 설정 초기화"""
-        # Phase 2-4: settings 사용
         try:
-            from AFO.config.settings import get_settings
-
-            settings = get_settings()
-        except ImportError:
+            # Phase 2-4: settings 사용
             try:
-                # [맹자] 득도다조 = 여러 길을 시도하여 도움을 구함
-                from config.settings import get_settings  # type: ignore[assignment]
+                from AFO.config.settings import get_settings
 
                 settings = get_settings()
             except ImportError:
-                settings = None
+                try:
+                    # [맹자] 득도다조 = 여러 길을 시도하여 도움을 구함
+                    from config.settings import get_settings  # type: ignore[assignment]
 
-        # Ollama (내부 지력)
-        ollama_model = (
-            settings.OLLAMA_MODEL if settings else os.getenv("OLLAMA_MODEL", "qwen3-vl:8b")
-        )
-        ollama_base_url = (
-            settings.OLLAMA_BASE_URL
-            if settings
-            else os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
-        )
+                    settings = get_settings()
+                except ImportError:
+                    settings = None
 
-        self.llm_configs[LLMProvider.OLLAMA] = LLMConfig(
-            provider=LLMProvider.OLLAMA,
-            model=ollama_model,  # Phase 2-4: settings 사용
-            base_url=ollama_base_url,  # Phase 2-4: settings 사용
-            temperature=0.7,
-            max_tokens=2048,
-            cost_per_token=0.0,  # 무료
-            latency_ms=500,  # 로컬이므로 빠름
-            quality_tier=QualityTier.PREMIUM,
-            context_window=8192,  # Qwen3-VL-8B supports larger context
-        )
-
-        # Vault Integration - [손자] 지피지기 - 비밀을 아는 자가 승리함
-        vault: Any = None
-        try:
-            from AFO.security.vault_manager import vault as _vault
-            vault = _vault
-        except (ImportError, ValueError):
-            try:
-                from security.vault_manager import vault as _v2
-                vault = _v2
-            except ImportError:
-                vault = None
-
-        # Helper to get secret
-        def get_secret(name: str) -> str | None:
-            if vault:
-                # Type safe call
-                res = vault.get_secret(name)
-                return res if isinstance(res, str) else None
-            return getattr(settings, name, None) if settings else os.getenv(name)
-
-        # Anthropic (Claude)
-        anthropic_key = get_secret("ANTHROPIC_API_KEY")
-        if anthropic_key:
-            self.llm_configs[LLMProvider.ANTHROPIC] = LLMConfig(
-                provider=LLMProvider.ANTHROPIC,
-                model="claude-3-sonnet-20240229",
-                api_key_env="ANTHROPIC_API_KEY",
-                temperature=0.7,
-                max_tokens=4096,
-                cost_per_token=0.000015,
-                latency_ms=2000,
-                quality_tier=QualityTier.ULTRA,
+            # Ollama (내부 지력)
+            ollama_model = (
+                settings.OLLAMA_MODEL if settings else os.getenv("OLLAMA_MODEL", "qwen3-vl:8b")
+            )
+            ollama_base_url = (
+                settings.OLLAMA_BASE_URL
+                if settings
+                else os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
             )
 
-        # Google Gemini
-        gemini_key = get_secret("GEMINI_API_KEY")
-        google_key = get_secret("GOOGLE_API_KEY")
-        if gemini_key or google_key:
-            self.llm_configs[LLMProvider.GEMINI] = LLMConfig(
-                provider=LLMProvider.GEMINI,
-                model="gemini-2.0-flash-exp",  # Updated to latest model
-                api_key_env="GEMINI_API_KEY" if gemini_key else "GOOGLE_API_KEY",
+            self.llm_configs[LLMProvider.OLLAMA] = LLMConfig(
+                provider=LLMProvider.OLLAMA,
+                model=ollama_model,  # Phase 2-4: settings 사용
+                base_url=ollama_base_url,  # Phase 2-4: settings 사용
                 temperature=0.7,
                 max_tokens=2048,
-                cost_per_token=0.0000005,
-                latency_ms=500,
+                cost_per_token=0.0,  # 무료
+                latency_ms=500,  # 로컬이므로 빠름
                 quality_tier=QualityTier.PREMIUM,
+                context_window=8192,  # Qwen3-VL-8B supports larger context
             )
 
-        # OpenAI GPT
-        openai_key = get_secret("OPENAI_API_KEY")
-        if openai_key:
-            self.llm_configs[LLMProvider.OPENAI] = LLMConfig(
-                provider=LLMProvider.OPENAI,
-                model="gpt-4o",
-                api_key_env="OPENAI_API_KEY",
-                temperature=0.7,
-                max_tokens=4096,
-                cost_per_token=0.000005,  # 입력 토큰당
-                latency_ms=1800,
-                quality_tier=QualityTier.ULTRA,
-            )
+            # Vault Integration - [손자] 지피지기 - 비밀을 아는 자가 승리함
+            vault: Any = None
+            try:
+                from AFO.security.vault_manager import vault as _vault
 
-        logger.info(f"✅ LLM Router 초기화: {len(self.llm_configs)}개 LLM 설정됨")
-        # Start health check in background implies calling check_connections async,
-        # but in sync __init__ we just log.
+                vault = _vault
+            except (ImportError, ValueError):
+                try:
+                    from security.vault_manager import vault as _v2
+
+                    vault = _v2
+                except ImportError:
+                    vault = None
+
+            # Helper to get secret
+            def get_secret(name: str) -> str | None:
+                if vault:
+                    try:
+                        # Type safe call
+                        res = vault.get_secret(name)
+                        return res if isinstance(res, str) else None
+                    except Exception:
+                        pass
+                return getattr(settings, name, None) if settings else os.getenv(name)
+
+            # Anthropic (Claude)
+            anthropic_key = get_secret("ANTHROPIC_API_KEY")
+            if anthropic_key:
+                self.llm_configs[LLMProvider.ANTHROPIC] = LLMConfig(
+                    provider=LLMProvider.ANTHROPIC,
+                    model="claude-3-sonnet-20240229",
+                    api_key_env="ANTHROPIC_API_KEY",
+                    temperature=0.7,
+                    max_tokens=4096,
+                    cost_per_token=0.000015,
+                    latency_ms=2000,
+                    quality_tier=QualityTier.ULTRA,
+                )
+
+            # Google Gemini
+            gemini_key = get_secret("GEMINI_API_KEY")
+            google_key = get_secret("GOOGLE_API_KEY")
+            if gemini_key or google_key:
+                self.llm_configs[LLMProvider.GEMINI] = LLMConfig(
+                    provider=LLMProvider.GEMINI,
+                    model="gemini-2.0-flash-exp",  # Updated to latest model
+                    api_key_env="GEMINI_API_KEY" if gemini_key else "GOOGLE_API_KEY",
+                    temperature=0.7,
+                    max_tokens=2048,
+                    cost_per_token=0.0000005,
+                    latency_ms=500,
+                    quality_tier=QualityTier.PREMIUM,
+                )
+
+            # OpenAI GPT
+            openai_key = get_secret("OPENAI_API_KEY")
+            if openai_key:
+                self.llm_configs[LLMProvider.OPENAI] = LLMConfig(
+                    provider=LLMProvider.OPENAI,
+                    model="gpt-4o",
+                    api_key_env="OPENAI_API_KEY",
+                    temperature=0.7,
+                    max_tokens=4096,
+                    cost_per_token=0.000005,  # 입력 토큰당
+                    latency_ms=1800,
+                    quality_tier=QualityTier.ULTRA,
+                )
+
+            logger.info(f"✅ LLM Router 초기화: {len(self.llm_configs)}개 LLM 설정됨")
+        except Exception as e:
+            logger.error(f"❌ LLM Router 초기화 실패: {e}")
+            # 최소한의 기본 설정 보장
+            if LLMProvider.OLLAMA not in self.llm_configs:
+                self.llm_configs[LLMProvider.OLLAMA] = LLMConfig(
+                    provider=LLMProvider.OLLAMA,
+                    model="qwen3-vl:8b",
+                    base_url="http://localhost:11434",
+                    quality_tier=QualityTier.STANDARD
+                )
 
     async def check_connections(self) -> dict[str, bool]:
         """Startup Health Check for all providers"""
         results = {}
         logger.info("🏥 Running LLM Health Checks...")
 
-        # Check Ollama
-        if self._is_ollama_available():
-            results["Ollama"] = True
-            logger.info("   ✅ Ollama: Online")
-        else:
+        try:
+            # Check Ollama
+            if self._is_ollama_available():
+                results["Ollama"] = True
+                logger.info("   ✅ Ollama: Online")
+            else:
+                results["Ollama"] = False
+                logger.warning("   ❌ Ollama: Offline or Unreachable")
+        except Exception as e:
             results["Ollama"] = False
-            logger.warning("   ❌ Ollama: Offline or Unreachable")
+            logger.error(f"   ❌ Health Check Failed: {e}")
 
         return results
 
@@ -222,53 +240,66 @@ class LLMRouter:
         """
         쿼리에 대한 최적 LLM 라우팅 결정
         """
-        context = context or {}
-        quality_requirement = context.get("quality_tier", QualityTier.STANDARD)
-        latency_requirement = context.get("max_latency_ms", 5000)
-        cost_budget = context.get("max_cost", 1.0)
+        try:
+            context = context or {}
+            quality_requirement = context.get("quality_tier", QualityTier.STANDARD)
+            latency_requirement = context.get("max_latency_ms", 5000)
+            cost_budget = context.get("max_cost", 1.0)
 
-        # 0. 명시적 프로바이더 요청 처리
-        requested_provider = context.get("provider")
-        if requested_provider and requested_provider != "auto":
-            try:
-                target_provider = LLMProvider(requested_provider)
-                config = self.llm_configs.get(target_provider)
+            # 0. 명시적 프로바이더 요청 처리
+            requested_provider = context.get("provider")
+            if requested_provider and requested_provider != "auto":
+                try:
+                    target_provider = LLMProvider(requested_provider)
+                    config = self.llm_configs.get(target_provider)
 
-                if config:
-                    return RoutingDecision(
-                        selected_provider=target_provider,
-                        selected_model=config.model,
-                        reasoning=f"사용자 명시적 요청: {requested_provider}",
-                        confidence=1.0,
-                        estimated_cost=self._estimate_cost(query, config),
-                        estimated_latency=config.latency_ms,
-                        fallback_providers=[LLMProvider.OLLAMA],
-                    )
-            except ValueError:
-                pass  # 유효하지 않은 provider 문자열은 무시
+                    if config:
+                        return RoutingDecision(
+                            selected_provider=target_provider,
+                            selected_model=config.model,
+                            reasoning=f"사용자 명시적 요청: {requested_provider}",
+                            confidence=1.0,
+                            estimated_cost=self._estimate_cost(query, config),
+                            estimated_latency=config.latency_ms,
+                            fallback_providers=[LLMProvider.OLLAMA],
+                        )
+                except ValueError:
+                    pass  # 유효하지 않은 provider 문자열은 무시
 
-        # 1. Ollama 우선 선택 (내부 지력)
-        if self._is_ollama_available():
-            decision = RoutingDecision(
-                selected_provider=LLMProvider.OLLAMA,
-                selected_model="qwen3-vl:8b",
-                reasoning="내부 지력(Ollama) 우선 사용 - 비용 절감 및 속도 최적화",
-                confidence=0.9,
-                estimated_cost=0.0,
-                estimated_latency=500,
-                fallback_providers=[LLMProvider.ANTHROPIC, LLMProvider.GEMINI, LLMProvider.OPENAI],
+            # 1. Ollama 우선 선택 (내부 지력)
+            if self._is_ollama_available():
+                decision = RoutingDecision(
+                    selected_provider=LLMProvider.OLLAMA,
+                    selected_model="qwen3-vl:8b",
+                    reasoning="내부 지력(Ollama) 우선 사용 - 비용 절감 및 속도 최적화",
+                    confidence=0.9,
+                    estimated_cost=0.0,
+                    estimated_latency=500,
+                    fallback_providers=[LLMProvider.ANTHROPIC, LLMProvider.GEMINI, LLMProvider.OPENAI],
+                )
+
+                # 품질 요구사항이 ULTRA인 경우 API LLM으로 업그레이드
+                if quality_requirement == QualityTier.ULTRA and self._has_ultra_llm():
+                    decision = self._upgrade_to_ultra(query, context)
+
+                return decision
+
+            # 2. Ollama 불가 시 API LLM 선택
+            return self._select_api_llm(
+                query, context, quality_requirement, latency_requirement, cost_budget
             )
-
-            # 품질 요구사항이 ULTRA인 경우 API LLM으로 업그레이드
-            if quality_requirement == QualityTier.ULTRA and self._has_ultra_llm():
-                decision = self._upgrade_to_ultra(query, context)
-
-            return decision
-
-        # 2. Ollama 불가 시 API LLM 선택
-        return self._select_api_llm(
-            query, context, quality_requirement, latency_requirement, cost_budget
-        )
+        except Exception as e:
+            logger.error(f"Routing logic failed: {e}")
+            # Absolute Safety Net Fallback
+            return RoutingDecision(
+                selected_provider=LLMProvider.OLLAMA,
+                selected_model="fallback-mode",
+                reasoning="Emergency Fallback due to Routing Error",
+                confidence=0.1,
+                estimated_cost=0.0,
+                estimated_latency=1000,
+                fallback_providers=[]
+            )
 
     def _is_ollama_available(self) -> bool:
         """Ollama 사용 가능 여부 확인"""
@@ -361,36 +392,48 @@ class LLMRouter:
         self, candidates: list[LLMConfig], query: str, context: dict[str, Any]
     ) -> LLMConfig:
         """최적 LLM 선택 알고리즘"""
-        # 점수 기반 선택 (비용, 품질, 지연 시간 균형)
-        scored_candidates = []
+        try:
+            # 점수 기반 선택 (비용, 품질, 지연 시간 균형)
+            scored_candidates = []
 
-        for config in candidates:
-            score = self._calculate_llm_score(config, query, context)
-            scored_candidates.append((config, score))
+            for config in candidates:
+                score = self._calculate_llm_score(config, query, context)
+                scored_candidates.append((config, score))
 
-        # 최고 점수 LLM 선택
-        return max(scored_candidates, key=lambda x: x[1])[0]
+            if not scored_candidates:
+                raise ValueError("No candidates to score")
+
+            # 최고 점수 LLM 선택
+            return max(scored_candidates, key=lambda x: x[1])[0]
+        except Exception:
+            # Fallback to first available
+            return candidates[0]
 
     def _calculate_llm_score(self, config: LLMConfig, query: str, context: dict[str, Any]) -> float:
         """LLM 점수 계산 (0-1 범위)"""
-        # 품질 점수 (0.4 가중치)
-        quality_score = {
-            QualityTier.BASIC: 0.3,
-            QualityTier.STANDARD: 0.6,
-            QualityTier.PREMIUM: 0.8,
-            QualityTier.ULTRA: 1.0,
-        }[config.quality_tier]
+        try:
+            # 품질 점수 (0.4 가중치)
+            quality_score = {
+                QualityTier.BASIC: 0.3,
+                QualityTier.STANDARD: 0.6,
+                QualityTier.PREMIUM: 0.8,
+                QualityTier.ULTRA: 1.0,
+            }.get(config.quality_tier, 0.6)
 
-        # 비용 점수 (역수, 0.3 가중치) - 저비용일수록 높음
-        cost_score = min(1.0, 1.0 / (config.cost_per_token * 1000 + 1))
+            # 비용 점수 (역수, 0.3 가중치) - 저비용일수록 높음
+            cost = config.cost_per_token * 1000
+            cost_score = min(1.0, 1.0 / (cost + 1.0)) if cost >= 0 else 0.5
 
-        # 지연 시간 점수 (역수, 0.3 가중치) - 빠를수록 높음
-        latency_score = min(1.0, 2000 / config.latency_ms)
+            # 지연 시간 점수 (역수, 0.3 가중치) - 빠를수록 높음
+            latency = config.latency_ms
+            latency_score = min(1.0, 2000 / latency) if latency > 0 else 0.0
 
-        # 최종 점수 (가중 평균)
-        final_score = quality_score * 0.4 + cost_score * 0.3 + latency_score * 0.3
+            # 최종 점수 (가중 평균)
+            final_score = quality_score * 0.4 + cost_score * 0.3 + latency_score * 0.3
 
-        return final_score
+            return final_score
+        except Exception:
+            return 0.5  # Neutral score on error
 
     def _generate_reasoning(
         self, config: LLMConfig, quality: QualityTier, max_latency: int, max_cost: float
@@ -417,9 +460,12 @@ class LLMRouter:
 
     def _estimate_cost(self, query: str, config: LLMConfig) -> float:
         """비용 추정 (근사치)"""
-        # 간단한 토큰 수 추정 (문자 수 기반)
-        estimated_tokens = len(query) * 0.3  # 대략적인 변환
-        return estimated_tokens * config.cost_per_token
+        try:
+            # 간단한 토큰 수 추정 (문자 수 기반)
+            estimated_tokens = len(query) * 0.3  # 대략적인 변환
+            return estimated_tokens * config.cost_per_token
+        except Exception:
+            return 0.0
 
     async def execute_with_routing(
         self, query: str, context: dict[str, Any] | None = None
@@ -427,71 +473,78 @@ class LLMRouter:
         """
         라우팅 결정 후 실제 실행
         """
-        # Explicitly return dict[str, Any]
-        result: dict[str, Any]
-        """
-        라우팅 결정 후 실제 실행 (w/ Caching)
-        """
-        # 1. Check Cache
-        cache_key = f"{query}::{context}"
-        if cache_key in self._response_cache:
-            entry = self._response_cache[cache_key]
-            if time.time() - entry["timestamp"] < self._cache_ttl:
-                # Move to end (LRU)
-                self._response_cache.move_to_end(cache_key)
-                logger.info("⚡️ Cache Hit! Returning cached response.")
-                # Cast Any to expected dict type for MyPy
-                cached_data: dict[str, Any] = entry["data"]
-                return cached_data
-            else:
-                # Expired
-                del self._response_cache[cache_key]
-
-        routing_decision = self.route_request(query, context)
-
-        # 라우팅 기록
-        self.routing_history.append(
-            {
-                "timestamp": time.time(),
-                "query": query[:100],  # 축약
-                "decision": {
-                    "provider": routing_decision.selected_provider.value,
-                    "model": routing_decision.selected_model,
-                    "reasoning": routing_decision.reasoning,
-                    "confidence": routing_decision.confidence,
-                },
-            }
-        )
-
-        # 실제 LLM 호출 (여기서는 모의 구현)
         try:
-            response = await self._call_llm(routing_decision, query, context)
-            response_data = {
-                "success": True,
-                "response": response,
-                "routing": {
-                    "provider": routing_decision.selected_provider.value,
-                    "model": routing_decision.selected_model,
-                    "reasoning": routing_decision.reasoning,
-                    "estimated_cost": routing_decision.estimated_cost,
-                    "estimated_latency": routing_decision.estimated_latency,
-                },
-            }
+            # Explicitly return dict[str, Any]
+            result: dict[str, Any]
 
-            # Cache Success Response
-            self._response_cache[cache_key] = {"timestamp": time.time(), "data": response_data}
-            if len(self._response_cache) > self._cache_max_size:
-                self._response_cache.popitem(last=False)  # Remove oldest
+            # 1. Check Cache
+            cache_key = f"{query}::{context}"
+            if cache_key in self._response_cache:
+                entry = self._response_cache[cache_key]
+                if time.time() - entry["timestamp"] < self._cache_ttl:
+                    # Move to end (LRU)
+                    self._response_cache.move_to_end(cache_key)
+                    logger.info("⚡️ Cache Hit! Returning cached response.")
+                    # Cast Any to expected dict type for MyPy
+                    cached_data: dict[str, Any] = entry["data"]
+                    return cached_data
+                else:
+                    # Expired
+                    del self._response_cache[cache_key]
 
-            return response_data
+            routing_decision = self.route_request(query, context)
+
+            # 라우팅 기록
+            self.routing_history.append(
+                {
+                    "timestamp": time.time(),
+                    "query": query[:100],  # 축약
+                    "decision": {
+                        "provider": routing_decision.selected_provider.value,
+                        "model": routing_decision.selected_model,
+                        "reasoning": routing_decision.reasoning,
+                        "confidence": routing_decision.confidence,
+                    },
+                }
+            )
+
+            # 실제 LLM 호출 (여기서는 모의 구현)
+            try:
+                response = await self._call_llm(routing_decision, query, context)
+                response_data = {
+                    "success": True,
+                    "response": response,
+                    "routing": {
+                        "provider": routing_decision.selected_provider.value,
+                        "model": routing_decision.selected_model,
+                        "reasoning": routing_decision.reasoning,
+                        "estimated_cost": routing_decision.estimated_cost,
+                        "estimated_latency": routing_decision.estimated_latency,
+                    },
+                }
+
+                # Cache Success Response
+                self._response_cache[cache_key] = {"timestamp": time.time(), "data": response_data}
+                if len(self._response_cache) > self._cache_max_size:
+                    self._response_cache.popitem(last=False)  # Remove oldest
+
+                return response_data
+            except Exception as e:
+                # Fallback 시도
+                if routing_decision.fallback_providers:
+                    return await self._try_fallback(
+                        routing_decision.fallback_providers[0], query, context
+                    )
+                else:
+                    return {"success": False, "error": str(e), "routing": routing_decision.__dict__}
         except Exception as e:
-            # Fallback 시도
-            if routing_decision.fallback_providers:
-                return await self._try_fallback(
-                    routing_decision.fallback_providers[0], query, context
-                )
-            else:
-                return {"success": False, "error": str(e), "routing": routing_decision.__dict__}
+            # Absolute last resort error handling
+            logger.critical(f"Critical Failure in execute_with_routing: {e}")
+            return {
+                "success": False, 
+                "error": f"Critical System Failure: {e}", 
+                "routing": {"provider": "error", "model": "none"}
+            }
 
     def _get_google_module(self) -> Any:
         """Helper for testability"""
@@ -503,75 +556,82 @@ class LLMRouter:
         self, query: str, config: LLMConfig, context: dict[str, Any] | None
     ) -> str:
         """Google Gemini 쿼리 실행 (모델 Fallback 적용)"""
-        genai = self._get_google_module()
-
-        # Phase 2-4: settings 사용
-        vault_client = None
         try:
-            from AFO.security.vault_manager import vault as v1_client
-            vault_client = v1_client
-        except ImportError:
+            genai = self._get_google_module()
+
+            # Phase 2-4: settings 사용
+            vault_client = None
             try:
-                # [맹자] 득도다조 - 진실된 경로를 찾으면 도움이 따름
-                from security.vault_manager import vault as v2_client
-                vault_client = v2_client
+                from AFO.security.vault_manager import vault as v1_client
+
+                vault_client = v1_client
             except ImportError:
-                vault_client = None
+                try:
+                    # [맹자] 득도다조 - 진실된 경로를 찾으면 도움이 따름
+                    from security.vault_manager import vault as v2_client
 
-        if vault_client and config.api_key_env:
-            api_key = vault_client.get_secret(config.api_key_env)
-        else:
-            # Fallback
-            try:
-                from AFO.config.settings import get_settings
+                    vault_client = v2_client
+                except ImportError:
+                    vault_client = None
 
-                settings = get_settings()
-                api_key = getattr(settings, config.api_key_env or "", None)
-            except ImportError:
-                api_key = os.getenv(config.api_key_env or "")
+            if vault_client and config.api_key_env:
+                api_key = vault_client.get_secret(config.api_key_env)
+            else:
+                # Fallback
+                try:
+                    from AFO.config.settings import get_settings
 
-        if not api_key:
-            raise ValueError(f"API Key not found for env var: {config.api_key_env}")
+                    settings = get_settings()
+                    api_key = getattr(settings, config.api_key_env or "", None)
+                except ImportError:
+                    api_key = os.getenv(config.api_key_env or "")
 
-        genai.configure(api_key=api_key)
+            if not api_key:
+                raise ValueError(f"API Key not found for env var: {config.api_key_env}")
 
-        # 시도할 모델 목록 (실제 API 조회 결과 기반)
-        models_to_try = ["gemini-2.0-flash-exp", "gemini-flash-latest", "gemini-pro-latest"]
-        last_error = None
+            genai.configure(api_key=api_key)
 
-        for model_name in models_to_try:
-            try:
-                model = genai.GenerativeModel(model_name)
+            # 시도할 모델 목록 (실제 API 조회 결과 기반)
+            models_to_try = ["gemini-2.0-flash-exp", "gemini-flash-latest", "gemini-pro-latest"]
+            last_error = None
 
-                # 안전 설정 완화
-                safety_settings: list[dict[str, str]] = [
-                    {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
-                    {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
-                    {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
-                    {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"},
-                ]
+            for model_name in models_to_try:
+                try:
+                    model = genai.GenerativeModel(model_name)
 
-                # context가 None일 수 있으므로 기본값 처리
-                context_dict = context or {}
-                response = await model.generate_content_async(
-                    query,
-                    generation_config=genai.types.GenerationConfig(
-                        temperature=context_dict.get("temperature", 0.7),
-                        max_output_tokens=context_dict.get("max_tokens", 1000),
-                    ),
-                    safety_settings=safety_settings,
-                )
+                    # 안전 설정 완화
+                    safety_settings: list[dict[str, str]] = [
+                        {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
+                        {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
+                        {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
+                        {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"},
+                    ]
 
-                return str(response.text)
-            except Exception as e:
-                print(f"⚠️ Gemini 모델({model_name}) 실패: {e}")
-                last_error = e  # Update with the actual error
-                continue  # 다음 모델 시도
+                    # context가 None일 수 있으므로 기본값 처리
+                    context_dict = context or {}
+                    response = await model.generate_content_async(
+                        query,
+                        generation_config=genai.types.GenerationConfig(
+                            temperature=context_dict.get("temperature", 0.7),
+                            max_output_tokens=context_dict.get("max_tokens", 1000),
+                        ),
+                        safety_settings=safety_settings,
+                    )
 
-        # 모든 모델 실패 시
-        if last_error is not None:
-            raise last_error
-        raise RuntimeError("All Gemini models failed and no error was captured")
+                    return str(response.text)
+                except Exception as e:
+                    print(f"⚠️ Gemini 모델({model_name}) 실패: {e}")
+                    last_error = e  # Update with the actual error
+                    continue  # 다음 모델 시도
+
+            # 모든 모델 실패 시
+            if last_error is not None:
+                raise last_error
+            raise RuntimeError("All Gemini models failed and no error was captured")
+
+        except Exception as e:
+            logger.error(f"Google Query Failed: {e}")
+            raise
 
     async def _call_ollama(
         self, query: str, config: LLMConfig, context: dict[str, Any] | None = None

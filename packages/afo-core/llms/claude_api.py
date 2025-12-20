@@ -31,16 +31,20 @@ class ClaudeAPIWrapper:
         vault_client: Any = None
         try:
             from ..security.vault_manager import vault as v1
+
             vault_client = v1
         except (ImportError, ValueError):
             try:
                 from AFO.security.vault_manager import vault as v2
+
                 vault_client = v2
             except ImportError:
                 pass
 
         self.api_key: str | None = (
-            vault_client.get_secret("ANTHROPIC_API_KEY") if vault_client else os.getenv("ANTHROPIC_API_KEY")
+            vault_client.get_secret("ANTHROPIC_API_KEY")
+            if vault_client
+            else os.getenv("ANTHROPIC_API_KEY")
         )
 
         self.cursor_token: str | None = os.getenv("CURSOR_ACCESS_TOKEN")
@@ -75,9 +79,7 @@ class ClaudeAPIWrapper:
             self.available = False
         else:
             # CLI 정기구독 사용 시 API 키 불필요 - 경고 대신 debug
-            logger.debug(
-                "ANTHROPIC_API_KEY 없음 - Claude API 비활성화 (CLI 사용 시 무시)"
-            )
+            logger.debug("ANTHROPIC_API_KEY 없음 - Claude API 비활성화 (CLI 사용 시 무시)")
 
     async def generate(self, prompt: str, **kwargs: Any) -> dict[str, Any]:
         """

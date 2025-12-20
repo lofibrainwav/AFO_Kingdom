@@ -1,0 +1,2 @@
+packages/afo-core/tests/llm/test_llm_router.py:43: error: Argument "key" to "min" has incompatible type overloaded function; expected "Callable[[str], SupportsDunderLT[Any] | SupportsDunderGT[Any]]"  [arg-type]
+packages/afo-core/tests/llm/test_llm_router.py:76: error: Value of type "object" is not indexable  [index]

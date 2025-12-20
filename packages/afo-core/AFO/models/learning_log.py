@@ -3,19 +3,20 @@ Learning Log Model (Phase 16-4)
 The Memory of the Kingdom's Evolution.
 """
 
-from typing import Optional
 from datetime import datetime
-from sqlmodel import SQLModel, Field
+
+from sqlmodel import Field, SQLModel
+
 
 class LearningLog(SQLModel, table=True):
     __tablename__ = "learning_logs"
 
-    id: Optional[int] = Field(default=None, primary_key=True)
+    id: int | None = Field(default=None, primary_key=True)
     timestamp: datetime = Field(default_factory=datetime.utcnow)
     agent: str  # e.g., "samahwi", "juyu"
     action: str  # e.g., "created_widget", "refactored_widget"
     trinity_before: float
     trinity_after: float
     delta: float
-    feedback: str # e.g., "Beauty Score improved by 10 points."
+    feedback: str  # e.g., "Beauty Score improved by 10 points."
     success: bool = True

@@ -36,6 +36,7 @@ build_chancellor_graph: Any = None
 chancellor_graph: Any = None
 _chancellor_import_error: str | None = None
 
+
 def _import_chancellor_graph() -> None:
     global build_chancellor_graph, chancellor_graph, _chancellor_import_error
     try:
@@ -49,13 +50,17 @@ def _import_chancellor_graph() -> None:
 
         from chancellor_graph import (
             build_chancellor_graph as _bcg,
+        )
+        from chancellor_graph import (
             chancellor_graph as _cg,
         )
+
         build_chancellor_graph = _bcg
         chancellor_graph = _cg
     except ImportError as e:
         print(f"⚠️  Chancellor Graph import 실패: {e}")
         _chancellor_import_error = str(e)
+
 
 _import_chancellor_graph()
 

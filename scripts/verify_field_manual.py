@@ -1,5 +1,7 @@
 import asyncio
+
 from AFO.scholars.yeongdeok import yeongdeok
+
 
 async def verify_field_manual_awareness():
     print("📜 Verifying Field Manual Compliance...")
@@ -17,13 +19,14 @@ async def verify_field_manual_awareness():
         "복잡한 에러가 발생했다. 사용자에게 어떻게 전달해야 하는가? (Rule #28 관점에서)"
     )
     print(f"Response Preview: {hwata_resp[:200]}...")
-    
+
     # 3. Jwaja (Beauty/Serenity) - Rule #18
     print("\n🎨 [Jwaja] Checking Frontend Philosophy...")
     jwaja_resp = await yeongdeok.consult_jwaja(
         "매우 복잡한 데이터 테이블을 UI로 표현해야 한다. 어떻게 설계해야 하는가?"
     )
     print(f"Response Preview: {jwaja_resp[:200]}...")
+
 
 if __name__ == "__main__":
     asyncio.run(verify_field_manual_awareness())

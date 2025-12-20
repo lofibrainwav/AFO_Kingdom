@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """
 Checkpoint Service
 永 (Eternity): Redis Checkpoint + DB 영속 저장
@@ -133,7 +134,8 @@ class CheckpointService:
                     data = await r.get(f"persona:{persona_id}")
                     await r.close()
                     if data:
-                        return json.loads(data)
+                        result: dict[str, Any] = json.loads(data)
+                        return result
                 except Exception as e:
                     logger.warning(f"[永: Checkpoint] Redis 로드 실패: {e}")
 

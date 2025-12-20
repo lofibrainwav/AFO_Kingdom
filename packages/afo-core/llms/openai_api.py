@@ -28,16 +28,20 @@ class OpenAIAPIWrapper:
         vault_client: Any = None
         try:
             from ..security.vault_manager import vault as v1
+
             vault_client = v1
         except (ImportError, ValueError):
             try:
                 from AFO.security.vault_manager import vault as v2
+
                 vault_client = v2
             except ImportError:
                 pass
 
         self.api_key: str | None = (
-            vault_client.get_secret("OPENAI_API_KEY") if vault_client else os.getenv("OPENAI_API_KEY")
+            vault_client.get_secret("OPENAI_API_KEY")
+            if vault_client
+            else os.getenv("OPENAI_API_KEY")
         )
 
         self.chatgpt_token: str | None = (
@@ -76,9 +80,7 @@ class OpenAIAPIWrapper:
             self.available = False
         else:
             # CLI 정기구독 사용 시 API 키 불필요 - 경고 대신 debug
-            logger.debug(
-                "OPENAI_API_KEY 없음 - OpenAI API 비활성화 (CLI 사용 시 무시)"
-            )
+            logger.debug("OPENAI_API_KEY 없음 - OpenAI API 비활성화 (CLI 사용 시 무시)")
 
     async def generate(self, prompt: str, **kwargs: Any) -> dict[str, Any]:
         """

@@ -40,7 +40,7 @@ import logging
 import random
 import time
 from functools import wraps
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -52,34 +52,34 @@ try:
     PROMETHEUS_AVAILABLE = True
 
     # 재시도 메트릭 (중복 등록 방지)
-    def _get_or_create_counter(name, description, labels):
+    def _get_or_create_counter(name: str, description: str, labels: list[str]) -> Counter | None:
         """Counter를 가져오거나 생성 (중복 등록 방지)"""
         try:
             # 이미 등록된 메트릭이 있는지 확인
             for collector in list(REGISTRY._collector_to_names.keys()):
                 if hasattr(collector, "_name") and collector._name == name:
-                    return collector
+                    return cast(Counter, collector)
             # 없으면 새로 생성
             return Counter(name, description, labels)
         except ValueError:
             # 중복 등록 에러 발생 시 기존 메트릭 반환
             for collector in list(REGISTRY._collector_to_names.keys()):
                 if hasattr(collector, "_name") and collector._name == name:
-                    return collector
+                    return cast(Counter, collector)
             # 그래도 없으면 None 반환 (메트릭 비활성화)
             return None
 
-    def _get_or_create_histogram(name, description, labels):
+    def _get_or_create_histogram(name: str, description: str, labels: list[str]) -> Histogram | None:
         """Histogram을 가져오거나 생성 (중복 등록 방지)"""
         try:
             for collector in list(REGISTRY._collector_to_names.keys()):
                 if hasattr(collector, "_name") and collector._name == name:
-                    return collector
+                    return cast(Histogram, collector)
             return Histogram(name, description, labels)
         except ValueError:
             for collector in list(REGISTRY._collector_to_names.keys()):
                 if hasattr(collector, "_name") and collector._name == name:
-                    return collector
+                    return cast(Histogram, collector)
             return None
 
     # 재시도 메트릭 (lazy initialization)
@@ -230,9 +230,11 @@ class ExponentialBackoff:
 
                 # Prometheus 메트릭: 성공
                 if PROMETHEUS_AVAILABLE:
-                    RETRY_SUCCESS.labels(function_name=func_name).inc()
-                    duration = time.time() - start_time
-                    RETRY_DURATION.labels(function_name=func_name).observe(duration)
+                    if RETRY_SUCCESS is not None:
+                        RETRY_SUCCESS.labels(function_name=func_name).inc()
+                    if RETRY_DURATION is not None:
+                        duration = time.time() - start_time
+                        RETRY_DURATION.labels(function_name=func_name).observe(duration)
 
                 # 재시도 후 성공한 경우 로그
                 if attempt > 0:
@@ -250,7 +252,7 @@ class ExponentialBackoff:
                     self.total_failures += 1
 
                     # Prometheus 메트릭: 실패
-                    if PROMETHEUS_AVAILABLE:
+                    if PROMETHEUS_AVAILABLE and RETRY_FAILURES is not None:
                         exception_type = type(e).__name__
                         RETRY_FAILURES.labels(
                             function_name=func_name, exception_type=exception_type
@@ -313,7 +315,7 @@ class ExponentialBackoff:
             ),
         }
 
-    def reset_stats(self):
+    def reset_stats(self) -> None:
         """통계 초기화"""
         self.total_attempts = 0
         self.total_successes = 0
@@ -350,7 +352,7 @@ def retry_with_exponential_backoff(
 
     def decorator(func: Callable) -> Callable:
         @wraps(func)
-        def wrapper(*args, **kwargs):
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
             backoff = ExponentialBackoff(
                 max_retries=max_retries,
                 base_delay=base_delay,

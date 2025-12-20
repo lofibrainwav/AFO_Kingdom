@@ -145,10 +145,10 @@ class SkillsService(BaseService):
                 version="1.0.0",
                 parameters=request.parameters or {},
                 philosophy_scores=RegistryPhilosophyScores(
-                    truth=int(85),
-                    goodness=int(80),
-                    beauty=int(75),
-                    serenity=int(90),
+                    truth=85,
+                    goodness=80,
+                    beauty=75,
+                    serenity=90,
                 ),
             )
 
@@ -283,7 +283,9 @@ class SkillsService(BaseService):
                     status=status_enum,
                     tags=filters.tags,
                     search=filters.search,
-                    min_philosophy_avg=int(filters.min_philosophy_avg) if filters.min_philosophy_avg else None,
+                    min_philosophy_avg=int(filters.min_philosophy_avg)
+                    if filters.min_philosophy_avg
+                    else None,
                     execution_mode=execution_mode_enum,
                     offset=filters.offset,
                     limit=filters.limit,
