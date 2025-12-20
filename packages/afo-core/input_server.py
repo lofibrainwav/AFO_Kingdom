@@ -20,12 +20,11 @@ Input Server - 사령관의 입력 통로 (input.brnestrm.com)
 
 from __future__ import annotations
 
-from typing import Any
-
 import hashlib
 import os
 import re
 from datetime import datetime
+from typing import Any
 
 import httpx
 from fastapi import FastAPI, Form, Request
@@ -111,7 +110,9 @@ async def health_check() -> dict[str, str]:
 
 
 @app.get("/", response_class=HTMLResponse)
-async def home_page(request: Request, success: str | None = None, error: str | None = None) -> HTMLResponse:
+async def home_page(
+    request: Request, success: str | None = None, error: str | None = None
+) -> HTMLResponse:
     """
     홈페이지 - API 키 입력 폼
 
@@ -131,7 +132,37 @@ async def home_page(request: Request, success: str | None = None, error: str | N
         print(f"⚠️  API Wallet 조회 실패: {e}")
 
     # HTML 폼 렌더링
-    html_content = f"""
+    html_content = _get_home_template(success, error, api_keys)
+    return HTMLResponse(content=html_content)
+
+
+def _get_home_template(
+    success: str | None, error: str | None, api_keys: list[dict[str, Any]]
+) -> str:
+    """홈페이지 HTML 템플릿 생성 (Beauty refactoring)"""
+    
+    # 키 리스트 HTML 생성
+    if api_keys:
+        keys_html = "".join(
+            [
+                f'''
+                <div class="key-item">
+                    <div>
+                        <div class="key-name">{key.get("name", "Unknown")}</div>
+                        <div style="font-size: 12px; color: #999; margin-top: 4px;">
+                            등록: {key.get("created_at", "Unknown")[:10]}
+                        </div>
+                    </div>
+                    <div class="key-provider">{key.get("provider", "Unknown")}</div>
+                </div>
+                '''
+                for key in api_keys
+            ]
+        )
+    else:
+        keys_html = '<p style="color: #999; text-align: center;">아직 등록된 키가 없습니다</p>'
+
+    return f"""
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -370,26 +401,7 @@ async def home_page(request: Request, success: str | None = None, error: str | N
 
         <div class="key-list">
             <h2>📋 등록된 API 키 ({len(api_keys)}개)</h2>
-            {
-        "".join(
-            [
-                f'''
-                    <div class="key-item">
-                        <div>
-                            <div class="key-name">{key.get("name", "Unknown")}</div>
-                            <div style="font-size: 12px; color: #999; margin-top: 4px;">
-                                등록: {key.get("created_at", "Unknown")[:10]}
-                            </div>
-                        </div>
-                        <div class="key-provider">{key.get("provider", "Unknown")}</div>
-                    </div>
-                    '''
-                for key in api_keys
-            ]
-        )
-        if api_keys
-        else '<p style="color: #999; text-align: center;">아직 등록된 키가 없습니다</p>'
-    }
+            {keys_html}
         </div>
 
         <div class="footer">
@@ -401,10 +413,8 @@ async def home_page(request: Request, success: str | None = None, error: str | N
 </html>
     """
 
-    return HTMLResponse(content=html_content)
 
-
-@app.post("/add_key")
+@app.post("/add_key", response_model=None)
 async def add_api_key(
     name: str = Form(...),
     provider: str = Form(...),
@@ -520,150 +530,110 @@ async def api_status() -> dict[str, Any]:
     }
 
 
-@app.post("/bulk_import")
-async def bulk_import(bulk_text: str = Form(...)) -> RedirectResponse:
-    """
-    대량 환경 변수 임포트
-
-    긴 문자열을 받아서 파싱하고 여러 API 키를 한 번에 저장
-    API Wallet 서버가 없어도 직접 파일에 저장
-    """
-    try:
-        # 파싱
-        parsed = parse_env_text(bulk_text)
-
-        if not parsed:
-            return RedirectResponse(
-                url="/?error=파싱된 환경 변수가 없습니다. KEY=VALUE 형식인지 확인하세요.",
-                status_code=303,
-            )
-
-        # API Wallet 직접 사용 (서버 없이)
+async def _is_api_server_available(url: str) -> bool:
+    """API Wallet 서버 가용성 확인"""
+    async with httpx.AsyncClient(timeout=2.0) as client:
         try:
-            from api_wallet import APIWallet
+            resp = await client.get(f"{url}/health")
+            return resp.status_code == 200
+        except Exception:
+            return False
 
-            wallet = APIWallet()
-            use_direct_wallet = True
+
+async def _import_single_key(
+    name: str, 
+    value: str, 
+    service: str, 
+    wallet: Any, 
+    api_server_url: str | None
+) -> str:
+    """단일 키 임포트 수행 (Success, Skipped, or Error)"""
+    # 1. API Wallet 직접 저장 시도
+    if wallet:
+        try:
+            if wallet.get(name, decrypt=False):
+                return "skipped"
+            wallet.add(name=name, api_key=value, key_type="api", read_only=True, service=service, description=f"Bulk import: {name}")
+            return "success"
         except Exception as e:
-            print(f"⚠️  API Wallet 직접 사용 실패: {e}")
-            wallet = None
-            use_direct_wallet = False
+            if "already exists" in str(e).lower(): return "skipped"
+            return str(e)
 
-        # 각 키를 저장
-        success_count = 0
-        failed_keys = []
-        skipped_keys = []
-
-        # 먼저 API Wallet 서버 시도
+    # 2. API Wallet 서버 저장 시도 (Fallback)
+    if api_server_url:
         async with httpx.AsyncClient(timeout=5.0) as client:
             try:
-                test_response = await client.get(f"{API_WALLET_URL}/health", timeout=2.0)
-                api_server_available = test_response.status_code == 200
-            except Exception:
-                api_server_available = False
+                # 존재 여부 확인 (중복 방지)
+                chk = await client.get(f"{api_server_url}/api/wallet/get/{name}", timeout=2.0)
+                if chk.status_code == 200: return "skipped"
+                
+                # 추가 요청 (POST)
+                resp = await client.post(
+                    f"{api_server_url}/api/wallet/add",
+                    json={"name": name, "api_key": value, "key_type": "api", "read_only": True, "service": service, "description": f"Bulk import: {name}"}
+                )
+                if resp.status_code == 200: return "success"
+                
+                # 에러 응답 처리
+                err_detail = resp.json().get("detail", "Unknown error")
+                return "skipped" if "already exists" in err_detail.lower() else err_detail
+            except Exception as e:
+                # 네트워크 에러 등
+                return str(e)
+                
+    return "API Wallet unavailable"
+
+
+@app.post("/bulk_import")
+async def bulk_import(bulk_text: str = Form(...)) -> RedirectResponse:
+    """대량 환경 변수 임포트 (Refactored)"""
+    try:
+        parsed = parse_env_text(bulk_text)
+        if not parsed:
+            return RedirectResponse(url="/?error=파싱된 환경 변수가 없습니다.", status_code=303)
+
+        # Wallet 인스턴스 준비
+        wallet = None
+        try:
+            from api_wallet import APIWallet
+            wallet = APIWallet()
+        except Exception: pass
+
+        server_url = API_WALLET_URL if await _is_api_server_available(API_WALLET_URL) else None
+        
+        counts = {"success": 0, "skipped": 0, "failed": 0}
+        failed_names = []
 
         for name, value, service in parsed:
-            try:
-                # API Wallet 직접 사용 (서버 없이)
-                if use_direct_wallet and wallet:
-                    try:
-                        # 이미 존재하는지 확인
-                        existing = wallet.get(name, decrypt=False)
-                        if existing:
-                            skipped_keys.append(name)
-                            continue
+            res = await _import_single_key(name, value, service, wallet, server_url)
+            if res == "success":
+                counts["success"] += 1
+            elif res == "skipped":
+                counts["skipped"] += 1
+            else:
+                counts["failed"] += 1
+                failed_names.append(f"{name}({res})")
 
-                        # 저장
-                        wallet.add(
-                            name=name,
-                            api_key=value,
-                            key_type="api",
-                            read_only=True,
-                            service=service,
-                            description=f"Bulk import: {name}",
-                        )
-                        success_count += 1
-                        print(f"✅ 저장 성공: {name}")
-                        continue
-                    except ValueError as e:
-                        if "already exists" in str(e).lower():
-                            skipped_keys.append(name)
-                            continue
-                        else:
-                            raise
-
-                # API 서버 사용 (서버가 있으면)
-                if api_server_available:
-                    async with httpx.AsyncClient(timeout=10.0) as client:
-                        # 이미 존재하는지 확인
-                        check_response = await client.get(
-                            f"{API_WALLET_URL}/api/wallet/get/{name}", timeout=2.0
-                        )
-                        if check_response.status_code == 200:
-                            skipped_keys.append(name)
-                            continue
-
-                        # 저장
-                        response = await client.post(
-                            f"{API_WALLET_URL}/api/wallet/add",
-                            json={
-                                "name": name,
-                                "api_key": value,
-                                "key_type": "api",
-                                "read_only": True,
-                                "service": service,
-                                "description": f"Bulk import: {name}",
-                            },
-                            timeout=10.0,
-                        )
-
-                        if response.status_code == 200:
-                            success_count += 1
-                            print(f"✅ 저장 성공: {name}")
-                        else:
-                            error_detail = response.json().get("detail", "Unknown error")
-                            if "already exists" in error_detail.lower():
-                                skipped_keys.append(name)
-                            else:
-                                failed_keys.append((name, error_detail))
-                                print(f"❌ 저장 실패: {name} - {error_detail}")
-                else:
-                    # 서버도 없고 직접 저장도 안 되면 실패
-                    failed_keys.append((name, "API Wallet 서버 없음"))
-                    print(f"❌ 저장 실패: {name} - API Wallet 서버 없음")
-
-            except Exception as e:
-                failed_keys.append((name, str(e)))
-                print(f"❌ 저장 중 오류: {name} - {e}")
-
-        # 결과 메시지 생성
-        result_parts = []
-        if success_count > 0:
-            result_parts.append(f"✅ {success_count}개 저장 성공")
-        if skipped_keys:
-            result_parts.append(f"⚠️ {len(skipped_keys)}개 스킵 (이미 존재)")
-        if failed_keys:
-            result_parts.append(f"❌ {len(failed_keys)}개 실패")
-
-        result_msg = " | ".join(result_parts)
-
-        if failed_keys:
-            failed_names = ", ".join([name for name, _ in failed_keys[:5]])
-            if len(failed_keys) > 5:
-                failed_names += f" 외 {len(failed_keys) - 5}개"
-            result_msg += f" (실패: {failed_names})"
+        # 요약 메시지 생성
+        summary = []
+        if counts["success"]: summary.append(f"✅ {counts['success']}개 성공")
+        if counts["skipped"]: summary.append(f"⚠️ {counts['skipped']}개 스킵")
+        if counts["failed"]: summary.append(f"❌ {counts['failed']}개 실패")
+        
+        result_msg = " | ".join(summary)
+        if failed_names:
+            result_msg += f" (실패: {', '.join(failed_names[:3])}{'...' if len(failed_names)>3 else ''})"
 
         return RedirectResponse(url=f"/?success={result_msg}", status_code=303)
 
     except Exception as e:
-        print(f"❌ 대량 임포트 중 오류: {e}")
-        return RedirectResponse(
-            url=f"/?error=대량 임포트 중 오류가 발생했습니다: {e!s}", status_code=303
-        )
+        return RedirectResponse(url=f"/?error=임포트 중 오류: {str(e)}", status_code=303)
 
 
-@app.get("/api/history")
-async def get_history(category: str | None = None, limit: int = 100) -> dict[str, Any] | JSONResponse:
+@app.get("/api/history", response_model=None)
+async def get_history(
+    category: str | None = None, limit: int = 100
+) -> dict[str, Any] | JSONResponse:
     """
     Input 히스토리 조회
 
