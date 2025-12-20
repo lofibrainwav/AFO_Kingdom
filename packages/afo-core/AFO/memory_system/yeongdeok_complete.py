@@ -99,7 +99,12 @@ class YeongdeokComplete:
                 if query_lower in content_str:
                     score = content_str.count(query_lower) * entry.importance
                     results.append(
-                        {"key": entry.key, "content": entry.content, "score": score, "tags": entry.tags}
+                        {
+                            "key": entry.key,
+                            "content": entry.content,
+                            "score": score,
+                            "tags": entry.tags,
+                        }
                     )
 
             # Sort by score

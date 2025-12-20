@@ -247,7 +247,9 @@ def calculate_tax(input_data: TaxInput) -> TaxResult:
             input_data.traditional_ira_balance,
         )
 
-        logger.info(f"[TaxEngine] 계산 완료: Income=${input_data.gross_income:,}, Tax=${total_tax:,}")
+        logger.info(
+            f"[TaxEngine] 계산 완료: Income=${input_data.gross_income:,}, Tax=${total_tax:,}"
+        )
 
         return TaxResult(
             filing_status=input_data.filing_status.value,
@@ -266,7 +268,7 @@ def calculate_tax(input_data: TaxInput) -> TaxResult:
             advice=advice,
         )
     except Exception as e:
-        logger.error(f"[TaxEngine] 계산 실패: {str(e)}")
+        logger.error(f"[TaxEngine] 계산 실패: {e!s}")
         # Provide a fallback TaxResult instead of raising, or re-raise if fatal
         raise
 

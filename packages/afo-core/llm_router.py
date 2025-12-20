@@ -214,7 +214,7 @@ class LLMRouter:
                     provider=LLMProvider.OLLAMA,
                     model="qwen3-vl:8b",
                     base_url="http://localhost:11434",
-                    quality_tier=QualityTier.STANDARD
+                    quality_tier=QualityTier.STANDARD,
                 )
 
     async def check_connections(self) -> dict[str, bool]:
@@ -275,7 +275,11 @@ class LLMRouter:
                     confidence=0.9,
                     estimated_cost=0.0,
                     estimated_latency=500,
-                    fallback_providers=[LLMProvider.ANTHROPIC, LLMProvider.GEMINI, LLMProvider.OPENAI],
+                    fallback_providers=[
+                        LLMProvider.ANTHROPIC,
+                        LLMProvider.GEMINI,
+                        LLMProvider.OPENAI,
+                    ],
                 )
 
                 # 품질 요구사항이 ULTRA인 경우 API LLM으로 업그레이드
@@ -298,7 +302,7 @@ class LLMRouter:
                 confidence=0.1,
                 estimated_cost=0.0,
                 estimated_latency=1000,
-                fallback_providers=[]
+                fallback_providers=[],
             )
 
     def _is_ollama_available(self) -> bool:
@@ -541,9 +545,9 @@ class LLMRouter:
             # Absolute last resort error handling
             logger.critical(f"Critical Failure in execute_with_routing: {e}")
             return {
-                "success": False, 
-                "error": f"Critical System Failure: {e}", 
-                "routing": {"provider": "error", "model": "none"}
+                "success": False,
+                "error": f"Critical System Failure: {e}",
+                "routing": {"provider": "error", "model": "none"},
             }
 
     def _get_google_module(self) -> Any:

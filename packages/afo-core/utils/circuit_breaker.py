@@ -128,7 +128,9 @@ class CircuitBreaker:
         try:
             self._state = CircuitState.OPEN
             self._stats.state_changes += 1
-            print(f"🚨 [Circuit Breaker] {self.service_name}: OPEN (연속 {self._failure_count}회 실패)")
+            print(
+                f"🚨 [Circuit Breaker] {self.service_name}: OPEN (연속 {self._failure_count}회 실패)"
+            )
             if self.on_open:
                 self.on_open(self)
         except Exception:
@@ -166,7 +168,9 @@ class CircuitBreaker:
                     await self._enter_half_open()
                 else:
                     self._stats.rejected_calls += 1
-                    remaining = self.recovery_timeout - (time.time() - (self._last_failure_time or 0))
+                    remaining = self.recovery_timeout - (
+                        time.time() - (self._last_failure_time or 0)
+                    )
                     raise CircuitBreakerOpenError(
                         f"[{self.service_name}] 서비스 일시 불가 (복구까지 {remaining:.0f}초)"
                     )
@@ -207,12 +211,13 @@ class CircuitBreaker:
     def __call__(self, func: Callable[..., Any]) -> Callable[..., Any]:
         """Decorator interface for the circuit breaker."""
         try:
+
             @wraps(func)
             async def wrapper(*args: Any, **kwargs: Any) -> Any:
                 return await self.call(func, *args, **kwargs)
 
             # Attach circuit breaker info to the wrapper
-            setattr(wrapper, 'circuit_breaker', self)
+            wrapper.circuit_breaker = self
             return wrapper
         except Exception:
             return func

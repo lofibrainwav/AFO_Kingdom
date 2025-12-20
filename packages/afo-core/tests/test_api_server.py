@@ -6,10 +6,10 @@ API 서버 핵심 함수 테스트 (Real Module Import)
 
 import os
 import sys
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
-from typing import Any
 from fastapi.testclient import TestClient
 
 # Ensure AFO root is in path
@@ -76,6 +76,7 @@ class TestLifespan:
     async def test_lifespan(self) -> None:
         """Lifespan 컨텍스트 매니저 테스트"""
         from api_server import lifespan
+
         # Use Any to avoid MyPy strictness on lifespan type
         api_lifespan: Any = lifespan
 

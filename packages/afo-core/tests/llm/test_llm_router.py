@@ -3,7 +3,6 @@ Tests for llm_router.py
 LLM Router 테스트 - Phase 2
 """
 
-
 from typing import Any, cast
 
 
@@ -76,7 +75,7 @@ class TestLLMResponseHandling:
         }
         assert response["success"] is True
         assert "response" in response
-        assert cast(Any, response)["routing"]["provider"] == "ollama"
+        assert cast("Any", response)["routing"]["provider"] == "ollama"
 
     def test_error_response_structure(self) -> None:
         """에러 응답 구조 테스트"""

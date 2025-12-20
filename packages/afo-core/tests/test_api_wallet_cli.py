@@ -1,4 +1,5 @@
 from unittest.mock import MagicMock, patch
+
 import pytest
 
 from AFO.api_wallet import main as cli

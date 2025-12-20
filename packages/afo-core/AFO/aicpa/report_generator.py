@@ -159,10 +159,10 @@ def generate_strategy_report(
         _add_executive_summary(doc, tax_result)
         _add_tax_analysis_table(doc, tax_result)
         _add_sweet_spot_analysis(doc, tax_result)
-        
+
         if roth_simulation:
             _add_roth_simulation(doc, roth_simulation)
-            
+
         _add_risk_alerts(doc, tax_result)
         _add_advice_and_closing(doc, tax_result)
 
@@ -175,7 +175,7 @@ def generate_strategy_report(
         return output_path
     except Exception as e:
         logger.error(f"[ReportGenerator] 보고서 생성 실패: {e}")
-        return f"Error: {str(e)}"
+        return f"Error: {e!s}"
 
 
 def generate_turbotax_csv(client_name: str, tax_data: dict, output_path: str | None = None) -> str:

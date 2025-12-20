@@ -4,9 +4,10 @@
 from dataclasses import dataclass
 from datetime import datetime
 
-from config.vault_manager import vault_manager
+from AFO.security.vault_manager import vault
 
 from config.antigravity import antigravity
+from decimal import Decimal
 
 
 @dataclass
@@ -51,16 +52,48 @@ class FrictionCalibrator:
 
         # 3. Vault 상태 점검
         vault_status = "SECURE"
-        if vault_manager.mock_mode:
-            vault_status += " (Mock)"
-            if antigravity.ENVIRONMENT == "prod":
-                score -= 20
-                friction_reasons.append("Prod Mock Secret Risk")
-        else:
-            vault_status += " (Live)"
+        try:
+            vault_mode = getattr(vault, "mode", "env")
+            if vault_mode == "env":
+                vault_status += " (Env Mode)"
+                # env 모드는 개발 환경에서는 정상, 프로덕션에서는 주의 필요
+                if antigravity.ENVIRONMENT == "prod":
+                    score -= 5
+                    friction_reasons.append("Prod using Env Mode (consider Vault)")
+            else:
+                vault_status += f" (Vault Mode: {vault_mode})"
+        except Exception:
+            vault_status += " (Unknown)"
 
         # 4. 환경 일치성
         # (추후 확장: 실제 배포된 버전과 코드 버전 일치 여부 등)
+
+        # 5. 재정적 마찰 (Financial Friction) - Phase 13
+        # 돈 계산이 부정확하거나(Float), 복구 불가능하면(No Undo) 마찰 발생
+        try:
+             # Lazy import to avoid circular dependency
+             try:
+                 from julie_cpa.core.julie_engine import julie
+             except ImportError:
+                 from packages.afo_core.julie_cpa.core.julie_engine import julie
+                 
+             if isinstance(julie.monthly_spending, Decimal) and isinstance(julie.budget_limit, Decimal):
+                 pass # Precision OK
+             else:
+                 score -= 15
+                 friction_reasons.append("Financial Precision Risk (Float Usage)")
+                 
+             # Check Undo Capability (Command History)
+             if hasattr(julie, 'command_history'):
+                 pass
+             else:
+                 score -= 5
+                 friction_reasons.append("Financial Irreversibility (No Undo)")
+                 
+        except Exception as e:
+            # If Julie module is missing or error, slight friction
+            score -= 2
+            friction_reasons.append(f"Financial Module Check Fail: {str(e)}")
 
         # 점수 보정
         score = max(0, score)

@@ -34,6 +34,12 @@ import json
 from AFO.utils.redis_connection import get_shared_async_redis_client
 
 
+
+# Import Modular Strategists & Tigers (Phase 3 Integration)
+from strategists import zhuge_liang, sima_yi, zhou_yu
+from tigers import guan_yu, zhang_fei, zhao_yun, ma_chao, huang_zhong
+import asyncio
+
 async def publish_thought(agent: str, message: str, type: str = "thought") -> None:
     """
     [Matrix Stream] Publish internal monologue to Redis for frontend visualization.
@@ -49,6 +55,27 @@ async def publish_thought(agent: str, message: str, type: str = "thought") -> No
         await redis.publish("chancellor_thought_stream", json.dumps(payload))
     except Exception as e:
         print(f"⚠️ [Matrix Stream] Failed to publish: {e}")
+
+async def o5_tigers_parallel_execution(query_data: dict[str, Any]) -> list[float | str]:
+    """
+    [O5 Tigers] Parallel Execution Engine (Phase 3)
+    Executes the 5 Tigers in parallel for maximum efficiency.
+    """
+    print("🐯 [O5 Tigers] Executing 5-Pillar Parallel Operation...")
+    await publish_thought("O5 Tigers", "Executing 5-Pillar Parallel Operation...", "thought")
+    
+    tasks = [
+        asyncio.to_thread(guan_yu.guard, query_data),
+        asyncio.to_thread(zhang_fei.gate, query_data.get("risk", 0.0), query_data),
+        asyncio.to_thread(zhao_yun.craft, query_data.get("code", ""), 2),
+        asyncio.to_thread(ma_chao.deploy, query_data),
+        asyncio.to_thread(huang_zhong.log, "Parallel Execution", {"trinity": 100.0})
+    ]
+    
+    results = await asyncio.gather(*tasks)
+    print(f"✅ [O5 Tigers] Execution Complete: {results}")
+    return list(results)
+
 
 
 # --- 1. State Definition (Chancellor's Memory - V2 Constitution) ---
@@ -70,7 +97,7 @@ class ChancellorState(TypedDict):
     persistent_memory: dict[str, Any]
 
     # Operational fields
-    current_speaker: str  # "user", "chancellor", "jegalryang", "samaui", "juyu"
+    current_speaker: str  # "user", "chancellor", "zhuge_liang", "sima_yi", "zhou_yu"
     steps_taken: int
     complexity: str  # "Low", "Medium", "High"
 
@@ -130,10 +157,10 @@ async def chancellor_router_node(state: ChancellorState) -> dict[str, Any]:
 
     analysis = state.get("analysis_results", {})
 
-    # 1. Always start with Jegalryang (Truth)
-    if "jegalryang" not in analysis:
+    # 1. Always start with Zhuge Liang (Truth)
+    if "zhuge_liang" not in analysis:
         return {
-            "next_step": "jegalryang",
+            "next_step": "zhuge_liang",
             "current_speaker": "chancellor",
             "steps_taken": steps + 1,
             "complexity": complexity,
@@ -146,17 +173,17 @@ async def chancellor_router_node(state: ChancellorState) -> dict[str, Any]:
 
     elif complexity == "Medium":
         # standard: Truth -> Goodness -> Finalize
-        if "samaui" not in analysis:
-            return {"next_step": "samaui", "current_speaker": "chancellor"}
+        if "sima_yi" not in analysis:
+            return {"next_step": "sima_yi", "current_speaker": "chancellor"}
         return {"next_step": "finalize", "current_speaker": "chancellor"}
 
     elif complexity == "High":
         # complex: Truth -> Goodness -> Beauty -> Finalize (Sequential for V1 stability)
         # In V2, we can loop Truth <-> Goodness if disagreement is high.
-        if "samaui" not in analysis:
-            return {"next_step": "samaui", "current_speaker": "chancellor"}
-        if "juyu" not in analysis:
-            return {"next_step": "juyu", "current_speaker": "chancellor"}
+        if "sima_yi" not in analysis:
+            return {"next_step": "sima_yi", "current_speaker": "chancellor"}
+        if "zhou_yu" not in analysis:
+            return {"next_step": "zhou_yu", "current_speaker": "chancellor"}
 
         return {"next_step": "finalize", "current_speaker": "chancellor"}
 
@@ -164,20 +191,20 @@ async def chancellor_router_node(state: ChancellorState) -> dict[str, Any]:
     return {"next_step": "finalize", "current_speaker": "chancellor"}
 
 
-async def jegalryang_node(state: ChancellorState) -> dict[str, Any]:
+async def zhuge_liang_node(state: ChancellorState) -> dict[str, Any]:
     """
-    [Jegalryang Node] - Truth (矛)
+    [Zhuge Liang Node] - Truth (矛)
     Focus: Architecture, Strategy, Technical Certainty.
     """
-    print("⚔️ [Jegalryang] Analyzing Truth...")
-    await publish_thought("Jegalryang", "Analyzing Truth... (Checking Architecture)", "thought")
+    print("⚔️ [Zhuge Liang] Analyzing Truth...")
+    await publish_thought("Zhuge Liang", "Analyzing Truth... (Checking Architecture)", "thought")
     query = state["messages"][-1].content
 
     # Use LLM Router to call a "Smart" model (Truth requires intelligence)
     # Context can be passed to select specific persona prompts if we had them loaded here.
     # For now, we simulate the persona via system context augmentation in a real implementation.
 
-    # In a full implementation, we would inject the System Prompt from TRINITY-OS/docs/personas/STRATEGIST_JEGALRYANG.md
+    # In a full implementation, we would inject the System Prompt from TRINITY-OS/docs/personas/STRATEGIST_ZHUGE_LIANG.md
     base_context = (state.get("kingdom_context") or {}).get("llm_context") or {}
     context = {
         **base_context,
@@ -186,7 +213,7 @@ async def jegalryang_node(state: ChancellorState) -> dict[str, Any]:
     }
 
     response_data = await llm_router.execute_with_routing(
-        f"당신은 제갈량(Truth)입니다. 다음 질문을 기술적/구조적 관점에서 분석하시오: {query}",
+        f"당신은 제갈량(Zhuge Liang - Truth)입니다. 다음 질문을 기술적/구조적 관점에서 분석하시오: {query}",
         context=context,
     )
 
@@ -194,8 +221,8 @@ async def jegalryang_node(state: ChancellorState) -> dict[str, Any]:
 
     # Rely on Reducer to merge this delta
     return {
-        "analysis_results": {"jegalryang": content},
-        "messages": [AIMessage(content=f"[제갈량] {content}", name="jegalryang")],
+        "analysis_results": {"zhuge_liang": content},
+        "messages": [AIMessage(content=f"[Zhuge Liang] {content}", name="zhuge_liang")],
     }
 
 
@@ -203,16 +230,16 @@ async def jegalryang_node(state: ChancellorState) -> dict[str, Any]:
 from AFO.scholars.yeongdeok import yeongdeok
 
 
-async def samaui_node(state: ChancellorState) -> dict[str, Any]:
+async def sima_yi_node(state: ChancellorState) -> dict[str, Any]:
     """
-    [Samaui Node] - Goodness (盾)
+    [Sima Yi Node] - Goodness (盾)
     Focus: Ethics, Stability, Risk Management.
     Uses: Samahwi (Qwen3-30B Pure MoE)
     """
-    print("🛡️ [Samaui] Consulting Samahwi (Backend/Risk)...")
-    await publish_thought("Samaui", "Consulting Samahwi for Stability Check...", "thought")
+    print("🛡️ [Sima Yi] Consulting Samahwi (Backend/Risk)...")
+    await publish_thought("Sima Yi", "Consulting Samahwi for Stability Check...", "thought")
     query = state["messages"][0].content
-    truth_analysis = state["analysis_results"].get("jegalryang", "")
+    truth_analysis = state["analysis_results"].get("zhuge_liang", "")
 
     # Construct rigid prompt for the Sage
     sage_prompt = (
@@ -226,21 +253,21 @@ async def samaui_node(state: ChancellorState) -> dict[str, Any]:
     content = await yeongdeok.consult_samahwi(sage_prompt)
 
     return {
-        "analysis_results": {"samaui": content},
-        "messages": [AIMessage(content=f"[사마의] {content}", name="samaui")],
+        "analysis_results": {"sima_yi": content},
+        "messages": [AIMessage(content=f"[Sima Yi] {content}", name="sima_yi")],
     }
 
 
-async def juyu_node(state: ChancellorState) -> dict[str, Any]:
+async def zhou_yu_node(state: ChancellorState) -> dict[str, Any]:
     """
-    [Juyu Node] - Beauty (橋)
+    [Zhou Yu Node] - Beauty (橋)
     Focus: Narrative, UX, User Experience.
     Uses: Jwaja (DeepSeek-R1 Frontend) & Hwata (Qwen3-VL UX)
     """
-    print("桥 [Juyu] Consulting Jwaja (Frontend) & Hwata (UX)...")
-    await publish_thought("Juyu", "Consulting Jwaja & Hwata for Beauty & Serenity...", "thought")
+    print("桥 [Zhou Yu] Consulting Jwaja (Frontend) & Hwata (UX)...")
+    await publish_thought("Zhou Yu", "Consulting Jwaja & Hwata for Beauty & Serenity...", "thought")
     original_query = state["messages"][0].content
-    truth = state["analysis_results"].get("jegalryang", "")
+    truth = state["analysis_results"].get("zhuge_liang", "")
 
     # 1. Frontend Architecture (Jwaja)
     jwaja_prompt = (
@@ -258,14 +285,14 @@ async def juyu_node(state: ChancellorState) -> dict[str, Any]:
     )
     hwata_content = await yeongdeok.consult_hwata(hwata_prompt)
 
-    # Combine for final Juyu output
+    # Combine for final Zhou Yu output
     final_content = (
         f"**UI Strategy (Jwaja)**:\n{jwaja_content}\n\n**UX Narrative (Hwata)**:\n{hwata_content}"
     )
 
     return {
-        "analysis_results": {"juyu": final_content},
-        "messages": [AIMessage(content=f"[주유] {final_content}", name="juyu")],
+        "analysis_results": {"zhou_yu": final_content},
+        "messages": [AIMessage(content=f"[Zhou Yu] {final_content}", name="zhou_yu")],
     }
 
 
@@ -282,12 +309,12 @@ async def chancellor_finalize_node(state: ChancellorState) -> dict[str, Any]:
         "당신은 승상(Chancellor)입니다. 책사의 의견을 종합하여 최종 보고를 하시오.",
         "가장 중요한 것은 사령관의 평온(孝)입니다.",
     ]
-    if analysis.get("jegalryang"):
-        parts.append(f"[제갈량]: {analysis.get('jegalryang')}")
-    if analysis.get("samaui"):
-        parts.append(f"[사마의]: {analysis.get('samaui')}")
-    if analysis.get("juyu"):
-        parts.append(f"[주유]: {analysis.get('juyu')}")
+    if analysis.get("zhuge_liang"):
+        parts.append(f"[Zhuge Liang]: {analysis.get('zhuge_liang')}")
+    if analysis.get("sima_yi"):
+        parts.append(f"[Sima Yi]: {analysis.get('sima_yi')}")
+    if analysis.get("zhou_yu"):
+        parts.append(f"[Zhou Yu]: {analysis.get('zhou_yu')}")
     final_prompt = "\n\n".join(parts)
 
     base_context = (state.get("kingdom_context") or {}).get("llm_context") or {}
@@ -405,9 +432,9 @@ def build_chancellor_graph(
 
     # Add Nodes
     workflow.add_node("chancellor", chancellor_router_node)
-    workflow.add_node("jegalryang", jegalryang_node)
-    workflow.add_node("samaui", samaui_node)
-    workflow.add_node("juyu", juyu_node)
+    workflow.add_node("zhuge_liang", zhuge_liang_node)
+    workflow.add_node("sima_yi", sima_yi_node)
+    workflow.add_node("zhou_yu", zhou_yu_node)
     workflow.add_node("finalize", chancellor_finalize_node)
     workflow.add_node("decision_gate", trinity_decision_gate)  # Phase 5: Trinity Routing
     workflow.add_node("historian", historian_node)  # Genesis Project
@@ -423,13 +450,13 @@ def build_chancellor_graph(
     workflow.add_conditional_edges(
         "chancellor",
         route_logic,
-        {"jegalryang": "jegalryang", "samaui": "samaui", "juyu": "juyu", "finalize": "finalize"},
+        {"zhuge_liang": "zhuge_liang", "sima_yi": "sima_yi", "zhou_yu": "zhou_yu", "finalize": "finalize"},
     )
 
     # Strategies return to Chancellor
-    workflow.add_edge("jegalryang", "chancellor")
-    workflow.add_edge("samaui", "chancellor")
-    workflow.add_edge("juyu", "chancellor")
+    workflow.add_edge("zhuge_liang", "chancellor")
+    workflow.add_edge("sima_yi", "chancellor")
+    workflow.add_edge("zhou_yu", "chancellor")
 
     # Phase 5: Finalize → Decision Gate → Historian -> END
     workflow.add_edge("finalize", "decision_gate")

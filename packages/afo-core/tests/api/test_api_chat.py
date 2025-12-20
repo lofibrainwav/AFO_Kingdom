@@ -57,6 +57,7 @@ class TestChatRouting:
     def test_routing_info_structure(self) -> None:
         """라우팅 정보 구조 테스트"""
         from typing import Any
+
         routing_info: dict[str, Any] = {
             "provider": "ollama",
             "model": "llama3.2:3b",

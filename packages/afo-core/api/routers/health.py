@@ -29,6 +29,7 @@ async def health_check() -> dict[str, Any]:
     """
     try:
         from AFO.services.health_service import get_comprehensive_health
+
         return await get_comprehensive_health()
     except Exception as e:
-        return {"status": "error", "message": f"Health check failed: {str(e)}"}
+        return {"status": "error", "message": f"Health check failed: {e!s}"}

@@ -164,7 +164,9 @@ def test_generate_answer_openai() -> None:
         MagicMock(message=MagicMock(content="Answer"))
     ]
 
-    ans: str | dict[str, Any] = generate_answer("q", ["c1"], 0.7, "markdown", "", openai_client=mock_client)
+    ans: str | dict[str, Any] = generate_answer(
+        "q", ["c1"], 0.7, "markdown", "", openai_client=mock_client
+    )
     assert ans == "Answer"
 
 

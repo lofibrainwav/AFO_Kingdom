@@ -36,7 +36,10 @@ if PROMETHEUS_AVAILABLE:
 
     # HTTP Request Metrics
     http_requests_total = get_or_create_metric(
-        Counter, "afo_http_requests_total", "Total HTTP requests", ["method", "endpoint", "status_code"]
+        Counter,
+        "afo_http_requests_total",
+        "Total HTTP requests",
+        ["method", "endpoint", "status_code"],
     )
 
     http_request_duration_seconds = get_or_create_metric(

@@ -1,8 +1,8 @@
 import os
 import sys
+from typing import Any
 from unittest.mock import AsyncMock, MagicMock, patch
 
-from typing import Any
 import pytest
 
 from AFO.llm_router import LLMConfig, LLMProvider, LLMRouter, QualityTier, RoutingDecision

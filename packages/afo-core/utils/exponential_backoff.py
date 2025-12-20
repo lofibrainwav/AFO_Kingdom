@@ -58,28 +58,30 @@ try:
             # 이미 등록된 메트릭이 있는지 확인
             for collector in list(REGISTRY._collector_to_names.keys()):
                 if hasattr(collector, "_name") and collector._name == name:
-                    return cast(Counter, collector)
+                    return cast("Counter", collector)
             # 없으면 새로 생성
             return Counter(name, description, labels)
         except ValueError:
             # 중복 등록 에러 발생 시 기존 메트릭 반환
             for collector in list(REGISTRY._collector_to_names.keys()):
                 if hasattr(collector, "_name") and collector._name == name:
-                    return cast(Counter, collector)
+                    return cast("Counter", collector)
             # 그래도 없으면 None 반환 (메트릭 비활성화)
             return None
 
-    def _get_or_create_histogram(name: str, description: str, labels: list[str]) -> Histogram | None:
+    def _get_or_create_histogram(
+        name: str, description: str, labels: list[str]
+    ) -> Histogram | None:
         """Histogram을 가져오거나 생성 (중복 등록 방지)"""
         try:
             for collector in list(REGISTRY._collector_to_names.keys()):
                 if hasattr(collector, "_name") and collector._name == name:
-                    return cast(Histogram, collector)
+                    return cast("Histogram", collector)
             return Histogram(name, description, labels)
         except ValueError:
             for collector in list(REGISTRY._collector_to_names.keys()):
                 if hasattr(collector, "_name") and collector._name == name:
-                    return cast(Histogram, collector)
+                    return cast("Histogram", collector)
             return None
 
     # 재시도 메트릭 (lazy initialization)
