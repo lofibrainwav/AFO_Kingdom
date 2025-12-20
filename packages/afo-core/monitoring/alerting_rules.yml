@@ -1,0 +1,193 @@
+# AFO Kingdom Alerting Rules
+# Prometheus Alertmanager Rules
+
+groups:
+  - name: afo-kingdom-critical
+    interval: 30s
+    rules:
+      # ============================================================
+      # Circuit Breaker Alerts
+      # ============================================================
+      - alert: CircuitBreakerOpen
+        expr: afo_circuit_breaker_state{service="ollama"} == 1
+        for: 1m
+        labels:
+          severity: critical
+          service: ollama
+        annotations:
+          summary: "🚨 Ollama Circuit Breaker OPEN"
+          description: "연속 실패로 Ollama 서비스가 차단됐습니다. 자동 복구 대기 중..."
+          runbook_url: "https://docs.afo-kingdom.local/runbooks/circuit-breaker"
+
+      - alert: CircuitBreakerHalfOpen
+        expr: afo_circuit_breaker_state{service="ollama"} == 2
+        for: 30s
+        labels:
+          severity: warning
+          service: ollama
+        annotations:
+          summary: "🔄 Ollama 복구 시도 중"
+          description: "Circuit Breaker가 HALF_OPEN 상태입니다. 복구 테스트 진행 중..."
+
+      # ============================================================
+      # Ollama Service Alerts
+      # ============================================================
+      - alert: OllamaHighFailureRate
+        expr: |
+          rate(afo_ollama_calls_total{status="failure"}[5m]) / 
+          rate(afo_ollama_calls_total[5m]) > 0.1
+        for: 2m
+        labels:
+          severity: critical
+          service: ollama
+        annotations:
+          summary: "🤖 Ollama 실패율 급증!"
+          description: "최근 5분간 Ollama 호출 실패율이 {{ $value | humanizePercentage }}입니다."
+
+      - alert: OllamaHighLatency
+        expr: |
+          histogram_quantile(0.95, 
+            sum(rate(afo_ollama_request_duration_seconds_bucket[5m])) by (le, model)
+          ) > 10
+        for: 2m
+        labels:
+          severity: warning
+          service: ollama
+        annotations:
+          summary: "⚡ Ollama 응답 지연"
+          description: "p95 레이턴시가 {{ $value }}초입니다. 모델 상태를 확인하세요."
+
+      - alert: OllamaNoRequests
+        expr: |
+          rate(afo_ollama_calls_total[5m]) == 0
+        for: 10m
+        labels:
+          severity: warning
+          service: ollama
+        annotations:
+          summary: "⚠️ Ollama 요청 없음"
+          description: "최근 10분간 Ollama 호출이 없습니다. 서비스가 정상인지 확인하세요."
+
+      # ============================================================
+      # API Health Alerts
+      # ============================================================
+      - alert: APIHighErrorRate
+        expr: |
+          sum(rate(afo_http_requests_total{status_code=~"5.."}[5m])) / 
+          sum(rate(afo_http_requests_total[5m])) > 0.05
+        for: 2m
+        labels:
+          severity: critical
+          service: api
+        annotations:
+          summary: "🔥 API 5xx 에러율 급증"
+          description: "API 5xx 에러율이 {{ $value | humanizePercentage }}입니다."
+
+      - alert: APIHighLatency
+        expr: |
+          histogram_quantile(0.95, 
+            sum(rate(afo_http_request_duration_seconds_bucket[5m])) by (le, endpoint)
+          ) > 2
+        for: 5m
+        labels:
+          severity: warning
+          service: api
+        annotations:
+          summary: "⚡ API 응답 지연"
+          description: "{{ $labels.endpoint }} 엔드포인트 p95 레이턴시가 {{ $value }}초입니다."
+
+      # ============================================================
+      # Organ Health Alerts
+      # ============================================================
+      - alert: RedisDown
+        expr: afo_organ_health{organ="redis"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: redis
+        annotations:
+          summary: "💔 Redis 연결 실패"
+          description: "Redis(心)가 응답하지 않습니다. 즉시 확인이 필요합니다."
+
+      - alert: PostgresDown
+        expr: afo_organ_health{organ="postgres"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: postgres
+        annotations:
+          summary: "💔 PostgreSQL 연결 실패"
+          description: "PostgreSQL(肝)이 응답하지 않습니다. 즉시 확인이 필요합니다."
+
+      - alert: OllamaDown
+        expr: afo_organ_health{organ="ollama"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          service: ollama
+        annotations:
+          summary: "💔 Ollama 연결 실패"
+          description: "Ollama(脾)가 응답하지 않습니다. 서비스 상태를 확인하세요."
+
+      # ============================================================
+      # Trinity Score Alerts
+      # ============================================================
+      - alert: TrinityScoreLow
+        expr: afo_trinity_score_total < 0.7
+        for: 5m
+        labels:
+          severity: warning
+          service: trinity
+        annotations:
+          summary: "⚖️ Trinity Score 저하"
+          description: "Trinity Score가 {{ $value }}로 떨어졌습니다. 균형을 확인하세요."
+
+      - alert: TrinityPillarImbalance
+        expr: |
+          (max(afo_trinity_score) by (pillar) - min(afo_trinity_score) by (pillar)) > 0.3
+        for: 5m
+        labels:
+          severity: warning
+          service: trinity
+        annotations:
+          summary: "⚖️ Trinity 기둥 불균형"
+          description: "眞善美孝永 기둥 간 불균형이 감지되었습니다."
+
+  # ============================================================
+  # Lower Priority Alerts
+  # ============================================================
+  - name: afo-kingdom-warning
+    interval: 1m
+    rules:
+      - alert: LLMRouterFallback
+        expr: |
+          rate(afo_llm_router_calls_total{provider!="ollama",status="success"}[5m]) > 0
+        for: 5m
+        labels:
+          severity: info
+          service: llm
+        annotations:
+          summary: "ℹ️ LLM 폴백 활성화"
+          description: "Ollama 외 다른 LLM 제공자({{ $labels.provider }})가 사용되고 있습니다."
+
+      - alert: CRAGWebFallback
+        expr: |
+          rate(afo_crag_queries_total{status="web_fallback"}[5m]) > 0.5
+        for: 5m
+        labels:
+          severity: info
+          service: crag
+        annotations:
+          summary: "ℹ️ CRAG 웹 검색 폴백 증가"
+          description: "지식 베이스에서 답을 찾지 못해 웹 검색이 자주 사용되고 있습니다."
+
+      - alert: MemorySystemHighUsage
+        expr: |
+          afo_memory_entries{store="short_term"} > 80
+        for: 5m
+        labels:
+          severity: warning
+          service: memory
+        annotations:
+          summary: "🧠 메모리 시스템 사용량 높음"
+          description: "단기 메모리에 {{ $value }}개 항목이 있습니다. 정리가 필요할 수 있습니다."
