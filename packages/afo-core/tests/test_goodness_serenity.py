@@ -3,6 +3,7 @@
 """
 
 import pytest
+from typing import Any
 
 from utils.automation import RetryConfig, auto_retry, cache_result
 from utils.error_handling import (
@@ -18,12 +19,12 @@ from utils.error_handling import (
 class TestErrorHandling:
     """善 에러 처리 테스트"""
 
-    def test_safe_execute_success(self):
+    def test_safe_execute_success(self) -> None:
         """정상 실행 테스트"""
         result = safe_execute(lambda x: x * 2, 5, default=0)
         assert result == 10
 
-    def test_safe_execute_failure_with_default(self):
+    def test_safe_execute_failure_with_default(self) -> None:
         """실패 시 기본값 반환 테스트"""
 
         def failing_func():
@@ -32,28 +33,28 @@ class TestErrorHandling:
         result = safe_execute(failing_func, default="fallback", log_error=False)
         assert result == "fallback"
 
-    def test_validate_input_success(self):
+    def test_validate_input_success(self) -> None:
         """입력 검증 성공 테스트"""
         api_key = "sk-test123"
         result = validate_input(api_key, "api_key", lambda k: k.startswith("sk-"))
         assert result == api_key
 
-    def test_validate_input_failure(self):
+    def test_validate_input_failure(self) -> None:
         """입력 검증 실패 테스트"""
         with pytest.raises(ValidationError):
             validate_input("invalid", "api_key", lambda k: k.startswith("sk-"))
 
-    def test_require_not_none_success(self):
+    def test_require_not_none_success(self) -> None:
         """None 검증 성공 테스트"""
         value = require_not_none("test", "param")
         assert value == "test"
 
-    def test_require_not_none_failure(self):
+    def test_require_not_none_failure(self) -> None:
         """None 검증 실패 테스트"""
         with pytest.raises(ValidationError):
             require_not_none(None, "param")
 
-    def test_log_and_return_error(self):
+    def test_log_and_return_error(self) -> None:
         """에러 응답 생성 테스트"""
         error = AFOError("Test error", code="TEST_CODE")
         result = log_and_return_error(error, "test_context")
@@ -64,7 +65,7 @@ class TestErrorHandling:
 class TestAutomation:
     """孝 자동화 테스트"""
 
-    def test_auto_retry_success(self):
+    def test_auto_retry_success(self) -> None:
         """재시도 성공 테스트"""
         call_count = 0
 
@@ -80,7 +81,7 @@ class TestAutomation:
         assert result == "success"
         assert call_count == 3
 
-    def test_auto_retry_failure(self):
+    def test_auto_retry_failure(self) -> None:
         """재시도 실패 테스트"""
 
         @auto_retry(RetryConfig(max_retries=2, base_delay=0.01))
@@ -90,7 +91,7 @@ class TestAutomation:
         with pytest.raises(ValueError):
             always_fails()
 
-    def test_cache_result(self):
+    def test_cache_result(self) -> None:
         """캐싱 테스트"""
         call_count = 0
 

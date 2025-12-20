@@ -25,10 +25,10 @@ class TestSystemHealthAPI:
     """System Health API 통합 테스트"""
 
     @pytest.fixture
-    def client(self):
+    def client(self) -> TestClient:
         return TestClient(app)
 
-    def test_system_health_metrics(self, client):
+    def test_system_health_metrics(self, client: TestClient) -> None:
         """GET /api/system/metrics 테스트"""
         with (
             patch("AFO.api.routes.system_health.psutil") as mock_psutil,
@@ -46,7 +46,7 @@ class TestSystemHealthAPI:
                 data = response.json()
                 assert "memory_percent" in data
 
-    def test_fallback_import_logic(self):
+    def test_fallback_import_logic(self) -> None:
         """시스템 헬스 라우터 import 확인"""
         try:
             from AFO.api.routes.system_health import router
@@ -60,10 +60,10 @@ class TestLogsStream:
     """Logs Stream 테스트"""
 
     @pytest.fixture
-    def client(self):
+    def client(self) -> TestClient:
         return TestClient(app)
 
-    def test_logs_endpoint(self, client):
+    def test_logs_endpoint(self, client: TestClient) -> None:
         """GET /api/system/logs 테스트"""
         # SSE endpoint testing with TestClient is tricky, just check connection
         try:

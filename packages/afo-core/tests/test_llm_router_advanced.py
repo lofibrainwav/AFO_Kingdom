@@ -2,6 +2,7 @@ import os
 import sys
 from unittest.mock import AsyncMock, MagicMock, patch
 
+from typing import Any
 import pytest
 
 from AFO.llm_router import LLMConfig, LLMProvider, LLMRouter, QualityTier, RoutingDecision
@@ -9,7 +10,8 @@ from AFO.llm_router import LLMConfig, LLMProvider, LLMRouter, QualityTier, Routi
 
 # Test Initialization
 @pytest.mark.skip(reason="Module caching makes settings mock unreliable in test suite")
-def test_router_initialization_env_vars():
+def test_router_initialization_env_vars() -> None:
+    """眞 (Truth): 환경 변수를 통한 라우터 초기화 테스트"""
     # Mock get_settings to return an object with keys
     mock_settings = MagicMock()
     mock_settings.ANTHROPIC_API_KEY = os.getenv("TEST_ANT_KEY", "mock-ant-key")
@@ -35,8 +37,9 @@ def test_router_initialization_env_vars():
 
 
 # Test Routing Logic: Explicit Provider
-def test_route_explicit_provider():
-    router = LLMRouter()
+def test_route_explicit_provider() -> None:
+    """眞 (Truth): 명시적 프로바이더 지정 라우팅 테스트"""
+    router: Any = LLMRouter()
     # Mock configs to ensure provider exists
     router.llm_configs[LLMProvider.OPENAI] = LLMConfig(LLMProvider.OPENAI, "gpt-4")
 
@@ -45,8 +48,9 @@ def test_route_explicit_provider():
     assert "명시적 요청" in decision.reasoning
 
 
-def test_route_explicit_provider_invalid():
-    router = LLMRouter()
+def test_route_explicit_provider_invalid() -> None:
+    """眞 (Truth): 유효하지 않은 명시적 프로바이더 지정 시 폴백 테스트"""
+    router: Any = LLMRouter()
     decision = router.route_request("hi", context={"provider": "invalid_provider"})
     # Should fall back to default logic (Ollama if available)
     with patch.object(router, "_is_ollama_available", return_value=True):
@@ -54,8 +58,9 @@ def test_route_explicit_provider_invalid():
 
 
 # Test Routing Logic: Ollama Priority
-def test_route_ollama_priority():
-    router = LLMRouter()
+def test_route_ollama_priority() -> None:
+    """眞 (Truth): Ollama 우선 순위 라우팅 테스트"""
+    router: Any = LLMRouter()
     with patch.object(router, "_is_ollama_available", return_value=True):
         decision = router.route_request("simple query")
         assert decision.selected_provider == LLMProvider.OLLAMA
@@ -63,8 +68,9 @@ def test_route_ollama_priority():
 
 
 # Test Routing Logic: Upgrade to Ultra
-def test_route_upgrade_to_ultra():
-    router = LLMRouter()
+def test_route_upgrade_to_ultra() -> None:
+    """眞 (Truth): ULTRA 품질 요구사항에 따른 라우팅 테스트"""
+    router: Any = LLMRouter()
     # Ensure we have an ULTRA provider
     router.llm_configs[LLMProvider.ANTHROPIC] = LLMConfig(
         LLMProvider.ANTHROPIC, "claude-3-opus", quality_tier=QualityTier.ULTRA, cost_per_token=0.01
@@ -79,8 +85,9 @@ def test_route_upgrade_to_ultra():
 
 
 # Test Routing Logic: API Selection (No Ollama)
-def test_route_api_selection():
-    router = LLMRouter()
+def test_route_api_selection() -> None:
+    """眞 (Truth): 레이턴시 등 조건 기반 API 선택 테스트"""
+    router: Any = LLMRouter()
     # Setup candidates
     router.llm_configs[LLMProvider.OPENAI] = LLMConfig(
         LLMProvider.OPENAI, "gpt-4", quality_tier=QualityTier.ULTRA, latency_ms=100
@@ -97,8 +104,9 @@ def test_route_api_selection():
 
 # Test Execution Caching
 @pytest.mark.asyncio
-async def test_execution_caching():
-    router = LLMRouter()
+async def test_execution_caching() -> None:
+    """眞 (Truth): 실행 결과 캐싱 기능 테스트"""
+    router: Any = LLMRouter()
     router._call_llm = AsyncMock(return_value="Response")
 
     # 1st call
@@ -117,8 +125,9 @@ async def test_execution_caching():
 # Test Provider Execution: Gemini (Google) with Retry
 @pytest.mark.skip(reason="Requires real API key or better settings mock")
 @pytest.mark.asyncio
-async def test_call_gemini_retry():
-    router = LLMRouter()
+async def test_call_gemini_retry() -> None:
+    """眞 (Truth): Gemini(Google) 호출 시 재시도 로직 테스트"""
+    router: Any = LLMRouter()
     config = LLMConfig(LLMProvider.GEMINI, "gemini-pro", api_key_env="GEMINI_API_KEY")
 
     # Mock google.generativeai module
@@ -157,8 +166,9 @@ async def test_call_gemini_retry():
 
 # Test Provider Execution: Ollama
 @pytest.mark.asyncio
-async def test_call_ollama():
-    router = LLMRouter()
+async def test_call_ollama() -> None:
+    """眞 (Truth): Ollama 호출 연동 테스트"""
+    router: Any = LLMRouter()
     config = LLMConfig(LLMProvider.OLLAMA, "llama3")
 
     with patch("httpx.AsyncClient.post") as mock_post:
@@ -172,8 +182,9 @@ async def test_call_ollama():
 
 # Test Provider Execution: Anthropic
 @pytest.mark.asyncio
-async def test_call_anthropic():
-    router = LLMRouter()
+async def test_call_anthropic() -> None:
+    """眞 (Truth): Anthropic 호출 연동 테스트"""
+    router: Any = LLMRouter()
     router.llm_configs[LLMProvider.ANTHROPIC] = LLMConfig(LLMProvider.ANTHROPIC, "claude")
 
     decision = RoutingDecision(LLMProvider.ANTHROPIC, "claude-3", "reason", 1.0, 0.0, 100, [])
@@ -191,8 +202,9 @@ async def test_call_anthropic():
 
 # Test Fallback
 @pytest.mark.asyncio
-async def test_fallback_execution():
-    router = LLMRouter()
+async def test_fallback_execution() -> None:
+    """眞 (Truth): 실행 실패 시 폴백 로직 테스트"""
+    router: Any = LLMRouter()
     router.llm_configs[LLMProvider.OLLAMA] = LLMConfig(LLMProvider.OLLAMA, "backup")
 
     # Make primary fail

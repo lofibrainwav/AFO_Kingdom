@@ -1,11 +1,7 @@
 from unittest.mock import MagicMock, patch
-
 import pytest
 
 from AFO.api_wallet import main as cli
-
-# The cli function instantiates APIWallet().
-# We should mock APIWallet class to avoid real IO.
 
 
 def test_cli_add_key():
@@ -32,8 +28,8 @@ def test_cli_add_key_failure():
         MockInstance.add.side_effect = ValueError("Duplicate")
 
         with patch.dict(cli.__globals__, {"APIWallet": MockWallet}):
-            # CLI does not catch ValueError, so it should propagate
-            with pytest.raises(ValueError):
+            # CLI catches error and system exits
+            with pytest.raises(SystemExit):
                 cli()
 
 

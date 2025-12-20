@@ -15,7 +15,7 @@ def test_generate_default_key_reads_env():
     """Test that _generate_default_key reads from .env file correctly."""
     import os
 
-    valid_key = "12345678901234567890123456789012345678901234"
+    valid_key = "3qX4+P5+12345678901234567890123456789012345="
 
     def exists_side_effect(self):
         return ".env" in str(self)
@@ -39,7 +39,9 @@ def test_generate_default_key_writes_env():
 
     with patch("pathlib.Path.exists", autospec=True, side_effect=exists_side_effect):
         with patch("builtins.open", mock_open(read_data="")) as m_open:
-            with patch("AFO.api_wallet.Fernet.generate_key", return_value=b"new_key_generated"):
+            # Must be 44 chars for Fernet (Base64 URL safe)
+            valid_new_key = b"3qX4+P5+12345678901234567890123456789012345="
+            with patch("AFO.api_wallet.Fernet.generate_key", return_value=valid_new_key):
                 APIWallet(use_vault=False, db_connection=None, encryption_key=None)
 
                 # Check that open was called with 'a' mode

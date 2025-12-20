@@ -1,8 +1,9 @@
+# Standardized for Trinity 100%
 """
 Tests for utils modules
 유틸리티 테스트 - Phase 3 (Real Modules)
 """
-
+from typing import Any, cast
 import os
 import sys
 from unittest.mock import AsyncMock, MagicMock, patch
@@ -20,8 +21,8 @@ try:
         retry_with_exponential_backoff,
     )
     from AFO.utils.friction_calibrator import FrictionCalibrator
-    from AFO.utils.lazy_imports import LazyImport
-    # redis_connection and dry_run might need mocking if env vars not set
+    from AFO.utils.lazy_imports import LazyModule
+    # Standardized for Trinity 100%
 except ImportError:
     pass
 
@@ -29,13 +30,13 @@ except ImportError:
 class TestExponentialBackoffReal:
     """Exponential Backoff 실제 모듈 테스트"""
 
-    def test_backoff_execution_success(self):
+    def test_backoff_execution_success(self) -> None:
         """백오프 실행 성공 테스트"""
         backoff = ExponentialBackoff(max_retries=3, base_delay=0.1, jitter=False)
         result = backoff.execute(lambda: "success")
         assert result == "success"
 
-    def test_backoff_retry_logic(self):
+    def test_backoff_retry_logic(self) -> None:
         """백오프 재시도 로직 테스트"""
         mock_func = MagicMock(side_effect=[ValueError("Fail 1"), "Success"])
         mock_func.__name__ = "mock_func"  # Fix for missing __name__ attribute
@@ -46,7 +47,7 @@ class TestExponentialBackoffReal:
         assert result == "Success"
         assert mock_func.call_count == 2
 
-    def test_backoff_strategies(self):
+    def test_backoff_strategies(self) -> None:
         """사전 정의된 전략 테스트"""
         api_strat = BackoffStrategies.api()
         assert api_strat.max_retries == 5
@@ -56,12 +57,12 @@ class TestExponentialBackoffReal:
 class TestContainerDetectorReal:
     """Container Detector 실제 모듈 테스트"""
 
-    def test_detector_defaults(self):
+    def test_detector_defaults(self) -> None:
         """디텍터 기본값 테스트"""
         detector = ContainerDetector()
         assert detector.project_prefix == "afo"
 
-    def test_redis_container_detection(self):
+    def test_redis_container_detection(self) -> None:
         """Redis 컨테이너 감지 테스트"""
         with patch("subprocess.run") as mock_run:
             mock_run.return_value.stdout = "afo-redis-test"
@@ -73,7 +74,7 @@ class TestContainerDetectorReal:
             # Verify cache hit
             assert detector.detect_redis_container() == "afo-redis-test"
 
-    def test_postgres_container_detection(self):
+    def test_postgres_container_detection(self) -> None:
         """Postgres 컨테이너 감지 테스트"""
         with patch("subprocess.run") as mock_run:
             mock_run.return_value.stdout = "afo-postgres-test"
@@ -82,7 +83,7 @@ class TestContainerDetectorReal:
             name = detector.detect_postgres_container()
             assert name == "afo-postgres-test"
 
-    def test_detection_failure_fallback(self):
+    def test_detection_failure_fallback(self) -> None:
         """감지 실패 시 기본값 사용 테스트"""
         with patch("subprocess.run") as mock_run:
             mock_run.side_effect = Exception("Docker Error")
@@ -92,7 +93,7 @@ class TestContainerDetectorReal:
             assert detector.detect_redis_container() == "afo-redis-1"
             assert detector.detect_postgres_container() == "afo-postgres-1"
 
-    def test_detect_api_wallet_path(self):
+    def test_detect_api_wallet_path(self) -> None:
         """API Wallet 경로 감지 테스트"""
         detector = ContainerDetector()
         detector._cache = {}
@@ -105,7 +106,7 @@ class TestContainerDetectorReal:
         # Test cache
         assert detector.detect_api_wallet_path() == path
 
-    def test_detect_api_wallet_path_env(self):
+    def test_detect_api_wallet_path_env(self) -> None:
         """환경변수 기반 경로 감지 (Fallback Logic Check)"""
         # Force ImportError for settings modules to test fallback to os.getenv
         with patch.dict(sys.modules, {"config.settings": None, "AFO.config.settings": None}):
@@ -123,14 +124,14 @@ class TestContainerDetectorReal:
                     # We accept that we might not be able to easily test this legacy fallback without refactor
                     pass
 
-    def test_clear_cache(self):
+    def test_clear_cache(self) -> None:
         """캐시 초기화 테스트"""
         detector = ContainerDetector()
         detector._cache["key"] = "val"
         detector.clear_cache()
         assert len(detector._cache) == 0
 
-    def test_get_all_containers(self):
+    def test_get_all_containers(self) -> None:
         """모든 컨테이너 조회"""
         with patch("subprocess.run") as mock_run:
             mock_run.return_value.stdout = "container"
@@ -143,12 +144,12 @@ class TestContainerDetectorReal:
 class TestFrictionCalibratorReal:
     """Friction Calibrator 실제 모듈 테스트"""
 
-    def test_calibrator_init(self):
+    def test_calibrator_init(self) -> None:
         """초기화 테스트"""
         calibrator = FrictionCalibrator()
         assert calibrator.target_friction == 0.02
 
-    def test_recommend_logic(self):
+    def test_recommend_logic(self) -> None:
         """추천 로직 테스트"""
         from AFO.utils.friction_calibrator import FrictionStats
 
@@ -166,7 +167,7 @@ class TestFrictionCalibratorReal:
 class TestLazyImportsReal:
     """Lazy Imports 실제 모듈 테스트"""
 
-    def test_lazy_module_behavior(self):
+    def test_lazy_module_behavior(self) -> None:
         """지연 로딩 모듈 동작 테스트"""
         from AFO.utils.lazy_imports import LazyModule
 
@@ -174,7 +175,7 @@ class TestLazyImportsReal:
         lazy_json = LazyModule("json")
         assert lazy_json.dumps({"a": 1}) == '{"a": 1}'
 
-    def test_lazy_module_availability(self):
+    def test_lazy_module_availability(self) -> None:
         """지연 로딩 가용성 테스트"""
         from AFO.utils.lazy_imports import LazyModule
 
@@ -182,7 +183,7 @@ class TestLazyImportsReal:
         assert lazy_os.is_available() is True
         assert lazy_os.get_error() is None
 
-    def test_lazy_module_fallback(self):
+    def test_lazy_module_fallback(self) -> None:
         """모듈 로딩 실패 시 Fallback 테스트"""
         from AFO.utils.lazy_imports import LazyModule
 
@@ -196,7 +197,7 @@ class TestLazyImportsReal:
         assert lazy_missing.hello() == "world"
         assert lazy_missing.is_available() is False
 
-    def test_lazy_module_missing_no_fallback(self):
+    def test_lazy_module_missing_no_fallback(self) -> None:
         """Fallback 없는 실패 케이스"""
         from AFO.utils.lazy_imports import LazyModule
 
@@ -208,14 +209,14 @@ class TestLazyImportsReal:
         with pytest.raises(AttributeError):
             lazy_fail.some_method()
 
-    def test_lazy_function(self):
+    def test_lazy_function(self) -> None:
         """LazyFunction 테스트"""
         from AFO.utils.lazy_imports import LazyFunction
 
         lazy_len = LazyFunction("builtins", "len")
         assert lazy_len([1, 2, 3]) == 3
 
-    def test_lazy_function_fallback(self):
+    def test_lazy_function_fallback(self) -> None:
         """LazyFunction Fallback 테스트"""
         from AFO.utils.lazy_imports import LazyFunction
 
@@ -236,7 +237,7 @@ class TestRedisConnectionReal:
 
     @patch("AFO.utils.redis_connection.get_settings")
     @patch("redis.from_url")
-    def test_get_redis_client_success(self, mock_from_url, mock_get_settings):
+    def test_get_redis_client_success(self, mock_from_url: Any, mock_get_settings: Any) -> None:
         """동기 Redis 클라이언트 생성 성공"""
         from AFO.utils.redis_connection import get_redis_client
 
@@ -253,7 +254,7 @@ class TestRedisConnectionReal:
 
     @patch("AFO.utils.redis_connection.get_settings")
     @patch("redis.from_url")
-    def test_get_redis_client_failure(self, mock_from_url, mock_get_settings):
+    def test_get_redis_client_failure(self, mock_from_url: Any, mock_get_settings: Any) -> None:
         """동기 Redis 클라이언트 생성 실패"""
         from AFO.utils.redis_connection import get_redis_client
 
@@ -268,7 +269,7 @@ class TestRedisConnectionReal:
 
     @patch("AFO.utils.redis_connection.get_settings")
     @patch("redis.asyncio.Redis.from_url")
-    async def test_get_async_redis_client(self, mock_from_url, mock_get_settings):
+    async def test_get_async_redis_client(self, mock_from_url: Any, mock_get_settings: Any) -> None:
         """비동기 Redis 클라이언트 생성"""
         from AFO.utils.redis_connection import get_async_redis_client
 
@@ -283,7 +284,7 @@ class TestRedisConnectionReal:
         assert client is mock_client
         mock_client.ping.assert_called_once()
 
-    async def test_shared_clients_and_close(self):
+    async def test_shared_clients_and_close(self) -> None:
         """싱글톤 클라이언트 및 종료 테스트"""
         import AFO.utils.redis_connection as rc_module
         from AFO.utils.redis_connection import (
@@ -318,8 +319,8 @@ class TestRedisConnectionReal:
 
             # Test close
             await close_redis_connections()
-            c1.close.assert_called_once()
-            ac1.aclose.assert_awaited_once()
+            cast(Any, c1).close.assert_called_once()
+            cast(Any, ac1).aclose.assert_awaited_once()
 
             assert rc_module._redis_client is None
             assert rc_module._async_redis_client is None
@@ -331,7 +332,7 @@ class TestRedisConnectionReal:
 
 
 class TestFrictionCalibratorExtended:
-    def test_friction_stats_calculations(self):
+    def test_friction_stats_calculations(self) -> None:
         """Friction 통계 계산 로직"""
         from AFO.utils.friction_calibrator import FrictionStats
 
@@ -351,7 +352,7 @@ class TestFrictionCalibratorExtended:
         assert s3.friction == pytest.approx(1.0)
         assert s3.efficiency == 0.5
 
-    def test_measure_and_recommend(self):
+    def test_measure_and_recommend(self) -> None:
         """측정 및 추천 통합 테스트"""
         calibrator = FrictionCalibrator()
 
@@ -378,7 +379,7 @@ class TestFrictionCalibratorExtended:
             # Should maintain concurrency
             assert rec == 4
 
-    def test_recommend_clamping(self):
+    def test_recommend_clamping(self) -> None:
         """추천 값 범위 제한 테스트"""
         calibrator = FrictionCalibrator(min_concurrency=2, max_concurrency=10)
         from AFO.utils.friction_calibrator import FrictionStats
