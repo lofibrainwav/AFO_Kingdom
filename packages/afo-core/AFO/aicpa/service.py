@@ -87,7 +87,7 @@ class AICPAService:
         }
 
         client_key = client_name.lower()
-        client_data = mock_clients.get(client_name.lower())
+        mock_clients.get(client_name.lower())
 
         if client_key in mock_clients:
             self.log_mission("Data Scouter", f"Found client: {client_name}")

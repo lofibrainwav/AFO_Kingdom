@@ -34,32 +34,36 @@ except ImportError as e:
     # Define mocks or allow failure
     zhuge_liang = None
 
+
 class ChancellorState(TypedDict):
     """
     State Definition for Chancellor Graph V2.
     Tracks query lifecycle through the 5 Pillars (眞·善·美·孝·永).
     """
+
     query: str
     messages: Annotated[list[Any], add_messages]
-    summary: str             # [ADVANCED/永] conversation summary
-    context: dict[str, Any]   # shared context (includes trinity metrics)
-    search_results: list[dict] # [ADVANCED/眞] raw search results before reranking
-    multimodal_slots: dict[str, Any] # [ADVANCED/眞] slots for image/vision data
+    summary: str  # [ADVANCED/永] conversation summary
+    context: dict[str, Any]  # shared context (includes trinity metrics)
+    search_results: list[dict]  # [ADVANCED/眞] raw search results before reranking
+    multimodal_slots: dict[str, Any]  # [ADVANCED/眞] slots for image/vision data
 
     # Pillar Assessment
-    status: str              # COMPLIANT, BLOCKED, RERANKED, etc.
-    risk_score: float        # Derived from Goodness
-    trinity_score: float     # SSOT Weighted Total
+    status: str  # COMPLIANT, BLOCKED, RERANKED, etc.
+    risk_score: float  # Derived from Goodness
+    trinity_score: float  # SSOT Weighted Total
     analysis_results: Annotated[dict[str, float], lambda a, b: {**(a or {}), **b}]
 
     # Execution
     results: dict[str, Any]  # Tigers execution outputs
-    actions: list[str]       # Sequence of actions taken
+    actions: list[str]  # Sequence of actions taken
+
 
 # === 1. Graph Definition ===
 graph = StateGraph(ChancellorState)
 
 # === 2. Node Definitions ===
+
 
 async def constitutional_node(state: ChancellorState) -> dict[str, Any]:
     """
@@ -77,18 +81,27 @@ async def constitutional_node(state: ChancellorState) -> dict[str, Any]:
     # [ADVANCED CAI] Anthropic-style Self-Critique & Revision Loop
     # We critique the query intent or a hypothetical baseline response if available.
     # For the entry gate, we focus on intent refinement.
-    critique, revised_query, critique_status = await AFOConstitution.critique_and_revise(query, query)
+    critique, revised_query, critique_status = await AFOConstitution.critique_and_revise(
+        query, query
+    )
 
     if critique_status == "REVISED":
-        log_sse(f"🛡️ [Constitution] CAI Refined Query: '{query[:30]}...' -> '{revised_query[:30]}...'")
+        log_sse(
+            f"🛡️ [Constitution] CAI Refined Query: '{query[:30]}...' -> '{revised_query[:30]}...'"
+        )
         log_sse(f"📝 [Constitution] Critique: {critique}")
 
         # [RLAIF] Record the preference for future alignment (永)
         Historian.log_preference(query, query, revised_query, critique)
 
-        return {"query": revised_query, "status": "COMPLIANT", "context": {**state.get("context", {}), "cai_critique": critique}}
+        return {
+            "query": revised_query,
+            "status": "COMPLIANT",
+            "context": {**state.get("context", {}), "cai_critique": critique},
+        }
 
     return {"status": "COMPLIANT"}
+
 
 async def memory_recall_node(state: ChancellorState) -> dict[str, Any]:
     """
@@ -105,7 +118,7 @@ async def memory_recall_node(state: ChancellorState) -> dict[str, Any]:
 
             vectorstore = Qdrant(
                 client=client,
-                collection_name="obsidian_vault", # Default Kingdom knowledge
+                collection_name="obsidian_vault",  # Default Kingdom knowledge
                 embeddings=embeddings,
             )
 
@@ -117,12 +130,16 @@ async def memory_recall_node(state: ChancellorState) -> dict[str, Any]:
             if history:
                 log_sse(f"🧠 [Memory] Recalled {len(history)} chars of context")
                 context["semantic_memory"] = history
-                state["search_results"] = [{"content": doc.page_content, "metadata": doc.metadata} for doc in retriever.get_relevant_documents(query)]
+                state["search_results"] = [
+                    {"content": doc.page_content, "metadata": doc.metadata}
+                    for doc in retriever.get_relevant_documents(query)
+                ]
 
         except Exception as e:
             log_sse(f"⚠️ [Memory] Recall failed: {e}")
 
     return {"context": context, "search_results": state.get("search_results", [])}
+
 
 async def rerank_node(state: ChancellorState) -> dict[str, Any]:
     """
@@ -139,14 +156,10 @@ async def rerank_node(state: ChancellorState) -> dict[str, Any]:
 
         # Simple LLM Reranking logic: Score each result
         context_str = "\n".join([f"[{i}] {r['content']}" for i, r in enumerate(results[:10])])
-        prompt = {
-            "task": "rerank",
-            "query": query,
-            "candidates": context_str
-        }
+        prompt = {"task": "rerank", "query": query, "candidates": context_str}
 
         # Use Grok for high-fidelity reranking
-        analysis = await consult_grok(prompt, market_context="rerank_precision", trinity_score=95)
+        await consult_grok(prompt, market_context="rerank_precision", trinity_score=95)
 
         # Grok output might be mock in sandbox, but we prepare the flow
         log_sse("✅ [Truth] LLM-based Reranking complete")
@@ -158,6 +171,7 @@ async def rerank_node(state: ChancellorState) -> dict[str, Any]:
 
     return {"status": "RERANKED"}
 
+
 async def summarize_history_node(state: ChancellorState) -> dict[str, Any]:
     """
     [Summary] 永 - 대화 요약 및 압축 (ConversationSummaryBufferMemory logic)
@@ -165,38 +179,48 @@ async def summarize_history_node(state: ChancellorState) -> dict[str, Any]:
     messages = state.get("messages", [])
     current_summary = state.get("summary", "")
 
-    if len(messages) > 10: # Threshold for summarization
+    if len(messages) > 10:  # Threshold for summarization
         try:
             from AFO.julie_cpa.grok_engine import consult_grok
+
             log_sse("🔄 [Eternity] Compressing long-term memory...")
 
             prompt = {
                 "task": "summarize",
                 "current_summary": current_summary,
-                "new_messages": [m.content for m in messages[-5:]]
+                "new_messages": [m.content for m in messages[-5:]],
             }
-            analysis = await consult_grok(prompt, market_context="memory_compression", trinity_score=95)
+            analysis = await consult_grok(
+                prompt, market_context="memory_compression", trinity_score=95
+            )
 
             new_summary = analysis.get("analysis", current_summary)
-            return {"summary": new_summary, "messages": messages[-3:]} # Keep only last 3 in active buffer
+            return {
+                "summary": new_summary,
+                "messages": messages[-3:],
+            }  # Keep only last 3 in active buffer
 
         except Exception as e:
             log_sse(f"⚠️ [Eternity] Summarization failed: {e}")
 
     return {}
 
+
 # 3 Strategists (Parallel Wrappers)
 async def zhuge_node(state: ChancellorState) -> dict[str, Any]:
     score = zhuge_liang.truth_evaluate({"query": state["query"]}) if zhuge_liang else 0.5
     return {"analysis_results": {"truth": score}}
 
+
 async def sima_node(state: ChancellorState) -> dict[str, Any]:
     score = sima_yi.goodness_review({"query": state["query"]}) if sima_yi else 0.5
     return {"analysis_results": {"goodness": score}}
 
+
 async def zhou_node(state: ChancellorState) -> dict[str, Any]:
     score = zhou_yu.beauty_optimize({"query": state["query"]}) if zhou_yu else 0.5
     return {"analysis_results": {"beauty": score}}
+
 
 # Trinity Calculation
 async def trinity_node(state: ChancellorState) -> dict[str, Any]:
@@ -216,8 +240,13 @@ async def trinity_node(state: ChancellorState) -> dict[str, Any]:
 
     # Normalize score types
     def normalize(val):
-        if isinstance(val, (int, float)): return val
-        return 1.0 if any(word in str(val).upper() for word in ["COMPLETE", "SAVED", "MODE", "SUCCESS"]) else 0.5
+        if isinstance(val, (int, float)):
+            return val
+        return (
+            1.0
+            if any(word in str(val).upper() for word in ["COMPLETE", "SAVED", "MODE", "SUCCESS"])
+            else 0.5
+        )
 
     raw_scores = [normalize(t), normalize(g), normalize(b), normalize(s), normalize(e)]
 
@@ -230,7 +259,12 @@ async def trinity_node(state: ChancellorState) -> dict[str, Any]:
         score = sum(raw_scores) * 20
 
     log_sse(f"⚖️ [Trinity] Score: {score}/100, Risk: {risk_score}")
-    return {"trinity_score": score, "raw_scores": raw_scores, "context": {**state.get("context", {}), "risk_score": risk_score}}
+    return {
+        "trinity_score": score,
+        "raw_scores": raw_scores,
+        "context": {**state.get("context", {}), "risk_score": risk_score},
+    }
+
 
 # Tigers Execution
 async def tigers_node(state: ChancellorState) -> dict[str, Any]:
@@ -261,7 +295,7 @@ async def tigers_node(state: ChancellorState) -> dict[str, Any]:
                 "zhang": zhang_fei.goodness_gate(score, state["context"]),
                 "zhao": zhao_yun.beauty_craft("Code Structure", ux_level=2),
                 "ma": ma_chao.serenity_deploy(state["context"]),
-                "huang": huang_zhong.eternity_log(state["query"], {"trinity": score})
+                "huang": huang_zhong.eternity_log(state["query"], {"trinity": score}),
             }
         else:
             results["execution"] = "Success (Simulated)"
@@ -274,6 +308,7 @@ async def tigers_node(state: ChancellorState) -> dict[str, Any]:
 
     return {"status": status, "results": results}
 
+
 # Historian Recording
 async def historian_node(state: ChancellorState) -> dict[str, Any]:
     """
@@ -282,9 +317,10 @@ async def historian_node(state: ChancellorState) -> dict[str, Any]:
     Historian.record(
         state.get("query", "Unknown"),
         state.get("trinity_score", 0.0),
-        state.get("status", "Unknown")
+        state.get("status", "Unknown"),
     )
     return {}
+
 
 # === 3. Add Nodes & Edges ===
 graph.add_node("constitutional", constitutional_node)
@@ -299,9 +335,10 @@ graph.add_node("rerank", rerank_node)
 graph.add_node("summarize", summarize_history_node)
 
 # Flow Definition
-graph.set_entry_point("summarize") # Start with memory maintenance
+graph.set_entry_point("summarize")  # Start with memory maintenance
 
 graph.add_edge("summarize", "constitutional")
+
 
 # Conditional Logic: If blocked, go straight to Historian (skip execution)
 def check_compliance(state: ChancellorState) -> str:
@@ -309,13 +346,9 @@ def check_compliance(state: ChancellorState) -> str:
         return "historian"
     return "memory_recall"
 
+
 graph.add_conditional_edges(
-    "constitutional",
-    check_compliance,
-    {
-        "historian": "historian",
-        "memory_recall": "memory_recall"
-    }
+    "constitutional", check_compliance, {"historian": "historian", "memory_recall": "memory_recall"}
 )
 
 # Rerank after recall
@@ -328,7 +361,7 @@ graph.add_edge("rerank", "zhou")
 
 graph.add_edge("zhuge", "trinity")
 graph.add_edge("sima", "trinity")
-graph.add_edge("zhou", "trinity") # Fan-in
+graph.add_edge("zhou", "trinity")  # Fan-in
 
 graph.add_edge("trinity", "tigers")
 graph.add_edge("tigers", "historian")
@@ -347,10 +380,14 @@ try:
     log_sse("✅ [Memory] Eternal Redis Checkpointer initialized")
 except ImportError:
     from langgraph.checkpoint.memory import MemorySaver
+
     checkpointer = MemorySaver()
-    log_sse("⚠️ [Memory] langgraph-checkpoint-redis not found. Falling back to MemorySaver (Degraded Memory)")
+    log_sse(
+        "⚠️ [Memory] langgraph-checkpoint-redis not found. Falling back to MemorySaver (Degraded Memory)"
+    )
 
 chancellor_graph = graph.compile(checkpointer=checkpointer)
+
 
 def build_chancellor_graph(checkpointer=None):
     """
@@ -360,6 +397,7 @@ def build_chancellor_graph(checkpointer=None):
     if checkpointer:
         return graph.compile(checkpointer=checkpointer)
     return chancellor_graph
+
 
 # Compatibility Aliases for Verification Scripts (眞)
 chancellor_router_node = constitutional_node  # Entry gate

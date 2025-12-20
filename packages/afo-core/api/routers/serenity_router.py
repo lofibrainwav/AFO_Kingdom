@@ -10,8 +10,10 @@ from AFO.serenity.creation_loop import serenity_loop
 
 router = APIRouter(prefix="/serenity", tags=["Serenity (GenUI)"])
 
+
 class SerenityCreateRequest(BaseModel):
     prompt: str
+
 
 class SerenityCreateResponse(BaseModel):
     code: str
@@ -21,6 +23,7 @@ class SerenityCreateResponse(BaseModel):
     iteration: int
     success: bool
     feedback: str
+
 
 @router.post("/create", response_model=SerenityCreateResponse)
 async def create_ui(request: SerenityCreateRequest):
@@ -37,16 +40,13 @@ async def create_ui(request: SerenityCreateRequest):
             risk_score=result.risk_score,
             iteration=result.iteration,
             success=result.success,
-            feedback=result.feedback
+            feedback=result.feedback,
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Serenity creation failed: {e!s}")
 
+
 @router.get("/status")
 async def get_serenity_status():
     """Returns the status of the Serenity sandbox."""
-    return {
-        "sandbox_active": True,
-        "sandbox_path": serenity_loop.sandbox_dir,
-        "mode": "autonomous"
-    }
+    return {"sandbox_active": True, "sandbox_path": serenity_loop.sandbox_dir, "mode": "autonomous"}

@@ -42,7 +42,7 @@ def _add_executive_summary(doc: Any, tax_result: dict) -> None:
     """Step 2: 요약 섹션 추가"""
     doc.add_heading("Executive Summary", level=1)
     summary_text = f"""
-Based on the 2025 OBBBA tax regulations, we have analyzed your financial situation 
+Based on the 2025 OBBBA tax regulations, we have analyzed your financial situation
 and prepared personalized recommendations to optimize your tax position.
 
 Filing Status: {tax_result.get("filing_status", "N/A").upper()}
@@ -89,10 +89,10 @@ def _add_sweet_spot_analysis(doc: Any, tax_result: dict) -> None:
 
 Your current taxable income is within the 12% bracket with ${headroom:,} of headroom.
 
-RECOMMENDATION: Consider converting ${roth_rec:,} from Traditional IRA to Roth IRA 
+RECOMMENDATION: Consider converting ${roth_rec:,} from Traditional IRA to Roth IRA
 this year to take advantage of the lower tax rate.
 
-This strategy allows you to pay taxes now at 12% instead of potentially higher rates 
+This strategy allows you to pay taxes now at 12% instead of potentially higher rates
 in the future when Required Minimum Distributions (RMDs) begin.
 """)
     else:
@@ -126,7 +126,7 @@ def _add_risk_alerts(doc: Any, tax_result: dict) -> None:
     if tax_result.get("irmaa_warning"):
         doc.add_heading("⚠️ Risk Alert: IRMAA", level=1)
         doc.add_paragraph("""
-WARNING: Your Modified Adjusted Gross Income (MAGI) may trigger 
+WARNING: Your Modified Adjusted Gross Income (MAGI) may trigger
 Income-Related Monthly Adjustment Amount (IRMAA) surcharges for Medicare Part B and D.
 
 Consider income smoothing strategies to avoid crossing IRMAA thresholds.
@@ -292,7 +292,7 @@ def generate_email_draft(
     """
     subject = f"Tax Strategy Update for {client_name} - 2025 OBBBA Analysis"
 
-    savings = tax_result.get("roth_conversion_recommendation", 0)
+    tax_result.get("roth_conversion_recommendation", 0)
     sweet_spot = tax_result.get("sweet_spot_headroom", 0)
 
     body = f"""Subject: {subject}

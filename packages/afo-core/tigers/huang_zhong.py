@@ -3,7 +3,7 @@ from datetime import datetime
 from strategists.base import log_action, robust_execute
 
 
-def log(action: str, details: dict = {}) -> str:
+def log(action: str, details: dict | None = None) -> str:
     """
     Huang Zhong (Eternity): Evolution Logging
 
@@ -12,9 +12,12 @@ def log(action: str, details: dict = {}) -> str:
     - Resilience: Log failure does not stop the system.
     """
 
+    if details is None:
+        details = {}
+
     def _logic(val):
         act, dets = val
-        entry = {
+        {
             "action": act,
             "timestamp": datetime.utcnow().isoformat(),
             "trinity": dets.get("trinity", 100.0),
@@ -26,6 +29,7 @@ def log(action: str, details: dict = {}) -> str:
     result = robust_execute(_logic, (action, details), fallback_value="LOG_FAILED")
     log_action("Huang Zhong 永", result)
     return str(result)
+
 
 # V2 Interface Alias
 eternity_log = log

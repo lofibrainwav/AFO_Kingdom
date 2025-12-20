@@ -34,5 +34,6 @@ def evaluate(query_data: dict[str, Any]) -> float:
     log_action("Zhuge Liang 眞", result)
     return result
 
+
 # V2 Interface Alias
 truth_evaluate = evaluate

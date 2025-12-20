@@ -322,10 +322,7 @@ def predict_next_month_spending(history: list[dict]) -> dict:
     numerator = sum((x[i] - x_mean) * (y[i] - y_mean) for i in range(n))
     denominator = sum((x[i] - x_mean) ** 2 for i in range(n))
 
-    if denominator == 0:
-        m = 0
-    else:
-        m = numerator / denominator
+    m = 0 if denominator == 0 else numerator / denominator
 
     # y절편 (b) 계산: b = ȳ - m * x̄
     b = y_mean - m * x_mean

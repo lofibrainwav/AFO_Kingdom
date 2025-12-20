@@ -9,6 +9,7 @@ from typing import Any
 
 logger = logging.getLogger(__name__)
 
+
 class Historian:
     """
     Historian (영(永)): The Keeper of Records.
@@ -16,7 +17,9 @@ class Historian:
     """
 
     @staticmethod
-    def record(query: str, trinity_score: float, status: str, metadata: dict[str, Any] = None):
+    def record(
+        query: str, trinity_score: float, status: str, metadata: dict[str, Any] | None = None
+    ):
         """
         Records a major event/decision to the Chronicles.
         """
@@ -29,11 +32,13 @@ class Historian:
             "trinity_score": trinity_score,
             "status": status,
             "metadata": metadata,
-            "philosophy": "Eternity (永)"
+            "philosophy": "Eternity (永)",
         }
 
         # 1. Log to System Log (Immediate Truth)
-        logger.info(f"📜 [Historian] Chronicle Entry: {json.dumps(record_entry, ensure_ascii=False)}")
+        logger.info(
+            f"📜 [Historian] Chronicle Entry: {json.dumps(record_entry, ensure_ascii=False)}"
+        )
 
         # 2. (Future) Append to Obsidian / Database
         # This implementation serves as the foundational interface.
@@ -59,9 +64,12 @@ class Historian:
             "rejected": rejected,
             "chosen": chosen,
             "critique": critique,
-            "type": "RLAIF_PREFERENCE"
+            "type": "RLAIF_PREFERENCE",
         }
-        logger.info(f"⚖️ [Historian] RLAIF Preference Entry: {json.dumps(preference_entry, ensure_ascii=False)}")
+        logger.info(
+            f"⚖️ [Historian] RLAIF Preference Entry: {json.dumps(preference_entry, ensure_ascii=False)}"
+        )
         return preference_entry
+
 
 historian = Historian()

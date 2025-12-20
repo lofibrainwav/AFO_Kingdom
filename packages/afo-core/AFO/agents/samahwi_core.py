@@ -56,7 +56,7 @@ class SamahwiAgent:
         Uses Grok Engine to decide the next action.
         """
         # Context for Grok
-        context = {
+        {
             "role": "Agent Samahwi",
             "objective": instruction,
             "available_tools": list(self.tools.keys()),

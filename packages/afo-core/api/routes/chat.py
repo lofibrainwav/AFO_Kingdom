@@ -6,6 +6,7 @@ Ollama 우선 → API LLM Fallback
 
 from __future__ import annotations
 
+import contextlib
 import logging
 from datetime import datetime
 from typing import Any
@@ -18,10 +19,8 @@ from pydantic import BaseModel, Field
 LLMRouter: Any = None
 llm_router: Any = None
 route_and_execute: Any = None
-try:
-    from AFO.llm_router import LLMRouter, llm_router, route_and_execute
-except ImportError:
-    pass
+with contextlib.suppress(ImportError):
+    from AFO.llm_router import llm_router, route_and_execute
 
 logger = logging.getLogger(__name__)
 

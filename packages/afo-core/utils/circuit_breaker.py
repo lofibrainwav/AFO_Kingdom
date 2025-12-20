@@ -12,11 +12,13 @@ from __future__ import annotations
 
 import asyncio
 import time
-from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
 from enum import Enum
 from functools import wraps
-from typing import Any, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar
+
+if TYPE_CHECKING:
+    from collections.abc import Awaitable, Callable
 
 T = TypeVar("T")
 

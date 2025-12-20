@@ -30,5 +30,6 @@ def deploy(config: dict) -> str:
     log_action("Ma Chao 孝", result)
     return str(result)
 
+
 # V2 Interface Alias
 serenity_deploy = deploy

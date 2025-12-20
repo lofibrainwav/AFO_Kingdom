@@ -3,6 +3,7 @@ Strategy Engine for AFO Kingdom
 Provides memory context and workflow management for LLM interactions.
 """
 
+import contextlib
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any
@@ -41,10 +42,8 @@ class MemoryContext:
 
     def set_state(self, key: str, value: Any) -> None:
         """Set a state variable."""
-        try:
+        with contextlib.suppress(Exception):
             self.state[key] = value
-        except Exception:
-            pass
 
     def get_state(self, key: str, default: Any = None) -> Any:
         """Get a state variable."""
@@ -87,10 +86,8 @@ class Workflow:
 
     def add_step(self, name: str, action: str, **params) -> "Workflow":
         """Add a step to the workflow."""
-        try:
+        with contextlib.suppress(Exception):
             self.steps.append(WorkflowStep(name=name, action=action, params=params))
-        except Exception:
-            pass
         return self
 
     def next_step(self) -> WorkflowStep | None:

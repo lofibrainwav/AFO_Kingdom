@@ -19,13 +19,15 @@ from __future__ import annotations
 
 import logging
 import os
-from collections.abc import Callable
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import httpx
 
 from AFO.afo_skills_registry import register_core_skills
 from AFO.scholars.libraries.obsidian_bridge import LocalObsidianBridge
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 logger = logging.getLogger(__name__)
 
@@ -367,8 +369,6 @@ class YeongdeokScholar:
         # Let's assume standard MCP usage via `mcp` library if installed, or `AFO.api.routes.mcp_routes`.
         # Given the constraint, I will implement a direct bridge for the requested capabilities here,
         # wrapping them as "using the skill".
-
-        result_content = ""
 
         if tool_name == "skill_012_mcp_tool_bridge":
             # Using standard MCP client logic (simulated or imported)

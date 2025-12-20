@@ -199,7 +199,7 @@ export default function {component_name}() {{
             ONLINE
         </span>
       </div>
-      
+
       <div className="space-y-6">
         {{/* Main Score - Trinity */}}
         <div className="text-center p-4 bg-white/5 rounded-xl border border-white/10">
@@ -229,7 +229,7 @@ export default function {component_name}() {{
             </div>
              <span className="text-sm text-blue-300">All Systems Nominal</span>
         </div>
-        
+
         <div className="pt-4 border-t border-white/10 text-center">
             <p className="text-xs text-gray-500 italic">
                 "Precision in definition leads to precision in execution."
@@ -426,15 +426,15 @@ export default function {component_name}() {{
     setLoading(true);
     setAnswer('사마휘가 왕국 기록을 뒤져보는 중... ✨');
     setSources([]);
-    
+
     try {{
       // In Mock Mode, we simulate the API call delay
       await new Promise(resolve => setTimeout(resolve, 1500));
-      
+
       // Simulation Logic
       let simulatedAnswer = "왕국의 기록에 따르면, 현재 시스템은 헌법(Constitution)에 따라 자율 진화 중입니다.";
       let simulatedSources = ["General Logs", "Memory Bank"];
-      
+
       const q = question.toLowerCase();
       if (q.includes("phase 11") || q.includes("accuracy") || q.includes("bert")) {{
           simulatedAnswer = "Phase 11에서 학습된 Custom BERT 모델의 정확도는 98.25%입니다. 眞·善·美·孝·永 5기둥을 분류하도록 최적화되었습니다.";
@@ -493,7 +493,7 @@ export default function {component_name}() {{
         <p className="leading-relaxed">
             {{answer || <span className="text-white/30 italic">질문을 기다리고 있어요 – 왕국의 모든 역사를 기억합니다 ✨</span>}}
         </p>
-        
+
         {{sources.length > 0 && (
           <div className="mt-6 pt-4 border-t border-white/10">
             <p className="text-xs text-purple-300/70 mb-2 uppercase tracking-wider font-bold">Sources Identified</p>

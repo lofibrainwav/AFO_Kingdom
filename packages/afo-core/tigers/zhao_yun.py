@@ -21,5 +21,6 @@ def craft(code_snippet: str, ux_level: int = 1) -> str:
     log_action("Zhao Yun 美", "Crafted" if result != code_snippet else "Fallback")
     return str(result)
 
+
 # V2 Interface Alias
 beauty_craft = craft

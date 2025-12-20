@@ -12,14 +12,15 @@ from trl import DPOTrainer
 # Configure Logger
 logger = logging.getLogger(__name__)
 
+
 def run_basic_dpo(
     model_name: str = "gpt2",
     data_path: str = "preference_data.json",
-    output_dir: str = "./afo_dpo_results"
+    output_dir: str = "./afo_dpo_results",
 ):
     """
     Executes Basic DPO Training with Full Configuration.
-    
+
     Args:
         model_name: HuggingFace model ID (Default: gpt2 for testing)
         data_path: Path to preference dataset (JSON format with 'prompt', 'chosen', 'rejected')
@@ -54,21 +55,18 @@ def run_basic_dpo(
     # Optimized for stability and convergence based on Rafailov et al. 2023
     training_args = TrainingArguments(
         output_dir=output_dir,
-
         # Training Strategy
-        num_train_epochs=3,              # Standard DPO stability range (1-3)
-        per_device_train_batch_size=4,   # Low batch size for VRAM efficiency
+        num_train_epochs=3,  # Standard DPO stability range (1-3)
+        per_device_train_batch_size=4,  # Low batch size for VRAM efficiency
         per_device_eval_batch_size=4,
-        gradient_accumulation_steps=4,   # Effective batch size = 16
-
+        gradient_accumulation_steps=4,  # Effective batch size = 16
         # Optimization
-        learning_rate=1e-5,              # Lower IR for alignment than pre-training
-        weight_decay=0.01,               # Regularization
-        max_grad_norm=1.0,               # Gradient clipping for stability
-        optim="adamw_torch",             # Standard robust optimizer
-        warmup_ratio=0.1,                # 10% warmup
-        lr_scheduler_type="linear",      # Linear decay usually works best for DPO
-
+        learning_rate=1e-5,  # Lower IR for alignment than pre-training
+        weight_decay=0.01,  # Regularization
+        max_grad_norm=1.0,  # Gradient clipping for stability
+        optim="adamw_torch",  # Standard robust optimizer
+        warmup_ratio=0.1,  # 10% warmup
+        lr_scheduler_type="linear",  # Linear decay usually works best for DPO
         # Logistics
         logging_steps=10,
         save_strategy="steps",
@@ -76,26 +74,25 @@ def run_basic_dpo(
         evaluation_strategy="steps",
         eval_steps=50,
         load_best_model_at_end=True,
-        metric_for_best_model="loss",    # DPO Loss minimization
+        metric_for_best_model="loss",  # DPO Loss minimization
         greater_is_better=False,
-
         # System
-        report_to="tensorboard",         # Visibility (Truth)
-        remove_unused_columns=False,     # Required for DPO dataset format
+        report_to="tensorboard",  # Visibility (Truth)
+        remove_unused_columns=False,  # Required for DPO dataset format
         run_name="afo_dpo_basic",
-        no_cuda=False                    # Set True for Mac M-series MPS availability check logic needed
+        no_cuda=False,  # Set True for Mac M-series MPS availability check logic needed
     )
 
     # 4. Initialize Trainer
     trainer = DPOTrainer(
         model=model,
-        ref_model=None,                  # None = create a copy of model as reference (Implicit)
+        ref_model=None,  # None = create a copy of model as reference (Implicit)
         args=training_args,
-        beta=0.1,                        # KL Penalty Coefficient (Reference Paper Value)
+        beta=0.1,  # KL Penalty Coefficient (Reference Paper Value)
         train_dataset=dataset["train"],
         eval_dataset=dataset["test"],
         tokenizer=tokenizer,
-        max_length=512,                  # Initial context window
+        max_length=512,  # Initial context window
         max_prompt_length=256,
     )
 
@@ -106,6 +103,7 @@ def run_basic_dpo(
     # 6. Save Artifacts
     trainer.save_model(output_dir)
     logger.info(f"✅ [DPO] Model aligned and saved to {output_dir}")
+
 
 if __name__ == "__main__":
     # DRY_RUN Example

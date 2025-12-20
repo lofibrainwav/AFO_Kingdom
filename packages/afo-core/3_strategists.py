@@ -34,7 +34,7 @@ def calculate_trinity_score(scores: list[float]) -> float:
     if len(scores) < 5:
         return 0.0
 
-    total = sum(s * w for s, w in zip(scores, weights))
+    total = sum(s * w for s, w in zip(scores, weights, strict=False))
     return round(total * 100, 2)
 
 

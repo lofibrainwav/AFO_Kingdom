@@ -83,7 +83,7 @@ class AFOConstitution:
             "task": "constitutional_critique",
             "principles": principles_str,
             "query": query,
-            "response_to_critique": response
+            "response_to_critique": response,
         }
 
         try:
@@ -95,7 +95,11 @@ class AFOConstitution:
             analysis = await consult_grok(prompt, market_context="moral_critique", trinity_score=98)
 
             critique = analysis.get("analysis", "No critique provided.")
-            revised = analysis.get("action_items", [response])[0] if "action_items" in analysis else response
+            revised = (
+                analysis.get("action_items", [response])[0]
+                if "action_items" in analysis
+                else response
+            )
 
             # If Grok suggests a revision, we treat it as the 'Chosen' response
             if "REVISED" in str(analysis).upper() or revised != response:
