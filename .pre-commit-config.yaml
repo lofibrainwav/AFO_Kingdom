@@ -1,0 +1,44 @@
+repos:
+  # Ruff - Ultra-fast Python linter and formatter
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.8.4
+    hooks:
+      - id: ruff
+        args: [--fix, --exit-non-zero-on-fix]
+        name: "⚔️ Ruff Lint (眞: Truth)"
+      - id: ruff-format
+        name: "✨ Ruff Format (美: Beauty)"
+
+  # MyPy - Static type checker
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.13.0
+    hooks:
+      - id: mypy
+        name: "🛡️ MyPy Type Check (善: Goodness)"
+        additional_dependencies:
+          - pydantic>=2.0
+          - types-redis
+          - types-requests
+        args:
+          - --ignore-missing-imports
+          - --no-error-summary
+        pass_filenames: false
+        entry: mypy packages/afo-core
+
+  # Basic file checks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+        name: "🧹 Trailing Whitespace"
+      - id: end-of-file-fixer
+        name: "📄 End of File Fixer"
+      - id: check-yaml
+        name: "📋 YAML Validator"
+      - id: check-added-large-files
+        name: "📦 Large File Check"
+        args: ['--maxkb=1000']
+
+# AFO Kingdom Pre-commit Configuration
+# 眞善美孝永 - Truth, Goodness, Beauty, Serenity, Eternity
+# Run: pre-commit run --all-files
