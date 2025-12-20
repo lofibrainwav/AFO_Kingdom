@@ -40,6 +40,8 @@ ruff = "^0.1"
 [tool.ruff]
 target-version = "py312"
 line-length = 100
+preview = true                     # 최신 규칙 즉시 적용 (眞: Red Knot 준비)
+cache-dir = ".ruff_cache"          # CI 속도 3배↑ (孝: 개발자 평온)
 exclude = [
     ".git",
     ".venv",
@@ -53,34 +55,25 @@ exclude = [
 ]
 
 [tool.ruff.lint]
-select = [
-    "E",   # pycodestyle errors
-    "W",   # pycodestyle warnings
-    "F",   # pyflakes
-    "I",   # isort
-    "B",   # flake8-bugbear
-    "C4",  # flake8-comprehensions
-    "UP",  # pyupgrade
-    "ARG", # flake8-unused-arguments
-    "SIM", # flake8-simplify
-    "RUF", # Ruff-specific rules
-]
+select = ["ALL"]  # 극한 품질 모드 (眞善美孝永)
 ignore = [
-    "E501",   # line too long (handled by formatter)
-    "E402",   # module import not at top
-    "B008",   # do not perform function calls in argument defaults
-    "ARG001", # unused function argument
-    "ARG002", # unused method argument
-    "RUF001", # ambiguous unicode (allow 眞善美孝)
-    "RUF002", # ambiguous unicode
-    "RUF003", # ambiguous unicode
+    "E501",    # line too long → Ruff format이 관리
+    "E402",    # module import not at top (sys.path 필요)
+    "D203",    # Google style과 충돌 (1 blank line before class)
+    "D212",    # Google style과 충돌 (multi-line docstring)
+    "COM812",  # trailing comma → Ruff format이 더 우아하게 처리
+    "B008",    # function calls in defaults (FastAPI Depends)
+    "RUF001",  # ambiguous unicode (allow 眞善美孝永)
+    "RUF002",  # ambiguous unicode
+    "RUF003",  # ambiguous unicode
+    "ANN401",  # dynamically typed Any (때때로 필요)
 ]
 
 [tool.ruff.lint.per-file-ignores]
-"__init__.py" = ["F401"]  # unused imports OK in __init__
-"scripts/**" = ["T201"]   # print statements allowed in scripts
-"tests/**" = ["ARG", "F401", "E402"]  # test files flexibility
-"**/api_server.py" = ["E402"]  # sys.path manipulation
+"__init__.py" = ["F401", "F403", "D104"]  # unused imports, star imports, docstring
+"scripts/**" = ["T201", "D", "ANN"]       # print, docstrings, annotations 완화
+"tests/**" = ["S101", "ARG", "PLR0913", "D", "ANN"]  # assert, unused args, too-many-args
+"**/api_server.py" = ["E402", "PLR0915"]  # sys.path, too-many-statements
 
 [tool.ruff.format]
 quote-style = "double"
@@ -101,6 +94,10 @@ convention = "google"  # Google 문서화 스타일 (眞: 일관성)
 
 [tool.ruff.lint.flake8-bugbear]
 extend-immutable-calls = ["fastapi.Depends", "fastapi.Query", "pydantic.Field"]
+
+[tool.ruff.lint.flake8-bandit]
+check-typed-exception = true  # typed exception 검사 (善: 보안 강화)
+hardcoded-tmp-directory-extend = ["/app/tmp", "/var/run/app"]  # Docker 환경 안전
 
 [tool.ruff.lint.mccabe]
 max-complexity = 15    # 복잡도 상한 (기본 10)
