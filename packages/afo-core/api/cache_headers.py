@@ -11,19 +11,19 @@ from fastapi import Request, Response
 logger = logging.getLogger(__name__)
 
 CACHE_STRATEGIES = {
-    "static": "public, max-age=31536000, immutable",        # 정적 자산 (영속)
-    "dynamic": "private, max-age=0, no-cache, stale-while-revalidate=60", # 동적 (SWR Short)
-    "realtime": "private, max-age=60, stale-while-revalidate=300", # 실시간 Data (SWR Long)
-    "sensitive": "private, no-store"                         # 민감 (No Cache)
+    "static": "public, max-age=31536000, immutable",  # 정적 자산 (영속)
+    "dynamic": "private, max-age=0, no-cache, stale-while-revalidate=60",  # 동적 (SWR Short)
+    "realtime": "private, max-age=60, stale-while-revalidate=300",  # 실시간 Data (SWR Long)
+    "sensitive": "private, no-store",  # 민감 (No Cache)
 }
 
+
 def set_optimized_cache_headers(
-    response: Response,
-    asset_type: Literal["static", "dynamic", "realtime", "sensitive"]
+    response: Response, asset_type: Literal["static", "dynamic", "realtime", "sensitive"]
 ):
     """
     Cache-Control Headers Optimization: 자산 유형별 최적 헤더
-    
+
     Args:
         response: FastAPI Response object
         asset_type: Strategy name ('static', 'dynamic', 'realtime', 'sensitive')
@@ -38,6 +38,7 @@ def set_optimized_cache_headers(
 
     logger.debug(f"[Cache-Control] Applied strategy '{asset_type}': {strategy}")
 
+
 def set_etag_and_cache(response: Response, content: bytes, asset_type: str):
     """
     ETag + Cache-Control 결합 최적화
@@ -51,6 +52,7 @@ def set_etag_and_cache(response: Response, content: bytes, asset_type: str):
     set_optimized_cache_headers(response, asset_type)
 
     logger.debug(f"[ETag] Generated: {etag}")
+
 
 def check_etag_match(request: Request, current_content: bytes) -> bool:
     """

@@ -36,5 +36,6 @@ def review(query_data: dict[str, Any]) -> float:
     log_action("Sima Yi 善", result)
     return result
 
+
 # V2 Interface Alias
 goodness_review = review

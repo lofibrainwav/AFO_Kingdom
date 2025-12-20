@@ -78,7 +78,6 @@ class TestLifespan:
         from api_server import lifespan
 
         # Use Any to avoid MyPy strictness on lifespan type
-        api_lifespan: Any = lifespan
 
         # Disable strict startup checks by mocking
         # get_settings is imported in api_server, so we can patch it

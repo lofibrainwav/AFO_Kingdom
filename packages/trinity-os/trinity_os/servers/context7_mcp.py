@@ -214,7 +214,7 @@ class Context7MCP:
         - 템플릿 수: 8개 (7개 마크다운 + 1개 HTML)
         - 자동화: Templater 플러그인 통합
         - 후처리: post_template.js 자동 실행
-        
+
         주요 템플릿:
         1. project_doc.md - 프로젝트 문서 템플릿
         2. system_component.md - 시스템 컴포넌트 템플릿
@@ -224,14 +224,14 @@ class Context7MCP:
         6. ai_integration_guide.md - AI 통합 가이드
         7. publish_template.html - 웹 퍼블리시 템플릿
         8. README.md - 템플릿 시스템 설명서
-        
+
         자동화 기능:
         - 폴더별 자동 템플릿 적용
         - 템플릿 변수 자동 완성
         - Context7 자동 등록 (register_obsidian_doc_to_context7.py)
         - Trinity Score 자동 계산
         - 관련 문서 자동 링크 추가
-        
+
         상세 참조: docs/_templates/README.md
         """,
     }

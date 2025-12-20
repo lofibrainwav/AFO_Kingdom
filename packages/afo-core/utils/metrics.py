@@ -6,7 +6,6 @@ Provides observability for the Soul Engine API.
 from __future__ import annotations
 
 import time
-from collections.abc import Callable
 from functools import wraps
 
 try:
@@ -17,9 +16,15 @@ except ImportError:
     PROMETHEUS_AVAILABLE = False
     print("⚠️ prometheus_client not installed. Run: pip install prometheus-client")
 
+from typing import TYPE_CHECKING
+
 from starlette.middleware.base import BaseHTTPMiddleware
-from starlette.requests import Request
 from starlette.responses import Response
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from starlette.requests import Request
 
 # ============================================================================
 # Core Metrics Definition
@@ -178,9 +183,7 @@ class MetricsMiddleware(BaseHTTPMiddleware):
         if len(part) == 36 and part.count("-") == 4:
             return True
         # Numeric ID
-        if part.isdigit() and len(part) > 3:
-            return True
-        return False
+        return bool(part.isdigit() and len(part) > 3)
 
 
 # ============================================================================

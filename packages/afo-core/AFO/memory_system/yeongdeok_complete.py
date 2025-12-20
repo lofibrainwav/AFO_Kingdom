@@ -4,6 +4,7 @@ Named after 영덕 (Yeongdeok), the Kingdom's archivist sage.
 Provides comprehensive memory management and context persistence.
 """
 
+import contextlib
 import hashlib
 import json
 from dataclasses import dataclass, field
@@ -194,10 +195,8 @@ class YeongdeokComplete:
 
     def clear_short_term(self) -> None:
         """Clear all short-term memory."""
-        try:
+        with contextlib.suppress(Exception):
             self.short_term = {}
-        except Exception:
-            pass
 
     def get_stats(self) -> dict[str, Any]:
         """Get memory system statistics."""

@@ -27,5 +27,6 @@ def optimize(query_data: dict[str, Any]) -> float:
     log_action("Zhou Yu 美", result)
     return result
 
+
 # V2 Interface Alias
 beauty_optimize = optimize

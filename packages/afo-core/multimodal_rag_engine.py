@@ -3,6 +3,7 @@ Multimodal RAG Engine for AFO Kingdom (Phase 2)
 Handles multimodal content (images, audio, video) in RAG pipelines.
 """
 
+import contextlib
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -49,14 +50,12 @@ class MultimodalRAGEngine:
 
     def add_image(self, image_path: str, description: str = "") -> None:
         """Add an image document."""
-        try:
+        with contextlib.suppress(Exception):
             self.add_document(
                 content=description or f"Image: {image_path}",
                 content_type="image",
                 metadata={"path": image_path},
             )
-        except Exception:
-            pass
 
     def search(
         self, query: str, top_k: int = 5, content_types: list[str] | None = None

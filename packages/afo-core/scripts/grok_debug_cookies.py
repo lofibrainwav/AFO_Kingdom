@@ -42,7 +42,7 @@ def check_cookies():
 
             count_auth = 0
             for row in rows:
-                host, name, path, created = row
+                host, name, _path, created = row
                 if name == "auth_token":
                     count_auth += 1
                     print(f"   🔥 FOUND 'auth_token' row! Host: {host}, Created: {created}")

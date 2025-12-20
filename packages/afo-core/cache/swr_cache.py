@@ -12,12 +12,14 @@ from typing import Any
 # Assume AFO redis client wrapper or standard redis
 try:
     import redis
-    redis_client = redis.Redis(host='localhost', port=6379, decode_responses=True)
+
+    redis_client = redis.Redis(host="localhost", port=6379, decode_responses=True)
 except ImportError:
     redis_client = None
     print("⚠️ Redis not installed, SWR cache falling back to pass-through")
 
 logger = logging.getLogger(__name__)
+
 
 async def background_revalidate(key: str, fetch_func: Callable[[], Any], ttl: int, swr_grace: int):
     """
@@ -32,26 +34,24 @@ async def background_revalidate(key: str, fetch_func: Callable[[], Any], ttl: in
 
         # Update Cache
         if redis_client:
-            payload = {
-                "data": data,
-                "timestamp": time.time()
-            }
+            payload = {"data": data, "timestamp": time.time()}
             redis_client.set(key, json.dumps(payload), ex=ttl + swr_grace)
 
         logger.info(f"[SWR] Revalidation complete for {key}")
     except Exception as e:
         logger.error(f"[SWR] Background revalidation failed for {key}: {e}")
 
+
 def get_with_swr(key: str, fetch_func: Callable[[], Any], max_age: int = 60, swr: int = 300) -> Any:
     """
     Stale-While-Revalidate: stale 허용 + 백그라운드 갱신 (PDF 캐싱 최적화)
-    
+
     Args:
         key: Cache Key
         fetch_func: Function to retrieve data if missed or stale
         max_age: Duration in seconds to consider data 'fresh'
         swr: Duration in seconds to allow 'stale' data while revalidating
-        
+
     Returns:
         The data (fresh, stale, or newly fetched)
     """
@@ -83,20 +83,17 @@ def get_with_swr(key: str, fetch_func: Callable[[], Any], max_age: int = 60, swr
                 except RuntimeError:
                     # Fallback for sync context or no loop (simple thread usage or skip)
                     pass
-                return data # Return stale data immediately
+                return data  # Return stale data immediately
 
         except json.JSONDecodeError:
-            pass # Invalid cache, treat as miss
+            pass  # Invalid cache, treat as miss
 
     # Case 3: Miss or Expired
     logger.info(f"[SWR] Cache Miss/Expired: {key} - Fetching synchronously")
     data = fetch_func()
 
     # Update Cache
-    payload = {
-        "data": data,
-        "timestamp": time.time()
-    }
+    payload = {"data": data, "timestamp": time.time()}
     redis_client.set(key, json.dumps(payload), ex=max_age + swr)
 
     return data

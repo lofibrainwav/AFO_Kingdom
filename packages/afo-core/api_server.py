@@ -309,6 +309,7 @@ except ImportError:
 chancellor_graph_runnable: Any = None
 try:
     from chancellor_graph import chancellor_graph
+
     chancellor_graph_runnable = chancellor_graph
     print("✅ [승상] Chancellor Graph (Real Brain) Loaded")
 except ImportError as e:
@@ -590,7 +591,9 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
             strategy_app_runnable = workflow.compile(checkpointer=memory_context)
             print("[지휘소 v6】 '두뇌' (Mock) 가동 준비 완료.")
         except AttributeError:
-            print("⚠️  Strategy Workflow is a Mock/Placeholder (no .compile method). Running in degraded mode.")
+            print(
+                "⚠️  Strategy Workflow is a Mock/Placeholder (no .compile method). Running in degraded mode."
+            )
             strategy_app_runnable = None
         except Exception as e:
             print(f"⚠️  LangGraph compilation failed: {e}")
@@ -927,6 +930,7 @@ except Exception as e:
 # ============================================================
 try:
     from AFO.api.routers.serenity_router import router as serenity_router
+
     app.include_router(serenity_router, prefix="/api", tags=["Serenity (GenUI)"])
     print("🎨 Serenity Router 등록 완료 (Phase 27: 프로젝트 제네시스)")
 except Exception as e:

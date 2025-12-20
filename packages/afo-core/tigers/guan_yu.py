@@ -28,5 +28,6 @@ def guard(data: dict[str, Any]) -> float:
     log_action("Guan Yu 眞", result)
     return result
 
+
 # V2 Interface Alias
 truth_guard = guard

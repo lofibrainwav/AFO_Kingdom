@@ -10,7 +10,7 @@ except ImportError:
     antigravity = MockAntiGravity()
 
 
-def gate(risk_score: float, context: dict = {}) -> float:
+def gate(risk_score: float, context: dict | None = None) -> float:
     """
     Zhang Fei (Goodness): Safety Gate
 
@@ -18,6 +18,9 @@ def gate(risk_score: float, context: dict = {}) -> float:
     - Strict Gating: Blocks execution if risk > 0.1.
     - Safety Fallback: Returns 0.0 (block) on any internal error.
     """
+
+    if context is None:
+        context = {}
 
     def _logic(val):
         risk, ctx = val
@@ -31,6 +34,7 @@ def gate(risk_score: float, context: dict = {}) -> float:
     result = robust_execute(_logic, (risk_score, context), fallback_value=0.0)
     log_action("Zhang Fei 善", result)
     return result
+
 
 # V2 Interface Alias
 goodness_gate = gate

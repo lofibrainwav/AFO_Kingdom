@@ -39,9 +39,11 @@ except ImportError:
 
 logger = logging.getLogger(__name__)
 
+
 @dataclass
 class CreationResult:
     """Result of a creation loop iteration."""
+
     code: str
     screenshot_path: str | None
     trinity_score: float
@@ -49,6 +51,7 @@ class CreationResult:
     iteration: int
     success: bool
     feedback: str
+
 
 class SerenityCreationLoop:
     """
@@ -81,7 +84,15 @@ class SerenityCreationLoop:
             # Step 1: Generate Code
             code = await self._generate_code(prompt, feedback)
             if not code:
-                return CreationResult(code="", screenshot_path=None, trinity_score=0, risk_score=1, iteration=iteration, success=False, feedback="GenUI failed")
+                return CreationResult(
+                    code="",
+                    screenshot_path=None,
+                    trinity_score=0,
+                    risk_score=1,
+                    iteration=iteration,
+                    success=False,
+                    feedback="GenUI failed",
+                )
 
             # Step 2: Write to Sandbox (HTML wrapped for rendering)
             html_path = await self._prepare_sandbox(code, iteration)
@@ -93,14 +104,20 @@ class SerenityCreationLoop:
                 try:
                     screenshot_path = os.path.join(self.sandbox_dir, f"screenshot_v{iteration}.png")
                     # Disable dry-run momentarily for real verification if explicitly asked or permitted
-                    verification_data = await self.bridge.verify_ui(f"file://{html_path}", screenshot_path)
-                    log_sse(f"📸 [Serenity] Visual verification complete: {verification_data.get('status')}")
+                    verification_data = await self.bridge.verify_ui(
+                        f"file://{html_path}", screenshot_path
+                    )
+                    log_sse(
+                        f"📸 [Serenity] Visual verification complete: {verification_data.get('status')}"
+                    )
                 except Exception as e:
                     log_sse(f"⚠️ [Serenity] Visual verification failed: {e}")
 
             # Step 4: Evaluate with Trinity (善)
             trinity_score, risk_score, feedback = self._evaluate(code, verification_data, prompt)
-            log_sse(f"⚖️ [Serenity] Iteration Score: {trinity_score*100:.1f}/100 (Risk: {risk_score*100:.1f}%)")
+            log_sse(
+                f"⚖️ [Serenity] Iteration Score: {trinity_score * 100:.1f}/100 (Risk: {risk_score * 100:.1f}%)"
+            )
 
             last_result = CreationResult(
                 code=code,
@@ -108,8 +125,10 @@ class SerenityCreationLoop:
                 trinity_score=trinity_score,
                 risk_score=risk_score,
                 iteration=iteration,
-                success=(trinity_score >= self.TRINITY_THRESHOLD and risk_score <= self.RISK_THRESHOLD),
-                feedback=feedback
+                success=(
+                    trinity_score >= self.TRINITY_THRESHOLD and risk_score <= self.RISK_THRESHOLD
+                ),
+                feedback=feedback,
             )
 
             if last_result.success:
@@ -205,7 +224,12 @@ class SerenityCreationLoop:
         final_trinity = (truth_score * 0.4) + (beauty_score * 0.3) + (base_trinity * 0.3)
         final_risk = risk_score + (0.1 if truth_score < 0.9 else 0.0)
 
-        return final_trinity, final_risk, "; ".join(feedback_list) if feedback_list else "Perfect alignment."
+        return (
+            final_trinity,
+            final_risk,
+            "; ".join(feedback_list) if feedback_list else "Perfect alignment.",
+        )
+
 
 # Singleton
 serenity_loop = SerenityCreationLoop()

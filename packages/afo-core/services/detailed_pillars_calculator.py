@@ -29,7 +29,7 @@ class DetailedPillarsCalculator:
             score += 0.2
 
         # 2. Ethical Guardrails (Max 0.3)
-        if context.get("ethics_check") == True:
+        if context.get("ethics_check"):
             score += 0.3
 
         # 3. Vulnerabilities (Max 0.2)
@@ -37,7 +37,7 @@ class DetailedPillarsCalculator:
             score += 0.2
 
         # 4. Cost Optimization (Max 0.1)
-        if context.get("cost_optimized") == True:
+        if context.get("cost_optimized"):
             score += 0.1
 
         return round(score, 2)  # 0.0 ~ 1.0
@@ -87,11 +87,11 @@ class DetailedPillarsCalculator:
             score += 0.3
 
         # 3. Env Consistency (Max 0.2)
-        if context.get("env_consistent") == True:
+        if context.get("env_consistent"):
             score += 0.2
 
         # 4. SSE Streaming (Max 0.1)
-        if context.get("sse_active") == True:
+        if context.get("sse_active"):
             score += 0.1
 
         return round(score, 2)
@@ -107,15 +107,15 @@ class DetailedPillarsCalculator:
             score += 0.4
 
         # 2. Evolution Log (Max 0.3)
-        if context.get("evolution_logged") == True:
+        if context.get("evolution_logged"):
             score += 0.3
 
         # 3. Version Control (Max 0.2)
-        if context.get("git_tracked") == True:
+        if context.get("git_tracked"):
             score += 0.2
 
         # 4. Sustainability (Max 0.1)
-        if context.get("sustainable_arch") == True:
+        if context.get("sustainable_arch"):
             score += 0.1
 
         return round(score, 2)
