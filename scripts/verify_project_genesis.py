@@ -9,43 +9,46 @@ sys.path.append("/Users/brnestrm/AFO_Kingdom/packages/afo-core")
 from AFO.chancellor_graph import chancellor_graph
 from langchain_core.messages import HumanMessage
 
+
 async def verify_genesis():
     print("📜 Project Genesis: Verification Start")
-    
+
     # 1. Simulate Commander's Query
     query = "Explain the difference between Truth and Goodness in our Kingdom."
     print(f"👑 Commander Query: {query}")
-    
+
     initial_state = {
         "messages": [HumanMessage(content=query)],
         "trinity_score": 0.85,  # Force ASK_COMMANDER path usually, but here we just want to reach Historian
         "risk_score": 0.1,
-        "steps_taken": 0
+        "steps_taken": 0,
     }
-    
+
     print("\n🚀 Running Chancellor Graph...")
-    
+
     # Run the graph
     inputs = initial_state
     final_output = None
-    
-    async for output in chancellor_graph.astream(inputs, config={"configurable": {"thread_id": "genesis_test"}}):
+
+    async for output in chancellor_graph.astream(
+        inputs, config={"configurable": {"thread_id": "genesis_test"}}
+    ):
         for key, value in output.items():
             print(f" -> Node Finished: {key}")
             if key == "historian":
                 final_output = value
 
     print("\n✅ Graph Execution Complete.")
-    
+
     # 2. Verify Chronicle Creation
     # Look for the daily log or chronicle file
     bridge_path = "/Users/brnestrm/AFO_Kingdom/docs"
     today = datetime.now().strftime("%Y-%m-%d")
     daily_log = f"{bridge_path}/journals/daily/{today}.md"
-    
+
     if os.path.exists(daily_log):
         print(f"\n✅ Daily Log Found: {daily_log}")
-        with open(daily_log, "r") as f:
+        with open(daily_log) as f:
             content = f.read()
             if "Council Session Recorded" in content:
                 print("   -> 'Council Session Recorded' signature found!")
@@ -68,6 +71,7 @@ async def verify_genesis():
         # Directory might not exist if first run and mkdir is handled by bridge but maybe not recursively for parent?
         # Bridge code uses `parent.mkdir(parents=True)`, so it should exist if `write_note` succeeded.
         print(f"❌ Chronicles directory {chronicles_dir} does not exist.")
+
 
 if __name__ == "__main__":
     asyncio.run(verify_genesis())

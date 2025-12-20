@@ -333,77 +333,95 @@ class SkillRegistry:
 
     def register(self, skill: AFOSkillCard) -> bool:
         """Register a skill"""
-        if skill.skill_id in self._skills:
-            # Update existing skill
-            self._skills[skill.skill_id] = skill
-            return False  # Not a new registration
-        else:
-            self._skills[skill.skill_id] = skill
-            return True  # New registration
+        try:
+            if skill.skill_id in self._skills:
+                # Update existing skill
+                self._skills[skill.skill_id] = skill
+                return False  # Not a new registration
+            else:
+                self._skills[skill.skill_id] = skill
+                return True  # New registration
+        except Exception:
+            return False
 
     def get(self, skill_id: str) -> AFOSkillCard | None:
         """Get skill by ID"""
-        return self._skills.get(skill_id)
+        try:
+            return self._skills.get(skill_id)
+        except Exception:
+            return None
 
     def list_all(self) -> list[AFOSkillCard]:
         """List all skills"""
-        return list(self._skills.values())
+        try:
+            return list(self._skills.values())
+        except Exception:
+            return []
 
     def filter(self, params: SkillFilterParams) -> list[AFOSkillCard]:
         """Filter skills by parameters"""
-        results = self.list_all()
+        try:
+            results = self.list_all()
 
-        # Category filter
-        if params.category:
-            results = [s for s in results if s.category == params.category]
+            # Category filter
+            if params.category:
+                results = [s for s in results if s.category == params.category]
 
-        # Status filter
-        if params.status:
-            results = [s for s in results if s.status == params.status]
+            # Status filter
+            if params.status:
+                results = [s for s in results if s.status == params.status]
 
-        # Tags filter (OR logic)
-        if params.tags:
-            tag_set = {tag.lower() for tag in params.tags}
-            results = [s for s in results if any(tag in tag_set for tag in s.tags)]
+            # Tags filter (OR logic)
+            if params.tags:
+                tag_set = {tag.lower() for tag in params.tags}
+                results = [s for s in results if any(tag in tag_set for tag in s.tags)]
 
-        # Search filter
-        if params.search:
-            search_lower = params.search.lower()
-            results = [
-                s
-                for s in results
-                if search_lower in s.name.lower() or search_lower in s.description.lower()
-            ]
+            # Search filter
+            if params.search:
+                search_lower = params.search.lower()
+                results = [
+                    s
+                    for s in results
+                    if search_lower in s.name.lower() or search_lower in s.description.lower()
+                ]
 
-        # Philosophy score filter
-        if params.min_philosophy_avg:
-            results = [
-                s for s in results if s.philosophy_scores.average >= params.min_philosophy_avg
-            ]
+            # Philosophy score filter
+            if params.min_philosophy_avg:
+                results = [
+                    s for s in results if s.philosophy_scores.average >= params.min_philosophy_avg
+                ]
 
-        # Execution mode filter
-        if params.execution_mode:
-            results = [s for s in results if s.execution_mode == params.execution_mode]
+            # Execution mode filter
+            if params.execution_mode:
+                results = [s for s in results if s.execution_mode == params.execution_mode]
 
-        # Pagination
-        len(results)
-        results = results[params.offset : params.offset + params.limit]
-
-        return results
+            # Pagination
+            start = params.offset
+            end = params.offset + params.limit
+            return results[start:end]
+        except Exception as e:
+            print(f"⚠️ Skill filtering failed: {e}")
+            return []
 
     def get_categories(self) -> list[str]:
         """Get all unique categories"""
-        return [cat.value for cat in SkillCategory]
+        try:
+            return [cat.value for cat in SkillCategory]
+        except Exception:
+            return []
 
     def get_category_stats(self) -> dict[str, int]:
         """Get category statistics (category -> count)"""
-        stats: dict[str, int] = {}
-        for skill in self._skills.values():
-            category = skill.category.value
-            if category not in stats:
-                stats[category] = 0
-            stats[category] += 1
-        return stats
+        try:
+            stats: dict[str, int] = {}
+            for skill in self._skills.values():
+                category = skill.category.value
+                if category not in stats:
+                    stats[category] = 0
+                stats[category] += 1
+            return stats
+        except Exception:
+            return {}
 
     def count(self) -> int:
         """Total skill count"""

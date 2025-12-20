@@ -1,0 +1,2 @@
+packages/afo-core/AFO/domain/metrics/trinity_manager.py:34: note: By default the bodies of untyped functions are not checked, consider using --check-untyped-defs  [annotation-unchecked]
+packages/afo-core/AFO/services/persona_service.py:45: note: By default the bodies of untyped functions are not checked, consider using --check-untyped-defs  [annotation-unchecked]

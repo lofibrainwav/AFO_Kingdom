@@ -27,7 +27,7 @@ class ScoreResult:
 class AutomatedScorecard:
     """眞善美孝永 자동 스코어링"""
 
-    def __init__(self, project_dir: str = "AFO/"):
+    def __init__(self, project_dir: str = "packages/afo-core"):
         self.project_dir = Path(project_dir)
         self.weights = {
             "truth": 0.35,
@@ -169,20 +169,45 @@ class AutomatedScorecard:
             return None
 
     def _run_mypy(self) -> float:
-        """MyPy 실행 (0-40점)"""
+        """MyPy 실행 (0-40점) - venv 환경 사용"""
         try:
-            result = subprocess.run(
-                ["mypy", str(self.project_dir), "--ignore-missing-imports"],
-                capture_output=True,
-                text=True,
-                timeout=60,
-            )
+            # MyPy needs packages/afo-core for proper import resolution
+            mypy_path = self.project_dir
+            if self.project_dir.name == "AFO":
+                mypy_path = self.project_dir.parent  # Go up to packages/afo-core
+            
+            # Use absolute path for venv (script may run from different cwd)
+            script_dir = Path(__file__).parent.parent  # Go up from scripts/ to repo root
+            venv_activate = script_dir / ".venv" / "bin" / "activate"
+            
+            if venv_activate.exists():
+                cmd = f"source {venv_activate} && mypy {mypy_path} --ignore-missing-imports"
+                result = subprocess.run(
+                    cmd,
+                    shell=True,
+                    executable="/bin/bash",
+                    capture_output=True,
+                    text=True,
+                    timeout=120,
+                    cwd=str(script_dir),  # Run from repo root
+                )
+            else:
+                # Fallback to system mypy
+                result = subprocess.run(
+                    ["mypy", str(mypy_path), "--ignore-missing-imports"],
+                    capture_output=True,
+                    text=True,
+                    timeout=120,
+                )
+            
             error_count = result.stdout.count("error:")
             if error_count == 0:
                 return 40
             return max(0, 40 - error_count * 2)
         except (FileNotFoundError, subprocess.TimeoutExpired):
             return 20  # MyPy 없으면 기본점
+
+
 
     def _check_type_hints(self) -> float:
         """타입 힌트 비율 (0-35점)"""
@@ -285,7 +310,8 @@ class AutomatedScorecard:
                 if isinstance(node, ast.Name):
                     if "_" in node.id and node.id.islower():
                         snake_case += 1
-                    elif any(c.isupper() for c in node.id[1:]):
+                    elif node.id[0].islower() and any(c.isupper() for c in node.id[1:]):
+                        # Only count lowerCamelCase as violation
                         camel_case += 1
 
         total = snake_case + camel_case
@@ -366,7 +392,7 @@ class AutomatedScorecard:
 
 def main():
     """메인 함수"""
-    project_dir = sys.argv[1] if len(sys.argv) > 1 else "AFO/"
+    project_dir = sys.argv[1] if len(sys.argv) > 1 else "packages/afo-core"
 
     scorer = AutomatedScorecard(project_dir)
     results = scorer.run_all()

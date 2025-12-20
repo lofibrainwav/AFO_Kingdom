@@ -4,8 +4,9 @@
 from dataclasses import dataclass
 from datetime import datetime
 
-from config.antigravity import antigravity
 from config.vault_manager import vault_manager
+
+from config.antigravity import antigravity
 
 
 @dataclass

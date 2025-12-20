@@ -1,16 +1,15 @@
-
-import sys
 import os
+import sys
 from pathlib import Path
 
 # Add project root to path
 sys.path.insert(0, "/Users/brnestrm/AFO_Kingdom/packages/afo-core")
 
 try:
-    from AFO.domain.metrics.trinity_ssot import TrinityWeights
-    from AFO.domain.metrics.trinity import TrinityMetrics
-    from AFO.domain.metrics.prometheus import trinity_strategist_score
     from AFO.api_server import SSE_AVAILABLE
+    from AFO.domain.metrics.prometheus import trinity_strategist_score
+    from AFO.domain.metrics.trinity import TrinityMetrics
+    from AFO.domain.metrics.trinity_ssot import TrinityWeights
 except ImportError as e:
     print(f"❌ Import Error: {e}")
     sys.exit(1)
@@ -25,7 +24,7 @@ expected_weights = {
     "GOODNESS": 0.35,
     "BEAUTY": 0.20,
     "SERENITY": 0.08,
-    "ETERNITY": 0.02
+    "ETERNITY": 0.02,
 }
 
 all_passed = True
@@ -44,8 +43,7 @@ if not all_passed:
 # 2. Verify TrinityMetrics usage of SSOT
 print("\n[LOCK 2] Checking TrinityMetrics usage...")
 metrics = TrinityMetrics
-if (metrics.WEIGHT_TRUTH == TrinityWeights.TRUTH and 
-    metrics.WEIGHT_BEAUTY == TrinityWeights.BEAUTY):
+if metrics.WEIGHT_TRUTH == TrinityWeights.TRUTH and metrics.WEIGHT_BEAUTY == TrinityWeights.BEAUTY:
     print("✅ TrinityMetrics is using SSOT weights.")
 else:
     print("❌ TrinityMetrics is NOT using SSOT weights!")
@@ -55,8 +53,8 @@ else:
 
 # 3. Verify Prometheus Metrics Labels
 print("\n[LOCK 3] Checking Prometheus Labels (Simulated)...")
-# Note: Can't easily inspect registry cleanly in this script without complex mocking, 
-# but the fact it imported means the code ran without error. 
+# Note: Can't easily inspect registry cleanly in this script without complex mocking,
+# but the fact it imported means the code ran without error.
 # We can check if the code *looks* right or rely on the import not failing.
 print("✅ Prometheus module imported successfully with TrinityWeights.")
 

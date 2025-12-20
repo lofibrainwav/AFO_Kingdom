@@ -19,6 +19,7 @@ from AFO.schemas.gen_ui import GenUIRequest, GenUIResponse
 # Logger setup
 logger = logging.getLogger("afo.services.gen_ui")
 
+
 class GenUIService:
     """
     Service for autonomous UI generation.
@@ -31,7 +32,9 @@ class GenUIService:
         # Root is ../../../..
         current_file = Path(__file__).resolve()
         self.project_root = current_file.parent.parent.parent.parent.parent
-        self.sandbox_dir = self.project_root / "packages" / "dashboard" / "src" / "components" / "genui"
+        self.sandbox_dir = (
+            self.project_root / "packages" / "dashboard" / "src" / "components" / "genui"
+        )
 
         # Ensure sandbox exists
         if not self.sandbox_dir.exists():
@@ -54,12 +57,15 @@ class GenUIService:
             "Ensure the component is named exactly as requested. "
             "Use 'lucide-react' for icons if needed."
         )
-        user_prompt = f"Create a component named '{request.component_name}'. Requirements: {request.prompt}"
+        user_prompt = (
+            f"Create a component named '{request.component_name}'. Requirements: {request.prompt}"
+        )
 
         # 2. Call Scholar (The Execution)
         # Using Yeongdeok's localized logic or direct LLM Router
         try:
             from AFO.llm_router import LLMRouter
+
             router = LLMRouter()
 
             # Use specific model routing or generic generation
@@ -73,17 +79,16 @@ class GenUIService:
                 query=full_prompt,
                 context={
                     "provider": "ollama",
-                    "ollama_model": "qwen2.5-coder-32b-instruct", # Use recruited model
+                    "ollama_model": "qwen2.5-coder-32b-instruct",  # Use recruited model
                     "max_tokens": 4096,
-                    "temperature": 0.2 # Precision for code
-                }
+                    "temperature": 0.2,  # Precision for code
+                },
             )
 
             if not response_dict.get("success"):
                 raise RuntimeError(response_dict.get("error", "Unknown Router Error"))
 
             response_text: str = str(response_dict.get("response", ""))
-
 
             # Clean up code (remove markdown fences if LLM disobeyed)
             code = self._clean_code(response_text)
@@ -94,7 +99,12 @@ class GenUIService:
             from AFO.config.antigravity import antigravity
             from AFO.config.settings import settings
 
-            if settings.MOCK_MODE or antigravity.DRY_RUN_DEFAULT or "test" in str(e).lower() or "connection" in str(e).lower():
+            if (
+                settings.MOCK_MODE
+                or antigravity.DRY_RUN_DEFAULT
+                or "test" in str(e).lower()
+                or "connection" in str(e).lower()
+            ):
                 logger.warning(f"⚠️ [GenUI] Router failed ({e}). Entering Mock/Simulation Mode.")
                 code = self._generate_mock_code(request.component_name)
             else:
@@ -111,7 +121,7 @@ class GenUIService:
         if not is_valid_syntax and (settings.MOCK_MODE or antigravity.DRY_RUN_DEFAULT):
             logger.warning("⚠️ [GenUI] Syntax check failed on LLM output. Using Mock Component.")
             code = self._generate_mock_code(request.component_name)
-            is_valid_syntax = True # Now it is valid
+            is_valid_syntax = True  # Now it is valid
 
         risk_score = 0 if is_valid_syntax else 100
 
@@ -121,9 +131,9 @@ class GenUIService:
             truth=100.0 if is_valid_syntax else 0.0,
             goodness=90.0,
             beauty=80.0,
-            serenity=90.0, # Uses 'serenity' field name in PersonaTrinityScore
+            serenity=90.0,  # Uses 'serenity' field name in PersonaTrinityScore
             eternity=80.0,
-            total_score=88.0 if is_valid_syntax else 0.0
+            total_score=88.0 if is_valid_syntax else 0.0,
         )
 
         component_id = f"gen_{uuid.uuid4().hex[:8]}"
@@ -137,7 +147,7 @@ class GenUIService:
             description=f"Generated from: {request.prompt}",
             trinity_score=trinity_score,
             risk_score=risk_score,
-            status="approved" if is_valid_syntax else "rejected"
+            status="approved" if is_valid_syntax else "rejected",
         )
 
     def validate_syntax(self, code: str) -> bool:
@@ -170,7 +180,7 @@ class GenUIService:
 
     def _generate_mock_code(self, component_name: str) -> str:
         """Returns a valid React component skeleton for testing."""
-        
+
         # Phase 9-3 Special Mock for TrinityMonitorWidget
         if component_name == "TrinityMonitorWidget":
             return f"""
@@ -230,7 +240,6 @@ export default function {component_name}() {{
   );
 }}
 """
-
 
         # Phase 10 Special Mock for CopilotThoughtStreamWidget
         if component_name == "CopilotThoughtStreamWidget":
@@ -395,7 +404,6 @@ export default function {component_name}() {{
 }}
 """
 
-
         # Phase 12 Special Mock for AskTheKingdomWidget
         if component_name == "AskTheKingdomWidget":
             return f"""
@@ -533,7 +541,7 @@ export default function {component_name}() {{
             ),
             risk_score=100,
             status="rejected",
-            error=error_msg
+            error=error_msg,
         )
 
     def deploy_component(self, response: GenUIResponse) -> str:
@@ -542,7 +550,9 @@ export default function {component_name}() {{
         Returns the absolute path of the written file.
         """
         if response.status != "approved" or not response.code:
-            raise ValueError(f"Cannot deploy rejected or empty component: {response.component_name}")
+            raise ValueError(
+                f"Cannot deploy rejected or empty component: {response.component_name}"
+            )
 
         filename = f"{response.component_name}.tsx"
         file_path = self.sandbox_dir / filename
@@ -550,7 +560,7 @@ export default function {component_name}() {{
         try:
             with open(file_path, "w", encoding="utf-8") as f:
                 f.write(response.code)
-            
+
             # Update Registry (index.ts)
             self._update_registry(response.component_name)
 
@@ -558,7 +568,7 @@ export default function {component_name}() {{
             return str(file_path)
         except Exception as e:
             logger.error(f"❌ [GenUI] Deployment failed: {e}")
-            raise IOError(f"Failed to write component: {e}") from e
+            raise OSError(f"Failed to write component: {e}") from e
 
     def _update_registry(self, component_name: str) -> None:
         """
@@ -567,14 +577,14 @@ export default function {component_name}() {{
         """
         registry_path = self.sandbox_dir / "index.ts"
         export_stmt = f"export {{ default as {component_name} }} from './{component_name}';\n"
-        
+
         try:
             # Create if not exists
             if not registry_path.exists():
                 registry_path.write_text("// GenUI Registry\nexport {};\n", encoding="utf-8")
-                
+
             current_content = registry_path.read_text(encoding="utf-8")
-            
+
             if export_stmt.strip() not in current_content:
                 with open(registry_path, "a", encoding="utf-8") as f:
                     f.write(export_stmt)

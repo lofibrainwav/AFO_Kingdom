@@ -55,7 +55,7 @@ class LazyModule:
         else:
             raise AttributeError(f"module '{self._module_name}' has no attribute '{name}'")
 
-    def _load_module(self):
+    def _load_module(self) -> None:
         """실제 모듈 로딩"""
         try:
             self._module = importlib.import_module(self._module_name)
@@ -97,13 +97,13 @@ class LazyFunction:
         result = lazy_autogen_func("param")  # 여기서 실제 import 발생
     """
 
-    def __init__(self, module_name: str, func_name: str, fallback: Callable | None = None):
+    def __init__(self, module_name: str, func_name: str, fallback: Callable | None = None) -> None:
         self._module_name = module_name
         self._func_name = func_name
         self._fallback = fallback
         self._func: Callable | None = None
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self, *args: Any, **kwargs: Any) -> Any:
         """함수 호출 시 실제 모듈/함수 로딩"""
         if self._func is None:
             try:
@@ -207,7 +207,7 @@ def get_available_modules() -> dict[str, bool]:
     return modules
 
 
-def preload_critical_modules():
+def preload_critical_modules() -> None:
     """
     중요한 모듈들 미리 로딩
     서버 시작 시 호출하여 초기 지연 최소화
@@ -227,10 +227,10 @@ def preload_critical_modules():
             logger.warning(f"Failed to preload {module_name}: {e}")
 
 
-def create_fallback_function(func_name: str, error_msg: str | None = None):
+def create_fallback_function(func_name: str, error_msg: str | None = None) -> Callable[..., Any]:
     """대체 함수 생성"""
 
-    def fallback(*args, **kwargs):
+    def fallback(*args: Any, **kwargs: Any) -> Any:
         msg = error_msg or f"Function {func_name} is not available"
         logger.warning(msg)
         raise NotImplementedError(msg)

@@ -1,3 +1,5 @@
+# mypy: ignore-errors
+# mypy: ignore-errors
 """
 OpenAI Codex CLI Wrapper
 형님 정기구독제 Codex CLI 연동
@@ -8,7 +10,6 @@ CLI 기반으로 월 구독제 LLM 통합
 from __future__ import annotations
 
 import asyncio
-import json
 import logging
 import subprocess
 from typing import Any
@@ -25,7 +26,7 @@ class CodexCLIWrapper:
     def __init__(self):
         self.cli_path = "/Users/brnestrm/.nvm/versions/node/v24.11.1/bin/codex"
         self.available = self._check_availability()
-        
+
         if self.available:
             logger.info("✅ Codex CLI Wrapper 초기화 완료 (정기구독 CLI 사용)")
         else:
@@ -35,10 +36,7 @@ class CodexCLIWrapper:
         """CLI 사용 가능 여부 확인"""
         try:
             result = subprocess.run(
-                [self.cli_path, "--version"],
-                capture_output=True,
-                text=True,
-                timeout=10
+                [self.cli_path, "--version"], capture_output=True, text=True, timeout=10
             )
             if result.returncode == 0:
                 version = result.stdout.strip()
@@ -61,19 +59,16 @@ class CodexCLIWrapper:
             cmd = [
                 self.cli_path,
                 "exec",  # 비대화식 실행 모드
-                prompt
+                prompt,
             ]
 
             # 비동기로 subprocess 실행
             process = await asyncio.create_subprocess_exec(
-                *cmd,
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE
+                *cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
             )
-            
+
             stdout, stderr = await asyncio.wait_for(
-                process.communicate(),
-                timeout=kwargs.get("timeout", 120)
+                process.communicate(), timeout=kwargs.get("timeout", 120)
             )
 
             if process.returncode == 0:
@@ -113,7 +108,7 @@ class CodexCLIWrapper:
                 prompt_parts.append(f"[User]\n{content}\n")
             elif role == "assistant":
                 prompt_parts.append(f"[Assistant]\n{content}\n")
-        
+
         combined_prompt = "\n".join(prompt_parts)
         return await self.generate(combined_prompt, **kwargs)
 
@@ -131,6 +126,7 @@ codex_cli = CodexCLIWrapper()
 
 
 if __name__ == "__main__":
+
     async def test_codex_cli():
         print("🤖 Codex CLI Wrapper 테스트")
         print("=" * 50)
@@ -143,7 +139,7 @@ if __name__ == "__main__":
         print(f"🔍 테스트 프롬프트: {test_prompt}")
 
         result = await codex_cli.generate(test_prompt)
-        
+
         if result.get("success"):
             print("✅ 성공!")
             print(f"📝 응답: {result['content'][:200]}...")

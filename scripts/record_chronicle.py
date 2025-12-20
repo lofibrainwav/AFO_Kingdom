@@ -7,6 +7,7 @@ AFO 왕국의 역사를 영원히 기록합니다.
 
 "역사를 모르는 자는 미래를 만들 수 없다." — 孫子
 """
+
 from datetime import datetime
 from pathlib import Path
 
@@ -60,14 +61,14 @@ CHRONICLE_SUMMARY = """
 def record_chronicle() -> None:
     """Append chronicle summary to AFO_EVOLUTION_LOG.md"""
     log_path = Path(__file__).parent.parent / "AFO_EVOLUTION_LOG.md"
-    
+
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M")
     footer = f"\n*기록일: {timestamp} by Chancellor (Antigravity)*\n"
-    
+
     with open(log_path, "a", encoding="utf-8") as f:
         f.write(CHRONICLE_SUMMARY)
         f.write(footer)
-    
+
     print("✅ AFO 왕국 연대기 영구 기록 완료 – 역사에 새겨졌습니다!")
     print(f"   📜 기록 위치: {log_path}")
     print(f"   🕐 기록 시간: {timestamp}")

@@ -1,5 +1,10 @@
 import logging
-from typing import Literal
+from typing import TYPE_CHECKING, Any, Literal
+
+if TYPE_CHECKING:
+    import redis
+    from watchdog.events import FileSystemEventHandler
+    from watchdog.observers import Observer
 
 from pydantic_settings import BaseSettings
 
@@ -47,27 +52,30 @@ class AntiGravitySettings(BaseSettings):
 
         return "[孝: 자동 동기화] 설정·데이터 실시간 반영 완료"
 
-    def _get_redis_conn(self):
+    def _get_redis_conn(self) -> "redis.Redis":
         """Helper for test mocking"""
         import redis
+
         try:
             from AFO.config.settings import get_settings
+
             redis_url = get_settings().get_redis_url()
         except ImportError:
             redis_url = "redis://localhost:6379"
-            
-        return redis.from_url(
+
+        from typing import cast
+        return cast("redis.Redis", redis.from_url(
             redis_url, decode_responses=True, socket_connect_timeout=1, socket_timeout=1
-        )
+        ))
 
     def _calculate_risk_score(self, key: str, context: dict | None = None) -> float:
         """
         [Goodness] 사마의(善) 리스크 평가 모델 (Mock)
-        
+
         Args:
             key: 기능/액션 키
             context: 컨텍스트 데이터
-            
+
         Returns:
             float: 리스크 점수 (0-100)
         """
@@ -84,7 +92,7 @@ class AntiGravitySettings(BaseSettings):
     ) -> bool:
         """
         [Pure Governance] 통합 거버넌스 체크 (眞·善·美)
-        
+
         1. Truth: Feature Flag 확인
         2. Goodness: Risk Score 확인 (>10 이면 Block)
         3. Eternity: DRY_RUN 모드 확인
@@ -102,15 +110,15 @@ class AntiGravitySettings(BaseSettings):
         # 3. Risk Score (Goodness)
         risk_score = self._calculate_risk_score(key, context)
         if risk_score > 10.0:
-            logger.warning(f"🛡️ [Governance] Feature '{key}' blocked by Risk Score ({risk_score} > 10.0)")
+            logger.warning(
+                f"🛡️ [Governance] Feature '{key}' blocked by Risk Score ({risk_score} > 10.0)"
+            )
             # TODO: Notify User / Ask Permission logic here
             return False
 
         return True
 
-    def get_feature_flag(
-        self, key: str, user_id: str | None = None, default: bool = False
-    ) -> bool:
+    def get_feature_flag(self, key: str, user_id: str | None = None, default: bool = False) -> bool:
         """
         [Advanced Governance] Feature Flag Check
         Redis 기반의 실시간 기능 플래그 확인 (Hot Reloading 없이 즉시 반영)
@@ -126,13 +134,16 @@ class AntiGravitySettings(BaseSettings):
         try:
             # Lazy Import to avoid circular dependencies
             import hashlib
-            
+
             # 1. Redis Connection
             r = self._get_redis_conn()
 
             # 2. Fetch Flag Data
             flag_key = f"feature_flags:{key}"
-            data = r.hgetall(flag_key)
+            raw_data = r.hgetall(flag_key)
+            # Handle potential awaitable (though unlikely here) or simplify for MyPy
+            from typing import cast
+            data = cast(dict, raw_data)
             r.close()
 
             if not data:
@@ -160,7 +171,7 @@ class AntiGravitySettings(BaseSettings):
 
             if user_id:
                 # Deterministic hashing: hash(key + user_id) % 100 < percentage
-                hash_input = f"{key}:{user_id}".encode("utf-8")
+                hash_input = f"{key}:{user_id}".encode()
                 hash_val = int(hashlib.sha256(hash_input).hexdigest(), 16)
                 user_bucket = hash_val % 100
                 return user_bucket < rollout_pct
@@ -185,25 +196,24 @@ class ConfigWatcher:
     (永: Eternity - Self-Healing & Reactive)
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
-            from watchdog.events import FileSystemEventHandler
             from watchdog.observers import Observer
 
-            self.observer = Observer()
-            self.handler = self._create_handler()
-            self.running = False
+            self.observer: Any = Observer()
+            self.handler: Any = self._create_handler()
+            self.running: bool = False
             logger.info("🔭 ConfigWatcher initialized")
         except ImportError:
             logger.warning("⚠️ watchdog not installed. Config monitoring disabled.")
             # [장자] 무용지용 - 없음도 쓰임이 있음, 옵저버 없이도 작동함
             self.observer = None  # type: ignore[assignment]
 
-    def _create_handler(self):
+    def _create_handler(self) -> "FileSystemEventHandler":
         from watchdog.events import FileSystemEventHandler
 
         class Handler(FileSystemEventHandler):
-            def on_modified(self, event):
+            def on_modified(self, event: Any) -> None:
                 if event.src_path.endswith(".env.antigravity"):
                     logger.info(f"🔄 Config changed: {event.src_path}. Reloading...")
                     # Reload logic here (mocked for now)
@@ -211,7 +221,7 @@ class ConfigWatcher:
 
         return Handler()
 
-    def start(self):
+    def start(self) -> None:
         if self.observer:
             self.observer.schedule(self.handler, path=".", recursive=False)
             self.observer.start()
@@ -222,4 +232,3 @@ class ConfigWatcher:
 # Initialize and start watcher
 watcher = ConfigWatcher()
 watcher.start()
-

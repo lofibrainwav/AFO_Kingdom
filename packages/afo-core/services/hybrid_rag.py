@@ -56,10 +56,30 @@ class HybridQueryResponse(BaseModel):
 
 
 def random_embedding(dim: int = 1536) -> list[float]:
+    """
+    眞 (Truth): 난수 기반 임베딩 생성 (폴백용)
+    
+    Args:
+        dim: 임베딩 차원 (기본 1536)
+        
+    Returns:
+        list[float]: 생성된 난수 리스트
+    """
     return [random.gauss(0, 0.1) for _ in range(dim)]
 
 
 def get_embedding(text: str, openai_client: Any) -> list[float]:
+    """
+    眞 (Truth): OpenAI API를 이용한 텍스트 임베딩 추출
+    善 (Goodness): 예외 발생 시 난수 임베딩으로 안전하게 폴백
+    
+    Args:
+        text: 임베딩할 텍스트
+        openai_client: OpenAI 클라이언트 인스턴스
+        
+    Returns:
+        list[float]: 추출된 임베딩 리스트
+    """
     if openai_client is None:
         return random_embedding()
 
@@ -74,7 +94,19 @@ def get_embedding(text: str, openai_client: Any) -> list[float]:
         return random_embedding()
 
 
-def query_pgvector(embedding: list[float], top_k: int, pg_pool: Any) -> list[dict]:
+def query_pgvector(embedding: list[float], top_k: int, pg_pool: Any) -> list[dict[str, Any]]:
+    """
+    眞 (Truth): PostgreSQL pgvector를 이용한 벡터 검색
+    善 (Goodness): 연결 풀 관리 및 예외 처리
+    
+    Args:
+        embedding: 검색할 벡터
+        top_k: 반환할 상위 항목 수
+        pg_pool: PostgreSQL 연결 풀
+        
+    Returns:
+        list[dict]: 검색 결과 리스트
+    """
     if pg_pool is None or not embedding:
         return []
 
@@ -102,19 +134,9 @@ def query_pgvector(embedding: list[float], top_k: int, pg_pool: Any) -> list[dic
     if not rows:
         return []
 
-    # Manual similarity calculation (fallback if pgvector extension logic is complex to port)
-    # Note: In production, this should be done by the DB using <-> or <=> operators
-    # But here we are preserving the logic from api_server.py which fetches 200 rows and re-ranks in Python?
-    # Wait, api_server.py code performs cosine similarity in Python.
-    # This is inefficient but preserves exact behavior for now (refactor later).
-
     norm_query = math.sqrt(sum(v * v for v in embedding)) or 1.0
-    scored: list[dict] = []
+    scored: list[dict[str, Any]] = []
     for row in rows:
-        # RealDictCursor returns dict-like, but standard cursor returns tuple.
-        # api_server.py assumes dict access row['content']
-        # If RealDictCursor is missing, this will fail. Handled by try-import above.
-
         content = row.get("content") or ""
         if not content:
             continue
@@ -122,7 +144,6 @@ def query_pgvector(embedding: list[float], top_k: int, pg_pool: Any) -> list[dic
         if vector is None:
             continue
         if not isinstance(vector, (list, tuple)):
-            # pgvector library returns numpy array or list usually
             vector = vector.tolist() if hasattr(vector, "tolist") else list(vector)
 
         norm_doc = math.sqrt(sum(v * v for v in vector)) or 1.0
@@ -141,15 +162,24 @@ def query_pgvector(embedding: list[float], top_k: int, pg_pool: Any) -> list[dic
     return scored[:top_k]
 
 
-def query_redis(embedding: list[float], top_k: int, redis_client: Any) -> list[dict]:
+def query_redis(embedding: list[float], top_k: int, redis_client: Any) -> list[dict[str, Any]]:
+    """
+    眞 (Truth): Redis RediSearch를 이용한 KNN 벡터 검색
+    善 (Goodness): 인덱스 확인 및 예외 차단
+    
+    Args:
+        embedding: 검색할 벡터
+        top_k: 반환할 상위 항목 수
+        redis_client: Redis 클라이언트
+        
+    Returns:
+        list[dict]: 검색 결과 리스트
+    """
     if redis_client is None or not embedding:
         return []
 
-    # Phase 2-4: settings 사용
-    # Phase 2-4: settings 사용
     try:
         from AFO.config.settings import get_settings
-
         settings = get_settings()
         index_name = settings.REDIS_RAG_INDEX
     except Exception:
@@ -167,7 +197,7 @@ def query_redis(embedding: list[float], top_k: int, redis_client: Any) -> list[d
         return []
 
     docs = getattr(search_result, "docs", getattr(search_result, "documents", []))
-    rows: list[dict] = []
+    rows: list[dict[str, Any]] = []
     for doc in docs:
         payload = getattr(doc, "__dict__", doc)
         content = payload.get("content") or ""
@@ -191,10 +221,21 @@ def query_redis(embedding: list[float], top_k: int, redis_client: Any) -> list[d
     return rows
 
 
-def blend_results(pg_rows: list[dict], redis_rows: list[dict], top_k: int) -> list[dict]:
-    merged: dict[str, dict] = {}
+def blend_results(pg_rows: list[dict[str, Any]], redis_rows: list[dict[str, Any]], top_k: int) -> list[dict[str, Any]]:
+    """
+    美 (Beauty): PGVector와 Redis 결과를 통합 및 가중치 정렬 (RRF 유사 방식)
+    
+    Args:
+        pg_rows: DB 검색 결과
+        redis_rows: Cache 검색 결과
+        top_k: 최종 반환 수
+        
+    Returns:
+        list[dict]: 혼합 및 정렬된 결과
+    """
+    merged: dict[str, dict[str, Any]] = {}
 
-    def boost(row: dict, origin: str) -> None:
+    def boost(row: dict[str, Any], origin: str) -> None:
         row_id = str(row["id"])
         existing = merged.get(row_id)
         adjusted = row["score"] * (1.1 if origin == "pg" else 1.0)
@@ -209,8 +250,18 @@ def blend_results(pg_rows: list[dict], redis_rows: list[dict], top_k: int) -> li
     return sorted(merged.values(), key=lambda r: r["score"], reverse=True)[:top_k]
 
 
-def select_context(rows: list[dict], limit: int) -> list[dict]:
-    selected: list[dict] = []
+def select_context(rows: list[dict[str, Any]], limit: int) -> list[dict[str, Any]]:
+    """
+    眞 (Truth): 토큰 제한에 맞춰 컨텍스트 선별
+    
+    Args:
+        rows: 검색된 청크들
+        limit: 글자수 제한
+        
+    Returns:
+        list[dict]: 선별된 청크들
+    """
+    selected: list[dict[str, Any]] = []
     used = 0
 
     for row in rows:
@@ -233,11 +284,25 @@ def generate_answer(
     additional_instructions: str,
     llm_provider: str = "openai",
     openai_client: Any = None,
-    # In future, other clients can be passed here
-) -> str | dict:
-    context_block = "\n\n".join([f"Chunk {idx + 1}:\n{ctx}" for idx, ctx in enumerate(contexts)])
+) -> str | dict[str, Any]:
+    """
+    眞 (Truth): 컨텍스트 기반 LLM 답변 생성
+    善 (Goodness): API 호출 실패 시 에러 메시지 반환
+    
+    Args:
+        query: 사용자 질문
+        contexts: 선별된 컨텍스트 리스트
+        temperature: LLM 온도
+        response_format: 응답 형식 (markdown 등)
+        additional_instructions: 추가 지침
+        llm_provider: LLM 제공자
+        openai_client: OpenAI 클라이언트
+        
+    Returns:
+        str | dict: 생성된 답변 또는 에러 정보
+    """
+    context_block = "\n\n".join([ f"Chunk {idx + 1}:\n{ctx}" for idx, ctx in enumerate(contexts) ])
 
-    # Simple prompt construction
     system_prompt = " ".join(
         part
         for part in [
@@ -249,10 +314,6 @@ def generate_answer(
         if part
     )
 
-    # Only supporting OpenAI for now as per original code logic in this function
-    # The original _generate_answer relied on global OPENAI_CLIENT or _call_claude_api (which uses local import)
-    # We will stick to OpenAI here and handle Claude separately or pass it in.
-
     if openai_client:
         try:
             messages = [
@@ -260,8 +321,6 @@ def generate_answer(
                 {"role": "user", "content": f"Context:\n{context_block}\n\nQuestion: {query}"},
             ]
 
-            # Simple simulation of response for now if we want to be pure
-            # but let's copy the logic.
             completion = openai_client.chat.completions.create(
                 model="gpt-4",
                 messages=messages,
@@ -274,27 +333,28 @@ def generate_answer(
     return "No LLM client available."
 
 
-# Async Wrappers
-
-
 async def get_embedding_async(text: str, client: Any) -> list[float]:
+    """비동기 임베딩 생성 래퍼"""
     loop = asyncio.get_event_loop()
     return await loop.run_in_executor(_executor, get_embedding, text, client)
 
 
-async def query_pgvector_async(embedding: list[float], top_k: int, pool: Any) -> list[dict]:
+async def query_pgvector_async(embedding: list[float], top_k: int, pool: Any) -> list[dict[str, Any]]:
+    """비동기 PGVector 검색 래퍼"""
     loop = asyncio.get_event_loop()
     return await loop.run_in_executor(_executor, query_pgvector, embedding, top_k, pool)
 
 
-async def query_redis_async(embedding: list[float], top_k: int, client: Any) -> list[dict]:
+async def query_redis_async(embedding: list[float], top_k: int, client: Any) -> list[dict[str, Any]]:
+    """비동기 Redis 검색 래퍼"""
     loop = asyncio.get_event_loop()
     return await loop.run_in_executor(_executor, query_redis, embedding, top_k, client)
 
 
 async def blend_results_async(
-    pg_rows: list[dict], redis_rows: list[dict], top_k: int
-) -> list[dict]:
+    pg_rows: list[dict[str, Any]], redis_rows: list[dict[str, Any]], top_k: int
+) -> list[dict[str, Any]]:
+    """비동기 결과 혼합 래퍼"""
     loop = asyncio.get_event_loop()
     return await loop.run_in_executor(_executor, blend_results, pg_rows, redis_rows, top_k)
 
@@ -307,7 +367,8 @@ async def generate_answer_async(
     additional_instructions: str,
     llm_provider: str = "openai",
     openai_client: Any = None,
-) -> str | dict:
+) -> str | dict[str, Any]:
+    """비동기 답변 생성 래퍼"""
     loop = asyncio.get_event_loop()
     return await loop.run_in_executor(
         _executor,

@@ -15,6 +15,7 @@ except ImportError:
     asyncpg = None
     ASYNCPG_AVAILABLE = False
 
+
 # [論語]學而不思則罔 - 배우되 생각하지 않으면 어둡다
 async def get_db_connection() -> Any:
     """비동기 PostgreSQL 연결 함수 (중앙 설정 사용)"""

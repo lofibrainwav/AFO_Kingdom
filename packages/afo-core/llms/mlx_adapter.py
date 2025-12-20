@@ -2,12 +2,13 @@
 MlxSage Adapter for AFO Kingdom
 Integrates Apple's MLX framework for native optimization of DeepSeek-R1 (Jwaja)
 """
+
 import logging
-import os
-from typing import Optional, Any
+from typing import Any
 
 # Setup logging
 logger = logging.getLogger("afo.scholars.mlx")
+
 
 class MlxSage:
     """
@@ -15,7 +16,7 @@ class MlxSage:
     Supports dynamic loading of models (Jwaja, Samahwi, etc.) on Apple Silicon.
     Philosophy: 眞(Truth) & 善(Goodness) via Native Performance
     """
-    
+
     def __init__(self, model_id: str, sage_name: str = "MLX Sage") -> None:
         self.model: Any | None = None
         self.tokenizer: Any | None = None
@@ -30,9 +31,10 @@ class MlxSage:
 
         try:
             from mlx_lm import load
+
             logger.info(f"🍎 [MLX] Loading native model for {self.sage_name}: {self.model_path}...")
             # Trust remote code is sometimes needed for new architectures, but keeping safe default
-            self.model, self.tokenizer = load(self.model_path) 
+            self.model, self.tokenizer = load(self.model_path)
             self._is_loaded = True
             logger.info(f"✅ [MLX] {self.sage_name} Model loaded successfully.")
         except ImportError:
@@ -46,25 +48,28 @@ class MlxSage:
         """Unsets references to allow GC to reclaim memory (if needed)"""
         if not self._is_loaded:
             return
-            
+
         self.model = None
         self.tokenizer = None
         self._is_loaded = False
         import gc
+
         gc.collect()
         logger.info(f"🗑️ [MLX] {self.sage_name} Model unloaded.")
 
-    def generate(self, prompt: str, system: str | None = None, max_tokens: int = 4096, temp: float = 0.6) -> str:
+    def generate(
+        self, prompt: str, system: str | None = None, max_tokens: int = 4096, temp: float = 0.6
+    ) -> Any:
         """
         Generates response using MLX
         """
         if not self._is_loaded:
             self.load_model()
-            
+
         try:
             from mlx_lm import generate
             from mlx_lm.sample_utils import make_sampler
-            
+
             # Construct full prompt with system instruction if provided
             messages = []
             if system:
@@ -74,9 +79,7 @@ class MlxSage:
             # Check if tokenizer has chat template
             if self.tokenizer is not None and hasattr(self.tokenizer, "apply_chat_template"):
                 input_prompt = self.tokenizer.apply_chat_template(
-                    messages, 
-                    tokenize=False, 
-                    add_generation_prompt=True
+                    messages, tokenize=False, add_generation_prompt=True
                 )
             else:
                 if system:
@@ -85,17 +88,17 @@ class MlxSage:
                     input_prompt = f"User: {prompt}\nAssistant:"
 
             logger.info(f"⚡ [MLX({self.sage_name})] Generating with temp={temp}...")
-            
+
             # Create sampler
             sampler = make_sampler(temp=temp)
-            
+
             response = generate(
                 self.model,
                 self.tokenizer,
                 prompt=input_prompt,
                 max_tokens=max_tokens,
                 sampler=sampler,
-                verbose=False 
+                verbose=False,
             )
             return response
 
@@ -103,9 +106,12 @@ class MlxSage:
             logger.error(f"❌ [MLX] Generation failed: {e}")
             return f"MLX Error: {e}"
 
+
 # Global Instances & Configuration
 JWAJA_MODEL_ID = "mlx-community/DeepSeek-R1-Distill-Qwen-14B-4bit"
-SAMAHWI_MLX_PATH = "mlx-community/Qwen2.5-Coder-32B-Instruct-4bit"  # [Recruited] Python Expert Model
+SAMAHWI_MLX_PATH = (
+    "mlx-community/Qwen2.5-Coder-32B-Instruct-4bit"  # [Recruited] Python Expert Model
+)
 
 # Default setup
 jwaja_sage = MlxSage(JWAJA_MODEL_ID, "Jwaja")

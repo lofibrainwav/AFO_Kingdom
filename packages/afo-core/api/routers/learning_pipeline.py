@@ -3,47 +3,51 @@ Learning Pipeline for AFO Kingdom (Phase 26)
 AI Self-Improvement - Samahwi's Autonomous Learning
 Analyzes evolution logs and suggests improvements.
 """
-from fastapi import APIRouter
-from pydantic import BaseModel
-from typing import List, Optional
+
 import json
+import logging
 import os
 from datetime import datetime
-import logging
+
+from fastapi import APIRouter
+from pydantic import BaseModel
 
 logger = logging.getLogger("AFO.Learning")
 router = APIRouter(prefix="/learning", tags=["AI Self-Improvement"])
 
 EVOLUTION_LOG_PATH = "evolution_log.jsonl"
 
+
 class LearningMetric(BaseModel):
     metric: str
     current_value: float
     trend: str  # "improving", "stable", "declining"
-    improvement_suggestion: Optional[str] = None
+    improvement_suggestion: str | None = None
+
 
 class LearningReport(BaseModel):
     timestamp: str
     total_actions_analyzed: int
     average_trinity_score: float
     success_rate: float
-    top_patterns: List[str]
-    improvement_suggestions: List[str]
-    metrics: List[LearningMetric]
+    top_patterns: list[str]
+    improvement_suggestions: list[str]
+    metrics: list[LearningMetric]
+
 
 def analyze_evolution_logs() -> dict:
     """Analyze evolution log entries for patterns and improvements."""
     entries = []
-    
+
     # Try to load evolution log
     if os.path.exists(EVOLUTION_LOG_PATH):
         try:
-            with open(EVOLUTION_LOG_PATH, 'r') as f:
+            with open(EVOLUTION_LOG_PATH) as f:
                 for line in f:
                     entries.append(json.loads(line.strip()))
         except Exception as e:
             logger.warning(f"Could not parse evolution log: {e}")
-    
+
     # If no entries, return mock analysis
     if not entries:
         return {
@@ -53,22 +57,22 @@ def analyze_evolution_logs() -> dict:
             "patterns": [
                 "Voice commands show high user satisfaction",
                 "Multi-model consensus improves accuracy",
-                "Security hardening reduces risk score"
+                "Security hardening reduces risk score",
             ],
             "suggestions": [
                 "Consider adding more voice personas for accessibility",
                 "Expand multi-model cross-validation to edge cases",
-                "Implement continuous security scanning"
-            ]
+                "Implement continuous security scanning",
+            ],
         }
-    
+
     # Real analysis
     trinity_scores = [e.get("trinity_score", 90) for e in entries if "trinity_score" in e]
     avg_trinity = sum(trinity_scores) / len(trinity_scores) if trinity_scores else 90.0
-    
+
     success_count = len([e for e in entries if e.get("mode") == "AUTO_RUN"])
     success_rate = success_count / len(entries) if entries else 0.95
-    
+
     return {
         "total_actions": len(entries),
         "avg_trinity": avg_trinity,
@@ -76,20 +80,21 @@ def analyze_evolution_logs() -> dict:
         "patterns": [
             "High Trinity Score actions correlate with successful outcomes",
             "DRY_RUN mode prevents errors effectively",
-            "Multi-strategist consensus improves reliability"
+            "Multi-strategist consensus improves reliability",
         ],
         "suggestions": [
             "Maintain Trinity Score above 90 for AUTO_RUN eligibility",
             "Consider expanding voice interface vocabulary",
-            "Continue multi-model validation for critical decisions"
-        ]
+            "Continue multi-model validation for critical decisions",
+        ],
     }
+
 
 @router.get("/report", response_model=LearningReport)
 async def get_learning_report():
     """Generate a learning report based on evolution log analysis."""
     analysis = analyze_evolution_logs()
-    
+
     return LearningReport(
         timestamp=datetime.now().isoformat(),
         total_actions_analyzed=analysis["total_actions"],
@@ -102,22 +107,23 @@ async def get_learning_report():
                 metric="Trinity Score",
                 current_value=analysis["avg_trinity"],
                 trend="improving",
-                improvement_suggestion="Maintain above 90 for optimal performance"
+                improvement_suggestion="Maintain above 90 for optimal performance",
             ),
             LearningMetric(
                 metric="Success Rate",
                 current_value=analysis["success_rate"] * 100,
                 trend="stable",
-                improvement_suggestion=None
+                improvement_suggestion=None,
             ),
             LearningMetric(
                 metric="Risk Score",
                 current_value=5.2,
                 trend="improving",
-                improvement_suggestion="Continue security hardening to reduce further"
-            )
-        ]
+                improvement_suggestion="Continue security hardening to reduce further",
+            ),
+        ],
     )
+
 
 @router.post("/log-action")
 async def log_action(action: str, trinity_score: float, mode: str = "AUTO_RUN"):
@@ -126,9 +132,9 @@ async def log_action(action: str, trinity_score: float, mode: str = "AUTO_RUN"):
         "timestamp": datetime.now().isoformat(),
         "action": action,
         "trinity_score": trinity_score,
-        "mode": mode
+        "mode": mode,
     }
-    
+
     try:
         with open(EVOLUTION_LOG_PATH, "a") as f:
             f.write(json.dumps(entry) + "\n")
@@ -137,6 +143,7 @@ async def log_action(action: str, trinity_score: float, mode: str = "AUTO_RUN"):
         logger.error(f"Failed to log action: {e}")
         return {"status": "error", "message": str(e)}
 
+
 @router.get("/health")
 async def learning_health():
     """Check learning pipeline health."""
@@ -144,5 +151,5 @@ async def learning_health():
         "status": "healthy",
         "mode": "autonomous",
         "agent": "Samahwi",
-        "evolution_log_exists": os.path.exists(EVOLUTION_LOG_PATH)
+        "evolution_log_exists": os.path.exists(EVOLUTION_LOG_PATH),
     }

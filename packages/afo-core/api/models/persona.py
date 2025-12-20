@@ -47,7 +47,8 @@ class Persona(BaseModel):
 
     # 맥락 정보
     context: PersonaContext = Field(
-        default_factory=lambda: PersonaContext(current_role="user"), description="페르소나 맥락 정보"
+        default_factory=lambda: PersonaContext(current_role="user"),
+        description="페르소나 맥락 정보",
     )
 
     # TRINITY-OS 연동

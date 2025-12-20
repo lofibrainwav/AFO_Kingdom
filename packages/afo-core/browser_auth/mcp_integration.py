@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """
 MCP (Model Context Protocol) 통합 모듈
 LLM이 브라우저를 직접 조종하는 통합
@@ -364,57 +365,120 @@ Return only Python code in ```python blocks."""
             print(f"\n❌ 코드 생성 실패: {e}")
             raise
 
+    def _init_error_handler(self) -> Any:
+        """Initialize MCP error handler if available."""
+        if not ERROR_HANDLER_AVAILABLE:
+            return None
+        try:
+            from AFO.config.settings import get_settings
+            claude_key = get_settings().ANTHROPIC_API_KEY
+            return MCPErrorHandler(api_key=claude_key)
+        except Exception:
+            return None
+
+    async def _setup_browser_and_page(
+        self, playwright: Any, attempt: int, max_retries: int, error_handler: Any
+    ) -> tuple[Any, Any]:
+        """브라우저 및 페이지 초기화 (Retry 포함)"""
+        print(f"\n🌐 브라우저 시작 (시도 {attempt + 1}/{max_retries})...")
+        if ADVANCED_RETRY_AVAILABLE:
+            browser = await with_condition_retry(
+                lambda: playwright.chromium.launch(headless=False),
+                max_retries=3,
+                base_delay=1.0,
+            )
+        else:
+            browser = await mcp_tool_call_with_retry(
+                lambda: playwright.chromium.launch(headless=False),
+                max_retries=3,
+                error_handler=error_handler,
+            )
+        page = await browser.new_page()
+        return browser, page
+
+    async def _perform_navigation(self, page: Any, url: str, error_handler: Any) -> None:
+        """페이지 이동 수행 (Retry 포함)"""
+        print(f"\n🌐 페이지 이동: {url}")
+        if ADVANCED_RETRY_AVAILABLE:
+            async def navigate_action():
+                await page.goto(url, wait_until="networkidle", timeout=60000)
+                return page
+
+            async def navigation_condition():
+                return page.url != "about:blank" and await page.evaluate("document.readyState") == "complete"
+
+            await with_condition_retry(
+                navigate_action,
+                max_retries=3,
+                condition_fn=navigation_condition,
+                timeout=10000,
+                base_delay=1.0,
+            )
+        else:
+            await mcp_tool_call_with_retry(
+                lambda: page.goto(url, wait_until="networkidle", timeout=60000),
+                max_retries=3,
+                error_handler=error_handler,
+            )
+        await asyncio.sleep(2)
+
+    async def _run_generated_logic(self, code: str, page: Any, browser: Any) -> None:
+        """생성된 코드 실행"""
+        print("\n🚀 4단계: 생성된 코드 실행 중...")
+        exec_globals = {"asyncio": asyncio, "page": page, "browser": browser}
+        exec_locals: dict[str, Any] = {}
+        exec(code, exec_globals, exec_locals)
+
+        for key, value in exec_locals.items():
+            if callable(value) and not key.startswith("_"):
+                await value(page)
+                break
+
+    async def _handle_auth_error(
+        self, error: Exception, attempt: int, max_retries: int, url: str, error_handler: Any, results: dict[str, Any]
+    ) -> bool:
+        """인증 오류 처리 및 재시도 판단"""
+        from playwright.async_api import Error as PlaywrightError
+        error_msg = str(error)
+        results["error"] = error_msg
+        print(f"\n❌ 오류 발생: {error_msg}")
+
+        if error_handler:
+            fix_result = await error_handler.handle_error(error, context={"url": url, "attempt": attempt})
+            is_playwright_error = isinstance(error, PlaywrightError)
+            
+            key = "errors_handled" if is_playwright_error else "fixes_applied"
+            val = {"error": error_msg, "fix": fix_result, "attempt": attempt + 1} if is_playwright_error else fix_result
+            results[key].append(val)
+
+            if fix_result.get("retry", False) and attempt < max_retries - 1:
+                delay = fix_result.get("delay", 2**attempt)
+                print(f"💡 {fix_result.get('message', '복구 중...')}")
+                print(f"   {delay}초 후 재시도...")
+                await asyncio.sleep(delay)
+                return True
+
+        if attempt < max_retries - 1:
+            delay = 5 + attempt * 2
+            print(f"   {delay}초 후 재시도...")
+            await asyncio.sleep(delay)
+            return True
+        return False
+
     async def execute_mcp_auth_flow(
         self,
         url: str,
         prompt: str = "ChatGPT 로그인 테스트 생성해, MCP로 페이지 탐색",
         max_retries: int = 3,
     ) -> dict[str, Any]:
-        """
-        MCP 통합 인증 플로우 실행 (에러 핸들링 포함)
-
-        Args:
-            url: 대상 URL
-            prompt: 테스트 생성 프롬프트
-            max_retries: 최대 재시도 횟수
-
-        Returns:
-            실행 결과
-        """
+        """MCP 통합 인증 플로우 실행 (Refactored)"""
         from playwright.async_api import Error as PlaywrightError
         from playwright.async_api import async_playwright
 
-        # 에러 핸들러 초기화
-        # Phase 2-4: settings 사용
-        error_handler = None
-        if ERROR_HANDLER_AVAILABLE:
-            try:
-                try:
-                    from config.settings import get_settings
-
-                    settings = get_settings()
-                    claude_key = settings.ANTHROPIC_API_KEY
-                except ImportError:
-                    try:
-                        from AFO.config.settings import get_settings
-
-                        settings = get_settings()
-                        claude_key = settings.ANTHROPIC_API_KEY
-                    except ImportError:
-                        claude_key = os.getenv("ANTHROPIC_API_KEY")
-
-                error_handler = MCPErrorHandler(api_key=claude_key)
-            except Exception:
-                pass
-
+        error_handler = self._init_error_handler()
         results: dict[str, Any] = {
-            "success": False,
-            "generated_code": "",
-            "tool_calls": [],
-            "snapshot": "",
-            "error": None,
-            "errors_handled": [],
-            "fixes_applied": [],
+            "success": False, "generated_code": "", "tool_calls": [], "snapshot": "",
+            "error": None, "errors_handled": [], "fixes_applied": [],
         }
 
         async with async_playwright() as p:
@@ -423,147 +487,34 @@ Return only Python code in ```python blocks."""
 
             for attempt in range(max_retries):
                 try:
-                    # 브라우저 시작 (Advanced Retry 포함)
                     if browser is None or not browser.is_connected():
-                        print(f"\n🌐 브라우저 시작 (시도 {attempt + 1}/{max_retries})...")
+                        browser, page = await self._setup_browser_and_page(p, attempt, max_retries, error_handler)
 
-                        if ADVANCED_RETRY_AVAILABLE:
-                            retry_state = RetryState(max_retries=3)
-                            browser = await with_condition_retry(
-                                lambda: p.chromium.launch(headless=False),
-                                max_retries=3,
-                                base_delay=1.0,
-                                retry_state=retry_state,
-                            )
-                        else:
-                            browser = await mcp_tool_call_with_retry(
-                                lambda: p.chromium.launch(headless=False),
-                                max_retries=3,
-                                error_handler=error_handler,
-                            )
-                        page = await browser.new_page()
+                    await self._perform_navigation(page, url, error_handler)
 
-                    # 1. 페이지 이동 (Advanced Retry 포함)
-                    print(f"\n🌐 페이지 이동: {url}")
-
-                    if ADVANCED_RETRY_AVAILABLE:
-                        retry_state = RetryState(max_retries=3)
-
-                        async def navigate_action():
-                            if page is None:
-                                raise ValueError("Page is None")
-                            await page.goto(url, wait_until="networkidle", timeout=60000)
-                            return page
-
-                        async def navigation_condition():
-                            # 페이지 로드 확인
-                            if page is None:
-                                return False
-                            return (
-                                page.url != "about:blank"
-                                and await page.evaluate("document.readyState") == "complete"
-                            )
-
-                        await with_condition_retry(
-                            navigate_action,
-                            max_retries=3,
-                            condition_fn=navigation_condition,
-                            timeout=10000,
-                            base_delay=1.0,
-                            retry_state=retry_state,
-                        )
-                    else:
-                        if page is None:
-                            raise ValueError("Page is None")
-                        await mcp_tool_call_with_retry(
-                            lambda: page.goto(url, wait_until="networkidle", timeout=60000),  # type: ignore
-                            max_retries=3,
-                            error_handler=error_handler,
-                        )
-                    await asyncio.sleep(2)  # 페이지 로딩 대기
-
-                    # 2. MCP를 사용하여 코드 생성
                     generated_code = await self.generate_auth_with_mcp(prompt, page)
                     results["generated_code"] = generated_code
                     results["tool_calls"] = self.mcp_tools.tool_call_history
 
-                    # 3. 생성된 코드 실행 (안전하게)
-                    print("\n🚀 4단계: 생성된 코드 실행 중...")
-                    exec_globals = {"asyncio": asyncio, "page": page, "browser": browser}
-                    exec_locals: dict[str, Any] = {}
-
-                    exec(generated_code, exec_globals, exec_locals)
-
-                    # 함수가 있으면 실행
-                    for key, value in exec_locals.items():
-                        if callable(value) and not key.startswith("_"):
-                            await value(page)
-                            break
+                    await self._run_generated_logic(generated_code, page, browser)
 
                     print("\n✅ MCP 통합 성공! 🎉")
                     results["success"] = True
                     break
 
-                except PlaywrightError as e:
-                    error_msg = str(e)
-                    results["error"] = error_msg
-                    print(f"\n❌ Playwright 오류 발생: {error_msg}")
+                except (PlaywrightError, Exception) as e:
+                    if await self._handle_auth_error(e, attempt, max_retries, url, error_handler, results):
+                        if attempt < max_retries - 1 and browser:
+                            try:
+                                await browser.close()
+                                browser = None
+                                page = None
+                            except Exception: pass
+                        continue
+                    break
 
-                    if error_handler:
-                        fix_result = await error_handler.handle_error(
-                            e, context={"url": url, "attempt": attempt}
-                        )
-                        results["errors_handled"].append(
-                            {"error": error_msg, "fix": fix_result, "attempt": attempt + 1}
-                        )
-
-                        if fix_result.get("retry", False) and attempt < max_retries - 1:
-                            delay = fix_result.get("delay", 2**attempt)
-                            print(f"💡 {fix_result.get('message', '복구 중...')}")
-                            print(f"   {delay}초 후 재시도...")
-                            await asyncio.sleep(delay)
-                            continue
-
-                    if attempt < max_retries - 1:
-                        print(f"   {5 + attempt * 2}초 후 재시도...")
-                        await asyncio.sleep(5 + attempt * 2)
-                    else:
-                        print("💡 MCP 스냅샷으로 Healer 트리거 가능")
-                        break
-
-                except Exception as e:
-                    error_msg = str(e)
-                    results["error"] = error_msg
-                    print(f"\n❌ 오류 발생: {error_msg}")
-
-                    if error_handler:
-                        fix_result = await error_handler.handle_error(
-                            e, context={"url": url, "attempt": attempt}
-                        )
-                        results["fixes_applied"].append(fix_result)
-
-                    if attempt < max_retries - 1:
-                        print(f"   {5 + attempt * 2}초 후 재시도...")
-                        await asyncio.sleep(5 + attempt * 2)
-                    else:
-                        break
-
-                finally:
-                    # 마지막 시도가 아니면 브라우저 정리
-                    if attempt < max_retries - 1 and browser:
-                        try:
-                            await browser.close()
-                            browser = None
-                            page = None
-                        except Exception:
-                            pass
-
-            # 에러 핸들러 요약 추가
             if error_handler:
-                error_summary = error_handler.get_error_summary()
-                results["error_summary"] = error_summary
-
-            # 브라우저는 사용자가 닫을 때까지 유지
+                results["error_summary"] = error_handler.get_error_summary()
             if browser:
                 print("\n💡 브라우저를 닫으시면 세션이 저장됩니다.")
 

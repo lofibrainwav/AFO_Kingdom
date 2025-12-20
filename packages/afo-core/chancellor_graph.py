@@ -1,6 +1,5 @@
-
-from typing import Annotated, Any, TypedDict
 from datetime import datetime
+from typing import Annotated, Any, TypedDict
 
 from langchain_core.messages import AIMessage, BaseMessage
 from langgraph.checkpoint.memory import MemorySaver
@@ -26,13 +25,14 @@ except ImportError:
         class MockAntigravity:
             AUTO_DEPLOY = True
             DRY_RUN_DEFAULT = True
-            ENVIRONMENT = "dev"
 
         antigravity = MockAntigravity()  # type: ignore[assignment]
 
 # Redis for Matrix Stream (Track B)
-from AFO.utils.redis_connection import get_shared_async_redis_client
 import json
+
+from AFO.utils.redis_connection import get_shared_async_redis_client
+
 
 async def publish_thought(agent: str, message: str, type: str = "thought") -> None:
     """
@@ -44,7 +44,7 @@ async def publish_thought(agent: str, message: str, type: str = "thought") -> No
             "source": agent,
             "message": message,
             "type": type,
-            "timestamp": datetime.now().strftime("%H:%M:%S")
+            "timestamp": datetime.now().strftime("%H:%M:%S"),
         }
         await redis.publish("chancellor_thought_stream", json.dumps(payload))
     except Exception as e:
@@ -96,14 +96,13 @@ def calculate_complexity(query: str) -> str:
         return "Low"
 
 
-
 async def chancellor_router_node(state: ChancellorState) -> dict[str, Any]:
     """
     [Chancellor Node] - Async Upgrade for Matrix Stream
     """
     print("👑 [Chancellor] Analyzing state & Complexity...")
     await publish_thought("Chancellor", "Analyzing state & Complexity... [Rule #0]", "thought")
-    
+
     messages = state["messages"]
 
     # Init State Variables
@@ -200,9 +199,9 @@ async def jegalryang_node(state: ChancellorState) -> dict[str, Any]:
     }
 
 
-
 # Import Yeongdeok for Sage Consultations
 from AFO.scholars.yeongdeok import yeongdeok
+
 
 async def samaui_node(state: ChancellorState) -> dict[str, Any]:
     """
@@ -242,7 +241,7 @@ async def juyu_node(state: ChancellorState) -> dict[str, Any]:
     await publish_thought("Juyu", "Consulting Jwaja & Hwata for Beauty & Serenity...", "thought")
     original_query = state["messages"][0].content
     truth = state["analysis_results"].get("jegalryang", "")
-    
+
     # 1. Frontend Architecture (Jwaja)
     jwaja_prompt = (
         f"Query: {original_query}\n"
@@ -250,7 +249,7 @@ async def juyu_node(state: ChancellorState) -> dict[str, Any]:
         "Propose a UI/UX logic or Component structure that is Beautiful & Serene."
     )
     jwaja_content = await yeongdeok.consult_jwaja(jwaja_prompt)
-    
+
     # 2. UX Tone/Copy (Hwata) - Optional but adds flavor
     # We can combine or append. For now, let's use Hwata to refine Jwaja's output.
     hwata_prompt = (
@@ -260,7 +259,9 @@ async def juyu_node(state: ChancellorState) -> dict[str, Any]:
     hwata_content = await yeongdeok.consult_hwata(hwata_prompt)
 
     # Combine for final Juyu output
-    final_content = f"**UI Strategy (Jwaja)**:\n{jwaja_content}\n\n**UX Narrative (Hwata)**:\n{hwata_content}"
+    final_content = (
+        f"**UI Strategy (Jwaja)**:\n{jwaja_content}\n\n**UX Narrative (Hwata)**:\n{hwata_content}"
+    )
 
     return {
         "analysis_results": {"juyu": final_content},
@@ -335,6 +336,7 @@ def trinity_decision_gate(state: ChancellorState) -> dict[str, Any]:
         "auto_run_eligible": auto_run_eligible,
     }
 
+
 async def historian_node(state: ChancellorState) -> dict[str, Any]:
     """
     [Historian Node] - Autonomous Archiving (Genesis Project)
@@ -342,36 +344,37 @@ async def historian_node(state: ChancellorState) -> dict[str, Any]:
     """
     print("📜 [Historian] Recording Session Chronicle...")
     await publish_thought("Historian", "Recording Session Chronicle... (Project Genesis)", "info")
-    
+
     # Extract essence
     messages = state["messages"]
     analysis = state["analysis_results"]
-    
+
     # Format the content
     content = "# Royal Council Chronicle\n\n"
     content += f"**Date**: {datetime.now().strftime('%Y-%m-%d %H:%M')}\n"
     content += f"**Trinity Score**: {state.get('trinity_score', 0.0):.2f}\n"
     content += f"**Risk Score**: {state.get('risk_score', 0.0):.2f}\n\n"
-    
+
     content += "## The Query\n"
     if messages:
         content += f"{messages[0].content}\n\n"
-        
+
     content += "## The Council's Wisdom\n"
     for sage, advice in analysis.items():
         content += f"### {sage.capitalize()}\n{advice}\n\n"
-        
+
     content += "## The Verdict\n"
     content += f"Final Decision: {state.get('next_step', 'Unknown')}\n"
 
     # Invoke Yeongdeok's Hand
     try:
         from AFO.scholars.yeongdeok import yeongdeok
+
         res = await yeongdeok.use_tool(
             "skill_013_obsidian_librarian",
             action="append_daily_log",
             content=f"Council Session Recorded.\nQuery: {messages[0].content[:50]}...",
-            tag="chronicle"
+            tag="chronicle",
         )
         # Also save full note
         full_note_path = f"journals/chronicles/session_{int(datetime.now().timestamp())}.md"
@@ -380,12 +383,12 @@ async def historian_node(state: ChancellorState) -> dict[str, Any]:
             action="write_note",
             note_path=full_note_path,
             content=content,
-            metadata={"type": "chronicle", "participants": list(analysis.keys())}
+            metadata={"type": "chronicle", "participants": list(analysis.keys())},
         )
         print(f"✅ [Historian] Chronicle saved: {res}")
     except Exception as e:
         print(f"❌ [Historian] Failed to record: {e}")
-        
+
     # Pass through state
     return {}
 
@@ -393,7 +396,11 @@ async def historian_node(state: ChancellorState) -> dict[str, Any]:
 # --- 3. Graph Construction ---
 
 
-def build_chancellor_graph() -> Any:
+def build_chancellor_graph(
+    memory_saver: Any = None,
+) -> Any:
+    """眞 (Truth): 승상 오케스트레이션 그래프를 구축합니다."""
+    # 1. 그래프 정의
     workflow = StateGraph(ChancellorState)
 
     # Add Nodes
@@ -403,13 +410,14 @@ def build_chancellor_graph() -> Any:
     workflow.add_node("juyu", juyu_node)
     workflow.add_node("finalize", chancellor_finalize_node)
     workflow.add_node("decision_gate", trinity_decision_gate)  # Phase 5: Trinity Routing
-    workflow.add_node("historian", historian_node) # Genesis Project
+    workflow.add_node("historian", historian_node)  # Genesis Project
 
     # Add Edges
     workflow.set_entry_point("chancellor")
 
     # Conditional Edge from Chancellor
     def route_logic(state: ChancellorState) -> str:
+        """眞 (Truth): 상태에 따른 다음 단계 라우팅 로직"""
         return state["next_step"]
 
     workflow.add_conditional_edges(

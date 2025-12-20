@@ -26,25 +26,25 @@ class MockScenario:
 class MockManager:
     """모킹 관리자 - 외부 의존성 격리 (善: 독립성)"""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.scenarios: list[MockScenario] = []
 
-    def add_scenario(self, scenario: MockScenario):
+    def add_scenario(self, scenario: MockScenario) -> None:
         self.scenarios.append(scenario)
 
-    def clear(self):
+    def clear(self) -> None:
         self.scenarios = []
 
 
 class PlaywrightBridgeMCP:
     """GenUI 시각 검증 브릿지 - 자가 검증 프로토콜 (眞: 무결성)"""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.playwright: Playwright | None = None
         self.browser: Browser | None = None
         self.mock_manager = MockManager()
 
-    async def setup(self):
+    async def setup(self) -> None:
         """브라우저 설정 - 동적 초기화 (永: 영속성)"""
         if not self.playwright:
             self.playwright = await async_playwright().start()
@@ -55,7 +55,7 @@ class PlaywrightBridgeMCP:
                 args=["--no-sandbox", "--disable-setuid-sandbox"],  # 컨테이너 환경 대비
             )
 
-    async def _setup_network_interception(self, page):
+    async def _setup_network_interception(self, page: Any) -> None:
         """네트워크 인터셉션 설정 (善: 외부 의존성 제거)"""
         for scenario in self.mock_manager.scenarios:
 
@@ -238,7 +238,7 @@ class PlaywrightBridgeMCP:
                 "fallback": "Manual verification required",  # 폴백 (孝: 평온 유지)
             }
 
-    async def teardown(self):
+    async def teardown(self) -> None:
         """자원 정리 - 안전 종료 (善: 자원 최적화)"""
         if self.browser:
             await self.browser.close()

@@ -10,21 +10,20 @@ Philosophy:
 """
 
 import logging
-import json
 import os
-from typing import Dict, Any, Optional
-from AFO.julie_cpa.grok_engine import consult_grok
+from typing import Any
 
 logger = logging.getLogger(__name__)
+
 
 class SamahwiAgent:
     def __init__(self):
         self.name = "Samahwi (The Strategist)"
         self.tools = {
             "create_widget": self._tool_create_widget,
-            "analyze_trinity": self._tool_analyze_trinity
+            "analyze_trinity": self._tool_analyze_trinity,
         }
-    
+
     async def run(self, instruction: str) -> str:
         """
         Executes the Agent Loop:
@@ -33,26 +32,26 @@ class SamahwiAgent:
         3. Observe (Result)
         """
         logger.info(f"[{self.name}] Received instruction: {instruction}")
-        
+
         # 1. Think: Ask Grok for a plan
         # We simulate a "ReAct" prompt here using Grok Engine
         plan = await self._consult_brain(instruction)
-        
+
         # 2. Act: Parse and execute tool
         if plan.get("action"):
             tool_name = plan["action"]
             tool_input = plan.get("action_input")
-            
+
             if tool_name in self.tools:
                 logger.info(f"[{self.name}] Executing tool: {tool_name}")
                 result = await self.tools[tool_name](tool_input)
                 return f"Task executed. Result: {result}"
             else:
                 return f"Error: Tool '{tool_name}' not found."
-        
+
         return f"Thinking complete. Output: {plan.get('thought', 'No response')}"
 
-    async def _consult_brain(self, instruction: str) -> Dict[str, Any]:
+    async def _consult_brain(self, instruction: str) -> dict[str, Any]:
         """
         Uses Grok Engine to decide the next action.
         """
@@ -60,24 +59,21 @@ class SamahwiAgent:
         context = {
             "role": "Agent Samahwi",
             "objective": instruction,
-            "available_tools": list(self.tools.keys())
+            "available_tools": list(self.tools.keys()),
         }
-        
+
         # Mocking the JSON response structure for now (16-1 Core Awakening)
         # In a real impl, this would be a prompt to consult_grok
         # For verification purposes, we'll return a deterministic response if it matches specific patterns
-        
+
         if "widget" in instruction.lower():
             return {
                 "thought": "User wants a widget. I should use create_widget.",
                 "action": "create_widget",
-                "action_input": instruction
+                "action_input": instruction,
             }
-        
-        return {
-            "thought": "I will contemplate this strategy.",
-            "action": None
-        }
+
+        return {"thought": "I will contemplate this strategy.", "action": None}
 
     async def _tool_create_widget(self, spec: str) -> str:
         """
@@ -85,20 +81,20 @@ class SamahwiAgent:
         Writes a .tsx file to the GenUI sandbox.
         """
         logger.info(f"[{self.name}] Generating widget for: {spec}")
-        
+
         # 1. Sandbox Path Definition
         # Relative to project root, assuming this runs from root or package
         # We need absolute path safety
         project_root = os.getcwd()
         sandbox_dir = os.path.join(project_root, "packages/dashboard/src/components/genui")
-        
+
         if not os.path.exists(sandbox_dir):
             os.makedirs(sandbox_dir, exist_ok=True)
-            
+
         # 2. Filename Strategy (Simple for MVP)
         # In real logic, LLM dictates filename. Here we default or extract.
         filename = "SamahwiGeneratedWidget.tsx"
-        
+
         # 3. Content Generation (Mocking LLM Code Gen)
         # This simulates the "Brain" creating code
         code_content = f"""
@@ -138,10 +134,12 @@ export function SamahwiGeneratedWidget() {{
         try:
             # Import dynamically to avoid circular dependnecy issues during init
             from AFO.api.routers.ssot import get_ssot_status
+
             status = await get_ssot_status()
             return f"Current Trinity Score: {status.trinity_score}"
         except Exception as e:
-             return f"Trinity Access Error: {e}"
+            return f"Trinity Access Error: {e}"
+
 
 # Singleton
 samahwi = SamahwiAgent()

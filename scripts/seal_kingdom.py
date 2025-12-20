@@ -9,7 +9,7 @@ log_entry = f"""
 - Commander Brnestrm has ascended.
 """
 
-with open('AFO_EVOLUTION_LOG.md', 'a') as f:
+with open("AFO_EVOLUTION_LOG.md", "a") as f:
     f.write(log_entry)
 
 print(f"✅ AFO Kingdom Sealed at {timestamp}.")

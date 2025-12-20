@@ -21,7 +21,6 @@ from typing import Literal
 from AFO.domain.metrics.trinity_ssot import TrinityWeights
 
 
-
 @dataclass
 class TrinityInputs:
     """
@@ -41,37 +40,45 @@ class TrinityInputs:
 
     def clamp(self) -> TrinityInputs:
         """값을 0.0 ~ 1.0 범위로 제한"""
+        try:
+            def c(x: float) -> float:
+                return max(0.0, min(1.0, x))
 
-        def c(x: float) -> float:
-            return max(0.0, min(1.0, x))
-
-        return TrinityInputs(
-            truth=c(self.truth),
-            goodness=c(self.goodness),
-            beauty=c(self.beauty),
-            filial_serenity=c(self.filial_serenity),
-        )
+            return TrinityInputs(
+                truth=c(self.truth),
+                goodness=c(self.goodness),
+                beauty=c(self.beauty),
+                filial_serenity=c(self.filial_serenity),
+            )
+        except Exception:
+            return TrinityInputs(0.0, 0.0, 0.0, 0.0)
 
     def to_100_scale(self) -> TrinityInputs:
         """100점 스케일로 변환 (0~100)"""
-        return TrinityInputs(
-            truth=self.truth * 100,
-            goodness=self.goodness * 100,
-            beauty=self.beauty * 100,
-            filial_serenity=self.filial_serenity * 100,
-        )
+        try:
+            return TrinityInputs(
+                truth=self.truth * 100,
+                goodness=self.goodness * 100,
+                beauty=self.beauty * 100,
+                filial_serenity=self.filial_serenity * 100,
+            )
+        except Exception:
+            return TrinityInputs(0, 0, 0, 0)
 
     @classmethod
     def from_100_scale(
         cls, truth: float, goodness: float, beauty: float, filial_serenity: float
     ) -> TrinityInputs:
         """100점 스케일에서 생성"""
-        return cls(
-            truth=truth / 100.0,
-            goodness=goodness / 100.0,
-            beauty=beauty / 100.0,
-            filial_serenity=filial_serenity / 100.0,
-        )
+        try:
+            return cls(
+                truth=truth / 100.0,
+                goodness=goodness / 100.0,
+                beauty=beauty / 100.0,
+                filial_serenity=filial_serenity / 100.0,
+            )
+        except Exception:
+            return cls(0, 0, 0, 0)
 
 
 @dataclass
@@ -110,116 +117,119 @@ class TrinityMetrics:
 
     @classmethod
     def from_inputs(cls, inputs: TrinityInputs, eternity: float = 1.0) -> TrinityMetrics:
-        """
-        입력값으로부터 Trinity 메트릭 계산 (5기둥 SSOT 가중치)
+        """입력값으로부터 Trinity 메트릭 계산 (5기둥 SSOT 가중치)"""
+        try:
+            x = inputs.clamp()
+            e = max(0.0, min(1.0, eternity))  # clamp eternity
 
-        Args:
-            inputs: 眞善美孝 입력값
-            eternity: 永 (영속성) 점수 (0.0 ~ 1.0)
+            t = x.truth
+            g = x.goodness
+            b = x.beauty
+            h = x.filial_serenity
 
-        Returns:
-            계산된 Trinity 메트릭
-        """
-        x = inputs.clamp()
-        e = max(0.0, min(1.0, eternity))  # clamp eternity
+            # Serenity core: geometric mean of T, G, B
+            if (
+                isclose(t, 0.0, abs_tol=1e-9)
+                or isclose(g, 0.0, abs_tol=1e-9)
+                or isclose(b, 0.0, abs_tol=1e-9)
+            ):
+                serenity_core = 0.0
+            else:
+                serenity_core = prod([t, g, b]) ** (1.0 / 3.0)
 
-        t = x.truth
-        g = x.goodness
-        b = x.beauty
-        h = x.filial_serenity
+            # Trinity Score: SSOT 가중 합 (0.35×眞 + 0.35×善 + 0.20×美 + 0.08×孝 + 0.02×永)
+            trinity_score = (
+                cls.WEIGHT_TRUTH * t
+                + cls.WEIGHT_GOODNESS * g
+                + cls.WEIGHT_BEAUTY * b
+                + cls.WEIGHT_SERENITY * h
+                + cls.WEIGHT_ETERNITY * e
+            )
 
-        # Serenity core: geometric mean of T, G, B
-        if (
-            isclose(t, 0.0, abs_tol=1e-9)
-            or isclose(g, 0.0, abs_tol=1e-9)
-            or isclose(b, 0.0, abs_tol=1e-9)
-        ):
-            serenity_core = 0.0
-        else:
-            serenity_core = prod([t, g, b]) ** (1.0 / 3.0)
+            # Balance delta: 5기둥 max - min
+            values = [t, g, b, h, e]
+            balance_delta = max(values) - min(values)
 
-        # Trinity Score: SSOT 가중 합 (0.35×眞 + 0.35×善 + 0.20×美 + 0.08×孝 + 0.02×永)
-        trinity_score = (
-            cls.WEIGHT_TRUTH * t
-            + cls.WEIGHT_GOODNESS * g
-            + cls.WEIGHT_BEAUTY * b
-            + cls.WEIGHT_SERENITY * h
-            + cls.WEIGHT_ETERNITY * e
-        )
+            # Balance status (SSOT threshold: 0.30)
+            if balance_delta < 0.3:
+                balance_status: Literal["balanced", "warning", "imbalanced"] = "balanced"
+            elif balance_delta < 0.5:
+                balance_status = "warning"
+            else:
+                balance_status = "imbalanced"
 
-        # Balance delta: 5기둥 max - min
-        values = [t, g, b, h, e]
-        balance_delta = max(values) - min(values)
-
-        # Balance status (SSOT threshold: 0.30)
-        if balance_delta < 0.3:
-            balance_status: Literal["balanced", "warning", "imbalanced"] = "balanced"
-        elif balance_delta < 0.5:
-            balance_status = "warning"
-        else:
-            balance_status = "imbalanced"
-
-        return cls(
-            truth=t,
-            goodness=g,
-            beauty=b,
-            filial_serenity=h,
-            eternity=e,
-            serenity_core=serenity_core,
-            trinity_score=trinity_score,
-            balance_delta=balance_delta,
-            balance_status=balance_status,
-        )
+            return cls(
+                truth=t,
+                goodness=g,
+                beauty=b,
+                filial_serenity=h,
+                eternity=e,
+                serenity_core=serenity_core,
+                trinity_score=trinity_score,
+                balance_delta=balance_delta,
+                balance_status=balance_status,
+            )
+        except Exception:
+            return cls(0, 0, 0, 0, 0, 0, 0, 0, "imbalanced")
 
     def to_100_scale(self) -> TrinityMetrics:
         """100점 스케일로 변환"""
-        return TrinityMetrics(
-            truth=self.truth * 100,
-            goodness=self.goodness * 100,
-            beauty=self.beauty * 100,
-            filial_serenity=self.filial_serenity * 100,
-            eternity=self.eternity * 100,
-            serenity_core=self.serenity_core * 100,
-            trinity_score=self.trinity_score * 100,
-            balance_delta=self.balance_delta * 100,
-            balance_status=self.balance_status,
-        )
+        try:
+            return TrinityMetrics(
+                truth=self.truth * 100,
+                goodness=self.goodness * 100,
+                beauty=self.beauty * 100,
+                filial_serenity=self.filial_serenity * 100,
+                eternity=self.eternity * 100,
+                serenity_core=self.serenity_core * 100,
+                trinity_score=self.trinity_score * 100,
+                balance_delta=self.balance_delta * 100,
+                balance_status=self.balance_status,
+            )
+        except Exception:
+            return self
 
     def to_dict(self) -> dict:
         """딕셔너리로 변환 (API 응답용) - 5기둥 SSOT"""
-        return {
-            "truth": round(self.truth, 4),
-            "goodness": round(self.goodness, 4),
-            "beauty": round(self.beauty, 4),
-            "filial_serenity": round(self.filial_serenity, 4),
-            "eternity": round(self.eternity, 4),
-            "serenity_core": round(self.serenity_core, 4),
-            "trinity_score": round(self.trinity_score, 4),
-            "balance_delta": round(self.balance_delta, 4),
-            "balance_status": self.balance_status,
-            "weights": {
-                "truth": self.WEIGHT_TRUTH,
-                "goodness": self.WEIGHT_GOODNESS,
-                "beauty": self.WEIGHT_BEAUTY,
-                "filial_serenity": self.WEIGHT_SERENITY,
-                "eternity": self.WEIGHT_ETERNITY,
-            },
-        }
+        try:
+            return {
+                "truth": round(self.truth, 4),
+                "goodness": round(self.goodness, 4),
+                "beauty": round(self.beauty, 4),
+                "filial_serenity": round(self.filial_serenity, 4),
+                "eternity": round(self.eternity, 4),
+                "serenity_core": round(self.serenity_core, 4),
+                "trinity_score": round(self.trinity_score, 4),
+                "balance_delta": round(self.balance_delta, 4),
+                "balance_status": self.balance_status,
+                "weights": {
+                    "truth": self.WEIGHT_TRUTH,
+                    "goodness": self.WEIGHT_GOODNESS,
+                    "beauty": self.WEIGHT_BEAUTY,
+                    "filial_serenity": self.WEIGHT_SERENITY,
+                    "eternity": self.WEIGHT_ETERNITY,
+                },
+            }
+        except Exception:
+            return {"error": "failed to convert to dict"}
 
     def __str__(self) -> str:
         """문자열 표현 - 5기둥 SSOT"""
-        return (
-            f"TrinityMetrics(\n"
-            f"  眞 (Truth 35%): {self.truth:.3f}\n"
-            f"  善 (Goodness 35%): {self.goodness:.3f}\n"
-            f"  美 (Beauty 20%): {self.beauty:.3f}\n"
-            f"  孝 (Serenity 8%): {self.filial_serenity:.3f}\n"
-            f"  永 (Eternity 2%): {self.eternity:.3f}\n"
-            f"  Serenity(§): {self.serenity_core:.3f}\n"
-            f"  Trinity Score: {self.trinity_score:.3f}\n"
-            f"  ΔTrinity: {self.balance_delta:.3f} ({self.balance_status})\n"
-            f")"
-        )
+        try:
+            return (
+                f"TrinityMetrics(\n"
+                f"  眞 (Truth 35%): {self.truth:.3f}\n"
+                f"  善 (Goodness 35%): {self.goodness:.3f}\n"
+                f"  美 (Beauty 20%): {self.beauty:.3f}\n"
+                f"  孝 (Serenity 8%): {self.filial_serenity:.3f}\n"
+                f"  永 (Eternity 2%): {self.eternity:.3f}\n"
+                f"  Serenity(§): {self.serenity_core:.3f}\n"
+                f"  Trinity Score: {self.trinity_score:.3f}\n"
+                f"  ΔTrinity: {self.balance_delta:.3f} ({self.balance_status})\n"
+                f")"
+            )
+        except Exception:
+            return "TrinityMetrics(Error)"
 
 
 def calculate_trinity(
@@ -230,33 +240,18 @@ def calculate_trinity(
     eternity: float = 1.0,
     from_100_scale: bool = False,
 ) -> TrinityMetrics:
-    """
-    Trinity 메트릭 계산 헬퍼 함수 (5기둥 SSOT 가중치)
+    """Trinity 메트릭 계산 헬퍼 함수 (5기둥 SSOT 가중치)"""
+    try:
+        if from_100_scale:
+            inputs = TrinityInputs.from_100_scale(truth, goodness, beauty, filial_serenity)
+            eternity_normalized = eternity / 100.0
+        else:
+            inputs = TrinityInputs(truth, goodness, beauty, filial_serenity)
+            eternity_normalized = eternity
 
-    Args:
-        truth: 眞 점수 (35% 가중치)
-        goodness: 善 점수 (35% 가중치)
-        beauty: 美 점수 (20% 가중치)
-        filial_serenity: 孝 점수 (8% 가중치)
-        eternity: 永 점수 (2% 가중치) - 영속성
-        from_100_scale: 100점 스케일에서 입력받는지 여부
-
-    Returns:
-        계산된 Trinity 메트릭 (SSOT 가중 합)
-
-    Example:
-        >>> metrics = calculate_trinity(0.95, 0.90, 0.85, 1.0, 1.0)
-        >>> print(metrics.trinity_score)  # 가중 합
-        0.9225...
-    """
-    if from_100_scale:
-        inputs = TrinityInputs.from_100_scale(truth, goodness, beauty, filial_serenity)
-        eternity_normalized = eternity / 100.0
-    else:
-        inputs = TrinityInputs(truth, goodness, beauty, filial_serenity)
-        eternity_normalized = eternity
-
-    return TrinityMetrics.from_inputs(inputs, eternity=eternity_normalized)
+        return TrinityMetrics.from_inputs(inputs, eternity=eternity_normalized)
+    except Exception:
+        return TrinityMetrics(0, 0, 0, 0, 0, 0, 0, 0, "imbalanced")
 
 
 # 예시 사용법

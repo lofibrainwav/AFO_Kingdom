@@ -10,7 +10,8 @@ from fastapi import APIRouter, HTTPException
 
 # Persona service import
 try:
-    from AFO.services.persona_service import get_current_persona, persona_service, switch_persona as switch_persona_service
+    from AFO.services.persona_service import get_current_persona, persona_service
+    from AFO.services.persona_service import switch_persona as switch_persona_service
 
     PERSONA_SERVICE_AVAILABLE = True
 except ImportError:

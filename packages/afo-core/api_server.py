@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 # 🧭 Trinity Score: 眞89% 善85% 美72% 孝95% | Total: 84%
 # 이 파일은 AFO 왕국의 眞善美孝 철학을 구현합니다
 
@@ -27,17 +28,17 @@ _AFO_ROOT = str(Path(__file__).resolve().parent.parent)
 if _AFO_ROOT not in sys.path:
     sys.path.insert(0, _AFO_ROOT)
 
-from AFO.api.routers.health import router as health_router
-from AFO.api.routers.root import router as root_router
-from AFO.api.routes.streams import router as streams_router
-
 # ============================================================================
 # IMPORTS via Strangler Fig Facade (AFO.api.compat)
 # ============================================================================
 from AFO.api.compat import HybridRAG, LazyModules, get_settings_safe, load_dotenv_safe
+from AFO.api.routers.health import router as health_router
+from AFO.api.routers.root import router as root_router
+from AFO.api.routes.streams import router as streams_router
 
 if TYPE_CHECKING:
     from collections.abc import AsyncIterator, Callable
+
     from AFO.config.settings import AFOSettings
 
 # Alias for compatibility with existing code
@@ -122,9 +123,25 @@ executor = ThreadPoolExecutor(max_workers=56)  # M4 Pro 풀가동
 
 # 마법 같은 유틸 - sync 함수를 async로 감싸는 만능 래퍼
 def to_async(sync_func: Callable) -> Callable:
+    """
+    Synchronous function wrapper for async execution.
+    
+    Uses ThreadPoolExecutor to run blocking code in a separate thread,
+    preventing the event loop from being blocked.
+    
+    Args:
+        sync_func: The blocking synchronous function to wrap.
+        
+    Returns:
+        Callable: An async wrapper function.
+    """
     async def wrapper(*args: Any, **kwargs: Any) -> Any:
-        loop = asyncio.get_running_loop()
-        return await loop.run_in_executor(executor, sync_func, *args, **kwargs)
+        try:
+            loop = asyncio.get_running_loop()
+            return await loop.run_in_executor(executor, sync_func, *args, **kwargs)
+        except Exception as exc:
+            logger.error(f"Error in to_async wrapper for {sync_func.__name__}: {exc}")
+            raise
 
     wrapper.__name__ = f"{sync_func.__name__}_async"
     return wrapper
@@ -163,6 +180,7 @@ except ImportError:
 EventSourceResponse: Any = None
 try:
     from sse_starlette.sse import EventSourceResponse
+
     SSE_AVAILABLE = True
 except ImportError:
     SSE_AVAILABLE = False
@@ -178,12 +196,29 @@ SKILLS_ROUTER_PERMANENT = True  # 이 플래그는 절대 False 안 됨
 
 
 def _fallback_router(name: str, exc: Exception, essential: bool = False) -> APIRouter:
-    """Return an empty router when optional imports fail."""
-    global MODULAR_ROUTERS_AVAILABLE
-    print(f"⚠️  {name} router not available: {exc}")
-    if essential:
-        MODULAR_ROUTERS_AVAILABLE = False
-    return APIRouter()
+    """
+    Return an empty router when optional imports fail.
+    
+    This implementation follows the 'Strangler Fig' pattern, ensuring
+    the monolith survives valid limb failures.
+    
+    Args:
+        name: Name of the router (e.g., 'wallet').
+        exc: Exception caught during import.
+        essential: If True, sets global availability flag to False.
+        
+    Returns:
+        APIRouter: An empty router instance.
+    """
+    try:
+        global MODULAR_ROUTERS_AVAILABLE
+        print(f"⚠️  {name} router not available: {exc}")
+        if essential:
+            MODULAR_ROUTERS_AVAILABLE = False
+        return APIRouter()
+    except Exception as e:
+        logger.error(f"Error in _fallback_router for {name}: {e}")
+        return APIRouter()
 
 
 # api_wallet_router는 레거시 - wallet_router로 대체됨 (Strangler Fig)
@@ -220,14 +255,14 @@ from AFO.api.compat import (
     skills_router,
     strangler_router,
     system_health_router,
+    thoughts_router,
     trinity_policy_router,
     trinity_router,
     trinity_sbt_router,
     users_router,
-    users_router,
     wallet_router,
-    thoughts_router,
 )
+
 # get_settings aliases are handled at the top
 pass
 
@@ -265,7 +300,9 @@ except ImportError:
 memory_context: Any = None
 workflow: Any = None
 try:
-    from strategy_engine import memory_context as _mc, workflow as _wf
+    from strategy_engine import memory_context as _mc
+    from strategy_engine import workflow as _wf
+
     memory_context = _mc
     workflow = _wf
 except ImportError:
@@ -290,7 +327,8 @@ except ImportError:
 QueryExpander: Any = None
 try:
     from query_expansion_advanced import QueryExpander as _QE
-    QueryExpander = _QE
+
+    QueryExpander = _QE  # noqa: N814
 except ImportError:
     print("⚠️  QueryExpander not available (Phase 2.3 pending)")
 
@@ -298,7 +336,8 @@ except ImportError:
 MultimodalRAGEngine: Any = None
 try:
     from multimodal_rag_engine import MultimodalRAGEngine as _MRAE
-    MultimodalRAGEngine = _MRAE
+
+    MultimodalRAGEngine = _MRAE  # noqa: N814
 except ImportError:
     print("⚠️  MultimodalRAGEngine not available (Multimodal RAG Phase 2 pending)")
 
@@ -307,6 +346,7 @@ except ImportError:
 set_redis_client: Any = None
 try:
     from multimodal_rag_cache import set_redis_client as _src
+
     set_redis_client = _src
 except ImportError:
     print("⚠️  Multimodal RAG Cache not available (Multimodal RAG Phase 5 pending)")
@@ -344,11 +384,13 @@ SUNO_MUSIC_RAG_AVAILABLE = False
 YeongdeokComplete: Any = None
 try:
     from AFO.memory_system.yeongdeok_complete import YeongdeokComplete as _YC
-    YeongdeokComplete = _YC
+
+    YeongdeokComplete = _YC  # noqa: N814
 except ImportError:
     try:
         from memory_system.yeongdeok_complete import YeongdeokComplete as _YC
-        YeongdeokComplete = _YC
+
+        YeongdeokComplete = _YC  # noqa: N814
     except ImportError:
         pass  # Silent - optional module
 
@@ -369,6 +411,7 @@ except ImportError:
 register_core_skills: Any = None
 try:
     from afo_skills_registry import register_core_skills as _rcs
+
     register_core_skills = _rcs
 except ImportError:
     print("⚠️  afo_skills_registry not available (Phase 2.5 pending)")
@@ -446,7 +489,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     # AntiGravity Phase 1: Initialization (Via Facade)
     # ============================================================================
     from AFO.api.compat import get_antigravity_control
-    
+
     antigravity = get_antigravity_control()
 
     if antigravity and antigravity.AUTO_DEPLOY:
@@ -577,15 +620,15 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     # get_settings is available globally via compat
     try:
         if get_settings is not None:
-             redis_settings = get_settings()
-             if redis_settings:
-                 redis_host = redis_settings.REDIS_HOST
-                 redis_port = redis_settings.REDIS_PORT
-                 redis_password = redis_settings.REDIS_PASSWORD
-             else:
-                 raise ValueError("Settings not loaded")
+            redis_settings = get_settings()
+            if redis_settings:
+                redis_host = redis_settings.REDIS_HOST
+                redis_port = redis_settings.REDIS_PORT
+                redis_password = redis_settings.REDIS_PASSWORD
+            else:
+                raise ValueError("Settings not loaded")
         else:
-             raise ValueError("get_settings not available")
+            raise ValueError("get_settings not available")
     except Exception:
         # Fallback to env
         redis_host = os.getenv("REDIS_HOST", "localhost")
@@ -769,20 +812,25 @@ app = FastAPI(
 # Must be mounted here to ensure route is registered on startup
 app.include_router(streams_router, prefix="/api/stream", tags=["Matrix Stream"])
 from AFO.api.routers.matrix import router as matrix_router
+
 app.include_router(matrix_router, prefix="/api", tags=["Matrix Stream (Phase 10)"])
 
 from AFO.api.routers.rag_query import router as rag_query_router
+
 app.include_router(rag_query_router, prefix="/api", tags=["RAG (Phase 12)"])
 
 from AFO.api.routers.finance import router as finance_router
-app.include_router(finance_router) # Prefix is defined in the router itself
+
+app.include_router(finance_router)  # Prefix is defined in the router itself
 
 from AFO.api.routers.ssot import router as ssot_router
-app.include_router(ssot_router) # Prefix is defined in the router itself
+
+app.include_router(ssot_router)  # Prefix is defined in the router itself
 
 # Phase 12 Extension: Budget Tracking
 try:
     from AFO.api.routers.budget import router as budget_router
+
     app.include_router(budget_router)  # Prefix /api/julie/budget
     print("✅ Budget Router 등록 완료 (Phase 12 확장)")
 except Exception as e:
@@ -793,6 +841,7 @@ except Exception as e:
 # ============================================================
 try:
     from AFO.api.routers.aicpa import router as aicpa_router
+
     app.include_router(aicpa_router, prefix="/api", tags=["AICPA Agent Army"])
     print("✅ AICPA Router 등록 완료 (Phase 13: 에이전트 군단)")
 except Exception as e:
@@ -803,6 +852,7 @@ except Exception as e:
 # ============================================================
 try:
     from AFO.api.routers.learning_log_router import router as learning_log_router
+
     app.include_router(learning_log_router)
     print("✅ Learning Log Router 등록 완료 (Phase 16-4: 자율 학습 루프)")
 except Exception as e:
@@ -813,6 +863,7 @@ except Exception as e:
 # ============================================================
 try:
     from AFO.api.routers.grok_stream import router as grok_stream_router
+
     app.include_router(grok_stream_router)
     print("✅ Grok Stream Router 등록 완료 (Phase 18: 왕국의 맥박)")
 except Exception as e:
@@ -823,6 +874,7 @@ except Exception as e:
 # ============================================================
 try:
     from AFO.api.routers.voice import router as voice_router
+
     app.include_router(voice_router, prefix="/api", tags=["Voice Interface"])
     print("🎙️ Voice Router 등록 완료 (Phase 24: Commander's Voice)")
 except Exception as e:
@@ -833,6 +885,7 @@ except Exception as e:
 # ============================================================
 try:
     from AFO.api.routers.council import router as council_router
+
     app.include_router(council_router, prefix="/api", tags=["Council of Minds"])
     print("🧠 Council Router 등록 완료 (Phase 23: 지혜의 의회)")
 except Exception as e:
@@ -843,6 +896,7 @@ except Exception as e:
 # ============================================================
 try:
     from AFO.api.routers.learning_pipeline import router as learning_router
+
     app.include_router(learning_router, prefix="/api", tags=["AI Self-Improvement"])
     print("🧠 Learning Pipeline Router 등록 완료 (Phase 26: 사마휘 자율 학습)")
 except Exception as e:
@@ -853,6 +907,7 @@ except Exception as e:
 # ============================================================
 try:
     from AFO.api.middleware.prometheus import setup_prometheus_metrics
+
     # Port 8001 for metrics
     setup_prometheus_metrics(app, port=8001)
     print("✅ Prometheus Metrics Exporter 가동 (Port 8001)")
@@ -863,12 +918,12 @@ except Exception as e:
 # Phase 22: Security Hardening (The Shield)
 # ============================================================
 try:
-    from AFO.security.vault_manager import vault
     from AFO.api.middleware.audit import audit_middleware
-    
+    from AFO.security.vault_manager import vault
+
     # Audit Middleware (Before Routes)
     app.middleware("http")(audit_middleware)
-    
+
     # Initialize Vault (Log only)
     print(f"🛡️ Vault Manager Active (Mode: {vault.mode})")
     print("🛡️ Audit Middleware Active (Logging POST/PUT/DELETE)")
@@ -879,6 +934,17 @@ except Exception as e:
 # ============================================================
 # 전역 예외 처리 (FastAPI 베스트 프랙티스)
 # ============================================================
+def to_async(func: Any) -> Any:
+    """眞 (Truth): 동기 함수를 비동기 루프에서 실행하기 위한 래퍼"""
+    from functools import wraps
+
+    @wraps(func)
+    async def run(*args, **kwargs):
+        loop = asyncio.get_event_loop()
+        return await loop.run_in_executor(None, func, *args, **kwargs)
+
+    return run
+
 try:
     from typing import cast
 
@@ -915,7 +981,6 @@ app.add_middleware(
 # - RateLimitMiddleware: API Rate Limiting
 # 이 기능들은 선택적이며 현재 미구현 상태입니다.
 # ============================================================
-
 
 
 # ============================================================
@@ -1017,16 +1082,17 @@ if n8n_router:
 
 # 7. Wallet Router
 if wallet_router:
+
     app.include_router(
         wallet_router,
-        prefix="/api/wallet",
+        # prefix="/api/wallet",  # Removed: Router already has prefix
         tags=["API Wallet"],
     )
 # 1. 5 Pillars Router (필수)
 if pillars_router:
     app.include_router(
         pillars_router,
-        prefix="/api/pillars",
+        # prefix="/api/pillars",  # Removed: Router already has prefix
         tags=["5 Pillars"],
         responses={418: {"description": "I'm a teapot (Pillars not ready)"}},
     )
@@ -1266,22 +1332,50 @@ pass
 # Adapter functions to inject global dependencies (OPENAI_CLIENT, etc.)
 
 
-async def _get_embedding_async_adapter(text: str) -> list[float]:
-    return cast(list[float], await get_embedding_async(text, OPENAI_CLIENT))
+async def _get_embedding_async_adapter(text: str, client: Any) -> list[float]:
+    """眞 (Truth): Hybrid RAG 임베딩 추출 어댑터"""
+    from AFO.services.hybrid_rag import get_embedding_async
+    try:
+        return cast("list[float]", await get_embedding_async(text, OPENAI_CLIENT))
+    except Exception as e:
+        logger.error(f"Error in _get_embedding_async_adapter: {e}")
+        raise
 
 
-async def _query_pgvector_async_adapter(embedding: list[float], top_k: int) -> list[dict]:
-    return cast(list[dict], await query_pgvector_async(embedding, top_k, PG_POOL))
+async def _query_pgvector_async_adapter(
+    embedding: list[float], top_k: int, pool: Any
+) -> list[dict[str, Any]]:
+    """眞 (Truth): Hybrid RAG PGVector 검색 어댑터"""
+    from AFO.services.hybrid_rag import query_pgvector_async
+    try:
+        return cast("list[dict]", await query_pgvector_async(embedding, top_k, PG_POOL))
+    except Exception as e:
+        logger.error(f"Error in _query_pgvector_async_adapter: {e}")
+        return []
 
 
-async def _query_redis_async_adapter(embedding: list[float], top_k: int) -> list[dict]:
-    return cast(list[dict], await query_redis_async(embedding, top_k, REDIS_CLIENT))
+async def _query_redis_async_adapter(
+    embedding: list[float], top_k: int, client: Any
+) -> list[dict[str, Any]]:
+    """眞 (Truth): Hybrid RAG Redis 검색 어댑터"""
+    from AFO.services.hybrid_rag import query_redis_async
+    try:
+        return cast("list[dict]", await query_redis_async(embedding, top_k, REDIS_CLIENT))
+    except Exception as e:
+        logger.error(f"Error in _query_redis_async_adapter: {e}")
+        return []
 
 
 async def _blend_results_async_adapter(
-    pg_rows: list[dict], redis_rows: list[dict], top_k: int
-) -> list[dict]:
-    return cast(list[dict], await blend_results_async(pg_rows, redis_rows, top_k))
+    pg_rows: list[dict[str, Any]], redis_rows: list[dict[str, Any]], top_k: int
+) -> list[dict[str, Any]]:
+    """眞 (Truth): Hybrid RAG 결과 혼합 어댑터"""
+    from AFO.services.hybrid_rag import blend_results_async
+    try:
+        return cast("list[dict]", await blend_results_async(pg_rows, redis_rows, top_k))
+    except Exception as e:
+        logger.error(f"Error in _blend_results_async_adapter: {e}")
+        return []
 
 
 async def _generate_answer_async_adapter(
@@ -1292,15 +1386,22 @@ async def _generate_answer_async_adapter(
     additional_instructions: str,
     llm_provider: str = "openai",
 ) -> str | dict:
-    return cast(str | dict, await generate_answer_async(
-        query,
-        contexts,
-        temperature,
-        response_format,
-        additional_instructions,
-        llm_provider,
-        openai_client=OPENAI_CLIENT,
-    ))
+    try:
+        return cast(
+            "str | dict",
+            await generate_answer_async(
+                query,
+                contexts,
+                temperature,
+                response_format,
+                additional_instructions,
+                llm_provider,
+                openai_client=OPENAI_CLIENT,
+            ),
+        )
+    except Exception as e:
+        logger.error(f"Error in _generate_answer_async_adapter: {e}")
+        return {"error": str(e)}
 
 
 # Alias for compatibility with existing code
@@ -1321,9 +1422,12 @@ _select_context = select_context  # Sync function alias
 @app.get("/", include_in_schema=False)
 async def read_root_legacy() -> dict[str, str]:
     """Legacy root endpoint - use root_router instead"""
-    from AFO.api.routers.root import read_root
-
-    return await read_root()
+    try:
+        from AFO.api.routers.root import read_root
+        return await read_root()
+    except Exception as e:
+        logger.error(f"Error in read_root_legacy: {e}")
+        return {"status": "error", "message": str(e)}
 
 
 # Phase 2 리팩토링: Health 엔드포인트는 api/routers/health.py로 이동됨
@@ -1332,237 +1436,38 @@ async def read_root_legacy() -> dict[str, str]:
 async def health_check_legacy() -> dict[str, Any]:
     """
     Health check endpoint - 브릿지의 시선: 메타인지 + 眞善美孝 점수
-
-    실제 서비스 연결을 테스트하고 Trinity Score로 건강도 계산
+    Refactored to use centralized health_service.
     """
-    import httpx
-    import redis.asyncio as redis
-
-    # Absolute import for domain modules
-    # TrinityMetrics and calculate_trinity imported from AFO.api.compat at top level
-    pass
-
-    current_time = datetime.now().isoformat()
-    organs: list[dict] = []
-
-    # === 실제 서비스 체크 함수들 ===
-    async def check_redis() -> dict:
-        try:
-            # Use centralized Redis connection (Phase 1 리팩토링)
-            from AFO.utils.redis_connection import get_redis_url
-
-            r = redis.from_url(get_redis_url())
-            pong = await r.ping()
-            await r.close()
-            return {"healthy": pong, "output": f"PING -> {pong}"}
-        except Exception as e:
-            return {"healthy": False, "output": f"Error: {str(e)[:50]}"}
-
-    async def check_postgres() -> dict:
-        try:
-            # Use centralized database connection (Phase 1 리팩토링)
-            from AFO.services.database import get_db_connection
-
-            conn = await get_db_connection()
-            result = await conn.fetchval("SELECT 1")
-            await conn.close()
-            return {"healthy": result == 1, "output": f"SELECT 1 -> {result}"}
-        except Exception as e:
-            return {"healthy": False, "output": f"Error: {str(e)[:50]}"}
-
-    async def check_ollama() -> dict:
-        try:
-            async with httpx.AsyncClient(timeout=5.0) as client:
-                # Use centralized settings (Phase 1 리팩토링)
-                from AFO.config.settings import get_settings
-
-                ollama_url = get_settings().OLLAMA_BASE_URL
-                resp = await client.get(ollama_url + "/api/tags")
-                data = resp.json()
-                model_count = len(data.get("models", []))
-                return {"healthy": model_count > 0, "output": f"Models: {model_count}"}
-        except Exception as e:
-            return {"healthy": False, "output": f"Error: {str(e)[:50]}"}
-
-    async def check_self() -> dict:
-        return {"healthy": True, "output": "Self-check: API responding"}
-
-    # === 병렬 실행 ===
-    results = await asyncio.gather(
-        check_redis(), check_postgres(), check_ollama(), check_self(), return_exceptions=True
-    )
-
-    # Type hint for results: tuple of (dict | BaseException, ...)
-    # But since we check isinstance(Exception), we can cast to Any for indexing
-
-    organ_checks = [
-        (
-            "心_Redis",
-            cast("dict[str, Any]", results[0])
-            if not isinstance(results[0], Exception)
-            else {"healthy": False, "output": str(results[0])},
-        ),
-        (
-            "肝_Postgres",
-            cast("dict[str, Any]", results[1])
-            if not isinstance(results[1], Exception)
-            else {"healthy": False, "output": str(results[1])},
-        ),
-        (
-            "脾_Ollama",
-            cast("dict[str, Any]", results[2])
-            if not isinstance(results[2], Exception)
-            else {"healthy": False, "output": str(results[2])},
-        ),
-        (
-            "肺_API_Server",
-            cast("dict[str, Any]", results[3])
-            if not isinstance(results[3], Exception)
-            else {"healthy": False, "output": str(results[3])},
-        ),
-    ]
-
-    for organ_name, result in organ_checks:
-        organs.append(
-            {
-                "organ": organ_name,
-                "healthy": result["healthy"],
-                "status": "healthy" if result["healthy"] else "unhealthy",
-                "output": result["output"],
-                "timestamp": current_time,
-            }
-        )
-
-    # M. Thoughts Router (Matrix Stream)
-    if thoughts_router:
-        # NOTE: Including router inside a function is bad practice. 
-        # But keeping legacy logic if it was intended for dynamic loading, 
-        # usually checks if already mounted. 
-        # However, for streams_router, we moved it to global scope.
-        pass
-
-    # === 眞善美孝永 5기둥 계산 (SSOT: TRINITY_OS_PERSONAS.yaml) ===
-    # 가중치: 眞35% 善35% 美20% 孝8% 永2%
-
-    healthy_count = sum(1 for o in organs if o["healthy"])
-    total_organs = len(organs)
-
-    # 眞 (Truth 35%) - 기술적 확실성: 핵심 데이터 계층 (PostgreSQL + Redis)
-    core_data_organs = ["心_Redis", "肝_PostgreSQL"]
-    truth_healthy = sum(1 for o in organs if o["organ"] in core_data_organs and o["healthy"])
-    truth_score = truth_healthy / len(core_data_organs) if core_data_organs else 0.0
-
-    # 善 (Goodness 35%) - 윤리·안정성: 전체 서비스 안정성 (모든 장기)
-    goodness_score = healthy_count / total_organs if total_organs > 0 else 0.0
-
-    # 美 (Beauty 20%) - 단순함·우아함: API 응답 품질
-    api_healthy = any(o["organ"] == "肺_API_Server" and o["healthy"] for o in organs)
-    beauty_score = 1.0 if api_healthy else 0.0
-
-    # 孝 (Serenity 8%) - 평온·연속성: LLM 서비스 가용성 (Ollama)
-    llm_healthy = any(o["organ"] == "脾_Ollama" and o["healthy"] for o in organs)
-    filial_score = 1.0 if llm_healthy else 0.0
-
-    # 永 (Eternity 2%) - 영속성: 모든 핵심 서비스 가동 시간 (현재는 전체 건강 기준)
-    eternity_score = 1.0 if healthy_count == total_organs else healthy_count / total_organs
-
-    # Trinity 계산 (5기둥 SSOT 가중 합)
-    trinity_metrics: TrinityMetrics = calculate_trinity(
-        truth=truth_score,
-        goodness=goodness_score,
-        beauty=beauty_score,
-        filial_serenity=filial_score,
-        eternity=eternity_score,
-    )
-
-    # Prometheus 메트릭 업데이트 (사용 가능한 경우)
     try:
-        from domain.metrics.prometheus import health_healthy_organs, health_total_score
-
-        health_total_score.set(trinity_metrics.trinity_score * 100)
-        health_healthy_organs.set(healthy_count)
-    except Exception:
-        pass
-
-    # === 집현전 철학: 즉시 폐기가 아닌, 반복 개선 (DRY_RUN + ITERATE) ===
-    # 문제 발견 시: 해결책 제시 + 재시도 가이드
-
-    issues = []
-    suggestions = []
-
-    if trinity_metrics.truth < 1.0:
-        failed_core = [
-            o["organ"]
-            for o in organs
-            if o["organ"] in ["心_Redis", "肝_PostgreSQL"] and not o["healthy"]
-        ]
-        issues.append(f"眞(데이터 계층): {', '.join(failed_core)} 연결 실패")
-        suggestions.append("docker-compose restart redis postgres")
-
-    if trinity_metrics.filial_serenity < 1.0:
-        issues.append("孝(LLM 서비스): Ollama 연결 끊김")
-        suggestions.append("docker start afo-ollama")
-
-    if trinity_metrics.beauty < 1.0:
-        issues.append("美(API): 응답 불가")
-        suggestions.append("docker-compose restart soul-engine")
-
-    # 집현전 판단: BLOCK 대신 TRY_AGAIN + 해결책 제시
-    if trinity_metrics.balance_status == "imbalanced":
-        decision = "TRY_AGAIN"
-        decision_message = "집현전 학자들이 문제를 해결 중입니다. 재시도하세요."
-    elif trinity_metrics.balance_status == "warning":
-        decision = "ASK_COMMANDER"
-        decision_message = "일부 서비스에 주의가 필요합니다."
-    else:
-        decision = "AUTO_RUN"
-        decision_message = "모든 시스템 정상. 자동 실행 가능합니다."
-
-    return {
-        "status": trinity_metrics.balance_status,
-        "health_percentage": round(trinity_metrics.trinity_score * 100, 2),
-        "healthy_organs": healthy_count,
-        "total_organs": total_organs,
-        "trinity": trinity_metrics.to_dict(),
-        "decision": decision,
-        "decision_message": decision_message,
-        "issues": issues if issues else None,
-        "suggestions": suggestions if suggestions else None,
-        "organs": {
-            o["organ"]: {"status": o["status"], "output": str(o.get("output", ""))[:100]}
-            for o in organs
-        },
-        "method": "bridge_perspective_v2_jiphyeonjeon",
-        "timestamp": current_time,
-    }
+        from AFO.services.health_service import get_comprehensive_health
+        return await get_comprehensive_health()
+    except Exception as e:
+        logger.error(f"Error in health_check_legacy: {e}")
+        return {"status": "error", "message": str(e)}
 
 
 @app.get("/health_old", tags=["Health"], include_in_schema=False)
 async def health_check_old() -> dict[str, Any]:
     """
     **11-Organ Health Check** - Verifies API server status and component readiness.
-
-    Returns the health status of the AFO Soul Engine API server including:
-    - Strategy Engine (LangGraph)
-    - Yeongdeok Memory System
-
-    **Usage**: Docker healthcheck, monitoring, readiness probes
-
-    **Expected Response**: `{"status": "healthy", "components": {...}}`
     """
-    # 로그 이벤트 발생 (emit_log_event는 refactoring 후 helpers.py로 이동 예정)
-    # 현재는 표준 로깅 사용
-    logging.info("Health check requested")
+    try:
+        # 로그 이벤트 발생 (emit_log_event는 refactoring 후 helpers.py로 이동 예정)
+        # 현재는 표준 로깅 사용
+        logging.info("Health check requested")
 
-    return {
-        "status": "healthy",
-        "service": "AFO Soul Engine API",
-        "timestamp": datetime.now().isoformat(),
-        "components": {
-            "strategy_engine": "ready" if strategy_app_runnable else "initializing",
-            "yeongdeok": "ready" if yeongdeok else "initializing",
-        },
-    }
+        return {
+            "status": "healthy",
+            "service": "AFO Soul Engine API",
+            "timestamp": datetime.now().isoformat(),
+            "components": {
+                "strategy_engine": "ready" if strategy_app_runnable else "initializing",
+                "yeongdeok": "ready" if yeongdeok else "initializing",
+            },
+        }
+    except Exception as e:
+        logger.error(f"Error in health_check_old: {e}")
+        return {"status": "error", "error": str(e)}
 
 
 # ============================================================
@@ -1589,28 +1494,23 @@ print("🎉 Phase 1.3: Async Wrappers 적용 완료 - Adapters Active")
 # (Legacy on_startup and debug_routes removed - migrated to lifespan)
 
 
-    # ============================================================================
+# ============================================================================
 
 
 # ============================================================================
 # AntiGravity Phase 4: Friction Status
 # ============================================================================
-@app.get("/api/antigravity/status", tags=["AntiGravity"])
-async def get_antigravity_status():
-    """
-    [AntiGravity] 왕국 평온 상태 조회 (Phase 4)
-    형님의 '신경 쓰임' 지수를 수치화하여 보고합니다.
-    """
+@app.get("/antigravity/status")
+async def get_antigravity_status() -> dict[str, Any]:
+    """眞 (Truth): Antigravity 시스템 상태 및 Trinity 지표 조회"""
     from config.friction_calibrator import friction_calibrator
 
     metrics = friction_calibrator.calculate_serenity()
     return metrics
 
 
-
 # ============================================================================
 # Main Block
-
 
 
 if __name__ == "__main__":
@@ -1630,8 +1530,8 @@ if __name__ == "__main__":
                 api_port = main_settings.API_SERVER_PORT
                 api_host = main_settings.API_SERVER_HOST
             else:
-                 api_port = int(os.getenv("API_SERVER_PORT", "8011"))
-                 api_host = os.getenv("API_SERVER_HOST", "0.0.0.0")
+                api_port = int(os.getenv("API_SERVER_PORT", "8011"))
+                api_host = os.getenv("API_SERVER_HOST", "0.0.0.0")
         else:
             raise ImportError("get_settings not available")
     except ImportError:

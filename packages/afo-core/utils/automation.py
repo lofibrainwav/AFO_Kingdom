@@ -25,7 +25,7 @@ class RetryConfig:
         base_delay: float = 1.0,
         max_delay: float = 60.0,
         exponential: bool = True,
-    ):
+    ) -> None:
         self.max_retries = max_retries
         self.base_delay = base_delay
         self.max_delay = max_delay
@@ -137,7 +137,7 @@ class CircuitBreaker:
         self,
         failure_threshold: int = 5,
         reset_timeout: float = 60.0,
-    ):
+    ) -> None:
         self.failure_threshold = failure_threshold
         self.reset_timeout = reset_timeout
         self.failures = 0

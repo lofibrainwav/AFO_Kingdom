@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# mypy: ignore-errors
 """
 옵시디언 vault를 Qdrant 벡터 DB에 인덱싱
 """

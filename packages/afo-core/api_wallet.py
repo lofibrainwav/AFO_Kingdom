@@ -16,8 +16,6 @@ API Wallet - 모든 API 키를 안전하게 보관
 
 from __future__ import annotations
 
-print("DEBUG: Executing AFO/api_wallet.py top level code")
-
 import base64
 import hashlib
 import json
@@ -25,7 +23,6 @@ import os
 from datetime import datetime
 from pathlib import Path
 from typing import Any
-
 # Phase 8.3.3: Vault KMS 통합
 try:
     from AFO.kms.vault_kms import VaultKMS
@@ -101,9 +98,9 @@ class APIWallet:
     def __init__(
         self,
         encryption_key: str | None = None,
-        db_connection: object | None = None,
+        db_connection: Any | None = None,
         use_vault: bool | None = None,
-    ):
+    ) -> None:
         """
         Initialize API Wallet
 
@@ -154,17 +151,21 @@ class APIWallet:
                 print("✅ Vault에서 암호화 키 로드 완료")
             else:
                 key_from_settings = self._get_encryption_key_from_settings()
-                self.encryption_key = key_from_settings or os.getenv(
-                    "API_WALLET_ENCRYPTION_KEY", self._generate_default_key()
-                ) or ""
+                self.encryption_key = (
+                    key_from_settings
+                    or os.getenv("API_WALLET_ENCRYPTION_KEY", self._generate_default_key())
+                    or ""
+                )
                 # Vault에 저장 시도
                 if self.vault_kms.is_available():
                     self.vault_kms.set_encryption_key(self.encryption_key)
         else:
             key_from_settings = self._get_encryption_key_from_settings()
-            self.encryption_key = key_from_settings or os.getenv(
-                "API_WALLET_ENCRYPTION_KEY", self._generate_default_key()
-            ) or ""
+            self.encryption_key = (
+                key_from_settings
+                or os.getenv("API_WALLET_ENCRYPTION_KEY", self._generate_default_key())
+                or ""
+            )
 
         # Validate key (only in real crypto mode)
         if CRYPTO_AVAILABLE and len(self.encryption_key) != 44:
@@ -199,6 +200,7 @@ class APIWallet:
         """Helper to get encryption key from settings with fallback"""
         try:
             from AFO.config.settings import get_settings
+
             return get_settings().API_WALLET_ENCRYPTION_KEY
         except ImportError:
             return None
@@ -208,51 +210,74 @@ class APIWallet:
         # WARNING: This is for development only!
         # In production, always use a randomly generated key!
 
-        env_path = Path(__file__).parent / ".env"
+        try:
+            env_path = Path(__file__).parent / ".env"
 
-        # Check if key already exists in .env
-        if env_path.exists():
-            with open(env_path) as f:
-                for line in f:
-                    if line.strip().startswith("API_WALLET_ENCRYPTION_KEY="):
-                        # Extract existing key
-                        existing_key = line.split("=", 1)[1].strip()
-                        if existing_key and len(existing_key) == 44:
-                            return existing_key
+            # Check if key already exists in .env
+            if env_path.exists():
+                with open(env_path) as f:
+                    for line in f:
+                        if line.strip().startswith("API_WALLET_ENCRYPTION_KEY="):
+                            # Extract existing key
+                            existing_key = line.split("=", 1)[1].strip()
+                            if existing_key and len(existing_key) == 44:
+                                return existing_key
 
-        # Generate new key only if not found
-        default_key = Fernet.generate_key().decode()
+            # Generate new key only if not found
+            default_key = Fernet.generate_key().decode()
 
-        # Save to .env (only once!)
-        if env_path.exists():
-            with open(env_path, "a") as f:
-                f.write("\n# Auto-generated encryption key (development only)\n")
-                f.write(f"API_WALLET_ENCRYPTION_KEY={default_key}\n")
+            # Save to .env (only once!)
+            if env_path.exists():
+                with open(env_path, "a") as f:
+                    f.write("\n# Auto-generated encryption key (development only)\n")
+                    f.write(f"API_WALLET_ENCRYPTION_KEY={default_key}\n")
 
-        return default_key
+            return default_key
+        except Exception as e:
+            # If filesystem is read-only or other error, return a reliable temporary key
+            print(f"⚠️  Failed to generate/save default key: {e}")
+            return Fernet.generate_key().decode()
 
     def _ensure_storage_file(self) -> None:
         """Ensure JSON storage file exists"""
-        if not self.storage_path.exists():
-            self.storage_path.write_text(json.dumps({"keys": []}, indent=2))
+        try:
+            if not self.storage_path.exists():
+                self.storage_path.write_text(json.dumps({"keys": []}, indent=2))
+        except Exception as e:
+            print(f"⚠️  Failed to create storage file: {e}")
+            # Non-critical if we are just reading/using transiently
 
     def _load_storage(self) -> dict[str, list[dict[str, Any]]]:
         """Load from JSON storage"""
-        # Explicit type cast for MyPy
-        data: dict[str, list[dict[str, Any]]] = json.loads(self.storage_path.read_text())
-        return data
+        try:
+            if not self.storage_path.exists():
+                return {"keys": []}
+            # Explicit type cast for MyPy
+            data: dict[str, list[dict[str, Any]]] = json.loads(self.storage_path.read_text())
+            return data
+        except Exception as e:
+            print(f"⚠️  Failed to load failed storage: {e}")
+            return {"keys": []}
 
     def _save_storage(self, data: dict[str, Any]) -> None:
         """Save to JSON storage"""
-        self.storage_path.write_text(json.dumps(data, indent=2))
+        try:
+            self.storage_path.write_text(json.dumps(data, indent=2))
+        except Exception as e:
+            print(f"⚠️  Failed to save storage: {e}")
+            raise IOError(f"Failed to persist wallet data: {e}")
 
     def _audit_log(self, action: str, key_name: str, details: str = "") -> None:
         """Write to audit log"""
-        timestamp = datetime.now().isoformat()
-        log_entry = f"{timestamp} | {action} | {key_name} | {details}\n"
+        try:
+            timestamp = datetime.now().isoformat()
+            log_entry = f"{timestamp} | {action} | {key_name} | {details}\n"
 
-        with open(self.audit_log_path, "a") as f:
-            f.write(log_entry)
+            with open(self.audit_log_path, "a") as f:
+                f.write(log_entry)
+        except Exception as e:
+            # Audit logging failure should not break the application
+            print(f"⚠️  Audit Log Failed: {e}")
 
     def _hash_key(self, api_key: str) -> str:
         """Create SHA-256 hash of key for audit purposes"""
@@ -282,51 +307,62 @@ class APIWallet:
             Key ID
 
         Raises:
-            ValueError: If key name already exists
+            ValueError: If key name already exists or encryption fails
         """
-        # Encrypt the API key
-        encrypted_key = self.cipher.encrypt(api_key.encode()).decode()
+        try:
+            # Encrypt the API key
+            try:
+                encrypted_key = self.cipher.encrypt(api_key.encode()).decode()
+            except Exception as e:
+                raise ValueError(f"Encryption failed: {e}")
 
-        # Create hash for audit
-        key_hash = self._hash_key(api_key)
+            # Create hash for audit
+            key_hash = self._hash_key(api_key)
 
-        # Prepare data
-        key_data = {
-            "name": name,
-            "encrypted_key": encrypted_key,
-            "key_type": key_type,
-            "read_only": read_only,
-            "service": service,
-            "description": description,
-            "key_hash": key_hash,
-            "created_at": datetime.now().isoformat(),
-            "last_accessed": None,
-            "access_count": 0,
-        }
+            # Prepare data
+            key_data = {
+                "name": name,
+                "encrypted_key": encrypted_key,
+                "key_type": key_type,
+                "read_only": read_only,
+                "service": service,
+                "description": description,
+                "key_hash": key_hash,
+                "created_at": datetime.now().isoformat(),
+                "last_accessed": None,
+                "access_count": 0,
+            }
 
-        if self.use_db:
-            # PostgreSQL storage
-            key_id = self._add_to_database(key_data)
-        else:
-            # JSON file storage
-            storage = self._load_storage()
+            if self.use_db:
+                # PostgreSQL storage
+                key_id = self._add_to_database(key_data)
+            else:
+                # JSON file storage
+                storage = self._load_storage()
 
-            # Check if name exists
-            if any(k["name"] == name for k in storage["keys"]):
-                raise ValueError(f"Key with name '{name}' already exists")
+                # Check if name exists
+                if any(k["name"] == name for k in storage["keys"]):
+                    raise ValueError(f"Key with name '{name}' already exists")
 
-            # Add ID
-            key_data["id"] = len(storage["keys"]) + 1
-            key_id = int(str(key_data["id"]))
+                # Add ID
+                key_id_val = len(storage["keys"]) + 1
+                key_data["id"] = key_id_val
+                key_id = int(key_id_val)
 
-            # Append and save
-            storage["keys"].append(key_data)
-            self._save_storage(storage)
+                # Append and save
+                storage["keys"].append(key_data)
+                self._save_storage(storage)
 
-        # Audit log
-        self._audit_log("ADD", name, f"type={key_type}, service={service}, hash={key_hash}")
+            # Audit log
+            self._audit_log("ADD", name, f"type={key_type}, service={service}, hash={key_hash}")
 
-        return key_id
+            return key_id
+
+        except ValueError:
+            raise
+        except Exception as e:
+            self._audit_log("ADD_FAILED", name, str(e))
+            raise RuntimeError(f"Failed to add key '{name}': {e}")
 
     def get(self, name: str, decrypt: bool = True) -> str | None:
         """
@@ -339,34 +375,45 @@ class APIWallet:
         Returns:
             Decrypted API key or None if not found
         """
-        if self.use_db:
-            # PostgreSQL storage
-            key_data = self._get_from_database(name)
-        else:
-            # JSON file storage
-            storage = self._load_storage()
-            key_data = next((k for k in storage["keys"] if k["name"] == name), None)
+        try:
+            if self.use_db:
+                # PostgreSQL storage
+                key_data = self._get_from_database(name)
+            else:
+                # JSON file storage
+                storage = self._load_storage()
+                key_data = next((k for k in storage["keys"] if k["name"] == name), None)
 
-        if not key_data:
-            self._audit_log("GET_FAILED", name, "Key not found")
+            if not key_data:
+                self._audit_log("GET_FAILED", name, "Key not found")
+                return None
+
+            # Update access stats
+            self._update_access_stats(name)
+
+            # Decrypt if requested
+            if decrypt:
+                try:
+                    encrypted_key = str(key_data["encrypted_key"])
+                    decrypted_key = self.cipher.decrypt(encrypted_key.encode()).decode()
+
+                    # Audit log (with hash only, not the actual key!)
+                    key_hash = self._hash_key(decrypted_key)
+                    self._audit_log("GET_SUCCESS", name, f"hash={key_hash}")
+
+                    return decrypted_key
+                except Exception as e:
+                    self._audit_log("DECRYPT_FAILED", name, str(e))
+                    raise ValueError(f"Failed to decrypt key '{name}': {e}")
+            else:
+                # Return encrypted key
+                return str(key_data["encrypted_key"])
+
+        except Exception as e:
+            self._audit_log("GET_ERROR", name, str(e))
+            # Don't raise here, return None for safer failure mode in production
+            print(f"⚠️  Error retrieving key '{name}': {e}")
             return None
-
-        # Update access stats
-        self._update_access_stats(name)
-
-        # Decrypt if requested
-        if decrypt:
-            encrypted_key = key_data["encrypted_key"]
-            decrypted_key = self.cipher.decrypt(encrypted_key.encode()).decode()
-
-            # Audit log (with hash only, not the actual key!)
-            key_hash = self._hash_key(decrypted_key)
-            self._audit_log("GET_SUCCESS", name, f"hash={key_hash}")
-
-            return decrypted_key
-        else:
-            # Return encrypted key
-            return str(key_data["encrypted_key"])
 
     def list_keys(self, include_encrypted: bool = False) -> list[dict[str, Any]]:
         """
@@ -378,34 +425,38 @@ class APIWallet:
         Returns:
             List of key metadata (without decrypted keys)
         """
-        if self.use_db:
-            keys = self._list_from_database()
-        else:
-            storage = self._load_storage()
-            keys = storage["keys"]
+        try:
+            if self.use_db:
+                keys = self._list_from_database()
+            else:
+                storage = self._load_storage()
+                keys = storage["keys"]
 
-        # Filter out encrypted keys unless requested
-        result = []
-        for key in keys:
-            key_info = {
-                "id": key.get("id"),
-                "name": key["name"],
-                "key_type": key["key_type"],
-                "read_only": key["read_only"],
-                "service": key["service"],
-                "description": key["description"],
-                "created_at": key["created_at"],
-                "last_accessed": key.get("last_accessed"),
-                "access_count": key.get("access_count", 0),
-            }
+            # Filter out encrypted keys unless requested
+            result = []
+            for key in keys:
+                key_info = {
+                    "id": key.get("id"),
+                    "name": key["name"],
+                    "key_type": key["key_type"],
+                    "read_only": key["read_only"],
+                    "service": key["service"],
+                    "description": key["description"],
+                    "created_at": key["created_at"],
+                    "last_accessed": key.get("last_accessed"),
+                    "access_count": key.get("access_count", 0),
+                }
 
-            if include_encrypted:
-                key_info["encrypted_key"] = key["encrypted_key"]
+                if include_encrypted:
+                    key_info["encrypted_key"] = key["encrypted_key"]
 
-            result.append(key_info)
+                result.append(key_info)
 
-        self._audit_log("LIST", "*", f"count={len(result)}")
-        return result
+            self._audit_log("LIST", "*", f"count={len(result)}")
+            return result
+        except Exception as e:
+            print(f"⚠️  Failed to list keys: {e}")
+            return []
 
     def delete(self, name: str) -> bool:
         """
@@ -417,61 +468,69 @@ class APIWallet:
         Returns:
             True if deleted, False if not found
         """
-        if self.use_db:
-            success = self._delete_from_database(name)
-        else:
-            storage = self._load_storage()
-            original_count = len(storage["keys"])
-            storage["keys"] = [k for k in storage["keys"] if k["name"] != name]
-            success = len(storage["keys"]) < original_count
+        try:
+            if self.use_db:
+                success = self._delete_from_database(name)
+            else:
+                storage = self._load_storage()
+                original_count = len(storage["keys"])
+                storage["keys"] = [k for k in storage["keys"] if k["name"] != name]
+                success = len(storage["keys"]) < original_count
+
+                if success:
+                    self._save_storage(storage)
 
             if success:
-                self._save_storage(storage)
+                self._audit_log("DELETE", name, "Success")
+            else:
+                self._audit_log("DELETE_FAILED", name, "Key not found")
 
-        if success:
-            self._audit_log("DELETE", name, "Success")
-        else:
-            self._audit_log("DELETE_FAILED", name, "Key not found")
-
-        return success
+            return success
+        except Exception as e:
+            self._audit_log("DELETE_ERROR", name, str(e))
+            print(f"⚠️  Failed to delete key '{name}': {e}")
+            return False
 
     def _update_access_stats(self, name: str) -> None:
         """Update access statistics for a key (Local + Redis Sync)"""
         service_name = "unknown"
 
         # 1. Update Local Storage
-        if self.use_db:
-            sql = """
-            UPDATE api_keys
-            SET last_accessed = %s, access_count = access_count + 1
-            WHERE name = %s
-            RETURNING service;
-            """
-            conn = None
-            try:
-                conn = self._get_connection()
-                with conn.cursor() as cur:
-                    cur.execute(sql, (datetime.now(), name))
-                    result = cur.fetchone()
-                    if result:
-                        service_name = result[0] or "unknown"
-                conn.commit()
-            except Exception as e:
-                print(f"⚠️  Failed to update access stats in DB: {e}")
-                if conn:
-                    conn.rollback()
-            finally:
-                if conn:
-                    self._release_connection(conn)
-        else:
-            storage = self._load_storage()
-            for key in storage["keys"]:
-                if key["name"] == name:
-                    key["last_accessed"] = datetime.now().isoformat()
-                    key["access_count"] = key.get("access_count", 0) + 1
-                    service_name = key.get("service", "unknown")
-                    break
-            self._save_storage(storage)
+        try:
+            if self.use_db:
+                sql = """
+                UPDATE api_keys
+                SET last_accessed = %s, access_count = access_count + 1
+                WHERE name = %s
+                RETURNING service;
+                """
+                conn = None
+                try:
+                    conn = self._get_connection()
+                    with conn.cursor() as cur:
+                        cur.execute(sql, (datetime.now(), name))
+                        result = cur.fetchone()
+                        if result:
+                            service_name = result[0] or "unknown"
+                    conn.commit()
+                except Exception as e:
+                    print(f"⚠️  Failed to update access stats in DB: {e}")
+                    if conn:
+                        conn.rollback()
+                finally:
+                    if conn:
+                        self._release_connection(conn)
+            else:
+                storage = self._load_storage()
+                for key in storage["keys"]:
+                    if key["name"] == name:
+                        key["last_accessed"] = datetime.now().isoformat()
+                        key["access_count"] = key.get("access_count", 0) + 1
+                        service_name = key.get("service", "unknown")
+                        break
+                self._save_storage(storage)
+        except Exception as e:
+            print(f"⚠️  Local access stats update failed: {e}")
 
         # 2. Sync to Redis (Monitoring Service)
         try:
@@ -574,30 +633,46 @@ class APIWallet:
 
     def test_api(self, api_id: str) -> dict[str, Any]:
         """Test API connection"""
-        api_info = self.get_api(api_id)
-        if not api_info:
-            return {"success": False, "error": "API not found"}
+        try:
+            api_info = self.get_api(api_id)
+            if not api_info:
+                return {"success": False, "error": "API not found"}
 
-        # Basic test - just check if key exists and is accessible
-        return {
-            "success": True,
-            "api_id": api_id,
-            "service": api_info.get("service", "unknown"),
-            "last_accessed": api_info.get("last_accessed"),
-            "access_count": api_info.get("access_count", 0),
-        }
+            # Basic test - just check if key exists and is accessible
+            return {
+                "success": True,
+                "api_id": api_id,
+                "service": api_info.get("service", "unknown"),
+                "last_accessed": api_info.get("last_accessed"),
+                "access_count": api_info.get("access_count", 0),
+            }
+        except Exception as e:
+            print(f"⚠️  API test failed: {e}")
+            return {"success": False, "error": str(e)}
 
     # Database methods
     def _get_connection(self) -> Any:
         """Get connection from pool or use single connection"""
-        if hasattr(self.db, "getconn"):
-            return self.db.getconn()
-        return self.db
+        try:
+            if self.db is None:
+                raise RuntimeError("Database connection not initialized")
+            if hasattr(self.db, "getconn"):
+                return self.db.getconn()
+            return self.db
+        except Exception as e:
+            print(f"⚠️  Database connection error: {e}")
+            raise
 
-    def _release_connection(self, conn: object) -> None:
+    def _release_connection(self, conn: Any) -> None:
         """Release connection back to pool"""
-        if hasattr(self.db, "putconn"):
-            self.db.putconn(conn)
+        try:
+            if self.db is None:
+                # Should not happen if _get_connection was successful
+                return
+            if hasattr(self.db, "putconn"):
+                self.db.putconn(conn)
+        except Exception as e:
+            print(f"⚠️  Database release error: {e}")
 
     def _ensure_table_exists(self) -> None:
         """Create api_keys table if not exists"""
@@ -646,7 +721,10 @@ class APIWallet:
             conn = self._get_connection()
             with conn.cursor() as cur:
                 cur.execute(sql, key_data)
-                key_id = cur.fetchone()[0]
+                result = cur.fetchone()
+                if result is None:
+                    raise RuntimeError("Failed to retrieve ID after insert")
+                key_id = result[0]
             conn.commit()
             return int(key_id)
         except Exception as e:
@@ -692,12 +770,21 @@ class APIWallet:
             keys = []
             for row in results:
                 r = dict(row)
-                if r.get("created_at"):
+                if r.get("created_at") and hasattr(r["created_at"], "isoformat"):
                     r["created_at"] = r["created_at"].isoformat()
-                if r.get("last_accessed"):
+                elif r.get("created_at"):
+                    r["created_at"] = str(r["created_at"])
+                    
+                if r.get("last_accessed") and hasattr(r["last_accessed"], "isoformat"):
                     r["last_accessed"] = r["last_accessed"].isoformat()
+                elif r.get("last_accessed"):
+                    r["last_accessed"] = str(r["last_accessed"])
+                    
                 keys.append(r)
             return keys
+        except Exception as e:
+            print(f"⚠️  Updated list from DB failed: {e}")
+            raise
         finally:
             if conn:
                 self._release_connection(conn)
@@ -745,48 +832,53 @@ def main() -> None:
 
     command = sys.argv[1]
 
-    if command == "add":
-        if len(sys.argv) < 4:
-            print("Usage: python api_wallet.py add <name> <key> [service]")
-            sys.exit(1)
+    try:
+        if command == "add":
+            if len(sys.argv) < 4:
+                print("Usage: python api_wallet.py add <name> <key> [service]")
+                sys.exit(1)
 
-        name = sys.argv[2]
-        key = sys.argv[3]
-        service = sys.argv[4] if len(sys.argv) > 4 else ""
+            name = sys.argv[2]
+            key = sys.argv[3]
+            service = sys.argv[4] if len(sys.argv) > 4 else ""
 
-        key_id = wallet.add(name, key, service=service)
-        print(f"✅ Added key '{name}' with ID {key_id}")
+            key_id = wallet.add(name, key, service=service)
+            print(f"✅ Added key '{name}' with ID {key_id}")
 
-    elif command == "get":
-        if len(sys.argv) < 3:
-            print("Usage: python api_wallet.py get <name>")
-            sys.exit(1)
+        elif command == "get":
+            if len(sys.argv) < 3:
+                print("Usage: python api_wallet.py get <name>")
+                sys.exit(1)
 
-        name = sys.argv[2]
-        key = wallet.get(name) or ""
-        if key:
-            print(f"🔑 Key '{name}': {key}")
+            name = sys.argv[2]
+            key = wallet.get(name) or ""
+            if key:
+                print(f"🔑 Key '{name}': {key}")
+            else:
+                print(f"❌ Key '{name}' not found")
+
+        elif command == "list":
+            keys = wallet.list_keys()
+            print(f"📋 Wallet Keys ({len(keys)}):")
+            for k in keys:
+                print(f"  - {k['name']} ({k.get('service', 'unknown')})")
+
+        elif command == "delete":
+            if len(sys.argv) < 3:
+                print("Usage: python api_wallet.py delete <name>")
+                sys.exit(1)
+
+            name = sys.argv[2]
+            if wallet.delete(name):
+                print(f"🗑️  Deleted key '{name}'")
+            else:
+                print(f"❌ Key '{name}' not found")
+                sys.exit(1)
+
         else:
-            print(f"❌ Key '{name}' not found")
-
-    elif command == "list":
-        keys = wallet.list_keys()
-        print(f"📋 Wallet Keys ({len(keys)}):")
-        for k in keys:
-            print(f"  - {k['name']} ({k.get('service', 'unknown')})")
-
-    elif command == "delete":
-        if len(sys.argv) < 3:
-            print("Usage: python api_wallet.py delete <name>")
+            print(f"❌ Unknown command: {command}")
             sys.exit(1)
 
-        name = sys.argv[2]
-        if wallet.delete(name):
-            print(f"🗑️  Deleted key '{name}'")
-        else:
-            print(f"❌ Key '{name}' not found")
-            sys.exit(1)
-
-    else:
-        print(f"❌ Unknown command: {command}")
+    except Exception as e:
+        print(f"❌ Error executing command '{command}': {e}")
         sys.exit(1)

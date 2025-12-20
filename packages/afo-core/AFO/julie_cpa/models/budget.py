@@ -4,24 +4,24 @@ Phase 12 Extension: 예산 추적 및 리스크 연동
 
 "금고가 튼튼해야 왕국이 번영한다" — 本立道生
 """
-from datetime import datetime
-from typing import Optional
+
 from pydantic import BaseModel, Field
 
 
 class BudgetCategory(BaseModel):
     """예산 카테고리 모델"""
-    id: Optional[int] = None
+
+    id: int | None = None
     category: str = Field(..., description="예산 카테고리명")
     allocated: int = Field(..., description="할당된 금액 (KRW)")
     spent: int = Field(default=0, description="지출된 금액")
     remaining: int = Field(default=0, description="잔여 금액")
-    
+
     def calculate_remaining(self) -> int:
         """잔여 예산 자동 계산"""
         self.remaining = self.allocated - self.spent
         return self.remaining
-    
+
     def utilization_rate(self) -> float:
         """예산 사용률 (0-100%)"""
         if self.allocated == 0:
@@ -31,6 +31,7 @@ class BudgetCategory(BaseModel):
 
 class BudgetSummary(BaseModel):
     """예산 요약 (API 응답용)"""
+
     budgets: list[BudgetCategory]
     total_allocated: int
     total_spent: int
@@ -44,9 +45,10 @@ class BudgetSummary(BaseModel):
 
 class BudgetUpdate(BaseModel):
     """예산 업데이트 요청"""
+
     category: str
     amount: int  # 양수: 지출, 음수: 환불/조정
-    description: Optional[str] = None
+    description: str | None = None
     dry_run: bool = True  # 善: 안전 우선
 
 
