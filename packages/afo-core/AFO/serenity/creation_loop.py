@@ -11,14 +11,12 @@ Philosophy:
 
 from __future__ import annotations
 
-import os
 import logging
+import os
 import tempfile
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
 
-from AFO.config.antigravity import antigravity
 from AFO.utils.logging import log_sse
 
 # GenUI Orchestrator
@@ -129,11 +127,11 @@ class SerenityCreationLoop:
         """Generate React component via GenUI."""
         if not self.genui:
             return "// GenUI not available"
-            
+
         full_prompt = prompt
         if feedback:
             full_prompt = f"{prompt}\n\n[REFINEMENT FEEDBACK]: {feedback}"
-            
+
         try:
             # Note: Assuming self.genui.generate returns a dict with 'code'
             result = await self.genui.generate(full_prompt)
@@ -176,37 +174,37 @@ class SerenityCreationLoop:
         base_trinity = 0.85
         if trinity_manager:
             base_trinity = trinity_manager.get_current_metrics().trinity_score
-            
+
         truth_score = 1.0
         beauty_score = 1.0
         risk_score = 0.05
         feedback_list = []
-        
+
         # 1. Structural Truth (眞)
         if "export function GeneratedComponent" not in code:
             truth_score -= 0.2
             feedback_list.append("Missing 'export function GeneratedComponent'")
-            
+
         if len(code) < 100:
             truth_score -= 0.1
             feedback_list.append("Code is too sparse")
-            
+
         # 2. Visual Beauty (美)
         acc_score = verification.get("accessibility_score", 0)
         if acc_score < 70 and verification.get("status") == "PASS":
             beauty_score -= 0.1
             feedback_list.append("Low accessibility/visual structure detected")
-            
+
         if "className" not in code:
             beauty_score -= 0.1
             feedback_list.append("Tailwind CSS classes not used")
-            
+
         # 3. Final Calculation (SSOT weighted)
         # Trinity = 0.35*眞 + 0.35*善 + 0.20*美 + ...
         # Simplified for loop:
         final_trinity = (truth_score * 0.4) + (beauty_score * 0.3) + (base_trinity * 0.3)
         final_risk = risk_score + (0.1 if truth_score < 0.9 else 0.0)
-        
+
         return final_trinity, final_risk, "; ".join(feedback_list) if feedback_list else "Perfect alignment."
 
 # Singleton

@@ -2,8 +2,8 @@
 # (Graceful Degradation 구현 - PDF 에러 처리 기반)
 # 🧭 Trinity Score: 眞95% 善99% 美85% 孝99%
 
-from typing import Any, Callable, Dict, List, Optional
 import logging
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -14,7 +14,7 @@ class GracefulService:
     Ensures that core functionality remains available even when optional components fail.
     Implements the 'Fail Safe' and 'Degrade Gracefully' patterns.
     """
-    
+
     def __init__(self, dry_run: bool = False):
         self.core_functional = True  # 핵심 기능 상태
         self.dry_run = dry_run
@@ -27,7 +27,7 @@ class GracefulService:
         # In a real scenario, this might be a DB query or basic echo
         return f"핵심 응답 (Core Response): {query}"
 
-    def execute_optional(self, feature: str) -> Optional[str]:
+    def execute_optional(self, feature: str) -> str | None:
         """
         선택 기능: 실패 시 폴백 (Graceful Degradation)
         """
@@ -36,16 +36,16 @@ class GracefulService:
             if self.dry_run:
                  if feature == "risky_operation":
                      raise RuntimeError("DRY_RUN: Risky operation simulated failure")
-            
+
             # Logic for optional feature would go here
             return f"선택 기능 {feature} 실행 성공"
-            
+
         except Exception as e:
             # Log failure but return None to signal degradation
             logger.warning(f"[Graceful Degradation] 선택 기능 저하 ({feature}): {e} - 핵심 기능 유지")
             return None  # 폴백: None 반환 (점진적 저하)
 
-    def handle_query(self, query: str, optional_features: List[str]) -> Dict[str, Any]:
+    def handle_query(self, query: str, optional_features: list[str]) -> dict[str, Any]:
         """
         통합 실행: 핵심 + 선택 기능 (형님 평온 100%)
         """
@@ -59,13 +59,13 @@ class GracefulService:
 
         # 2. Execute Optionals (Protected)
         optional_results = [self.execute_optional(f) for f in optional_features]
-        
+
         # 3. Determine Status
         degraded = any(r is None for r in optional_results if r is not None) or not self.core_functional
         status = "Degraded Mode" if degraded else "Full Mode"
-        
+
         logger.info(f"[Graceful Degradation] 상태: {status} - 핵심 기능: {'정상' if self.core_functional else '실패'}")
-        
+
         return {
             "core": core_result,
             "optional": optional_results,

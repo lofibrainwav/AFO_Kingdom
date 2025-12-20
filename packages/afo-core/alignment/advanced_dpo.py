@@ -3,16 +3,17 @@
 # 🧭 Trinity Score: 眞95% 善99% 美95% 孝100% (Efficiency)
 
 import logging
+import os
+
+from datasets import load_dataset
+from peft import LoraConfig, TaskType
 from transformers import AutoModelForCausalLM, AutoTokenizer, TrainingArguments
 from trl import DPOTrainer
-from peft import LoraConfig, get_peft_model, TaskType
-from datasets import load_dataset
-import os
 
 logger = logging.getLogger(__name__)
 
 def run_advanced_dpo_lora(
-    model_name: str = "meta-llama/Llama-3-8b", 
+    model_name: str = "meta-llama/Llama-3-8b",
     data_path: str = "preference_data.json",
     output_dir: str = "./afo_dpo_lora_results"
 ):
@@ -43,7 +44,7 @@ def run_advanced_dpo_lora(
         task_type=TaskType.CAUSAL_LM,
         target_modules=["q_proj", "v_proj", "k_proj", "o_proj"] # Target Attention layers
     )
-    
+
     # 3. Load Data
     if not os.path.exists(data_path):
         logger.warning(f"⚠️ Data file {data_path} not found.")
@@ -56,13 +57,13 @@ def run_advanced_dpo_lora(
     # Adjusted for LoRA stability
     training_args = TrainingArguments(
         output_dir=output_dir,
-        
+
         # Strategy
         num_train_epochs=5,                 # More epochs for LoRA convergence
         per_device_train_batch_size=8,      # Higher batch allowed due to LoRA
         per_device_eval_batch_size=8,
         gradient_accumulation_steps=2,
-        
+
         # Optimization
         learning_rate=5e-5,                 # Higher LR typical for LoRA (vs 1e-5 for full fine-tune)
         weight_decay=0.005,
@@ -70,7 +71,7 @@ def run_advanced_dpo_lora(
         max_grad_norm=0.5,                  # Tighter clipping
         warmup_ratio=0.03,                  # Shorter warmup
         lr_scheduler_type="cosine",         # Cosine scheduler for better convergence
-        
+
         # Logistics
         logging_steps=5,
         save_strategy="steps",
@@ -80,7 +81,7 @@ def run_advanced_dpo_lora(
         load_best_model_at_end=True,
         metric_for_best_model="loss",       # Use eval_loss if available from DPO
         greater_is_better=False,
-        
+
         # System
         report_to="tensorboard",
         remove_unused_columns=False,
@@ -104,7 +105,7 @@ def run_advanced_dpo_lora(
     # 6. Execute Training
     logger.info("⚔️ [Advanced DPO] Starting LoRA-DPO Optimization...")
     trainer.train()
-    
+
     # 7. Save Adapter
     trainer.save_model(output_dir)
     logger.info(f"✅ [Advanced DPO] Adapter saved to {output_dir}")

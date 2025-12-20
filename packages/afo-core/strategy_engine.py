@@ -28,7 +28,7 @@ class MemoryContext:
             # Keep only last N turns
             if len(self.history) > self.max_turns * 2:
                 self.history = self.history[-self.max_turns * 2 :]
-        except Exception as e:
+        except Exception:
             # Silent failure for memory, or fallback logging
             pass
 

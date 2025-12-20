@@ -2,18 +2,18 @@
 
 import { useEffect, useState } from 'react';
 
-// Breakdown Interface
+// Breakdown Interface - now supports null for loading states
 export interface TrinityBreakdown {
-  truth: number;
-  goodness: number;
-  beauty: number;
-  filial_serenity: number;
-  eternity: number;
+  truth: number | null;
+  goodness: number | null;
+  beauty: number | null;
+  filial_serenity: number | null;
+  eternity: number | null;
 }
 
 interface TrinityGlowCardProps {
-  trinityScore: number; // 0.0 - 1.0
-  riskScore: number;    // 0.0 - 1.0
+  trinityScore: number | null; // 0.0 - 1.0, null = loading
+  riskScore: number | null;    // 0.0 - 1.0, null = loading
   breakdown?: TrinityBreakdown;
   children?: React.ReactNode;
 }
@@ -38,16 +38,17 @@ export function TrinityGlowCard({ trinityScore, riskScore, breakdown, children }
     return () => clearInterval(interval);
   }, []);
 
-  // Determine glow color based on score
+  // Determine glow color based on score (null = gray/loading)
   const getGlowColor = (): string => {
+    if (trinityScore === null) return '#6b7280'; // Gray for loading
     if (trinityScore >= 0.9) return '#22c55e'; // Green
     if (trinityScore >= 0.7) return '#eab308'; // Yellow
     return '#ef4444'; // Red
   };
 
   const glowColor = getGlowColor();
-  const glowStrength = Math.round(trinityScore * 30);
-  const riskOverlay = riskScore > 0.1 ? riskScore * 0.3 : 0;
+  const glowStrength = trinityScore !== null ? Math.round(trinityScore * 30) : 5;
+  const riskOverlay = riskScore !== null && riskScore > 0.1 ? riskScore * 0.3 : 0;
 
   return (
     <div style={{
@@ -92,23 +93,23 @@ export function TrinityGlowCard({ trinityScore, riskScore, breakdown, children }
           }}>
               <div title="Truth (35%)" style={{textAlign: 'center'}}>
                  <div style={{color: '#3b82f6'}}>眞</div>
-                 <div>{(breakdown.truth * 100).toFixed(0)}</div>
+                 <div>{breakdown.truth !== null ? (breakdown.truth * 100).toFixed(0) : '--'}</div>
               </div>
               <div title="Goodness (35%)" style={{textAlign: 'center'}}>
                  <div style={{color: '#22c55e'}}>善</div>
-                 <div>{(breakdown.goodness * 100).toFixed(0)}</div>
+                 <div>{breakdown.goodness !== null ? (breakdown.goodness * 100).toFixed(0) : '--'}</div>
               </div>
               <div title="Beauty (20%)" style={{textAlign: 'center'}}>
                  <div style={{color: '#ec4899'}}>美</div>
-                 <div>{(breakdown.beauty * 100).toFixed(0)}</div>
+                 <div>{breakdown.beauty !== null ? (breakdown.beauty * 100).toFixed(0) : '--'}</div>
               </div>
               <div title="Serenity (8%)" style={{textAlign: 'center'}}>
                  <div style={{color: '#a855f7'}}>孝</div>
-                 <div>{(breakdown.filial_serenity * 100).toFixed(0)}</div>
+                 <div>{breakdown.filial_serenity !== null ? (breakdown.filial_serenity * 100).toFixed(0) : '--'}</div>
               </div>
               <div title="Eternity (2%)" style={{textAlign: 'center'}}>
                  <div style={{color: '#f59e0b'}}>永</div>
-                 <div>{(breakdown.eternity * 100).toFixed(0)}</div>
+                 <div>{breakdown.eternity !== null ? (breakdown.eternity * 100).toFixed(0) : '--'}</div>
               </div>
           </div>
       )}
@@ -123,9 +124,9 @@ export function TrinityGlowCard({ trinityScore, riskScore, breakdown, children }
             fontSize: '0.875rem',
         }}>
             <span style={{ color: glowColor, fontWeight: 600 }}>
-            ⚖️ {(trinityScore * 100).toFixed(0)}%
+            ⚖️ {trinityScore !== null ? `${(trinityScore * 100).toFixed(0)}%` : 'Loading...'}
             </span>
-            {riskScore > 0.1 && (
+            {riskScore !== null && riskScore > 0.1 && (
             <span style={{ color: '#ef4444', fontWeight: 600 }}>
                 ⚠️ Risk: {(riskScore * 100).toFixed(0)}%
             </span>

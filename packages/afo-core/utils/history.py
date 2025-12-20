@@ -2,10 +2,10 @@
 # (Historian - 영(永) 기록 보관소)
 # 🧭 Trinity Score: 眞95% 善99% 美90% 孝95%
 
-import logging
 import json
+import logging
 from datetime import datetime
-from typing import Any, Dict
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -14,15 +14,15 @@ class Historian:
     Historian (영(永)): The Keeper of Records.
     Ensures that every decision and action of the Royal Council is recorded for posterity.
     """
-    
+
     @staticmethod
-    def record(query: str, trinity_score: float, status: str, metadata: Dict[str, Any] = None):
+    def record(query: str, trinity_score: float, status: str, metadata: dict[str, Any] = None):
         """
         Records a major event/decision to the Chronicles.
         """
         if metadata is None:
             metadata = {}
-            
+
         record_entry = {
             "timestamp": datetime.now().isoformat(),
             "query": query,
@@ -31,13 +31,13 @@ class Historian:
             "metadata": metadata,
             "philosophy": "Eternity (永)"
         }
-        
+
         # 1. Log to System Log (Immediate Truth)
         logger.info(f"📜 [Historian] Chronicle Entry: {json.dumps(record_entry, ensure_ascii=False)}")
-        
+
         # 2. (Future) Append to Obsidian / Database
         # This implementation serves as the foundational interface.
-        
+
         return record_entry
 
     @staticmethod

@@ -206,7 +206,7 @@ def calculate_trinity(*args: Any, **kwargs: Any) -> Any:
         from AFO.domain.metrics.trinity import calculate_trinity as real_calculate
 
         return real_calculate(*args, **kwargs)
-    except Exception as e:
+    except Exception:
         # Fallback to mock if import fails or execution fails
         # Try importing TrinityMetrics to return a mock instance
         try:

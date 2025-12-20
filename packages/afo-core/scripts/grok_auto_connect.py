@@ -60,7 +60,7 @@ def extract_grok_token():
             if found_token:
                 break
 
-        except Exception as e:
+        except Exception:
             # db lock or generic error
             # print(f"   (Skip {profile}: {e})")
             pass
