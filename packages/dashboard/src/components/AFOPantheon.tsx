@@ -8,6 +8,8 @@ import { SandboxCanvas } from './genui/SandboxCanvas';
 import { AICPAJulieWidget } from './genui/AICPAJulieWidget';
 import { SSOTMonitor } from './genui/SSOTMonitor';
 import { JulieCPAWidget } from './genui/JulieCPAWidget';
+import { GenesisWidget } from './genui/GenesisWidget';
+import { FinalEternalVictoryWidget } from './genui/FinalEternalVictoryWidget';
 import { useSpatialAudio } from '../hooks/useSpatialAudio';
 
 interface PantheonState {
@@ -265,6 +267,11 @@ export function AFOPantheon() {
            </div>
         </div>
         
+        {/* Project Genesis (Self-Expanding Kingdom - v100.0) */}
+        <div style={{ gridColumn: '1 / -1', marginTop: '1.5rem' }}>
+             <GenesisWidget />
+        </div>
+        
         {/* Julie CPA (Financial Guardian - Phase 12) */}
         <div style={{ gridColumn: '1 / -1', marginTop: '1rem' }}>
              <JulieCPAWidget />
@@ -273,6 +280,11 @@ export function AFOPantheon() {
         {/* SSOT Monitor (Compass) */}
         <div style={{ gridColumn: '1 / -1', marginTop: '1rem' }}>
              <SSOTMonitor />
+        </div>
+
+        {/* 🏆 FINAL ETERNAL VICTORY SEAL (v100.0) */}
+        <div style={{ gridColumn: '1 / -1', marginTop: '3rem', marginBottom: '4rem' }}>
+             <FinalEternalVictoryWidget />
         </div>
       </div>
 

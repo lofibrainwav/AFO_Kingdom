@@ -3,11 +3,10 @@
 
 from dataclasses import dataclass
 from datetime import datetime
+from decimal import Decimal
 
 from AFO.security.vault_manager import vault
-
 from config.antigravity import antigravity
-from decimal import Decimal
 
 
 @dataclass
@@ -71,29 +70,31 @@ class FrictionCalibrator:
         # 5. 재정적 마찰 (Financial Friction) - Phase 13
         # 돈 계산이 부정확하거나(Float), 복구 불가능하면(No Undo) 마찰 발생
         try:
-             # Lazy import to avoid circular dependency
-             try:
-                 from julie_cpa.core.julie_engine import julie
-             except ImportError:
-                 from packages.afo_core.julie_cpa.core.julie_engine import julie
-                 
-             if isinstance(julie.monthly_spending, Decimal) and isinstance(julie.budget_limit, Decimal):
-                 pass # Precision OK
-             else:
-                 score -= 15
-                 friction_reasons.append("Financial Precision Risk (Float Usage)")
-                 
-             # Check Undo Capability (Command History)
-             if hasattr(julie, 'command_history'):
-                 pass
-             else:
-                 score -= 5
-                 friction_reasons.append("Financial Irreversibility (No Undo)")
-                 
+            # Lazy import to avoid circular dependency
+            try:
+                from julie_cpa.core.julie_engine import julie
+            except ImportError:
+                from packages.afo_core.julie_cpa.core.julie_engine import julie  # type: ignore[no-redef]
+
+            if isinstance(julie.monthly_spending, Decimal) and isinstance(
+                julie.budget_limit, Decimal
+            ):
+                pass  # Precision OK
+            else:
+                score -= 15
+                friction_reasons.append("Financial Precision Risk (Float Usage)")
+
+            # Check Undo Capability (Command History)
+            if hasattr(julie, "command_history"):
+                pass
+            else:
+                score -= 5
+                friction_reasons.append("Financial Irreversibility (No Undo)")
+
         except Exception as e:
             # If Julie module is missing or error, slight friction
             score -= 2
-            friction_reasons.append(f"Financial Module Check Fail: {str(e)}")
+            friction_reasons.append(f"Financial Module Check Fail: {e!s}")
 
         # 점수 보정
         score = max(0, score)

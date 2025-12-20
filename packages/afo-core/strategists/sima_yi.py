@@ -1,5 +1,6 @@
-from .base import robust_execute, log_action
-from typing import Dict, Any
+from typing import Any
+
+from .base import log_action, robust_execute
 
 try:
     from AFO.config.antigravity import antigravity
@@ -7,22 +8,25 @@ except ImportError:
     # Dependency Injection Stub / Fallback Configuration
     class MockAntiGravity:
         DRY_RUN_DEFAULT = True
+
     antigravity = MockAntiGravity()
 
-def review(query_data: Dict[str, Any]) -> float:
+
+def review(query_data: dict[str, Any]) -> float:
     """
     Sima Yi (Goodness): Risk & Ethics Review
-    
+
     [Goodness Philosophy]:
     - Safety First: Check Risk Level and Dry Run status.
     - Graceful Degradation: If checking fails, assume high risk (0.0).
     """
+
     def _logic(data):
         risk_level = data.get("risk_level", 0.0)
         if risk_level > 0.1:
             print(f"[Sima Yi 善] Risk too high: {risk_level}")
             return 0.0
-        
+
         dry_run_score = 1.0 if antigravity.DRY_RUN_DEFAULT else 0.0
         ethics_score = 1.0 if "ethics_pass" in data else 0.0
         return (dry_run_score + ethics_score) / 2
@@ -31,3 +35,6 @@ def review(query_data: Dict[str, Any]) -> float:
     result = robust_execute(_logic, query_data, fallback_value=0.0)
     log_action("Sima Yi 善", result)
     return result
+
+# V2 Interface Alias
+goodness_review = review

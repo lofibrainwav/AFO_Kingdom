@@ -1,7 +1,8 @@
-from dataclasses import dataclass, field
-from decimal import Decimal
-from datetime import datetime
 import random
+from dataclasses import dataclass
+from datetime import datetime
+from decimal import Decimal
+
 
 @dataclass
 class Transaction:
@@ -10,9 +11,9 @@ class Transaction:
     amount: Decimal
     merchant: str
     category: str = "Uncategorized"
-    
+
     @staticmethod
-    def mock() -> 'Transaction':
+    def mock() -> "Transaction":
         """Generate a mock transaction for DRY_RUN"""
         amounts = [Decimal("10.50"), Decimal("4.25"), Decimal("100.00"), Decimal("42.99")]
         merchants = ["Starbucks", "Uber", "Amazon", "K-Town Market"]
@@ -20,5 +21,5 @@ class Transaction:
             id=f"txn_{random.randint(1000, 9999)}",
             date=datetime.now(),
             amount=random.choice(amounts),
-            merchant=random.choice(merchants)
+            merchant=random.choice(merchants),
         )

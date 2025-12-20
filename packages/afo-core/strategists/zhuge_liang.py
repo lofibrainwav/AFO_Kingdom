@@ -1,21 +1,26 @@
-from .base import robust_execute, log_action
-from typing import Dict, Any
-from pydantic import BaseModel, ValidationError, Field
+from typing import Any
+
+from pydantic import BaseModel, Field
+
+from .base import log_action, robust_execute
+
 
 # Defines the data contract for Truth verification (Modular Interface)
 class QueryModel(BaseModel):
     query: str = Field(..., description="Query body - Required")
-    context: Dict[str, Any] = Field(default_factory=dict, description="Context data")
+    context: dict[str, Any] = Field(default_factory=dict, description="Context data")
     validation_level: int = Field(1, ge=1, le=10, description="Validation Intensity")
 
-def evaluate(query_data: Dict[str, Any]) -> float:
+
+def evaluate(query_data: dict[str, Any]) -> float:
     """
     Zhuge Liang (Truth): Architectural Validation
-    
-    [Modular Design Benefit]: 
+
+    [Modular Design Benefit]:
     - Isolated Logic: Validation rules are encapsulated here.
     - Testability: Can be unit tested independently with mock data.
     """
+
     def _logic(data):
         # Truth Verification Logic
         model = QueryModel(**data)
@@ -28,3 +33,6 @@ def evaluate(query_data: Dict[str, Any]) -> float:
     result = robust_execute(_logic, query_data, fallback_value=0.5)
     log_action("Zhuge Liang 眞", result)
     return result
+
+# V2 Interface Alias
+truth_evaluate = evaluate

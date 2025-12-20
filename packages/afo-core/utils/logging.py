@@ -1,6 +1,7 @@
 import sys
 from datetime import datetime
 
+
 def log_sse(message: str):
     """
     Log message in a format compatible with Server-Sent Events (SSE) or structured logs.

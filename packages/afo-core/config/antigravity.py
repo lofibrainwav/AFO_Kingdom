@@ -25,7 +25,7 @@ class AntiGravitySettings(BaseSettings):
     CENTRAL_CONFIG_SYNC: bool = True  # 중앙 설정 동기화 (永: 영속성)
     AUTO_SYNC: bool = True  # 자동 동기화 활성화 (孝: 설정 마찰 제거)
     SELF_EXPANDING_MODE: bool = True  # 자율 확장 모드 (永: 창조자 트랙 활성화)
-    
+
     # [NEW] Phase 0: Logging Level Enforcement (眞: 관찰 강화)
     @property
     def LOG_LEVEL(self) -> str:
