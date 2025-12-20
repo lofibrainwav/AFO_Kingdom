@@ -5,8 +5,7 @@ PDF 핵심 철학 구현 25/25: Constitutional AI 원칙 주입
 """
 
 import logging
-import json
-from typing import Any, Dict, Tuple
+
 from AFO.julie_cpa.grok_engine import consult_grok
 
 logger = logging.getLogger("AFO.Constitution")
@@ -73,37 +72,37 @@ class AFOConstitution:
         return True, "Aligned with AFO Constitution."
 
     @classmethod
-    async def critique_and_revise(cls, query: str, response: str) -> Tuple[str, str, str]:
+    async def critique_and_revise(cls, query: str, response: str) -> tuple[str, str, str]:
         """
         [CAI] Self-Critique and Revision Loop (Anthropic Style).
         Returns (critique, revised_response, type).
         """
         principles_str = "\n".join(cls.PRINCIPLES)
-        
+
         prompt = {
             "task": "constitutional_critique",
             "principles": principles_str,
             "query": query,
             "response_to_critique": response
         }
-        
+
         try:
             # Use Grok for moral adjudication
             log_msg = f"🔍 [Constitutional AI] Critiquing response for query: '{query[:50]}...'"
             logger.info(log_msg)
-            
+
             # Note: consult_grok handles its own caching and trinity logic
             analysis = await consult_grok(prompt, market_context="moral_critique", trinity_score=98)
-            
+
             critique = analysis.get("analysis", "No critique provided.")
             revised = analysis.get("action_items", [response])[0] if "action_items" in analysis else response
-            
+
             # If Grok suggests a revision, we treat it as the 'Chosen' response
             if "REVISED" in str(analysis).upper() or revised != response:
                 return critique, revised, "REVISED"
-            
+
             return "Response is compliant.", response, "COMPLIANT"
-            
+
         except Exception as e:
             logger.error(f"[Constitutional AI] Critique cycle failed: {e}")
             return f"Critique error: {e}", response, "FAILED"

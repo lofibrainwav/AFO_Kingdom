@@ -2,10 +2,11 @@
 # [Serenity] Autonomous UI Creation API
 # 眞95% 善100% 美90% 孝95%
 
+
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from typing import Any, Dict
-from AFO.serenity.creation_loop import serenity_loop, create_ui_from_prompt
+
+from AFO.serenity.creation_loop import serenity_loop
 
 router = APIRouter(prefix="/serenity", tags=["Serenity (GenUI)"])
 
@@ -39,7 +40,7 @@ async def create_ui(request: SerenityCreateRequest):
             feedback=result.feedback
         )
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Serenity creation failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Serenity creation failed: {e!s}")
 
 @router.get("/status")
 async def get_serenity_status():

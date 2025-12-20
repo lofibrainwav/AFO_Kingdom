@@ -74,7 +74,9 @@ class FrictionCalibrator:
             try:
                 from julie_cpa.core.julie_engine import julie
             except ImportError:
-                from packages.afo_core.julie_cpa.core.julie_engine import julie  # type: ignore[no-redef]
+                from packages.afo_core.julie_cpa.core.julie_engine import (
+                    julie,  # type: ignore[no-redef]
+                )
 
             if isinstance(julie.monthly_spending, Decimal) and isinstance(
                 julie.budget_limit, Decimal

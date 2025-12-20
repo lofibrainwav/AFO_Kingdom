@@ -13,18 +13,18 @@ import { FinalEternalVictoryWidget } from './genui/FinalEternalVictoryWidget';
 import { useSpatialAudio } from '../hooks/useSpatialAudio';
 
 interface PantheonState {
-  trinityScore: number;
-  riskScore: number;
-  healthStatus: 'excellent' | 'good' | 'warning' | 'critical';
+  trinityScore: number | null;
+  riskScore: number | null;
+  healthStatus: 'excellent' | 'good' | 'warning' | 'critical' | 'loading';
   servicesOnline: number;
   totalServices: number;
   lastUpdate: string;
   breakdown?: {
-      truth: number;
-      goodness: number;
-      beauty: number;
-      filial_serenity: number;
-      eternity: number;
+      truth: number | null;
+      goodness: number | null;
+      beauty: number | null;
+      filial_serenity: number | null;
+      eternity: number | null;
   };
 }
 
@@ -32,11 +32,11 @@ interface PantheonState {
 
 export function AFOPantheon() {
   const [state, setState] = useState<PantheonState>({
-    trinityScore: 1.0,
-    riskScore: 0.0,
-    healthStatus: 'excellent',
-    servicesOnline: 11,
-    totalServices: 11,
+    trinityScore: null,      // ✅ Unknown until fetched (no more fake 100%)
+    riskScore: null,
+    healthStatus: 'loading', // ✅ Shows loading state until verified
+    servicesOnline: 0,       // ✅ Zero until backend confirms
+    totalServices: 0,
     lastUpdate: new Date().toISOString(),
   });
 
@@ -167,10 +167,10 @@ export function AFOPantheon() {
             <div style={{
               fontSize: '2.5rem',
               fontWeight: 'bold',
-              color: state.trinityScore >= 0.9 ? '#22c55e' : state.trinityScore >= 0.7 ? '#eab308' : '#ef4444',
+              color: state.trinityScore === null ? '#6b7280' : state.trinityScore >= 0.9 ? '#22c55e' : state.trinityScore >= 0.7 ? '#eab308' : '#ef4444',
               marginTop: '0.5rem',
             }}>
-              {(state.trinityScore * 100).toFixed(0)}%
+              {state.trinityScore !== null ? `${(state.trinityScore * 100).toFixed(0)}%` : 'Loading...'}
             </div>
           </div>
         </TrinityGlowCard>
@@ -300,7 +300,7 @@ export function AFOPantheon() {
           border: '1px solid rgba(255,255,255,0.2)',
           boxShadow: '0 10px 40px rgba(0,0,0,0.5)',
         }}>
-          <VoiceReactivePanel baseTrinityScore={state.trinityScore} baseRiskScore={state.riskScore} />
+          <VoiceReactivePanel baseTrinityScore={state.trinityScore ?? undefined} baseRiskScore={state.riskScore ?? undefined} />
         </div>
       )}
     </div>

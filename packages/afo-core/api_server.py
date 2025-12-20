@@ -578,12 +578,12 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
     # Compile with MemorySaver (no context manager needed)
     print("[지휘소 v6】 LangGraph 설계도를 컴파일하여 '두뇌'를 완성합니다...")
-    
+
     # 1. Try Real Brain (Chancellor Graph)
     if chancellor_graph_runnable is not None:
         strategy_app_runnable = chancellor_graph_runnable
         print("[지휘소 v6】 '진정한 두뇌' (Chancellor Graph) 가동 준비 완료. (True Intelligence)")
-        
+
     # 2. Fallback to Workflow Mock Compilation
     elif workflow is not None and memory_context is not None:
         try:

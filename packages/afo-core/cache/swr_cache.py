@@ -2,12 +2,12 @@
 # (Stale-While-Revalidate 구현 - PDF 성능 최적화 기반)
 # 🧭 Trinity Score: 眞85% 善95% 美99% 孝100%
 
-import json
-import time
 import asyncio
+import json
 import logging
-from typing import Any, Callable, Optional, Union
-from datetime import datetime
+import time
+from collections.abc import Callable
+from typing import Any
 
 # Assume AFO redis client wrapper or standard redis
 try:
@@ -29,7 +29,7 @@ async def background_revalidate(key: str, fetch_func: Callable[[], Any], ttl: in
         data = fetch_func()  # This might be async in real app, keeping simple for pattern
         if asyncio.iscoroutine(data):
             data = await data
-            
+
         # Update Cache
         if redis_client:
             payload = {
@@ -37,7 +37,7 @@ async def background_revalidate(key: str, fetch_func: Callable[[], Any], ttl: in
                 "timestamp": time.time()
             }
             redis_client.set(key, json.dumps(payload), ex=ttl + swr_grace)
-            
+
         logger.info(f"[SWR] Revalidation complete for {key}")
     except Exception as e:
         logger.error(f"[SWR] Background revalidation failed for {key}: {e}")
@@ -59,20 +59,20 @@ def get_with_swr(key: str, fetch_func: Callable[[], Any], max_age: int = 60, swr
         return fetch_func()
 
     cached_raw = redis_client.get(key)
-    
+
     if cached_raw:
         try:
             cached_entry = json.loads(cached_raw)
             data = cached_entry.get("data")
             timestamp = cached_entry.get("timestamp", 0)
-            
+
             age = time.time() - timestamp
-            
+
             # Case 1: Fresh Hit
             if age < max_age:
                 logger.debug(f"[SWR] Fresh Hit: {key} (Age: {age:.1f}s)")
                 return data
-                
+
             # Case 2: Stale Hit (within grace period)
             if age < max_age + swr:
                 logger.info(f"[SWR] Stale Hit: {key} (Age: {age:.1f}s) - Triggering Revalidation")
@@ -84,19 +84,19 @@ def get_with_swr(key: str, fetch_func: Callable[[], Any], max_age: int = 60, swr
                     # Fallback for sync context or no loop (simple thread usage or skip)
                     pass
                 return data # Return stale data immediately
-                
+
         except json.JSONDecodeError:
             pass # Invalid cache, treat as miss
-    
+
     # Case 3: Miss or Expired
     logger.info(f"[SWR] Cache Miss/Expired: {key} - Fetching synchronously")
     data = fetch_func()
-    
+
     # Update Cache
     payload = {
         "data": data,
         "timestamp": time.time()
     }
     redis_client.set(key, json.dumps(payload), ex=max_age + swr)
-    
+
     return data

@@ -2,10 +2,11 @@
 # (Cache-Control Headers Optimization - PDF 성능 최적화 기반)
 # 🧭 Trinity Score: 眞90% 善95% 美95% 孝95%
 
-from fastapi import Response, Request
-from typing import Literal
 import hashlib
 import logging
+from typing import Literal
+
+from fastapi import Request, Response
 
 logger = logging.getLogger(__name__)
 
@@ -28,13 +29,13 @@ def set_optimized_cache_headers(
         asset_type: Strategy name ('static', 'dynamic', 'realtime', 'sensitive')
     """
     strategy = CACHE_STRATEGIES.get(asset_type, CACHE_STRATEGIES["dynamic"])
-    
+
     response.headers["Cache-Control"] = strategy
-    
+
     # Modern CDNs often respect this header for edge caching separate from browser
     if asset_type != "sensitive":
         response.headers["CDN-Cache-Control"] = strategy
-        
+
     logger.debug(f"[Cache-Control] Applied strategy '{asset_type}': {strategy}")
 
 def set_etag_and_cache(response: Response, content: bytes, asset_type: str):
@@ -45,10 +46,10 @@ def set_etag_and_cache(response: Response, content: bytes, asset_type: str):
     # 1. Generate ETag (Strong validation)
     etag = hashlib.md5(content).hexdigest()
     response.headers["ETag"] = f'"{etag}"'
-    
+
     # 2. Set Cache-Control
     set_optimized_cache_headers(response, asset_type)
-    
+
     logger.debug(f"[ETag] Generated: {etag}")
 
 def check_etag_match(request: Request, current_content: bytes) -> bool:
@@ -59,7 +60,7 @@ def check_etag_match(request: Request, current_content: bytes) -> bool:
     client_etag = request.headers.get("If-None-Match")
     if not client_etag:
         return False
-        
+
     current_etag = hashlib.md5(current_content).hexdigest()
     # Handle quoted etags
     return client_etag.strip('"') == current_etag

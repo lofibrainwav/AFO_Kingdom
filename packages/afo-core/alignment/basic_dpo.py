@@ -3,16 +3,17 @@
 # 🧭 Trinity Score: 眞95% 善99% 美90% 孝95%
 
 import logging
+import os
+
+from datasets import load_dataset
 from transformers import AutoModelForCausalLM, AutoTokenizer, TrainingArguments
 from trl import DPOTrainer
-from datasets import load_dataset
-import os
 
 # Configure Logger
 logger = logging.getLogger(__name__)
 
 def run_basic_dpo(
-    model_name: str = "gpt2", 
+    model_name: str = "gpt2",
     data_path: str = "preference_data.json",
     output_dir: str = "./afo_dpo_results"
 ):
@@ -24,18 +25,18 @@ def run_basic_dpo(
         data_path: Path to preference dataset (JSON format with 'prompt', 'chosen', 'rejected')
         output_dir: Directory to save the aligned model
     """
-    
+
     logger.info(f"🚀 [DPO] Initializing Basic DPO for model: {model_name}")
-    
+
     # 1. Load Model & Tokenizer
     # In a real scenario, use device_map="auto" for GPU
     model = AutoModelForCausalLM.from_pretrained(model_name)
     tokenizer = AutoTokenizer.from_pretrained(model_name)
-    
+
     # Fix for models without pad token (common in Llama/GPT)
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
-        
+
     # 2. Load Preference Dataset
     # Expected format: {"prompt": "...", "chosen": "...", "rejected": "..."}
     if not os.path.exists(data_path):
@@ -44,7 +45,7 @@ def run_basic_dpo(
         return
 
     dataset = load_dataset("json", data_files=data_path)
-    
+
     # Split dataset if no test split exists
     if "test" not in dataset:
         dataset = dataset["train"].train_test_split(test_size=0.1)
@@ -53,13 +54,13 @@ def run_basic_dpo(
     # Optimized for stability and convergence based on Rafailov et al. 2023
     training_args = TrainingArguments(
         output_dir=output_dir,
-        
+
         # Training Strategy
         num_train_epochs=3,              # Standard DPO stability range (1-3)
         per_device_train_batch_size=4,   # Low batch size for VRAM efficiency
         per_device_eval_batch_size=4,
         gradient_accumulation_steps=4,   # Effective batch size = 16
-        
+
         # Optimization
         learning_rate=1e-5,              # Lower IR for alignment than pre-training
         weight_decay=0.01,               # Regularization
@@ -67,7 +68,7 @@ def run_basic_dpo(
         optim="adamw_torch",             # Standard robust optimizer
         warmup_ratio=0.1,                # 10% warmup
         lr_scheduler_type="linear",      # Linear decay usually works best for DPO
-        
+
         # Logistics
         logging_steps=10,
         save_strategy="steps",
@@ -77,7 +78,7 @@ def run_basic_dpo(
         load_best_model_at_end=True,
         metric_for_best_model="loss",    # DPO Loss minimization
         greater_is_better=False,
-        
+
         # System
         report_to="tensorboard",         # Visibility (Truth)
         remove_unused_columns=False,     # Required for DPO dataset format
@@ -101,7 +102,7 @@ def run_basic_dpo(
     # 5. Execute Training
     logger.info("⚔️ [DPO] Starting Direct Preference Optimization...")
     trainer.train()
-    
+
     # 6. Save Artifacts
     trainer.save_model(output_dir)
     logger.info(f"✅ [DPO] Model aligned and saved to {output_dir}")
