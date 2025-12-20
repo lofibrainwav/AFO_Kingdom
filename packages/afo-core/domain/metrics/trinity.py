@@ -41,6 +41,7 @@ class TrinityInputs:
     def clamp(self) -> TrinityInputs:
         """값을 0.0 ~ 1.0 범위로 제한"""
         try:
+
             def c(x: float) -> float:
                 return max(0.0, min(1.0, x))
 

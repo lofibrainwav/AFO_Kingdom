@@ -173,7 +173,11 @@ def _combine_forecasts(
     predictions = []
     for i, (_, row) in enumerate(future_forecast.iterrows()):
         prophet_pred = row["yhat"]
-        correction = residual_correction[i] if residual_correction is not None and i < len(residual_correction) else 0
+        correction = (
+            residual_correction[i]
+            if residual_correction is not None and i < len(residual_correction)
+            else 0
+        )
         final_pred = prophet_pred + correction
 
         predictions.append(
@@ -191,7 +195,9 @@ def _combine_forecasts(
     return predictions
 
 
-def _calculate_metrics(predictions: list[dict[str, Any]], residual_corrected: bool) -> dict[str, Any]:
+def _calculate_metrics(
+    predictions: list[dict[str, Any]], residual_corrected: bool
+) -> dict[str, Any]:
     """Step 4: 정확도 메트릭 계산"""
     if not predictions:
         return {"confidence": 50, "total_final": 0, "total_prophet": 0, "average": 0}
@@ -271,7 +277,11 @@ def hybrid_predict(
         # Step 5: Advice
         advice = _generate_forecast_advice(historical_data, predictions, summary)
 
-        engine_name = "Hybrid (Prophet + auto_arima)" if summary["residual_corrected"] else "Prophet (고급 튜닝)"
+        engine_name = (
+            "Hybrid (Prophet + auto_arima)"
+            if summary["residual_corrected"]
+            else "Prophet (고급 튜닝)"
+        )
 
         return {
             "engine": engine_name,

@@ -184,6 +184,7 @@ OPENAI_AVAILABLE: bool = False
 try:
     from AFO.domain.metrics.trinity import TrinityMetrics
 except ImportError:
+
     class TrinityMetrics:  # type: ignore
         def __init__(self, **kwargs):
             self.trinity_score = 0.0
@@ -197,26 +198,29 @@ except ImportError:
         def to_dict(self) -> dict:
             return {}
 
+
 # Functions
 def calculate_trinity(*args: Any, **kwargs: Any) -> Any:
     try:
         # Try to use real function if available
         from AFO.domain.metrics.trinity import calculate_trinity as real_calculate
+
         return real_calculate(*args, **kwargs)
     except Exception as e:
         # Fallback to mock if import fails or execution fails
         # Try importing TrinityMetrics to return a mock instance
         try:
             from AFO.domain.metrics.trinity import TrinityMetrics
-             # If we have the class but function failed, we can't easily instantiate it 
-             # because it needs derived fields. 
-             # So we fall back into the Mock class below if possible, 
-             # OR we manually construct it with dummy derived fields if needed.
-             # But easier to just return the Mock object defined locally if we can.
+
+            # If we have the class but function failed, we can't easily instantiate it
+            # because it needs derived fields.
+            # So we fall back into the Mock class below if possible,
+            # OR we manually construct it with dummy derived fields if needed.
+            # But easier to just return the Mock object defined locally if we can.
             pass
         except ImportError:
             pass
-            
+
         # Return fallback mock
         m = TrinityMetrics()
         m.trinity_score = 0.8
@@ -343,7 +347,6 @@ def load_routers() -> None:
 
 
 load_routers()
-
 
 
 # 5. Antigravity Facade (Pure Control)

@@ -13,12 +13,13 @@ import httpx
 import redis.asyncio as redis
 
 # AFO internal imports
-from AFO.api.compat import calculate_trinity, TrinityMetrics
+from AFO.api.compat import TrinityMetrics, calculate_trinity
 from AFO.config.settings import get_settings
 from AFO.services.database import get_db_connection
 from AFO.utils.redis_connection import get_redis_url
 
 logger = logging.getLogger(__name__)
+
 
 async def check_redis() -> dict[str, Any]:
     """心_Redis 상태 체크"""
@@ -30,6 +31,7 @@ async def check_redis() -> dict[str, Any]:
     except Exception as e:
         return {"healthy": False, "output": f"Error: {str(e)[:50]}"}
 
+
 async def check_postgres() -> dict[str, Any]:
     """肝_Postgres 상태 체크"""
     try:
@@ -39,6 +41,7 @@ async def check_postgres() -> dict[str, Any]:
         return {"healthy": result == 1, "output": f"SELECT 1 -> {result}"}
     except Exception as e:
         return {"healthy": False, "output": f"Error: {str(e)[:50]}"}
+
 
 async def check_ollama() -> dict[str, Any]:
     """脾_Ollama 상태 체크"""
@@ -52,14 +55,16 @@ async def check_ollama() -> dict[str, Any]:
     except Exception as e:
         return {"healthy": False, "output": f"Error: {str(e)[:50]}"}
 
+
 async def check_self() -> dict[str, Any]:
     """肺_API_Server 자가 진단"""
     return {"healthy": True, "output": "Self-check: API responding"}
 
+
 async def get_comprehensive_health() -> dict[str, Any]:
     """종합 건강 상태 진단 및 Trinity Score 계산"""
     current_time = datetime.now().isoformat()
-    
+
     # 병렬 실행
     results = await asyncio.gather(
         check_redis(), check_postgres(), check_ollama(), check_self(), return_exceptions=True
@@ -67,21 +72,23 @@ async def get_comprehensive_health() -> dict[str, Any]:
 
     organ_names = ["心_Redis", "肝_PostgreSQL", "脾_Ollama", "肺_API_Server"]
     organs: list[dict[str, Any]] = []
-    
+
     for i, name in enumerate(organ_names):
         res = results[i]
         if isinstance(res, Exception):
             status_data = {"healthy": False, "output": str(res)}
         else:
-            status_data = cast(dict[str, Any], res)
-            
-        organs.append({
-            "organ": name,
-            "healthy": status_data["healthy"],
-            "status": "healthy" if status_data["healthy"] else "unhealthy",
-            "output": status_data["output"],
-            "timestamp": current_time,
-        })
+            status_data = cast("dict[str, Any]", res)
+
+        organs.append(
+            {
+                "organ": name,
+                "healthy": status_data["healthy"],
+                "status": "healthy" if status_data["healthy"] else "unhealthy",
+                "output": status_data["output"],
+                "timestamp": current_time,
+            }
+        )
 
     # Trinity 계산 (5기둥 SSOT 가중 합)
     healthy_count = sum(1 for o in organs if o["healthy"])
@@ -121,7 +128,7 @@ async def get_comprehensive_health() -> dict[str, Any]:
         failed = [o["organ"] for o in organs if o["organ"] in core_data_organs and not o["healthy"]]
         issues.append(f"眞(데이터 계층): {', '.join(failed)} 연결 실패")
         suggestions.append("docker-compose restart redis postgres")
-    
+
     if trinity_metrics.filial_serenity < 1.0:
         issues.append("孝(LLM 서비스): Ollama 연결 끊김")
         suggestions.append("docker start afo-ollama")

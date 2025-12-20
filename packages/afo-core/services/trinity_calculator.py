@@ -1,94 +1,78 @@
 """
-Trinity Score Calculator
-동적 Trinity Score 계산기 - 실시간 행동·상태 반영
+Trinity Score Calculator (SSOT)
+동적 Trinity Score 계산기 - SSOT 가중치 기반 정밀 산출
 PDF 페이지 1: Trinity Score 계산기, 페이지 3: 5대 가치 동적 평가
 """
 
 import logging
-from typing import Any
-
-from AFO.config.antigravity import antigravity
-from AFO.domain.persona import current_persona
+import numpy as np
+from typing import List, Dict, Any
+from config.friction_calibrator import friction_calibrator
 
 logger = logging.getLogger(__name__)
 
+# SSOT 가중치 (agents.md Ⅱ. SSOT)
+# Truth(35%), Goodness(35%), Beauty(20%), Serenity(8%), Eternity(2%)
+SSOT_WEIGHTS = np.array([0.35, 0.35, 0.20, 0.08, 0.02])
 
 class TrinityCalculator:
     """
-    동적 Trinity Score 계산기 - 실시간 행동·상태 반영
-
-    PDF 페이지 1: Trinity Score 계산기
-    PDF 페이지 3: 5대 가치 동적 평가
+    Trinity Score Calculator (SSOT Implementation)
     """
 
-    BASE_SCORES = {  # 기본 점수 (PDF 페이지 3: 5대 가치 구현 기준)
-        "truth": 100.0,
-        "goodness": 100.0,
-        "beauty": 100.0,
-        "serenity": 100.0,
-        "eternity": 100.0,
-    }
-
-    def calculate_dynamic(
-        self, action: str, context: dict[str, Any] | None = None
-    ) -> dict[str, Any]:
+    def calculate_raw_scores(self, query_data: Dict[str, Any]) -> List[float]:
         """
-        동적 점수 계산 - 행동에 따라 변동
-
-        PDF 페이지 1: Trinity Score 계산기
-        PDF 페이지 3: 5대 가치 동적 평가
-
-        Args:
-            action: 수행한 행동 (예: "receipt", "safe", "summary", "auto", "checkpoint")
-            context: 추가 맥락 정보
-
-        Returns:
-            계산된 Trinity Scores 및 총점
+        Calculates Raw Scores [0.0, 1.0] for each Pillar.
+        Ideally this delegates to specific evaluators (TruthVerifier, RiskGate, etc.)
+        For this service method, we implement the logic aggregation.
         """
-        if context is None:
-            context = {}
+        # 1. 眞 (Truth): Validation & Architecture
+        # Simplified logic based on input quality
+        truth = 1.0
+        if "invalid" in query_data or query_data.get("valid_structure") is False:
+            truth = 0.0
+            
+        # 2. 善 (Goodness): Risk & Ethics
+        goodness = 1.0
+        risk = query_data.get("risk_level", 0.0)
+        if risk > 0.1:
+            goodness = 0.0 # Block logic
+            
+        # 3. 美 (Beauty): Narrative & UX
+        beauty = 1.0
+        if query_data.get("narrative") == "partial":
+            beauty = 0.85
+            
+        # 4. 孝 (Serenity): Automation Friction
+        # Integrated with FrictionCalibrator (Phase 13)
+        serenity_metrics = friction_calibrator.calculate_serenity()
+        serenity = serenity_metrics.score / 100.0 # Normalize 0-100 to 0.0-1.0
+        
+        # 5. 永 (Eternity): Logging
+        eternity = 1.0
+        # Placeholder
+        
+        return [truth, goodness, beauty, serenity, eternity]
 
-        scores = self.BASE_SCORES.copy()
+    def calculate_trinity_score(self, raw_scores: List[float]) -> float:
+        """
+        Calculates final Trinity Score using SSOT Weights.
+        Range: 0.0 to 100.0
+        """
+        if len(raw_scores) != 5:
+            raise ValueError(f"Must have 5 raw scores, got {len(raw_scores)}")
+            
+        if not all(0.0 <= s <= 1.0 for s in raw_scores):
+            raise AssertionError("Raw scores must be between 0.0 and 1.0")
+            
+        # SSOT Weighted Sum
+        weighted_sum = np.dot(raw_scores, SSOT_WEIGHTS)
+        
+        # Scale to 100 and Round
+        final_score = round(weighted_sum * 100, 1)
+        
+        logger.info(f"[TrinityCalculator] Raw: {raw_scores} -> Score: {final_score}")
+        return final_score
 
-        # 眞 (Truth): 증거 기반 행동 시 가점
-        if "receipt" in action.lower() or "verified" in action.lower():
-            scores["truth"] = min(100.0, scores["truth"] + 5.0)
-            logger.debug("[眞: Truth] 증거 기반 행동 감지: +5점")
-
-        # 善 (Goodness): DRY_RUN 또는 안전 행동 시 가점
-        if antigravity.DRY_RUN_DEFAULT or "safe" in action.lower():
-            scores["goodness"] = min(100.0, scores["goodness"] + 10.0)
-            logger.debug("[善: Goodness] DRY_RUN/안전 행동 감지: +10점")
-
-        # 美 (Beauty): 우아한 응답(3줄 요약) 시 가점
-        response_length = len(context.get("response", ""))
-        if "summary" in action.lower() or response_length < 300:
-            scores["beauty"] = min(100.0, scores["beauty"] + 8.0)
-            logger.debug("[美: Beauty] 우아한 응답 감지: +8점")
-
-        # 孝 (Serenity): 마찰 제거 행동 시 가점
-        if "auto" in action.lower() or antigravity.AUTO_DEPLOY:
-            scores["serenity"] = min(100.0, scores["serenity"] + 10.0)
-            logger.debug("[孝: Serenity] 자동화 행동 감지: +10점")
-
-        # 永 (Eternity): 영속 저장 행동 시 가점
-        if "checkpoint" in action.lower() or "save" in action.lower():
-            scores["eternity"] = min(100.0, scores["eternity"] + 5.0)
-            logger.debug("[永: Eternity] 영속 저장 행동 감지: +5점")
-
-        total = sum(scores.values())
-        # 상한 초과 시 500으로 클립
-        if total > 500.0:
-            logger.warning(f"[TrinityCalculator] 총점 상한 초과: {total} → 500으로 클립")
-            total = 500.0
-
-        return {
-            "scores": scores,
-            "total": total,
-            "max": 500.0,
-            "persona": current_persona.name if current_persona else "unknown",
-        }
-
-
-# 싱글톤 인스턴스
+# Singleton Instance
 trinity_calculator = TrinityCalculator()

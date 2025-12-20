@@ -125,16 +125,17 @@ executor = ThreadPoolExecutor(max_workers=56)  # M4 Pro 풀가동
 def to_async(sync_func: Callable) -> Callable:
     """
     Synchronous function wrapper for async execution.
-    
+
     Uses ThreadPoolExecutor to run blocking code in a separate thread,
     preventing the event loop from being blocked.
-    
+
     Args:
         sync_func: The blocking synchronous function to wrap.
-        
+
     Returns:
         Callable: An async wrapper function.
     """
+
     async def wrapper(*args: Any, **kwargs: Any) -> Any:
         try:
             loop = asyncio.get_running_loop()
@@ -198,15 +199,15 @@ SKILLS_ROUTER_PERMANENT = True  # 이 플래그는 절대 False 안 됨
 def _fallback_router(name: str, exc: Exception, essential: bool = False) -> APIRouter:
     """
     Return an empty router when optional imports fail.
-    
+
     This implementation follows the 'Strangler Fig' pattern, ensuring
     the monolith survives valid limb failures.
-    
+
     Args:
         name: Name of the router (e.g., 'wallet').
         exc: Exception caught during import.
         essential: If True, sets global availability flag to False.
-        
+
     Returns:
         APIRouter: An empty router instance.
     """
@@ -241,10 +242,7 @@ from AFO.api.compat import (
     ANTHROPIC_AVAILABLE,
     OPENAI_AVAILABLE,
     # Functions
-    TrinityMetrics,
-    # Routers
     auth_router,
-    calculate_trinity,
     education_system_router,
     got_router,
     modal_data_router,
@@ -255,7 +253,6 @@ from AFO.api.compat import (
     skills_router,
     strangler_router,
     system_health_router,
-    thoughts_router,
     trinity_policy_router,
     trinity_router,
     trinity_sbt_router,
@@ -328,7 +325,7 @@ QueryExpander: Any = None
 try:
     from query_expansion_advanced import QueryExpander as _QE
 
-    QueryExpander = _QE  # noqa: N814
+    QueryExpander = _QE
 except ImportError:
     print("⚠️  QueryExpander not available (Phase 2.3 pending)")
 
@@ -337,7 +334,7 @@ MultimodalRAGEngine: Any = None
 try:
     from multimodal_rag_engine import MultimodalRAGEngine as _MRAE
 
-    MultimodalRAGEngine = _MRAE  # noqa: N814
+    MultimodalRAGEngine = _MRAE
 except ImportError:
     print("⚠️  MultimodalRAGEngine not available (Multimodal RAG Phase 2 pending)")
 
@@ -385,12 +382,12 @@ YeongdeokComplete: Any = None
 try:
     from AFO.memory_system.yeongdeok_complete import YeongdeokComplete as _YC
 
-    YeongdeokComplete = _YC  # noqa: N814
+    YeongdeokComplete = _YC
 except ImportError:
     try:
         from memory_system.yeongdeok_complete import YeongdeokComplete as _YC
 
-        YeongdeokComplete = _YC  # noqa: N814
+        YeongdeokComplete = _YC
     except ImportError:
         pass  # Silent - optional module
 
@@ -931,6 +928,7 @@ try:
 except Exception as e:
     print(f"⚠️ Security Hardening 설정 실패: {e}")
 
+
 # ============================================================
 # 전역 예외 처리 (FastAPI 베스트 프랙티스)
 # ============================================================
@@ -944,6 +942,7 @@ def to_async(func: Any) -> Any:
         return await loop.run_in_executor(None, func, *args, **kwargs)
 
     return run
+
 
 try:
     from typing import cast
@@ -1082,7 +1081,6 @@ if n8n_router:
 
 # 7. Wallet Router
 if wallet_router:
-
     app.include_router(
         wallet_router,
         # prefix="/api/wallet",  # Removed: Router already has prefix
@@ -1335,6 +1333,7 @@ pass
 async def _get_embedding_async_adapter(text: str, client: Any) -> list[float]:
     """眞 (Truth): Hybrid RAG 임베딩 추출 어댑터"""
     from AFO.services.hybrid_rag import get_embedding_async
+
     try:
         return cast("list[float]", await get_embedding_async(text, OPENAI_CLIENT))
     except Exception as e:
@@ -1347,6 +1346,7 @@ async def _query_pgvector_async_adapter(
 ) -> list[dict[str, Any]]:
     """眞 (Truth): Hybrid RAG PGVector 검색 어댑터"""
     from AFO.services.hybrid_rag import query_pgvector_async
+
     try:
         return cast("list[dict]", await query_pgvector_async(embedding, top_k, PG_POOL))
     except Exception as e:
@@ -1359,6 +1359,7 @@ async def _query_redis_async_adapter(
 ) -> list[dict[str, Any]]:
     """眞 (Truth): Hybrid RAG Redis 검색 어댑터"""
     from AFO.services.hybrid_rag import query_redis_async
+
     try:
         return cast("list[dict]", await query_redis_async(embedding, top_k, REDIS_CLIENT))
     except Exception as e:
@@ -1371,6 +1372,7 @@ async def _blend_results_async_adapter(
 ) -> list[dict[str, Any]]:
     """眞 (Truth): Hybrid RAG 결과 혼합 어댑터"""
     from AFO.services.hybrid_rag import blend_results_async
+
     try:
         return cast("list[dict]", await blend_results_async(pg_rows, redis_rows, top_k))
     except Exception as e:
@@ -1424,6 +1426,7 @@ async def read_root_legacy() -> dict[str, str]:
     """Legacy root endpoint - use root_router instead"""
     try:
         from AFO.api.routers.root import read_root
+
         return await read_root()
     except Exception as e:
         logger.error(f"Error in read_root_legacy: {e}")
@@ -1440,6 +1443,7 @@ async def health_check_legacy() -> dict[str, Any]:
     """
     try:
         from AFO.services.health_service import get_comprehensive_health
+
         return await get_comprehensive_health()
     except Exception as e:
         logger.error(f"Error in health_check_legacy: {e}")

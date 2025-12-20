@@ -4,7 +4,6 @@ from typing import TYPE_CHECKING, Any, Literal
 if TYPE_CHECKING:
     import redis
     from watchdog.events import FileSystemEventHandler
-    from watchdog.observers import Observer
 
 from pydantic_settings import BaseSettings
 
@@ -26,6 +25,11 @@ class AntiGravitySettings(BaseSettings):
     CENTRAL_CONFIG_SYNC: bool = True  # 중앙 설정 동기화 (永: 영속성)
     AUTO_SYNC: bool = True  # 자동 동기화 활성화 (孝: 설정 마찰 제거)
     SELF_EXPANDING_MODE: bool = True  # 자율 확장 모드 (永: 창조자 트랙 활성화)
+    
+    # [NEW] Phase 0: Logging Level Enforcement (眞: 관찰 강화)
+    @property
+    def LOG_LEVEL(self) -> str:
+        return "DEBUG" if self.ENVIRONMENT == "dev" else "INFO"
 
     class Config:
         env_file = ".env.antigravity"  # 별도 env 파일로 마찰 최소화
@@ -64,9 +68,13 @@ class AntiGravitySettings(BaseSettings):
             redis_url = "redis://localhost:6379"
 
         from typing import cast
-        return cast("redis.Redis", redis.from_url(
-            redis_url, decode_responses=True, socket_connect_timeout=1, socket_timeout=1
-        ))
+
+        return cast(
+            "redis.Redis",
+            redis.from_url(
+                redis_url, decode_responses=True, socket_connect_timeout=1, socket_timeout=1
+            ),
+        )
 
     def _calculate_risk_score(self, key: str, context: dict | None = None) -> float:
         """
@@ -143,7 +151,8 @@ class AntiGravitySettings(BaseSettings):
             raw_data = r.hgetall(flag_key)
             # Handle potential awaitable (though unlikely here) or simplify for MyPy
             from typing import cast
-            data = cast(dict, raw_data)
+
+            data = cast("dict", raw_data)
             r.close()
 
             if not data:

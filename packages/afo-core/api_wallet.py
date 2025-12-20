@@ -23,6 +23,7 @@ import os
 from datetime import datetime
 from pathlib import Path
 from typing import Any
+
 # Phase 8.3.3: Vault KMS 통합
 try:
     from AFO.kms.vault_kms import VaultKMS
@@ -265,7 +266,7 @@ class APIWallet:
             self.storage_path.write_text(json.dumps(data, indent=2))
         except Exception as e:
             print(f"⚠️  Failed to save storage: {e}")
-            raise IOError(f"Failed to persist wallet data: {e}")
+            raise OSError(f"Failed to persist wallet data: {e}")
 
     def _audit_log(self, action: str, key_name: str, details: str = "") -> None:
         """Write to audit log"""
@@ -774,12 +775,12 @@ class APIWallet:
                     r["created_at"] = r["created_at"].isoformat()
                 elif r.get("created_at"):
                     r["created_at"] = str(r["created_at"])
-                    
+
                 if r.get("last_accessed") and hasattr(r["last_accessed"], "isoformat"):
                     r["last_accessed"] = r["last_accessed"].isoformat()
                 elif r.get("last_accessed"):
                     r["last_accessed"] = str(r["last_accessed"])
-                    
+
                 keys.append(r)
             return keys
         except Exception as e:

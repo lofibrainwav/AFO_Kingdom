@@ -92,7 +92,7 @@ class OptimizedRedisCache:
 
         try:
             # Lua Script 실행
-            result = await self.get_or_compute_script(keys=[key], args=[ttl_seconds]) # type: ignore
+            result = await self.get_or_compute_script(keys=[key], args=[ttl_seconds])  # type: ignore
 
             if result[0] == "hit":
                 self.hit_count += 1
@@ -126,7 +126,7 @@ class OptimizedRedisCache:
 
         try:
             # Lua Script로 배치 조회
-            results = await self.batch_get_script(keys=keys) # type: ignore
+            results = await self.batch_get_script(keys=keys)  # type: ignore
 
             self.pipeline_count += 1
             sum(1 for r in results if r is not False)

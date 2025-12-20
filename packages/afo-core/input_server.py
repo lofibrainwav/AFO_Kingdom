@@ -140,12 +140,12 @@ def _get_home_template(
     success: str | None, error: str | None, api_keys: list[dict[str, Any]]
 ) -> str:
     """홈페이지 HTML 템플릿 생성 (Beauty refactoring)"""
-    
+
     # 키 리스트 HTML 생성
     if api_keys:
         keys_html = "".join(
             [
-                f'''
+                f"""
                 <div class="key-item">
                     <div>
                         <div class="key-name">{key.get("name", "Unknown")}</div>
@@ -155,7 +155,7 @@ def _get_home_template(
                     </div>
                     <div class="key-provider">{key.get("provider", "Unknown")}</div>
                 </div>
-                '''
+                """
                 for key in api_keys
             ]
         )
@@ -541,11 +541,7 @@ async def _is_api_server_available(url: str) -> bool:
 
 
 async def _import_single_key(
-    name: str, 
-    value: str, 
-    service: str, 
-    wallet: Any, 
-    api_server_url: str | None
+    name: str, value: str, service: str, wallet: Any, api_server_url: str | None
 ) -> str:
     """단일 키 임포트 수행 (Success, Skipped, or Error)"""
     # 1. API Wallet 직접 저장 시도
@@ -553,10 +549,18 @@ async def _import_single_key(
         try:
             if wallet.get(name, decrypt=False):
                 return "skipped"
-            wallet.add(name=name, api_key=value, key_type="api", read_only=True, service=service, description=f"Bulk import: {name}")
+            wallet.add(
+                name=name,
+                api_key=value,
+                key_type="api",
+                read_only=True,
+                service=service,
+                description=f"Bulk import: {name}",
+            )
             return "success"
         except Exception as e:
-            if "already exists" in str(e).lower(): return "skipped"
+            if "already exists" in str(e).lower():
+                return "skipped"
             return str(e)
 
     # 2. API Wallet 서버 저장 시도 (Fallback)
@@ -565,22 +569,31 @@ async def _import_single_key(
             try:
                 # 존재 여부 확인 (중복 방지)
                 chk = await client.get(f"{api_server_url}/api/wallet/get/{name}", timeout=2.0)
-                if chk.status_code == 200: return "skipped"
-                
+                if chk.status_code == 200:
+                    return "skipped"
+
                 # 추가 요청 (POST)
                 resp = await client.post(
                     f"{api_server_url}/api/wallet/add",
-                    json={"name": name, "api_key": value, "key_type": "api", "read_only": True, "service": service, "description": f"Bulk import: {name}"}
+                    json={
+                        "name": name,
+                        "api_key": value,
+                        "key_type": "api",
+                        "read_only": True,
+                        "service": service,
+                        "description": f"Bulk import: {name}",
+                    },
                 )
-                if resp.status_code == 200: return "success"
-                
+                if resp.status_code == 200:
+                    return "success"
+
                 # 에러 응답 처리
                 err_detail = resp.json().get("detail", "Unknown error")
                 return "skipped" if "already exists" in err_detail.lower() else err_detail
             except Exception as e:
                 # 네트워크 에러 등
                 return str(e)
-                
+
     return "API Wallet unavailable"
 
 
@@ -596,11 +609,13 @@ async def bulk_import(bulk_text: str = Form(...)) -> RedirectResponse:
         wallet = None
         try:
             from api_wallet import APIWallet
+
             wallet = APIWallet()
-        except Exception: pass
+        except Exception:
+            pass
 
         server_url = API_WALLET_URL if await _is_api_server_available(API_WALLET_URL) else None
-        
+
         counts = {"success": 0, "skipped": 0, "failed": 0}
         failed_names = []
 
@@ -616,18 +631,23 @@ async def bulk_import(bulk_text: str = Form(...)) -> RedirectResponse:
 
         # 요약 메시지 생성
         summary = []
-        if counts["success"]: summary.append(f"✅ {counts['success']}개 성공")
-        if counts["skipped"]: summary.append(f"⚠️ {counts['skipped']}개 스킵")
-        if counts["failed"]: summary.append(f"❌ {counts['failed']}개 실패")
-        
+        if counts["success"]:
+            summary.append(f"✅ {counts['success']}개 성공")
+        if counts["skipped"]:
+            summary.append(f"⚠️ {counts['skipped']}개 스킵")
+        if counts["failed"]:
+            summary.append(f"❌ {counts['failed']}개 실패")
+
         result_msg = " | ".join(summary)
         if failed_names:
-            result_msg += f" (실패: {', '.join(failed_names[:3])}{'...' if len(failed_names)>3 else ''})"
+            result_msg += (
+                f" (실패: {', '.join(failed_names[:3])}{'...' if len(failed_names) > 3 else ''})"
+            )
 
         return RedirectResponse(url=f"/?success={result_msg}", status_code=303)
 
     except Exception as e:
-        return RedirectResponse(url=f"/?error=임포트 중 오류: {str(e)}", status_code=303)
+        return RedirectResponse(url=f"/?error=임포트 중 오류: {e!s}", status_code=303)
 
 
 @app.get("/api/history", response_model=None)

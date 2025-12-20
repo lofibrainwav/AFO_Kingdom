@@ -58,10 +58,10 @@ class HybridQueryResponse(BaseModel):
 def random_embedding(dim: int = 1536) -> list[float]:
     """
     眞 (Truth): 난수 기반 임베딩 생성 (폴백용)
-    
+
     Args:
         dim: 임베딩 차원 (기본 1536)
-        
+
     Returns:
         list[float]: 생성된 난수 리스트
     """
@@ -72,11 +72,11 @@ def get_embedding(text: str, openai_client: Any) -> list[float]:
     """
     眞 (Truth): OpenAI API를 이용한 텍스트 임베딩 추출
     善 (Goodness): 예외 발생 시 난수 임베딩으로 안전하게 폴백
-    
+
     Args:
         text: 임베딩할 텍스트
         openai_client: OpenAI 클라이언트 인스턴스
-        
+
     Returns:
         list[float]: 추출된 임베딩 리스트
     """
@@ -98,12 +98,12 @@ def query_pgvector(embedding: list[float], top_k: int, pg_pool: Any) -> list[dic
     """
     眞 (Truth): PostgreSQL pgvector를 이용한 벡터 검색
     善 (Goodness): 연결 풀 관리 및 예외 처리
-    
+
     Args:
         embedding: 검색할 벡터
         top_k: 반환할 상위 항목 수
         pg_pool: PostgreSQL 연결 풀
-        
+
     Returns:
         list[dict]: 검색 결과 리스트
     """
@@ -166,12 +166,12 @@ def query_redis(embedding: list[float], top_k: int, redis_client: Any) -> list[d
     """
     眞 (Truth): Redis RediSearch를 이용한 KNN 벡터 검색
     善 (Goodness): 인덱스 확인 및 예외 차단
-    
+
     Args:
         embedding: 검색할 벡터
         top_k: 반환할 상위 항목 수
         redis_client: Redis 클라이언트
-        
+
     Returns:
         list[dict]: 검색 결과 리스트
     """
@@ -180,6 +180,7 @@ def query_redis(embedding: list[float], top_k: int, redis_client: Any) -> list[d
 
     try:
         from AFO.config.settings import get_settings
+
         settings = get_settings()
         index_name = settings.REDIS_RAG_INDEX
     except Exception:
@@ -221,15 +222,17 @@ def query_redis(embedding: list[float], top_k: int, redis_client: Any) -> list[d
     return rows
 
 
-def blend_results(pg_rows: list[dict[str, Any]], redis_rows: list[dict[str, Any]], top_k: int) -> list[dict[str, Any]]:
+def blend_results(
+    pg_rows: list[dict[str, Any]], redis_rows: list[dict[str, Any]], top_k: int
+) -> list[dict[str, Any]]:
     """
     美 (Beauty): PGVector와 Redis 결과를 통합 및 가중치 정렬 (RRF 유사 방식)
-    
+
     Args:
         pg_rows: DB 검색 결과
         redis_rows: Cache 검색 결과
         top_k: 최종 반환 수
-        
+
     Returns:
         list[dict]: 혼합 및 정렬된 결과
     """
@@ -253,11 +256,11 @@ def blend_results(pg_rows: list[dict[str, Any]], redis_rows: list[dict[str, Any]
 def select_context(rows: list[dict[str, Any]], limit: int) -> list[dict[str, Any]]:
     """
     眞 (Truth): 토큰 제한에 맞춰 컨텍스트 선별
-    
+
     Args:
         rows: 검색된 청크들
         limit: 글자수 제한
-        
+
     Returns:
         list[dict]: 선별된 청크들
     """
@@ -288,7 +291,7 @@ def generate_answer(
     """
     眞 (Truth): 컨텍스트 기반 LLM 답변 생성
     善 (Goodness): API 호출 실패 시 에러 메시지 반환
-    
+
     Args:
         query: 사용자 질문
         contexts: 선별된 컨텍스트 리스트
@@ -297,11 +300,11 @@ def generate_answer(
         additional_instructions: 추가 지침
         llm_provider: LLM 제공자
         openai_client: OpenAI 클라이언트
-        
+
     Returns:
         str | dict: 생성된 답변 또는 에러 정보
     """
-    context_block = "\n\n".join([ f"Chunk {idx + 1}:\n{ctx}" for idx, ctx in enumerate(contexts) ])
+    context_block = "\n\n".join([f"Chunk {idx + 1}:\n{ctx}" for idx, ctx in enumerate(contexts)])
 
     system_prompt = " ".join(
         part
@@ -339,13 +342,17 @@ async def get_embedding_async(text: str, client: Any) -> list[float]:
     return await loop.run_in_executor(_executor, get_embedding, text, client)
 
 
-async def query_pgvector_async(embedding: list[float], top_k: int, pool: Any) -> list[dict[str, Any]]:
+async def query_pgvector_async(
+    embedding: list[float], top_k: int, pool: Any
+) -> list[dict[str, Any]]:
     """비동기 PGVector 검색 래퍼"""
     loop = asyncio.get_event_loop()
     return await loop.run_in_executor(_executor, query_pgvector, embedding, top_k, pool)
 
 
-async def query_redis_async(embedding: list[float], top_k: int, client: Any) -> list[dict[str, Any]]:
+async def query_redis_async(
+    embedding: list[float], top_k: int, client: Any
+) -> list[dict[str, Any]]:
     """비동기 Redis 검색 래퍼"""
     loop = asyncio.get_event_loop()
     return await loop.run_in_executor(_executor, query_redis, embedding, top_k, client)

@@ -1,27 +1,62 @@
 # packages/afo-core/julie_cpa/core/julie_engine.py
-# Julie CPA AutoMate 메인 엔진
+# Julie CPA AutoMate 메인 엔진 (Precision Upgrade)
 # AntiGravity: 비용 최적화(Truth), 권한 검증(Goodness), 지속 아키텍처(Eternity)
 
+from decimal import Decimal, getcontext
+from typing import List, Dict, Any
+from dataclasses import dataclass
+from abc import ABC, abstractmethod
 
-from config.vault_manager import vault_manager
-
+from AFO.security.vault_manager import vault as vault_manager
 from config.antigravity import antigravity
+from services.trinity_calculator import trinity_calculator
 
-# Assuming llm_router is in services.llm_router based on typical structure,
-# but will use a safe import or mock if not found during runtime to prevent crash.
+# Set Decimal Precision
+getcontext().prec = 28
+
+# Assuming llm_router import logic remains similar or we mock it
 try:
     from services.llm_router import llm_router
 except ImportError:
-
     class MockRouter:
         async def ask(self, prompt, context=None, model_priority=None):
             return "Mock LLM Response"
-
     llm_router = MockRouter()
 
+from julie_cpa.domain.transaction import Transaction
 
-from domain.transaction import Transaction
+# ==========================================
+# Command Pattern for Financial Operations
+# ==========================================
 
+class FinancialCommand(ABC):
+    @abstractmethod
+    def execute(self) -> bool:
+        pass
+        
+    @abstractmethod
+    def undo(self) -> None:
+        pass
+
+class AdjustBudgetCommand(FinancialCommand):
+    def __init__(self, cpa: 'JulieCPA', amount: Decimal):
+        self.cpa = cpa
+        self.amount = amount
+        self.previous_limit = Decimal("0.00")
+
+    def execute(self) -> bool:
+        self.previous_limit = self.cpa.budget_limit
+        self.cpa.budget_limit = self.amount
+        print(f"💰 [Julie] Budget Adjusted: ${self.previous_limit} -> ${self.amount}")
+        return True
+
+    def undo(self) -> None:
+        print(f"↩️ [Julie] Undo Budget Adjustment. Reverting to ${self.previous_limit}")
+        self.cpa.budget_limit = self.previous_limit
+
+# ==========================================
+# Julie CPA Engine (Precision)
+# ==========================================
 
 class JulieCPA:
     """
@@ -30,65 +65,54 @@ class JulieCPA:
     """
 
     def __init__(self):
-        # Vault 동적 조회 (善) - 실제 키가 없으면 Mock 모드에서 안전하게 처리됨
-        self.openai_key = vault_manager.get_secret("secret/afo", "openai_key")
+        # Vault 동적 조회
+        self.openai_key = vault_manager.get_secret("OPENAI_API_KEY", "mock-key")
 
-        # Mocking generic financial state (US Context)
-        self.monthly_spending = 4200.00  # USD
-        self.budget_limit = 3500.00  # USD
+        # Financial State (Decimal for Precision)
+        self.monthly_spending = Decimal("4200.00")
+        self.budget_limit = Decimal("3500.00")
         self.tax_risk_score = 85
+        
+        self.command_history: List[FinancialCommand] = []
 
-    async def ingest_transactions(self, source: str) -> list[Transaction]:
-        """은행·카드 데이터 자동 수집 (PDF 페이지 3: 보호 장치)"""
-        if antigravity.DRY_RUN_DEFAULT:
-            print("[Julie DRY_RUN] Simulating 50 transactions (LA Region)")
-            return [Transaction.mock() for _ in range(50)]
+    async def execute_command(self, command: FinancialCommand) -> bool:
+        """Trinity Gated Execution"""
+        # 1. Calculate Trinity Score to approve action
+        # Mocking raw scores for this action context - ideally dynamic
+        raw_scores = [1.0, 1.0, 1.0, 1.0, 1.0] 
+        # Check Risk Gate (Goodness)
+        if self.tax_risk_score > 90:
+             # If too risky, Goodness pillar might fail
+             raw_scores[1] = 0.0
+             
+        trinity_score = trinity_calculator.calculate_trinity_score(raw_scores)
+        
+        if trinity_score < 70.0:
+            print(f"⛔ [Julie] Trinity Score Too Low ({trinity_score}). Action Blocked.")
+            return False
+            
+        # 2. Execute
+        success = command.execute()
+        if success:
+            self.command_history.append(command)
+            return True
+        return False
 
-        return []
-
-    async def auto_categorize(self, transactions: list[Transaction]) -> dict:
-        """Trinity Score 기반 자동 분류 (PDF 페이지 1: 비용 최적화)"""
-        if not transactions:
-            return {}
-
-        prompt = f"""
-        Classify these transactions based on US Tax Law (IRS) & CA State Tax rules:
-        {transactions[:10]}
-        Categories: Dining/Transport/Medical/Education/Donation/Business/Other
-        Context: Korean-American in Los Angeles, CA
-        """
-        # llm_router availability checked at import time
-        if hasattr(llm_router, "ask"):
-            result = await llm_router.ask(prompt, model_priority=["claude", "gpt-4o"])
+    async def undo_last_command(self):
+        if self.command_history:
+            cmd = self.command_history.pop()
+            cmd.undo()
         else:
-            result = "Categorization Mock Result (US/CA)"
-
-        return {"result": result}
-
-    async def generate_tax_report(self, year: int) -> str:
-        """세금 보고서 자동 생성 + DRY_RUN 검증 (PDF 페이지 3: Graceful degradation)"""
-        if antigravity.DRY_RUN_DEFAULT:
-            return "[Julie DRY_RUN] Generated Draft 1040 & CA 540 (Mock)"
-
-        return "Live Tax Report (Not Implemented)"
+            print("⚠️ [Julie] No commands to undo.")
 
     async def risk_alert(self) -> list[str]:
-        """초과 지출·세금 위험 실시간 알림 (PDF 페이지 4: SSE 스트리밍)"""
+        """초과 지출·세금 위험 실시간 알림"""
         alerts = []
-        if self.monthly_spending > self.budget_limit * 1.2:
+        if self.monthly_spending > self.budget_limit * Decimal("1.2"):
             alerts.append("⚠️ Monthly burn rate > 20% over budget (LA Life)")
         if self.tax_risk_score > 80:
             alerts.append("🔴 IRS Audit Risk High - Check 1099s immediately")
         return alerts
 
-    async def personalized_advice(self) -> str:
-        """형님 전용 3줄 절약 추천 (PDF 페이지 2: 겸손한 인터페이스)"""
-        return """
-        1. LA Dining: $4,200 → $3,000 target. Try K-Town groceries more.
-        2. Donation: Utilize 501(c)(3) deduction limit (US Tax).
-        3. Prep for April 15: Est. Refund +$2,800 USD via deductions.
-        """
-
-
-# 즉시 실행 가능 엔진 인스턴스 (싱글톤)
+# Singleton Instance
 julie = JulieCPA()

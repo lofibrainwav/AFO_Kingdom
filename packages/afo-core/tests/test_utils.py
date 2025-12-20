@@ -3,9 +3,10 @@
 Tests for utils modules
 유틸리티 테스트 - Phase 3 (Real Modules)
 """
-from typing import Any, cast
+
 import os
 import sys
+from typing import Any, cast
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -319,8 +320,8 @@ class TestRedisConnectionReal:
 
             # Test close
             await close_redis_connections()
-            cast(Any, c1).close.assert_called_once()
-            cast(Any, ac1).aclose.assert_awaited_once()
+            cast("Any", c1).close.assert_called_once()
+            cast("Any", ac1).aclose.assert_awaited_once()
 
             assert rc_module._redis_client is None
             assert rc_module._async_redis_client is None

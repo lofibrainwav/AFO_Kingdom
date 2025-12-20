@@ -22,7 +22,6 @@ except ImportError:
     ERROR_HANDLER_AVAILABLE = False
 
     from .advanced_retry import (
-        RetryState,
         with_condition_retry,
         # jittered_backoff, # Unused
         # poll_until, # Unused
@@ -371,6 +370,7 @@ Return only Python code in ```python blocks."""
             return None
         try:
             from AFO.config.settings import get_settings
+
             claude_key = get_settings().ANTHROPIC_API_KEY
             return MCPErrorHandler(api_key=claude_key)
         except Exception:
@@ -400,12 +400,16 @@ Return only Python code in ```python blocks."""
         """페이지 이동 수행 (Retry 포함)"""
         print(f"\n🌐 페이지 이동: {url}")
         if ADVANCED_RETRY_AVAILABLE:
+
             async def navigate_action():
                 await page.goto(url, wait_until="networkidle", timeout=60000)
                 return page
 
             async def navigation_condition():
-                return page.url != "about:blank" and await page.evaluate("document.readyState") == "complete"
+                return (
+                    page.url != "about:blank"
+                    and await page.evaluate("document.readyState") == "complete"
+                )
 
             await with_condition_retry(
                 navigate_action,
@@ -435,20 +439,33 @@ Return only Python code in ```python blocks."""
                 break
 
     async def _handle_auth_error(
-        self, error: Exception, attempt: int, max_retries: int, url: str, error_handler: Any, results: dict[str, Any]
+        self,
+        error: Exception,
+        attempt: int,
+        max_retries: int,
+        url: str,
+        error_handler: Any,
+        results: dict[str, Any],
     ) -> bool:
         """인증 오류 처리 및 재시도 판단"""
         from playwright.async_api import Error as PlaywrightError
+
         error_msg = str(error)
         results["error"] = error_msg
         print(f"\n❌ 오류 발생: {error_msg}")
 
         if error_handler:
-            fix_result = await error_handler.handle_error(error, context={"url": url, "attempt": attempt})
+            fix_result = await error_handler.handle_error(
+                error, context={"url": url, "attempt": attempt}
+            )
             is_playwright_error = isinstance(error, PlaywrightError)
-            
+
             key = "errors_handled" if is_playwright_error else "fixes_applied"
-            val = {"error": error_msg, "fix": fix_result, "attempt": attempt + 1} if is_playwright_error else fix_result
+            val = (
+                {"error": error_msg, "fix": fix_result, "attempt": attempt + 1}
+                if is_playwright_error
+                else fix_result
+            )
             results[key].append(val)
 
             if fix_result.get("retry", False) and attempt < max_retries - 1:
@@ -477,8 +494,13 @@ Return only Python code in ```python blocks."""
 
         error_handler = self._init_error_handler()
         results: dict[str, Any] = {
-            "success": False, "generated_code": "", "tool_calls": [], "snapshot": "",
-            "error": None, "errors_handled": [], "fixes_applied": [],
+            "success": False,
+            "generated_code": "",
+            "tool_calls": [],
+            "snapshot": "",
+            "error": None,
+            "errors_handled": [],
+            "fixes_applied": [],
         }
 
         async with async_playwright() as p:
@@ -488,7 +510,9 @@ Return only Python code in ```python blocks."""
             for attempt in range(max_retries):
                 try:
                     if browser is None or not browser.is_connected():
-                        browser, page = await self._setup_browser_and_page(p, attempt, max_retries, error_handler)
+                        browser, page = await self._setup_browser_and_page(
+                            p, attempt, max_retries, error_handler
+                        )
 
                     await self._perform_navigation(page, url, error_handler)
 
@@ -503,13 +527,16 @@ Return only Python code in ```python blocks."""
                     break
 
                 except (PlaywrightError, Exception) as e:
-                    if await self._handle_auth_error(e, attempt, max_retries, url, error_handler, results):
+                    if await self._handle_auth_error(
+                        e, attempt, max_retries, url, error_handler, results
+                    ):
                         if attempt < max_retries - 1 and browser:
                             try:
                                 await browser.close()
                                 browser = None
                                 page = None
-                            except Exception: pass
+                            except Exception:
+                                pass
                         continue
                     break
 

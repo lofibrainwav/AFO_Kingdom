@@ -150,7 +150,9 @@ async def get_current_pillars() -> FivePillarsResponse:
 
 
 @router.post("/live", response_model=LiveFivePillarsResponse, summary="LangFlow 실시간 5기둥 평가")
-async def evaluate_five_pillars_live(request: LangFlowFivePillarsRequest) -> LiveFivePillarsResponse:
+async def evaluate_five_pillars_live(
+    request: LangFlowFivePillarsRequest,
+) -> LiveFivePillarsResponse:
     """
     LangFlow 실시간 데이터를 받아서 5기둥으로 평가 (Phase 23-D)
 

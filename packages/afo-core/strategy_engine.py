@@ -136,7 +136,9 @@ class Workflow:
             return {
                 "name": self.name,
                 "status": self.status,
-                "steps": [{"name": s.name, "action": s.action, "status": s.status} for s in self.steps],
+                "steps": [
+                    {"name": s.name, "action": s.action, "status": s.status} for s in self.steps
+                ],
             }
         except Exception:
             return {"name": self.name, "status": "error", "steps": []}

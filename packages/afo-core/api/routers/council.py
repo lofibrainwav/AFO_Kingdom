@@ -102,9 +102,13 @@ async def deliberate(query: CouncilQuery):
     logger.info(f"🧠 Council Deliberation Requested: {query.query}")
 
     # Query all strategists in parallel
-    responses = list(await asyncio.gather(
-        consult_zhuge_liang(query.query), consult_sima_yi(query.query), consult_zhou_yu(query.query)
-    ))
+    responses = list(
+        await asyncio.gather(
+            consult_zhuge_liang(query.query),
+            consult_sima_yi(query.query),
+            consult_zhou_yu(query.query),
+        )
+    )
 
     # Calculate agreement
     agreement_score = calculate_agreement(responses)
