@@ -1,11 +1,10 @@
-
-import sys
-import os
 import asyncio
 import logging
+import os
+import sys
 
 # Setup Logger
-logging.basicConfig(level=logging.INFO, format='%(message)s')
+logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger("AFO.GrandInspection")
 
 # Setup path
@@ -14,28 +13,29 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../pack
 
 # Import Verification Modules
 try:
-    from scripts.verify_financial_precision import verify_financial_precision
-    from scripts.verify_sejong_research import verify_sejong_system
-    from scripts.verify_full_pillars_metrics import verify_full_pillars
     from scripts.verify_constitutional_ai import verify_constitution
     from scripts.verify_diplomatic_protocol import verify_protocol
+    from scripts.verify_financial_precision import verify_financial_precision
+    from scripts.verify_full_pillars_metrics import verify_full_pillars
+    from scripts.verify_sejong_research import verify_sejong_system
 except ImportError as e:
     logger.error(f"❌ Metacognition Fail: Could not import verification modules. {e}")
     sys.exit(1)
 
+
 async def grand_inspection():
     print("\n🏰 [AFO Kingdom] Grand Inspection (Ji-Pi-Ji-Gi) Starting...\n")
-    
+
     score_card = {
         "CPA_Precision": "PENDING",
         "Sejong_Research": "PENDING",
         "5_Pillars_Metrics": "PENDING",
         "Constitution": "PENDING",
-        "Diplomatic_Protocol": "PENDING"
+        "Diplomatic_Protocol": "PENDING",
     }
 
     print("==================================================")
-    
+
     # 1. Financial Precision (Julie CPA)
     try:
         print("\n💰 [1. Julie CPA Resource Check]")
@@ -96,13 +96,14 @@ async def grand_inspection():
         print(f"   - {module.ljust(20)}: {status}")
         if "FAIL" in status:
             all_pass = False
-            
+
     if all_pass:
         print("\n✨ CONCLUSION: The Kingdom is in Perfect Harmony (Metacognition Confirmed).")
     else:
         print("\n⚠️ CONCLUSION: Maintenance Required in some sectors.")
 
+
 if __name__ == "__main__":
-    # Suppress internal prints of imported modules slightly if possible, 
+    # Suppress internal prints of imported modules slightly if possible,
     # but for now we let them print to show full logs.
     asyncio.run(grand_inspection())

@@ -34,7 +34,13 @@ class MlxSage:
 
             logger.info(f"🍎 [MLX] Loading native model for {self.sage_name}: {self.model_path}...")
             # Trust remote code is sometimes needed for new architectures, but keeping safe default
-            self.model, self.tokenizer = load(self.model_path)
+            # Validated: load() returns model, tokenizer (and config sometimes?) - Handle extra values
+            loaded = load(self.model_path)
+            if len(loaded) >= 2:
+                self.model = loaded[0]
+                self.tokenizer = loaded[1]
+            else:
+                raise ValueError("Unexpected return from mlx_lm.load")
             self._is_loaded = True
             logger.info(f"✅ [MLX] {self.sage_name} Model loaded successfully.")
         except ImportError:

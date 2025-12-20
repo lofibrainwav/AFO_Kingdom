@@ -1,22 +1,24 @@
-import sys
 import os
+import sys
 
 # Check AntiGravity Configuration
 try:
     sys.path.append("/Users/brnestrm/AFO_Kingdom/packages/afo-core")
     from config.antigravity import antigravity
-    
+
     # 1. Check DRY_RUN_DEFAULT
     if not antigravity.DRY_RUN_DEFAULT:
         print("❌ FAIL: DRY_RUN_DEFAULT should be True")
         sys.exit(1)
-    
+
     # 2. Check LOG_LEVEL
     expected_log_level = "DEBUG" if antigravity.ENVIRONMENT == "dev" else "INFO"
-    if antigravity.LOG_LEVEL != expected_log_level:
-        print(f"❌ FAIL: LOG_LEVEL mismatch. Got {antigravity.LOG_LEVEL}, expected {expected_log_level}")
+    if expected_log_level != antigravity.LOG_LEVEL:
+        print(
+            f"❌ FAIL: LOG_LEVEL mismatch. Got {antigravity.LOG_LEVEL}, expected {expected_log_level}"
+        )
         sys.exit(1)
-    
+
     print("✅ AntiGravity Config Checked: Safe Mode Active")
 
 except ImportError as e:
@@ -32,16 +34,16 @@ if not os.path.exists(agents_md_path):
     print("❌ FAIL: AGENTS.md not found")
     sys.exit(1)
 
-with open(agents_md_path, "r", encoding="utf-8") as f:
+with open(agents_md_path, encoding="utf-8") as f:
     lines = f.readlines()
-    
+
     # 3. Check Line Count
     if len(lines) > 500:
         print(f"❌ FAIL: AGENTS.md is too long ({len(lines)} lines). Limit is 500.")
         sys.exit(1)
-        
+
     content = "".join(lines)
-    
+
     # 4. Check Key Pillars (Korean)
     required_keywords = ["眞", "善", "美", "孝", "永", "35%", "20%", "8%", "2%"]
     for kw in required_keywords:

@@ -1,21 +1,24 @@
-from strategists.base import robust_execute, log_action
-from typing import Dict
+from strategists.base import log_action, robust_execute
 
 try:
     from AFO.config.antigravity import antigravity
 except ImportError:
+
     class MockAntiGravity:
         DRY_RUN_DEFAULT = True
+
     antigravity = MockAntiGravity()
 
-def gate(risk_score: float, context: Dict = {}) -> float:
+
+def gate(risk_score: float, context: dict = {}) -> float:
     """
     Zhang Fei (Goodness): Safety Gate
-    
+
     [Goodness Philosophy]:
     - Strict Gating: Blocks execution if risk > 0.1.
     - Safety Fallback: Returns 0.0 (block) on any internal error.
     """
+
     def _logic(val):
         risk, ctx = val
         if risk > 0.1:
@@ -28,3 +31,6 @@ def gate(risk_score: float, context: Dict = {}) -> float:
     result = robust_execute(_logic, (risk_score, context), fallback_value=0.0)
     log_action("Zhang Fei 善", result)
     return result
+
+# V2 Interface Alias
+goodness_gate = gate

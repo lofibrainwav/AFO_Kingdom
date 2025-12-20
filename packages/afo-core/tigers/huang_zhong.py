@@ -1,22 +1,24 @@
-from strategists.base import robust_execute, log_action
 from datetime import datetime
-from typing import Dict
 
-def log(action: str, details: Dict = {}) -> str:
+from strategists.base import log_action, robust_execute
+
+
+def log(action: str, details: dict = {}) -> str:
     """
     Huang Zhong (Eternity): Evolution Logging
-    
+
     [Eternity Philosophy]:
     - History: Records actions with timestamps for persistence.
     - Resilience: Log failure does not stop the system.
     """
+
     def _logic(val):
         act, dets = val
         entry = {
             "action": act,
             "timestamp": datetime.utcnow().isoformat(),
             "trinity": dets.get("trinity", 100.0),
-            "legacy_stable": True
+            "legacy_stable": True,
         }
         return "LOG_SAVED"
 
@@ -24,3 +26,6 @@ def log(action: str, details: Dict = {}) -> str:
     result = robust_execute(_logic, (action, details), fallback_value="LOG_FAILED")
     log_action("Huang Zhong 永", result)
     return str(result)
+
+# V2 Interface Alias
+eternity_log = log

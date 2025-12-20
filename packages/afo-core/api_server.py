@@ -305,6 +305,15 @@ try:
 except ImportError:
     print("⚠️  Strategy engine not available")
 
+# [승상] 진정한 두뇌(Chancellor Graph) 로드 시도
+chancellor_graph_runnable: Any = None
+try:
+    from chancellor_graph import chancellor_graph
+    chancellor_graph_runnable = chancellor_graph
+    print("✅ [승상] Chancellor Graph (Real Brain) Loaded")
+except ImportError as e:
+    print(f"⚠️  Chancellor Graph not available: {e}")
+
 # Import RAG engines (Phase 2.3 - Optional until implemented)
 # CRAGEngine, HybridCRAGSelfRAG는 현재 사용되지 않음 (레거시)
 # try:
@@ -569,9 +578,23 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
     # Compile with MemorySaver (no context manager needed)
     print("[지휘소 v6】 LangGraph 설계도를 컴파일하여 '두뇌'를 완성합니다...")
-    if workflow is not None and memory_context is not None:
-        strategy_app_runnable = workflow.compile(checkpointer=memory_context)
-        print("[지휘소 v6】 '두뇌' 가동 준비 완료. 명령을 수신할 수 있습니다.")
+    
+    # 1. Try Real Brain (Chancellor Graph)
+    if chancellor_graph_runnable is not None:
+        strategy_app_runnable = chancellor_graph_runnable
+        print("[지휘소 v6】 '진정한 두뇌' (Chancellor Graph) 가동 준비 완료. (True Intelligence)")
+        
+    # 2. Fallback to Workflow Mock Compilation
+    elif workflow is not None and memory_context is not None:
+        try:
+            strategy_app_runnable = workflow.compile(checkpointer=memory_context)
+            print("[지휘소 v6】 '두뇌' (Mock) 가동 준비 완료.")
+        except AttributeError:
+            print("⚠️  Strategy Workflow is a Mock/Placeholder (no .compile method). Running in degraded mode.")
+            strategy_app_runnable = None
+        except Exception as e:
+            print(f"⚠️  LangGraph compilation failed: {e}")
+            strategy_app_runnable = None
     else:
         strategy_app_runnable = None
         print("⚠️  Strategy workflow 또는 memory_context 없음 - LangGraph 컴파일 건너뜀")
@@ -898,6 +921,16 @@ try:
     print("🧠 Learning Pipeline Router 등록 완료 (Phase 26: 사마휘 자율 학습)")
 except Exception as e:
     print(f"⚠️ Learning Pipeline Router 등록 실패: {e}")
+
+# ============================================================
+# Phase 27: Project Serenity (GenUI Autonomous Creation)
+# ============================================================
+try:
+    from AFO.api.routers.serenity_router import router as serenity_router
+    app.include_router(serenity_router, prefix="/api", tags=["Serenity (GenUI)"])
+    print("🎨 Serenity Router 등록 완료 (Phase 27: 프로젝트 제네시스)")
+except Exception as e:
+    print(f"⚠️ Serenity Router 등록 실패: {e}")
 
 # ============================================================
 # Phase 20: Kingdom Observability

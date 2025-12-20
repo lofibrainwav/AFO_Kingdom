@@ -1,6 +1,5 @@
-
-import sys
 import os
+import sys
 
 # Add package root to sys.path
 # Using absolute path to packages/afo-core so we can import modules directly
@@ -13,27 +12,29 @@ except ImportError:
     print(f"Current sys.path: {sys.path}")
     sys.exit(1)
 
+
 class MockSkill(Skill):
     def execute(self) -> str:
         return "New Skill Executed"
 
+
 def test_factory_pattern():
     print("\n[Testing Factory Pattern]")
-    
+
     factory = AFO_SkillFactory()
-    
+
     # Test 1: Standard Creation
     print("Testing Standard Creation...")
     try:
         yt = factory.create_skill("youtube")
         print(f"✅ Created Youtube Skill: {yt.execute()}")
-        
+
         rag = factory.create_skill("rag")
         print(f"✅ Created RAG Skill: {rag.execute()}")
     except Exception as e:
         print(f"❌ Creation Failed: {e}")
         sys.exit(1)
-        
+
     # Test 2: Error Handling
     print("Testing Unknown Skill...")
     try:
@@ -59,6 +60,7 @@ def test_factory_pattern():
         sys.exit(1)
 
     print("🎉 Factory Pattern Verification Complete!")
+
 
 if __name__ == "__main__":
     test_factory_pattern()

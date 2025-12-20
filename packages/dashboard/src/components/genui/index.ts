@@ -10,6 +10,8 @@ export { JulieCPAWidget } from './JulieCPAWidget';
 export { BudgetDashboard } from './BudgetDashboard';
 export { JulieSuggestions } from './JulieSuggestions';
 export { JuliePrediction } from './JuliePrediction';
+export { GenesisWidget } from './GenesisWidget';
+export { FinalEternalVictoryWidget } from './FinalEternalVictoryWidget';
 
 // Phase 13: AICPA Agent Army Integration
 export { TaxSimulationWidget } from '../aicpa/TaxSimulationWidget';

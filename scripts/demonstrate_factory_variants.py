@@ -1,20 +1,26 @@
-
-import sys
 import os
+import sys
 from abc import ABC, abstractmethod
+
 
 # ==========================================
 # 1. Common Product Interface (5 Pillars)
 # ==========================================
 class Skill(ABC):
     @abstractmethod
-    def execute(self) -> str: pass
+    def execute(self) -> str:
+        pass
+
 
 class YoutubeSkill(Skill):
-    def execute(self) -> str: return "YouTube Skill Executed (Truth)"
+    def execute(self) -> str:
+        return "YouTube Skill Executed (Truth)"
+
 
 class RAGSkill(Skill):
-    def execute(self) -> str: return "RAG Skill Executed (Truth)"
+    def execute(self) -> str:
+        return "RAG Skill Executed (Truth)"
+
 
 # ==========================================
 # 2. Variant 1: Simple Factory (Static)
@@ -22,47 +28,69 @@ class RAGSkill(Skill):
 class SimpleSkillFactory:
     @staticmethod
     def create_skill(skill_type: str) -> Skill:
-        if skill_type == "youtube": return YoutubeSkill()
-        elif skill_type == "rag": return RAGSkill()
-        else: raise ValueError("Unknown Skill")
+        if skill_type == "youtube":
+            return YoutubeSkill()
+        elif skill_type == "rag":
+            return RAGSkill()
+        else:
+            raise ValueError("Unknown Skill")
+
 
 # ==========================================
 # 3. Variant 2: Factory Method (Inheritance)
 # ==========================================
 class BaseSkillFactory(ABC):
     @abstractmethod
-    def create_skill(self) -> Skill: pass
+    def create_skill(self) -> Skill:
+        pass
 
     def operate(self) -> str:
         # Template method using the factory method
         skill = self.create_skill()
         return f"Factory Method Operation: {skill.execute()}"
 
+
 class YoutubeFactory(BaseSkillFactory):
-    def create_skill(self) -> Skill: return YoutubeSkill()
+    def create_skill(self) -> Skill:
+        return YoutubeSkill()
+
 
 class RAGFactory(BaseSkillFactory):
-    def create_skill(self) -> Skill: return RAGSkill()
+    def create_skill(self) -> Skill:
+        return RAGSkill()
+
 
 # ==========================================
 # 4. Variant 3: Abstract Factory (Families)
 # ==========================================
 class MCP(ABC):
     @abstractmethod
-    def connect(self) -> str: pass
+    def connect(self) -> str:
+        pass
+
 
 class UltimateMCP(MCP):
-    def connect(self) -> str: return "Connected to Ultimate MCP"
+    def connect(self) -> str:
+        return "Connected to Ultimate MCP"
+
 
 class AbstractKingdomFactory(ABC):
     @abstractmethod
-    def create_skill(self) -> Skill: pass
+    def create_skill(self) -> Skill:
+        pass
+
     @abstractmethod
-    def create_mcp(self) -> MCP: pass
+    def create_mcp(self) -> MCP:
+        pass
+
 
 class AFO_KingdomFactory(AbstractKingdomFactory):
-    def create_skill(self) -> Skill: return YoutubeSkill() # Default family skill
-    def create_mcp(self) -> MCP: return UltimateMCP()
+    def create_skill(self) -> Skill:
+        return YoutubeSkill()  # Default family skill
+
+    def create_mcp(self) -> MCP:
+        return UltimateMCP()
+
 
 # ==========================================
 # 5. Demonstration / Dry Run
@@ -89,6 +117,7 @@ def run_demonstration():
     print(f"MCP: {k_mcp.connect()}")
 
     print("\n✅ All Variants Verified Successfully.")
+
 
 if __name__ == "__main__":
     run_demonstration()
