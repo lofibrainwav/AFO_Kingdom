@@ -25,10 +25,10 @@ class TestWalletAPI:
     """Wallet API 통합 테스트"""
 
     @pytest.fixture
-    def client(self):
+    def client(self) -> TestClient:
         return TestClient(app)
 
-    def test_list_keys(self, client):
+    def test_list_keys(self, client: TestClient) -> None:
         """GET /api/wallet/keys 테스트"""
         with patch("AFO.api_wallet.APIWallet") as MockWallet:
             instance = MockWallet.return_value
@@ -37,7 +37,7 @@ class TestWalletAPI:
             response = client.get("/api/wallet/keys")
             assert response.status_code in [200, 404, 500]
 
-    def test_add_key_validation(self, client):
+    def test_add_key_validation(self, client: TestClient) -> None:
         """POST /api/wallet/keys 검증 테스트"""
         # Testing missing 'key' field -> 422
         response = client.post(
@@ -54,10 +54,10 @@ class TestWalletBrowserBridge:
     """Wallet Browser Bridge 테스트"""
 
     @pytest.fixture
-    def client(self):
+    def client(self) -> TestClient:
         return TestClient(app)
 
-    def test_bridge_status(self, client):
+    def test_bridge_status(self, client: TestClient) -> None:
         """GET /api/wallet/bridge/status 테스트"""
         response = client.get("/api/wallet/bridge/status")
         assert response.status_code in [200, 404, 500]
@@ -67,10 +67,10 @@ class TestWalletBilling:
     """Wallet Billing 테스트"""
 
     @pytest.fixture
-    def client(self):
+    def client(self) -> TestClient:
         return TestClient(app)
 
-    def test_billing_summary(self, client):
+    def test_billing_summary(self, client: TestClient) -> None:
         """GET /api/wallet/billing/summary 테스트"""
         response = client.get("/api/wallet/billing/summary")
         assert response.status_code in [200, 404, 500]

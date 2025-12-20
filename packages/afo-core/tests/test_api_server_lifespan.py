@@ -31,6 +31,7 @@ async def test_lifespan_components_enabled():
         "MultimodalRAGEngine": MagicMock(return_value=mock_multimodal),
         "YeongdeokComplete": MagicMock(return_value=mock_yeongdeok_instance),
         "register_core_skills": MagicMock(return_value=mock_registry_instance),
+        "workflow": MagicMock(),  # Patch workflow for compile call
     }
 
     # We need to construct this carefully because api_server.py might have already imported "None"

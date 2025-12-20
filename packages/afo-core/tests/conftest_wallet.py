@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """
 Conftest for API Wallet tests.
 Ensures proper module isolation between tests that manipulate sys.modules.

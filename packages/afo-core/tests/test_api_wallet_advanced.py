@@ -13,13 +13,13 @@ pytest_plugins = ["tests.conftest_wallet"]
 def test_wallet_init_vault_success():
     mock_vault = MagicMock()
     mock_vault.is_available.return_value = True
-    mock_vault.get_encryption_key.return_value = "vault_key_44_chars_encoded_here__"
+    mock_vault.get_encryption_key.return_value = "3qX4+P5+12345678901234567890123456789012345="
 
     with patch("AFO.api_wallet.VaultKMS", return_value=mock_vault):
         with patch.dict(os.environ, {"VAULT_ENABLED": "true"}):
             wallet = APIWallet(use_vault=True)
             # It should try to get key from vault
-            assert wallet.encryption_key == "vault_key_44_chars_encoded_here__"
+            assert wallet.encryption_key == "3qX4+P5+12345678901234567890123456789012345="
             assert wallet.use_vault is True
 
 

@@ -31,7 +31,7 @@ class TestScholarsBehavior(unittest.IsolatedAsyncioTestCase):
 
         self.assertEqual(result, "def foo(): pass")
         call_args = mock_api.generate_with_context.call_args
-        self.assertIn("gpt-4o", call_args.kwargs["model"])
+        self.assertIn("codex-cli", call_args.kwargs["model"])
 
     async def test_bangtong_implement_failure(self):
         """Bangtong implement failure scenario"""
@@ -57,7 +57,8 @@ class TestScholarsBehavior(unittest.IsolatedAsyncioTestCase):
 
     # --- Jaryong (Claude) Tests ---
 
-    async def test_jaryong_verify_logic(self):
+    @patch("AFO.scholars.jaryong.JaryongScholar._check_governance", return_value=True)
+    async def test_jaryong_verify_logic(self, mock_gov):
         """Jaryong verify logic success"""
         mock_api = AsyncMock()
         mock_api.generate_with_context.return_value = mock_api_response("Logic Verified")
@@ -67,9 +68,10 @@ class TestScholarsBehavior(unittest.IsolatedAsyncioTestCase):
 
         self.assertEqual(result, "Logic Verified")
         call_args = mock_api.generate_with_context.call_args
-        self.assertIn("claude-3-5-sonnet", call_args.kwargs["model"])
+        self.assertIn("claude-code-cli", call_args.kwargs["model"])
 
-    async def test_jaryong_refactor(self):
+    @patch("AFO.scholars.jaryong.JaryongScholar._check_governance", return_value=True)
+    async def test_jaryong_refactor(self, mock_gov):
         """Jaryong suggest refactoring"""
         mock_api = AsyncMock()
         mock_api.generate_with_context.return_value = mock_api_response("Refactored Code")

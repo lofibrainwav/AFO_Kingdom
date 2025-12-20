@@ -22,7 +22,7 @@ class TestOptimizedRedis(unittest.IsolatedAsyncioTestCase):
     async def test_get_or_compute_hit(self):
         """Test Lua script returns hit"""
         # Lua returns ['hit', 'json_value']
-        self.mock_script.execute.return_value = ["hit", '{"val": 100}']
+        self.mock_script.return_value = ["hit", '{"val": 100}']
 
         async def compute():
             return 200
@@ -34,7 +34,7 @@ class TestOptimizedRedis(unittest.IsolatedAsyncioTestCase):
     async def test_get_or_compute_miss_compute(self):
         """Test Lua script returns miss, then compute and set"""
         # Lua returns ['miss', '']
-        self.mock_script.execute.return_value = ["miss", ""]
+        self.mock_script.return_value = ["miss", ""]
 
         # Mock setex (it's async in redis-py usually, but here client might be sync or async wrapper)
         # The code awaits client.setex, so we need AsyncMock for setex
@@ -51,7 +51,7 @@ class TestOptimizedRedis(unittest.IsolatedAsyncioTestCase):
     async def test_batch_get_success(self):
         """Test batch get with Lua"""
         # Lua returns list of stringified JSONs or False
-        self.mock_script.execute.return_value = ['{"a": 1}', False, '{"b": 2}']
+        self.mock_script.return_value = ['{"a": 1}', False, '{"b": 2}']
 
         result = await self.cache.batch_get(["k1", "k2", "k3"])
 

@@ -1,3 +1,4 @@
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -15,32 +16,36 @@ from AFO.services.hybrid_rag import (
 
 
 # 1. Embedding Tests
-def test_get_embedding_success():
-    mock_client = MagicMock()
+def test_get_embedding_success() -> None:
+    """眞 (Truth): 임베딩 생성 성공 테스트"""
+    mock_client: Any = MagicMock()
     mock_client.embeddings.create.return_value.data = [MagicMock(embedding=[0.1, 0.2])]
 
     emb = get_embedding("test", mock_client)
     assert emb == [0.1, 0.2]
 
 
-def test_get_embedding_failure():
-    mock_client = MagicMock()
+def test_get_embedding_failure() -> None:
+    """眞 (Truth): 임베딩 생성 실패 시 폴백 테스트"""
+    mock_client: Any = MagicMock()
     mock_client.embeddings.create.side_effect = Exception("API Error")
 
     emb = get_embedding("test", mock_client)
     assert len(emb) == 1536  # Returns random embedding on failure
 
 
-def test_get_embedding_no_client():
-    emb = get_embedding("test", None)
+def test_get_embedding_no_client() -> None:
+    """眞 (Truth): 클라이언트 없을 때 폴백 테스트"""
+    emb: list[float] = get_embedding("test", None)
     assert len(emb) == 1536
 
 
 # 2. PGVector Query Tests (Manual Similarity)
-def test_query_pgvector_logic():
-    mock_pool = MagicMock()
-    mock_conn = MagicMock()
-    mock_cursor = MagicMock()
+def test_query_pgvector_logic() -> None:
+    """眞 (Truth): PGVector 검색 로직 검증"""
+    mock_pool: Any = MagicMock()
+    mock_conn: Any = MagicMock()
+    mock_cursor: Any = MagicMock()
     mock_pool.getconn.return_value = mock_conn
     mock_conn.cursor.return_value.__enter__.return_value = mock_cursor
 
@@ -65,24 +70,26 @@ def test_query_pgvector_logic():
     assert results[1]["score"] < 0.01
 
 
-def test_query_pgvector_failure():
-    mock_pool = MagicMock()
+def test_query_pgvector_failure() -> None:
+    """眞 (Truth): PGVector 검색 실패 케이스 검증"""
+    mock_pool: Any = MagicMock()
     # Trigger error INSIDE the try block (e.g., cursor) to test the exception handling -> return [] path
-    mock_conn = MagicMock()
+    mock_conn: Any = MagicMock()
     mock_pool.getconn.return_value = mock_conn
     mock_conn.cursor.side_effect = Exception("DB Cursor Error")
 
-    results = query_pgvector([0.1], 5, mock_pool)
+    results: list[dict[str, Any]] = query_pgvector([0.1], 5, mock_pool)
     assert results == []
 
 
 # 3. Redis Query Tests
-def test_query_redis_logic():
-    mock_client = MagicMock()
-    mock_search_result = MagicMock()
+def test_query_redis_logic() -> None:
+    """眞 (Truth): Redis 검색 로직 검증"""
+    mock_client: Any = MagicMock()
+    mock_search_result: Any = MagicMock()
 
     # Mock docs
-    doc1 = MagicMock()
+    doc1: Any = MagicMock()
     doc1.id = "doc1"
     doc1.content = "c1"
     doc1.score = "0.1"  # distance? usually lower is better in vector search but hybrid_rag code treats score as similarity if higher?
@@ -107,17 +114,19 @@ def test_query_redis_logic():
     assert results[0]["score"] == 0.9
 
 
-def test_query_redis_failure():
-    mock_client = MagicMock()
+def test_query_redis_failure() -> None:
+    """眞 (Truth): Redis 검색 실패 케이스 검증"""
+    mock_client: Any = MagicMock()
     mock_client.ft.side_effect = Exception("Redis Error")
-    results = query_redis([0.1], 5, mock_client)
+    results: list[dict[str, Any]] = query_redis([0.1], 5, mock_client)
     assert results == []
 
 
 # 4. Blend Results
-def test_blend_results():
-    pg_rows = [{"id": "1", "content": "c1", "score": 0.5}]
-    redis_rows = [
+def test_blend_results() -> None:
+    """美 (Beauty): 결과 혼합 로직 정합성 테스트"""
+    pg_rows: list[dict[str, Any]] = [{"id": "1", "content": "c1", "score": 0.5}]
+    redis_rows: list[dict[str, Any]] = [
         {"id": "1", "content": "c1", "score": 0.6},
         {"id": "2", "content": "c2", "score": 0.4},
     ]
@@ -127,7 +136,7 @@ def test_blend_results():
     # redis row 1 score is 0.6
     # so row 1 score should be max(0.55, 0.6) = 0.6
 
-    merged = blend_results(pg_rows, redis_rows, top_k=2)
+    merged: list[dict[str, Any]] = blend_results(pg_rows, redis_rows, top_k=2)
 
     assert len(merged) == 2
     assert merged[0]["id"] == "1"
@@ -135,46 +144,48 @@ def test_blend_results():
     assert merged[1]["id"] == "2"
 
 
-def test_select_context():
-    rows = [
+def test_select_context() -> None:
+    """眞 (Truth): 컨텍스트 선별 로직(글자수 제한) 테스트"""
+    rows: list[dict[str, Any]] = [
         {"content": "short"},  # len 5
         {"content": "very long content that exceeds limit"},  # len 34
     ]
-    selected = select_context(rows, limit=10)
+    selected: list[dict[str, Any]] = select_context(rows, limit=10)
 
     assert len(selected) == 1
     assert selected[0]["content"] == "short"
 
 
 # 5. Generate Answer
-def test_generate_answer_openai():
-    mock_client = MagicMock()
+def test_generate_answer_openai() -> None:
+    """眞 (Truth): OpenAI 기반 답변 생성 테스트"""
+    mock_client: Any = MagicMock()
     mock_client.chat.completions.create.return_value.choices = [
         MagicMock(message=MagicMock(content="Answer"))
     ]
 
-    ans = generate_answer("q", ["c1"], 0.7, "markdown", "", openai_client=mock_client)
+    ans: str | dict[str, Any] = generate_answer("q", ["c1"], 0.7, "markdown", "", openai_client=mock_client)
     assert ans == "Answer"
 
 
-def test_generate_answer_no_client():
-    ans = generate_answer("q", [], 0.7, "", "", openai_client=None)
+def test_generate_answer_no_client() -> None:
+    """眞 (Truth): 클라이언트 없을 때 에러 메시지 검증"""
+    ans: str | dict[str, Any] = generate_answer("q", [], 0.7, "", "", openai_client=None)
     assert ans == "No LLM client available."
 
 
 # 6. Async Wrappers
 @pytest.mark.asyncio
-async def test_async_wrappers():
+async def test_async_wrappers() -> None:
+    """眞 (Truth): 비동기 래퍼 동작 검증"""
     # Test get_embedding_async
-    mock_client = MagicMock()
+    mock_client: Any = MagicMock()
     mock_client.embeddings.create.return_value.data = [MagicMock(embedding=[0.1])]
-    emb = await get_embedding_async("test", mock_client)
+    emb: list[float] = await get_embedding_async("test", mock_client)
     assert emb == [0.1]
 
     # Test query_pgvector_async
-    # (Mocking pg_pool is complex for threading, but should work if mock is pickleable/thread-safe enough for ThreadPoolExecutor)
-    # MagicMock is generally fine in threads.
-    pool = MagicMock()
+    pool: Any = MagicMock()
     pool.getconn.return_value.cursor.return_value.__enter__.return_value.fetchall.return_value = []
-    res = await query_pgvector_async([0.1], 5, pool)
+    res: list[dict[str, Any]] = await query_pgvector_async([0.1], 5, pool)
     assert res == []
