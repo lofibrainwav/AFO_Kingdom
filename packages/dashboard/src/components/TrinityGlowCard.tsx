@@ -20,7 +20,7 @@ interface TrinityGlowCardProps {
 
 /**
  * TrinityGlowCard - Phase 7 Sensory Integration
- * 
+ *
  * Displays a pulsing glow based on Trinity/Risk scores:
  * - Trinity ≥ 0.9: Bright green pulse (Safe)
  * - Trinity 0.7-0.9: Yellow steady glow (Caution)
@@ -65,7 +65,7 @@ export function TrinityGlowCard({ trinityScore, riskScore, breakdown, children }
       justifyContent: 'space-between'
     }}>
       {/* Risk Overlay */}
-      {riskScore > 0.1 && (
+      {riskScore !== null && riskScore > 0.1 && (
         <div style={{
           position: 'absolute',
           inset: 0,
@@ -74,7 +74,7 @@ export function TrinityGlowCard({ trinityScore, riskScore, breakdown, children }
           pointerEvents: 'none',
         }} />
       )}
-      
+
       {/* Content */}
       <div style={{ position: 'relative', zIndex: 1 }}>
         {children}
