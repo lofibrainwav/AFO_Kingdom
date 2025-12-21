@@ -1,6 +1,6 @@
 # 🔄 AFO 왕국 워크플로우 동기화 가이드
 
-**최종 업데이트**: 2025-12-16  
+**최종 업데이트**: 2025-12-16
 **목적**: 지갑 시스템과 학자 시스템 간의 완벽한 동기화
 
 ---
@@ -42,7 +42,7 @@ python3 -c "from langchain_openai import OpenAIEmbeddings; e = OpenAIEmbeddings(
 psql -h localhost -p 15432 -U afo -d afo_memory -c "SELECT 1;"
 
 # API 서버 건강 상태
-curl http://localhost:8011/health
+curl http://localhost:8010/health
 ```
 
 ---
@@ -65,7 +65,7 @@ curl http://localhost:8011/health
 
 ### API 서버 건강 상태
 ```bash
-curl http://localhost:8011/health | python3 -m json.tool
+curl http://localhost:8010/health | python3 -m json.tool
 ```
 
 **정상 상태**:
@@ -75,7 +75,7 @@ curl http://localhost:8011/health | python3 -m json.tool
 
 ### 지갑 상태
 ```bash
-curl http://localhost:8011/api/wallet/keys | python3 -m json.tool
+curl http://localhost:8010/api/wallet/keys | python3 -m json.tool
 ```
 
 ---
@@ -142,4 +142,3 @@ lsof -i :15432
 ---
 
 **상태**: ✅ 워크플로우 가이드 생성 완료
-

@@ -4,7 +4,7 @@ import json
 import aiohttp
 
 
-STREAM_URL = "http://localhost:8011/api/stream/mcp/thoughts"
+STREAM_URL = "http://localhost:8010/api/stream/mcp/thoughts"
 
 
 async def verify_sse():
@@ -44,7 +44,7 @@ async def verify_sse():
 
     except Exception as e:
         print(f"❌ Verification Failed: {e}")
-        print("💡 Hint: Ensure 'api_server.py' is running on port 8011.")
+        print("💡 Hint: Ensure 'api_server.py' is running on port 8010.")
 
 
 if __name__ == "__main__":

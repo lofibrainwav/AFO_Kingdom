@@ -25,10 +25,11 @@ sleep 2
 
 # 2. Start Backend (Port 8010)
 echo ""
-echo ">> 🔌 [1/3] Starting Backend Core (Port 8011)..."
+echo ">> 🔌 [1/3] Starting Backend Core (Port 8010)..."
 cd packages/afo-core
 # Run in background, redirect output
-PORT=8011 nohup python3 api_server.py > ../../api_server_reboot.log 2>&1 &
+# Note: PORT environment variable is optional - api_server.py uses settings.API_SERVER_PORT (default: 8010)
+API_SERVER_PORT=8010 nohup python3 api_server.py > ../../api_server_reboot.log 2>&1 &
 BACKEND_PID=$!
 echo "   -> Backend started (PID: $BACKEND_PID). Logs: api_server_reboot.log"
 cd ../..

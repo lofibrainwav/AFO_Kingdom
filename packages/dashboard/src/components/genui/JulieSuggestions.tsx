@@ -1,6 +1,6 @@
 /**
  * JulieSuggestions.tsx
- * 
+ *
  * Phase 12-3: Smart Guardian - Julie CPA의 스마트 제안
  * "Julie가 제안해요: 지출 줄여보세요 – 잔고 안전 업그레이드 ✨"
  */
@@ -25,7 +25,7 @@ interface SuggestionsData {
   summary: string;
 }
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8011';
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8010';
 
 export function JulieSuggestions() {
   const [data, setData] = useState<SuggestionsData | null>(null);

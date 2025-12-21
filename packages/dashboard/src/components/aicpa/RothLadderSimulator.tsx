@@ -2,20 +2,20 @@
 
 /**
  * Roth Ladder Simulator Widget
- * 
+ *
  * 정밀 Roth Ladder 시뮬레이션
  * Bracket 기반 세금 계산 + 복리 성장 + 미래 절세 예측
- * 
+ *
  * 眞 (Truth): 2025 OBBBA bracket 정확 반영
  * 美 (Beauty): 직관적인 슬라이더 UI
  * 永 (Eternity): 장기 부의 증식 전략
  */
 
 import React, { useState, useEffect } from 'react';
-import { 
-  TrendingUp, 
-  DollarSign, 
-  Calendar, 
+import {
+  TrendingUp,
+  DollarSign,
+  Calendar,
   Sparkles,
   RefreshCw,
   Shield,
@@ -37,7 +37,7 @@ interface RothResult {
   }>;
 }
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8011';
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8010';
 
 export const RothLadderSimulator: React.FC = () => {
   // Form State
@@ -45,17 +45,17 @@ export const RothLadderSimulator: React.FC = () => {
   const [currentIncome, setCurrentIncome] = useState(180000);
   const [filingStatus, setFilingStatus] = useState('mfj');
   const [years, setYears] = useState(4);
-  
+
   // Result State
   const [result, setResult] = useState<RothResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   // Simulate
   const runSimulation = async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const response = await fetch(`${API_BASE}/api/aicpa/roth-ladder`, {
         method: 'POST',
@@ -67,9 +67,9 @@ export const RothLadderSimulator: React.FC = () => {
           years: years,
         }),
       });
-      
+
       if (!response.ok) throw new Error('API Error');
-      
+
       const data = await response.json();
       setResult(data.strategy);
     } catch (e) {
@@ -79,7 +79,7 @@ export const RothLadderSimulator: React.FC = () => {
       setLoading(false);
     }
   };
-  
+
   // Format currency
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -103,7 +103,7 @@ export const RothLadderSimulator: React.FC = () => {
           </div>
         </div>
       </div>
-      
+
       <div className="p-6 space-y-6">
         {/* Filing Status */}
         <div>
@@ -127,7 +127,7 @@ export const RothLadderSimulator: React.FC = () => {
             ))}
           </div>
         </div>
-        
+
         {/* IRA Balance Slider */}
         <div>
           <div className="flex justify-between items-center mb-2">
@@ -150,7 +150,7 @@ export const RothLadderSimulator: React.FC = () => {
             <span>$2M</span>
           </div>
         </div>
-        
+
         {/* Current Income Slider */}
         <div>
           <div className="flex justify-between items-center mb-2">
@@ -167,7 +167,7 @@ export const RothLadderSimulator: React.FC = () => {
             className="w-full h-2 bg-white/20 rounded-full appearance-none cursor-pointer accent-emerald-500"
           />
         </div>
-        
+
         {/* Conversion Years */}
         <div>
           <div className="flex justify-between items-center mb-2">
@@ -191,7 +191,7 @@ export const RothLadderSimulator: React.FC = () => {
             <span>10 yrs</span>
           </div>
         </div>
-        
+
         {/* Simulate Button */}
         <button
           onClick={runSimulation}
@@ -207,14 +207,14 @@ export const RothLadderSimulator: React.FC = () => {
             </>
           )}
         </button>
-        
+
         {/* Error */}
         {error && (
           <div className="p-4 bg-red-500/20 border border-red-500/30 rounded-xl text-red-300 text-sm">
             {error}
           </div>
         )}
-        
+
         {/* Results */}
         {result && !error && (
           <div className="space-y-4 pt-4">
@@ -230,7 +230,7 @@ export const RothLadderSimulator: React.FC = () => {
                 </div>
               </div>
             </div>
-            
+
             {/* Summary Stats */}
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-white/5 rounded-xl p-4 border border-white/10">
@@ -242,7 +242,7 @@ export const RothLadderSimulator: React.FC = () => {
                 <div className="text-xl font-bold text-amber-400">{formatCurrency(result.total_tax_paid)}</div>
               </div>
             </div>
-            
+
             {/* Year-by-Year Breakdown */}
             <div className="bg-white/5 rounded-xl p-4 border border-white/10">
               <div className="text-sm font-bold text-slate-300 mb-3 flex items-center gap-2">
@@ -267,7 +267,7 @@ export const RothLadderSimulator: React.FC = () => {
                 ))}
               </div>
             </div>
-            
+
             {/* Summary */}
             <div className="p-4 bg-slate-900/50 rounded-xl text-center">
               <p className="text-slate-300 text-sm">{result.summary}</p>
@@ -275,7 +275,7 @@ export const RothLadderSimulator: React.FC = () => {
           </div>
         )}
       </div>
-      
+
       {/* Footer */}
       <div className="px-6 py-3 bg-black/30 text-center">
         <p className="text-white/50 text-xs italic">

@@ -11,7 +11,7 @@ export interface JulieStatusResponse {
 const MOCK_STATUS: JulieStatusResponse = {
     status: "Offline Mode",
     alerts: ["⚠️ Backend disconnected"],
-    advice: "Check connection to Soul Engine (Port 8011).\nEnsure 'python api_server.py' is running.",
+    advice: "Check connection to Soul Engine (Port 8010).\nEnsure 'python api_server.py' is running.",
     dry_run_tx_count: 0
 };
 
@@ -22,8 +22,8 @@ export const JulieService = {
      */
     async getStatus(): Promise<JulieStatusResponse> {
         try {
-            // Using logic from implementation plan: connect to AntiGravity Port 8011
-            const response = await fetch('http://localhost:8011/api/julie/status', {
+            // Using logic from implementation plan: connect to AntiGravity Port 8010
+            const response = await fetch('http://localhost:8010/api/julie/status', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

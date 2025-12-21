@@ -1,7 +1,7 @@
 # ✅ 하이브리드 전략 실행 완료 보고서
 
-**완료일**: 2025-12-16  
-**상태**: ✅ 완료  
+**완료일**: 2025-12-16
+**상태**: ✅ 완료
 **목적**: AFO 왕국 지갑 시스템 정상화 및 학자 시스템 활성화
 
 ---
@@ -65,7 +65,7 @@
   conn = await asyncpg.connect(
       os.getenv("DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/afo")
   )
-  
+
   # 수정: database.py와 동일한 방식
   conn = await asyncpg.connect(
       host=os.getenv("POSTGRES_HOST", "localhost"),
@@ -178,16 +178,15 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 - **재생성**: `python3 scripts/export_keys.py`
 
 ### API 서버 설정
-- **포트**: 8011
-- **Health Check**: `http://localhost:8011/health`
+- **포트**: 8010
+- **Health Check**: `http://localhost:8010/health`
 - **PostgreSQL**: `localhost:15432`
 
 ### 지갑 시스템
 - **URL**: `http://localhost:3000/wallet`
-- **API**: `http://localhost:8011/api/wallet/keys`
+- **API**: `http://localhost:8010/api/wallet/keys`
 
 ---
 
-**상태**: ✅ 하이브리드 전략 완료  
+**상태**: ✅ 하이브리드 전략 완료
 **결과**: 왕국 건설 준비 완료
-

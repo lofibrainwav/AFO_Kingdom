@@ -77,7 +77,7 @@ The knowledge base that defines the Kingdom's identity.
 ```bash
 # Start Backend (Soul Engine)
 cd packages/afo-core
-uvicorn api_server:app --reload --port 8011
+uvicorn api_server:app --reload --port 8010
 
 # Start Frontend (Dashboard)
 cd packages/dashboard

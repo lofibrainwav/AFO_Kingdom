@@ -4,7 +4,7 @@
 import { NextResponse } from 'next/server';
 
 // Server-side: use environment variable or default to localhost
-const API_BASE = process.env.SOUL_ENGINE_URL || process.env.API_BASE_URL || process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8011';
+const API_BASE = process.env.SOUL_ENGINE_URL || process.env.API_BASE_URL || process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8010';
 
 export async function GET() {
   try {
@@ -34,7 +34,7 @@ export async function GET() {
   } catch (error) {
     console.error('Health API Error:', error);
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to connect to backend',
         status: 'error',
         health_percentage: 0,
@@ -46,4 +46,3 @@ export async function GET() {
     );
   }
 }
-

@@ -3,7 +3,7 @@ import sys
 import requests
 
 
-BASE_URL = "http://localhost:8011/api/finance"
+BASE_URL = "http://localhost:8010/api/finance"
 
 
 def verify_dashboard():

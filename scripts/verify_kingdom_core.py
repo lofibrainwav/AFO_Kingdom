@@ -8,7 +8,7 @@ import json
 import requests
 
 
-BASE_URL = "http://localhost:8011"
+BASE_URL = "http://localhost:8010"
 
 COLORS = {"GREEN": "\033[92m", "RED": "\033[91m", "RESET": "\033[0m", "BOLD": "\033[1m"}
 

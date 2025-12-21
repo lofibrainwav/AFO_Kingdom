@@ -23,7 +23,7 @@ export default function WalletPage() {
 
   const fetchKeys = async () => {
     try {
-      const res = await fetch('/api/proxy/api/wallet/keys'); // Needs Proxy Check (Updated to 127.0.0.1:8011)
+      const res = await fetch('/api/proxy/api/wallet/keys'); // Needs Proxy Check (Updated to 127.0.0.1:8010)
       if (!res.ok) {
         const text = await res.text();
         throw new Error(`Fetch Failed: ${res.status} ${res.statusText} - ${text.substring(0, 50)}`);
@@ -208,8 +208,8 @@ export default function WalletPage() {
         )}
       </div>
 
-      <BrowserAuthModal 
-        isOpen={showBrowserAuth} 
+      <BrowserAuthModal
+        isOpen={showBrowserAuth}
         onClose={() => setShowBrowserAuth(false)}
         onSuccess={fetchKeys}
       />

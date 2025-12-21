@@ -7,18 +7,18 @@ Shift from "Client-Side AI" to "Server-Side AI" to ensure **Goodness (Security)*
 ## Current State Analysis (Truth)
 - **Frontend**: React/Vite app on port `3005`.
 - **AI Logic**: `geminiService.ts` calls Google Gemini API directly (Client-side).
-- **Backend Link**: `trinityService.ts` attempts to call `localhost:8010` (Incorrect Port, should be `8011`).
+- **Backend Link**: `trinityService.ts` attempts to call `localhost:8010` (Correct Port).
 - **Security Risk**: API keys required in local `.env`, distinct from Vault.
 
 ## Proposed Architecture (Target)
 
 ### 1. Secure Link (Truth & Serenity)
-- **Frontend**: Update `trinityService.ts` to target `http://localhost:8011` (AntiGravity Port).
+- **Frontend**: Update `trinityService.ts` to target `http://localhost:8010` (Soul Engine Port).
 - **Backend**: Create `api/routes/julie.py` to handle CPA requests.
 
 ### 2. Vault Integration (Goodness)
 - **Problem**: Client-side keys are unsafe and create "Configuration Friction".
-- **Solution**: 
+- **Solution**:
     1. Backend `JulieRouter` uses `VaultManager` to retrieve `GEMINI_API_KEY`.
     2. Frontend sends prompt to Backend -> Backend calls Gemini -> Returns result.
     3. User needs **Zero Configuration** in the frontend folder.
@@ -26,7 +26,7 @@ Shift from "Client-Side AI" to "Server-Side AI" to ensure **Goodness (Security)*
 ### 3. Implementation Steps
 
 #### Phase 8-1: Bridge Repair
-- [ ] [MODIFY] `AICPA/aicpa-core/services/trinityService.ts`: Fix port to `8011`.
+- [ ] [MODIFY] `AICPA/aicpa-core/services/trinityService.ts`: Fix port to `8010`.
 - [ ] [NEW] `packages/afo-core/api/routes/julie.py`: Create basic health/status endpoint.
 - [ ] [MODIFY] `packages/afo-core/api_server.py`: Register `julie_router`.
 

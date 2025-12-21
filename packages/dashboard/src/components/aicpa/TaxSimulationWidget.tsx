@@ -2,24 +2,24 @@
 
 /**
  * AICPA Tax Simulation Widget
- * 
+ *
  * 실시간 세금 시뮬레이션 위젯
  * 슬라이더 조작으로 세금 계산 결과 즉시 확인
- * 
+ *
  * 眞 (Truth): 정확한 2025 OBBBA 세법 기반
  * 美 (Beauty): 직관적인 슬라이더 UI
  * 孝 (Serenity): Zero Friction - 마찰 없는 경험
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { 
-  Calculator, 
-  DollarSign, 
-  TrendingUp, 
-  AlertTriangle, 
+import {
+  Calculator,
+  DollarSign,
+  TrendingUp,
+  AlertTriangle,
   CheckCircle,
   RefreshCw,
-  Sparkles 
+  Sparkles
 } from 'lucide-react';
 
 interface TaxResult {
@@ -38,7 +38,7 @@ interface TaxResult {
   advice: string;
 }
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8011';
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8010';
 
 export const TaxSimulationWidget: React.FC = () => {
   // Form State
@@ -46,17 +46,17 @@ export const TaxSimulationWidget: React.FC = () => {
   const [grossIncome, setGrossIncome] = useState(180000);
   const [iraBalance, setIraBalance] = useState(600000);
   const [rothConversion, setRothConversion] = useState(0);
-  
+
   // Result State
   const [result, setResult] = useState<TaxResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   // Debounced API Call
   const simulateTax = useCallback(async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const response = await fetch(`${API_BASE}/api/aicpa/tax-simulate`, {
         method: 'POST',
@@ -69,9 +69,9 @@ export const TaxSimulationWidget: React.FC = () => {
           state: 'CA',
         }),
       });
-      
+
       if (!response.ok) throw new Error('API Error');
-      
+
       const data = await response.json();
       setResult(data.simulation);
     } catch (e) {
@@ -81,12 +81,12 @@ export const TaxSimulationWidget: React.FC = () => {
       setLoading(false);
     }
   }, [filingStatus, grossIncome, iraBalance, rothConversion]);
-  
+
   // Auto-simulate on mount
   useEffect(() => {
     simulateTax();
   }, []);
-  
+
   // Format currency
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -95,7 +95,7 @@ export const TaxSimulationWidget: React.FC = () => {
       maximumFractionDigits: 0,
     }).format(value);
   };
-  
+
   // Calculate slider position for visual feedback
   const getProgressColor = (rate: number) => {
     if (rate <= 12) return 'bg-emerald-500';
@@ -117,7 +117,7 @@ export const TaxSimulationWidget: React.FC = () => {
               <p className="text-slate-400 text-sm">Real-time calculation</p>
             </div>
           </div>
-          <button 
+          <button
             onClick={simulateTax}
             disabled={loading}
             className="p-2 bg-white/10 hover:bg-white/20 rounded-xl transition-colors"
@@ -126,7 +126,7 @@ export const TaxSimulationWidget: React.FC = () => {
           </button>
         </div>
       </div>
-      
+
       <div className="p-6 space-y-6">
         {/* Filing Status */}
         <div>
@@ -152,7 +152,7 @@ export const TaxSimulationWidget: React.FC = () => {
             ))}
           </div>
         </div>
-        
+
         {/* Income Slider */}
         <div>
           <div className="flex justify-between items-center mb-2">
@@ -173,7 +173,7 @@ export const TaxSimulationWidget: React.FC = () => {
             <span>$500k</span>
           </div>
         </div>
-        
+
         {/* IRA Balance Slider */}
         <div>
           <div className="flex justify-between items-center mb-2">
@@ -194,7 +194,7 @@ export const TaxSimulationWidget: React.FC = () => {
             <span>$2M</span>
           </div>
         </div>
-        
+
         {/* Roth Conversion Slider */}
         <div>
           <div className="flex justify-between items-center mb-2">
@@ -211,7 +211,7 @@ export const TaxSimulationWidget: React.FC = () => {
             className="w-full h-2 bg-emerald-100 rounded-full appearance-none cursor-pointer"
           />
         </div>
-        
+
         {/* Simulate Button */}
         <button
           onClick={simulateTax}
@@ -225,7 +225,7 @@ export const TaxSimulationWidget: React.FC = () => {
           )}
           Calculate Tax
         </button>
-        
+
         {/* Error State */}
         {error && (
           <div className="p-4 bg-rose-50 border border-rose-200 rounded-2xl text-rose-700 text-sm">
@@ -233,7 +233,7 @@ export const TaxSimulationWidget: React.FC = () => {
             {error}
           </div>
         )}
-        
+
         {/* Results */}
         {result && !error && (
           <div className="space-y-4 pt-4 border-t border-slate-100">
@@ -249,7 +249,7 @@ export const TaxSimulationWidget: React.FC = () => {
                 <div className="text-xl font-bold text-slate-800">{formatCurrency(result.state_tax)}</div>
               </div>
             </div>
-            
+
             {/* Total Tax */}
             <div className="bg-gradient-to-r from-slate-900 to-slate-800 rounded-2xl p-4 text-white">
               <div className="flex justify-between items-center">
@@ -261,14 +261,14 @@ export const TaxSimulationWidget: React.FC = () => {
                 <span className="text-lg font-bold text-emerald-400">{formatCurrency(result.after_tax_income)}</span>
               </div>
             </div>
-            
+
             {/* Marginal Bracket Indicator */}
             <div className="bg-slate-50 rounded-2xl p-4">
               <div className="flex justify-between items-center mb-2">
                 <span className="text-xs text-slate-500 uppercase">Marginal Bracket</span>
                 <span className={`text-sm font-bold px-2 py-1 rounded-lg ${
-                  result.marginal_bracket <= 0.12 
-                    ? 'bg-emerald-100 text-emerald-700' 
+                  result.marginal_bracket <= 0.12
+                    ? 'bg-emerald-100 text-emerald-700'
                     : result.marginal_bracket <= 0.22
                     ? 'bg-amber-100 text-amber-700'
                     : 'bg-rose-100 text-rose-700'
@@ -277,13 +277,13 @@ export const TaxSimulationWidget: React.FC = () => {
                 </span>
               </div>
               <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
-                <div 
+                <div
                   className={`h-full ${getProgressColor(result.marginal_bracket * 100)} transition-all`}
                   style={{ width: `${result.marginal_bracket * 100 * 2.7}%` }}
                 />
               </div>
             </div>
-            
+
             {/* Sweet Spot Analysis */}
             {result.sweet_spot_headroom > 0 && (
               <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4">
@@ -304,7 +304,7 @@ export const TaxSimulationWidget: React.FC = () => {
                 </div>
               </div>
             )}
-            
+
             {/* IRMAA Warning */}
             {result.irmaa_warning && (
               <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4">
@@ -319,7 +319,7 @@ export const TaxSimulationWidget: React.FC = () => {
                 </div>
               </div>
             )}
-            
+
             {/* Julie's Advice */}
             <div className="bg-slate-900 text-white rounded-2xl p-4">
               <div className="flex items-center gap-2 mb-2 text-amber-400">
@@ -331,7 +331,7 @@ export const TaxSimulationWidget: React.FC = () => {
           </div>
         )}
       </div>
-      
+
       {/* Footer */}
       <div className="px-6 py-3 bg-slate-50 border-t border-slate-100 text-xs text-slate-400 text-center">
         Powered by AFO AICPA Agent Army | 2025 OBBBA Tax Regulations

@@ -34,7 +34,7 @@ export default function CPADashboard({}: CPADashboardProps) {
         setError(null);
         try {
             // GenUI: Connect to Backend (Vault Integrated) via Proxy
-            // Port 8011 is targeted via next.config.ts proxy
+            // Port 8010 is targeted via next.config.ts proxy
             const res = await fetch('/api/proxy/api/julie/dashboard');
             if (!res.ok) throw new Error(`Failed to fetch dashboard data: ${res.statusText}`);
             const jsonData = await res.json();
@@ -74,7 +74,7 @@ export default function CPADashboard({}: CPADashboardProps) {
                             <p className="text-xs text-emerald-400 mt-1 italic opacity-90">"{displayData.advice}"</p>
                         </div>
                     </div>
-                     <button 
+                     <button
                         onClick={fetchData}
                         disabled={loading}
                         className={`p-2 bg-gray-800 rounded-lg hover:bg-gray-700 text-xs text-gray-400 border border-gray-700 transition-all ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:text-white'}`}
@@ -104,12 +104,12 @@ export default function CPADashboard({}: CPADashboardProps) {
                         {/* Phase 16.5: Trinity Score - Strategic Compass */}
                         <TrinityScoreWidget />
 
-                        <FinancialHealthDial 
-                            score={displayData.financial_health_score} 
+                        <FinancialHealthDial
+                            score={displayData.financial_health_score}
                             trend={displayData.financial_health_score > 80 ? "up" : "down"}
                             risk_level={displayData.financial_health_score > 80 ? "low" : "medium"}
                         />
-                        
+
                         <div className="bg-[#0A0F1C] border border-gray-800 rounded-2xl p-6 space-y-4 shadow-lg">
                             <div>
                                 <div className="text-xs text-gray-500 mb-1 font-medium">Monthly Spending</div>
@@ -130,9 +130,9 @@ export default function CPADashboard({}: CPADashboardProps) {
                             <BudgetPredictionWidget />
                             <GrokInsightWidget />
                         </div>
-                        
+
                         <TransactionLedger transactions={displayData.recent_transactions || []} />
-                        
+
                         {/* Phase 16.5: Detailed Pillars */}
                         <PillarsDetailedWidget />
                     </div>
