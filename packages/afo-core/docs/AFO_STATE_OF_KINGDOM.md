@@ -14,12 +14,12 @@ The system has transitioned from a fragmented agent fleet to a **Unified Graph M
     - **Persistence**: Redis-backed Checkpointing (永).
 
 - **The Trinity Nodes (3책사)**
-    - **Jegalryang (Truth)** ⚔️: Architecture & Strategy.
-    - **Samaui (Goodness)** 🛡️: Risk & Ethics.
-    - **Juyu (Beauty)** 🌉: Narrative & UX.
+    - **Zhuge Liang (Truth)** ⚔️: Architecture & Strategy.
+    - **Sima Yi (Goodness)** 🛡️: Risk & Ethics.
+    - **Zhou Yu (Beauty)** 🌉: Narrative & UX.
 
 - **Integration Status**
-    - **API**: `/chancellor/invoke` (Active on Port 8011/8000).
+    - **API**: `/chancellor/invoke` (Active on Port 8010).
     - **Legacy**: Necrotic imports (`afo_soul_engine.domain/utils`) surgically removed.
     - **Verification**: Logic verified via `verify_chancellor_graph.py` and live `curl` tests.
 

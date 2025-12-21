@@ -11,7 +11,7 @@ export interface JulieStatusResponse {
 const MOCK_STATUS: JulieStatusResponse = {
     status: "Offline Mode",
     alerts: ["⚠️ Backend disconnected"],
-    advice: "Check connection to Soul Engine (Port 8011).\nEnsure 'python api_server.py' is running.",
+    advice: "Check connection to Soul Engine (Port 8010).\nEnsure 'python api_server.py' is running.",
     dry_run_tx_count: 0
 };
 
@@ -23,7 +23,7 @@ export const JulieService = {
     async getStatus(): Promise<JulieStatusResponse> {
         try {
             // AFO Kingdom Integration: Use environment variable for API base
-            const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8011';
+            const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8010';
             const response = await fetch(`${API_BASE}/api/julie/status`, {
                 method: 'GET',
                 headers: {

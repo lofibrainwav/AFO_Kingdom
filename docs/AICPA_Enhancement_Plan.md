@@ -4,7 +4,7 @@
 Transform the "AI Studio" frontend into the true **Julie CPA AutoMate** interface.
 **Missing Parts**:
 1.  **CPA Dashboard**: Visualization of the financial data provided by `JulieEngine` (Backend).
-2.  **Backend Integration**: Connect frontend to `http://localhost:8011/api/julie/status` instead of just mock data.
+2.  **Backend Integration**: Connect frontend to `http://localhost:8010/api/julie/status` instead of just mock data.
 3.  **Persona Alignment**: Update UI to reflect "LA Korean-American" context (Currency $, English/Korean mix).
 
 ## Analysis (Truth)
@@ -31,5 +31,5 @@ Transform the "AI Studio" frontend into the true **Julie CPA AutoMate** interfac
 
 ## Verification
 - Run `npm run dev`.
-- Verify "CPA Dashboard" loads data from `localhost:8011`.
+- Verify "CPA Dashboard" loads data from `localhost:8010`.
 - Verify "LA/US" context in the UI.

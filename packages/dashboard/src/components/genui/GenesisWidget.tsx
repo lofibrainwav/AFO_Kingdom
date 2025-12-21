@@ -21,7 +21,7 @@ export function GenesisWidget() {
 
   const handleCreate = async () => {
     if (!prompt.trim()) return;
-    
+
     setIsCreating(true);
     setStatus('왕국의 지혜를 모으는 중...');
     setResult(null);
@@ -38,11 +38,17 @@ export function GenesisWidget() {
         setResult(data);
         setStatus(data.success ? '제네시스 성공: 새로운 차원이 열렸습니다.' : '제네시스 지연: 추가 정련이 필요합니다.');
       } else {
-        setStatus('제네시스 실패: 차원의 균열이 발생했습니다.');
+        const errorData = await res.json().catch(() => ({}));
+        const errorMsg = errorData.detail || errorData.error || '알 수 없는 오류';
+        setStatus(`제네시스 실패: ${errorMsg}`);
       }
     } catch (error) {
       console.error('Genesis Error:', error);
-      setStatus('연결 실패: 지휘소와의 통신이 원활하지 않습니다.');
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        setStatus('연결 실패: API 서버가 실행 중이지 않습니다. 포트 8010에서 서버를 시작해주세요.');
+      } else {
+        setStatus('연결 실패: 지휘소와의 통신이 원활하지 않습니다.');
+      }
     } finally {
       setIsCreating(false);
     }
@@ -82,8 +88,8 @@ export function GenesisWidget() {
           onClick={handleCreate}
           disabled={isCreating || !prompt.trim()}
           className={`absolute bottom-4 right-4 p-4 rounded-xl transition-all duration-300 ${
-            isCreating || !prompt.trim() 
-            ? 'bg-white/5 text-white/20' 
+            isCreating || !prompt.trim()
+            ? 'bg-white/5 text-white/20'
             : 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-900/40 hover:scale-110 active:scale-95'
           }`}
         >
@@ -94,8 +100,8 @@ export function GenesisWidget() {
       {/* Status Bar */}
       {status && (
         <div className={`mb-8 p-4 rounded-xl border flex items-center gap-3 animate-in fade-in slide-in-from-top-2 ${
-          status.includes('성공') ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300' : 
-          status.includes('실패') ? 'bg-red-500/10 border-red-500/30 text-red-300' : 
+          status.includes('성공') ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300' :
+          status.includes('실패') ? 'bg-red-500/10 border-red-500/30 text-red-300' :
           'bg-white/5 border-white/10 text-white/60'
         }`}>
           {isCreating ? <Play className="w-4 h-4 animate-pulse" /> : status.includes('성공') ? <CheckCircle2 className="w-4 h-4" /> : <AlertTriangle className="w-4 h-4" />}

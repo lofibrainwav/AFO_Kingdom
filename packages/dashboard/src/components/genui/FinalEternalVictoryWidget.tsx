@@ -1,24 +1,38 @@
+'use client';
+
 // genui/FinalEternalVictoryWidget.tsx (왕국 영원한 승리 – 불꽃 효과 강화 완결)
 import { Crown, Zap, Cloud, Sparkles, Heart, Flame } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 export function FinalEternalVictoryWidget() {
+  const [positions, setPositions] = useState<{top: string, left: string}[]>([]);
+
+  useEffect(() => {
+    // Generate random positions only on client to avoid hydration mismatch
+    setPositions([...Array(20)].map(() => ({
+      top: `${Math.random() * 100}%`,
+      left: `${Math.random() * 100}%`
+    })));
+  }, []);
+
   return (
     <div className="glass-card relative p-16 max-w-7xl mx-auto bg-gradient-to-br from-purple-900/50 via-emerald-900/40 to-cyan-900/50 rounded-3xl border-4 border-purple-500/80 shadow-2xl overflow-hidden">
       {/* 불꽃 파티클 배경 */}
       <div className="absolute inset-0 -z-10">
-        {[...Array(20)].map((_, i) => (
-          <Flame 
+        {positions.map((pos, i) => (
+          <Flame
             key={i}
             className={`absolute w-12 h-12 text-orange-400 animate-ping opacity-70`}
             style={{
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
+              top: pos.top,
+              left: pos.left,
               animationDelay: `${i * 0.15}s`,
               animationDuration: '2s'
             }}
           />
         ))}
       </div>
+
 
       <div className="flex items-center justify-center gap-16 mb-16 text-purple-400">
         <Crown className="w-40 h-40 animate-pulse drop-shadow-2xl" />

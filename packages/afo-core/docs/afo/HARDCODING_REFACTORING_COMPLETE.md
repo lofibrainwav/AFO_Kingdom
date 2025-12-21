@@ -1,7 +1,7 @@
 # ✅ 하드코딩 제거 및 최적화 완료 보고서
 
-**완료일**: 2025-12-17  
-**상태**: ✅ 하드코딩 제거 및 최적화 완료  
+**완료일**: 2025-12-17
+**상태**: ✅ 하드코딩 제거 및 최적화 완료
 **목적**: 남은 하드코딩 제거 및 코드 최적화
 
 ---
@@ -11,7 +11,7 @@
 ### 1. config/settings.py 확장 ✅
 
 **추가된 설정 항목**:
-- `API_SERVER_PORT`: API Server 포트 (기본값: 8011)
+- `API_SERVER_PORT`: API Server 포트 (기본값: 8010)
 - `API_SERVER_HOST`: API Server 호스트 (기본값: 0.0.0.0)
 - `SOUL_ENGINE_PORT`: Soul Engine 포트 (기본값: 8010)
 
@@ -24,12 +24,12 @@
 ### 2. api_server.py 리팩토링 ✅
 
 **변경 사항**:
-- 하드코딩된 포트 `8011` → `settings.API_SERVER_PORT` 사용
+- 하드코딩된 포트 `8010` → `settings.API_SERVER_PORT` 사용
 - 하드코딩된 호스트 `"0.0.0.0"` → `settings.API_SERVER_HOST` 사용
 
 **Before**:
 ```python
-uvicorn.run(app, host="0.0.0.0", port=8011)
+uvicorn.run(app, host="0.0.0.0", port=8010)
 ```
 
 **After**:
@@ -113,16 +113,16 @@ connection_configs = [
 ### 6. scripts/sync_workflow.sh 리팩토링 ✅
 
 **변경 사항**:
-- 하드코딩된 포트 `8011` → 환경 변수 사용
+- 하드코딩된 포트 `8010` → 환경 변수 사용
 
 **Before**:
 ```bash
-HEALTH=$(curl -s http://localhost:8011/health 2>/dev/null || echo "{}")
+HEALTH=$(curl -s http://localhost:8010/health 2>/dev/null || echo "{}")
 ```
 
 **After**:
 ```bash
-API_SERVER_PORT=${API_SERVER_PORT:-8011}
+API_SERVER_PORT=${API_SERVER_PORT:-8010}
 HEALTH=$(curl -s http://localhost:${API_SERVER_PORT}/health 2>/dev/null || echo "{}")
 ```
 
@@ -131,7 +131,7 @@ HEALTH=$(curl -s http://localhost:${API_SERVER_PORT}/health 2>/dev/null || echo 
 ## 📈 최적화 결과
 
 ### Before
-- 하드코딩된 포트: 3개 (8011, 8010, 8931)
+- 하드코딩된 포트: 3개 (8010, 8931)
 - 하드코딩된 호스트: 1개
 - PostgreSQL 설정: os.getenv 직접 사용
 
@@ -193,4 +193,3 @@ HEALTH=$(curl -s http://localhost:${API_SERVER_PORT}/health 2>/dev/null || echo 
 ---
 
 **상태**: ✅ 하드코딩 제거 및 최적화 완료
-

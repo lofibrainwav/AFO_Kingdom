@@ -59,11 +59,11 @@ def check_serenity():
     # Check Matrix Stream Endpoint
     try:
         res = requests.get(
-            "http://localhost:8011/api/stream/health"
+            "http://localhost:8010/api/stream/health"
         )  # Assuming /health or similar exists or just check connection
         # Actually stream endpoint might be /api/stream/thoughts
         # Let's check the main health endpoint as proxy for Zero Friction
-        res = requests.get("http://localhost:8011/api/health")
+        res = requests.get("http://localhost:8010/api/health")
         if res.status_code == 200:
             print("✅ System Health Endpoint Active (Zero Friction)")
         else:

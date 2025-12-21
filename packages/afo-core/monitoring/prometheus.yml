@@ -20,9 +20,11 @@ alerting:
 # Scrape configuration
 scrape_configs:
   # Soul Engine API (main backend)
+  # Note: API Server runs on port 8010 (see config/settings.py)
+  # If using Docker port mapping, adjust target port accordingly
   - job_name: 'afo-soul-engine'
     static_configs:
-      - targets: ['host.docker.internal:8011']
+      - targets: ['host.docker.internal:8010']
     metrics_path: '/metrics'
     scrape_interval: 10s
 

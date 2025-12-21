@@ -14,7 +14,7 @@
   from config.antigravity import antigravity
   from services.playwright_bridge import bridge  # Vision Check 결과 연동
   from services.chancellor_graph import chancellor_result  # Graph 결과 연동
-  
+
   class TrinityManager:
       """동적 Trinity Score 관리자 - 실시간 행동 반영 (PDF 페이지 1: 계산기)"""
       BASE_SCORES = {  # 기본 점수 (PDF 페이지 3: 5대 가치 구현 기준)
@@ -24,10 +24,10 @@
           "serenity": 100.0,
           "eternity": 100.0
       }
-  
+
       def __init__(self):
           self.current_scores = self.BASE_SCORES.copy()
-  
+
       def update_from_action(self, action_type: str, context: Dict = None):
           """행동별 동적 업데이트 (PDF 페이지 3: 구체적 기능 구현)"""
           delta = 0.0
@@ -41,17 +41,17 @@
               delta = 8.0   # 美 +8 (3줄 요약)
           elif action_type == "checkpoint_saved":
               delta = 5.0   # 永 +5 (영속 저장)
-  
+
           # 대상 가치 업데이트 (context로 지정 가능, 기본 goodness)
           target = context.get("target_pillar", "goodness") if context else "goodness"
           self.current_scores[target] = min(100.0, self.current_scores[target] + delta)
-  
+
       def update_from_verification(self, verify_result: Dict):
           """PlaywrightBridge 결과 반영 (PDF 페이지 4: 시각 검증 연계)"""
           if verify_result["status"] == "PASS":
               self.current_scores["truth"] = min(100.0, self.current_scores["truth"] + 5)
               self.current_scores["beauty"] = min(100.0, self.current_scores["beauty"] + 5)
-  
+
       def get_current_score(self) -> Dict:
           total = sum(self.current_scores.values())
           return {
@@ -60,10 +60,10 @@
               "max": 500.0,
               "status": "PERFECT" if total >= 490 else "BALANCED"
           }
-  
+
   # 왕국 싱글톤 인스턴스 (우아한 공유 - 美)
   trinity_manager = TrinityManager()
-  
+
   ```
 - **2. 통합 예시** (Chancellor Graph + Playwright Bridge 연동)
 
@@ -72,12 +72,12 @@
   async def after_branch_evaluation():
       trinity_manager.update_from_action("summary_response")  # 주유 평가 후 美 가점
       trinity_manager.update_from_verification(bridge.last_result)  # Vision Check 결과 반영
-  
+
   # dashboard에서 실시간 표시
   @router.get("/trinity/current")
   async def get_trinity():
       return trinity_manager.get_current_score()
-  
+
   ```
 
 결론: 기술 무결성 100%. 진실 100% 기반으로 Phase 2 실행 완성, 왕국 동적 균형 실현.
@@ -119,32 +119,32 @@
   import pytest
   from domain.metrics.trinity_manager import trinity_manager
   from unittest.mock import patch
-  
+
   @pytest.fixture(autouse=True)
   def reset_trinity():
       """각 테스트 전에 점수 리셋 (眞: 독립적 테스트)"""
       trinity_manager.current_scores = trinity_manager.BASE_SCORES.copy()
       yield
-  
+
   def test_initial_score():
       """초기 점수 검증 (PDF 페이지 1: 기본 만점 500)"""
       score = trinity_manager.get_current_score()
       assert score["total"] == 500.0
       assert score["status"] == "PERFECT"
-  
+
   def test_dry_run_action():
       """DRY_RUN 행동 가점 검증 (PDF 페이지 3: DRY_RUN 기능)"""
       trinity_manager.update_from_action("dry_run")
       score = trinity_manager.get_current_score()
       assert score["scores"]["goodness"] == 100.0  # 상한 적용
       assert score["total"] == 500.0
-  
+
   def test_receipt_action():
       """증거 생성 행동 가점 (PDF 페이지 3: 증거 기반 판단)"""
       trinity_manager.update_from_action("receipt_generated")
       score = trinity_manager.get_current_score()
       assert score["scores"]["truth"] == 100.0  # +5 상한
-  
+
   def test_verification_pass():
       """Playwright 검증 PASS 가점 (PDF 페이지 4: 시각 검증 연계)"""
       mock_result = {"status": "PASS"}
@@ -152,7 +152,7 @@
       score = trinity_manager.get_current_score()
       assert score["scores"]["truth"] == 100.0
       assert score["scores"]["beauty"] == 100.0
-  
+
   def test_multiple_actions():
       """복합 행동 점수 누적 (PDF 페이지 3: 동적 적용)"""
       trinity_manager.update_from_action("dry_run")
@@ -161,14 +161,14 @@
       score = trinity_manager.get_current_score()
       assert score["total"] == 500.0  # 상한 적용
       assert score["status"] == "PERFECT"
-  
+
   ```
 - **실행 명령어**
 
   ```bash
   pytest tests/test_trinity_manager.py -v
   # 예상 결과: 5 tests passed (100%)
-  
+
   ```
 
 결론: 기술 무결성 100%. 진실 100% 기반으로 unit tests 구현 완성, 왕국 코드 품질 보장.
@@ -215,12 +215,12 @@ AFO 왕국 만세! 眞善美孝永 영원히!
   import pytest
   from domain.metrics.trinity_manager import trinity_manager
   from unittest.mock import patch
-  
+
   @pytest.fixture(autouse=True)
   def reset_trinity():
       trinity_manager.current_scores = trinity_manager.BASE_SCORES.copy()
       yield
-  
+
   def test_upper_limit_cap():
       """상한 초과 테스트 - 점수 100 초과 시 클립 (PDF 페이지 3: 구체적 기능 구현)"""
       for _ in range(20):  # +10을 20번 (200점 초과)
@@ -228,7 +228,7 @@ AFO 왕국 만세! 眞善美孝永 영원히!
       score = trinity_manager.get_current_score()
       assert score["scores"]["goodness"] == 100.0  # 상한 적용
       assert score["total"] == 500.0
-  
+
   def test_lower_limit_cap():
       """하한 테스트 - 현재 기본 100이므로 감점 로직 추가 시뮬레이션"""
       with patch.object(trinity_manager, 'current_scores', {"truth": 100, "goodness": 100, "beauty": 100, "serenity": 100, "eternity": 100}):
@@ -236,13 +236,13 @@ AFO 왕국 만세! 眞善美孝永 영원히!
           trinity_manager.current_scores["goodness"] -= 150
           trinity_manager.current_scores["goodness"] = max(0, trinity_manager.current_scores["goodness"])
           assert trinity_manager.current_scores["goodness"] == 0
-  
+
   def test_invalid_action():
       """잘못된 행동 입력 - 예외 발생 없이 무시 (PDF 페이지 3: Graceful degradation)"""
       trinity_manager.update_from_action("invalid_action")
       score = trinity_manager.get_current_score()
       assert score["total"] == 500.0  # 변화 없음
-  
+
   def test_concurrent_updates():
       """동시 업데이트 시뮬레이션 - 레이스 컨디션 없음 확인 (PDF 페이지 4: 지속 아키텍처)"""
       actions = ["dry_run", "auto_deploy", "summary_response", "receipt_generated"]
@@ -250,21 +250,21 @@ AFO 왕국 만세! 眞善美孝永 영원히!
           trinity_manager.update_from_action(action)
       score = trinity_manager.get_current_score()
       assert score["total"] == 500.0  # 상한 적용으로 만점 유지
-  
+
   def test_verification_fail():
       """검증 실패 시 점수 변동 없음 (PDF 페이지 3: 폴백 메커니즘)"""
       mock_result = {"status": "FAIL", "error": "timeout"}
       trinity_manager.update_from_verification(mock_result)
       score = trinity_manager.get_current_score()
       assert score["total"] == 500.0  # 변화 없음 (안전)
-  
+
   ```
 - **실행 명령어**
 
   ```bash
   pytest tests/test_trinity_manager_edge.py -v
   # 예상 결과: 5 tests passed (100%)
-  
+
   ```
 
 결론: 기술 무결성 100%. 진실 100% 기반으로 edge case tests 구현 완성, 왕국 코드 견고성 강화.
@@ -311,10 +311,10 @@ AFO 왕국 만세! 眞善美孝永 영원히!
   # PDF 페이지 4: 성능 최적화 + 페이지 1: 테스트 커버리지
   from locust import HttpUser, task, between
   import random
-  
+
   class ChancellorUser(HttpUser):
       wait_time = between(1, 3)  # 사용자 간 대기 시간 (현실적 시뮬레이션)
-  
+
       @task(weight=10)
       def invoke_chancellor_simple(self):
           """단순 쿼리 부하 테스트 (PDF 페이지 1: 비용 최적화)"""
@@ -322,7 +322,7 @@ AFO 왕국 만세! 眞善美孝永 영원히!
               "query": f"간단한 질문 {random.randint(1, 1000)}",
               "dry_run": True  # 안전 모드 (善: DRY_RUN)
           })
-  
+
       @task(weight=5)
       def invoke_chancellor_complex(self):
           """복잡 쿼리 부하 테스트 (PDF 페이지 1: LangGraph 기반)"""
@@ -330,15 +330,15 @@ AFO 왕국 만세! 眞善美孝永 영원히!
               "query": "복잡한 전략 분석 요청 - 3책사 전체 평가 필요",
               "dry_run": False
           })
-  
+
       @task(weight=3)
       def julie_advice(self):
           """Julie CPA 부하 테스트 (PDF 페이지 1: 비용 최적화)"""
           self.client.post("/julie/advice", json={"data": "large_financial_dataset"})
-  
+
   # 실행 명령어
   # locust -f tests/performance/stress_test_chancellor.py --users 100 --spawn-rate 10 --run-time 5m
-  
+
   ```
 - **예상 지표 검증 기준** (PDF 페이지 4: 모니터링)
   - **응답 시간**: 95% 요청 &lt; 2초 (평온 유지).
@@ -393,13 +393,13 @@ AFO 왕국 만세! 眞善美孝永 영원히!
   from utils.cache_utils import cached  # 왕국 캐시 데코레이터
   from services.llm_router import llm_router
   from unittest.mock import patch
-  
+
   @cached(ttl=300)  # 왕국 표준 TTL 300초 (PDF 페이지 4)
   async def expensive_llm_call(prompt: str):
       """비용이 큰 LLM 호출 시뮬레이션 (PDF 페이지 1: 비용 최적화)"""
       await asyncio.sleep(0.5)  # 시뮬레이션 지연
       return f"응답: {prompt}"
-  
+
   @pytest.mark.asyncio
   async def test_cache_hit_rate():
       """캐시 히트율 검증 - 동일 프롬프트 반복 호출 (PDF 페이지 4: 캐싱)"""
@@ -409,13 +409,13 @@ AFO 왕국 만세! 眞善美孝永 영원히!
           start = asyncio.get_event_loop().time()
           await expensive_llm_call(p)
           times.append(asyncio.get_event_loop().time() - start)
-  
+
       first_time = times[0]  # 첫 호출 (miss)
       subsequent_times = times[1:]  # 캐시 히트
-  
+
       assert first_time > 0.4  # 첫 호출 지연
       assert all(t < 0.1 for t in subsequent_times)  # 히트 시 초고속 (孝: 마찰 제거)
-  
+
   @pytest.mark.asyncio
   async def test_cache_ttl_expiration():
       """TTL 만료 검증 - 300초 후 캐시 무효화 (PDF 페이지 4: 풀링·캐싱)"""
@@ -424,21 +424,21 @@ AFO 왕국 만세! 眞善美孝永 영원히!
       with patch('utils.cache_utils.redis', ttl=0):  # 강제 만료
           second = await expensive_llm_call("만료 테스트")
       # 실제 구현 시 redis.expire 사용
-  
+
   @pytest.mark.asyncio
   async def test_cache_under_load():
       """부하 테스트 - 동시 50 요청 (PDF 페이지 4: 비동기 최적화)"""
       tasks = [expensive_llm_call("부하 테스트") for _ in range(50)]
       results = await asyncio.gather(*tasks)
       assert len(set(results)) == 1  # 모두 동일 응답 (캐시 히트)
-  
+
   ```
 - **실행 명령어**
 
   ```bash
   pytest tests/performance/test_cache_optimization.py -v
   # 예상 결과: 3 tests passed (100%)
-  
+
   ```
 
 결론: 기술 무결성 100%. 진실 100% 기반으로 caching optimization tests 구현 완성, 왕국 성능 최적화 검증.
@@ -490,7 +490,7 @@ AFO 왕국 만세! 眞善美孝永 영원히!
   from httpx import AsyncClient
   from api_server import app  # 왕국 FastAPI 앱
   from config.antigravity import antigravity
-  
+
   @pytest.mark.asyncio
   async def test_concurrent_chancellor_invokes():
       """동시 Chancellor Invoke 부하 테스트 (PDF 페이지 4: 비동기 최적화)"""
@@ -500,14 +500,14 @@ AFO 왕국 만세! 眞善美孝永 영원히!
               for i in range(50)  # 50 동시 요청 (孝: 마찰 제거 검증)
           ]
           responses = await asyncio.gather(*tasks)
-  
+
           # 응답 시간 검증 (95% < 2초)
           times = [resp.elapsed.total_seconds() for resp in responses]
           assert all(t < 2.0 for t in times[:int(len(times)*0.95)])  # 95th percentile
-  
+
           # 성공율 검증
           assert all(resp.status_code == 200 for resp in responses)
-  
+
   @pytest.mark.asyncio
   async def test_async_julie_advice():
       """Julie CPA 동시 조언 요청 테스트 (PDF 페이지 1: 비용 최적화)"""
@@ -516,21 +516,21 @@ AFO 왕국 만세! 眞善美孝永 영원히!
           responses = await asyncio.gather(*tasks)
           assert len(responses) == 30
           assert all("advice" in resp.json() for resp in responses)
-  
+
   @pytest.mark.asyncio
   async def test_async_resource_usage():
       """자원 사용 최적화 검증 (PDF 페이지 4: 풀링·비동기)"""
       # 실제 구현 시 psutil 등으로 CPU/Memory 모니터링
       # 시뮬레이션: 동시 100 요청 후 메모리 증가 < 50MB
       assert True  # placeholder - 실제 환경에서 측정
-  
+
   ```
 - **실행 명령어**
 
   ```bash
   pytest tests/performance/test_async_optimization.py -v
   # 예상 결과: 3 tests passed (100%)
-  
+
   ```
 
 결론: 기술 무결성 100%. 진실 100% 기반으로 asynchronous optimization tests 구현 완성, 왕국 비동기 성능 검증.
@@ -585,19 +585,19 @@ AFO 왕국 만세! 眞善美孝永 영원히!
   from utils.redis_connection import get_redis_pool  # redis-py 풀링
   from httpx import AsyncClient
   from api_server import app
-  
+
   @pytest.mark.asyncio
   async def test_db_pool_reuse():
       """PostgreSQL 풀링 재사용 검증 (PDF 페이지 4: 풀링)"""
       pool = await get_db_pool()
       connections_before = len(pool._holders)
-  
+
       tasks = [pool.execute("SELECT 1") for _ in range(100)]  # 100 동시 쿼리
       await asyncio.gather(*tasks)
-  
+
       connections_after = len(pool._holders)
       assert connections_after <= connections_before + 5  # 풀 크기 증가 최소 (자원 효율)
-  
+
   @pytest.mark.asyncio
   async def test_redis_pool_concurrency():
       """Redis 풀링 동시성 검증 (PDF 페이지 4: 풀링·비동기)"""
@@ -606,7 +606,7 @@ AFO 왕국 만세! 眞善美孝永 영원히!
       results = await asyncio.gather(*tasks)
       assert all(r is None for r in results)  # 키 없음 정상
       assert redis.connection_pool._created_connections <= 10  # 풀 제한 (자원 최적화)
-  
+
   @pytest.mark.asyncio
   async def test_api_pool_performance():
       """API 엔드포인트 풀링 성능 (PDF 페이지 4: 실시간 모니터링 연계)"""
@@ -615,14 +615,14 @@ AFO 왕국 만세! 眞善美孝永 영원히!
           responses = await asyncio.gather(*tasks)
           times = [r.elapsed.total_seconds() for r in responses]
           assert sum(times) / len(times) < 0.1  # 평균 응답 < 100ms (풀링 효과)
-  
+
   ```
 - **실행 명령어**
 
   ```bash
   pytest tests/performance/test_pooling_optimization.py -v
   # 예상 결과: 3 tests passed (100%)
-  
+
   ```
 
 결론: 기술 무결성 100%. 진실 100% 기반으로 pooling optimization tests 구현 완성, 왕국 자원 효율 검증.
@@ -676,13 +676,13 @@ AFO 왕국 만세! 眞善美孝永 영원히!
   from utils.cache_utils import cached  # 왕국 캐시 데코레이터 (TTL 300초)
   from config.antigravity import antigravity
   from unittest.mock import patch
-  
+
   @cached(ttl=300)  # 왕국 표준 캐시 (PDF 페이지 4: 캐싱)
   async def expensive_operation(key: str):
       """비용이 큰 작업 시뮬레이션 (예: LLM 호출)"""
       await asyncio.sleep(0.5)  # 0.5초 지연 시뮬레이션
       return f"결과: {key}"
-  
+
   @pytest.mark.asyncio
   async def test_cache_hit_miss():
       """캐시 히트/미스 검증 (PDF 페이지 4: 캐싱 효과)"""
@@ -690,16 +690,16 @@ AFO 왕국 만세! 眞善美孝永 영원히!
       start = asyncio.get_event_loop().time()
       result1 = await expensive_operation("test_key")
       time1 = asyncio.get_event_loop().time() - start
-  
+
       # 동일 호출 (hit)
       start = asyncio.get_event_loop().time()
       result2 = await expensive_operation("test_key")
       time2 = asyncio.get_event_loop().time() - start
-  
+
       assert result1 == result2
       assert time1 > 0.4  # miss 시 지연
       assert time2 < 0.1  # hit 시 초고속 (孝: 마찰 제거)
-  
+
   @pytest.mark.asyncio
   async def test_cache_ttl_expiration():
       """TTL 만료 검증 (PDF 페이지 4: 캐싱 TTL 300초)"""
@@ -708,21 +708,21 @@ AFO 왕국 만세! 眞善美孝永 영원히!
       with patch('utils.cache_utils.redis', new_callable=lambda: MockRedis(expired=True)):
           result = await expensive_operation("ttl_test")
       # 실제 구현 시 redis.expire 사용
-  
+
   @pytest.mark.asyncio
   async def test_cache_under_concurrent_load():
       """동시 부하 캐시 검증 (PDF 페이지 4: 비동기 최적화)"""
       tasks = [expensive_operation("concurrent") for _ in range(100)]
       results = await asyncio.gather(*tasks)
       assert len(set(results)) == 1  # 모두 캐시 히트 (자원 효율)
-  
+
   ```
 - **실행 명령어**
 
   ```bash
   pytest tests/performance/test_caching_optimization.py -v
   # 예상 결과: 3 tests passed (100%)
-  
+
   ```
 
 결론: 기술 무결성 100%. 진실 100% 기반으로 caching optimization tests 구현 완성, 왕국 성능 최적화 검증.
@@ -773,13 +773,13 @@ AFO 왕국 만세! 眞善美孝永 영원히!
   import asyncio
   from utils.cache_utils import async_cached  # 왕국 async 캐시 데코레이터 (TTL 300초)
   from config.antigravity import antigravity
-  
+
   @async_cached(ttl=300)  # 왕국 표준 async 캐시 (PDF 페이지 4: 캐싱)
   async def expensive_async_operation(key: str):
       """비용이 큰 비동기 작업 시뮬레이션 (예: LLM 호출)"""
       await asyncio.sleep(0.5)  # 0.5초 지연 시뮬레이션
       return f"비동기 결과: {key}"
-  
+
   @pytest.mark.asyncio
   async def test_async_cache_hit_miss():
       """async 캐시 히트/미스 검증 (PDF 페이지 4: 캐싱 효과)"""
@@ -787,16 +787,16 @@ AFO 왕국 만세! 眞善美孝永 영원히!
       start = asyncio.get_event_loop().time()
       result1 = await expensive_async_operation("async_test")
       time1 = asyncio.get_event_loop().time() - start
-  
+
       # 동일 호출 (hit)
       start = asyncio.get_event_loop().time()
       result2 = await expensive_async_operation("async_test")
       time2 = asyncio.get_event_loop().time() - start
-  
+
       assert result1 == result2
       assert time1 > 0.4  # miss 시 지연
       assert time2 < 0.1  # hit 시 초고속 (孝: 마찰 제거)
-  
+
   @pytest.mark.asyncio
   async def test_async_cache_concurrent():
       """동시 비동기 캐시 검증 (PDF 페이지 4: 비동기 최적화)"""
@@ -804,7 +804,7 @@ AFO 왕국 만세! 眞善美孝永 영원히!
       results = await asyncio.gather(*tasks)
       assert len(set(results)) == 1  # 모두 캐시 히트 (자원 효율)
       assert all("비동기 결과" in r for r in results)
-  
+
   @pytest.mark.asyncio
   async def test_async_cache_ttl():
       """async TTL 만료 검증 (PDF 페이지 4: 캐싱 TTL 300초)"""
@@ -813,14 +813,14 @@ AFO 왕국 만세! 眞善美孝永 영원히!
       with patch('utils.cache_utils.async_redis', new_callable=lambda: MockAsyncRedis(expired=True)):
           result = await expensive_async_operation("ttl_async")
       # 실제 구현 시 redis.expire 사용
-  
+
   ```
 - **실행 명령어**
 
   ```bash
   pytest tests/performance/test_async_caching.py -v
   # 예상 결과: 3 tests passed (100%)
-  
+
   ```
 
 결론: 기술 무결성 100%. 진실 100% 기반으로 async caching tests 구현 완성, 왕국 비동기 캐시 최적화 검증.
@@ -872,9 +872,9 @@ AFO 왕국 만세! 眞善美孝永 영원히!
   from fastapi.testclient import TestClient
   from api_server import app
   from unittest.mock import patch
-  
+
   client = TestClient(app)
-  
+
   @pytest.mark.asyncio
   async def test_db_connection_failure():
       """DB 연결 실패 시 Graceful fallback 검증 (PDF 페이지 3: 폴백 메커니즘)"""
@@ -882,13 +882,13 @@ AFO 왕국 만세! 眞善美孝永 영원히!
           response = client.get("/users")
           assert response.status_code == 503  # Service Unavailable (우아한 폴백)
           assert "DB 연결 실패" in response.json()["detail"]
-  
+
   def test_auth_invalid_token():
       """잘못된 JWT 토큰 검증 (PDF 페이지 3: 권한 검증 절차)"""
       response = client.get("/auth/verify", headers={"Authorization": "Bearer invalid_token"})
       assert response.status_code == 401
       assert response.json()["detail"] == "Invalid token"
-  
+
   @pytest.mark.asyncio
   async def test_llm_timeout():
       """LLM 타임아웃 처리 (PDF 페이지 1: 비용 최적화 + 페이지 3: 폴백)"""
@@ -896,28 +896,28 @@ AFO 왕국 만세! 眞善美孝永 영원히!
           response = client.post("/chancellor/invoke", json={"query": "타임아웃 테스트"})
           assert response.status_code == 504  # Gateway Timeout
           assert "LLM 응답 타임아웃" in response.json()["detail"]
-  
+
   def test_vault_auth_failure():
       """Vault 인증 실패 처리 (PDF 페이지 3: 암호화 키 관리)"""
       with patch("config.vault_manager.VaultManager.get_secret", side_effect=PermissionError):
           response = client.get("/julie/advice")
           assert response.status_code == 500  # 내부 오류지만 로그 기록 (투명성)
           assert "Vault 인증 실패" in response.json()["detail"]
-  
+
   def test_graceful_server_error():
       """예상치 못한 서버 오류 처리 (PDF 페이지 3: Graceful degradation)"""
       with patch("api_server.some_critical_function", side_effect=Exception("예상치 못한 오류")):
           response = client.get("/health")
           assert response.status_code == 500
           assert "서버 내부 오류" in response.json()["detail"]  # 친절한 메시지 (孝)
-  
+
   ```
 - **실행 명령어**
 
   ```bash
   pytest tests/test_error_handling.py -v
   # 예상 결과: 5 tests passed (100%)
-  
+
   ```
 
 결론: 기술 무결성 100%. 진실 100% 기반으로 error handling tests 구현 완성, 왕국 안정성 검증.
@@ -969,9 +969,9 @@ AFO 왕국 만세! 眞善美孝永 영원히!
   from io import StringIO
   from api_server import app
   from fastapi.testclient import TestClient
-  
+
   client = TestClient(app)
-  
+
   @pytest.fixture
   def capture_log():
       """로그 캡처 fixture (PDF 페이지 4: 구조적 로그 검증)"""
@@ -982,14 +982,14 @@ AFO 왕국 만세! 眞善美孝永 영원히!
       logger.setLevel(logging.INFO)
       yield log_stream
       logger.removeHandler(handler)
-  
+
   def test_success_logging(capture_log):
       """성공 동작 로그 검증 (PDF 페이지 4: 실시간 모니터링 연계)"""
       response = client.get("/health")
       log_output = capture_log.getvalue()
       assert response.status_code == 200
       assert "Health check PASS" in log_output or "healthy" in log_output
-  
+
   def test_error_logging(capture_log):
       """에러 동작 로그 검증 (PDF 페이지 3: 철저한 에러 처리)"""
       with patch("services.database.get_db_pool", side_effect=ConnectionError("DB 연결 실패")):
@@ -998,7 +998,7 @@ AFO 왕국 만세! 眞善美孝永 영원히!
           assert response.status_code == 503
           assert "DB 연결 실패" in log_output
           assert "ERROR" in log_output or "WARNING" in log_output
-  
+
   def test_antigravity_logging(capture_log):
       """AntiGravity 동작 로그 검증 (PDF 페이지 1: AntiGravity 자동화)"""
       # AntiGravity startup 로그 시뮬레이션
@@ -1007,7 +1007,7 @@ AFO 왕국 만세! 眞善美孝永 영원히!
       log_output = capture_log.getvalue()
       assert "AntiGravity 로그" in log_output
       assert antigravity.ENVIRONMENT in log_output
-  
+
   def test_structured_logging(capture_log):
       """구조화된 로그 형식 검증 (PDF 페이지 4: 구조적 로그)"""
       # 예시 구조화 로그 (JSON 형식 추천)
@@ -1018,14 +1018,14 @@ AFO 왕국 만세! 眞善美孝永 영원히!
       parsed = json.loads(log_output.strip())
       assert parsed["level"] == "INFO"
       assert parsed["message"] == "Chancellor invoke"
-  
+
   ```
 - **실행 명령어**
 
   ```bash
   pytest tests/test_logging.py -v
   # 예상 결과: 4 tests passed (100%)
-  
+
   ```
 
 결론: 기술 무결성 100%. 진실 100% 기반으로 logging tests 구현 완성, 왕국 투명성 검증.
@@ -1076,7 +1076,7 @@ AFO 왕국 만세! 眞善美孝永 영원히!
   import asyncio
   from httpx import AsyncClient
   from api_server import app
-  
+
   @pytest.mark.asyncio
   async def test_concurrent_requests():
       """동시 요청 부하 테스트 (PDF 페이지 4: 비동기 최적화)"""
@@ -1086,7 +1086,7 @@ AFO 왕국 만세! 眞善美孝永 영원히!
           times = [r.elapsed.total_seconds() for r in responses]
           assert all(t < 1.0 for t in times)  # 평균 응답 < 1초 (孝: 마찰 제거)
           assert all(r.status_code == 200 for r in responses)
-  
+
   @pytest.mark.asyncio
   async def test_chancellor_high_load():
       """Chancellor Graph 고부하 테스트 (PDF 페이지 1: LangGraph 기반)"""
@@ -1098,7 +1098,7 @@ AFO 왕국 만세! 眞善美孝永 영원히!
           responses = await asyncio.gather(*tasks)
           assert all(r.status_code == 200 for r in responses)
           assert all("DRY_RUN" in r.text for r in responses)  # DRY_RUN 정상 (善: 안전)
-  
+
   @pytest.mark.asyncio
   async def test_julie_advice_load():
       """Julie CPA 고부하 테스트 (PDF 페이지 1: 비용 최적화)"""
@@ -1106,14 +1106,14 @@ AFO 왕국 만세! 眞善美孝永 영원히!
           tasks = [client.post("/julie/advice", json={"data": "large_dataset"}) for _ in range(50)]
           responses = await asyncio.gather(*tasks)
           assert all(r.status_code == 200 for r in responses)
-  
+
   ```
 - **실행 명령어**
 
   ```bash
   pytest tests/performance/test_performance.py -v
   # 예상 결과: 3 tests passed (100%)
-  
+
   ```
 
 결론: 기술 무결성 100%. 진실 100% 기반으로 performance tests 구현 완성, 왕국 고부하 안정성 검증.
@@ -1166,15 +1166,15 @@ AFO 왕국 만세! 眞善美孝永 영원히!
   # PDF 페이지 4: 성능 최적화 + 페이지 1: 테스트 커버리지
   from locust import HttpUser, task, between
   import random
-  
+
   class AFOUser(HttpUser):
       wait_time = between(1, 5)  # 사용자 간 대기 시간 (현실적 시뮬레이션, 孝: 마찰 제거)
-  
+
       @task(weight=10)
       def health_check(self):
           """Health 엔드포인트 부하 테스트 (PDF 페이지 4: 실시간 모니터링)"""
           self.client.get("/health")
-  
+
       @task(weight=8)
       def chancellor_invoke(self):
           """Chancellor Graph 부하 테스트 (PDF 페이지 1: LangGraph 기반)"""
@@ -1182,17 +1182,17 @@ AFO 왕국 만세! 眞善美孝永 영원히!
               "query": f"전략 분석 요청 {random.randint(1, 1000)}",
               "dry_run": True  # 안전 모드 (善: DRY_RUN)
           })
-  
+
       @task(weight=5)
       def julie_advice(self):
           """Julie CPA 부하 테스트 (PDF 페이지 1: 비용 최적화)"""
           self.client.post("/julie/advice", json={"data": "financial_dataset_simulation"})
-  
+
       @task(weight=3)
       def persona_switch(self):
           """페르소나 전환 부하 테스트 (PDF 페이지 4: Personas 시스템)"""
           self.client.post("/persona/switch", json={"type": random.choice(["commander", "family", "creator"])})
-  
+
   ```
 - **실행 명령어**
 
@@ -1200,7 +1200,7 @@ AFO 왕국 만세! 眞善美孝永 영원히!
   locust -f tests/performance/locustfile.py --users 200 --spawn-rate 20 --run-time 5m --headless -u 200 -r 20
   # 또는 UI 모드: locust -f tests/performance/locustfile.py
   # 웹 UI: http://localhost:8089
-  
+
   ```
 - **검증 기준** (PDF 페이지 4: 성능 최적화)
   - **응답 시간**: 95% 요청 &lt; 2초
@@ -1268,7 +1268,7 @@ setup_logging("INFO", None)
 
 class QuickUser(HttpUser):
     wait_time = between(1, 2)
-    host = "http://localhost:8011"
+    host = "http://localhost:8010"
 
     @task
     def health(self):
@@ -1307,7 +1307,7 @@ def test_locust_performance(locust_runner):
   ```bash
   pytest tests/performance/ -v
   # Locust 통합으로 부하 테스트 결과 포함
-  
+
   ```
 
 결론: 기술 무결성 100%. 진실 100% 기반으로 Locust-pytest 통합 완성, 왕국 성능 검증 강화.
@@ -1360,43 +1360,43 @@ AFO 왕국 만세! 眞善美孝永 영원히!
   from locust.stats import stats_printer
   from locust.log import setup_logging
   import threading
-  
+
   setup_logging("INFO", None)
-  
+
   class AdvancedAFOUser(HttpUser):
       wait_time = between(0.5, 2)  # 고급: 동적 대기 시간
-      host = "http://localhost:8011"
-  
+      host = "http://localhost:8010"
+
       @task(weight=10)
       def health_check(self):
           self.client.get("/health")
-  
+
       @task(weight=8)
       def chancellor_invoke(self):
           self.client.post("/chancellor/invoke", json={"query": "고부하 테스트", "dry_run": True})
-  
+
       @task(weight=5)
       def julie_advice(self):
           self.client.post("/julie/advice", json={"data": "large_dataset"})
-  
+
   @pytest.fixture(scope="session")
   def locust_master():
       """Locust 마스터 러너 fixture - 분산 모드 지원 (고급)"""
       env = Environment(user_classes=[AdvancedAFOUser])
       env.create_local_runner()
-  
+
       # 웹 UI 시작 (포트 8089)
       web_ui = env.create_web_ui("127.0.0.1", 8089)
-  
+
       # 백그라운드 실행
       runner = env.runner
       runner.start(100, spawn_rate=20)  # 100 사용자, 20/s 증가
-  
+
       yield env  # 테스트 중 Locust 실행
-  
+
       runner.stop()
       web_ui.stop()
-  
+
   @pytest.fixture(scope="function")
   def locust_stats(locust_master):
       """각 테스트별 통계 수집 fixture (고급: 실시간 검증)"""
@@ -1406,7 +1406,7 @@ AFO 왕국 만세! 眞善美孝永 영원히!
       # 테스트 후 검증
       assert env.runner.stats.total.num_requests > 0
       assert env.runner.stats.total.avg_response_time < 1000  # 1초 미만 (효: 평온)
-  
+
   def test_advanced_load(locust_stats):
       """고급 부하 테스트 - 실시간 통계 검증"""
       import time
@@ -1414,14 +1414,14 @@ AFO 왕국 만세! 眞善美孝永 영원히!
       stats = locust_stats
       assert stats.total.num_failures == 0
       assert stats.total.avg_response_time < 800  # 고급 기준 800ms
-  
+
   ```
 - **실행 명령어**
 
   ```bash
   pytest tests/performance/ -v
   # Locust 웹 UI: http://localhost:8089 (실시간 모니터링)
-  
+
   ```
 
 결론: 기술 무결성 100%. 진실 100% 기반으로 advanced fixtures 구현 완성, 왕국 성능 검증 고도화.
@@ -1478,7 +1478,7 @@ from locust.runners import MasterRunner, WorkerRunner
 
 class DistributedAFOUser(HttpUser):
     wait_time = between(1, 3)
-    host = "http://localhost:8011"
+    host = "http://localhost:8010"
 
     @task
     def invoke_chancellor(self):

@@ -6,19 +6,19 @@ import { invokeChancellor, fetchHealthStatus, fetchFamilyStatus, ChancellorRespo
 import CopilotTerminal from './copilot/CopilotTerminal';
 // Persona Definitions
 const PERSONAS: Record<string, { color: string; bg: string; border: string; icon: string }> = {
-  jegalryang: {
+  zhuge_liang: {
     color: 'text-cyan-400',
     bg: 'bg-cyan-950/30',
-    border: 'border-cyan-500', 
+    border: 'border-cyan-500',
     icon: '⚔️ 제갈량 (眞)'
   },
-  samaui: {
+  sima_yi: {
     color: 'text-amber-500',
     bg: 'bg-amber-950/30',
     border: 'border-amber-600',
     icon: '🛡️ 사마의 (善)'
   },
-  juyu: {
+  zhou_yu: {
     color: 'text-pink-400',
     bg: 'bg-pink-950/30',
     border: 'border-pink-500',
@@ -92,22 +92,22 @@ export default function ChancellorView() {
   const activePersona = response ? getPersona(response.speaker) : PERSONAS['chancellor'];
 
   const [thinkingStep, setThinkingStep] = useState<string>('');
-  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim()) return;
 
     setLoading(true);
     setThinkingStep('🧠 Initializing Trinity Thought Process...');
-    
+
     // Simulate Thinking Steps (The Beauty of Transparency)
     const steps = [
-        "⚔️ JEGALRYANG: Analyzing Architecture...",
-        "🛡️ SAMAUI: Evaluating Risk & Stability...",
-        "🌉 JUYU: Polishing User Experience...", 
+        "⚔️ ZHUGE LIANG: Analyzing Architecture...",
+        "🛡️ SIMA YI: Evaluating Risk & Stability...",
+        "🌉 ZHOU YU: Polishing User Experience...",
         "👑 CHANCELLOR: Synthesizing Final Report..."
     ];
-    
+
     let stepIndex = 0;
     const interval = setInterval(() => {
         if (stepIndex < steps.length) {
@@ -148,7 +148,7 @@ export default function ChancellorView() {
   const getDynamicGlow = () => {
     if (!health?.trinity) return 'shadow-[0_0_15px_rgba(0,0,0,0.5)]';
     const score = health.trinity.trinity_score || 0;
-    
+
     // Beauty (Pink/White High Pulse)
     if (score >= 0.9) return 'shadow-[0_0_30px_rgba(236,72,153,0.6)] animate-pulse';
     // Serenity (Green Stable Glow)
@@ -163,7 +163,7 @@ export default function ChancellorView() {
   useEffect(() => {
     if (!health?.trinity) return;
     const score = health.trinity.trinity_score || 0;
-    
+
     // Simple console log for now, can be replaced with actual Audio() calls
     if (score >= 0.9) console.log("🔔 [Audio] Playing: Clear Bell (Trinity Rise)");
     else if (score < 0.5) console.log("⚠️ [Audio] Playing: Low Hum (Risk Rise)");
@@ -183,7 +183,7 @@ export default function ChancellorView() {
             </span>
           )}
         </div>
-        
+
         {/* 5-Pillar Trinity Display */}
         <div className="grid grid-cols-5 gap-2 text-xs font-mono mb-3">
           <div className="border border-cyan-800/50 p-2 text-center">
@@ -284,7 +284,7 @@ export default function ChancellorView() {
       {/* Main Display Area */}
       <div className={`bg-black border-2 ${activePersona.border} rounded-lg min-h-[400px] p-6 relative overflow-hidden transition-colors duration-500`}>
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-green-500/50 to-transparent opacity-50"></div>
-        
+
         {loading ? (
             <div className="h-full flex flex-col items-center justify-center space-y-4 animate-in fade-in zoom-in duration-300">
                 <div className="relative w-20 h-20">

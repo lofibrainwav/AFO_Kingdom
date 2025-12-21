@@ -15,10 +15,10 @@ const CopilotTerminal: React.FC = () => {
 
   // SSE Connection for Matrix Stream
   useEffect(() => {
-    // Determine API Base URL (Default to localhost:8011 if not proxied)
-    const apiBase = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8011';
+    // Determine API Base URL (Default to localhost:8010 if not proxied)
+    const apiBase = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8010';
     const streamUrl = `${apiBase}/api/stream/mcp/thoughts`;
-    
+
     console.log(`🔌 [Matrix] Connecting to Neural Stream: ${streamUrl}`);
     const eventSource = new EventSource(streamUrl);
 
@@ -26,7 +26,7 @@ const CopilotTerminal: React.FC = () => {
         try {
             // Backend sends data as JSON string inside data field
             const payload = JSON.parse(event.data);
-            
+
             setLogs(prev => {
                 const newLogs = [...prev, {
                     id: Date.now().toString() + Math.random().toString(),
@@ -106,8 +106,8 @@ const CopilotTerminal: React.FC = () => {
                         'text-green-400'
                     }`}>[{log.source}]</span>
                     <span className={`
-                         ${log.type === 'thought' ? 'text-gray-400 italic' : 
-                           log.type === 'tool' ? 'text-yellow-200' : 
+                         ${log.type === 'thought' ? 'text-gray-400 italic' :
+                           log.type === 'tool' ? 'text-yellow-200' :
                            log.type === 'error' ? 'text-red-400' : 'text-gray-300'}
                     `}>{log.message}</span>
                 </div>

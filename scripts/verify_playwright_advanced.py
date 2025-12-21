@@ -44,7 +44,7 @@ async def verify_advanced_features():
         # We try to verify a non-existent URL that matches our pattern
         # Since we mock it, it should work if network interception works.
         # But wait, page.goto needs a valid protocol.
-        target_url = "http://localhost:8011/mock_test"
+        target_url = "http://localhost:8010/mock_test"
 
         result = await bridge.verify_ui(
             url=target_url,
@@ -65,7 +65,7 @@ async def verify_advanced_features():
 
     except Exception as e:
         print(f"❌ Verification Failed: {e}")
-        # If connection refused (since localhost:8011 might not be up), it captures it.
+        # If connection refused (since localhost:8010 might not be up), it captures it.
         # But since we are mocking, Playwright request interception should kick in BEFORE network if properly done?
         # Actually playwright route fulfills the request, so no actual network connection is made to the server
         # IF the routing matches. However, browser still needs to resolve DNS or similar unless fully intercepted.

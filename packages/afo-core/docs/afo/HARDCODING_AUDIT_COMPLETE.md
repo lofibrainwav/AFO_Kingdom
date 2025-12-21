@@ -1,7 +1,7 @@
 # ✅ 하드코딩 검사 및 최적화 완료 보고서
 
-**완료일**: 2025-12-17  
-**상태**: ✅ 검사 및 최적화 완료  
+**완료일**: 2025-12-17
+**상태**: ✅ 검사 및 최적화 완료
 **목적**: 하드코딩된 값 제거 및 최적화
 
 ---
@@ -23,7 +23,7 @@
 
 1. **하드코딩된 URL**
    - `localhost:8000` (API Wallet)
-   - `localhost:8011` (API Server)
+   - `localhost:8010` (API Server)
    - `localhost:15432` (PostgreSQL)
    - `localhost:6379` (Redis)
    - `localhost:6333` (Qdrant)
@@ -135,4 +135,3 @@ except ImportError:
 ---
 
 **상태**: ✅ 하드코딩 검사 및 최적화 완료
-

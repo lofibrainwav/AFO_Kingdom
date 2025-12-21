@@ -1,9 +1,9 @@
 /**
  * JulieCPAWidget.tsx
- * 
+ *
  * 수호자 Julie CPA - 왕국의 금고를 지키는 재무 수호자
  * Phase 12: Complete Awakening
- * 
+ *
  * "금고가 튼튼해야 왕국이 번영한다"
  */
 'use client';
@@ -32,7 +32,7 @@ interface FinanceDashboard {
   advice: string;
 }
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8011';
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8010';
 
 export function JulieCPAWidget() {
   const [data, setData] = useState<FinanceDashboard | null>(null);
@@ -43,12 +43,21 @@ export function JulieCPAWidget() {
     const fetchDashboard = async () => {
       try {
         const response = await fetch(`${API_BASE}/api/finance/dashboard`);
-        if (!response.ok) throw new Error('Failed to fetch financial data');
+        if (!response.ok) {
+          if (response.status === 503 || response.status === 0) {
+            throw new Error('API 서버가 실행 중이지 않습니다. 포트 8010에서 서버를 시작해주세요.');
+          }
+          throw new Error(`Failed to fetch financial data: ${response.statusText}`);
+        }
         const json = await response.json();
         setData(json);
         setError(null);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Unknown error');
+        if (err instanceof TypeError && err.message.includes('fetch')) {
+          setError('API 서버 연결 실패: 포트 8010에서 서버가 실행 중인지 확인해주세요.');
+        } else {
+          setError(err instanceof Error ? err.message : 'Unknown error');
+        }
       } finally {
         setLoading(false);
       }
@@ -75,8 +84,8 @@ export function JulieCPAWidget() {
   };
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('ko-KR', { 
-      style: 'currency', 
+    return new Intl.NumberFormat('ko-KR', {
+      style: 'currency',
       currency: 'KRW',
       maximumFractionDigits: 0,
     }).format(amount);
@@ -120,7 +129,7 @@ export function JulieCPAWidget() {
   const healthPercentage = data.financial_health_score;
 
   return (
-    <div 
+    <div
       style={{
         background: 'linear-gradient(135deg, rgba(17, 24, 39, 0.95), rgba(59, 130, 246, 0.15))',
         backdropFilter: 'blur(20px)',
@@ -135,9 +144,9 @@ export function JulieCPAWidget() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <span style={{ fontSize: '32px' }}>💰</span>
           <div>
-            <h2 style={{ 
-              fontSize: '20px', 
-              fontWeight: 'bold', 
+            <h2 style={{
+              fontSize: '20px',
+              fontWeight: 'bold',
               color: 'white',
               margin: 0,
             }}>
@@ -148,7 +157,7 @@ export function JulieCPAWidget() {
             </p>
           </div>
         </div>
-        <div 
+        <div
           style={{
             background: `${healthColor}20`,
             border: `1px solid ${healthColor}50`,
@@ -163,9 +172,9 @@ export function JulieCPAWidget() {
       </div>
 
       {/* Health Score Gauge */}
-      <div style={{ 
-        background: 'rgba(0,0,0,0.3)', 
-        borderRadius: '16px', 
+      <div style={{
+        background: 'rgba(0,0,0,0.3)',
+        borderRadius: '16px',
         padding: '20px',
         marginBottom: '20px',
       }}>
@@ -175,16 +184,16 @@ export function JulieCPAWidget() {
             {data.financial_health_score}%
           </span>
         </div>
-        <div style={{ 
-          width: '100%', 
-          height: '12px', 
-          background: 'rgba(255,255,255,0.1)', 
+        <div style={{
+          width: '100%',
+          height: '12px',
+          background: 'rgba(255,255,255,0.1)',
           borderRadius: '6px',
           overflow: 'hidden',
         }}>
-          <div style={{ 
-            width: `${healthPercentage}%`, 
-            height: '100%', 
+          <div style={{
+            width: `${healthPercentage}%`,
+            height: '100%',
             background: `linear-gradient(90deg, ${healthColor}, ${healthColor}80)`,
             borderRadius: '6px',
             transition: 'width 0.5s ease',
@@ -193,15 +202,15 @@ export function JulieCPAWidget() {
       </div>
 
       {/* Stats Grid */}
-      <div style={{ 
-        display: 'grid', 
-        gridTemplateColumns: '1fr 1fr', 
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
         gap: '16px',
         marginBottom: '20px',
       }}>
-        <div style={{ 
-          background: 'rgba(59, 130, 246, 0.1)', 
-          borderRadius: '12px', 
+        <div style={{
+          background: 'rgba(59, 130, 246, 0.1)',
+          borderRadius: '12px',
           padding: '16px',
           border: '1px solid rgba(59, 130, 246, 0.2)',
         }}>
@@ -212,9 +221,9 @@ export function JulieCPAWidget() {
             {formatCurrency(data.monthly_spending)}
           </div>
         </div>
-        <div style={{ 
-          background: 'rgba(34, 197, 94, 0.1)', 
-          borderRadius: '12px', 
+        <div style={{
+          background: 'rgba(34, 197, 94, 0.1)',
+          borderRadius: '12px',
           padding: '16px',
           border: '1px solid rgba(34, 197, 94, 0.2)',
         }}>
@@ -234,7 +243,7 @@ export function JulieCPAWidget() {
             🛡️ 리스크 알림
           </div>
           {data.risk_alerts.map((alert, i) => (
-            <div 
+            <div
               key={i}
               style={{
                 background: `${getAlertColor(alert.level)}15`,
@@ -264,7 +273,7 @@ export function JulieCPAWidget() {
           📊 최근 거래
         </div>
         {data.recent_transactions.slice(0, 3).map((tx) => (
-          <div 
+          <div
             key={tx.id}
             style={{
               display: 'flex',
@@ -296,9 +305,9 @@ export function JulieCPAWidget() {
           <span style={{ fontSize: '16px' }}>🤖</span>
           <span style={{ color: '#A855F7', fontSize: '12px', fontWeight: '600' }}>Julie's Advice</span>
         </div>
-        <p style={{ 
-          color: 'rgba(255,255,255,0.85)', 
-          fontSize: '13px', 
+        <p style={{
+          color: 'rgba(255,255,255,0.85)',
+          fontSize: '13px',
           lineHeight: '1.6',
           margin: 0,
         }}>
@@ -307,11 +316,11 @@ export function JulieCPAWidget() {
       </div>
 
       {/* Footer */}
-      <div style={{ 
-        marginTop: '16px', 
-        textAlign: 'center', 
-        color: 'rgba(255,255,255,0.4)', 
-        fontSize: '11px' 
+      <div style={{
+        marginTop: '16px',
+        textAlign: 'center',
+        color: 'rgba(255,255,255,0.4)',
+        fontSize: '11px'
       }}>
         眞善美孝永 · Julie CPA Phase 12 Active
       </div>

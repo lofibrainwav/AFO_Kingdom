@@ -3,7 +3,7 @@ Tests for llm_router.py
 LLM Router 테스트 - Phase 2
 """
 
-from typing import Any, cast
+from typing import Any
 
 
 class TestLLMRouterConfig:
@@ -42,7 +42,7 @@ class TestLLMProviderSelection:
     def test_select_cheapest(self) -> None:
         """가장 저렴한 provider 선택"""
         costs = {"ollama": 0.0, "gemini": 0.001, "claude": 0.008}
-        cheapest = min(costs, key=lambda k: costs[k])
+        cheapest = min(costs.items(), key=lambda x: x[1])[0]
         assert cheapest == "ollama"
 
     def test_select_by_capability(self) -> None:
@@ -67,7 +67,7 @@ class TestLLMResponseHandling:
 
     def test_response_structure(self) -> None:
         """응답 구조 테스트"""
-        response = {
+        response: dict[str, Any] = {
             "success": True,
             "response": "테스트 응답",
             "error": None,
@@ -75,7 +75,7 @@ class TestLLMResponseHandling:
         }
         assert response["success"] is True
         assert "response" in response
-        assert cast("Any", response)["routing"]["provider"] == "ollama"
+        assert response["routing"]["provider"] == "ollama"
 
     def test_error_response_structure(self) -> None:
         """에러 응답 구조 테스트"""

@@ -1,6 +1,6 @@
 /**
  * BudgetDashboard.tsx
- * 
+ *
  * Phase 12 Extension: 실시간 예산 대시보드
  * "금고 안전! Julie CPA가 왕국 부를 지켜요" 🛡️💰
  */
@@ -28,7 +28,7 @@ interface BudgetData {
   timestamp: string;
 }
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8011';
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8010';
 
 export function BudgetDashboard() {
   const [data, setData] = useState<BudgetData | null>(null);
@@ -148,15 +148,15 @@ export function BudgetDashboard() {
       </div>
 
       {/* Summary Stats */}
-      <div style={{ 
-        display: 'grid', 
-        gridTemplateColumns: 'repeat(3, 1fr)', 
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(3, 1fr)',
         gap: '16px',
         marginBottom: '24px',
       }}>
-        <div style={{ 
-          background: 'rgba(34, 197, 94, 0.1)', 
-          borderRadius: '12px', 
+        <div style={{
+          background: 'rgba(34, 197, 94, 0.1)',
+          borderRadius: '12px',
           padding: '16px',
           textAlign: 'center',
         }}>
@@ -167,9 +167,9 @@ export function BudgetDashboard() {
             {formatCurrency(data.total_allocated)}
           </div>
         </div>
-        <div style={{ 
-          background: 'rgba(251, 191, 36, 0.1)', 
-          borderRadius: '12px', 
+        <div style={{
+          background: 'rgba(251, 191, 36, 0.1)',
+          borderRadius: '12px',
           padding: '16px',
           textAlign: 'center',
         }}>
@@ -180,9 +180,9 @@ export function BudgetDashboard() {
             {formatCurrency(data.total_spent)}
           </div>
         </div>
-        <div style={{ 
-          background: 'rgba(59, 130, 246, 0.1)', 
-          borderRadius: '12px', 
+        <div style={{
+          background: 'rgba(59, 130, 246, 0.1)',
+          borderRadius: '12px',
           padding: '16px',
           textAlign: 'center',
         }}>
@@ -203,16 +203,16 @@ export function BudgetDashboard() {
             {data.utilization_rate}%
           </span>
         </div>
-        <div style={{ 
-          width: '100%', 
-          height: '12px', 
-          background: 'rgba(255,255,255,0.1)', 
+        <div style={{
+          width: '100%',
+          height: '12px',
+          background: 'rgba(255,255,255,0.1)',
           borderRadius: '6px',
           overflow: 'hidden',
         }}>
-          <div style={{ 
-            width: `${Math.min(data.utilization_rate, 100)}%`, 
-            height: '100%', 
+          <div style={{
+            width: `${Math.min(data.utilization_rate, 100)}%`,
+            height: '100%',
             background: `linear-gradient(90deg, ${getUtilizationColor(data.utilization_rate)}, ${getUtilizationColor(data.utilization_rate)}80)`,
             borderRadius: '6px',
             transition: 'width 0.5s ease',
@@ -228,7 +228,7 @@ export function BudgetDashboard() {
         {data.budgets.map((budget) => {
           const rate = (budget.spent / budget.allocated) * 100;
           return (
-            <div 
+            <div
               key={budget.id}
               style={{
                 display: 'flex',
@@ -244,15 +244,15 @@ export function BudgetDashboard() {
                 <div style={{ color: 'white', fontSize: '14px', marginBottom: '4px' }}>
                   {budget.category}
                 </div>
-                <div style={{ 
-                  width: '100%', 
-                  height: '4px', 
-                  background: 'rgba(255,255,255,0.1)', 
+                <div style={{
+                  width: '100%',
+                  height: '4px',
+                  background: 'rgba(255,255,255,0.1)',
                   borderRadius: '2px',
                 }}>
-                  <div style={{ 
-                    width: `${Math.min(rate, 100)}%`, 
-                    height: '100%', 
+                  <div style={{
+                    width: `${Math.min(rate, 100)}%`,
+                    height: '100%',
                     background: getUtilizationColor(rate),
                     borderRadius: '2px',
                   }} />
@@ -278,9 +278,9 @@ export function BudgetDashboard() {
         padding: '16px',
         textAlign: 'center',
       }}>
-        <p style={{ 
-          color: getRiskColor(data.risk_level), 
-          fontSize: '14px', 
+        <p style={{
+          color: getRiskColor(data.risk_level),
+          fontSize: '14px',
           fontWeight: '600',
           margin: 0,
         }}>

@@ -25,7 +25,7 @@ lsof -i :8010
 kill -9 <PID>
 
 # 또는 다른 포트 사용
-export API_PORT=8011
+export API_SERVER_PORT=8010
 ```
 
 ---
@@ -340,6 +340,5 @@ curl http://localhost:8010/api/system/logs/stream
 
 ---
 
-**최종 업데이트**: 2025-01-27  
+**최종 업데이트**: 2025-01-27
 **담당**: 승상 (丞相) - AFO Kingdom
-

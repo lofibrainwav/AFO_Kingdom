@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8011';
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8010';
 
 export async function GET() {
   try {
@@ -14,7 +14,7 @@ export async function GET() {
 
     if (!res.ok) {
       return NextResponse.json(
-        { error: `Backend Error: ${res.statusText}` }, 
+        { error: `Backend Error: ${res.statusText}` },
         { status: res.status }
       );
     }

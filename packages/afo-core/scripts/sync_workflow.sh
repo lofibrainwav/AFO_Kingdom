@@ -41,8 +41,8 @@ echo ""
 echo "🔍 Step 3: 시스템 검증"
 
 # 3.1 API 서버 건강 상태
-# Phase 2-4: settings에서 포트 가져오기 (기본값 8011)
-API_SERVER_PORT=${API_SERVER_PORT:-8011}
+# Phase 2-4: settings에서 포트 가져오기 (기본값 8010)
+API_SERVER_PORT=${API_SERVER_PORT:-8010}
 HEALTH=$(curl -s http://localhost:${API_SERVER_PORT}/health 2>/dev/null || echo "{}")
 if echo "$HEALTH" | grep -q "health_percentage"; then
     PERCENTAGE=$(echo "$HEALTH" | python3 -c "import sys, json; print(json.load(sys.stdin)['health_percentage'])" 2>/dev/null || echo "N/A")
@@ -70,4 +70,3 @@ echo "✅ 워크플로우 동기화 완료"
 echo ""
 echo "💡 다음 명령으로 환경 변수를 로드하세요:"
 echo "   source $ENV_KEYS_FILE"
-

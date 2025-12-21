@@ -1,6 +1,6 @@
 # 📚 AFO 왕국 문서 인덱스
 
-**최종 업데이트**: 2025-12-16  
+**최종 업데이트**: 2025-12-16
 **목적**: 모든 문서의 체계적 정리 및 빠른 접근
 
 ---
@@ -80,7 +80,7 @@ source /tmp/afo_env_keys_clean.sh
 
 ### 3. 시스템 검증
 ```bash
-curl http://localhost:8011/health
+curl http://localhost:8010/health
 ```
 
 ---
@@ -99,6 +99,5 @@ curl http://localhost:8011/health
 
 ---
 
-**상태**: ✅ 문서 인덱스 생성 완료  
+**상태**: ✅ 문서 인덱스 생성 완료
 **다음 업데이트**: 새 문서 추가 시
-

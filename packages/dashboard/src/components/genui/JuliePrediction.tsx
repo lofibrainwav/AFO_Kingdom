@@ -1,6 +1,6 @@
 /**
  * JuliePrediction.tsx
- * 
+ *
  * Phase 12-4: Predictive Guardian - Julie CPA의 미래 예측
  * "Julie가 미래를 봐요 – 다음 달 예상 지출 알려줄게요 ✨"
  */
@@ -28,7 +28,7 @@ interface PredictionData {
   summary: string;
 }
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8011';
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8010';
 
 export function JuliePrediction() {
   const [data, setData] = useState<PredictionData | null>(null);
@@ -149,15 +149,15 @@ export function JuliePrediction() {
         <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '14px', marginBottom: '8px' }}>
           다음 달 예상 지출
         </p>
-        <div style={{ 
-          fontSize: '36px', 
-          fontWeight: 'bold', 
+        <div style={{
+          fontSize: '36px',
+          fontWeight: 'bold',
           color: '#22C55E',
           marginBottom: '8px',
         }}>
           {formatCurrency(data.next_month_predicted)}
         </div>
-        <div style={{ 
+        <div style={{
           display: 'inline-block',
           background: data.difference > 0 ? 'rgba(251, 191, 36, 0.2)' : 'rgba(34, 197, 94, 0.2)',
           borderRadius: '20px',
@@ -178,16 +178,16 @@ export function JuliePrediction() {
             {(data.confidence * 100).toFixed(0)}% {data.confidence_note}
           </span>
         </div>
-        <div style={{ 
-          width: '100%', 
-          height: '8px', 
-          background: 'rgba(255,255,255,0.1)', 
+        <div style={{
+          width: '100%',
+          height: '8px',
+          background: 'rgba(255,255,255,0.1)',
           borderRadius: '4px',
           overflow: 'hidden',
         }}>
-          <div style={{ 
-            width: `${data.confidence * 100}%`, 
-            height: '100%', 
+          <div style={{
+            width: `${data.confidence * 100}%`,
+            height: '100%',
             background: `linear-gradient(90deg, ${getConfidenceColor(data.confidence)}, ${getConfidenceColor(data.confidence)}80)`,
             borderRadius: '4px',
             transition: 'width 0.5s ease',
@@ -241,9 +241,9 @@ export function JuliePrediction() {
         borderRadius: '12px',
         padding: '16px',
       }}>
-        <p style={{ 
-          color: getTrendColor(data.trend), 
-          fontSize: '14px', 
+        <p style={{
+          color: getTrendColor(data.trend),
+          fontSize: '14px',
           margin: 0,
           lineHeight: '1.6',
         }}>

@@ -9,7 +9,7 @@ docker start afo-postgres afo-redis 2>/dev/null || docker compose -f packages/af
 
 # 2. Kill Old Processes
 echo "2. [Cleanup] 좀비 프로세스 정리 중..."
-lsof -ti :8011 | xargs kill -9 2>/dev/null
+lsof -ti :8010 | xargs kill -9 2>/dev/null
 lsof -ti :3000 | xargs kill -9 2>/dev/null
 
 # 3. Start API Server (Nerves)
@@ -27,10 +27,19 @@ npm run dev > /tmp/afo_dashboard.log 2>&1 &
 DASH_PID=$!
 echo "   ✅ Dashboard PID: $DASH_PID"
 
-echo "⏳ 시스템 안정화 대기 중 (10초)..."
-sleep 10
+echo "⏳ 시스템 안정화 대기 중..."
+# Wait for API server to be ready (port check)
+for i in {1..10}; do
+    if lsof -ti :8010 > /dev/null 2>&1; then
+        echo "   ✅ API Server is listening on port 8010"
+        break
+    fi
+    sleep 1
+done
+# Additional wait for full initialization
+sleep 2
 
 echo "🎉 왕국 복구 완료!"
-echo "   - API: http://localhost:8011/docs"
+echo "   - API: http://localhost:8010/docs"
 echo "   - Dashboard: http://localhost:3000/aicpa_julie"
 echo "   - Logs: tail -f /tmp/afo_api.log"

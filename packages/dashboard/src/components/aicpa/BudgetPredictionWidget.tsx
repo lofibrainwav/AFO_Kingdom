@@ -2,19 +2,19 @@
 
 /**
  * Budget Prediction Widget (Prophet 기반)
- * 
+ *
  * Phase 14: Julie CPA 미래 예측 위젯
- * 
+ *
  * 眞 (Truth): Prophet 데이터 기반 정밀 예측
  * 美 (Beauty): 직관적인 차트 + 카드 UI
  * 孝 (Serenity): 형님 안심을 위한 명확한 결과
  */
 
 import React, { useState, useEffect } from 'react';
-import { 
-  TrendingUp, 
-  Calendar, 
-  DollarSign, 
+import {
+  TrendingUp,
+  Calendar,
+  DollarSign,
   Shield,
   RefreshCw,
   AlertTriangle,
@@ -46,24 +46,24 @@ interface ForecastResult {
   last_updated: string;
 }
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8011';
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8010';
 
 export const BudgetPredictionWidget: React.FC = () => {
   const [periods, setPeriods] = useState(3);
   const [result, setResult] = useState<ForecastResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   // Fetch forecast
   const fetchForecast = async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const response = await fetch(`${API_BASE}/api/julie/budget/forecast?periods=${periods}`);
-      
+
       if (!response.ok) throw new Error('API Error');
-      
+
       const data = await response.json();
       setResult(data);
     } catch (e) {
@@ -73,12 +73,12 @@ export const BudgetPredictionWidget: React.FC = () => {
       setLoading(false);
     }
   };
-  
+
   // Auto-fetch on mount
   useEffect(() => {
     fetchForecast();
   }, []);
-  
+
   // Format currency
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -87,14 +87,14 @@ export const BudgetPredictionWidget: React.FC = () => {
       maximumFractionDigits: 0,
     }).format(value);
   };
-  
+
   // Get confidence color
   const getConfidenceColor = (conf: number) => {
     if (conf >= 80) return 'text-emerald-400';
     if (conf >= 60) return 'text-amber-400';
     return 'text-rose-400';
   };
-  
+
   // Get bar width for mini chart
   const getBarWidth = (value: number, max: number) => {
     return Math.min(100, (value / max) * 100);
@@ -123,7 +123,7 @@ export const BudgetPredictionWidget: React.FC = () => {
           </button>
         </div>
       </div>
-      
+
       <div className="p-6 space-y-6">
         {/* Period Selector */}
         <div>
@@ -144,7 +144,7 @@ export const BudgetPredictionWidget: React.FC = () => {
             ))}
           </div>
         </div>
-        
+
         {/* Fetch Button */}
         <button
           onClick={fetchForecast}
@@ -160,7 +160,7 @@ export const BudgetPredictionWidget: React.FC = () => {
             </>
           )}
         </button>
-        
+
         {/* Error */}
         {error && (
           <div className="p-4 bg-rose-500/20 border border-rose-500/30 rounded-xl text-rose-300 text-sm flex items-center gap-2">
@@ -168,7 +168,7 @@ export const BudgetPredictionWidget: React.FC = () => {
             {error}
           </div>
         )}
-        
+
         {/* Results */}
         {result && !error && (
           <div className="space-y-4">
@@ -180,8 +180,8 @@ export const BudgetPredictionWidget: React.FC = () => {
                   <div className="text-4xl font-black text-white">{formatCurrency(result.summary.total)}</div>
                 </div>
                 <div className={`flex items-center gap-2 px-3 py-1 rounded-lg ${
-                  result.kingdom_status === 'healthy' 
-                    ? 'bg-emerald-500/20 text-emerald-400' 
+                  result.kingdom_status === 'healthy'
+                    ? 'bg-emerald-500/20 text-emerald-400'
                     : 'bg-amber-500/20 text-amber-400'
                 }`}>
                   {result.kingdom_status === 'healthy' ? (
@@ -194,7 +194,7 @@ export const BudgetPredictionWidget: React.FC = () => {
                   </span>
                 </div>
               </div>
-              
+
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-black/20 rounded-xl p-3">
                   <div className="text-xs text-slate-400 uppercase">월 평균</div>
@@ -208,7 +208,7 @@ export const BudgetPredictionWidget: React.FC = () => {
                 </div>
               </div>
             </div>
-            
+
             {/* Mini Chart */}
             <div className="bg-white/5 rounded-xl p-4 border border-white/10">
               <div className="flex items-center gap-2 mb-4 text-slate-300">
@@ -216,7 +216,7 @@ export const BudgetPredictionWidget: React.FC = () => {
                 <span className="text-sm font-bold">월별 예측</span>
                 <span className="text-xs text-slate-500 ml-auto">{result.engine}</span>
               </div>
-              
+
               <div className="space-y-3">
                 {result.predictions.map((pred) => {
                   const maxValue = Math.max(...result.predictions.map(p => p.upper));
@@ -228,12 +228,12 @@ export const BudgetPredictionWidget: React.FC = () => {
                       </div>
                       <div className="h-3 bg-slate-700 rounded-full overflow-hidden relative">
                         {/* Lower bound */}
-                        <div 
+                        <div
                           className="absolute h-full bg-emerald-900/50 rounded-full"
                           style={{ width: `${getBarWidth(pred.upper, maxValue)}%` }}
                         />
                         {/* Predicted */}
-                        <div 
+                        <div
                           className="absolute h-full bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full"
                           style={{ width: `${getBarWidth(pred.predicted, maxValue)}%` }}
                         />
@@ -247,7 +247,7 @@ export const BudgetPredictionWidget: React.FC = () => {
                 })}
               </div>
             </div>
-            
+
             {/* Advice */}
             <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-600/30">
               <div className="flex items-center gap-2 mb-2 text-amber-400">
@@ -256,7 +256,7 @@ export const BudgetPredictionWidget: React.FC = () => {
               </div>
               <p className="text-slate-300 text-sm">{result.advice}</p>
             </div>
-            
+
             {/* Message */}
             <div className="text-center p-3 bg-black/20 rounded-xl">
               <p className="text-emerald-300 text-sm italic">{result.message}</p>
@@ -264,7 +264,7 @@ export const BudgetPredictionWidget: React.FC = () => {
           </div>
         )}
       </div>
-      
+
       {/* Footer */}
       <div className="px-6 py-3 bg-black/30 text-center">
         <p className="text-white/50 text-xs italic">
