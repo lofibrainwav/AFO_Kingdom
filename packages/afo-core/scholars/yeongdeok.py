@@ -146,7 +146,7 @@ class YeongdeokScholar:
 
     async def _consult_sage_core(
         self,
-        sage_type: Any,
+        sage_type: str | Any,  # SageType enum or string
         query: str,
         temperature: float,
         model_id: str,
@@ -301,7 +301,10 @@ class YeongdeokScholar:
         from AFO.schemas.sage import SageType
 
         return await self._consult_sage_core(
-            sage_type=SageType.HWATA, query=query, temperature=0.7, model_id=self.SAGE_HWATA
+            sage_type=SageType.HWATA,
+            query=query,
+            temperature=0.7,
+            model_id=self.SAGE_HWATA,
         )
 
     async def document_code(self, code: str) -> str:
@@ -327,7 +330,7 @@ class YeongdeokScholar:
         )
         return await self.consult_samahwi(prompt)
 
-    async def use_tool(self, tool_name: str, **kwargs) -> str:
+    async def use_tool(self, tool_name: str, **kwargs: Any) -> str:
         """
         [영덕] 왕실 도구 사용 (Royal Tool Usage)
         SkillRegistry를 통해 등록된 도구(MCP, Obsidian 등)를 사용합니다.

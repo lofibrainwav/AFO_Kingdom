@@ -384,7 +384,10 @@ class ProblemDetector:
         """check_11_organs.py 결과 로드"""
         try:
             result = subprocess.run(
-                ["python3", str(AFO_ROOT / ".claude" / "scripts" / "check_11_organs.py")],
+                [
+                    "python3",
+                    str(AFO_ROOT / ".claude" / "scripts" / "check_11_organs.py"),
+                ],
                 capture_output=True,
                 text=True,
                 timeout=30,
@@ -513,11 +516,21 @@ class ProblemDetector:
                     "severity": "high" if balance_delta > 0.5 else "medium",
                     "description": f"Trinity Balance 불균형: Δ={balance_delta:.2%} (목표: <30%)",
                     "max_pillar": max(
-                        [("眞", truth_score), ("善", goodness_score), ("美", beauty_score), ("孝", filial_serenity)],
+                        [
+                            ("眞", truth_score),
+                            ("善", goodness_score),
+                            ("美", beauty_score),
+                            ("孝", filial_serenity),
+                        ],
                         key=lambda x: x[1],
                     )[0],
                     "min_pillar": min(
-                        [("眞", truth_score), ("善", goodness_score), ("美", beauty_score), ("孝", filial_serenity)],
+                        [
+                            ("眞", truth_score),
+                            ("善", goodness_score),
+                            ("美", beauty_score),
+                            ("孝", filial_serenity),
+                        ],
                         key=lambda x: x[1],
                     )[0],
                 }

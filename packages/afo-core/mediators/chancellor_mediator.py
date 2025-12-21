@@ -27,6 +27,8 @@ class Colleague(ABC):
 
     @property
     def mediator(self) -> Mediator:
+        if self._mediator is None:
+            raise ValueError("Mediator not initialized")
         return self._mediator
 
     @mediator.setter

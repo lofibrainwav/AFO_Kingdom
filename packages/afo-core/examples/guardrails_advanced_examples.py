@@ -1,4 +1,5 @@
-"""Advanced Guardrails SDK usage scenarios with graceful fallbacks.
+"""
+Advanced Guardrails SDK usage scenarios with graceful fallbacks.
 
 형님이 바로 붙여넣어 실행할 수 있도록, 각 예제는 실제 Guardrails SDK가
 설치되어 있을 때는 진짜 호출을 시도하고, 그렇지 않으면 친절한 안내만
@@ -23,14 +24,23 @@ if TYPE_CHECKING:
 try:
     from guardrails import CustomGuard, GuardrailsOpenAI
 except ModuleNotFoundError:  # pragma: no cover - 환경에 따라 설치 미완료 가능
-    GuardrailsOpenAI = None  # type: ignore
-    CustomGuard = None  # type: ignore
+    GuardrailsOpenAI = None
+    CustomGuard = None
 
 # 스트리밍 전용 클래스는 프리뷰 단계에서 이름이 바뀔 수 있어 optional import 처리
 try:  # pragma: no cover - SDK 버전에 따라 달라짐
     from guardrails import StreamingGuardrailsOpenAI
 except ModuleNotFoundError:
-    StreamingGuardrailsOpenAI = None  # type: ignore
+    StreamingGuardrailsOpenAI = None
+
+
+# Strangler Fig Phase 1: 타입 모델 추가 (眞: Truth 타입 안전성)
+try:
+    from AFO.api.compat import ChancellorInvokeRequest, ChancellorInvokeResponse
+except ImportError:
+    # Fallback for backward compatibility
+    ChancellorInvokeRequest = Any  # type: ignore[assignment]
+    ChancellorInvokeResponse = Any  # type: ignore[assignment]
 
 
 def _require_guardrails() -> bool:
@@ -47,7 +57,10 @@ def _build_base_config() -> dict[str, Any]:
 
     return {
         "input": [
-            {"name": "Moderation", "config": {"categories": ["harassment", "hate", "self-harm"]}}
+            {
+                "name": "Moderation",
+                "config": {"categories": ["harassment", "hate", "self-harm"]},
+            }
         ],
         "output": [{"name": "PII", "config": {"action": "block"}}],
     }
@@ -148,7 +161,7 @@ def example_custom_guard() -> None:
         return
 
     class BrandGuard(CustomGuard):
-        def validate(self, text: str) -> bool:  # type: ignore[override]
+        def validate(self, text: str) -> bool:
             return "brand_name" not in text.lower()
 
     config = {"output": [{"name": "Custom", "guard": BrandGuard()}]}
@@ -173,23 +186,85 @@ EXAMPLES: dict[str, Callable[[], None]] = {
 }
 
 
-def run_all_examples() -> None:
+# Strangler Fig Phase 2: 함수 분해 (美: 우아한 구조)
+def _validate_example_target(
+    target: str,
+) -> tuple[bool, str | None, Callable[[], None] | None]:
+    """
+    예제 타겟 검증 (순수 함수)
+
+    Args:
+        target: 실행할 예제 이름
+
+    Returns:
+        (유효성, 에러 메시지, 실행 함수)
+    """
+    if target == "all":
+        return True, None, None
+
+    runner = EXAMPLES.get(target)
+    if runner is None:
+        available = ", ".join(EXAMPLES.keys())
+        error_msg = f"알 수 없는 예제입니다: {target}. 사용 가능: {available}"
+        return False, error_msg, None
+
+    return True, None, runner
+
+
+def _execute_single_example(key: str, runner: Callable[[], None]) -> None:
+    """
+    단일 예제 실행 (순수 함수)
+
+    Args:
+        key: 예제 키
+        runner: 실행 함수
+    """
+    print("=" * 60)
+    print(f"실행: {key}")
+    try:
+        runner()
+    except Exception as exc:
+        print(f"  → 예제 실행 중 오류 발생: {exc}")
+
+
+def _execute_all_examples() -> None:
+    """
+    모든 예제 실행 (순수 함수)
+    """
     for key, runner in EXAMPLES.items():
-        print("=" * 60)
-        print(f"실행: {key}")
-        try:
-            runner()
-        except Exception as exc:  # pragma: no cover - 실행 시 안내용
-            print(f"  → 예제 실행 중 오류 발생: {exc}")
+        _execute_single_example(key, runner)
+
+
+def _handle_execution_error(error_msg: str) -> None:
+    """
+    실행 에러 처리 (순수 함수)
+
+    Args:
+        error_msg: 에러 메시지
+    """
+    print(error_msg)
+    sys.exit(1)
+
+
+def run_all_examples() -> None:
+    """
+    모든 예제 실행 (Strangler Fig Facade - 외부 인터페이스 유지)
+    """
+    _execute_all_examples()
 
 
 if __name__ == "__main__":
+    # Strangler Fig Phase 2: 메인 로직 분해 적용
     target = sys.argv[1] if len(sys.argv) > 1 else "all"
+
+    # 타겟 검증
+    is_valid, error_msg, runner = _validate_example_target(target)
+
+    if not is_valid:
+        _handle_execution_error(error_msg)  # type: ignore
+
+    # 실행
     if target == "all":
-        run_all_examples()
+        _execute_all_examples()
     else:
-        runner = EXAMPLES.get(target)
-        if runner is None:
-            print(f"알 수 없는 예제입니다: {target}. 사용 가능: {', '.join(EXAMPLES)}")
-            sys.exit(1)
-        runner()
+        _execute_single_example(target, runner)  # type: ignore

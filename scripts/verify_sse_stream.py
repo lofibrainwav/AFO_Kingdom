@@ -10,7 +10,10 @@ STREAM_URL = "http://localhost:8010/api/stream/mcp/thoughts"
 async def verify_sse():
     print(f"🔌 Connecting to Neural Stream: {STREAM_URL}")
     try:
-        async with aiohttp.ClientSession() as session, session.get(STREAM_URL) as response:
+        async with (
+            aiohttp.ClientSession() as session,
+            session.get(STREAM_URL) as response,
+        ):
             print(f"   Status: {response.status}")
             if response.status != 200:
                 print("❌ Connection failed")

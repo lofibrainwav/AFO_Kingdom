@@ -22,10 +22,11 @@ def test_init_success():
     mock_hvac_module.Client.return_value = mock_client
 
     # Patch the 'hvac' attribute in the imported module to be our mock
-    with patch("AFO.kms.vault_kms.hvac", mock_hvac_module):
-        with patch.dict(os.environ, {"VAULT_ADDR": "http://test", "VAULT_TOKEN": "token"}):
-            kms = VaultKMS()
-            assert kms.client is mock_client
+    with patch("AFO.kms.vault_kms.hvac", mock_hvac_module), patch.dict(
+        os.environ, {"VAULT_ADDR": "http://test", "VAULT_TOKEN": "token"}
+    ):
+        kms = VaultKMS()
+        assert kms.client is mock_client
 
 
 def test_is_available_success():

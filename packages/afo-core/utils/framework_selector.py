@@ -76,7 +76,7 @@ selector = select_framework
 
 
 # 테스트용 헬퍼 함수
-def demo_selector():
+def demo_selector() -> None:
     """데모: 다양한 프로필로 테스트"""
     profiles = [
         MissionProfile("research", 4, 3, 2, 3),  # → AUTOGEN

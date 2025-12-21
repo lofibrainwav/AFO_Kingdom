@@ -41,7 +41,7 @@ class TestScholarGovernance(unittest.TestCase):
         result = asyncio.run(self.jaryong.verify_logic("print('hello')"))
 
         # Assert
-        self.assertIn("Governance Denied", result)
+        assert "Governance Denied" in result
         print("✅ Correctly BLOCKED by Flag.")
 
     @patch.object(antigravity, "get_feature_flag")
@@ -60,8 +60,8 @@ class TestScholarGovernance(unittest.TestCase):
         result = asyncio.run(self.jaryong.verify_logic("print('hello')"))
 
         # Assert
-        self.assertNotIn("Governance Denied", result)
-        self.assertIn("Analysis Complete", result)
+        assert "Governance Denied" not in result
+        assert "Analysis Complete" in result
         print("✅ Correctly ALLOWED by Flag.")
 
     @patch.object(antigravity, "get_feature_flag")
@@ -77,9 +77,9 @@ class TestScholarGovernance(unittest.TestCase):
         result = asyncio.run(self.jaryong.verify_logic(dangerous_code))
 
         # Assert
-        self.assertIn("Governance Denied", result)
+        assert "Governance Denied" in result
         # Verify Governance Check directly
-        self.assertFalse(self.jaryong._check_governance("jaryong", dangerous_code))
+        assert not self.jaryong._check_governance("jaryong", dangerous_code)
         print("✅ Correctly BLOCKED by Risk Brake.")
 
 

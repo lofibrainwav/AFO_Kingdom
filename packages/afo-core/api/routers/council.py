@@ -6,6 +6,7 @@ Routes queries to multiple LLMs and cross-validates responses.
 
 import asyncio
 import logging
+from typing import Any
 
 from fastapi import APIRouter
 from pydantic import BaseModel
@@ -95,7 +96,7 @@ def synthesize_consensus(responses: list[StrategistResponse]) -> str:
 
 
 @router.post("/deliberate", response_model=CouncilResponse)
-async def deliberate(query: CouncilQuery):
+async def deliberate(query: CouncilQuery) -> CouncilResponse:
     """
     Send query to the Council of Minds for multi-model deliberation.
     """
@@ -131,7 +132,7 @@ async def deliberate(query: CouncilQuery):
 
 
 @router.get("/health")
-async def council_health():
+async def council_health() -> dict[str, Any]:
     """Check Council of Minds health."""
     return {
         "status": "healthy",

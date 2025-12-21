@@ -10,12 +10,12 @@ from collections.abc import Callable
 from typing import Any
 
 # Assume AFO redis client wrapper or standard redis
+redis_client: redis.Redis | None = None
 try:
     import redis
 
     redis_client = redis.Redis(host="localhost", port=6379, decode_responses=True)
 except ImportError:
-    redis_client = None
     print("⚠️ Redis not installed, SWR cache falling back to pass-through")
 
 logger = logging.getLogger(__name__)
@@ -62,7 +62,7 @@ def get_with_swr(key: str, fetch_func: Callable[[], Any], max_age: int = 60, swr
 
     if cached_raw:
         try:
-            cached_entry = json.loads(cached_raw)
+            cached_entry = json.loads(cached_raw)  # type: ignore[arg-type]
             data = cached_entry.get("data")
             timestamp = cached_entry.get("timestamp", 0)
 

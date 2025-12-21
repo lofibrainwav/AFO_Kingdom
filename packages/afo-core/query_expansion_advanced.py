@@ -89,7 +89,21 @@ class QueryExpander:
     def get_keywords(self, query: str) -> list[str]:
         """Extract important keywords from query."""
         # Remove common stop words
-        stop_words = {"은", "는", "이", "가", "을", "를", "의", "에", "로", "a", "the", "is", "are"}
+        stop_words = {
+            "은",
+            "는",
+            "이",
+            "가",
+            "을",
+            "를",
+            "의",
+            "에",
+            "로",
+            "a",
+            "the",
+            "is",
+            "are",
+        }
         words = re.findall(r"\w+", query.lower())
         return [w for w in words if w not in stop_words and len(w) > 1]
 

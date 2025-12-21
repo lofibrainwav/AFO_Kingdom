@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Shield, Zap, Heart, Clock, Search } from 'lucide-react';
+import { logError } from '@/lib/logger';
 
 interface PillarDetail {
     name: string;
@@ -30,7 +31,7 @@ export function PillarsDetailedWidget() {
     fetch('/api/ssot-status')
       .then(res => res.json())
       .then(setData)
-      .catch(console.error)
+      .catch((err) => logError('Failed to fetch pillars data', { error: err instanceof Error ? err.message : 'Unknown error' }))
       .finally(() => setLoading(false));
   }, []);
 

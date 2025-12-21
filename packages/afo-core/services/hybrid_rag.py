@@ -321,7 +321,10 @@ def generate_answer(
         try:
             messages = [
                 {"role": "system", "content": system_prompt},
-                {"role": "user", "content": f"Context:\n{context_block}\n\nQuestion: {query}"},
+                {
+                    "role": "user",
+                    "content": f"Context:\n{context_block}\n\nQuestion: {query}",
+                },
             ]
 
             completion = openai_client.chat.completions.create(

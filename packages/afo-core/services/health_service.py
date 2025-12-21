@@ -67,7 +67,11 @@ async def get_comprehensive_health() -> dict[str, Any]:
 
     # 병렬 실행
     results = await asyncio.gather(
-        check_redis(), check_postgres(), check_ollama(), check_self(), return_exceptions=True
+        check_redis(),
+        check_postgres(),
+        check_ollama(),
+        check_self(),
+        return_exceptions=True,
     )
 
     organ_names = ["心_Redis", "肝_PostgreSQL", "脾_Ollama", "肺_API_Server"]
@@ -154,7 +158,10 @@ async def get_comprehensive_health() -> dict[str, Any]:
         "issues": issues if issues else None,
         "suggestions": suggestions if suggestions else None,
         "organs": {
-            o["organ"]: {"status": o["status"], "output": str(o.get("output", ""))[:100]}
+            o["organ"]: {
+                "status": o["status"],
+                "output": str(o.get("output", ""))[:100],
+            }
             for o in organs
         },
         "method": "bridge_perspective_v2_jiphyeonjeon",

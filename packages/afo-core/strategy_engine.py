@@ -24,7 +24,11 @@ class MemoryContext:
         """Add a message to conversation history."""
         try:
             self.history.append(
-                {"role": role, "content": content, "timestamp": datetime.now().isoformat()}
+                {
+                    "role": role,
+                    "content": content,
+                    "timestamp": datetime.now().isoformat(),
+                }
             )
             # Keep only last N turns
             if len(self.history) > self.max_turns * 2:

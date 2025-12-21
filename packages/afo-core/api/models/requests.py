@@ -18,7 +18,8 @@ class RAGQueryRequest(BaseModel):
 
     query: str = Field(..., description="Query string")
     llm_provider: str = Field(
-        default="claude", description="LLM provider (claude, gemini, codex, ollama, lmstudio)"
+        default="claude",
+        description="LLM provider (claude, gemini, codex, ollama, lmstudio)",
     )
     expand_query: bool = Field(default=True, description="Use Query Expansion")
     expansion_method: str = Field(

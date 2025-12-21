@@ -4,9 +4,13 @@ Phase 2: Family Hub OS - 페르소나 API
 TRINITY-OS 페르소나 시스템 통합
 """
 
+import logging
 from typing import Any
 
 from fastapi import APIRouter, HTTPException
+
+# 로깅 설정
+logger = logging.getLogger(__name__)
 
 # Persona service import
 try:
@@ -14,9 +18,9 @@ try:
     from AFO.services.persona_service import switch_persona as switch_persona_service
 
     PERSONA_SERVICE_AVAILABLE = True
-except ImportError:
+except ImportError as e:
     PERSONA_SERVICE_AVAILABLE = False
-    print("⚠️  Persona service not available - using fallback")
+    logger.warning("Persona service not available - using fallback: %s", str(e))
 
 # Persona models import
 try:
@@ -29,9 +33,9 @@ try:
     )
 
     PERSONA_MODELS_AVAILABLE = True
-except ImportError:
+except ImportError as e:
     PERSONA_MODELS_AVAILABLE = False
-    print("⚠️  Persona models not available - using fallback")
+    logger.warning("Persona models not available - using fallback: %s", str(e))
 
 router = APIRouter(prefix="/api/personas", tags=["Personas"])
 
@@ -88,32 +92,32 @@ DEFAULT_PERSONAS: dict[str, dict[str, Any]] = {
         "color": "purple",
         "trinity_os_persona_id": None,
     },
-    "jegalryang": {
-        "id": "jegalryang",
+    "zhuge_liang": {
+        "id": "zhuge_liang",
         "name": "제갈량",
         "role": "Prime Strategist (Truth)",
         "description": "眞 (Truth) - 전략과 기술적 정확성",
         "icon": "⚔️",
         "color": "cyan",
-        "trinity_os_persona_id": "jegalryang_truth",
+        "trinity_os_persona_id": "zhuge_liang_truth",
     },
-    "samaui": {
-        "id": "samaui",
+    "sima_yi": {
+        "id": "sima_yi",
         "name": "사마의",
         "role": "Grand Guardian (Goodness)",
         "description": "善 (Goodness) - 안정성과 윤리",
         "icon": "🛡️",
         "color": "amber",
-        "trinity_os_persona_id": "samaui_goodness",
+        "trinity_os_persona_id": "sima_yi_goodness",
     },
-    "juyu": {
-        "id": "juyu",
+    "zhou_yu": {
+        "id": "zhou_yu",
         "name": "주유",
         "role": "Grand Architect (Beauty)",
         "description": "美 (Beauty) - 우아함과 사용자 경험",
         "icon": "🌉",
         "color": "pink",
-        "trinity_os_persona_id": "juyu_beauty",
+        "trinity_os_persona_id": "zhou_yu_beauty",
     },
 }
 
@@ -129,9 +133,10 @@ async def get_current_persona_endpoint() -> dict[str, Any]:
     if PERSONA_SERVICE_AVAILABLE:
         try:
             return await get_current_persona()
-        except Exception:
-            # Fallback
-            pass
+        except (AttributeError, ValueError) as e:
+            logger.warning("현재 페르소나 조회 실패 (속성/값 에러): %s", str(e))
+        except Exception as e:  # - Intentional fallback for unexpected errors
+            logger.debug("현재 페르소나 조회 중 예상치 못한 에러: %s", str(e))
 
     # Fallback: 기본 응답
     return {
@@ -157,20 +162,52 @@ async def list_personas() -> dict[str, Any]:
             "count": len(DEFAULT_PERSONAS),
         }
 
-    # TODO: DB에서 페르소나 조회 (Phase 2 확장)
+    # Phase 2 확장: DB에서 페르소나 조회 시도 (persona_service 사용)
     personas = []
+    if PERSONA_SERVICE_AVAILABLE:
+        # DB에서 조회 시도 (각 페르소나 ID로)
+        for persona_id in DEFAULT_PERSONAS:
+            try:
+                db_persona = await persona_service.get_persona_from_db(persona_id)
+                if db_persona:
+                    # DB에서 조회된 페르소나 사용
+                    persona = Persona(
+                        id=db_persona["id"],
+                        name=db_persona["name"],
+                        role=DEFAULT_PERSONAS[persona_id].get("role", "Unknown"),
+                        description=DEFAULT_PERSONAS[persona_id].get("description", ""),
+                        icon=DEFAULT_PERSONAS[persona_id].get("icon", "👤"),
+                        color=DEFAULT_PERSONAS[persona_id].get("color", "gray"),
+                        trinity_os_persona_id=DEFAULT_PERSONAS[persona_id].get(
+                            "trinity_os_persona_id"
+                        ),
+                        context=PersonaContext(
+                            current_role=DEFAULT_PERSONAS[persona_id].get("role", "Unknown")
+                        ),
+                    )
+                    personas.append(persona)
+                    continue
+            except (ValueError, KeyError, AttributeError) as e:
+                logger.debug("DB 페르소나 조회 실패 (값/키/속성 에러): %s", str(e))
+                # DB 조회 실패 시 기본 페르소나 사용
+            except Exception as e:  # - Intentional fallback for unexpected errors
+                logger.debug("DB 페르소나 조회 중 예상치 못한 에러: %s", str(e))
+                # DB 조회 실패 시 기본 페르소나 사용
+
+    # DB에서 조회되지 않은 페르소나 또는 DB 조회 실패 시 기본 페르소나 사용
     for persona_data in DEFAULT_PERSONAS.values():
-        persona = Persona(
-            id=persona_data["id"],
-            name=persona_data["name"],
-            role=persona_data["role"],
-            description=persona_data["description"],
-            icon=persona_data["icon"],
-            color=persona_data["color"],
-            trinity_os_persona_id=persona_data.get("trinity_os_persona_id"),
-            context=PersonaContext(current_role=persona_data["role"]),
-        )
-        personas.append(persona)
+        if not any(p.id == persona_data["id"] for p in personas):
+            persona = Persona(
+                id=persona_data["id"],
+                name=persona_data["name"],
+                role=persona_data["role"],
+                description=persona_data["description"],
+                icon=persona_data["icon"],
+                color=persona_data["color"],
+                trinity_os_persona_id=persona_data.get("trinity_os_persona_id"),
+                context=PersonaContext(current_role=persona_data["role"]),
+            )
+            personas.append(persona)
 
     return {
         "personas": [p.model_dump() for p in personas],
@@ -208,7 +245,7 @@ async def get_persona(persona_id: str) -> dict[str, Any]:
             trinity_os_persona_id=persona_data.get("trinity_os_persona_id"),
             context=PersonaContext(current_role=persona_data["role"]),
         )
-        return persona.model_dump()
+        return dict(persona.model_dump())
 
     return persona_data
 
@@ -275,12 +312,14 @@ async def switch_persona(request: PersonaSwitchRequest) -> dict[str, Any]:
         family_data["system"]["overall_happiness"] = new_happiness
 
         save_family_data(family_data)
-        print(f"✅ Logged persona switch to Family Hub: {persona_data['name']}")
+        logger.info("Logged persona switch to Family Hub: %s", persona_data["name"])
 
-    except ImportError:
-        print("⚠️ Family Hub integration not available")
-    except Exception as e:
-        print(f"⚠️ Failed to log persona switch: {e}")
+    except ImportError as e:
+        logger.warning("Family Hub integration not available: %s", str(e))
+    except (ValueError, KeyError, OSError) as e:
+        logger.warning("Failed to log persona switch (값/키/파일 시스템 에러): %s", str(e))
+    except Exception as e:  # - Intentional fallback for unexpected errors
+        logger.debug("Failed to log persona switch (예상치 못한 에러): %s", str(e))
 
     if PERSONA_MODELS_AVAILABLE:
         persona = Persona(
@@ -337,8 +376,43 @@ async def get_persona_trinity_score(persona_id: str) -> dict[str, Any]:
     if persona_id not in DEFAULT_PERSONAS:
         raise HTTPException(status_code=404, detail=f"페르소나를 찾을 수 없습니다: {persona_id}")
 
-    # TODO: 실제 Trinity Score 계산 (Phase 2 확장)
-    # 현재는 기본값 반환
+    persona_data = DEFAULT_PERSONAS[persona_id]
+
+    # Phase 2 확장: 실제 Trinity Score 계산 (persona_service 사용)
+    if PERSONA_SERVICE_AVAILABLE:
+        try:
+            # persona_service의 calculate_trinity_score 사용
+            score_result = await persona_service.calculate_trinity_score(
+                persona_data=persona_data, context={"persona_id": persona_id}
+            )
+
+            if PERSONA_MODELS_AVAILABLE:
+                trinity_score = PersonaTrinityScore(
+                    truth=score_result.get("truth_score", 80.0),
+                    goodness=score_result.get("goodness_score", 75.0),
+                    beauty=score_result.get("beauty_score", 90.0),
+                    serenity=score_result.get("serenity_score", 85.0),
+                    eternity=score_result.get("eternity_score", 80.0),
+                    total_score=score_result.get("total_score", 82.0),
+                )
+                return dict(trinity_score.model_dump())
+
+            return {
+                "truth": score_result.get("truth_score", 80.0),
+                "goodness": score_result.get("goodness_score", 75.0),
+                "beauty": score_result.get("beauty_score", 90.0),
+                "serenity": score_result.get("serenity_score", 85.0),
+                "eternity": score_result.get("eternity_score", 80.0),
+                "total_score": score_result.get("total_score", 82.0),
+                "evaluation": score_result.get("evaluation", "양호"),
+                "calculated_at": score_result.get("calculated_at"),
+            }
+        except (ValueError, TypeError, AttributeError) as e:
+            logger.warning("Trinity Score 계산 실패 (값/타입/속성 에러), 기본값 사용: %s", str(e))
+        except Exception as e:  # - Intentional fallback for unexpected errors
+            logger.warning("Trinity Score 계산 실패 (예상치 못한 에러), 기본값 사용: %s", str(e))
+
+    # Fallback: 기본값 반환
     if PERSONA_MODELS_AVAILABLE:
         trinity_score = PersonaTrinityScore(
             truth=80.0,
@@ -348,7 +422,7 @@ async def get_persona_trinity_score(persona_id: str) -> dict[str, Any]:
             eternity=80.0,
             total_score=82.0,
         )
-        return trinity_score.model_dump()
+        return dict(trinity_score.model_dump())
 
     return {
         "truth": 80.0,

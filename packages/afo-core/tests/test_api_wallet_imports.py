@@ -11,7 +11,7 @@ from AFO.api_wallet import APIWallet
 
 
 @pytest.mark.skip(reason="Flaky in full suite due to pytest import caching. Passes individually.")
-def test_generate_default_key_reads_env():
+def test_generate_default_key_reads_env() -> None:
     """Test that _generate_default_key reads from .env file correctly."""
     import os
 
@@ -21,17 +21,18 @@ def test_generate_default_key_reads_env():
         return ".env" in str(self)
 
     # Clear any existing env var that might interfere
-    with patch.dict(os.environ, {"API_WALLET_ENCRYPTION_KEY": ""}, clear=False):
-        with patch("pathlib.Path.exists", autospec=True, side_effect=exists_side_effect):
-            with patch(
-                "builtins.open", mock_open(read_data=f"API_WALLET_ENCRYPTION_KEY={valid_key}")
-            ):
-                wallet = APIWallet(use_vault=False, db_connection=None, encryption_key=None)
-                # When .env has key, it should be used
-                assert wallet.encryption_key == valid_key
+    with patch.dict(os.environ, {"API_WALLET_ENCRYPTION_KEY": ""}, clear=False), patch(
+        "pathlib.Path.exists", autospec=True, side_effect=exists_side_effect
+    ), patch(
+        "builtins.open",
+        mock_open(read_data=f"API_WALLET_ENCRYPTION_KEY={valid_key}"),
+    ):
+        wallet = APIWallet(use_vault=False, db_connection=None, encryption_key=None)
+        # When .env has key, it should be used
+        assert wallet.encryption_key == valid_key
 
 
-def test_generate_default_key_writes_env():
+def test_generate_default_key_writes_env() -> None:
     """Test that _generate_default_key writes a new key when missing."""
 
     def exists_side_effect(self):
@@ -50,7 +51,7 @@ def test_generate_default_key_writes_env():
                 assert len(append_calls) > 0, "No file opened in append mode"
 
 
-def test_vault_fallback_to_default_key():
+def test_vault_fallback_to_default_key() -> None:
     """Test vault key retrieval failure falls back to default key generation."""
     mock_vault = MagicMock()
     mock_vault.is_available.return_value = True
@@ -64,7 +65,7 @@ def test_vault_fallback_to_default_key():
             assert len(wallet.encryption_key) > 0
 
 
-def test_crypto_mock_fernet():
+def test_crypto_mock_fernet() -> None:
     """Test that MockFernet works when cryptography unavailable."""
     from AFO import api_wallet
 

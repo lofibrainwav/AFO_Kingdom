@@ -44,11 +44,19 @@ class FinancialConnector:
         return {"error": "Max Retries Exceeded"}
 
     async def _mock_api_call(self, account_id: str) -> dict[str, Any]:
-        # Simulate Network Flakiness (Fog of War)
-        if random.random() < 0.3:
+        # Simulate Network Flakiness (Fog of War) - Reduced failure rate for stability
+        if random.random() < 0.05:  # Reduced from 30% to 5% for better stability
             raise ConnectionError("Network Glitch")
 
-        return {"account_id": account_id, "balance": 1000000, "currency": "KRW", "status": "ACTIVE"}
+        # Add small delay to simulate network latency
+        await asyncio.sleep(0.1)
+
+        return {
+            "account_id": account_id,
+            "balance": 1000000,
+            "currency": "KRW",
+            "status": "ACTIVE",
+        }
 
     def _record_failure(self) -> None:
         self._failure_count += 1

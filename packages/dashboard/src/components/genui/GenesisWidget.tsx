@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Sparkles, Loader2, Send, CheckCircle2, AlertTriangle, Play, Code, Eye } from 'lucide-react';
+import { logError } from '@/lib/logger';
 
 interface CreationResult {
   code: string;
@@ -43,7 +44,7 @@ export function GenesisWidget() {
         setStatus(`제네시스 실패: ${errorMsg}`);
       }
     } catch (error) {
-      console.error('Genesis Error:', error);
+      logError('Genesis creation failed', { error: error instanceof Error ? error.message : 'Unknown error' });
       if (error instanceof TypeError && error.message.includes('fetch')) {
         setStatus('연결 실패: API 서버가 실행 중이지 않습니다. 포트 8010에서 서버를 시작해주세요.');
       } else {

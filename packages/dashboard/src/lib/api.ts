@@ -3,6 +3,8 @@
  * Dynamic Trinity Score & Health Integration
  */
 
+import { logError } from './logger';
+
 export interface ChancellorResponse {
   response: string;
   speaker: string;
@@ -90,7 +92,7 @@ export async function invokeChancellor(
 
     return await response.json();
   } catch (error) {
-    console.error('Failed to invoke Chancellor:', error);
+    logError('Failed to invoke Chancellor', { error: error instanceof Error ? error.message : 'Unknown error' });
     throw error;
   }
 }

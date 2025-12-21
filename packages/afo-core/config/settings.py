@@ -21,7 +21,8 @@ class AFOSettings(BaseSettings):
     # AntiGravity Integration (Phase 1)
     # ============================================================================
     antigravity_mode: bool = Field(
-        default=antigravity.AUTO_DEPLOY, description="AntiGravity 자동 배포 모드 (True: 활성화)"
+        default=antigravity.AUTO_DEPLOY,
+        description="AntiGravity 자동 배포 모드 (True: 활성화)",
     )
 
     model_config = SettingsConfigDict(
@@ -63,7 +64,7 @@ class AFOSettings(BaseSettings):
     # Ollama Settings
     # ============================================================================
     OLLAMA_BASE_URL: str = Field(
-        default="http://localhost:11435", description="Ollama LLM 서버 URL"
+        default="http://localhost:11434", description="Ollama LLM 서버 URL"
     )
     OLLAMA_MODEL: str = Field(default="qwen3-vl:8b", description="Ollama 기본 모델")
 
@@ -83,7 +84,8 @@ class AFOSettings(BaseSettings):
     # MCP Server Settings
     # ============================================================================
     MCP_SERVER_URL: str = Field(
-        default="http://localhost:8787", description="MCP (Model Context Protocol) 서버 URL"
+        default="http://localhost:8787",
+        description="MCP (Model Context Protocol) 서버 URL",
     )
 
     # ============================================================================
@@ -108,11 +110,15 @@ class AFOSettings(BaseSettings):
     AFO_API_VERSION: str = Field(default="v1", description="AFO API 버전")
     INPUT_SERVER_PORT: int = Field(default=4200, description="Input Server 포트")
     INPUT_SERVER_HOST: str = Field(default="0.0.0.0", description="Input Server 호스트")
+    DASHBOARD_URL: str = Field(
+        default="http://localhost:3000",
+        description="프론트엔드 대시보드 URL (GenUI 등)",
+    )
 
     # ============================================================================
     # API Server Settings
     # ============================================================================
-    API_SERVER_PORT: int = Field(default=8011, description="API Server 포트 (Soul Engine)")
+    API_SERVER_PORT: int = Field(default=8010, description="API Server 포트 (Soul Engine)")
     API_SERVER_HOST: str = Field(default="0.0.0.0", description="API Server 호스트")
     SOUL_ENGINE_PORT: int = Field(default=8010, description="Soul Engine 포트 (5 Pillars 등)")
     ASYNC_QUERY_ENABLED: bool = Field(default=True, description="비동기 쿼리 활성화 여부")

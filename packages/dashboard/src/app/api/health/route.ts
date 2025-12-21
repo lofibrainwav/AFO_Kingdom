@@ -3,8 +3,9 @@
  */
 import { NextResponse } from 'next/server';
 
-// Server-side: use environment variable or default to localhost
-const API_BASE = process.env.SOUL_ENGINE_URL || process.env.API_BASE_URL || process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8010';
+import { API_BASE_URL } from '@/lib/constants';
+// Server-side: use environment variable or default
+const API_BASE = process.env.SOUL_ENGINE_URL || process.env.API_BASE_URL || API_BASE_URL;
 
 export async function GET() {
   try {

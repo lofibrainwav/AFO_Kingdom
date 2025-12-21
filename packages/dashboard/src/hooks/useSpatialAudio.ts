@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef } from 'react';
+import { logWarn } from '@/lib/logger';
 
 interface SpatialAudioOptions {
   trinityUp?: boolean;  // Bright chime from above
@@ -59,7 +60,7 @@ export function useSpatialAudio() {
       oscillator.start(ctx.currentTime);
       oscillator.stop(ctx.currentTime + 0.5);
     } catch (e) {
-      console.warn('Spatial audio not available:', e);
+      logWarn('Spatial audio not available', { error: e instanceof Error ? e.message : 'Unknown error' });
     }
   }, [initAudio]);
 
@@ -94,7 +95,7 @@ export function useSpatialAudio() {
       oscillator.start(ctx.currentTime);
       oscillator.stop(ctx.currentTime + 0.8);
     } catch (e) {
-      console.warn('Spatial audio not available:', e);
+      logWarn('Spatial audio not available', { error: e instanceof Error ? e.message : 'Unknown error' });
     }
   }, [initAudio]);
 

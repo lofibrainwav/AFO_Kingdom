@@ -29,7 +29,9 @@ def invoke_ollama(prompt: str, model: str | None = None) -> str:
 
     try:
         response = requests.post(
-            f"{base_url}/api/generate", json={"model": model, "prompt": prompt, "stream": False}, timeout=300
+            f"{base_url}/api/generate",
+            json={"model": model, "prompt": prompt, "stream": False},
+            timeout=300,
         )
         response.raise_for_status()
         result = response.json()

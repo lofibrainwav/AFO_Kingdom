@@ -8,6 +8,7 @@ import json
 import logging
 import os
 from datetime import datetime
+from typing import Any
 
 from fastapi import APIRouter
 from pydantic import BaseModel
@@ -35,7 +36,7 @@ class LearningReport(BaseModel):
     metrics: list[LearningMetric]
 
 
-def analyze_evolution_logs() -> dict:
+def analyze_evolution_logs() -> dict[str, Any]:
     """Analyze evolution log entries for patterns and improvements."""
     entries = []
 
@@ -91,7 +92,7 @@ def analyze_evolution_logs() -> dict:
 
 
 @router.get("/report", response_model=LearningReport)
-async def get_learning_report():
+async def get_learning_report() -> LearningReport:
     """Generate a learning report based on evolution log analysis."""
     analysis = analyze_evolution_logs()
 
@@ -126,7 +127,7 @@ async def get_learning_report():
 
 
 @router.post("/log-action")
-async def log_action(action: str, trinity_score: float, mode: str = "AUTO_RUN"):
+async def log_action(action: str, trinity_score: float, mode: str = "AUTO_RUN") -> dict[str, Any]:
     """Log an action for future learning analysis."""
     entry = {
         "timestamp": datetime.now().isoformat(),
@@ -145,7 +146,7 @@ async def log_action(action: str, trinity_score: float, mode: str = "AUTO_RUN"):
 
 
 @router.get("/health")
-async def learning_health():
+async def learning_health() -> dict[str, Any]:
     """Check learning pipeline health."""
     return {
         "status": "healthy",

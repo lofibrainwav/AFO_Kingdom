@@ -9,6 +9,7 @@ into SixXon CLI for complete human dream AI execution.
 import argparse
 import sys
 from pathlib import Path
+from typing import Any
 
 # Add paths for imports
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
@@ -26,7 +27,7 @@ except ImportError as e:
     sys.exit(1)
 
 
-def run_dream_hub_command(args):
+def run_dream_hub_command(args: argparse.Namespace) -> int:
     """Execute dream hub command"""
     print("🧠 SixXon Dream Hub - Human Dream AI Execution")
     print("眞善美孝永 - Energy Flow Vision Complete")
@@ -63,29 +64,35 @@ def run_dream_hub_command(args):
         print("🚀 Executing Dream through Enhanced Dream Hub...")
         thread_id = "dream_safe_thread"
 
-        result = enhanced_dream_hub_module.run_enhanced_dream_hub(human_dream, thread_id)
+        result: dict[str, Any] = enhanced_dream_hub_module.run_enhanced_dream_hub(human_dream, thread_id)
 
-        if result["status"] == "ERROR":
-            print(f"❌ Dream execution failed: {result['error']}")
+        if result.get("status") == "ERROR":
+            error_msg = result.get("error", "Unknown error")
+            print(f"❌ Dream execution failed: {error_msg}")
             return 1
 
         # Step 3: Validate Contract Compliance
         print("📋 Validating Contract Compliance...")
-        trinity_score = result.get("trinity_score", {})
-        risk_score = result.get("risk_score", 0.0)
+        trinity_score: dict[str, float] = result.get("trinity_score", {})
+        risk_score: float = result.get("risk_score", 0.0)
 
-        validation = dream_contract_module.contract_manager.validate_execution(contract_id, trinity_score, risk_score)
+        validation: dict[str, Any] = dream_contract_module.contract_manager.validate_execution(
+            contract_id, trinity_score, risk_score
+        )
 
-        if not validation["valid"]:
-            print(f"❌ Contract violation: {validation['reason']}")
-            print(f"   Violations: {validation.get('violations', [])}")
+        if not validation.get("valid", False):
+            reason = validation.get("reason", "Unknown reason")
+            violations = validation.get("violations", [])
+            print(f"❌ Contract violation: {reason}")
+            if violations:
+                print(f"   Violations: {violations}")
             return 1
 
         print("✅ Contract compliance verified")
 
         # Step 4: Complete Contract
         print("🏁 Completing Dream Contract...")
-        final_result = {
+        final_result: dict[str, Any] = {
             "status": "SUCCESS",
             "trinity_score": trinity_score,
             "risk_score": risk_score,
@@ -134,7 +141,7 @@ def run_dream_hub_command(args):
         return 1
 
 
-def create_parser():
+def create_parser() -> argparse.ArgumentParser:
     """Create command line argument parser"""
     parser = argparse.ArgumentParser(
         description="SixXon Dream Hub - Human Dream AI Execution",
@@ -146,22 +153,51 @@ Examples:
         """,
     )
 
-    parser.add_argument("--dream", "-d", required=True, help="Human dream description to execute through AI")
+    parser.add_argument(
+        "--dream",
+        "-d",
+        required=True,
+        help="Human dream description to execute through AI",
+    )
 
-    parser.add_argument("--human-party", default="Human Creator", help="Name of the human party in the dream contract")
+    parser.add_argument(
+        "--human-party",
+        default="Human Creator",
+        help="Name of the human party in the dream contract",
+    )
 
-    parser.add_argument("--truth", type=float, default=85.0, help="Minimum truth score requirement (0-100)")
+    parser.add_argument(
+        "--truth",
+        type=float,
+        default=85.0,
+        help="Minimum truth score requirement (0-100)",
+    )
 
-    parser.add_argument("--goodness", type=float, default=80.0, help="Minimum goodness score requirement (0-100)")
+    parser.add_argument(
+        "--goodness",
+        type=float,
+        default=80.0,
+        help="Minimum goodness score requirement (0-100)",
+    )
 
-    parser.add_argument("--risk-threshold", type=float, default=25.0, help="Maximum risk threshold (0-100)")
+    parser.add_argument(
+        "--risk-threshold",
+        type=float,
+        default=25.0,
+        help="Maximum risk threshold (0-100)",
+    )
 
-    parser.add_argument("--verbose", "-v", action="store_true", help="Show detailed execution information")
+    parser.add_argument(
+        "--verbose",
+        "-v",
+        action="store_true",
+        help="Show detailed execution information",
+    )
 
     return parser
 
 
-def main():
+def main() -> int:
     """Main entry point for Dream Hub CLI"""
     parser = create_parser()
     args = parser.parse_args()

@@ -141,7 +141,11 @@ class YeongdeokComplete:
         """Add a conversation turn to buffer."""
         try:
             self.conversation_buffer.append(
-                {"role": role, "content": content, "timestamp": datetime.now().isoformat()}
+                {
+                    "role": role,
+                    "content": content,
+                    "timestamp": datetime.now().isoformat(),
+                }
             )
 
             # Keep buffer manageable
@@ -173,7 +177,8 @@ class YeongdeokComplete:
             if len(self.long_term) > self.max_long_term:
                 # Remove lowest importance entries
                 sorted_entries = sorted(
-                    self.long_term.items(), key=lambda x: x[1].importance * x[1].access_count
+                    self.long_term.items(),
+                    key=lambda x: x[1].importance * x[1].access_count,
                 )
                 for key, _ in sorted_entries[: len(self.long_term) - self.max_long_term]:
                     del self.long_term[key]

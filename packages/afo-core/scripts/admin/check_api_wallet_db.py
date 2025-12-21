@@ -30,12 +30,14 @@ def check_postgres():
 
         with conn.cursor(cursor_factory=RealDictCursor) as cur:
             # 테이블 존재 확인
-            cur.execute("""
+            cur.execute(
+                """
                 SELECT table_name
                 FROM information_schema.tables
                 WHERE table_schema = 'public'
                 AND table_name = 'api_keys';
-            """)
+            """
+            )
 
             if not cur.fetchone():
                 print("❌ api_keys 테이블 없음")
@@ -54,11 +56,13 @@ def check_postgres():
                 return
 
             # 모든 키 목록
-            cur.execute("""
+            cur.execute(
+                """
                 SELECT name, service, key_type, created_at, access_count
                 FROM api_keys
                 ORDER BY created_at DESC;
-            """)
+            """
+            )
 
             keys = cur.fetchall()
             print("📋 저장된 키 목록:")
@@ -73,14 +77,16 @@ def check_postgres():
                 print()
 
             # OpenAI 키 검색
-            cur.execute("""
+            cur.execute(
+                """
                 SELECT name, service
                 FROM api_keys
                 WHERE service ILIKE '%openai%'
                    OR service ILIKE '%gpt%'
                    OR name ILIKE '%openai%'
                    OR name ILIKE '%gpt%';
-            """)
+            """
+            )
 
             openai_keys = cur.fetchall()
             print("🔍 OpenAI 관련 키:")

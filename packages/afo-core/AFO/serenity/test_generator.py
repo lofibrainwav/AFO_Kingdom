@@ -71,7 +71,7 @@ class AutoTestGenerator:
         return GeneratedTest(
             name=f"test_{component_name}_renders",
             test_type="e2e",
-            code=f'''
+            code=f"""
 import {{ test, expect }} from '@playwright/test';
 
 test('{component_name} renders correctly', async ({{ page }}) => {{
@@ -84,7 +84,7 @@ test('{component_name} renders correctly', async ({{ page }}) => {{
   // Screenshot for visual regression
   await expect(page).toHaveScreenshot('{component_name.lower()}.png');
 }});
-''',
+""",
         )
 
     def _generate_a11y_test(self, component_name: str) -> GeneratedTest:
@@ -110,7 +110,7 @@ test('{component_name} passes accessibility checks', async ({{ page }}) => {{
         return GeneratedTest(
             name=f"test_{component_name}_interaction",
             test_type="e2e",
-            code=f'''
+            code=f"""
 import {{ test, expect }} from '@playwright/test';
 
 test('{component_name} handles user interaction', async ({{ page }}) => {{
@@ -124,7 +124,7 @@ test('{component_name} handles user interaction', async ({{ page }}) => {{
   // Verify state change (customize based on component)
   await expect(component).toHaveAttribute('aria-pressed', 'true');
 }});
-''',
+""",
         )
 
     def _generate_responsive_test(self, component_name: str) -> GeneratedTest:
@@ -132,7 +132,7 @@ test('{component_name} handles user interaction', async ({{ page }}) => {{
         return GeneratedTest(
             name=f"test_{component_name}_responsive",
             test_type="e2e",
-            code=f'''
+            code=f"""
 import {{ test, expect }} from '@playwright/test';
 
 test('{component_name} is responsive', async ({{ page }}) => {{
@@ -151,7 +151,7 @@ test('{component_name} is responsive', async ({{ page }}) => {{
   await page.setViewportSize({{ width: 1920, height: 1080 }});
   await expect(component).toBeVisible();
 }});
-''',
+""",
         )
 
     async def run_tests(self, tests: list[GeneratedTest]) -> tuple[bool, float]:

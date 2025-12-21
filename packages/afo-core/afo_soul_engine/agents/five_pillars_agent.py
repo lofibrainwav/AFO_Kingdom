@@ -1,15 +1,21 @@
 import json
 import logging
-import os
 from datetime import datetime
 from typing import Any
 
+# Phase 5: google.generativeai → REST API 마이그레이션
 try:
-    import google.generativeai as genai
+    from AFO.llms.gemini_api import GeminiAPIWrapper, gemini_api
 
     GEMINI_AVAILABLE = True
 except ImportError:
-    GEMINI_AVAILABLE = False
+    try:
+        from llms.gemini_api import GeminiAPIWrapper, gemini_api  # type: ignore[assignment]
+
+        GEMINI_AVAILABLE = True
+    except ImportError:
+        GEMINI_AVAILABLE = False
+        gemini_api = None  # type: ignore[assignment]
 
 logger = logging.getLogger(__name__)
 
@@ -18,18 +24,17 @@ class FivePillarsAgent:
     """
     5기둥(Pillars) 평가 에이전트 (Refactored & Optimized)
     uses Gemini 1.5 Flash for rapid evaluation, falling back to heuristics if needed.
+    Phase 5: REST API 기반으로 마이그레이션 (google.generativeai deprecation 대응)
     """
 
     def __init__(self):
-        self.api_key = os.getenv("GEMINI_API_KEY")
-        self.model = None
-        if self.api_key and GEMINI_AVAILABLE:
-            try:
-                genai.configure(api_key=self.api_key)
-                self.model = genai.GenerativeModel("gemini-flash-latest")
-                logger.info("✅ FivePillarsAgent: Gemini Model Initialized")
-            except Exception as e:
-                logger.error(f"⚠️ FivePillarsAgent: Failed to init Gemini: {e}")
+        # Phase 5: REST API 사용 (google.generativeai 대체)
+        if GEMINI_AVAILABLE and gemini_api and gemini_api.is_available():
+            self.gemini_api = gemini_api
+            logger.info("✅ FivePillarsAgent: Gemini REST API Initialized")
+        else:
+            self.gemini_api = None  # type: ignore[assignment]
+            logger.debug("⚠️ FivePillarsAgent: Gemini API not available, using heuristics only")
 
     async def evaluate_five_pillars(self, data: dict[str, Any]) -> dict[str, Any]:
         """
@@ -38,8 +43,8 @@ class FivePillarsAgent:
         """
         input_text = str(data.get("input", "") or data.get("text", "") or json.dumps(data))
 
-        # 1. Try LLM Evaluation
-        if self.model:
+        # 1. Try LLM Evaluation (Phase 5: REST API 사용)
+        if self.gemini_api:
             try:
                 # Optimized Prompt
                 prompt = f"""
@@ -64,14 +69,19 @@ class FivePillarsAgent:
                     "forever": <float>
                 }}
                 """
-                response = await self.model.generate_content_async(prompt)
-                text = response.text.replace("```json", "").replace("```", "").strip()
-                scores = json.loads(text)
+                # Phase 5: REST API 호출
+                result = await self.gemini_api.generate(
+                    prompt, model="gemini-1.5-flash", max_tokens=500, temperature=0.7
+                )
 
-                # Validate keys
-                required = ["truth", "goodness", "beauty", "serenity", "forever"]
-                if all(k in scores for k in required):
-                    return self._format_response(scores, source="gemini-1.5-flash")
+                if result.get("success"):
+                    text = result["content"].replace("```json", "").replace("```", "").strip()
+                    scores = json.loads(text)
+
+                    # Validate keys
+                    required = ["truth", "goodness", "beauty", "serenity", "forever"]
+                    if all(k in scores for k in required):
+                        return self._format_response(scores, source="gemini-1.5-flash")
 
             except Exception as e:
                 logger.warning(f"FivePillarsAgent LLM Error: {e}. Falling back to heuristics.")
@@ -82,7 +92,13 @@ class FivePillarsAgent:
     def _heuristic_evaluate(self, text: str) -> dict[str, Any]:
         """Fallback logic using keyword analysis"""
         text = text.lower()
-        scores = {"truth": 0.5, "goodness": 0.5, "beauty": 0.5, "serenity": 0.5, "forever": 0.5}
+        scores = {
+            "truth": 0.5,
+            "goodness": 0.5,
+            "beauty": 0.5,
+            "serenity": 0.5,
+            "forever": 0.5,
+        }
 
         if "fact" in text or "analysis" in text:
             scores["truth"] += 0.2

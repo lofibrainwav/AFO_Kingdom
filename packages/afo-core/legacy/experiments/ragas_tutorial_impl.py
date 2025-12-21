@@ -173,7 +173,10 @@ class RagasTutorial:
             print(f"✅ Faithfulness Score: {faithfulness_score:.2f}")
             print(f"   Evaluation Time: {evaluation_time:.2f}s")
 
-            self.results = {"faithfulness": faithfulness_score, "evaluation_time": evaluation_time}
+            self.results = {
+                "faithfulness": faithfulness_score,
+                "evaluation_time": evaluation_time,
+            }
 
             return self.results
 
@@ -266,7 +269,12 @@ def demo_ragas_tutorial():
     serenity_score_final = serenity_score  # 孝
 
     # 정규화 (0-100)
-    normalized_scores = [truth_score, goodness_score, beauty_score, serenity_score_final]
+    normalized_scores = [
+        truth_score,
+        goodness_score,
+        beauty_score,
+        serenity_score_final,
+    ]
 
     avg_score = sum(normalized_scores) / len(normalized_scores)
     max_min_diff = max(normalized_scores) - min(normalized_scores)

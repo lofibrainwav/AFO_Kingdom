@@ -9,7 +9,7 @@ except ImportError:
     class MockAntiGravity:
         DRY_RUN_DEFAULT = True
 
-    antigravity = MockAntiGravity()
+    antigravity: Any = MockAntiGravity()  # type: ignore[no-redef]
 
 
 def review(query_data: dict[str, Any]) -> float:

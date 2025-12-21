@@ -7,6 +7,7 @@ Strangler Fig Pattern (간결화 버전)
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Any
 
 from fastapi import APIRouter, HTTPException
 
@@ -17,7 +18,7 @@ setup_router = APIRouter(prefix="/api/wallet/setup", tags=["Wallet Setup"])
 
 
 @setup_router.post("/api-key")
-async def set_api_key(request: WalletAPIKeyRequest):
+async def set_api_key(request: WalletAPIKeyRequest) -> dict[str, Any]:
     """
     **Wallet API 키 설정** - API 키 저장 및 관리
 
@@ -59,7 +60,7 @@ async def set_api_key(request: WalletAPIKeyRequest):
 
 
 @setup_router.get("/status", response_model=WalletStatusResponse)
-async def get_wallet_status():
+async def get_wallet_status() -> WalletStatusResponse:
     """
     **Wallet 상태 조회** - API Wallet 시스템 상태 확인
 

@@ -6,12 +6,26 @@ Orchestrates the creation of new UI components using AI.
 - Creator: Samahwi (Qwen2.5)
 - Validator: AST Parsing & Trinity Score
 - Goal: Autonomous UI improvement (Serenity)
+
+Phase 5: Trinity Type Validator 적용 - 런타임 Trinity Score 검증
 """
 
 import logging
 import uuid
+from collections.abc import Callable
 from pathlib import Path
-from typing import Any
+from typing import Any, TypeVar
+
+F = TypeVar("F", bound=Callable[..., Any])
+
+try:
+    from AFO.utils.trinity_type_validator import validate_with_trinity
+except ImportError:
+    # Fallback for import issues - 시그니처를 실제 함수와 일치시킴
+    def validate_with_trinity(func: F) -> F:
+        """Fallback decorator when trinity_type_validator is not available."""
+        return func
+
 
 from AFO.api.models.persona import PersonaTrinityScore as TrinityScore
 from AFO.schemas.gen_ui import GenUIRequest, GenUIResponse
@@ -43,9 +57,12 @@ class GenUIService:
             except Exception as e:
                 logger.warning(f"⚠️ [GenUI] Could not create sandbox dir: {e}")
 
+    @validate_with_trinity
     async def generate_component(self, request: GenUIRequest) -> GenUIResponse:
         """
         Generates a React component based on the request.
+
+        Phase 5: Trinity 검증 적용 - 런타임 품질 모니터링
         """
         logger.info(f"🎨 [GenUI] Starting generation for '{request.component_name}'...")
 
@@ -157,6 +174,12 @@ class GenUIService:
         We will do a basic sanity check here (e.g. balanced braces)
         or rely on the Sandbox (frontend) to catch build errors.
         For now, we check if it's not empty and looks like a component.
+
+        Args:
+            code: The code string to validate
+
+        Returns:
+            True if code appears valid, False otherwise
         """
         if not code or len(code) < 50:
             return False
@@ -165,7 +188,15 @@ class GenUIService:
         return "export default" in code or "export function" in code
 
     def _clean_code(self, text: str) -> str:
-        """Removes markdown code blocks if present."""
+        """
+        Removes markdown code blocks if present.
+
+        Args:
+            text: Raw text that may contain markdown code blocks
+
+        Returns:
+            Cleaned code string without markdown fences
+        """
         cleaned = text.strip()
         if cleaned.startswith("```"):
             lines = cleaned.splitlines()
@@ -548,6 +579,16 @@ export default function {component_name}() {{
         """
         Deploys the generated code to the Sandbox (Dashboard).
         Returns the absolute path of the written file.
+
+        Args:
+            response: GenUIResponse containing the generated component
+
+        Returns:
+            Absolute path of the deployed component file
+
+        Raises:
+            ValueError: If component is rejected or empty
+            OSError: If file writing fails
         """
         if response.status != "approved" or not response.code:
             raise ValueError(

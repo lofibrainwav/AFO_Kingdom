@@ -51,7 +51,12 @@ MOCK_KINGDOM_SPEND = [
 
 # Phase 보상 등 특별 이벤트
 KINGDOM_EVENTS = [
-    {"holiday": "phase_reward", "ds": "2025-06-30", "lower_window": 0, "upper_window": 2},
+    {
+        "holiday": "phase_reward",
+        "ds": "2025-06-30",
+        "lower_window": 0,
+        "upper_window": 2,
+    },
     {"holiday": "year_end", "ds": "2025-12-31", "lower_window": -3, "upper_window": 2},
 ]
 

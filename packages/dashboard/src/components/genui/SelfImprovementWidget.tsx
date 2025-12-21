@@ -1,7 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Brain, TrendingUp, Lightbulb, CheckCircle2, Loader2, Sparkles } from 'lucide-react';
+import { Brain, TrendingUp, Lightbulb, CheckCircle2, Sparkles } from 'lucide-react';
+import { useApi } from '@/hooks/useApi';
+import { LoadingSpinner } from '@/components/common';
+import { REFRESH_INTERVALS } from '@/lib/constants';
 
 interface LearningMetric {
   metric: string;
@@ -21,49 +23,12 @@ interface LearningReport {
 }
 
 export function SelfImprovementWidget() {
-  const [report, setReport] = useState<LearningReport | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchReport = async () => {
-      try {
-        const res = await fetch('/api/learning/report');
-        if (res.ok) {
-          const data = await res.json();
-          setReport(data);
-        }
-      } catch (error) {
-        console.error('Learning Report Error:', error);
-        // Mock data for demo
-        setReport({
-          timestamp: new Date().toISOString(),
-          total_actions_analyzed: 247,
-          average_trinity_score: 95.2,
-          success_rate: 0.98,
-          top_patterns: [
-            "Voice commands show high user satisfaction",
-            "Multi-model consensus improves accuracy",
-            "Security hardening reduces risk score"
-          ],
-          improvement_suggestions: [
-            "Add more voice personas for accessibility",
-            "Expand multi-model validation to edge cases"
-          ],
-          metrics: [
-            { metric: "Trinity Score", current_value: 95.2, trend: "improving", improvement_suggestion: null },
-            { metric: "Success Rate", current_value: 98, trend: "stable", improvement_suggestion: null },
-            { metric: "Risk Score", current_value: 5.2, trend: "improving", improvement_suggestion: "Continue hardening" }
-          ]
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    
-    fetchReport();
-    const interval = setInterval(fetchReport, 30000);
-    return () => clearInterval(interval);
-  }, []);
+  const {
+    data: report,
+    loading: isLoading,
+  } = useApi<LearningReport>('/api/learning/report', {
+    refetchInterval: REFRESH_INTERVALS.NORMAL, // 30초마다 자동 업데이트
+  });
 
   const getTrendColor = (trend: string) => {
     switch (trend) {
@@ -85,8 +50,8 @@ export function SelfImprovementWidget() {
 
   if (isLoading) {
     return (
-      <div className="p-6 bg-gradient-to-br from-emerald-900/40 to-cyan-900/40 rounded-2xl border border-emerald-500/40 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-emerald-400 animate-spin" />
+      <div className="p-6 bg-gradient-to-br from-emerald-900/40 to-cyan-900/40 rounded-2xl border border-emerald-500/40">
+        <LoadingSpinner size="md" text="학습 리포트 분석 중..." />
       </div>
     );
   }

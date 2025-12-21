@@ -1,10 +1,13 @@
 import asyncio
 import os
+import pathlib
 import sys
 
 
 # Set path to allow imports
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../packages/afo-core")))
+sys.path.append(
+    pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")).resolve()
+)
 
 from AFO.agents.samahwi_core import samahwi
 

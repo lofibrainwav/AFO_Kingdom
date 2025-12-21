@@ -108,7 +108,10 @@ async def test_gemini_generate() -> None:
         status_code=200,
         json=lambda: {
             "candidates": [
-                {"content": {"parts": [{"text": "Hello Gemini"}]}, "finishReason": "STOP"}
+                {
+                    "content": {"parts": [{"text": "Hello Gemini"}]},
+                    "finishReason": "STOP",
+                }
             ],
             "usageMetadata": {"totalTokenCount": 10},
         },
@@ -172,7 +175,10 @@ async def test_gemini_generate_with_context() -> None:
         status_code=200,
         json=lambda: {
             "candidates": [
-                {"content": {"parts": [{"text": "Conversational reply"}]}, "finishReason": "STOP"}
+                {
+                    "content": {"parts": [{"text": "Conversational reply"}]},
+                    "finishReason": "STOP",
+                }
             ],
             "usageMetadata": {"totalTokenCount": 20},
         },
@@ -208,7 +214,9 @@ async def test_gemini_generate_with_context() -> None:
 async def test_gemini_error_handling() -> None:
     mock_client = AsyncMock()
     mock_client.post.return_value = MagicMock(
-        status_code=400, text="Bad Request", json=lambda: {"error": {"message": "Invalid API Key"}}
+        status_code=400,
+        text="Bad Request",
+        json=lambda: {"error": {"message": "Invalid API Key"}},
     )
 
     with patch("httpx.AsyncClient", return_value=mock_client):

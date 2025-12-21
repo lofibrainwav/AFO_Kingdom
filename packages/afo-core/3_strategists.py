@@ -18,7 +18,7 @@ except ImportError:
         DRY_RUN_DEFAULT = True
         AUTO_DEPLOY = True
 
-    antigravity = MockAntiGravity()
+    antigravity: Any = MockAntiGravity()  # type: ignore[no-redef]
 
 
 # Mocking log_sse as it was marked as (미 달성) in user prompt

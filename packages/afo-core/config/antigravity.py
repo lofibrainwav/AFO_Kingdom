@@ -72,7 +72,10 @@ class AntiGravitySettings(BaseSettings):
         return cast(
             "redis.Redis",
             redis.from_url(
-                redis_url, decode_responses=True, socket_connect_timeout=1, socket_timeout=1
+                redis_url,
+                decode_responses=True,
+                socket_connect_timeout=1,
+                socket_timeout=1,
             ),
         )
 
@@ -216,7 +219,7 @@ class ConfigWatcher:
         except ImportError:
             logger.warning("⚠️ watchdog not installed. Config monitoring disabled.")
             # [장자] 무용지용 - 없음도 쓰임이 있음, 옵저버 없이도 작동함
-            self.observer = None  # type: ignore[assignment]
+            self.observer = None
 
     def _create_handler(self) -> "FileSystemEventHandler":
         from watchdog.events import FileSystemEventHandler
@@ -231,13 +234,23 @@ class ConfigWatcher:
         return Handler()
 
     def start(self) -> None:
-        if self.observer:
-            self.observer.schedule(self.handler, path=".", recursive=False)
-            self.observer.start()
-            self.running = True
-            logger.info("🔭 ConfigWatcher started monitoring .env.antigravity")
+        if self.observer and not self.running:
+            try:
+                self.observer.schedule(self.handler, path=".", recursive=False)
+                self.observer.start()
+                self.running = True
+                logger.info("🔭 ConfigWatcher started monitoring .env.antigravity")
+            except RuntimeError as e:
+                if "already scheduled" in str(e).lower():
+                    logger.debug("🔭 ConfigWatcher already running, skipping duplicate start")
+                    self.running = True
+                else:
+                    raise
 
 
-# Initialize and start watcher
+# Initialize and start watcher (with error handling)
 watcher = ConfigWatcher()
-watcher.start()
+try:
+    watcher.start()
+except Exception as e:
+    logger.warning(f"⚠️ ConfigWatcher start failed (non-critical): {e}")

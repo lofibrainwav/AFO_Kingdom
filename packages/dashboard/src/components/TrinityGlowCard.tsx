@@ -51,64 +51,49 @@ export function TrinityGlowCard({ trinityScore, riskScore, breakdown, children }
   const riskOverlay = riskScore !== null && riskScore > 0.1 ? riskScore * 0.3 : 0;
 
   return (
-    <div style={{
-      position: 'relative',
-      padding: '1.5rem',
-      borderRadius: '16px',
-      background: 'rgba(0, 0, 0, 0.8)',
-      boxShadow: `0 0 ${glowStrength}px ${glowColor}, 0 0 ${glowStrength * 2}px ${glowColor}`,
-      transform: `scale(${pulseScale})`,
-      transition: 'all 1s ease-in-out',
-      minHeight: '200px',
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'space-between'
-    }}>
+    <div 
+      className="relative p-6 rounded-2xl bg-black/80 min-h-[200px] flex flex-col justify-between transition-all duration-1000 ease-in-out"
+      style={{
+        boxShadow: `0 0 ${glowStrength}px ${glowColor}, 0 0 ${glowStrength * 2}px ${glowColor}`,
+        transform: `scale(${pulseScale})`,
+      }}
+    >
       {/* Risk Overlay */}
       {riskScore !== null && riskScore > 0.1 && (
-        <div style={{
-          position: 'absolute',
-          inset: 0,
-          borderRadius: '16px',
-          background: `rgba(239, 68, 68, ${riskOverlay})`,
-          pointerEvents: 'none',
-        }} />
+        <div 
+          className="absolute inset-0 rounded-2xl pointer-events-none"
+          style={{
+            background: `rgba(239, 68, 68, ${riskOverlay})`,
+          }}
+        />
       )}
 
       {/* Content */}
-      <div style={{ position: 'relative', zIndex: 1 }}>
+      <div className="relative z-10">
         {children}
       </div>
 
       {/* Breakdown Display */}
       {breakdown && (
-          <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              marginTop: '1rem',
-              borderTop: '1px solid rgba(255,255,255,0.1)',
-              paddingTop: '0.5rem',
-              fontSize: '0.7rem',
-              color: '#d1d5db'
-          }}>
-              <div title="Truth (35%)" style={{textAlign: 'center'}}>
-                 <div style={{color: '#3b82f6'}}>眞</div>
+          <div className="flex justify-between mt-4 border-t border-white/10 pt-2 text-xs text-gray-300">
+              <div title="Truth (35%)" className="text-center">
+                 <div className="text-blue-500">眞</div>
                  <div>{breakdown.truth !== null ? (breakdown.truth * 100).toFixed(0) : '--'}</div>
               </div>
-              <div title="Goodness (35%)" style={{textAlign: 'center'}}>
-                 <div style={{color: '#22c55e'}}>善</div>
+              <div title="Goodness (35%)" className="text-center">
+                 <div className="text-green-500">善</div>
                  <div>{breakdown.goodness !== null ? (breakdown.goodness * 100).toFixed(0) : '--'}</div>
               </div>
-              <div title="Beauty (20%)" style={{textAlign: 'center'}}>
-                 <div style={{color: '#ec4899'}}>美</div>
+              <div title="Beauty (20%)" className="text-center">
+                 <div className="text-pink-500">美</div>
                  <div>{breakdown.beauty !== null ? (breakdown.beauty * 100).toFixed(0) : '--'}</div>
               </div>
-              <div title="Serenity (8%)" style={{textAlign: 'center'}}>
-                 <div style={{color: '#a855f7'}}>孝</div>
+              <div title="Serenity (8%)" className="text-center">
+                 <div className="text-purple-500">孝</div>
                  <div>{breakdown.filial_serenity !== null ? (breakdown.filial_serenity * 100).toFixed(0) : '--'}</div>
               </div>
-              <div title="Eternity (2%)" style={{textAlign: 'center'}}>
-                 <div style={{color: '#f59e0b'}}>永</div>
+              <div title="Eternity (2%)" className="text-center">
+                 <div className="text-amber-500">永</div>
                  <div>{breakdown.eternity !== null ? (breakdown.eternity * 100).toFixed(0) : '--'}</div>
               </div>
           </div>
@@ -116,18 +101,12 @@ export function TrinityGlowCard({ trinityScore, riskScore, breakdown, children }
 
       {/* Score Display (Summary) */}
       {!breakdown && (
-        <div style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            marginTop: '1rem',
-            fontFamily: 'monospace',
-            fontSize: '0.875rem',
-        }}>
-            <span style={{ color: glowColor, fontWeight: 600 }}>
+        <div className="flex justify-between mt-4 font-mono text-sm">
+            <span className="font-semibold" style={{ color: glowColor }}>
             ⚖️ {trinityScore !== null ? `${(trinityScore * 100).toFixed(0)}%` : 'Loading...'}
             </span>
             {riskScore !== null && riskScore > 0.1 && (
-            <span style={{ color: '#ef4444', fontWeight: 600 }}>
+            <span className="text-red-500 font-semibold">
                 ⚠️ Risk: {(riskScore * 100).toFixed(0)}%
             </span>
             )}

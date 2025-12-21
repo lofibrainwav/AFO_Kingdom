@@ -47,7 +47,7 @@ async def list_skills(
     offset: int = Query(0, ge=0, description="페이지 시작 위치"),
     limit: int = Query(50, ge=0, le=100, description="페이지 크기"),
     service: SkillsService = Depends(get_skills_service),
-):
+) -> SkillListResponse:
     """
     스킬 목록을 조회합니다.
 
@@ -81,7 +81,9 @@ async def list_skills(
 
 
 @router.get("/{skill_id}", response_model=SkillResponse, summary="스킬 상세 조회")
-async def get_skill(skill_id: str, service: SkillsService = Depends(get_skills_service)):
+async def get_skill(
+    skill_id: str, service: SkillsService = Depends(get_skills_service)
+) -> SkillResponse:
     """
     특정 스킬의 상세 정보를 조회합니다.
 
@@ -106,7 +108,7 @@ async def get_skill(skill_id: str, service: SkillsService = Depends(get_skills_s
 @router.post("/", response_model=SkillResponse, summary="스킬 등록", status_code=201)
 async def register_skill(
     request: SkillRequest, service: SkillsService = Depends(get_skills_service)
-):
+) -> JSONResponse:
     """
     새로운 스킬을 등록합니다.
 
@@ -125,7 +127,8 @@ async def register_skill(
         existing = await service.get_skill(request.skill_id)
         if existing:
             raise HTTPException(
-                status_code=409, detail=f"이미 존재하는 스킬 ID입니다: {request.skill_id}"
+                status_code=409,
+                detail=f"이미 존재하는 스킬 ID입니다: {request.skill_id}",
             )
 
         result = await service.register_skill(request)
@@ -143,7 +146,7 @@ async def execute_skill(
     parameters: dict[str, Any] | None = None,
     timeout: int | None = Query(30, ge=1, le=300, description="실행 타임아웃(초)"),
     service: SkillsService = Depends(get_skills_service),
-):
+) -> SkillExecutionResult:
     """
     스킬을 실행합니다.
 
@@ -176,7 +179,9 @@ async def execute_skill(
 
 
 @router.delete("/{skill_id}", summary="스킬 삭제", status_code=204)
-async def delete_skill(skill_id: str, service: SkillsService = Depends(get_skills_service)):
+async def delete_skill(
+    skill_id: str, service: SkillsService = Depends(get_skills_service)
+) -> JSONResponse:
     """
     스킬을 삭제합니다.
 
@@ -201,7 +206,9 @@ async def delete_skill(skill_id: str, service: SkillsService = Depends(get_skill
 
 
 @router.get("/stats", response_model=SkillStatsResponse, summary="스킬 통계 조회")
-async def get_skill_stats(service: SkillsService = Depends(get_skills_service)):
+async def get_skill_stats(
+    service: SkillsService = Depends(get_skills_service),
+) -> SkillStatsResponse:
     """
     스킬 시스템의 통계 정보를 조회합니다.
 
@@ -217,7 +224,9 @@ async def get_skill_stats(service: SkillsService = Depends(get_skills_service)):
 
 
 @router.get("/categories", summary="카테고리 목록 조회")
-async def get_categories(service: SkillsService = Depends(get_skills_service)):
+async def get_categories(
+    service: SkillsService = Depends(get_skills_service),
+) -> dict[str, Any]:
     """
     사용 가능한 스킬 카테고리 목록을 조회합니다.
 
@@ -259,7 +268,9 @@ def _get_category_description(category: str) -> str:
 
 
 @router.get("/health", summary="스킬 서비스 헬스체크")
-async def skills_health(service: SkillsService = Depends(get_skills_service)):
+async def skills_health(
+    service: SkillsService = Depends(get_skills_service),
+) -> dict[str, Any]:
     """
     스킬 서비스의 헬스 상태를 확인합니다.
 
@@ -278,4 +289,9 @@ async def skills_health(service: SkillsService = Depends(get_skills_service)):
         }
 
     except Exception as e:  # pragma: no cover - 헬스체크 실패 fallback
-        return {"service": "skills", "status": "error", "error": str(e), "philosophy": "眞善美孝"}
+        return {
+            "service": "skills",
+            "status": "error",
+            "error": str(e),
+            "philosophy": "眞善美孝",
+        }

@@ -11,11 +11,15 @@ States:
 from __future__ import annotations
 
 import asyncio
+import logging
 import time
 from dataclasses import dataclass
 from enum import Enum
 from functools import wraps
 from typing import TYPE_CHECKING, Any, TypeVar
+
+# 로깅 설정
+logger = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     from collections.abc import Awaitable, Callable
@@ -102,7 +106,11 @@ class CircuitBreaker:
             if self._last_failure_time is None:
                 return False
             return time.time() - self._last_failure_time >= self.recovery_timeout
-        except Exception:
+        except (TypeError, AttributeError) as e:
+            logger.debug("복구 타임아웃 확인 실패 (타입/속성 에러): %s", str(e))
+            return False
+        except Exception as e:  # - Intentional fallback for unexpected errors
+            logger.debug("복구 타임아웃 확인 중 예상치 못한 에러: %s", str(e))
             return False
 
     def _record_success(self) -> None:
@@ -111,8 +119,10 @@ class CircuitBreaker:
             self._stats.total_calls += 1
             self._stats.successful_calls += 1
             self._stats.last_success_time = time.time()
-        except Exception:
-            pass
+        except (AttributeError, TypeError) as e:
+            logger.debug("성공 기록 실패 (속성/타입 에러): %s", str(e))
+        except Exception as e:  # - Intentional fallback for unexpected errors
+            logger.debug("성공 기록 중 예상치 못한 에러: %s", str(e))
 
     def _record_failure(self) -> None:
         """Record a failed call."""
@@ -122,21 +132,27 @@ class CircuitBreaker:
             self._stats.last_failure_time = time.time()
             self._failure_count += 1
             self._last_failure_time = time.time()
-        except Exception:
-            pass
+        except (AttributeError, TypeError) as e:
+            logger.debug("실패 기록 실패 (속성/타입 에러): %s", str(e))
+        except Exception as e:  # - Intentional fallback for unexpected errors
+            logger.debug("실패 기록 중 예상치 못한 에러: %s", str(e))
 
     def _trip(self) -> None:
         """Open the circuit breaker."""
         try:
             self._state = CircuitState.OPEN
             self._stats.state_changes += 1
-            print(
-                f"🚨 [Circuit Breaker] {self.service_name}: OPEN (연속 {self._failure_count}회 실패)"
+            logger.warning(
+                "[Circuit Breaker] %s: OPEN (연속 %d회 실패)",
+                self.service_name,
+                self._failure_count,
             )
             if self.on_open:
                 self.on_open(self)
-        except Exception:
-            pass
+        except (AttributeError, TypeError) as e:
+            logger.debug("Circuit Breaker 트립 실패 (속성/타입 에러): %s", str(e))
+        except Exception as e:  # - Intentional fallback for unexpected errors
+            logger.debug("Circuit Breaker 트립 중 예상치 못한 에러: %s", str(e))
 
     def _reset(self) -> None:
         """Close the circuit breaker."""
@@ -145,11 +161,13 @@ class CircuitBreaker:
             self._failure_count = 0
             self._half_open_calls = 0
             self._stats.state_changes += 1
-            print(f"✅ [Circuit Breaker] {self.service_name}: CLOSED (복구 완료)")
+            logger.info("[Circuit Breaker] %s: CLOSED (복구 완료)", self.service_name)
             if self.on_close:
                 self.on_close(self)
-        except Exception:
-            pass
+        except (AttributeError, TypeError) as e:
+            logger.debug("Circuit Breaker 리셋 실패 (속성/타입 에러): %s", str(e))
+        except Exception as e:  # - Intentional fallback for unexpected errors
+            logger.debug("Circuit Breaker 리셋 중 예상치 못한 에러: %s", str(e))
 
     async def _enter_half_open(self) -> None:
         """Transition to half-open state."""
@@ -157,9 +175,11 @@ class CircuitBreaker:
             self._state = CircuitState.HALF_OPEN
             self._half_open_calls = 0
             self._stats.state_changes += 1
-            print(f"🔄 [Circuit Breaker] {self.service_name}: HALF_OPEN (복구 시도 중)")
-        except Exception:
-            pass
+            logger.info("[Circuit Breaker] %s: HALF_OPEN (복구 시도 중)", self.service_name)
+        except (AttributeError, TypeError) as e:
+            logger.debug("Circuit Breaker HALF_OPEN 전환 실패 (속성/타입 에러): %s", str(e))
+        except Exception as e:  # - Intentional fallback for unexpected errors
+            logger.debug("Circuit Breaker HALF_OPEN 전환 중 예상치 못한 에러: %s", str(e))
 
     async def call(self, func: Callable[..., Awaitable[T]], *args: Any, **kwargs: Any) -> T:
         """Execute a function through the circuit breaker."""
@@ -219,9 +239,13 @@ class CircuitBreaker:
                 return await self.call(func, *args, **kwargs)
 
             # Attach circuit breaker info to the wrapper
-            wrapper.circuit_breaker = self
+            wrapper.circuit_breaker = self  # type: ignore[attr-defined]
             return wrapper
-        except Exception:
+        except (AttributeError, TypeError) as e:
+            logger.debug("Circuit Breaker 데코레이터 생성 실패 (속성/타입 에러): %s", str(e))
+            return func
+        except Exception as e:  # - Intentional fallback for unexpected errors
+            logger.debug("Circuit Breaker 데코레이터 생성 중 예상치 못한 에러: %s", str(e))
             return func
 
     def get_status(self) -> dict[str, Any]:
@@ -239,13 +263,20 @@ class CircuitBreaker:
                     "rejected": self._stats.rejected_calls,
                 },
                 "recovery_timeout": self.recovery_timeout,
-                "time_until_reset": max(
-                    0.0, self.recovery_timeout - (time.time() - (self._last_failure_time or 0.0))
-                )
-                if self._last_failure_time and self._state == CircuitState.OPEN
-                else None,
+                "time_until_reset": (
+                    max(
+                        0.0,
+                        self.recovery_timeout - (time.time() - (self._last_failure_time or 0.0)),
+                    )
+                    if self._last_failure_time and self._state == CircuitState.OPEN
+                    else None
+                ),
             }
-        except Exception:
+        except (AttributeError, TypeError, KeyError) as e:
+            logger.debug("Circuit Breaker 상태 조회 실패 (속성/타입/키 에러): %s", str(e))
+            return {"service": self.service_name, "state": "error"}
+        except Exception as e:  # - Intentional fallback for unexpected errors
+            logger.debug("Circuit Breaker 상태 조회 중 예상치 못한 에러: %s", str(e))
             return {"service": self.service_name, "state": "error"}
 
 
@@ -279,7 +310,7 @@ redis_circuit = CircuitBreaker(
 
 
 # Convenience functions
-def get_all_circuit_statuses() -> dict:
+def get_all_circuit_statuses() -> dict[str, Any]:
     """Get status of all circuit breakers."""
     try:
         return {
@@ -287,7 +318,11 @@ def get_all_circuit_statuses() -> dict:
             "qdrant": qdrant_circuit.get_status(),
             "redis": redis_circuit.get_status(),
         }
-    except Exception:
+    except (AttributeError, KeyError) as e:
+        logger.debug("모든 Circuit Breaker 상태 조회 실패 (속성/키 에러): %s", str(e))
+        return {}
+    except Exception as e:  # - Intentional fallback for unexpected errors
+        logger.debug("모든 Circuit Breaker 상태 조회 중 예상치 못한 에러: %s", str(e))
         return {}
 
 
@@ -296,6 +331,8 @@ def reset_all_circuits() -> None:
     try:
         for circuit in [ollama_circuit, qdrant_circuit, redis_circuit]:
             circuit._reset()
-        print("🔄 All circuit breakers reset")
-    except Exception:
-        pass
+        logger.info("All circuit breakers reset")
+    except (AttributeError, TypeError) as e:
+        logger.debug("모든 Circuit Breaker 리셋 실패 (속성/타입 에러): %s", str(e))
+    except Exception as e:  # - Intentional fallback for unexpected errors
+        logger.debug("모든 Circuit Breaker 리셋 중 예상치 못한 에러: %s", str(e))

@@ -28,7 +28,7 @@ def scan_workflows():
         filepath = os.path.join(WORKFLOW_DIR, filename)
         print(f"🔍 Scanning {filename}...")
 
-        with pathlib.Path(filepath).open() as f:
+        with pathlib.Path(filepath).open(encoding="utf-8") as f:
             lines = f.readlines()
 
         for i, line in enumerate(lines):

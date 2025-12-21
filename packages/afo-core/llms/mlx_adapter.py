@@ -64,7 +64,11 @@ class MlxSage:
         logger.info(f"🗑️ [MLX] {self.sage_name} Model unloaded.")
 
     def generate(
-        self, prompt: str, system: str | None = None, max_tokens: int = 4096, temp: float = 0.6
+        self,
+        prompt: str,
+        system: str | None = None,
+        max_tokens: int = 4096,
+        temp: float = 0.6,
     ) -> Any:
         """
         Generates response using MLX
@@ -97,6 +101,9 @@ class MlxSage:
 
             # Create sampler
             sampler = make_sampler(temp=temp)
+
+            if self.model is None or self.tokenizer is None:
+                raise ValueError("Model or tokenizer not initialized")
 
             response = generate(
                 self.model,

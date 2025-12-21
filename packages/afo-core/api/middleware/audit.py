@@ -5,13 +5,17 @@ Logs privileged actions (POST/PUT/DELETE) for security auditing.
 
 import logging
 import time
+from collections.abc import Awaitable, Callable
 
 from fastapi import Request
+from starlette.responses import Response
 
 logger = logging.getLogger("AFO.Audit")
 
 
-async def audit_middleware(request: Request, call_next):
+async def audit_middleware(
+    request: Request, call_next: Callable[[Request], Awaitable[Response]]
+) -> Response:
     # Only audit state-changing methods
     if request.method in ["POST", "PUT", "DELETE", "PATCH"]:
         user_agent = request.headers.get("user-agent", "unknown")

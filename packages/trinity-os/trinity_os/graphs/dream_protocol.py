@@ -130,10 +130,18 @@ class DreamProtocol:
         avg_score = sum(trinity_score.values()) / len(trinity_score)
         if avg_score < 80:
             contract.status = "BLOCKED"
-            return {"status": "BLOCKED", "reason": "Energy flow imbalance detected", "trinity_score": trinity_score}
+            return {
+                "status": "BLOCKED",
+                "reason": "Energy flow imbalance detected",
+                "trinity_score": trinity_score,
+            }
 
         contract.status = "EXECUTING"
-        return {"status": "EXECUTING", "trinity_score": trinity_score, "execution_plan": contract.execution_plan}
+        return {
+            "status": "EXECUTING",
+            "trinity_score": trinity_score,
+            "execution_plan": contract.execution_plan,
+        }
 
     def complete_dream(self, dream_id: str, final_result: dict[str, Any]) -> bool:
         """Complete dream execution"""

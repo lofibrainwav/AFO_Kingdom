@@ -42,9 +42,9 @@ def main():
         skill_info = {
             "skill_id": skill.skill_id,
             "name": skill.name,
-            "category": skill.category.value
-            if hasattr(skill.category, "value")
-            else str(skill.category),
+            "category": (
+                skill.category.value if hasattr(skill.category, "value") else str(skill.category)
+            ),
             "has_philosophy": skill.philosophy_scores is not None,
         }
 

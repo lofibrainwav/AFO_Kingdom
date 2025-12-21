@@ -11,7 +11,7 @@ log_entry = f"""
 - Commander Brnestrm has ascended.
 """
 
-with pathlib.Path("AFO_EVOLUTION_LOG.md").open("a") as f:
+with pathlib.Path("AFO_EVOLUTION_LOG.md").open("a", encoding="utf-8") as f:
     f.write(log_entry)
 
 print(f"✅ AFO Kingdom Sealed at {timestamp}.")

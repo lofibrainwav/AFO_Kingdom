@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Mic, MicOff, Volume2, Loader2 } from 'lucide-react';
+import { logError } from '@/lib/logger';
 
 interface VoiceCommandWidgetProps {
   onCommand?: (text: string) => void;
@@ -44,7 +45,7 @@ export function VoiceCommandWidget({ onCommand, onResponse }: VoiceCommandWidget
     };
 
     recognition.onerror = (event: any) => {
-      console.error('Speech Recognition Error:', event.error);
+      logError('Speech Recognition Error', { error: event.error });
       setIsListening(false);
     };
 

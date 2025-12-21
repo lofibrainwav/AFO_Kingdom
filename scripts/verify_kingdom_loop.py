@@ -47,11 +47,9 @@ class TestKingdomLoop(unittest.TestCase):
         # Here we verify the logic flow that WOULD happen.
 
         # Jegalryang (Truth) Analysis
-        jegalryang_thought = "Technically, we need a Firewall and RBAC."
 
         # Samaui (Goodness) Check
         samaui_risk_score = 0.05  # Low Risk
-        samaui_verdict = "Approved. Risk is within acceptable limits."
 
         # 3. Antigravity Governance Check
         # Check if 'construct_fortress' feature is enabled
@@ -67,7 +65,7 @@ class TestKingdomLoop(unittest.TestCase):
                 print("🛑 Risk Brake Triggered!")
                 is_allowed = False
 
-            self.assertTrue(is_allowed, "Governance should allow safe construction")
+            assert is_allowed, "Governance should allow safe construction"
 
         # 4. Action (Result)
         if is_allowed:
@@ -76,7 +74,7 @@ class TestKingdomLoop(unittest.TestCase):
         else:
             final_action = "BLOCKED"
 
-        self.assertEqual(final_action, "Deploying Firewall Rules [DRY_RUN]")
+        assert final_action == "Deploying Firewall Rules [DRY_RUN]"
         print("✅ Full Loop Verified: Commander -> Chancellor -> Antigravity -> Action")
 
     def test_risk_brake_loop(self):
@@ -95,7 +93,7 @@ class TestKingdomLoop(unittest.TestCase):
                 print(f"🛡️ SAMAUI INTERVENTION: Risk {samaui_risk_score} is too high.")
                 is_allowed = False
 
-            self.assertFalse(is_allowed, "High risk should be blocked")
+            assert not is_allowed, "High risk should be blocked"
             print("✅ Risk Brake Verified")
 
 

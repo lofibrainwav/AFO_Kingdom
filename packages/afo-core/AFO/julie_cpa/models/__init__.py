@@ -1,9 +1,4 @@
 # AFO Julie CPA Models Package
-from AFO.julie_cpa.models.budget import (
-    MOCK_BUDGETS,
-    BudgetCategory,
-    BudgetSummary,
-    BudgetUpdate,
-)
+from AFO.julie_cpa.models.budget import MOCK_BUDGETS, BudgetCategory, BudgetSummary, BudgetUpdate
 
 __all__ = ["MOCK_BUDGETS", "BudgetCategory", "BudgetSummary", "BudgetUpdate"]

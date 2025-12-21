@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Sparkles, Terminal, AlertTriangle, Play, Save } from 'lucide-react';
 import * as GenUIRegistry from './index';
+import { logError } from '@/lib/logger';
 
 // Types for API
 interface GenUIRequest {
@@ -64,7 +65,7 @@ export const SandboxCanvas: React.FC = () => {
         }, 1000);
       }
     } catch (e) {
-      console.error(e);
+      logError('GenUI component generation failed', { error: e instanceof Error ? e.message : 'Unknown error' });
       setResponse({
           component_id: 'error',
           component_name: componentName,

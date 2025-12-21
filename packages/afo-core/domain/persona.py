@@ -18,9 +18,9 @@ class PersonaType(str, Enum):
     FAMILY_HEAD = "family_head"  # 가장 (인·따뜻함)
     CREATOR = "creator"  # 창작자 (美·몰입)
     LEARNER = "learner"  # 배움의 길 (眞·탐구)
-    JEGALRYANG = "jegalryang"  # 제갈량 (眞 Truth)
-    SAMAUI = "samaui"  # 사마의 (善 Goodness)
-    JUYU = "juyu"  # 주유 (美 Beauty)
+    ZHUGE_LIANG = "zhuge_liang"  # 제갈량 (眞 Truth)
+    SIMA_YI = "sima_yi"  # 사마의 (善 Goodness)
+    ZHOU_YU = "zhou_yu"  # 주유 (美 Beauty)
 
 
 class Persona(BaseModel):
@@ -115,9 +115,9 @@ creator = Persona(
     },
 )
 
-jegalryang = Persona(
+zhuge_liang = Persona(
     id="p004",
-    type=PersonaType.JEGALRYANG,
+    type=PersonaType.ZHUGE_LIANG,
     name="제갈량 (眞 Truth)",
     trinity_scores={
         "truth": 100.0,
@@ -128,9 +128,9 @@ jegalryang = Persona(
     },
 )
 
-samaui = Persona(
+sima_yi = Persona(
     id="p005",
-    type=PersonaType.SAMAUI,
+    type=PersonaType.SIMA_YI,
     name="사마의 (善 Goodness)",
     trinity_scores={
         "truth": 85.0,
@@ -141,9 +141,9 @@ samaui = Persona(
     },
 )
 
-juyu = Persona(
+zhou_yu = Persona(
     id="p006",
-    type=PersonaType.JUYU,
+    type=PersonaType.ZHOU_YU,
     name="주유 (美 Beauty)",
     trinity_scores={
         "truth": 80.0,
@@ -151,6 +151,19 @@ juyu = Persona(
         "beauty": 100.0,
         "serenity": 90.0,
         "eternity": 95.0,
+    },
+)
+
+learner = Persona(
+    id="p007",
+    type=PersonaType.LEARNER,
+    name="배움의 길 (眞 Learning)",
+    trinity_scores={
+        "truth": 100.0,
+        "goodness": 95.0,
+        "beauty": 85.0,
+        "serenity": 97.0,
+        "eternity": 100.0,
     },
 )
 

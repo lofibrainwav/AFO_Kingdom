@@ -24,7 +24,13 @@ class TrinityOS:
         self.scripts_path = self.base_path / "scripts"
 
         # 철학 정의
-        self.philosophy = {"truth": "眞", "goodness": "善", "beauty": "美", "serenity": "孝", "eternity": "永"}
+        self.philosophy = {
+            "truth": "眞",
+            "goodness": "善",
+            "beauty": "美",
+            "serenity": "孝",
+            "eternity": "永",
+        }
 
         # 철학 엔진 초기화
         self.philosophy_engine = philosophy_engine
@@ -76,7 +82,12 @@ class TrinityOS:
         """철학 엔진 실행"""
         return {
             "philosophy_engine_status": "active",
-            "available_functions": ["register_agent", "interact_with_agent", "certify_master", "get_agent_status"],
+            "available_functions": [
+                "register_agent",
+                "interact_with_agent",
+                "certify_master",
+                "get_agent_status",
+            ],
             "description": "에이전트들의 철학 학습, 성장, 명장 인증을 관리합니다.",
         }
 
@@ -86,7 +97,11 @@ class TrinityOS:
         return {
             "master_system_status": "active",
             "registered_masters": len(masters),
-            "master_titles": ["trinity_apprentice", "kingdom_strategist", "philosophy_master"],
+            "master_titles": [
+                "trinity_apprentice",
+                "kingdom_strategist",
+                "philosophy_master",
+            ],
             "certification_process": "Trinity Score 기반 자동 평가",
             "masters": masters[:5],  # 최근 5명 표시
         }
@@ -95,7 +110,10 @@ class TrinityOS:
         """Python 스크립트 실행"""
         try:
             result = subprocess.run(
-                [sys.executable, str(script_path)], capture_output=True, text=True, cwd=self.base_path
+                [sys.executable, str(script_path)],
+                capture_output=True,
+                text=True,
+                cwd=self.base_path,
             )
             return json.loads(result.stdout.strip())
         except Exception as e:

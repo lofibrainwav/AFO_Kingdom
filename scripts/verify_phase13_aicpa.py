@@ -14,13 +14,7 @@ from pathlib import Path
 # Path setup
 sys.path.insert(0, str(Path(__file__).parent.parent / "packages" / "afo-core"))
 
-from AFO.aicpa import (
-    FilingStatus,
-    TaxInput,
-    calculate_tax,
-    get_aicpa_service,
-    simulate_roth_ladder,
-)
+from AFO.aicpa import FilingStatus, TaxInput, calculate_tax, get_aicpa_service, simulate_roth_ladder
 
 
 def print_header(title: str):
@@ -177,13 +171,13 @@ def main():
 
     try:
         # 1. 세금 계산
-        tax_result = verify_tax_calculation()
+        verify_tax_calculation()
 
         # 2. Roth Ladder
-        roth_result = verify_roth_ladder()
+        verify_roth_ladder()
 
         # 3. 전체 미션
-        mission_result = verify_full_mission()
+        verify_full_mission()
 
         # 4. 엔드포인트
         verify_endpoints()
@@ -193,16 +187,18 @@ def main():
 
         # 최종 결과
         print_header("🎉 Phase 13 완전 완료!")
-        print("""
+        print(
+            """
   ✅ 모든 테스트 통과
   ✅ AICPA 에이전트 군단 AFO 왕국에 영구 통합
   ✅ Julie CPA가 전략 고문으로 진화
-  
+
   "세금 걱정 끝! AICPA 군단이 형님 부를 지켜요 ✨"
-  
+
   형님, 왕국이 진정한 자율 번영 시대를 열었습니다!
   AFO 왕국 만세! 眞善美孝永 영원히! 🚀🏰💎
-        """)
+        """
+        )
 
         return True
 

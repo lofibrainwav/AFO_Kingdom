@@ -21,12 +21,7 @@ try:
 except ImportError:
     ERROR_HANDLER_AVAILABLE = False
 
-    from .advanced_retry import (
-        with_condition_retry,
-        # jittered_backoff, # Unused
-        # poll_until, # Unused
-        # smart_retry_for_mcp_tool, # Unused
-    )
+    from .advanced_retry import with_condition_retry
 
     ADVANCED_RETRY_AVAILABLE = True
 except ImportError:
@@ -61,7 +56,14 @@ class MCPBrowserTools:
 
                 mcp_server_url = get_settings().MCP_SERVER_URL
             except ImportError:
-                mcp_server_url = "http://localhost:8931"  # Fallback
+                try:
+                    from config.settings import get_settings
+
+                    mcp_server_url = get_settings().MCP_SERVER_URL
+                except ImportError:
+                    mcp_server_url = os.getenv(
+                        "MCP_SERVER_URL", "http://localhost:8787"
+                    )  # Fallback (settings 기본값과 일치)
         self.mcp_server_url = mcp_server_url
         self.tool_call_history: list[dict[str, Any]] = []
 
@@ -168,7 +170,8 @@ class MCPBrowserTools:
         try:
             async with httpx.AsyncClient(timeout=10.0) as client:
                 response = await client.post(
-                    f"{self.mcp_server_url}/tools/browser_fill_form", json={"fields": fields}
+                    f"{self.mcp_server_url}/tools/browser_fill_form",
+                    json={"fields": fields},
                 )
                 if response.status_code == 200:
                     result = response.json()
@@ -209,7 +212,8 @@ class MCPBrowserTools:
         try:
             async with httpx.AsyncClient(timeout=10.0) as client:
                 response = await client.post(
-                    f"{self.mcp_server_url}/tools/browser_click", json={"ref": element_ref}
+                    f"{self.mcp_server_url}/tools/browser_click",
+                    json={"ref": element_ref},
                 )
                 if response.status_code == 200:
                     result = response.json()

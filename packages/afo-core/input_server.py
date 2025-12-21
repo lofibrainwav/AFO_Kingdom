@@ -41,7 +41,9 @@ except ImportError:
 
 # FastAPI 앱 초기화
 app = FastAPI(
-    title="AFO Input Server", description="API 키 입력 및 관리 서버 (胃 Stomach)", version="1.0.0"
+    title="AFO Input Server",
+    description="API 키 입력 및 관리 서버 (胃 Stomach)",
+    version="1.0.0",
 )
 
 # API Wallet 서버 URL (중앙 설정 사용 - Phase 1 리팩토링)
@@ -474,7 +476,8 @@ async def add_api_key(
 
         print(f"✅ API 키 저장 성공: {name} ({provider})")
         return RedirectResponse(
-            url=f"/?success=API 키 '{name}'이(가) 성공적으로 저장되었습니다", status_code=303
+            url=f"/?success=API 키 '{name}'이(가) 성공적으로 저장되었습니다",
+            status_code=303,
         )
 
     except httpx.ConnectError:

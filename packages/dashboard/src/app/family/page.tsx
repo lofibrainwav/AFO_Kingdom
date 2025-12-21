@@ -6,6 +6,7 @@ import HappinessChart from '@/components/family/HappinessChart';
 import FamilyTimeline from '@/components/family/FamilyTimeline';
 import CopilotTerminal from '@/components/copilot/CopilotTerminal';
 import { Sparkles, RefreshCw } from 'lucide-react';
+import { logError } from '@/lib/logger';
 
 export default function FamilyPage() {
   const [members, setMembers] = useState<any[]>([]);
@@ -23,11 +24,11 @@ export default function FamilyPage() {
             const logLine = `[${new Date().toLocaleTimeString()}] ${data.agent || 'SYSTEM'}: ${data.message || 'Processing...'}`;
             setMemories((prev) => [logLine, ...prev].slice(0, 50)); // Keep last 50 lines
         } catch (e) {
-            console.error("SSE Parse Error", e);
+            logError("SSE Parse Error", { error: e instanceof Error ? e.message : 'Unknown error' });
         }
     };
     eventSource.onerror = (err) => {
-        console.error("SSE Error", err);
+        logError("SSE Error", { error: err });
         eventSource.close();
     };
     return () => {
@@ -70,7 +71,7 @@ export default function FamilyPage() {
         setTimeline(mockTimeline);
 
     } catch (e) {
-        console.error("Failed to fetch family data", e);
+        logError("Failed to fetch family data", { error: e instanceof Error ? e.message : 'Unknown error' });
     } finally {
         setLoading(false);
     }

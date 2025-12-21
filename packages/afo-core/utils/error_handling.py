@@ -1,198 +1,301 @@
 """
-善 (Goodness) 에러 처리 유틸리티
+Error Handling Utilities (야전교범 원칙 준수)
+眞善美孝永 철학에 기반한 에러 핸들링 패턴
 
-AFO 왕국의 안전하고 윤리적인 에러 처리 패턴
+眞 (Truth): 정확한 에러 타입 및 메시지
+善 (Goodness): 안전한 에러 처리 및 복구
+美 (Beauty): 우아한 에러 메시지 및 로깅
+孝 (Serenity): 개발자 경험 최적화
+永 (Eternity): 재사용 가능한 에러 핸들링 패턴
 """
 
-import functools
+from __future__ import annotations
+
 import logging
-from collections.abc import Callable
-from typing import Any, TypeVar
+import traceback
+from functools import wraps
+from typing import TYPE_CHECKING, Any, TypeVar
+
+from typing_extensions import ParamSpec
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+P = ParamSpec("P")
+T = TypeVar("T")
 
 logger = logging.getLogger(__name__)
 
-T = TypeVar("T")
-
 
 class AFOError(Exception):
-    """AFO 왕국 기본 예외 클래스"""
+    """AFO 왕국 기본 에러 클래스"""
 
-    def __init__(self, message: str, code: str = "AFO_ERROR"):
+    def __init__(
+        self,
+        message: str,
+        error_code: str | None = None,
+        code: str | None = None,  # code는 error_code의 별칭 (하위 호환성)
+        details: dict[str, Any] | None = None,
+    ):
+        super().__init__(message)
         self.message = message
-        self.code = code
-        super().__init__(self.message)
+        # code 또는 error_code 중 하나라도 제공되면 사용
+        self.error_code = error_code or code
+        self.details = details or {}
+
+
+class TruthError(AFOError):
+    """眞 (Truth) 에러 - 기술적 정확성 관련"""
+
+    pass
+
+
+class GoodnessError(AFOError):
+    """善 (Goodness) 에러 - 안전성 및 윤리 관련"""
+
+    pass
+
+
+class BeautyError(AFOError):
+    """美 (Beauty) 에러 - 구조적 우아함 관련"""
+
+    pass
+
+
+class SerenityError(AFOError):
+    """孝 (Serenity) 에러 - 평온함 및 마찰 관련"""
+
+    pass
+
+
+class EternityError(AFOError):
+    """永 (Eternity) 에러 - 영속성 관련"""
+
+    pass
 
 
 class ValidationError(AFOError):
-    """입력 검증 오류"""
+    """검증 에러 - 입력값 검증 실패 관련 (善 - Goodness)"""
 
-    def __init__(self, message: str):
-        super().__init__(message, code="VALIDATION_ERROR")
-
-
-class ServiceUnavailableError(AFOError):
-    """서비스 불가 오류"""
-
-    def __init__(self, service: str, reason: str = ""):
-        message = f"서비스 불가: {service}"
-        if reason:
-            message += f" ({reason})"
-        super().__init__(message, code="SERVICE_UNAVAILABLE")
+    pass
 
 
-class ConfigurationError(AFOError):
-    """설정 오류"""
+def handle_errors(
+    default_return: Any = None,
+    log_error: bool = True,
+    reraise: bool = False,
+    error_type: type[AFOError] = AFOError,
+) -> Callable[[Callable[P, T]], Callable[P, T | Any]]:
+    """
+    에러 핸들링 데코레이터 (眞善美孝永 철학)
 
-    def __init__(self, key: str, reason: str = ""):
-        message = f"설정 오류: {key}"
-        if reason:
-            message += f" ({reason})"
-        super().__init__(message, code="CONFIG_ERROR")
+    Args:
+        default_return: 에러 발생 시 기본 반환값
+        log_error: 에러 로깅 여부
+        reraise: 에러 재발생 여부
+        error_type: 변환할 에러 타입
+
+    Returns:
+        데코레이터 함수
+    """
+
+    def decorator(func: Callable[P, T]) -> Callable[P, T | Any]:
+        @wraps(func)
+        def wrapper(*args: P.args, **kwargs: P.kwargs) -> T | Any:
+            try:
+                return func(*args, **kwargs)
+            except Exception as e:
+                if log_error:
+                    logger.error(
+                        f"[{func.__name__}] Error: {e}",
+                        exc_info=True,
+                        extra={
+                            "function": func.__name__,
+                            "error_type": type(e).__name__,
+                            "traceback": traceback.format_exc(),
+                        },
+                    )
+
+                if reraise:
+                    if isinstance(e, AFOError):
+                        raise
+                    raise error_type(str(e)) from e
+
+                return default_return
+
+        return wrapper
+
+    return decorator
+
+
+async def handle_async_errors(
+    default_return: Any = None,
+    log_error: bool = True,
+    reraise: bool = False,
+    error_type: type[AFOError] = AFOError,
+) -> Callable[[Callable[P, Any]], Callable[P, Any]]:
+    """
+    비동기 에러 핸들링 데코레이터 (眞善美孝永 철학)
+
+    Args:
+        default_return: 에러 발생 시 기본 반환값
+        log_error: 에러 로깅 여부
+        reraise: 에러 재발생 여부
+        error_type: 변환할 에러 타입
+
+    Returns:
+        데코레이터 함수
+    """
+
+    def decorator(func: Callable[P, Any]) -> Callable[P, Any]:
+        @wraps(func)
+        async def wrapper(*args: P.args, **kwargs: P.kwargs) -> Any:
+            try:
+                return await func(*args, **kwargs)
+            except Exception as e:
+                if log_error:
+                    logger.error(
+                        f"[{func.__name__}] Async Error: {e}",
+                        exc_info=True,
+                        extra={
+                            "function": func.__name__,
+                            "error_type": type(e).__name__,
+                            "traceback": traceback.format_exc(),
+                        },
+                    )
+
+                if reraise:
+                    if isinstance(e, AFOError):
+                        raise
+                    raise error_type(str(e)) from e
+
+                return default_return
+
+        return wrapper
+
+    return decorator
 
 
 def safe_execute(
-    func: Callable[..., T],
-    *args: Any,
-    default: T | None = None,
+    func: Callable[P, T],
+    default: Any = None,
     log_error: bool = True,
-    reraise: bool = False,
-    **kwargs: Any,
-) -> T | None:
+) -> Callable[P, T | Any]:
     """
-    함수를 안전하게 실행 (善 패턴)
+    안전한 함수 실행 (善 - Goodness)
 
     Args:
         func: 실행할 함수
-        *args: 위치 인자
-        default: 실패 시 반환할 기본값
+        default: 에러 발생 시 기본 반환값
         log_error: 에러 로깅 여부
-        reraise: 예외 재발생 여부
-        **kwargs: 키워드 인자
-
-    Returns:
-        함수 결과 또는 기본값
-
-    Example:
-        >>> result = safe_execute(risky_function, default="fallback")
-    """
-    try:
-        return func(*args, **kwargs)
-    except Exception as e:
-        if log_error:
-            logger.error(f"[善] 안전 실행 실패: {func.__name__} - {e}")
-        if reraise:
-            raise
-        return default
-
-
-def with_fallback(primary: Callable[..., T], fallback: Callable[..., T]) -> Callable[..., T]:
-    """
-    폴백 전략 데코레이터 (善 패턴)
-
-    Args:
-        primary: 주 함수
-        fallback: 폴백 함수
 
     Returns:
         래핑된 함수
-
-    Example:
-        >>> @with_fallback(get_from_cache, get_from_db)
-        ... def get_data(): ...
     """
 
-    @functools.wraps(primary)
-    def wrapper(*args: Any, **kwargs: Any) -> T:
+    @wraps(func)
+    def wrapper(*args: P.args, **kwargs: P.kwargs) -> T | Any:
         try:
-            return primary(*args, **kwargs)
+            return func(*args, **kwargs)
         except Exception as e:
-            logger.warning(f"[善] 폴백 실행: {primary.__name__} → {fallback.__name__} ({e})")
-            return fallback(*args, **kwargs)
+            if log_error:
+                logger.error(f"Safe execute failed: {e}", exc_info=True)
+            return default
 
     return wrapper
 
 
+async def safe_execute_async(
+    func: Callable[P, Any], *args: P.args, **kwargs: P.kwargs
+) -> tuple[Any | None, Exception | None]:
+    """
+    안전한 비동기 함수 실행 (善 - Goodness)
+
+    Returns:
+        (result, error) 튜플
+    """
+    try:
+        result = await func(*args, **kwargs)
+        return result, None
+    except Exception as e:
+        logger.error(f"Safe async execute failed: {e}", exc_info=True)
+        return None, e
+
+
 def validate_input(
-    value: Any, name: str, validator: Callable[[Any], bool], message: str = ""
+    value: Any,
+    name: str,
+    validator: Callable[[Any], bool],
+    error_message: str | None = None,
 ) -> Any:
     """
-    입력 검증 (善 패턴)
+    입력값 검증 (善 - Goodness)
 
     Args:
         value: 검증할 값
-        name: 파라미터 이름
-        validator: 검증 함수
-        message: 실패 메시지
+        name: 값의 이름 (에러 메시지용)
+        validator: 검증 함수 (True 반환 시 통과)
+        error_message: 커스텀 에러 메시지
 
     Returns:
         검증된 값
 
     Raises:
         ValidationError: 검증 실패 시
-
-    Example:
-        >>> api_key = validate_input(key, "api_key", lambda k: k.startswith("sk-"))
     """
     if not validator(value):
-        error_msg = message or f"{name} 검증 실패"
-        logger.error(f"[善] 입력 검증 실패: {error_msg}")
-        raise ValidationError(error_msg)
+        message = error_message or f"Validation failed for {name}: {value}"
+        raise ValidationError(message, error_code="VALIDATION_FAILED")
+
     return value
 
 
-def require_not_none(value: T | None, name: str) -> T:
+def require_not_none(value: Any, name: str) -> Any:
     """
-    None 검증 (善 패턴)
+    None 값 검증 (善 - Goodness)
 
     Args:
         value: 검증할 값
-        name: 파라미터 이름
+        name: 값의 이름 (에러 메시지용)
 
     Returns:
-        검증된 값
+        검증된 값 (None이 아닌 경우)
 
     Raises:
-        ValidationError: None인 경우
-
-    Example:
-        >>> user = require_not_none(get_user(id), "user")
+        ValidationError: 값이 None인 경우
     """
     if value is None:
-        raise ValidationError(f"{name}은(는) 필수입니다")
+        raise ValidationError(f"{name} cannot be None", error_code="NONE_VALUE")
+
     return value
 
 
-def log_and_return_error(error: Exception, context: str = "") -> dict[str, Any]:
+def log_and_return_error(error: AFOError, context: str | None = None) -> dict[str, Any]:
     """
-    에러 로깅 및 표준 응답 생성 (善 패턴)
+    에러 로깅 및 응답 생성 (善 - Goodness)
 
     Args:
-        error: 발생한 예외
-        context: 컨텍스트 정보
+        error: 발생한 에러
+        context: 에러 발생 컨텍스트
 
     Returns:
-        표준 에러 응답 딕셔너리
+        에러 응답 딕셔너리
     """
-    error_code = getattr(error, "code", "UNKNOWN_ERROR")
-    error_msg = str(error)
-
-    logger.error(f"[善] {context}: {error_code} - {error_msg}")
+    error_context = context or "unknown"
+    logger.error(
+        f"[{error_context}] Error: {error.message}",
+        exc_info=True,
+        extra={
+            "error_code": error.error_code,
+            "error_details": error.details,
+            "context": error_context,
+        },
+    )
 
     return {
         "success": False,
-        "error": error_msg,
-        "error_code": error_code,
-        "context": context,
+        "error_code": error.error_code or "UNKNOWN_ERROR",
+        "error_message": error.message,
+        "error_details": error.details,
+        "context": error_context,
     }
-
-
-# 에러 코드 상수 (眞 패턴: 타입 안전)
-class ErrorCodes:
-    """AFO 왕국 표준 에러 코드"""
-
-    VALIDATION_ERROR = "VALIDATION_ERROR"
-    SERVICE_UNAVAILABLE = "SERVICE_UNAVAILABLE"
-    CONFIG_ERROR = "CONFIG_ERROR"
-    AUTH_ERROR = "AUTH_ERROR"
-    NOT_FOUND = "NOT_FOUND"
-    INTERNAL_ERROR = "INTERNAL_ERROR"

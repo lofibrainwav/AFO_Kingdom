@@ -23,7 +23,7 @@ class Context7MCP:
         Trinity 5 Pillars (The Soul):
         1. Truth (眞, 35%): Technical Certainty, Logic, Facts. (Scholar: Jegalyang)
         2. Goodness (善, 35%): Ethics, Safety, Risk Management. (Scholar: Samayi)
-        3. Beauty (美, 20%): Aesthetics, UX, Simplicity. (Scholar: Juyu)
+        3. Beauty (美, 20%): Aesthetics, UX, Simplicity. (Scholar: Zhou Yu)
         4. Serenity (孝, 8%): Peace of Mind, Friction Reduction. (Role: Chancellor)
         5. Eternity (永, 2%): Sustainability, Legacy, Long-term view. (Role: Chancellor)
 
@@ -279,7 +279,14 @@ class Context7MCP:
             results.append(Context7MCP.KNOWLEDGE_BASE["CONFIGURATION"])
 
         # Troubleshooting queries
-        troubleshoot_keywords = ["TROUBLESHOOT", "DEBUG", "ERROR", "문제", "해결", "디버그"]
+        troubleshoot_keywords = [
+            "TROUBLESHOOT",
+            "DEBUG",
+            "ERROR",
+            "문제",
+            "해결",
+            "디버그",
+        ]
         if any(kw in query_upper for kw in troubleshoot_keywords) or any(
             kw in query for kw in ["문제", "해결", "디버그"]
         ):
@@ -298,7 +305,17 @@ class Context7MCP:
             results.append(Context7MCP.KNOWLEDGE_BASE["OBSIDIAN_LIBRARIAN"])
 
         # Royal Library queries
-        royal_keywords = ["ROYAL", "LIBRARY", "사서", "원칙", "헌법", "손자", "삼국지", "군주론", "전쟁론"]
+        royal_keywords = [
+            "ROYAL",
+            "LIBRARY",
+            "사서",
+            "원칙",
+            "헌법",
+            "손자",
+            "삼국지",
+            "군주론",
+            "전쟁론",
+        ]
         if any(kw in query_upper for kw in royal_keywords) or any(
             kw in query for kw in ["사서", "원칙", "헌법", "손자병법", "삼국지", "군주론", "전쟁론"]
         ):
@@ -306,7 +323,13 @@ class Context7MCP:
 
         # Obsidian Templates queries
         template_keywords_upper = ["TEMPLATE", "TEMPLATER"]
-        template_keywords_korean = ["템플릿", "옵시디언 템플릿", "프로젝트 템플릿", "컴포넌트 템플릿", "API 템플릿"]
+        template_keywords_korean = [
+            "템플릿",
+            "옵시디언 템플릿",
+            "프로젝트 템플릿",
+            "컴포넌트 템플릿",
+            "API 템플릿",
+        ]
         if any(kw in query_upper for kw in template_keywords_upper) or any(
             kw in query for kw in template_keywords_korean
         ):

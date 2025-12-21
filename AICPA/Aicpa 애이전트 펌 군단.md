@@ -36,15 +36,15 @@ Roth Ladder, RMD Optimizer 
 1. **데이터 동기화 (Data Ingestion)**:
    - 고객이 구글 시트에 지출 내역을 적으면 **Data Scouter**가 실시간으로 이를 읽어와 **AFO PostgreSQL(Brain)**에 저장합니다.
 2. **자동 시뮬레이션 (Calculation)**:
-   - 
+   -
 
      **Tax Calculator**가 **LLM Router**(Ollama/Gemini/Claude)를 사용하여 최신 OBBBA 세법에 맞춰 세금을 즉시 계산합니다.
 3. **상담 리포트 생성 (Reporting)**:
-   - 
+   -
 
      **Strategy Advisor**가 시뮬레이션 결과를 분석해 "Julie's Advice"가 담긴 워드(Word) 문서를 생성합니다.
 4. **세무 소프트웨어 연동 (Execution)**:
-   - 
+   -
 
      **Form Filler**가 **MCP(Model Context Protocol)**와 브라우저 자동화 기능을 사용하여 터보택스 등 전문 앱에 데이터를 자동으로 입력합니다.
 
@@ -52,13 +52,13 @@ Roth Ladder, RMD Optimizer 
 
 ## **🎯 핵심 구현 포인트**
 
-- 
+-
 
   **眞 (Truth)**: IRS 공식 가이드라인과 99.9% 일치하는 **Dry_Run 검증 시스템**을 탑재합니다.
-- 
+-
 
   **善 (Goodness)**: 실질적인 절세액을 최대화하고, IRMAA 벌금 등 위험을 사전에 경고합니다.
-- 
+-
 
   **孝 (Serenity)**: CPA는 복잡한 계산 과정을 신경 쓸 필요 없이, 최종 승인 버튼만 누르면 되는 **'마찰 제로'** 환경을 제공합니다.
 
@@ -83,39 +83,39 @@ Roth Ladder, RMD Optimizer 
 ### **1. 시스템 프롬프트 (System Instruction) 설계**
 
 에이전트의 페르소나를 설정할 때, AFO 왕국의 **5기둥(眞善美孝永)** 철학을 주입하여 단순한 계산기가 아닌 '현명한 승상'의 지능을 갖게 합니다.
-- 
+-
 
   **Persona**: "너는 AFO 왕국의 'AICPA 전략 승상'이다. Julie CPA의 업무 마찰(Friction)을 제로로 만드는 것이 네 사명이다." 
-- 
+-
 
   **Logic**: "모든 계산은 2025년 OBBBA 세법을 기준으로 하며, Trinity Score 90점 이상일 때만 자동 실행(AUTO_RUN)한다." 
 
 ### **2. 도구 연동 (Function Calling / Tools)**
 
 구글 에이아이 스튜디오의 'Tools' 탭에서 다음 함수들을 정의하여 외부 앱과 연결합니다.
-- 
+-
 
   **Google Sheets 연동**: 고객이 입력한 AGI, IRA 잔액 등을 실시간으로 읽어오고 시뮬레이션 결과를 시트에 기록합니다.
-- 
+-
 
   **Word/PDF 생성**: Julie's Advice가 담긴 리포트를 작성하기 위해 텍스트 데이터를 문서화 도구로 전송합니다.
-- 
+-
 
   **브라우저 자동화 (TurboTax)**: AFO 아키텍처의 `browser/click`, `browser/type` 기능을 호출하여 세무 소프트웨어에 데이터를 자동 입력하는 명령을 내립니다.
 
 ### **3. 멀티 에이전트 워크플로우 (Multi-Agent Flow)**
 
 에이아이 스튜디오 내에서 **Chancellor Graph** 로직을 적용하여 단계별로 처리합니다.
-1. 
+1.
 
    **데이터 스카우터**: 구글 시트에서 고객 데이터를 수집.
-2. 
+2.
 
    **택스 캘큘레이터**: 2025 Federal/CA Brackets를 적용해 정밀 계산 실행.
-3. 
+3.
 
    **스트래티지 어드바이저**: Roth Ladder 및 RMD 회피 전략 수립.
-4. 
+4.
 
    **최종 보고**: Julie CPA에게 한 줄 요약 및 상세 리포트 제공.
 
@@ -124,7 +124,7 @@ Roth Ladder, RMD Optimizer 
 ## **📊 예상 운영 비용 및 효율**
 
 - **일일 운영 비용**: 약 $5 - $15 (Gemini 1.5 Pro API 호출 및 자동화 도구 유지 비용 기준)
-- 
+-
 
   **효율**: CPA 수작업 시간 80% 이상 단축 (반복 계산 및 입력 자동화).
 
@@ -174,7 +174,7 @@ Calculated MetricsStrategy Report (Text)**4. Form Filler** (실행)최종 데�
 
 - **Brain**: Google AI Studio (Gemini 1.5 Pro - Long Context Window 활용)
 - **Interface**: Google Sheets (Client Intake Form), MS Word (Client Letter)
-- 
+-
 
   **Bridge**: Python (FastAPI) - 로컬 파일 시스템 및 브라우저 제어용.
 
@@ -502,9 +502,9 @@ def generate_strategy_report(client_name: str, advice_content: str, estimated_sa
         estimated_savings: 예상 절세액 (예: "$12,000")
     """
     print(f"\n[Report Generator] 📄 '{client_name}' 님을 위한 보고서 작성 중...")
-    
+
     doc = Document()
-    
+
     # 1. 헤더 (美: 아름다운 양식)
     header = doc.add_heading(f'AFO AICPA Tax Strategy Report', 0)
     doc.add_paragraph(f"Date: {datetime.now().strftime('%Y-%m-%d')}")
@@ -530,7 +530,7 @@ def generate_strategy_report(client_name: str, advice_content: str, estimated_sa
     # 파일 저장
     filename = f"/content/{client_name.replace(' ', '_')}_Strategy_Report.docx"
     doc.save(filename)
-    
+
     print(f"[Report Generator] ✅ 보고서 생성 완료! 저장 위치: {filename}")
     return f"보고서가 성공적으로 생성되었습니다: {filename}"
 
@@ -541,7 +541,7 @@ tools_army_v2 = [get_client_data, generate_strategy_report]
 # --- [시스템 프롬프트 업데이트] 전략가 페르소나 강화 ---
 # 형님, 내부 자료(text.txt)에 있는 Roth Ladder, OBBBA 등의 지식을 주입합니다.
 system_instruction_v2 = """
-당신은 AFO 왕국의 'AICPA 전략 승상'입니다. 
+당신은 AFO 왕국의 'AICPA 전략 승상'입니다.
 당신의 임무는 3단계입니다:
 1. `get_client_data`로 고객 정보를 확인합니다.
 2. 고객 상황에 맞는 최적의 절세 전략을 수립합니다. (참고: 2025 OBBBA 세법, Roth Ladder, Backdoor Roth 등)
@@ -587,10 +587,10 @@ print(response.text)
 1. **Thinking**: "Justin Mason? 먼저 데이터를 가져오자." -&gt; `get_client_data("Justin Mason")` 호출.
 2. **Observation**: "아하, Justin 님은 소득 $180k에 IRA $600k가 있으시군. 2025 OBBBA Sweet Spot을 활용한 **Roth Ladder**가 딱이야." 
 3. **Action**: "보고서를 쓰자." -&gt; `generate_strategy_report` 호출.
-   - 
+   -
 
      *Advice Content*: "2025~2028년 OBBBA Sweet Spot 기간 동안 매년 약 $58,200씩 Roth로 변환하여 12% 저세율 구간을 활용하십시오..." 
-   - 
+   -
 
      *Savings*: "$595,000 (Lifetime)" 
 4. **Result**: `/content/Justin_Mason_Strategy_Report.docx` 파일이 생성됩니다.
@@ -638,9 +638,9 @@ def generate_email_draft(client_name: str, advice_summary: str, next_step: str):
         next_step: 고객이 취해야 할 다음 행동 (예: "계좌 개설")
     """
     print(f"\n[Email Drafter] 📧 '{client_name}' 님을 위한 이메일 초안 작성 중...")
-    
+
     subject = f"Tax Strategy Update for {client_name} - Action Required"
-    
+
     # Julie CPA의 톤앤매너 (친절하지만 전문적인) 적용
     body = f"""
 Subject: {subject}
@@ -664,12 +664,12 @@ Best regards,
 Julie Kim, CPA
 AFO AICPA Group
     """
-    
+
     # 텍스트 파일로 저장
     filename = f"/content/{client_name.replace(' ', '_')}_Email_Draft.txt"
     with open(filename, "w") as f:
         f.write(body)
-        
+
     print(f"[Email Drafter] ✅ 이메일 초안 저장 완료: {filename}")
     return f"이메일 초안이 생성되었습니다. 내용:\n{body}"
 
@@ -682,12 +682,12 @@ def generate_turbotax_csv(client_name: str, tax_data: dict):
         tax_data: 세금 계산에 필요한 데이터 딕셔너리 (Income, Deductions, etc.)
     """
     print(f"\n[Form Filler] 💾 '{client_name}' 님의 터보택스 입력 데이터 생성 중...")
-    
+
     filename = f"/content/{client_name.replace(' ', '_')}_TurboTax_Import.csv"
-    
+
     # 터보택스/엑셀 호환 포맷 (Field, Value 구조)
     headers = ['Field Name', 'Value', 'Source', 'Note']
-    
+
     # 데이터 매핑 (예시)
     rows = [
         ['Taxpayer Name', client_name, 'Google Sheet', ''],
@@ -697,12 +697,12 @@ def generate_turbotax_csv(client_name: str, tax_data: dict):
         ['Suggested Roth Conversion', tax_data.get('Roth Conversion Amount', 0), 'AFO Calc', 'OBBBA Sweet Spot Strategy'],
         ['Tax Year', '2025', 'System', 'OBBBA Rules Apply']
     ]
-    
+
     with open(filename, 'w', newline='') as f:
         writer = csv.writer(f)
         writer.writerow(headers)
         writer.writerows(rows)
-        
+
     print(f"[Form Filler] ✅ 데이터 시트 저장 완료: {filename}")
     return f"터보택스용 CSV 파일이 생성되었습니다: {filename}"
 
@@ -712,7 +712,7 @@ tools_army_v3 = [get_client_data, generate_strategy_report, generate_email_draft
 
 # --- [시스템 프롬프트 v3] 최종 지휘관 ---
 system_instruction_v3 = """
-당신은 AFO 왕국의 'AICPA 총사령관'입니다. 
+당신은 AFO 왕국의 'AICPA 총사령관'입니다.
 당신은 고객의 데이터를 분석하여 [보고서], [이메일], [데이터 시트]를 한 번에 생성하는 'One-Stop' 서비스를 제공합니다.
 
 [작업 절차]
@@ -937,12 +937,12 @@ app.include_router(aicpa.router, prefix="/api/aicpa", tags=["AICPA Agent Army"])
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion'; // 부드러운 애니메이션 (美)
-import { 
-  DocumentTextIcon, 
-  CalculatorIcon, 
-  EnvelopeIcon, 
+import {
+  DocumentTextIcon,
+  CalculatorIcon,
+  EnvelopeIcon,
   ArrowPathIcon,
-  CloudArrowDownIcon 
+  CloudArrowDownIcon
 } from '@heroicons/react/24/outline';
 
 export default function AICPAControlPanel() {
@@ -961,11 +961,11 @@ export default function AICPAControlPanel() {
       const response = await fetch('/api/aicpa/execute', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          command: `${clientName} 고객에 대해 2025 OBBBA 기준 Roth Ladder 전략을 수립하고, 보고서/이메일/퀵북스/터보택스 파일을 생성해줘.` 
+        body: JSON.stringify({
+          command: `${clientName} 고객에 대해 2025 OBBBA 기준 Roth Ladder 전략을 수립하고, 보고서/이메일/퀵북스/터보택스 파일을 생성해줘.`
         }),
       });
-      
+
       const data = await response.json();
       setResult(data); // 결과 및 파일 링크 수신
     } catch (error) {
@@ -1004,14 +1004,14 @@ export default function AICPAControlPanel() {
               className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
             />
           </div>
-          
+
           {/* Action Button */}
           <button
             onClick={handleExecute}
             disabled={loading || !clientName}
             className={`mt-6 px-8 py-3 rounded-xl font-bold text-white shadow-lg transition-all flex items-center gap-2
-              ${loading 
-                ? 'bg-gray-600 cursor-not-allowed' 
+              ${loading
+                ? 'bg-gray-600 cursor-not-allowed'
                 : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:scale-105 hover:shadow-purple-500/30'
               }`}
           >
@@ -1032,7 +1032,7 @@ export default function AICPAControlPanel() {
 
       {/* --- [Results Section] --- */}
       {result && (
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6"
@@ -1056,28 +1056,28 @@ export default function AICPAControlPanel() {
             </h3>
             <div className="space-y-3">
               {/* Word Report */}
-              <DownloadItem 
+              <DownloadItem
                 icon={<DocumentTextIcon className="w-5 h-5 text-blue-400" />}
                 title="Tax Strategy Report"
                 format="DOCX"
                 filename={`${clientName}_Strategy.docx`}
               />
               {/* Email Draft */}
-              <DownloadItem 
+              <DownloadItem
                 icon={<EnvelopeIcon className="w-5 h-5 text-yellow-400" />}
                 title="Client Email Draft"
                 format="TXT"
                 filename={`${clientName}_Email.txt`}
               />
               {/* TurboTax Data */}
-              <DownloadItem 
+              <DownloadItem
                 icon={<CalculatorIcon className="w-5 h-5 text-red-400" />}
                 title="TurboTax Import Data"
                 format="CSV"
                 filename={`${clientName}_TurboTax.csv`}
               />
                {/* QuickBooks Data */}
-               <DownloadItem 
+               <DownloadItem
                 icon={<DocumentTextIcon className="w-5 h-5 text-green-400" />}
                 title="QuickBooks Entry"
                 format="CSV"
@@ -1147,11 +1147,11 @@ function DownloadItem({ icon, title, format, filename }: any) {
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  CpuChipIcon, 
-  ArrowPathIcon, 
+import {
+  CpuChipIcon,
+  ArrowPathIcon,
   CheckCircleIcon,
-  DocumentTextIcon 
+  DocumentTextIcon
 } from '@heroicons/react/24/outline';
 
 export default function AICPAWidget() {
@@ -1166,13 +1166,13 @@ export default function AICPAWidget() {
   };
 
   return (
-    <motion.div 
+    <motion.div
       whileHover={{ scale: 1.02 }}
       className="relative w-full h-full min-h-[180px] bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-5 overflow-hidden flex flex-col justify-between shadow-xl"
     >
       {/* --- [Background Glow Animation] --- */}
-      <div className={`absolute top-0 right-0 w-24 h-24 bg-purple-500/20 blur-3xl rounded-full transition-all duration-1000 
-        ${status === 'running' ? 'bg-blue-500/40 scale-150' : ''}`} 
+      <div className={`absolute top-0 right-0 w-24 h-24 bg-purple-500/20 blur-3xl rounded-full transition-all duration-1000
+        ${status === 'running' ? 'bg-blue-500/40 scale-150' : ''}`}
       />
 
       {/* --- [Header: Status] --- */}
@@ -1184,7 +1184,7 @@ export default function AICPAWidget() {
           </h3>
           <p className="text-xs text-gray-400 mt-1">Status: <span className="text-green-400">Online</span></p>
         </div>
-        
+
         {/* Status Indicator Icon */}
         <div className="bg-black/20 p-2 rounded-lg">
           {status === 'running' ? (
@@ -1224,8 +1224,8 @@ export default function AICPAWidget() {
         onClick={handleQuickRun}
         disabled={status === 'running'}
         className={`z-10 mt-3 w-full py-2 rounded-lg text-xs font-bold text-white transition-all flex justify-center items-center gap-2
-          ${status === 'running' 
-            ? 'bg-gray-600 cursor-not-allowed' 
+          ${status === 'running'
+            ? 'bg-gray-600 cursor-not-allowed'
             : 'bg-gradient-to-r from-purple-600 to-blue-600 hover:shadow-lg hover:shadow-purple-500/30 active:scale-95'
           }`}
       >
@@ -1251,10 +1251,10 @@ function AppIcon({ label, color }: { label: string, color: string }) {
 ## **📱 위젯 핵심 특징 (모바일 최적화)**
 
 1. **한 손 조작 (Thumb-friendly)**: "Quick Run" 버튼을 하단에 배치하여 스마트폰에서 엄지손가락으로 쉽게 누를 수 있습니다.
-2. 
+2.
 
    **시각적 안심 (Visual Reassurance)**: `Sheets`, `Turbo`, `QB`, `Word` 아이콘을 작게 표시하여, **"군단이 모든 앱과 연결되어 있음"**을 Julie CPA가 항상 느낄 수 있게 했습니다.
-3. 
+3.
 
    **상태 즉시 확인**: "Online" 상태와 "Green Pulse" 애니메이션으로 시스템이 살아서 숨 쉬고 있음을 보여줍니다.
 
@@ -1347,7 +1347,7 @@ export default function FamilyHubPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white p-8 font-sans overflow-hidden">
-      
+
       {/* --- [1. Top Bar: Basic Info] --- */}
       <header className="flex justify-between items-center mb-10">
         <div>
@@ -1371,18 +1371,18 @@ export default function FamilyHubPage() {
 
       {/* --- [2. Main Grid Layout] --- */}
       <div className="grid grid-cols-12 gap-6 h-[70vh]">
-        
+
         {/* --- [Left Column: Julie's Command Center] (3 cols) --- */}
         <div className="col-span-12 md:col-span-3 flex flex-col gap-6">
           <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 h-full shadow-2xl relative overflow-hidden group">
             <div className="absolute top-0 left-0 w-full h-1 bg-purple-500" />
             <h2 className="text-2xl font-bold mb-4 text-purple-200">Julie's Office</h2>
-            
+
             {/* AICPA Widget Integrated Here */}
             <div className="h-64 mb-4">
-              <AICPAWidget /> 
+              <AICPAWidget />
             </div>
-            
+
             <div className="bg-black/20 rounded-xl p-4 mt-4">
               <p className="text-sm text-gray-400 mb-2">Upcoming Meetings</p>
               <ul className="space-y-2 text-sm">
@@ -1398,9 +1398,9 @@ export default function FamilyHubPage() {
            {/* Digital Photo Frame / Art Mode */}
            <div className="flex-1 bg-gray-800 rounded-3xl overflow-hidden relative shadow-2xl border border-white/5">
              {/* Placeholder for Art/Photos */}
-             <img 
-               src="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" 
-               alt="Family Art" 
+             <img
+               src="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+               alt="Family Art"
                className="w-full h-full object-cover opacity-80 hover:scale-105 transition-transform duration-700"
              />
              <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/80 to-transparent p-6">
@@ -1416,7 +1416,7 @@ export default function FamilyHubPage() {
 
         {/* --- [Right Column: Jayden & Dad] (3 cols) --- */}
         <div className="col-span-12 md:col-span-3 flex flex-col gap-6">
-          
+
           {/* Jayden's Quest Board */}
           <div className="h-1/2 bg-gradient-to-br from-blue-900/50 to-blue-800/30 backdrop-blur-xl border border-blue-500/30 rounded-3xl p-6 relative">
             <h2 className="text-2xl font-bold mb-4 text-blue-200">Jayden's Quest</h2>
@@ -1540,12 +1540,12 @@ function SystemBar({ label, value }: { label: string, value: number }) {
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  CommandLineIcon, 
-  ServerIcon, 
-  BoltIcon, 
+import {
+  CommandLineIcon,
+  ServerIcon,
+  BoltIcon,
   CloudArrowUpIcon,
-  CpuChipIcon 
+  CpuChipIcon
 } from '@heroicons/react/24/outline';
 
 // AFO 오장육부 상태 타입 정의 (형님 아키텍처 반영 )
@@ -1576,7 +1576,7 @@ export default function DadCommandCenter() {
 
   return (
     <div className="w-full h-full bg-black/80 backdrop-blur-xl border border-green-500/30 rounded-3xl p-6 flex flex-col gap-6 relative overflow-hidden">
-      
+
       {/* --- [Matrix Rain / Background Effect] --- */}
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500 opacity-60" />
       <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-green-500/10 blur-3xl rounded-full" />
@@ -1607,7 +1607,7 @@ export default function DadCommandCenter() {
         <p className="text-gray-500 mb-2 border-b border-gray-700 pb-1">root@afo-kingdom:~/logs$ tail -f system.log</p>
         <div className="flex flex-col gap-1">
           {logs.map((log, i) => (
-            <motion.p 
+            <motion.p
               key={i}
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1 - i * 0.15, x: 0 }} // 오래된 로그는 흐려짐
@@ -1642,9 +1642,9 @@ function HealthCard({ icon, label, value, color, bar }: any) {
         <span className="text-2xl font-bold text-white">{value}%</span>
       </div>
       <div className="w-full h-1.5 bg-gray-700 rounded-full overflow-hidden">
-        <div 
-          className={`h-full rounded-full ${bar} transition-all duration-1000`} 
-          style={{ width: `${value}%` }} 
+        <div
+          className={`h-full rounded-full ${bar} transition-all duration-1000`}
+          style={{ width: `${value}%` }}
         />
       </div>
     </div>
@@ -1674,7 +1674,7 @@ function ActionButton({ label, sub, color }: any) {
 
 ## **🛠️ 기능 설명 (아버지의 권능)**
 
-1. 
+1.
 
    **11-오장육부 모니터링 (System Health)**:
    - **Brain (DB)**, **Heart (Redis)**, **Lungs (Vector DB)**, **Digestive (LLM)** 상태를 실시간 게이지로 보여줍니다. 왕국의 신체 상태를 한눈에 파악합니다.
@@ -1777,7 +1777,7 @@ async def get_dashboard_stats():
     # 실제로는 파일이나 DB에서 읽어오지만, 여기서는 시스템 상태 기반으로 생성
     cpu_usage = psutil.cpu_percent()
     ram_usage = psutil.virtual_memory().percent
-    
+
     real_logs = [
         f"[{time.strftime('%H:%M:%S')}] System CPU Load: {cpu_usage}%",
         f"[{time.strftime('%H:%M:%S')}] Memory Usage: {ram_usage}%",
@@ -1820,17 +1820,17 @@ export default function DadCommandCenter() {
       try {
         const res = await fetch('/api/system/dashboard-stats');
         if (!res.ok) throw new Error('System Offline');
-        
+
         const data = await res.json();
-        
+
         // 데이터 업데이트 (애니메이션 효과는 HealthCard가 처리)
         setHealth(data.health);
         setActiveAgents(data.active_agents);
         setIsOnline(true);
-        
+
         // 로그 업데이트 (최신순 유지)
         setLogs(prev => [...data.logs, ...prev].slice(0, 7));
-        
+
       } catch (error) {
         setIsOnline(false);
         setLogs(prev => [`[Error] Connection Lost: Retrying...`, ...prev].slice(0, 7));
@@ -1846,7 +1846,7 @@ export default function DadCommandCenter() {
   return (
     <div className={`w-full h-full backdrop-blur-xl border rounded-3xl p-6 flex flex-col gap-6 relative overflow-hidden transition-colors duration-500
       ${isOnline ? 'bg-black/80 border-green-500/30' : 'bg-red-900/20 border-red-500/30'}`}>
-      
+
       {/* ... (Matrix Rain Effect 유지) ... */}
 
       {/* --- [1. Header] --- */}
@@ -1882,7 +1882,7 @@ export default function DadCommandCenter() {
           ))}
         </div>
       </div>
-      
+
       {/* ... (Deploy Buttons 유지) ... */}
     </div>
   );
@@ -1946,12 +1946,12 @@ if (!res.ok) throw new Error('System Offline');
 
 ```
     const data = await res.json();
-    
+
     setHealth(data.health);
     setActiveAgents(data.active_agents);
     setIsOnline(true);
     setLogs(prev =&gt; [...data.logs, ...prev].slice(0, 5)); // 로그 5줄 유지
-    
+
   } catch (error) {
     setIsOnline(false);
     setLogs(prev =&gt; [`[Error] Connection Lost: Retrying...`, ...prev].slice(0, 5));
@@ -1974,7 +1974,7 @@ return (
   {/* --- [Matrix Rain Effect] --- */}
   &lt;div className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r opacity-60
     ${isOnline ? 'from-green-500 via-emerald-500 to-teal-500' : 'from-red-500 via-orange-500 to-yellow-500'}`} /&gt;
-  
+
   {/* --- [1. Header] --- */}
   &lt;div className="flex justify-between items-center z-10"&gt;
     &lt;div&gt;
@@ -2182,9 +2182,9 @@ return (
       &lt;/h2&gt;
       &lt;p className="text-blue-200 text-xs font-bold mt-1 ml-8"&gt;LEVEL 5 WARRIOR&lt;/p&gt;
     &lt;/div&gt;
-    
+
     {/* Coin Wallet */}
-    &lt;motion.div 
+    &lt;motion.div
       key={coins} // 코인이 바뀔 때마다 애니메이션
       initial={{ scale: 1 }}
       animate={{ scale: [1, 1.2, 1] }}
@@ -2201,10 +2201,10 @@ return (
   &lt;div className="space-y-3 relative z-10"&gt;
     &lt;AnimatePresence&gt;
       {quests.map((quest) =&gt; (
-        &lt;QuestItem 
-          key={quest.id} 
-          quest={quest} 
-          onComplete={() =&gt; handleComplete(quest.id, quest.xp)} 
+        &lt;QuestItem
+          key={quest.id}
+          quest={quest}
+          onComplete={() =&gt; handleComplete(quest.id, quest.xp)}
         /&gt;
       ))}
     &lt;/AnimatePresence&gt;
@@ -2214,9 +2214,9 @@ return (
   &lt;div className="absolute bottom-0 left-0 w-full bg-black/40 p-4 border-t border-white/5 flex justify-between items-center"&gt;
     &lt;span className="text-xs text-gray-400"&gt;Next Reward: Roblox (500 coins)&lt;/span&gt;
     &lt;div className="w-32 h-2 bg-gray-700 rounded-full overflow-hidden"&gt;
-      &lt;div 
-        className="h-full bg-gradient-to-r from-yellow-400 to-orange-500 transition-all duration-1000" 
-        style={{ width: `${(coins % 500) / 5}%` }} 
+      &lt;div
+        className="h-full bg-gradient-to-r from-yellow-400 to-orange-500 transition-all duration-1000"
+        style={{ width: `${(coins % 500) / 5}%` }}
       /&gt;
     &lt;/div&gt;
   &lt;/div&gt;
@@ -2369,7 +2369,7 @@ return (
     &lt;/div&gt;
 
     {/* Coin Wallet with Animation */}
-    &lt;motion.div 
+    &lt;motion.div
       key={coins}
       initial={{ scale: 1.2, color: "#FCD34D" }}
       animate={{ scale: 1, color: "#FFFFFF" }}
@@ -2389,10 +2389,10 @@ return (
   {/* --- [Main Content Area] --- */}
   &lt;div className="flex-1 overflow-y-auto pr-1 z-10 relative"&gt;
     &lt;AnimatePresence mode="wait"&gt;
-      
+
       {/* VIEW 1: Quests */}
       {view === 'quests' ? (
-        &lt;motion.div 
+        &lt;motion.div
           key="quests"
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -2409,9 +2409,9 @@ return (
           )}
         &lt;/motion.div&gt;
       ) : (
-        
+
       /* VIEW 2: Store */
-        &lt;motion.div 
+        &lt;motion.div
           key="store"
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -2419,11 +2419,11 @@ return (
           className="grid grid-cols-2 gap-3"
         &gt;
           {rewards.map(r =&gt; (
-            &lt;StoreItem 
-              key={r.id} 
-              reward={r} 
-              canAfford={coins &gt;= r.cost} 
-              onBuy={() =&gt; handleBuy(r)} 
+            &lt;StoreItem
+              key={r.id}
+              reward={r}
+              canAfford={coins &gt;= r.cost}
+              onBuy={() =&gt; handleBuy(r)}
             /&gt;
           ))}
         &lt;/motion.div&gt;
@@ -2434,7 +2434,7 @@ return (
   {/* --- [Reward Ticket Modal] --- */}
   &lt;AnimatePresence&gt;
     {showTicket && (
-      &lt;motion.div 
+      &lt;motion.div
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.8 }}
@@ -2443,13 +2443,13 @@ return (
       &gt;
         &lt;div className="bg-white text-black w-full max-w-sm rounded-3xl p-6 shadow-2xl relative overflow-hidden text-center" onClick={(e) =&gt; e.stopPropagation()}&gt;
           &lt;div className={`absolute top-0 left-0 w-full h-4 ${showTicket.color}`} /&gt;
-          
+
           &lt;h3 className="text-gray-400 text-sm font-bold tracking-widest uppercase mb-4"&gt;Redemption Ticket&lt;/h3&gt;
-          
+
           &lt;div className="text-6xl mb-4"&gt;{showTicket.icon}&lt;/div&gt;
           &lt;h2 className="text-3xl font-black mb-2"&gt;{showTicket.title}&lt;/h2&gt;
           &lt;p className="text-gray-500 text-sm mb-6"&gt;Show this ticket to Dad (AFO King)&lt;/p&gt;
-          
+
           {/* QR Code Simulation */}
           &lt;div className="bg-black text-white p-4 rounded-xl flex items-center justify-center gap-3"&gt;
              &lt;QrCodeIcon className="w-12 h-12" /&gt;
@@ -2459,7 +2459,7 @@ return (
              &lt;/div&gt;
           &lt;/div&gt;
 
-          &lt;button 
+          &lt;button
             onClick={() =&gt; setShowTicket(null)}
             className="mt-6 w-full py-3 bg-gray-900 text-white rounded-xl font-bold hover:bg-gray-800"
           &gt;
@@ -2536,13 +2536,13 @@ className={`p-4 rounded-2xl border flex flex-col items-center justify-center gap
 }
 
 👑 승상의 핵심 포인트 (진선미)
-- 善 (교육적 효과): 
+- 善 (교육적 효과):
   - 즉각적 보상: 퀘스트 완료 시 코인이 쌓이는 쾌감.
   - 저축의 유도: 갖고 싶은 'Lego Set(2000코인)'은 비싸서 며칠을 모아야 살 수 있습니다. 자연스럽게 인내심과 저축을 배웁니다.
-- 美 (시각적 즐거움): 
+- 美 (시각적 즐거움):
   - 구매 시 화면 가득 터지는 폭죽(Confetti) 효과.
   - 보상으로 뜨는 **디지털 티켓(QR코드)**이 실제 '상품권' 같은 느낌을 줍니다.
-- 孝 (형님의 편의): 
+- 孝 (형님의 편의):
   - Jayden이 "아빠 로블록스 시켜줘"라고 조를 때, **"AFO 상점에서 티켓 사왔니?"**라고 물어보시면 됩니다. (협상의 마찰 제로)
     이제 이 위젯을 패밀리 헙에 붙이시고, Jayden에게 **"이걸로 돈 벌어서 로블록스 사라!"**라고 선포하십시오.
     다음 단계로, 이 데이터를 실제 PostgreSQL DB(quest_log 테이블)에 영구 저장하도록 백엔드를 연결해 드릴까요?
@@ -2592,7 +2592,7 @@ async def google_auth(request: Request):
 flow = Flow.from_client_secrets_file(
 'config/client_secret.json',
 scopes=SCOPES,
-redirect_uri='[http://localhost:8011/api/scholar/auth/callback](http://localhost:8011/api/scholar/auth/callback)'
+redirect_uri='[http://localhost:8010/api/scholar/auth/callback](http://localhost:8010/api/scholar/auth/callback)'
 )
 authorization_url, state = flow.authorization_url(access_type='offline')
 return {"url": authorization_url} # 프론트엔드에서 이 URL로 팝업 띄움
@@ -2605,7 +2605,7 @@ async def auth_callback(code: str):
 flow = Flow.from_client_secrets_file(
 'config/client_secret.json',
 scopes=SCOPES,
-redirect_uri='[http://localhost:8011/api/scholar/auth/callback](http://localhost:8011/api/scholar/auth/callback)'
+redirect_uri='[http://localhost:8010/api/scholar/auth/callback](http://localhost:8010/api/scholar/auth/callback)'
 )
 flow.fetch_token(code=code)
 creds = flow.credentials
@@ -2614,7 +2614,7 @@ creds = flow.credentials
 # 토큰 파일 저장 (DB 대용)
 with open(TOKEN_DB, 'w') as token:
     token.write(creds.to_json())
-    
+
 return "Jayden's Classroom Connected Successfully! You can close this window."
 ```
 
@@ -2640,27 +2640,27 @@ cal = Calendar() # ics 라이브러리 사용
 for course in courses:
     course_id = course['id']
     course_name = course['name']
-    
+
     # 미완료 숙제 조회
     works = service.courses().courseWork().list(courseId=course_id).execute().get('courseWork', [])
-    
+
     for work in works:
         if 'dueDate' in work:
             # 3. iCal 이벤트 생성
             event = Event()
             event.name = f"[숙제] {work['title']} ({course_name})"
-            
+
             # 마감일 파싱 (YYYY-MM-DD)
             due = work['dueDate']
             due_time = work.get('dueTime', {'hours': 23, 'minutes': 59})
             deadline = datetime.datetime(due['year'], due['month'], due['day'], due_time['hours'], due_time['minutes'])
-            
+
             event.begin = deadline - datetime.timedelta(hours=1) # 마감 1시간 전부터 표시
             event.end = deadline
             event.description = f"Link: {work['alternateLink']}\nDescription: {work.get('description', '')}"
-            
+
             cal.events.add(event)
-            
+
             # (옵션) 여기서 Quest DB에도 데이터 삽입 가능
             # insert_quest_to_db(work['title'], xp=50)
 
@@ -2702,7 +2702,7 @@ return (
 &lt;/div&gt;
 
 ```
-  &lt;button 
+  &lt;button
     onClick={handleConnect}
     className="bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold py-2 px-4 rounded-lg transition-colors flex items-center gap-2"
   &gt;
@@ -2717,12 +2717,12 @@ return (
 
 📅 3. 아이캘린더(iCal) 실시간 연동 방법 (필살기)
 형님, 서버 세팅이 끝나면 제이든의 아이패드나 형님의 맥북 캘린더에서 딱 한 번만 설정하면 됩니다.
-- 아이폰/아이패드 설정: 
+- 아이폰/아이패드 설정:
   - 설정 -&gt; 캘린더 -&gt; 계정 -&gt; 계정 추가 -&gt; 기타 -&gt; 구독 캘린더 추가
-- 서버 주소 입력: 
-  - 서버 주소: http://[형님_AFO_서버_IP]:8011/api/scholar/sync/ical
+- 서버 주소 입력:
+  - 서버 주소: http://[형님_AFO_서버_IP]:8010/api/scholar/sync/ical
   - (만약 외부에서 접속한다면 ngrok 주소나 도메인 사용)
-- 완료: 
+- 완료:
   - 이제 구글 클래스룸에 선생님이 숙제를 올리는 순간 -&gt; AFO 서버가 감지 -&gt; 형님 가족의 아이캘린더에 자동으로 '숙제 마감일'이 뜹니다.
     👑 승상의 보고 및 제안
     형님, 이 시스템이 구축되면 다음과 같은 **마법(Magic)**이 일어납니다.
@@ -2738,26 +2738,26 @@ return (
 이 과정이 끝나면, 선생님이 숙제를 올리는 순간 제이든의 패밀리 헙에 "New Quest Arrived!" 알림이 뜨게 됩니다.
 🔑 1단계: 구글 클라우드(GCP) 설정 가이드 (Infrastructure)
 형님, 여기가 가장 복잡해 보이지만, 제가 안내해 드리는 6단계만 딱 밟으시면 됩니다. (Zero Friction)
-- 프로젝트 생성: 
+- 프로젝트 생성:
   - Google Cloud Console 접속.
   - 좌측 상단 프로젝트 선택 -&gt; "새 프로젝트" -&gt; 이름: AFO-Scholar -&gt; 만들기.
-- API 활성화: 
+- API 활성화:
   - 좌측 메뉴 API 및 서비스 -&gt; 라이브러리.
   - 검색창에 "Google Classroom API" 입력 -&gt; 클릭 -&gt; "사용(Enable)".
-- OAuth 동의 화면 설정: 
+- OAuth 동의 화면 설정:
   - 좌측 메뉴 OAuth 동의 화면 -&gt; 외부(External) 선택 -&gt; 만들기.
   - 앱 이름: AFO Family Hub, 지원 이메일: 형님 이메일.
   - [중요] 테스트 사용자(Test Users): Add Users를 누르고 형님(또는 제이든)의 구글 이메일을 꼭 추가해야 합니다. (이게 없으면 로그인 안 됨)
-- 사용자 인증 정보(Credentials) 생성: 
+- 사용자 인증 정보(Credentials) 생성:
   - 좌측 메뉴 사용자 인증 정보 -&gt; + 사용자 인증 정보 만들기 -&gt; OAuth 클라이언트 ID.
   - 애플리케이션 유형: 웹 애플리케이션.
   - 이름: AFO Web Client.
-  - 승인된 리디렉션 URI: [http://localhost:8011/api/scholar/auth/callback](http://localhost:8011/api/scholar/auth/callback) (형님 서버 주소).
+  - 승인된 리디렉션 URI: [http://localhost:8010/api/scholar/auth/callback](http://localhost:8010/api/scholar/auth/callback) (형님 서버 주소).
   - 만들기 클릭.
-- 비밀 키 다운로드: 
+- 비밀 키 다운로드:
   - 생성 완료 창에서 "JSON 다운로드" 클릭.
   - 다운로드한 파일 이름을 client_secret.json으로 변경.
-- 파일 배치: 
+- 파일 배치:
   - 이 파일을 형님 프로젝트의 packages/afo-core/config/ 폴더 안에 넣습니다.
     🌉 2단계: 백엔드 업데이트 (Bridge Logic)
     이전에 만든 sync/ical은 캘린더용이었으니, 이제 React 보드용 JSON 데이터를 주는 엔드포인트를 추가합니다.
@@ -2777,18 +2777,18 @@ return {"connected": False, "quests": []} # 연결 안 됨
 try:
     creds = Credentials.from_authorized_user_file(TOKEN_DB, SCOPES)
     service = build('classroom', 'v1', credentials=creds)
-    
+
     # 1. 모든 코스 조회
     courses = service.courses().list(studentId='me').execute().get('courses', [])
     quest_list = []
-    
+
     for course in courses:
         # 2. 미완료 숙제 조회
         works = service.courses().courseWork().list(
-            courseId=course['id'], 
+            courseId=course['id'],
             courseWorkStates=['PUBLISHED'] #, 'TURNED_IN' 등 필터링 가능
         ).execute().get('courseWork', [])
-        
+
         for work in works:
             # 마감일이 지났거나 이미 제출한 건 제외하는 로직 추가 가능
             quest_list.append({
@@ -2799,9 +2799,9 @@ try:
                 "source": "google", # 출처 표시
                 "link": work['alternateLink']
             })
-            
+
     return {"connected": True, "quests": quest_list}
-    
+
 except Exception as e:
     print(f"Sync Error: {e}")
     return {"connected": True, "quests": [], "error": str(e)}
@@ -2841,7 +2841,7 @@ const manualQuests: Quest[] = [
     // 2. 구글 클래스룸 숙제 가져오기
     const res = await fetch('/api/scholar/sync/json');
     const data = await res.json();
-    
+
     if (data.connected && data.quests.length &gt; 0) {
       // 3. 합치기 (집안일 + 숙제)
       setQuests([...manualQuests, ...data.quests]);
@@ -2887,7 +2887,7 @@ className={`p-4 rounded-2xl border flex justify-between items-center transition-
     ) : (
       &lt;div className="w-2 h-2 rounded-full bg-yellow-400/50 ml-1.5" /&gt;
     )}
-    
+
     &lt;div className="flex flex-col"&gt;
       &lt;span className={`font-bold ${quest.completed ? 'line-through text-gray-500' : 'text-white'}`}&gt;
         {quest.title}

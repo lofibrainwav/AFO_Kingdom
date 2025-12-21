@@ -327,8 +327,8 @@ class SpiritIntegration:
             "average_scores": avg_scores,
             "average_trinity": avg_trinity,
             "operation_count": len(self.operation_history),
-            "recent_operations": self.operation_history[-3:] if self.operation_history else [],
-            "spirit_maintained": avg_trinity["total_score"] >= 0.9 if avg_trinity else False,
+            "recent_operations": (self.operation_history[-3:] if self.operation_history else []),
+            "spirit_maintained": (avg_trinity["total_score"] >= 0.9 if avg_trinity else False),
         }
 
 

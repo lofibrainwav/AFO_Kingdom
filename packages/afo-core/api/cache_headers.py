@@ -19,8 +19,9 @@ CACHE_STRATEGIES = {
 
 
 def set_optimized_cache_headers(
-    response: Response, asset_type: Literal["static", "dynamic", "realtime", "sensitive"]
-):
+    response: Response,
+    asset_type: Literal["static", "dynamic", "realtime", "sensitive"],
+) -> None:
     """
     Cache-Control Headers Optimization: 자산 유형별 최적 헤더
 
@@ -39,7 +40,11 @@ def set_optimized_cache_headers(
     logger.debug(f"[Cache-Control] Applied strategy '{asset_type}': {strategy}")
 
 
-def set_etag_and_cache(response: Response, content: bytes, asset_type: str):
+def set_etag_and_cache(
+    response: Response,
+    content: bytes,
+    asset_type: Literal["static", "dynamic", "realtime", "sensitive"],
+) -> None:
     """
     ETag + Cache-Control 결합 최적화
     Generates ETag from content and applies cache headers.

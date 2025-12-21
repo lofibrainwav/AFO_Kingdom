@@ -18,7 +18,8 @@ class GenUISpec(BaseModel):
     app_id: str = Field(..., description="Unique ID for the sub-app (e.g. 'health-dashboard')")
     description: str = Field(..., description="High-level description of what to build")
     requirements: list[str] = Field(
-        default_factory=list, description="Specific features compliant with Royal Standards"
+        default_factory=list,
+        description="Specific features compliant with Royal Standards",
     )
 
 
@@ -32,7 +33,7 @@ class GenUIOrchestrator:
     3. Verify (Hwata): Visual Inspection via Browser
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.settings = get_settings()
         self.genui_base_path = "packages/dashboard/src/app/genui"
 
@@ -76,7 +77,10 @@ class GenUIOrchestrator:
         # In a fully autonomous loop, we would call the browser tool here.
         # Currently, we design this to provide instructions to the Chancellor.
 
-        url = f"http://localhost:3000/genui/{app_id}"
+        # Phase 1 리팩터링: settings에서 대시보드 URL 가져오기
+        settings = get_settings()
+        dashboard_url = settings.DASHBOARD_URL
+        url = f"{dashboard_url}/genui/{app_id}"
 
         prompt = (
             f"Please verify the UI at {url}.\n"

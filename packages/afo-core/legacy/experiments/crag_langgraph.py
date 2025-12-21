@@ -70,7 +70,10 @@ class CRAGLangGraph:
     """
 
     def __init__(
-        self, vectorstore=None, llm_model: str = "gpt-3.5-turbo", grade_threshold: float = 0.5
+        self,
+        vectorstore=None,
+        llm_model: str = "gpt-3.5-turbo",
+        grade_threshold: float = 0.5,
     ):
         """
         초기화
@@ -81,7 +84,7 @@ class CRAGLangGraph:
             grade_threshold: 평가 임계값 (0.5 = 50%)
         """
         self.vectorstore = vectorstore
-        self.llm = ChatOpenAI(model=llm_model, temperature=0, api_key=OPENAI_API_KEY)  # type: ignore[arg-type]
+        self.llm = ChatOpenAI(model=llm_model, temperature=0, api_key=OPENAI_API_KEY)
         self.grade_threshold = grade_threshold
 
         # Tavily 웹 검색 (API 키 있을 때만)
@@ -164,7 +167,12 @@ class CRAGLangGraph:
 
         print(f"  ✅ 찾은 문서: {len(documents)}개")
 
-        return {"question": question, "documents": documents, "web_search": "No", "generation": ""}
+        return {
+            "question": question,
+            "documents": documents,
+            "web_search": "No",
+            "generation": "",
+        }
 
     def _grade_documents(self, state: GraphState) -> GraphState:
         """
@@ -271,7 +279,12 @@ class CRAGLangGraph:
             documents.append(dummy_doc)
             print("  ⚠️  Tavily API 키 없음 - 더미 웹 검색 결과 사용")
 
-        return {"question": question, "documents": documents, "web_search": "Yes", "generation": ""}
+        return {
+            "question": question,
+            "documents": documents,
+            "web_search": "Yes",
+            "generation": "",
+        }
 
     def _generate(self, state: GraphState) -> GraphState:
         """

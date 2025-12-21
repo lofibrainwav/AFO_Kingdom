@@ -41,7 +41,7 @@ async def verify_genesis_fast():
 
     if pathlib.Path(daily_log).exists():
         print(f"\n✅ Daily Log Found: {daily_log}")
-        with pathlib.Path(daily_log).open() as f:
+        with pathlib.Path(daily_log).open(encoding="utf-8") as f:
             content = f.read()
             if "Council Session Recorded" in content:
                 print("   -> 'Council Session Recorded' signature found!")

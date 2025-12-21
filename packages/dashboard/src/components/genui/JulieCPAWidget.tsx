@@ -8,7 +8,7 @@
  */
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 interface Transaction {
   id: string;
@@ -32,41 +32,20 @@ interface FinanceDashboard {
   advice: string;
 }
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8010';
+import { useApi } from '@/hooks/useApi';
+import { LoadingSpinner, ErrorMessage } from '@/components/common';
+import { backendApi } from '@/lib/api-client';
+import { REFRESH_INTERVALS } from '@/lib/constants';
 
 export function JulieCPAWidget() {
-  const [data, setData] = useState<FinanceDashboard | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchDashboard = async () => {
-      try {
-        const response = await fetch(`${API_BASE}/api/finance/dashboard`);
-        if (!response.ok) {
-          if (response.status === 503 || response.status === 0) {
-            throw new Error('API 서버가 실행 중이지 않습니다. 포트 8010에서 서버를 시작해주세요.');
-          }
-          throw new Error(`Failed to fetch financial data: ${response.statusText}`);
-        }
-        const json = await response.json();
-        setData(json);
-        setError(null);
-      } catch (err) {
-        if (err instanceof TypeError && err.message.includes('fetch')) {
-          setError('API 서버 연결 실패: 포트 8010에서 서버가 실행 중인지 확인해주세요.');
-        } else {
-          setError(err instanceof Error ? err.message : 'Unknown error');
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchDashboard();
-    const interval = setInterval(fetchDashboard, 30000); // Refresh every 30s
-    return () => clearInterval(interval);
-  }, []);
+  const {
+    data,
+    loading,
+    error,
+    refetch,
+  } = useApi<FinanceDashboard>('/api/finance/dashboard', {
+    refetchInterval: REFRESH_INTERVALS.NORMAL, // 30초마다 자동 업데이트
+  });
 
   const getHealthColor = (score: number) => {
     if (score >= 80) return '#22C55E'; // Green
@@ -93,144 +72,92 @@ export function JulieCPAWidget() {
 
   if (loading) {
     return (
-      <div style={{
-        background: 'linear-gradient(135deg, rgba(17, 24, 39, 0.9), rgba(59, 130, 246, 0.2))',
-        backdropFilter: 'blur(20px)',
-        borderRadius: '20px',
-        border: '1px solid rgba(255, 255, 255, 0.1)',
-        padding: '24px',
-        textAlign: 'center',
-        color: 'rgba(255,255,255,0.7)',
-      }}>
-        🔄 Julie CPA 각성 중...
+      <div className="bg-gradient-to-br from-gray-900/90 to-blue-900/20 backdrop-blur-xl rounded-2xl border border-white/10 p-8">
+        <LoadingSpinner size="md" text="재무 데이터 로딩 중..." />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div style={{
-        background: 'linear-gradient(135deg, rgba(17, 24, 39, 0.9), rgba(239, 68, 68, 0.2))',
-        backdropFilter: 'blur(20px)',
-        borderRadius: '20px',
-        border: '1px solid rgba(239, 68, 68, 0.3)',
-        padding: '24px',
-        textAlign: 'center',
-        color: '#EF4444',
-      }}>
-        ⚠️ 금고 연결 실패: {error}
+      <div className="bg-gradient-to-br from-gray-900/90 to-blue-900/20 backdrop-blur-xl rounded-2xl border border-white/10 p-8">
+        <ErrorMessage
+          message={error.message || '재무 데이터를 불러올 수 없습니다.'}
+          onRetry={refetch}
+        />
       </div>
     );
   }
 
-  if (!data) return null;
+  if (!data) {
+    return null;
+  }
 
   const healthColor = getHealthColor(data.financial_health_score);
   const healthPercentage = data.financial_health_score;
 
   return (
-    <div
-      style={{
-        background: 'linear-gradient(135deg, rgba(17, 24, 39, 0.95), rgba(59, 130, 246, 0.15))',
-        backdropFilter: 'blur(20px)',
-        borderRadius: '24px',
-        border: '1px solid rgba(255, 255, 255, 0.1)',
-        padding: '28px',
-        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
-      }}
-    >
+    <div className="bg-gradient-to-br from-gray-900/95 to-blue-500/15 backdrop-blur-xl rounded-3xl border border-white/10 p-7 shadow-2xl">
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <span style={{ fontSize: '32px' }}>💰</span>
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <span className="text-4xl">💰</span>
           <div>
-            <h2 style={{
-              fontSize: '20px',
-              fontWeight: 'bold',
-              color: 'white',
-              margin: 0,
-            }}>
+            <h2 className="text-xl font-bold text-white m-0">
               Julie CPA
             </h2>
-            <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '12px', margin: 0 }}>
+            <p className="text-white/60 text-xs m-0">
               수호자 시대 · Phase 12
             </p>
           </div>
         </div>
         <div
+          className="rounded-xl px-4 py-2"
           style={{
             background: `${healthColor}20`,
             border: `1px solid ${healthColor}50`,
-            borderRadius: '12px',
-            padding: '8px 16px',
           }}
         >
-          <span style={{ color: healthColor, fontWeight: 'bold', fontSize: '14px' }}>
+          <span className="font-bold text-sm" style={{ color: healthColor }}>
             {healthPercentage >= 80 ? '✅ 안정' : healthPercentage >= 60 ? '⚠️ 주의' : '🚨 위험'}
           </span>
         </div>
       </div>
 
       {/* Health Score Gauge */}
-      <div style={{
-        background: 'rgba(0,0,0,0.3)',
-        borderRadius: '16px',
-        padding: '20px',
-        marginBottom: '20px',
-      }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-          <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: '14px' }}>재무 건강도</span>
-          <span style={{ color: healthColor, fontSize: '28px', fontWeight: 'bold' }}>
+      <div className="bg-black/30 rounded-2xl p-5 mb-5">
+        <div className="flex justify-between items-center mb-3">
+          <span className="text-white/80 text-sm">재무 건강도</span>
+          <span className="text-3xl font-bold" style={{ color: healthColor }}>
             {data.financial_health_score}%
           </span>
         </div>
-        <div style={{
-          width: '100%',
-          height: '12px',
-          background: 'rgba(255,255,255,0.1)',
-          borderRadius: '6px',
-          overflow: 'hidden',
-        }}>
-          <div style={{
-            width: `${healthPercentage}%`,
-            height: '100%',
-            background: `linear-gradient(90deg, ${healthColor}, ${healthColor}80)`,
-            borderRadius: '6px',
-            transition: 'width 0.5s ease',
-          }} />
+        <div className="w-full h-3 bg-white/10 rounded-full overflow-hidden">
+          <div 
+            className="h-full rounded-full transition-all duration-500 ease-out"
+            style={{
+              width: `${healthPercentage}%`,
+              background: `linear-gradient(90deg, ${healthColor}, ${healthColor}80)`,
+            }}
+          />
         </div>
       </div>
 
       {/* Stats Grid */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr',
-        gap: '16px',
-        marginBottom: '20px',
-      }}>
-        <div style={{
-          background: 'rgba(59, 130, 246, 0.1)',
-          borderRadius: '12px',
-          padding: '16px',
-          border: '1px solid rgba(59, 130, 246, 0.2)',
-        }}>
-          <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: '12px', marginBottom: '4px' }}>
+      <div className="grid grid-cols-2 gap-4 mb-5">
+        <div className="bg-blue-500/10 rounded-xl p-4 border border-blue-500/20">
+          <div className="text-white/60 text-xs mb-1">
             월간 지출
           </div>
-          <div style={{ color: '#3B82F6', fontSize: '18px', fontWeight: 'bold' }}>
+          <div className="text-blue-500 text-lg font-bold">
             {formatCurrency(data.monthly_spending)}
           </div>
         </div>
-        <div style={{
-          background: 'rgba(34, 197, 94, 0.1)',
-          borderRadius: '12px',
-          padding: '16px',
-          border: '1px solid rgba(34, 197, 94, 0.2)',
-        }}>
-          <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: '12px', marginBottom: '4px' }}>
+        <div className="bg-green-500/10 rounded-xl p-4 border border-green-500/20">
+          <div className="text-white/60 text-xs mb-1">
             잔여 예산
           </div>
-          <div style={{ color: '#22C55E', fontSize: '18px', fontWeight: 'bold' }}>
+          <div className="text-green-500 text-lg font-bold">
             {formatCurrency(data.budget_remaining)}
           </div>
         </div>
@@ -238,28 +165,23 @@ export function JulieCPAWidget() {
 
       {/* Risk Alerts */}
       {data.risk_alerts.length > 0 && (
-        <div style={{ marginBottom: '20px' }}>
-          <div style={{ color: 'rgba(255,255,255,0.8)', fontSize: '14px', marginBottom: '12px', fontWeight: '600' }}>
+        <div className="mb-5">
+          <div className="text-white/80 text-sm mb-3 font-semibold">
             🛡️ 리스크 알림
           </div>
           {data.risk_alerts.map((alert, i) => (
             <div
               key={i}
+              className="rounded-lg p-3 mb-2 flex items-center gap-2.5"
               style={{
                 background: `${getAlertColor(alert.level)}15`,
                 border: `1px solid ${getAlertColor(alert.level)}30`,
-                borderRadius: '8px',
-                padding: '12px',
-                marginBottom: '8px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '10px',
               }}
             >
-              <span style={{ fontSize: '16px' }}>
+              <span className="text-base">
                 {alert.level === 'critical' ? '🚨' : alert.level === 'warning' ? '⚠️' : 'ℹ️'}
               </span>
-              <span style={{ color: 'rgba(255,255,255,0.9)', fontSize: '13px' }}>
+              <span className="text-white/90 text-[13px]">
                 {alert.message}
               </span>
             </div>
@@ -268,26 +190,20 @@ export function JulieCPAWidget() {
       )}
 
       {/* Recent Transactions */}
-      <div style={{ marginBottom: '20px' }}>
-        <div style={{ color: 'rgba(255,255,255,0.8)', fontSize: '14px', marginBottom: '12px', fontWeight: '600' }}>
+      <div className="mb-5">
+        <div className="text-white/80 text-sm mb-3 font-semibold">
           📊 최근 거래
         </div>
         {data.recent_transactions.slice(0, 3).map((tx) => (
           <div
             key={tx.id}
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              padding: '10px 0',
-              borderBottom: '1px solid rgba(255,255,255,0.05)',
-            }}
+            className="flex justify-between items-center py-2.5 border-b border-white/5"
           >
             <div>
-              <div style={{ color: 'white', fontSize: '14px' }}>{tx.merchant}</div>
-              <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '11px' }}>{tx.category} · {tx.date}</div>
+              <div className="text-white text-sm">{tx.merchant}</div>
+              <div className="text-white/50 text-[11px]">{tx.category} · {tx.date}</div>
             </div>
-            <div style={{ color: '#F97316', fontWeight: '600', fontSize: '14px' }}>
+            <div className="text-orange-500 font-semibold text-sm">
               -{formatCurrency(tx.amount)}
             </div>
           </div>
@@ -295,33 +211,18 @@ export function JulieCPAWidget() {
       </div>
 
       {/* AI Advice */}
-      <div style={{
-        background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(59, 130, 246, 0.15))',
-        borderRadius: '12px',
-        padding: '16px',
-        border: '1px solid rgba(168, 85, 247, 0.2)',
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-          <span style={{ fontSize: '16px' }}>🤖</span>
-          <span style={{ color: '#A855F7', fontSize: '12px', fontWeight: '600' }}>Julie's Advice</span>
+      <div className="bg-gradient-to-br from-purple-500/15 to-blue-500/15 rounded-xl p-4 border border-purple-500/20">
+        <div className="flex items-center gap-2 mb-2">
+          <span className="text-base">🤖</span>
+          <span className="text-purple-400 text-xs font-semibold">Julie's Advice</span>
         </div>
-        <p style={{
-          color: 'rgba(255,255,255,0.85)',
-          fontSize: '13px',
-          lineHeight: '1.6',
-          margin: 0,
-        }}>
+        <p className="text-white/85 text-[13px] leading-relaxed m-0">
           {data.advice}
         </p>
       </div>
 
       {/* Footer */}
-      <div style={{
-        marginTop: '16px',
-        textAlign: 'center',
-        color: 'rgba(255,255,255,0.4)',
-        fontSize: '11px'
-      }}>
+      <div className="mt-4 text-center text-white/40 text-[11px]">
         眞善美孝永 · Julie CPA Phase 12 Active
       </div>
     </div>

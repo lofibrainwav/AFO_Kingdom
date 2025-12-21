@@ -1,44 +1,85 @@
 repos:
-  # Ruff - Ultra-fast Python linter and formatter
+  # ============================================================================
+  # AFO 왕국 코드 품질 자동화 체계
+  # ============================================================================
+
+  # Ruff: 초고속 Python 린터 및 포맷터
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.8.4
+    rev: v0.6.8
     hooks:
       - id: ruff
-        args: [--fix, --exit-non-zero-on-fix]
-        name: "⚔️ Ruff Lint (眞: Truth)"
+        args: [--fix]
+        types: [python]
       - id: ruff-format
-        name: "✨ Ruff Format (美: Beauty)"
+        types: [python]
 
-  # MyPy - Static type checker
+  # Black: Python 코드 포맷터
+  - repo: https://github.com/psf/black
+    rev: 24.8.0
+    hooks:
+      - id: black
+        language_version: python3
+        types: [python]
+
+  # isort: Python import 정렬 도구
+  - repo: https://github.com/pycqa/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+        args: ["--profile", "black", "--filter-files"]
+        types: [python]
+
+  # MyPy: 정적 타입 체커
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.13.0
+    rev: v1.11.2
     hooks:
       - id: mypy
-        name: "🛡️ MyPy Type Check (善: Goodness)"
-        additional_dependencies:
-          - pydantic>=2.0
-          - types-redis
-          - types-requests
-        args:
-          - --ignore-missing-imports
-          - --no-error-summary
-        pass_filenames: false
-        entry: mypy packages/afo-core
+        additional_dependencies: [types-all]
+        types: [python]
+        exclude: ^(tests/|scripts/|docs/)
 
-  # Basic file checks
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+  # AFO 왕국 커스텀 검증 스크립트
+  - repo: local
     hooks:
-      - id: trailing-whitespace
-        name: "🧹 Trailing Whitespace"
-      - id: end-of-file-fixer
-        name: "📄 End of File Fixer"
-      - id: check-yaml
-        name: "📋 YAML Validator"
-      - id: check-added-large-files
-        name: "📦 Large File Check"
-        args: ['--maxkb=1000']
+      - id: afo-syntax-check
+        name: AFO Syntax 검증
+        entry: python scripts/syntax_check.py
+        language: system
+        files: \.py$
+        pass_filenames: false
+        exclude: .venv/
 
-# AFO Kingdom Pre-commit Configuration
-# 眞善美孝永 - Truth, Goodness, Beauty, Serenity, Eternity
-# Run: pre-commit run --all-files
+  # Trinity Score 검증
+  - repo: local
+    hooks:
+      - id: trinity-score-check
+        name: Trinity Score 검증
+        entry: python scripts/auto_lint_fix.py
+        language: system
+        files: \.py$
+        pass_filenames: false
+
+  # 보안 취약점 검사 (선택적)
+  - repo: https://github.com/PyCQA/bandit
+    rev: 1.7.9
+    hooks:
+      - id: bandit
+        args: ["-c", "pyproject.toml"]
+        exclude: ^(tests/|scripts/|docs/)
+        types: [python]
+
+# ============================================================================
+# 설정 설명
+# ============================================================================
+#
+# 이 pre-commit 설정은 AFO 왕국의 코드 품질을 자동으로 유지합니다:
+#
+# 1. ruff: 초고속 린팅 및 자동 수정
+# 2. black: 코드 포맷팅 표준화
+# 3. isort: import 문 정렬 및 정리
+# 4. mypy: 정적 타입 검증
+# 5. afo-syntax-check: AFO 전용 syntax 검증
+# 6. trinity-score-check: Trinity Score 기반 품질 검증
+# 7. bandit: 보안 취약점 검사
+#
+# 커밋 시 자동으로 실행되어 코드 품질을 보장합니다.

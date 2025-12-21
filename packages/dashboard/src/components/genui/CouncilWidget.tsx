@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Brain, Users, CheckCircle2, AlertTriangle, Loader2 } from 'lucide-react';
+import { logError } from '@/lib/logger';
 
 interface StrategistResponse {
   strategist: string;
@@ -37,7 +38,7 @@ export function CouncilWidget() {
       const data = await res.json();
       setResponse(data);
     } catch (error) {
-      console.error('Council Error:', error);
+      logError('Council Error', { error: error instanceof Error ? error.message : 'Unknown error' });
     } finally {
       setIsLoading(false);
     }

@@ -1,5 +1,5 @@
 """
-Juyu Agent Core (Phase 16-3)
+Zhou Yu Agent Core (Phase 16-3)
 The Esthetic Guardian of AFO Kingdom.
 Philosophy:
 - 美 (Beauty): Ensures standard Glassmorphism and Tailwind tokens.
@@ -12,9 +12,9 @@ import os
 logger = logging.getLogger(__name__)
 
 
-class JuyuAgent:
+class ZhouYuAgent:
     def __init__(self):
-        self.name = "Juyu (The Guardian)"
+        self.name = "Zhou Yu (The Guardian)"
         self.tools = {"refactor_widget": self._tool_refactor_widget}
 
     async def run(self, instruction: str) -> str:
@@ -32,7 +32,7 @@ class JuyuAgent:
             else:
                 return "Error: No target .tsx file specified."
 
-        return "Juyu is watching. (No refactoring triggered)"
+        return "Zhou Yu is watching. (No refactoring triggered)"
 
     async def _tool_refactor_widget(self, relative_path: str) -> str:
         """
@@ -62,11 +62,10 @@ class JuyuAgent:
         new_code = code
         refactored_items = []
 
-        if "glass-card" not in new_code:
-            # Replace basic div with glass-card
-            if '<div className="' in new_code:
-                new_code = new_code.replace('<div className="', '<div className="glass-card ', 1)
-                refactored_items.append("Injected 'glass-card' utility")
+        # Replace basic div with glass-card
+        if "glass-card" not in new_code and '<div className="' in new_code:
+            new_code = new_code.replace('<div className="', '<div className="glass-card ', 1)
+            refactored_items.append("Injected 'glass-card' utility")
 
         # Enforce consistency (Example: Use 'text-cyan-400' for headings)
         if "text-2xl font-bold" in new_code and "text-white" in new_code:
@@ -107,4 +106,4 @@ class JuyuAgent:
 
 
 # Singleton
-juyu = JuyuAgent()
+zhou_yu = ZhouYuAgent()

@@ -1,10 +1,13 @@
 import asyncio
 import os
+import pathlib
 import sys
 
 
 # Add package root to sys.path
-core_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../packages/afo-core"))
+core_path = pathlib.Path(
+    os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")
+).resolve()
 sys.path.append(core_path)
 
 
@@ -45,7 +48,7 @@ async def run_end_to_end_test():
 
     # 1. Build Graph
     try:
-        app = graph_module.build_chancellor_graph()
+        graph_module.build_chancellor_graph()
         print("✅ Chancellor Graph Built Successfully.")
     except Exception as e:
         print(f"❌ Failed to build graph: {e}")

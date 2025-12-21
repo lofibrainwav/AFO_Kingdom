@@ -5,6 +5,8 @@ Wallet Keys Router - API 키 CRUD 관리
 
 from __future__ import annotations
 
+from typing import Any
+
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
@@ -33,7 +35,7 @@ class AddKeyRequest(BaseModel):
 
 
 @keys_router.get("/keys", response_model=list[KeyResponse])
-async def list_keys():
+async def list_keys() -> list[KeyResponse]:
     """List all stored API keys (metadata only)"""
     try:
         from AFO.api_wallet import APIWallet
@@ -63,7 +65,7 @@ async def list_keys():
 
 
 @keys_router.post("/keys")
-async def add_key(request: AddKeyRequest):
+async def add_key(request: AddKeyRequest) -> dict[str, Any]:
     """Add a new API key"""
     try:
         from AFO.api_wallet import APIWallet
@@ -94,7 +96,7 @@ async def add_key(request: AddKeyRequest):
 
 
 @keys_router.delete("/keys/{name}")
-async def delete_key(name: str):
+async def delete_key(name: str) -> dict[str, Any]:
     """Delete an API key"""
     try:
         from AFO.api_wallet import APIWallet

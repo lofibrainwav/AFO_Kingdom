@@ -32,15 +32,14 @@ async def verify_genesis():
 
     # Run the graph
     inputs = initial_state
-    final_output = None
 
     async for output in chancellor_graph.astream(
         inputs, config={"configurable": {"thread_id": "genesis_test"}}
     ):
-        for key, value in output.items():
+        for key in output:
             print(f" -> Node Finished: {key}")
             if key == "historian":
-                final_output = value
+                pass
 
     print("\n✅ Graph Execution Complete.")
 
@@ -52,7 +51,7 @@ async def verify_genesis():
 
     if pathlib.Path(daily_log).exists():
         print(f"\n✅ Daily Log Found: {daily_log}")
-        with pathlib.Path(daily_log).open() as f:
+        with pathlib.Path(daily_log).open(encoding="utf-8") as f:
             content = f.read()
             if "Council Session Recorded" in content:
                 print("   -> 'Council Session Recorded' signature found!")

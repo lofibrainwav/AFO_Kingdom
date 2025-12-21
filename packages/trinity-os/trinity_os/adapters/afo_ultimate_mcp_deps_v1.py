@@ -217,7 +217,10 @@ def build_deps_v1():
             return None, ts, str(latest_by_mtime)
 
         for mod_name, fn_names in (
-            ("afo_soul_engine.serenity_decision_engine", ["serenity_gate", "decide", "decide_mode"]),
+            (
+                "afo_soul_engine.serenity_decision_engine",
+                ["serenity_gate", "decide", "decide_mode"],
+            ),
             ("afo_soul_engine.health.serenity_gate", ["serenity_gate", "decide"]),
             ("afo_soul_engine.trinity_gate", ["serenity_gate", "decide"]),
         ):
@@ -238,7 +241,11 @@ def build_deps_v1():
 
         total_score, ts, src = _load_latest_trinity_score()
         if total_score is None or get_gate_verdict is None:
-            return {"decision": "ASK", "reason": "No valid Trinity score evidence", "source": src}
+            return {
+                "decision": "ASK",
+                "reason": "No valid Trinity score evidence",
+                "source": src,
+            }
 
         # 점수의 신선도(Health First): 오래된 스코어는 AUTO_RUN 근거로 쓰지 않는다.
         max_age_min = int(os.environ.get("TRINITY_TOOLFLOW_MAX_SCORE_AGE_MINUTES", "60"))
@@ -255,7 +262,12 @@ def build_deps_v1():
             gate_status = None
 
         if gate_status == "BLOCK" or total_score < 80.0:
-            return {"decision": "BLOCK", "gate_status": gate_status, "total_score": total_score, "source": src}
+            return {
+                "decision": "BLOCK",
+                "gate_status": gate_status,
+                "total_score": total_score,
+                "source": src,
+            }
 
         # Risk는 SSOT에서 오지 않으면 보수적으로 ‘unknown’ 처리
         risk_score = payload.get("risk_score")
@@ -315,8 +327,14 @@ def build_deps_v1():
                 return out
 
         for mod_name, fn_names in (
-            ("afo_soul_engine.skill_executor", ["execute_skill_proxy", "execute_skill", "run_skill"]),
-            ("afo_soul_engine.skills", ["execute_skill_proxy", "execute_skill", "run_skill"]),
+            (
+                "afo_soul_engine.skill_executor",
+                ["execute_skill_proxy", "execute_skill", "run_skill"],
+            ),
+            (
+                "afo_soul_engine.skills",
+                ["execute_skill_proxy", "execute_skill", "run_skill"],
+            ),
         ):
             mod = _maybe_import(mod_name)
             fn = _resolve_fn(mod, fn_names)
@@ -328,7 +346,12 @@ def build_deps_v1():
                 if isinstance(out, dict):
                     return out
 
-        return {"ok": False, "error": "execute_skill_proxy not found", "skill_id": skill_id, "args": args}
+        return {
+            "ok": False,
+            "error": "execute_skill_proxy not found",
+            "skill_id": skill_id,
+            "args": args,
+        }
 
     return Deps(
         tool_search=tool_search,

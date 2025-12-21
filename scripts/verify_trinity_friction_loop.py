@@ -1,19 +1,23 @@
 import asyncio
 import os
+import pathlib
 import sys
 
 
 # Setup path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../packages")))
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../packages/afo-core")))
+sys.path.append(pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages")).resolve())
+sys.path.append(
+    pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")).resolve()
+)
 
-from config.friction_calibrator import friction_calibrator
+import contextlib
+
 from services.trinity_calculator import trinity_calculator
 
+from config.friction_calibrator import friction_calibrator
 
-try:
-    from julie_cpa.core.julie_engine import julie
-except ImportError:
+
+with contextlib.suppress(ImportError):
     pass
 
 

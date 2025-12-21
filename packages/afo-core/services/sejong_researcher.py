@@ -9,7 +9,8 @@ import logging
 from datetime import datetime
 from typing import Any
 
-from services.trinity_calculator import trinity_calculator
+from AFO.services.trinity_calculator import trinity_calculator
+from AFO.utils.trinity_type_validator import validate_with_trinity
 
 logger = logging.getLogger("AFO.Sejong")
 
@@ -22,6 +23,10 @@ class SejongResearcher:
     Responsibility: Continuous accumulation of validated knowledge.
     """
 
+    def __init__(self) -> None:
+        pass
+
+    @validate_with_trinity
     def research_topic(self, topic: str) -> dict[str, Any]:
         """
         Step 1: Research (널리 구한다)
@@ -40,6 +45,7 @@ class SejongResearcher:
         }
         return findings
 
+    @validate_with_trinity
     def sisi_bibi_validation(self, data: dict[str, Any]) -> float:
         """
         Step 2: Sisi-Bibi (시시비비를 가린다)
@@ -69,8 +75,9 @@ class SejongResearcher:
 
         score = trinity_calculator.calculate_trinity_score(raw_scores)
         logger.info(f"⚖️ [Sejong] Validation Score: {score}")
-        return score
+        return float(score)
 
+    @validate_with_trinity
     def adopt_knowledge(self, data: dict[str, Any], score: float) -> bool:
         """
         Step 3: Adopt (우리 것으로 만든다)
@@ -92,7 +99,7 @@ class SejongResearcher:
         }
 
         try:
-            with open(KNOWLEDGE_BASE_PATH, "a") as f:
+            with open(KNOWLEDGE_BASE_PATH, "a", encoding="utf-8") as f:
                 f.write(json.dumps(entry) + "\n")
             return True
         except Exception as e:

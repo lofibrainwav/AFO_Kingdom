@@ -34,7 +34,10 @@ class AutoRecovery:
         self.recovery_log: list[dict[str, Any]] = []
 
     def execute_with_recovery(
-        self, command: list[str], description: str, alternative_commands: list[list[str]] | None = None
+        self,
+        command: list[str],
+        description: str,
+        alternative_commands: list[list[str]] | None = None,
     ) -> dict[str, Any]:
         """명령 실행 및 자동 복구"""
         result = {
@@ -212,7 +215,11 @@ class AutoRecovery:
 
     def recover_problem_solver(self, phase: int) -> dict[str, Any]:
         """문제 해결 스크립트 복구"""
-        command = ["bash", str(AFO_ROOT / "scripts" / "kingdom_problem_solver.sh"), f"--phase={phase}"]
+        command = [
+            "bash",
+            str(AFO_ROOT / "scripts" / "kingdom_problem_solver.sh"),
+            f"--phase={phase}",
+        ]
         alternative = [
             ["bash", str(AFO_ROOT / "scripts" / "kingdom_auto_fix_all.sh")],
         ]
@@ -263,7 +270,7 @@ class AutoRecovery:
             "successful": successful,
             "failed": failed,
             "recovered": recovered,
-            "recovery_rate": round(recovered / len(self.recovery_log) * 100, 2) if self.recovery_log else 0,
+            "recovery_rate": (round(recovered / len(self.recovery_log) * 100, 2) if self.recovery_log else 0),
             "operations": self.recovery_log,
             "recommendation": self._get_recommendation(successful, failed),
         }

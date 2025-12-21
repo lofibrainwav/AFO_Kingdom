@@ -120,50 +120,28 @@ export function SerenityMonitor({
   };
 
   return (
-    <div style={{ maxWidth: '600px', margin: '0 auto', padding: '2rem' }}>
-      <h1 style={{ 
-        fontSize: '1.5rem', 
-        fontWeight: 'bold', 
-        color: 'white',
-        marginBottom: '1rem',
-        textAlign: 'center'
-      }}>
+    <div className="max-w-[600px] mx-auto p-8">
+      <h1 className="text-2xl font-bold text-white mb-4 text-center">
         🌟 Project Serenity
       </h1>
       
       {/* Input */}
-      <div style={{ marginBottom: '1.5rem' }}>
+      <div className="mb-6">
         <textarea
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
           placeholder="Describe the UI you want to create..."
           disabled={isCreating}
-          style={{
-            width: '100%',
-            padding: '1rem',
-            borderRadius: '8px',
-            background: 'rgba(255,255,255,0.1)',
-            border: '1px solid rgba(255,255,255,0.2)',
-            color: 'white',
-            fontSize: '1rem',
-            minHeight: '80px',
-            resize: 'vertical',
-          }}
+          className="w-full p-4 rounded-lg bg-white/10 border border-white/20 text-white text-base min-h-[80px] resize-y focus:outline-none focus:border-green-500/50"
         />
         <button
           onClick={startCreation}
           disabled={isCreating || !prompt.trim()}
-          style={{
-            width: '100%',
-            padding: '0.75rem',
-            marginTop: '0.5rem',
-            borderRadius: '8px',
-            background: isCreating ? '#4b5563' : '#22c55e',
-            color: 'white',
-            fontWeight: 'bold',
-            cursor: isCreating ? 'wait' : 'pointer',
-            border: 'none',
-          }}
+          className={`w-full py-3 mt-2 rounded-lg text-white font-bold border-none transition-colors ${
+            isCreating 
+              ? 'bg-gray-600 cursor-wait' 
+              : 'bg-green-500 hover:bg-green-600 cursor-pointer'
+          }`}
         >
           {isCreating ? '🔄 Creating...' : '✨ Create UI'}
         </button>
@@ -174,15 +152,15 @@ export function SerenityMonitor({
         trinityScore={progress.trinityScore} 
         riskScore={progress.riskScore}
       >
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>
+        <div className="text-center">
+          <div className="text-3xl mb-2">
             {getStatusIcon()}
           </div>
-          <div style={{ color: 'white', fontWeight: '600' }}>
+          <div className="text-white font-semibold">
             {getStatusText()}
           </div>
           {progress.iteration > 0 && (
-            <div style={{ color: '#9ca3af', fontSize: '0.875rem', marginTop: '0.25rem' }}>
+            <div className="text-gray-400 text-sm mt-1">
               Iteration {progress.iteration}/{progress.maxIterations}
             </div>
           )}
@@ -190,14 +168,7 @@ export function SerenityMonitor({
         
         {/* Feedback */}
         {progress.feedback && (
-          <div style={{
-            marginTop: '1rem',
-            padding: '0.75rem',
-            background: 'rgba(255,255,255,0.1)',
-            borderRadius: '8px',
-            color: '#d1d5db',
-            fontSize: '0.875rem',
-          }}>
+          <div className="mt-4 p-3 bg-white/10 rounded-lg text-gray-300 text-sm">
             💬 {progress.feedback}
           </div>
         )}
@@ -205,16 +176,12 @@ export function SerenityMonitor({
       
       {/* Screenshot Preview */}
       {progress.screenshotUrl && (
-        <div style={{ marginTop: '1.5rem' }}>
-          <h3 style={{ color: 'white', marginBottom: '0.5rem' }}>📸 Preview</h3>
+        <div className="mt-6">
+          <h3 className="text-white mb-2">📸 Preview</h3>
           <img 
             src={progress.screenshotUrl}
             alt="Generated UI"
-            style={{
-              width: '100%',
-              borderRadius: '8px',
-              border: '1px solid rgba(255,255,255,0.2)'
-            }}
+            className="w-full rounded-lg border border-white/20"
           />
         </div>
       )}

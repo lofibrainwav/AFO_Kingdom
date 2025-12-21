@@ -121,7 +121,7 @@ def main():
 
     # 결과 저장
     output_path = Path("trinity_score.json")
-    with Path(output_path).open("w") as f:
+    with Path(output_path).open("w", encoding="utf-8") as f:
         json.dump({"trinity": trinity, "mode": mode}, f, indent=2)
 
     print(f"\n✅ 저장됨: {output_path}")

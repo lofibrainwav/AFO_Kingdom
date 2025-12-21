@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { invokeChancellor, fetchHealthStatus, fetchFamilyStatus, ChancellorResponse, HealthResponse, FamilyHubResponse } from '@/lib/api';
 import CopilotTerminal from './copilot/CopilotTerminal';
+import { logError, logInfo } from '@/lib/logger';
 // Persona Definitions
 const PERSONAS: Record<string, { color: string; bg: string; border: string; icon: string }> = {
   zhuge_liang: {
@@ -73,7 +74,7 @@ export default function ChancellorView() {
       setFamilyData(familyRes);
       setLatency(Date.now() - startTime);
     } catch (error) {
-      console.error('Failed to fetch data:', error);
+      logError('Failed to fetch data', { error: error instanceof Error ? error.message : 'Unknown error' });
     }
   }, []);
 
@@ -125,7 +126,7 @@ export default function ChancellorView() {
       // Refresh health after command
       await refreshHealth();
     } catch (err) {
-      console.error(err);
+      logError('Chancellor invocation failed', { error: err instanceof Error ? err.message : 'Unknown error' });
       setResponse({
         speaker: 'System',
         response: 'Error communicating with the Chancellor. Ensure backend Docker services are running.',
@@ -165,8 +166,8 @@ export default function ChancellorView() {
     const score = health.trinity.trinity_score || 0;
 
     // Simple console log for now, can be replaced with actual Audio() calls
-    if (score >= 0.9) console.log("🔔 [Audio] Playing: Clear Bell (Trinity Rise)");
-    else if (score < 0.5) console.log("⚠️ [Audio] Playing: Low Hum (Risk Rise)");
+    if (score >= 0.9) logInfo("🔔 [Audio] Playing: Clear Bell (Trinity Rise)");
+    else if (score < 0.5) logInfo("⚠️ [Audio] Playing: Low Hum (Risk Rise)");
   }, [health?.trinity?.trinity_score]);
 
   return (

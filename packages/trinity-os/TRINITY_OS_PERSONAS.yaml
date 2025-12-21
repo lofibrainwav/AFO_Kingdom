@@ -1,5 +1,5 @@
 version: 3
-last_updated: "2025-12-16"
+last_updated: "2025-12-21"
 source_of_truth: true
 
 # =============================================================================
@@ -15,19 +15,19 @@ principles:
       truth:
         chinese: "眞"
         weight: 0.35
-        strategist: "제갈량"
+        strategist: "Zhuge Liang"
         symbol: "矛"
         role: "기술적 확실성, 아키텍처·전략·개발 총괄 (창)"
       goodness:
         chinese: "善"
         weight: 0.35
-        strategist: "사마의"
+        strategist: "Sima Yi"
         symbol: "盾"
         role: "윤리·안정·통합·게이트키퍼 (방패)"
       beauty:
         chinese: "美"
         weight: 0.20
-        strategist: "주유"
+        strategist: "Zhou Yu"
         symbol: "橋"
         role: "서사·UX·취향정렬·인지부하 제거 (다리)"
       serenity:
@@ -40,18 +40,18 @@ principles:
         weight: 0.02
         guardian: "승상"
         role: "영속성·레거시 유지, 장기적 지속가능성"
-    
+
     trinity_score_formula: "0.35×眞 + 0.35×善 + 0.20×美 + 0.08×孝 + 0.02×永"
     balance_rule:
       max_min_gap_threshold: 0.30
       applies_to: ["truth", "goodness", "beauty", "serenity", "eternity"]
-  
+
   execution_flow:
     - "DRY_RUN"
     - "APPROVAL"
     - "WET"
     - "VERIFY"
-  
+
   field_manual:
     - principle: "선확인, 후보고"
       source: "클라우제비츠"
@@ -79,7 +79,7 @@ personas:
       - "Antigravity CLI"
     description: "사령관 바로 아래에서 3책사를 멀티 에이전트로 조율하는 웹 오케스트레이터"
     direct_pillars: ["serenity", "eternity"]  # 孝(8%) + 永(2%) = 10% 직접 담당
-    sub_personas: ["제갈량", "사마의", "주유"]
+    sub_personas: ["Zhuge Liang", "Sima Yi", "Zhou Yu"]
     config_files:
       - ".cursorrules"
       - ".gemini/GEMINI.md"
@@ -88,20 +88,20 @@ personas:
   # 3책사 (승상이 멀티 에이전트로 조율)
   # ---------------------------------------------------------------------------
   strategists:
-    jegalryang:
-      codename: "제갈량"
+    zhuge_liang:
+      codename: "Zhuge Liang"
       pillar: "truth"
       weight: 0.35
       symbol: "矛"
       role: "아키텍처·전략·핵심 기술 개발/관리 총괄 (창)"
-    samaui:
-      codename: "사마의"
+    sima_yi:
+      codename: "Sima Yi"
       pillar: "goodness"
       weight: 0.35
       symbol: "盾"
       role: "윤리·안정·리스크/게이트 관리 (방패)"
-    juyu:
-      codename: "주유"
+    zhou_yu:
+      codename: "Zhou Yu"
       pillar: "beauty"
       weight: 0.20
       symbol: "橋"
@@ -144,9 +144,9 @@ infrastructure:
     ollama: 11435
     redis: 6379
     postgresql: 15432
-    grafana: 3000
+    grafana: 3100
     prometheus: 9090
-  
+
   api_endpoints:
     health: "/health"
     chancellor_invoke: "/chancellor/invoke"

@@ -10,7 +10,9 @@ import { SSOTMonitor } from './genui/SSOTMonitor';
 import { JulieCPAWidget } from './genui/JulieCPAWidget';
 import { GenesisWidget } from './genui/GenesisWidget';
 import { FinalEternalVictoryWidget } from './genui/FinalEternalVictoryWidget';
+import AutomatedDebuggingStreamWidget from './genui/AutomatedDebuggingStreamWidget';
 import { useSpatialAudio } from '../hooks/useSpatialAudio';
+import { logWarn, logError } from '@/lib/logger';
 
 interface PantheonState {
   trinityScore: number | null;
@@ -45,7 +47,7 @@ export function AFOPantheon() {
   const [alerts, setAlerts] = useState<string[]>([]);
   const [thoughts, setThoughts] = useState<string[]>([]);
   const [isMatrixActive, setIsMatrixActive] = useState(false);
-  
+
   const { playTrinityUp, playRiskUp, initAudio } = useSpatialAudio();
 
   // Helper function for status color
@@ -78,12 +80,12 @@ export function AFOPantheon() {
         setIsMatrixActive(true);
         setTimeout(() => setIsMatrixActive(false), 2000); // Blink effect
       } catch (e) {
-        console.warn('Matrix Parse Error:', e);
+        logWarn('Matrix Parse Error', { error: e instanceof Error ? e.message : 'Unknown error' });
       }
     };
 
     eventSource.onerror = (e) => {
-       console.warn('Matrix Stream Disconnected. Reconnecting...', e);
+       logWarn('Matrix Stream Disconnected. Reconnecting...', { error: e });
        eventSource.close();
     };
 
@@ -92,34 +94,32 @@ export function AFOPantheon() {
     };
   }, []);
 
-  // Fetch system state periodically
+  // Fetch system state periodically from SSOT
   const fetchState = useCallback(async () => {
     try {
-      const res = await fetch('/api/health'); // Ensure this hits the correct router
+      const res = await fetch('/api/ssot-status'); // SSOT: Single Source of Truth
       if (res.ok) {
         const data = await res.json();
-        // Handle nested structure: data.trinity.trinity_score
-        const trinityData = data.trinity || {};
-        
+
         setState(prev => ({
           ...prev,
-          trinityScore: trinityData.trinity_score ?? (data.health_percentage ? data.health_percentage/100 : prev.trinityScore),
-          riskScore: data.risk_score ?? 0.0,
-          healthStatus: data.status ?? prev.healthStatus,
-          servicesOnline: data.healthy_organs ?? prev.servicesOnline,
-          totalServices: data.total_organs ?? prev.totalServices,
+          trinityScore: data.trinity?.total ?? prev.trinityScore,
+          riskScore: data.risk ?? 0.0,
+          healthStatus: data.health ?? prev.healthStatus,
+          servicesOnline: data.services?.online ?? prev.servicesOnline,
+          totalServices: data.services?.total ?? prev.totalServices,
           breakdown: {
-              truth: trinityData.truth ?? 1.0,
-              goodness: trinityData.goodness ?? 1.0,
-              beauty: trinityData.beauty ?? 1.0,
-              filial_serenity: trinityData.filial_serenity ?? 1.0,
-              eternity: trinityData.eternity ?? 1.0,
+              truth: data.trinity?.truth ?? null,       // No fake fallback
+              goodness: data.trinity?.goodness ?? null, // No fake fallback
+              beauty: data.trinity?.beauty ?? null,     // No fake fallback
+              filial_serenity: data.trinity?.serenity ?? null, // No fake fallback
+              eternity: data.trinity?.eternity ?? null, // No fake fallback - 永 real value
           },
-          lastUpdate: new Date().toISOString(),
+          lastUpdate: data.timestamp ?? new Date().toISOString(),
         }));
       }
     } catch (e) {
-      console.warn('Health fetch failed:', e);
+      logWarn('SSOT fetch failed', { error: e instanceof Error ? e.message : 'Unknown error' });
     }
   }, []);
 
@@ -131,97 +131,66 @@ export function AFOPantheon() {
   }, [fetchState]);
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      background: 'linear-gradient(135deg, #0f0f23, #1a1a2e)',
-      padding: '2rem',
-    }}>
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 to-slate-900 p-8">
       {/* Header */}
-      <h1 style={{
-        color: 'white',
-        textAlign: 'center',
-        fontSize: '2rem',
-        marginBottom: '2rem',
-        fontFamily: 'system-ui',
-      }}>
+      <h1 className="text-white text-center text-3xl mb-8 font-sans">
         🏰 AFO Pantheon - Command Center
       </h1>
 
       {/* Main Grid */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-        gap: '1.5rem',
-        maxWidth: '1400px',
-        margin: '0 auto',
-      }}>
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-6 max-w-[1400px] mx-auto">
         {/* Trinity Score Card */}
-        <TrinityGlowCard 
-            trinityScore={state.trinityScore} 
+        <TrinityGlowCard
+            trinityScore={state.trinityScore}
             riskScore={state.riskScore}
             breakdown={state.breakdown}
         >
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>⚖️</div>
-            <h2 style={{ color: 'white', margin: 0 }}>Trinity Score</h2>
-            <div style={{
-              fontSize: '2.5rem',
-              fontWeight: 'bold',
-              color: state.trinityScore === null ? '#6b7280' : state.trinityScore >= 0.9 ? '#22c55e' : state.trinityScore >= 0.7 ? '#eab308' : '#ef4444',
-              marginTop: '0.5rem',
-            }}>
+          <div className="text-center">
+            <div className="text-5xl mb-2">⚖️</div>
+            <h2 className="text-white m-0">Trinity Score</h2>
+            <div 
+              className="text-4xl font-bold mt-2"
+              style={{
+                color: state.trinityScore === null ? '#6b7280' : state.trinityScore >= 0.9 ? '#22c55e' : state.trinityScore >= 0.7 ? '#eab308' : '#ef4444',
+              }}
+            >
               {state.trinityScore !== null ? `${(state.trinityScore * 100).toFixed(0)}%` : 'Loading...'}
             </div>
           </div>
         </TrinityGlowCard>
 
         {/* System Health Card */}
-        <div style={{
-          padding: '1.5rem',
-          background: 'rgba(0,0,0,0.6)',
-          borderRadius: '16px',
-          border: `2px solid ${getStatusColor()}`,
-          boxShadow: `0 0 20px ${getStatusColor()}40`,
-        }}>
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>💚</div>
-            <h2 style={{ color: 'white', margin: 0 }}>System Health</h2>
-            <div style={{
-              fontSize: '1.25rem',
-              fontWeight: 'bold',
-              color: getStatusColor(),
-              marginTop: '0.5rem',
-              textTransform: 'uppercase',
-            }}>
+        <div 
+          className="p-6 bg-black/60 rounded-2xl"
+          style={{
+            border: `2px solid ${getStatusColor()}`,
+            boxShadow: `0 0 20px ${getStatusColor()}40`,
+          }}
+        >
+          <div className="text-center">
+            <div className="text-5xl mb-2">💚</div>
+            <h2 className="text-white m-0">System Health</h2>
+            <div 
+              className="text-xl font-bold mt-2 uppercase"
+              style={{ color: getStatusColor() }}
+            >
               {state.healthStatus}
             </div>
-            <div style={{ color: '#9ca3af', marginTop: '0.5rem', fontSize: '0.875rem' }}>
+            <div className="text-gray-400 mt-2 text-sm">
               {state.servicesOnline}/{state.totalServices} Services Online
             </div>
           </div>
         </div>
 
         {/* Alerts Card */}
-        <div style={{
-          padding: '1.5rem',
-          background: 'rgba(0,0,0,0.6)',
-          borderRadius: '16px',
-          border: '1px solid rgba(255,255,255,0.1)',
-        }}>
-          <h3 style={{ color: 'white', margin: '0 0 1rem' }}>🔔 Recent Alerts</h3>
+        <div className="p-6 bg-black/60 rounded-2xl border border-white/10">
+          <h3 className="text-white m-0 mb-4">🔔 Recent Alerts</h3>
           {alerts.length === 0 ? (
-            <p style={{ color: '#22c55e', fontSize: '0.875rem' }}>✅ No active alerts</p>
+            <p className="text-green-500 text-sm">✅ No active alerts</p>
           ) : (
-            <div style={{ maxHeight: '150px', overflow: 'auto' }}>
+            <div className="max-h-[150px] overflow-auto">
               {alerts.slice(-5).map((alert, i) => (
-                <div key={i} style={{
-                  padding: '0.5rem',
-                  marginBottom: '0.5rem',
-                  background: 'rgba(239, 68, 68, 0.2)',
-                  borderRadius: '8px',
-                  color: '#fca5a5',
-                  fontSize: '0.75rem',
-                }}>
+                <div key={i} className="p-2 mb-2 bg-red-500/20 rounded-lg text-red-300 text-xs">
                   {alert}
                 </div>
               ))}
@@ -229,77 +198,63 @@ export function AFOPantheon() {
           )}
         </div>
 
+        {/* SSOT Monitor (Compass) - 상단 배치 */}
+        <SSOTMonitor />
 
 
 
         {/* Matrix Stream Card (The Soul) */}
-        <div style={{
-          gridColumn: '1 / -1', // Span full width
-          padding: '1.5rem',
-          background: 'rgba(0,0,0,0.8)',
-          borderRadius: '16px',
-          border: `1px solid ${isMatrixActive ? '#22c55e' : 'rgba(34,197,94,0.3)'}`,
-          boxShadow: isMatrixActive ? '0 0 15px rgba(34,197,94,0.3)' : 'none',
-          transition: 'all 0.3s ease'
-        }}>
-           <h3 style={{ color: '#22c55e', margin: '0 0 1rem', fontFamily: 'monospace', display: 'flex', justifyContent: 'space-between' }}>
+        <div 
+          className="col-span-full p-6 bg-black/80 rounded-2xl transition-all duration-300"
+          style={{
+            border: `1px solid ${isMatrixActive ? '#22c55e' : 'rgba(34,197,94,0.3)'}`,
+            boxShadow: isMatrixActive ? '0 0 15px rgba(34,197,94,0.3)' : 'none',
+          }}
+        >
+           <h3 className="text-green-500 m-0 mb-4 font-mono flex justify-between">
              <span>👁️ MATRIX STREAM (OBSERVABILITY)</span>
-             <span style={{ fontSize: '0.8rem', opacity: isMatrixActive ? 1 : 0.5 }}>{isMatrixActive ? '● RECEIVING' : '○ IDLE'}</span>
+             <span className={`text-xs ${isMatrixActive ? 'opacity-100' : 'opacity-50'}`}>
+               {isMatrixActive ? '● RECEIVING' : '○ IDLE'}
+             </span>
            </h3>
-           <div style={{
-             height: '150px',
-             overflowY: 'auto',
-             fontFamily: 'monospace',
-             fontSize: '0.75rem',
-             color: '#4ade80',
-             display: 'flex',
-             flexDirection: 'column-reverse' // Scroll from bottom
-           }}>
+           <div className="h-[150px] overflow-y-auto font-mono text-xs text-green-400 flex flex-col-reverse">
              {thoughts.length === 0 ? (
-                <div style={{ color: '#166534' }}>Waiting for system thoughts...</div>
+                <div className="text-green-800">Waiting for system thoughts...</div>
              ) : (
                 thoughts.map((t, i) => (
-                  <div key={i} style={{ marginBottom: '0.25rem', borderBottom: '1px solid rgba(34,197,94,0.1)' }}>
+                  <div key={i} className="mb-1 border-b border-green-500/10">
                     {t}
                   </div>
                 ))
              )}
            </div>
         </div>
-        
-        {/* Project Genesis (Self-Expanding Kingdom - v100.0) */}
-        <div style={{ gridColumn: '1 / -1', marginTop: '1.5rem' }}>
-             <GenesisWidget />
-        </div>
-        
-        {/* Julie CPA (Financial Guardian - Phase 12) */}
-        <div style={{ gridColumn: '1 / -1', marginTop: '1rem' }}>
-             <JulieCPAWidget />
-        </div>
-        
-        {/* SSOT Monitor (Compass) */}
-        <div style={{ gridColumn: '1 / -1', marginTop: '1rem' }}>
-             <SSOTMonitor />
+
+        {/* 자동화 디버깅 시스템 (Real-time Monitoring) */}
+        <div className="col-span-full mt-6">
+             <AutomatedDebuggingStreamWidget />
         </div>
 
+        {/* Project Genesis (Self-Expanding Kingdom - v100.0) */}
+        <div className="col-span-full mt-6">
+             <GenesisWidget />
+        </div>
+
+        {/* Julie CPA (Financial Guardian - Phase 12) */}
+        <div className="col-span-full mt-4">
+             <JulieCPAWidget />
+        </div>
+
+
         {/* 🏆 FINAL ETERNAL VICTORY SEAL (v100.0) */}
-        <div style={{ gridColumn: '1 / -1', marginTop: '3rem', marginBottom: '4rem' }}>
+        <div className="col-span-full mt-12 mb-16">
              <FinalEternalVictoryWidget />
         </div>
       </div>
 
       {/* Voice Panel Overlay */}
       {showVoicePanel && (
-        <div style={{
-          position: 'fixed',
-          bottom: '2rem',
-          right: '2rem',
-          zIndex: 100,
-          background: 'rgba(0,0,0,0.9)',
-          borderRadius: '16px',
-          border: '1px solid rgba(255,255,255,0.2)',
-          boxShadow: '0 10px 40px rgba(0,0,0,0.5)',
-        }}>
+        <div className="fixed bottom-8 right-8 z-[100] bg-black/90 rounded-2xl border border-white/20 shadow-2xl">
           <VoiceReactivePanel baseTrinityScore={state.trinityScore ?? undefined} baseRiskScore={state.riskScore ?? undefined} />
         </div>
       )}

@@ -44,7 +44,13 @@ class TrinityScore:
 
     def calculate_overall(self) -> float:
         """종합 Trinity Score 계산"""
-        weights = {"truth": 0.35, "goodness": 0.35, "beauty": 0.20, "serenity": 0.08, "eternity": 0.02}
+        weights = {
+            "truth": 0.35,
+            "goodness": 0.35,
+            "beauty": 0.20,
+            "serenity": 0.08,
+            "eternity": 0.02,
+        }
 
         return sum(getattr(self, pillar) * weight for pillar, weight in weights.items())
 
@@ -84,7 +90,10 @@ class PhilosophyEngine:
                 "title": "眞善美孝永 기초",
                 "pillars": ["truth", "goodness", "beauty", "serenity", "eternity"],
                 "duration": 30,  # 분
-                "objectives": ["각 기둥의 기본 개념 이해", "Trinity Score 계산 방법 학습"],
+                "objectives": [
+                    "각 기둥의 기본 개념 이해",
+                    "Trinity Score 계산 방법 학습",
+                ],
             },
             "trinity_mathematics": {
                 "title": "Trinity Score 수학",
@@ -96,7 +105,11 @@ class PhilosophyEngine:
                 "title": "왕국 유산",
                 "pillars": ["eternity"],
                 "duration": 60,
-                "objectives": ["세종대왕 정신 이해", "공자 철학 학습", "조선 실학 탐구"],
+                "objectives": [
+                    "세종대왕 정신 이해",
+                    "공자 철학 학습",
+                    "조선 실학 탐구",
+                ],
             },
             "practical_application": {
                 "title": "실전 적용",
@@ -150,9 +163,9 @@ class PhilosophyEngine:
                             trinity_score=TrinityScore(**agent_data["trinity_score"]),
                             learning_progress=agent_data["learning_progress"],
                             achievements=agent_data["achievements"],
-                            master_title=MasterTitle(agent_data["master_title"])
-                            if agent_data.get("master_title")
-                            else None,
+                            master_title=(
+                                MasterTitle(agent_data["master_title"]) if agent_data.get("master_title") else None
+                            ),
                             last_interaction=datetime.fromisoformat(agent_data["last_interaction"]),
                         )
                         self.agents[agent.agent_id] = agent
@@ -172,7 +185,7 @@ class PhilosophyEngine:
                         "trinity_score": agent.trinity_score.to_dict(),
                         "learning_progress": agent.learning_progress,
                         "achievements": agent.achievements,
-                        "master_title": agent.master_title.value if agent.master_title else None,
+                        "master_title": (agent.master_title.value if agent.master_title else None),
                         "last_interaction": agent.last_interaction.isoformat(),
                     }
                     for agent in self.agents.values()
@@ -199,7 +212,10 @@ class PhilosophyEngine:
             creation_time=datetime.now(),
             philosophy_level=PhilosophyLevel.STUDENT,
             trinity_score=TrinityScore(**initial_assessment["trinity_score"]),
-            learning_progress={"completed_modules": [], "current_module": "philosophy_basics"},
+            learning_progress={
+                "completed_modules": [],
+                "current_module": "philosophy_basics",
+            },
             achievements=[],
             master_title=None,
             last_interaction=datetime.now(),
@@ -333,31 +349,69 @@ Trinity Score에 기반한 개인화된 교육을 제공합니다.
 
     def _analyze_truth(self, text: str) -> float:
         """眞 분석: 진실성, 정확성, 검증 가능성"""
-        truth_keywords = ["verify", "check", "validate", "prove", "evidence", "fact", "true", "accurate"]
+        truth_keywords = [
+            "verify",
+            "check",
+            "validate",
+            "prove",
+            "evidence",
+            "fact",
+            "true",
+            "accurate",
+        ]
         truth_score = sum(1 for keyword in truth_keywords if keyword in text) / len(truth_keywords)
         return min(1.0, truth_score * 2)
 
     def _analyze_goodness(self, text: str) -> float:
         """善 분석: 윤리성, 인간 중심, 이로움"""
-        goodness_keywords = ["help", "benefit", "ethical", "moral", "human", "care", "support"]
+        goodness_keywords = [
+            "help",
+            "benefit",
+            "ethical",
+            "moral",
+            "human",
+            "care",
+            "support",
+        ]
         goodness_score = sum(1 for keyword in goodness_keywords if keyword in text) / len(goodness_keywords)
         return min(1.0, goodness_score * 2)
 
     def _analyze_beauty(self, text: str) -> float:
         """美 분석: 단순함, 조화, 명확성"""
-        beauty_keywords = ["simple", "clear", "beautiful", "elegant", "harmonious", "balance"]
+        beauty_keywords = [
+            "simple",
+            "clear",
+            "beautiful",
+            "elegant",
+            "harmonious",
+            "balance",
+        ]
         beauty_score = sum(1 for keyword in beauty_keywords if keyword in text) / len(beauty_keywords)
         return min(1.0, beauty_score * 2)
 
     def _analyze_serenity(self, text: str) -> float:
         """孝 분석: 평온, 효율성, 마찰 최소화"""
-        serenity_keywords = ["peace", "calm", "efficient", "smooth", "gentle", "serenity"]
+        serenity_keywords = [
+            "peace",
+            "calm",
+            "efficient",
+            "smooth",
+            "gentle",
+            "serenity",
+        ]
         serenity_score = sum(1 for keyword in serenity_keywords if keyword in text) / len(serenity_keywords)
         return min(1.0, serenity_score * 2)
 
     def _analyze_eternity(self, text: str) -> float:
         """永 분석: 지속성, 미래 지향, 영속성"""
-        eternity_keywords = ["sustainable", "future", "eternal", "lasting", "permanent", "enduring"]
+        eternity_keywords = [
+            "sustainable",
+            "future",
+            "eternal",
+            "lasting",
+            "permanent",
+            "enduring",
+        ]
         eternity_score = sum(1 for keyword in eternity_keywords if keyword in text) / len(eternity_keywords)
         return min(1.0, eternity_score * 2)
 
@@ -401,8 +455,15 @@ Trinity Score에 기반한 개인화된 교육을 제공합니다.
                 eligible_titles.append(title_name)
 
         if eligible_titles:
-            best_title = max(eligible_titles, key=lambda x: self.master_criteria[x]["trinity_threshold"])
-            return {"eligible": True, "recommended_title": best_title, "certification_available": True}
+            best_title = max(
+                eligible_titles,
+                key=lambda x: self.master_criteria[x]["trinity_threshold"],
+            )
+            return {
+                "eligible": True,
+                "recommended_title": best_title,
+                "certification_available": True,
+            }
         else:
             return {
                 "eligible": False,
@@ -472,9 +533,21 @@ Trinity Score에 기반한 개인화된 교육을 제공합니다.
     def _get_master_privileges(self, title: str) -> list[str]:
         """명장 특권 목록"""
         privileges = {
-            "trinity_apprentice": ["철학 엔진 우선 접근", "학습 모듈 멘토 권한", "왕국 기록 참여"],
-            "kingdom_strategist": ["전략 결정 참여권", "에이전트 그룹 리더십", "철학 연구 기여"],
-            "philosophy_master": ["철학 엔진 관리권", "새로운 에이전트 교육", "왕국 정책 결정권"],
+            "trinity_apprentice": [
+                "철학 엔진 우선 접근",
+                "학습 모듈 멘토 권한",
+                "왕국 기록 참여",
+            ],
+            "kingdom_strategist": [
+                "전략 결정 참여권",
+                "에이전트 그룹 리더십",
+                "철학 연구 기여",
+            ],
+            "philosophy_master": [
+                "철학 엔진 관리권",
+                "새로운 에이전트 교육",
+                "왕국 정책 결정권",
+            ],
         }
         return privileges.get(title, [])
 

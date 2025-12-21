@@ -59,7 +59,8 @@ class PlaywrightBridgeMCP:
         """네트워크 인터셉션 설정 (善: 외부 의존성 제거)"""
         for scenario in self.mock_manager.scenarios:
 
-            async def handle_route(route: Route):
+            async def handle_route(route: Route, scenario: MockScenario = scenario) -> None:
+                """Handle route interception for mocking."""
                 await route.fulfill(
                     status=scenario.status,
                     content_type=scenario.content_type,
@@ -80,7 +81,11 @@ class PlaywrightBridgeMCP:
         """UI 시각 검증 - SKIPPED → PASS 전환 (PDF 페이지 4)"""
         if antigravity.DRY_RUN_DEFAULT:
             logger.info(f"[DRY_RUN] UI 검증 시뮬레이션: {url} -> {screenshot_path}")
-            return {"status": "simulation", "path": screenshot_path, "tracing": "skipped"}
+            return {
+                "status": "simulation",
+                "path": screenshot_path,
+                "tracing": "skipped",
+            }
 
         if not self.browser:
             await self.setup()

@@ -3,7 +3,10 @@ import subprocess
 
 
 def verify_playwright():
-    cmd = ["python3", "packages/trinity-os/trinity_os/servers/afo_ultimate_mcp_server.py"]
+    cmd = [
+        "python3",
+        "packages/trinity-os/trinity_os/servers/afo_ultimate_mcp_server.py",
+    ]
     process = subprocess.Popen(
         cmd,
         stdin=subprocess.PIPE,

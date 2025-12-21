@@ -1,11 +1,14 @@
 import asyncio
 import os
+import pathlib
 import sys
 
 
 # Setup path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../packages")))
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../packages/afo-core")))
+sys.path.append(pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages")).resolve())
+sys.path.append(
+    pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")).resolve()
+)
 
 from services.detailed_pillars_calculator import pillars_metrics
 from services.truth_metrics_calculator import truth_metrics  # Re-using Truth from Phase 15
@@ -71,7 +74,16 @@ async def verify_full_pillars():
     print(f"🔹 Eternity (永): {eternity_score * 100:.1f}%")
 
     # Final Validation
-    if min(truth_normalized, goodness_score, beauty_score, serenity_score, eternity_score) == 1.0:
+    if (
+        min(
+            truth_normalized,
+            goodness_score,
+            beauty_score,
+            serenity_score,
+            eternity_score,
+        )
+        == 1.0
+    ):
         print("\n✅ Verification SUCCESS: All Pillars Achieved 100% Perfection.")
         print("   -> 眞·善·미·효·영 Metrics Operational.")
     else:

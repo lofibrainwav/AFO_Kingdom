@@ -28,7 +28,7 @@ def analyze_risk(directory: str) -> float:
             d
             for d in dirs
             if d
-            not in [
+            not in {
                 "node_modules",
                 ".git",
                 "__pycache__",
@@ -39,7 +39,7 @@ def analyze_risk(directory: str) -> float:
                 "build",
                 "site-packages",
                 "lib",
-            ]
+            }
         ]
 
         if any(
@@ -53,7 +53,7 @@ def analyze_risk(directory: str) -> float:
 
             path = os.path.join(root, file)
             try:
-                with pathlib.Path(path).open(errors="ignore") as f:
+                with pathlib.Path(path).open(encoding="utf-8", errors="ignore") as f:
                     content = f.read()
                     for pattern, weight, msg in risk_patterns:
                         if re.search(pattern, content):
@@ -147,7 +147,7 @@ def main():
 
     # Output for GitHub Actions
     if os.environ.get("GITHUB_OUTPUT"):
-        with pathlib.Path(os.environ["GITHUB_OUTPUT"]).open("a") as f:
+        with pathlib.Path(os.environ["GITHUB_OUTPUT"]).open("a", encoding="utf-8") as f:
             f.write(f"trinity_score={trinity_score}\n")
             f.write(f"risk_score={risk}\n")
             f.write(f"passed={str(passed).lower()}\n")

@@ -6,7 +6,10 @@
  */
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { useApi } from '@/hooks/useApi';
+import { LoadingSpinner } from '@/components/common';
+import { REFRESH_INTERVALS } from '@/lib/constants';
 
 interface Suggestion {
   priority: 'critical' | 'warning' | 'info' | 'success';
@@ -25,31 +28,13 @@ interface SuggestionsData {
   summary: string;
 }
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8010';
-
 export function JulieSuggestions() {
-  const [data, setData] = useState<SuggestionsData | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchSuggestions = async () => {
-      try {
-        const response = await fetch(`${API_BASE}/api/julie/budget/suggestions`);
-        if (response.ok) {
-          const json = await response.json();
-          setData(json);
-        }
-      } catch (err) {
-        console.warn('Suggestions fetch failed:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchSuggestions();
-    const interval = setInterval(fetchSuggestions, 60000);
-    return () => clearInterval(interval);
-  }, []);
+  const {
+    data,
+    loading,
+  } = useApi<SuggestionsData>('/api/julie/budget/suggestions', {
+    refetchInterval: REFRESH_INTERVALS.NORMAL, // 30초마다 자동 업데이트
+  });
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
@@ -71,14 +56,8 @@ export function JulieSuggestions() {
 
   if (loading) {
     return (
-      <div style={{
-        background: 'linear-gradient(135deg, rgba(17, 24, 39, 0.9), rgba(168, 85, 247, 0.1))',
-        borderRadius: '20px',
-        padding: '24px',
-        textAlign: 'center',
-        color: 'rgba(255,255,255,0.7)',
-      }}>
-        🔄 제안 분석 중...
+      <div className="bg-gradient-to-br from-gray-900/90 to-purple-500/10 rounded-2xl p-8">
+        <LoadingSpinner size="md" text="제안 분석 중..." />
       </div>
     );
   }
@@ -86,37 +65,23 @@ export function JulieSuggestions() {
   if (!data) return null;
 
   return (
-    <div
-      style={{
-        background: 'linear-gradient(135deg, rgba(17, 24, 39, 0.95), rgba(168, 85, 247, 0.15))',
-        backdropFilter: 'blur(20px)',
-        borderRadius: '24px',
-        border: '1px solid rgba(168, 85, 247, 0.2)',
-        padding: '28px',
-        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
-      }}
-    >
+    <div className="bg-gradient-to-br from-gray-900/95 to-purple-500/15 backdrop-blur-xl rounded-3xl border border-purple-500/20 p-7 shadow-2xl">
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <span style={{ fontSize: '32px' }}>💡</span>
+      <div className="flex items-center justify-between mb-5">
+        <div className="flex items-center gap-3">
+          <span className="text-4xl">💡</span>
           <div>
-            <h2 style={{ fontSize: '20px', fontWeight: 'bold', color: 'white', margin: 0 }}>
+            <h2 className="text-xl font-bold text-white m-0">
               Julie CPA의 스마트 제안
             </h2>
-            <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '12px', margin: 0 }}>
+            <p className="text-white/60 text-xs m-0">
               Phase 12-3 · Smart Guardian
             </p>
           </div>
         </div>
         {data.total_potential_saving > 0 && (
-          <div style={{
-            background: 'rgba(34, 197, 94, 0.2)',
-            border: '1px solid rgba(34, 197, 94, 0.4)',
-            borderRadius: '12px',
-            padding: '8px 16px',
-          }}>
-            <span style={{ color: '#22C55E', fontWeight: 'bold', fontSize: '14px' }}>
+          <div className="bg-green-500/20 border border-green-500/40 rounded-xl px-4 py-2">
+            <span className="text-green-500 font-bold text-sm">
               💰 {formatCurrency(data.total_potential_saving)} 절감 가능
             </span>
           </div>
@@ -124,55 +89,41 @@ export function JulieSuggestions() {
       </div>
 
       {/* Suggestions List */}
-      <div style={{ marginBottom: '16px' }}>
+      <div className="mb-4">
         {data.suggestions.map((suggestion, i) => {
           const colors = getPriorityColor(suggestion.priority);
           return (
             <div
               key={i}
+              className="rounded-xl p-4 mb-3 transition-transform duration-200 ease-in-out hover:translate-x-1"
               style={{
                 background: colors.bg,
                 border: `1px solid ${colors.border}`,
-                borderRadius: '12px',
-                padding: '16px',
-                marginBottom: '12px',
-                transition: 'transform 0.2s ease',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateX(4px)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateX(0)';
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-                <span style={{ fontSize: '24px' }}>{suggestion.icon}</span>
-                <div style={{ flex: 1 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <h3 style={{ color: colors.text, fontSize: '16px', fontWeight: 'bold', margin: 0 }}>
+              <div className="flex items-start gap-3">
+                <span className="text-2xl">{suggestion.icon}</span>
+                <div className="flex-1">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-base font-bold m-0" style={{ color: colors.text }}>
                       {suggestion.title}
                     </h3>
                     {suggestion.expected_saving > 0 && (
-                      <span style={{ color: '#22C55E', fontSize: '12px', fontWeight: '600' }}>
+                      <span className="text-green-500 text-xs font-semibold">
                         +{formatCurrency(suggestion.expected_saving)}
                       </span>
                     )}
                   </div>
-                  <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: '14px', margin: '8px 0 0 0', lineHeight: '1.5' }}>
+                  <p className="text-white/85 text-sm mt-2 m-0 leading-relaxed">
                     {suggestion.message}
                   </p>
                   {suggestion.action && (
                     <button
+                      className="mt-3 rounded-lg px-3 py-1.5 text-xs font-semibold cursor-pointer"
                       style={{
-                        marginTop: '12px',
                         background: `${colors.text}20`,
                         border: `1px solid ${colors.text}50`,
-                        borderRadius: '8px',
-                        padding: '6px 12px',
                         color: colors.text,
-                        fontSize: '12px',
-                        fontWeight: '600',
-                        cursor: 'pointer',
                       }}
                     >
                       {suggestion.action} →
@@ -186,13 +137,8 @@ export function JulieSuggestions() {
       </div>
 
       {/* Summary */}
-      <div style={{
-        background: 'rgba(168, 85, 247, 0.1)',
-        borderRadius: '12px',
-        padding: '12px 16px',
-        textAlign: 'center',
-      }}>
-        <p style={{ color: '#A855F7', fontSize: '13px', margin: 0 }}>
+      <div className="bg-purple-500/10 rounded-xl px-4 py-3 text-center">
+        <p className="text-purple-400 text-[13px] m-0">
           {data.summary}
         </p>
       </div>

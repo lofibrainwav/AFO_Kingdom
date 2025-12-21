@@ -1,4 +1,5 @@
 import os
+from typing import Any
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
@@ -19,7 +20,7 @@ class BrowserTokenRequest(BaseModel):
 
 
 @router.post("/save-token")
-async def save_browser_token(request: BrowserTokenRequest):
+async def save_browser_token(request: BrowserTokenRequest) -> dict[str, Any]:
     """
     Save a browser session token to the API Wallet.
     """
@@ -61,7 +62,7 @@ async def save_browser_token(request: BrowserTokenRequest):
 
 
 @router.get("/extraction-script")
-async def get_extraction_script():
+async def get_extraction_script() -> dict[str, str]:
     """
     Returns the JS script for the user to run in their browser console.
     """

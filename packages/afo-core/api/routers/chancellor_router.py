@@ -6,22 +6,26 @@ LangGraph 기반 3책사 (Zhuge Liang/Sima Yi/Zhou Yu) 시스템
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Literal
+import asyncio
+import logging
+from typing import Any, Literal
 
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel, Field
 
-if TYPE_CHECKING:
-    from chancellor_graph import (
-        ChancellorState,  # Singleton instance
-    )
+# 로깅 설정
+logger = logging.getLogger(__name__)
+
+# Strangler Fig: compat.py에서 타입 모델 import (眞: Truth 타입 안전성)
+from AFO.api.compat import ChancellorInvokeRequest, ChancellorInvokeResponse
 
 # Antigravity import (통합)
 try:
     from AFO.config.antigravity import antigravity
 except ImportError:
     try:
-        from config.antigravity import antigravity  # type: ignore[assignment]
+        from config.antigravity import antigravity as ag
+
+        antigravity = ag  # type: ignore[assignment]
     except ImportError:
         # Fallback: 기본값 사용
         class MockAntigravity:
@@ -48,12 +52,8 @@ def _import_chancellor_graph() -> None:
         if str(_CORE_ROOT) not in sys.path:
             sys.path.insert(0, str(_CORE_ROOT))
 
-        from chancellor_graph import (
-            build_chancellor_graph as _bcg,
-        )
-        from chancellor_graph import (
-            chancellor_graph as _cg,
-        )
+        from chancellor_graph import build_chancellor_graph as _bcg
+        from chancellor_graph import chancellor_graph as _cg
 
         build_chancellor_graph = _bcg
         chancellor_graph = _cg
@@ -66,63 +66,439 @@ _import_chancellor_graph()
 
 router = APIRouter(prefix="/chancellor", tags=["Chancellor"])
 
-
-class ChancellorInvokeRequest(BaseModel):
-    """Chancellor Graph 호출 요청 모델"""
-
-    query: str = Field(..., description="사용자 쿼리")
-    thread_id: str = Field(default="default", description="대화 스레드 ID")
-    auto_run: bool = Field(
-        default_factory=lambda: antigravity.AUTO_DEPLOY,
-        description="자동 실행 여부 (孝: Serenity) - Antigravity.AUTO_DEPLOY 기본값 사용",
-    )
-    timeout_seconds: int = Field(default=30, ge=1, le=300, description="최대 실행 시간(초)")
-    mode: Literal["auto", "offline", "fast", "lite", "full"] = Field(
-        default="auto",
-        description="실행 모드(auto=자동, offline=LLM 없이 상태 보고, fast=1회 LLM, lite=짧은 1회 LLM, full=LangGraph 3책사)",
-    )
-    max_strategists: int | None = Field(
-        default=None,
-        ge=0,
-        le=3,
-        description="사용할 책사 수(0~3). full 모드에서 적용 가능. None이면 mode/timeout 기반 자동 결정",
-    )
-    provider: Literal["auto", "ollama", "anthropic", "gemini", "openai"] = Field(
-        default="auto",
-        description="LLM 제공자 강제 선택(라우터 우회). auto이면 라우팅 사용",
-    )
-    ollama_model: str | None = Field(
-        default=None, description="Ollama 모델 override (예: llama3.2:3b, qwen2.5:3b 등)"
-    )
-    ollama_timeout_seconds: float | None = Field(
-        default=None, ge=0.5, le=300, description="Ollama HTTP 타임아웃(초)"
-    )
-    ollama_num_ctx: int | None = Field(
-        default=None, ge=256, le=32768, description="Ollama num_ctx override (컨텍스트 윈도우)"
-    )
-    ollama_num_thread: int | None = Field(
-        default=None, ge=1, le=64, description="Ollama num_thread override"
-    )
-    max_tokens: int | None = Field(default=None, ge=32, le=4096, description="최대 출력 토큰")
-    temperature: float | None = Field(default=None, ge=0.0, le=2.0, description="온도")
-    fallback_on_timeout: bool = Field(
-        default=True, description="시간 초과 시 504 대신 상태 기반 답변으로 폴백"
-    )
+# Strangler Fig: Chancellor 타입 모델들은 compat.py로 이동됨 (眞: Truth 타입 안전성)
 
 
-class ChancellorInvokeResponse(BaseModel):
-    """Chancellor Graph 호출 응답 모델"""
+def _determine_execution_mode(
+    request: ChancellorInvokeRequest,
+) -> Literal["offline", "fast", "lite", "full"]:
+    """
+    실행 모드 결정 (美: 순수 함수 - 동일 입력에 동일 출력)
 
-    response: str = Field(..., description="Chancellor 응답")
-    thread_id: str = Field(..., description="대화 스레드 ID")
-    trinity_score: float = Field(default=0.0, description="Trinity Score")
-    strategists_consulted: list[str] = Field(default_factory=list, description="상담한 책사 목록")
+    Args:
+        request: Chancellor 요청
+
+    Returns:
+        결정된 실행 모드
+    """
+
+    def _looks_like_system_query(query: str) -> bool:
+        q = query.lower()
+        keywords = [
+            "상태",
+            "health",
+            "헬스",
+            "metrics",
+            "메트릭",
+            "redis",
+            "postgres",
+            "postgresql",
+            "db",
+            "데이터베이스",
+            "포트",
+            "서버",
+            "메모리",
+            "스왑",
+            "디스크",
+            "오장육부",
+            "langgraph",
+            "엔드포인트",
+        ]
+        return any(k in q for k in keywords)
+
+    if request.mode == "auto":
+        if _looks_like_system_query(request.query):
+            return "offline"
+        elif request.timeout_seconds <= 12:
+            return "fast"
+        elif request.timeout_seconds <= 45:
+            return "lite"
+        else:
+            return "full"
+    else:
+        # [논어]言必信行必果 - 사용자 명시적 모드를 존중함
+        return request.mode
+
+
+def _build_llm_context(request: ChancellorInvokeRequest) -> dict[str, Any]:
+    """
+    LLM 컨텍스트 구축 (美: 순수 함수)
+
+    Args:
+        request: Chancellor 요청
+
+    Returns:
+        LLM 컨텍스트 딕셔너리
+    """
+    llm_context: dict[str, Any] = {}
+
+    if request.provider != "auto":
+        llm_context["provider"] = request.provider
+    if request.ollama_model:
+        llm_context["ollama_model"] = request.ollama_model
+    if request.ollama_timeout_seconds is not None:
+        llm_context["ollama_timeout_seconds"] = request.ollama_timeout_seconds
+    if request.ollama_num_ctx is not None:
+        llm_context["ollama_num_ctx"] = request.ollama_num_ctx
+    if request.ollama_num_thread is not None:
+        llm_context["ollama_num_thread"] = request.ollama_num_thread
+    if request.max_tokens is not None:
+        llm_context["max_tokens"] = request.max_tokens
+    if request.temperature is not None:
+        llm_context["temperature"] = request.temperature
+
+    return llm_context
+
+
+def _build_fallback_text(query: str, metrics: dict[str, Any]) -> str:
+    """Build fallback text for offline mode responses."""
+
+    def _looks_like_system_query(q: str) -> bool:
+        keywords = [
+            "상태",
+            "health",
+            "헬스",
+            "metrics",
+            "메트릭",
+            "redis",
+            "postgres",
+            "postgresql",
+            "db",
+            "데이터베이스",
+            "포트",
+            "서버",
+            "메모리",
+            "스왑",
+            "디스크",
+            "오장육부",
+            "langgraph",
+            "엔드포인트",
+        ]
+        return any(k in q.lower() for k in keywords)
+
+    is_system = _looks_like_system_query(query)
+    mem = metrics.get("memory_percent")
+    swap = metrics.get("swap_percent")
+    disk = metrics.get("disk_percent")
+    redis_ok = metrics.get("redis_connected")
+    langgraph_ok = metrics.get("langgraph_active")
+    containers = metrics.get("containers_running")
+
+    lines = [
+        "승상 보고(폴백 모드): LLM 응답이 지연되어 현재는 제한된 방식으로 답변합니다.",
+        "",
+        f"- 요청: {query}",
+    ]
+
+    if is_system:
+        lines.extend(
+            [
+                f"- 메모리: {mem}%",
+                f"- 스왑: {swap}%",
+                f"- 디스크: {disk}%",
+                f"- Redis: {'연결됨' if redis_ok else '미연결'}",
+                f"- LangGraph: {'활성' if langgraph_ok else '비활성'}",
+                f"- 감지된 서비스(추정): {containers}",
+            ]
+        )
+    else:
+        q_lower = query.lower()
+        if any(k in q_lower for k in ["자기소개", "who are you", "너는 누구", "당신은 누구"]):
+            lines.append(
+                "- 오프라인 응답: 저는 AFO Kingdom의 승상(Chancellor)이며, 시스템 상태/전략/실행을 정리해 사령관의 결정을 돕습니다."
+            )
+        else:
+            lines.append(
+                "- 오프라인 응답: 현재 LLM이 제시간에 응답하지 못해 질문에 대한 생성형 답변을 확정할 수 없습니다."
+            )
+
+    lines.extend(
+        [
+            "",
+            "504를 줄이고 실제 LLM 답변 확률을 올리려면:",
+            "- `mode=fast` 또는 `mode=lite`로 LLM 호출 수를 1회로 제한",
+            "- 더 작은(빠른) 모델 사용: `ollama_model` (예: `llama3.2:3b`, `qwen2.5:3b`)",
+            "- Ollama 성능 옵션: `ollama_num_ctx`(예: 2048~4096), `ollama_num_thread`",
+            "- 시간 예산 확대: `timeout_seconds` (예: 20~60초)",
+        ]
+    )
+    return "\n".join(lines)
+
+
+async def _execute_with_fallback(
+    mode_used: Literal["offline", "fast", "lite", "full"],
+    request: ChancellorInvokeRequest,
+    llm_context: dict[str, Any],
+) -> dict[str, Any]:
+    """
+    실행 모드에 따른 처리 및 폴백 (美: 순수 함수)
+
+    Args:
+        mode_used: 실행 모드
+        request: Chancellor 요청
+        llm_context: LLM 컨텍스트
+
+    Returns:
+        처리 결과
+    """
+    import asyncio
+
+    async def _get_system_metrics_safe() -> dict[str, Any]:
+        try:
+            from api.routes.system_health import get_system_metrics
+        except ImportError:
+            try:
+                from AFO.api.routes.system_health import get_system_metrics
+            except ImportError as e:
+                logger.debug("시스템 메트릭 모듈 import 실패: %s", str(e))
+                return {"error": "system metrics route not available"}
+        try:
+            return dict(await get_system_metrics())
+        except (AttributeError, TypeError, ValueError) as e:
+            logger.warning("시스템 메트릭 수집 실패 (속성/타입/값 에러): %s", str(e))
+            return {"error": f"failed to collect system metrics: {type(e).__name__}: {e}"}
+        except Exception as e:  # - Intentional fallback for unexpected errors
+            logger.warning("시스템 메트릭 수집 실패 (예상치 못한 에러): %s", str(e))
+            return {"error": f"failed to collect system metrics: {type(e).__name__}: {e}"}
+
+    async def _single_shot_answer(
+        query: str, budget_seconds: float, context: dict[str, Any]
+    ) -> tuple[str, dict[str, Any] | None, bool]:
+        try:
+            from llm_router import llm_router as _router
+        except ImportError:
+            try:
+                from AFO.llm_router import (
+                    llm_router as _router,  # type: ignore[assignment]  # type: ignore[assignment]
+                )
+            except ImportError as e:
+                logger.error("llm_router import 실패: %s", str(e))
+                raise RuntimeError(f"llm_router import failed: {e}") from e
+
+        timed_out = False
+        try:
+            result = await asyncio.wait_for(
+                _router.execute_with_routing(query, context=context),
+                timeout=max(0.5, budget_seconds),
+            )
+            return result.get("response", ""), result.get("routing"), timed_out
+        except TimeoutError:
+            timed_out = True
+            return "", None, timed_out
+
+    def _is_real_answer(answer: str, routing: dict[str, Any] | None) -> bool:
+        text = (answer or "").strip()
+        if not text:
+            return False
+        if routing and routing.get("is_fallback") is True:
+            return False
+        lowered = text.lower()
+        return not (
+            text.lstrip().startswith("[")
+            and (
+                " error" in lowered
+                or lowered.startswith("[fallback")
+                or "unavailable" in lowered
+                or "api wrapper unavailable" in lowered
+            )
+        )
+
+    # OFFLINE 모드
+    if mode_used == "offline":
+        metrics = await _get_system_metrics_safe()
+        return {
+            "response": _build_fallback_text(request.query, metrics),
+            "thread_id": request.thread_id,
+            "trinity_score": 0.0,
+            "strategists_consulted": [],
+            "mode_used": mode_used,
+            "fallback_used": True,
+            "timed_out": False,
+            "system_metrics": metrics,
+        }
+
+    # FAST/LITE 모드
+    if mode_used in {"fast", "lite"}:
+        budget_total = float(request.timeout_seconds)
+        budget_llm = max(0.5, budget_total - 1.0)
+
+        # 모드별 기본값 설정
+        if mode_used == "fast":
+            llm_context.setdefault("max_tokens", 128)
+            llm_context.setdefault("temperature", 0.2)
+            llm_context.setdefault("ollama_timeout_seconds", budget_llm)
+            llm_context.setdefault("ollama_num_ctx", 2048)
+        else:
+            llm_context.setdefault("max_tokens", 384)
+            llm_context.setdefault("temperature", 0.4)
+            llm_context.setdefault("ollama_timeout_seconds", budget_llm)
+            llm_context.setdefault("ollama_num_ctx", 4096)
+
+        answer, routing, timed_out = await _single_shot_answer(
+            request.query, budget_llm, llm_context
+        )
+
+        if _is_real_answer(answer, routing):
+            return {
+                "response": answer,
+                "thread_id": request.thread_id,
+                "trinity_score": 0.0,
+                "strategists_consulted": ["single_shot"],
+                "mode_used": mode_used,
+                "fallback_used": False,
+                "timed_out": timed_out,
+                "routing": routing,
+            }
+
+        if not request.fallback_on_timeout:
+            raise HTTPException(
+                status_code=504,
+                detail=f"Chancellor LLM timeout after {request.timeout_seconds}s",
+            )
+
+        metrics = await _get_system_metrics_safe()
+        return {
+            "response": _build_fallback_text(request.query, metrics),
+            "thread_id": request.thread_id,
+            "trinity_score": 0.0,
+            "strategists_consulted": [],
+            "mode_used": mode_used,
+            "fallback_used": True,
+            "timed_out": True,
+            "system_metrics": metrics,
+            "routing": routing,
+        }
+
+    # FULL 모드 (LangGraph 기반 3책사)
+    return await _execute_full_mode(request, llm_context)
+
+
+async def _execute_full_mode(
+    request: ChancellorInvokeRequest, llm_context: dict[str, Any]
+) -> dict[str, Any]:
+    """
+    FULL 모드 실행 (LangGraph 기반 3책사)
+    """
+    try:
+        from chancellor_graph import chancellor_graph
+    except ImportError as e:
+        raise HTTPException(
+            status_code=503,
+            detail="Chancellor Graph가 초기화되지 않았습니다. chancellor_graph.py를 확인하세요.",
+        ) from e
+
+    graph = chancellor_graph
+    from AFO.api.compat import get_antigravity_control
+
+    antigravity = get_antigravity_control()
+    effective_auto_run = request.auto_run and not (antigravity and antigravity.DRY_RUN_DEFAULT)
+
+    initial_state = {
+        "query": request.query,
+        "messages": [],
+        "summary": "",
+        "context": {
+            "llm_context": llm_context,
+            "max_strategists": request.max_strategists,
+            "antigravity": {
+                "AUTO_DEPLOY": antigravity.AUTO_DEPLOY if antigravity else True,
+                "DRY_RUN_DEFAULT": (antigravity.DRY_RUN_DEFAULT if antigravity else False),
+                "ENVIRONMENT": antigravity.ENVIRONMENT if antigravity else "dev",
+            },
+            "auto_run_eligible": effective_auto_run,
+        },
+        "search_results": [],
+        "multimodal_slots": {},
+        "status": "INIT",
+        "risk_score": 0.0,
+        "trinity_score": 0.0,
+        "analysis_results": {},
+        "results": {},
+        "actions": [],
+    }
+
+    from langchain_core.messages import HumanMessage
+
+    initial_state["messages"].append(HumanMessage(content=request.query))
+
+    config = {"configurable": {"thread_id": request.thread_id}}
+
+    try:
+        result = await asyncio.wait_for(
+            graph.ainvoke(initial_state, config),
+            timeout=float(request.timeout_seconds),
+        )
+    except TimeoutError as e:
+        if not request.fallback_on_timeout:
+            raise HTTPException(
+                status_code=504,
+                detail=f"Chancellor Graph timeout after {request.timeout_seconds}s",
+            ) from e
+
+        async def _get_system_metrics_safe() -> dict[str, Any]:
+            try:
+                from api.routes.system_health import get_system_metrics
+            except ImportError:
+                try:
+                    from AFO.api.routes.system_health import get_system_metrics
+                except ImportError as e:
+                    logger.debug("시스템 메트릭 모듈 import 실패: %s", str(e))
+                    return {"error": "system metrics route not available"}
+            try:
+                return dict(await get_system_metrics())
+            except (AttributeError, TypeError, ValueError) as e:
+                logger.warning("시스템 메트릭 수집 실패 (속성/타입/값 에러): %s", str(e))
+                return {"error": f"failed to collect system metrics: {type(e).__name__}: {e}"}
+            except Exception as e:  # - Intentional fallback for unexpected errors
+                logger.warning("시스템 메트릭 수집 실패 (예상치 못한 에러): %s", str(e))
+                return {"error": f"failed to collect system metrics: {type(e).__name__}: {e}"}
+
+        metrics = await _get_system_metrics_safe()
+        return {
+            "response": _build_fallback_text(request.query, metrics),
+            "thread_id": request.thread_id,
+            "trinity_score": 0.0,
+            "strategists_consulted": [],
+            "mode_used": "full",
+            "fallback_used": True,
+            "timed_out": True,
+            "system_metrics": metrics,
+        }
+
+    # 응답 추출
+    messages = result.get("messages", [])
+    last_message = messages[-1] if messages else None
+
+    response_text = ""
+    if last_message and hasattr(last_message, "content"):
+        response_text = last_message.content
+    elif isinstance(last_message, dict):
+        response_text = last_message.get("content", "")
+
+    strategists_consulted = []
+    analysis_results = result.get("analysis_results", {})
+    if analysis_results:
+        strategists_consulted = list(analysis_results.keys())
+
+    return {
+        "response": response_text,
+        "speaker": result.get("speaker", "Chancellor"),
+        "thread_id": request.thread_id,
+        "trinity_score": result.get("trinity_score", 0.0),
+        "strategists_consulted": strategists_consulted,
+        "analysis_results": analysis_results,
+        "mode_used": "full",
+        "fallback_used": False,
+        "timed_out": False,
+    }
 
 
 @router.post("/invoke")
-async def invoke_chancellor(request: ChancellorInvokeRequest) -> dict[str, Any]:
+async def invoke_chancellor(
+    request: ChancellorInvokeRequest,
+) -> ChancellorInvokeResponse:
     """
-    Chancellor Graph 호출 엔드포인트
+    Chancellor Graph 호출 엔드포인트 (Strangler Fig 적용)
 
     3책사 (Zhuge Liang/Sima Yi/Zhou Yu)를 LangGraph로 연결하여
     사용자 쿼리에 대한 최적의 답변을 생성합니다.
@@ -137,336 +513,13 @@ async def invoke_chancellor(request: ChancellorInvokeRequest) -> dict[str, Any]:
         HTTPException: Chancellor Graph 초기화 실패 시
     """
     try:
-        import asyncio
+        # Strangler Fig Phase 2: 함수 분해 적용 (美: 우아한 구조)
+        mode_used = _determine_execution_mode(request)
+        llm_context = _build_llm_context(request)
+        result = await _execute_with_fallback(mode_used, request, llm_context)
 
-        def _looks_like_system_query(query: str) -> bool:
-            q = query.lower()
-            keywords = [
-                "상태",
-                "health",
-                "헬스",
-                "metrics",
-                "메트릭",
-                "redis",
-                "postgres",
-                "postgresql",
-                "db",
-                "데이터베이스",
-                "포트",
-                "서버",
-                "메모리",
-                "스왑",
-                "디스크",
-                "오장육부",
-                "langgraph",
-                "엔드포인트",
-            ]
-            return any(k in q for k in keywords)
-
-        async def _get_system_metrics_safe() -> dict[str, Any]:
-            try:
-                from api.routes.system_health import get_system_metrics
-            except Exception:
-                try:
-                    # [주역] 천행건군자이자강불식 - 진실된 경로를 인내하며 찾음
-                    from AFO.api.routes.system_health import get_system_metrics
-                except Exception:
-                    return {"error": "system metrics route not available"}
-            try:
-                return await get_system_metrics()
-            except Exception as e:
-                return {"error": f"failed to collect system metrics: {type(e).__name__}: {e}"}
-
-        def _build_fallback_text(query: str, metrics: dict[str, Any]) -> str:
-            is_system = _looks_like_system_query(query)
-            mem = metrics.get("memory_percent")
-            swap = metrics.get("swap_percent")
-            disk = metrics.get("disk_percent")
-            redis_ok = metrics.get("redis_connected")
-            langgraph_ok = metrics.get("langgraph_active")
-            containers = metrics.get("containers_running")
-
-            lines: list[str] = [
-                "승상 보고(폴백 모드): LLM 응답이 지연되어 현재는 제한된 방식으로 답변합니다.",
-                "",
-                f"- 요청: {query}",
-            ]
-
-            if is_system:
-                lines.extend(
-                    [
-                        f"- 메모리: {mem}%",
-                        f"- 스왑: {swap}%",
-                        f"- 디스크: {disk}%",
-                        f"- Redis: {'연결됨' if redis_ok else '미연결'}",
-                        f"- LangGraph: {'활성' if langgraph_ok else '비활성'}",
-                        f"- 감지된 서비스(추정): {containers}",
-                    ]
-                )
-            else:
-                # Give a minimally useful offline reply for common non-system queries.
-                q_lower = query.lower()
-                if any(
-                    k in q_lower for k in ["자기소개", "who are you", "너는 누구", "당신은 누구"]
-                ):
-                    lines.append(
-                        "- 오프라인 응답: 저는 AFO Kingdom의 승상(Chancellor)이며, 시스템 상태/전략/실행을 정리해 사령관의 결정을 돕습니다."
-                    )
-                else:
-                    lines.append(
-                        "- 오프라인 응답: 현재 LLM이 제시간에 응답하지 못해 질문에 대한 생성형 답변을 확정할 수 없습니다."
-                    )
-
-            lines.extend(
-                [
-                    "",
-                    "504를 줄이고 실제 LLM 답변 확률을 올리려면:",
-                    "- `mode=fast` 또는 `mode=lite`로 LLM 호출 수를 1회로 제한",
-                    "- 더 작은(빠른) 모델 사용: `ollama_model` (예: `llama3.2:3b`, `qwen2.5:3b`)",
-                    "- Ollama 성능 옵션: `ollama_num_ctx`(예: 2048~4096), `ollama_num_thread`",
-                    "- 시간 예산 확대: `timeout_seconds` (예: 20~60초)",
-                ]
-            )
-            return "\n".join(lines)
-
-        async def _single_shot_answer(
-            query: str, budget_seconds: float, llm_context: dict[str, Any]
-        ) -> tuple[str, dict[str, Any] | None, bool]:
-            try:
-                from llm_router import llm_router as _router
-            except Exception:
-                try:
-                    from AFO.llm_router import llm_router as _router  # type: ignore
-                except Exception as e:
-                    raise RuntimeError(f"llm_router import failed: {e}") from e
-
-            timed_out = False
-            try:
-                result = await asyncio.wait_for(
-                    _router.execute_with_routing(query, context=llm_context),
-                    timeout=max(0.5, budget_seconds),
-                )
-                return result.get("response", ""), result.get("routing"), timed_out
-            except TimeoutError:
-                timed_out = True
-                return "", None, timed_out
-
-        def _is_real_answer(answer: str, routing: dict[str, Any] | None) -> bool:
-            text = (answer or "").strip()
-            if not text:
-                return False
-            if routing and routing.get("is_fallback") is True:
-                return False
-            lowered = text.lower()
-            return not (
-                text.lstrip().startswith("[")
-                and (
-                    " error" in lowered
-                    or lowered.startswith("[fallback")
-                    or "unavailable" in lowered
-                    or "api wrapper unavailable" in lowered
-                )
-            )
-
-        # Decide mode based on timeout/query
-        mode_used: Literal["offline", "fast", "lite", "full"]
-        if request.mode == "auto":
-            if _looks_like_system_query(request.query):
-                mode_used = "offline"
-            elif request.timeout_seconds <= 12:
-                mode_used = "fast"
-            elif request.timeout_seconds <= 45:
-                mode_used = "lite"
-            else:
-                mode_used = "full"
-        else:
-            # [논어]言必信行必果 - 사용자 명시적 모드를 존중함
-            mode_used = request.mode
-
-        # Build shared LLM context overrides
-        llm_context: dict[str, Any] = {}
-        if request.provider != "auto":
-            llm_context["provider"] = request.provider
-        if request.ollama_model:
-            llm_context["ollama_model"] = request.ollama_model
-        if request.ollama_timeout_seconds is not None:
-            llm_context["ollama_timeout_seconds"] = request.ollama_timeout_seconds
-        if request.ollama_num_ctx is not None:
-            llm_context["ollama_num_ctx"] = request.ollama_num_ctx
-        if request.ollama_num_thread is not None:
-            llm_context["ollama_num_thread"] = request.ollama_num_thread
-        if request.max_tokens is not None:
-            llm_context["max_tokens"] = request.max_tokens
-        if request.temperature is not None:
-            llm_context["temperature"] = request.temperature
-
-        # OFFLINE: always return a deterministic answer
-        if mode_used == "offline":
-            metrics = await _get_system_metrics_safe()
-            return {
-                "response": _build_fallback_text(request.query, metrics),
-                "thread_id": request.thread_id,
-                "trinity_score": 0.0,
-                "strategists_consulted": [],
-                "mode_used": mode_used,
-                "fallback_used": True,
-                "timed_out": False,
-                "system_metrics": metrics,
-            }
-
-        # FAST/LITE: single LLM call with tight budget, fallback to system metrics
-        if mode_used in {"fast", "lite"}:
-            # Budgeting: keep a small buffer for JSON serialization + fallback work
-            budget_total = float(request.timeout_seconds)
-            budget_llm = max(0.5, budget_total - 1.0)
-
-            # Mode defaults (can be overridden by request fields)
-            if mode_used == "fast":
-                llm_context.setdefault("max_tokens", 128)
-                llm_context.setdefault("temperature", 0.2)
-                llm_context.setdefault("ollama_timeout_seconds", budget_llm)
-                llm_context.setdefault("ollama_num_ctx", 2048)
-            else:
-                llm_context.setdefault("max_tokens", 384)
-                llm_context.setdefault("temperature", 0.4)
-                llm_context.setdefault("ollama_timeout_seconds", budget_llm)
-                llm_context.setdefault("ollama_num_ctx", 4096)
-
-            answer, routing, timed_out = await _single_shot_answer(
-                request.query, budget_llm, llm_context
-            )
-
-            if _is_real_answer(answer, routing):
-                return {
-                    "response": answer,
-                    "thread_id": request.thread_id,
-                    "trinity_score": 0.0,
-                    "strategists_consulted": ["single_shot"],
-                    "mode_used": mode_used,
-                    "fallback_used": False,
-                    "timed_out": timed_out,
-                    "routing": routing,
-                }
-
-            if not request.fallback_on_timeout:
-                raise HTTPException(
-                    status_code=504,
-                    detail=f"Chancellor LLM timeout after {request.timeout_seconds}s",
-                )
-
-            metrics = await _get_system_metrics_safe()
-            return {
-                "response": _build_fallback_text(request.query, metrics),
-                "thread_id": request.thread_id,
-                "trinity_score": 0.0,
-                "strategists_consulted": [],
-                "mode_used": mode_used,
-                "fallback_used": True,
-                "timed_out": True,
-                "system_metrics": metrics,
-                "routing": routing,
-            }
-
-        # FULL: LangGraph 기반 3책사 (필요 시 strategist 수 제한)
-        if chancellor_graph is None:
-            raise HTTPException(
-                status_code=503,
-                detail="Chancellor Graph가 초기화되지 않았습니다. chancellor_graph.py를 확인하세요.",
-            )
-
-        graph = chancellor_graph
-
-        # 초기 상태 설정 (Antigravity 통합)
-        # auto_run_eligible: request.auto_run과 antigravity.AUTO_DEPLOY를 모두 고려
-        # DRY_RUN 모드일 때는 auto_run을 False로 강제 (善: 안전 우선)
-        effective_auto_run = request.auto_run and not antigravity.DRY_RUN_DEFAULT
-
-        initial_state: ChancellorState = {
-            "messages": [],
-            "trinity_score": 0.0,
-            "risk_score": 0.0,
-            "auto_run_eligible": effective_auto_run,
-            "kingdom_context": {
-                "llm_context": llm_context,
-                "max_strategists": request.max_strategists,
-                # Antigravity 설정을 컨텍스트에 포함 (眞: 명시적 전달)
-                "antigravity": {
-                    "AUTO_DEPLOY": antigravity.AUTO_DEPLOY,
-                    "DRY_RUN_DEFAULT": antigravity.DRY_RUN_DEFAULT,
-                    "ENVIRONMENT": antigravity.ENVIRONMENT,
-                },
-            },
-            "persistent_memory": {},
-            "current_speaker": "user",
-            "next_step": "chancellor",
-            "steps_taken": 0,
-            "complexity": "Low",
-            "analysis_results": {},
-        }
-
-        # 사용자 메시지 추가
-        from langchain_core.messages import HumanMessage
-
-        initial_state["messages"].append(HumanMessage(content=request.query))
-
-        # Graph 실행
-        #
-        # NOTE:
-        # - LangGraph 내부가 sync I/O를 사용하면 event loop가 블로킹될 수 있어
-        #   asyncio.wait_for 타임아웃이 동작하지 않을 수 있습니다.
-        # - 안전하게 별도 스레드에서 sync `invoke()`를 실행하고, 타임아웃은 event loop에서 관리합니다.
-        config = {"configurable": {"thread_id": request.thread_id}}
-        try:
-            # [孫子]兵者詭道 - 시간제한 내에서 최선의 결과를 얻음
-            result = await asyncio.wait_for(
-                graph.ainvoke(initial_state, config),
-                timeout=float(request.timeout_seconds),
-            )
-        except TimeoutError as e:
-            if not request.fallback_on_timeout:
-                raise HTTPException(
-                    status_code=504,
-                    detail=f"Chancellor Graph timeout after {request.timeout_seconds}s",
-                ) from e
-
-            metrics = await _get_system_metrics_safe()
-            return {
-                "response": _build_fallback_text(request.query, metrics),
-                "thread_id": request.thread_id,
-                "trinity_score": 0.0,
-                "strategists_consulted": [],
-                "mode_used": mode_used,
-                "fallback_used": True,
-                "timed_out": True,
-                "system_metrics": metrics,
-            }
-
-        # 응답 추출
-        messages = result.get("messages", [])
-        last_message = messages[-1] if messages else None
-
-        response_text = ""
-        if last_message and hasattr(last_message, "content"):
-            response_text = last_message.content
-        elif isinstance(last_message, dict):
-            response_text = last_message.get("content", "")
-
-        # 책사 목록 추출
-        strategists_consulted = []
-        analysis_results = result.get("analysis_results", {})
-        if analysis_results:
-            strategists_consulted = list(analysis_results.keys())
-
-        return {
-            "response": response_text,
-            "thread_id": request.thread_id,
-            "trinity_score": result.get("trinity_score", 0.0),
-            "strategists_consulted": strategists_consulted,
-            "analysis_results": analysis_results,
-            "mode_used": mode_used,
-            "fallback_used": False,
-            "timed_out": False,
-        }
+        # 결과 포맷팅 및 타입 검증
+        return ChancellorInvokeResponse(**result)
 
     except HTTPException:
         raise
@@ -498,7 +551,14 @@ async def chancellor_health() -> dict[str, Any]:
             "message": "Chancellor Graph 정상 작동 중",
             "strategists": ["Zhuge Liang", "Sima Yi", "Zhou Yu"],
         }
-    except Exception as e:
+    except (ImportError, AttributeError, RuntimeError) as e:
+        logger.error("Chancellor Graph 초기화 실패 (import/속성/런타임 에러): %s", str(e))
+        return {
+            "status": "error",
+            "message": f"Chancellor Graph 초기화 실패: {e!s}",
+        }
+    except Exception as e:  # - Intentional fallback for unexpected errors
+        logger.error("Chancellor Graph 초기화 실패 (예상치 못한 에러): %s", str(e))
         return {
             "status": "error",
             "message": f"Chancellor Graph 초기화 실패: {e!s}",

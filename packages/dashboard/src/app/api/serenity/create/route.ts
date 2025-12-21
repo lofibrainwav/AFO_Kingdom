@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { API_BASE_URL } from '@/lib/constants';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 300; // 5 minutes max for Vercel/Edge
@@ -12,7 +13,7 @@ export async function POST(request: NextRequest) {
     const timeoutId = setTimeout(() => controller.abort(), 300000); // 5 min
 
     // Get backend URL from environment variable with fallback
-    const backendUrl = process.env.SOUL_ENGINE_URL || 'http://localhost:8010';
+    const backendUrl = process.env.SOUL_ENGINE_URL || API_BASE_URL;
 
     const response = await fetch(`${backendUrl}/api/serenity/create`, {
       method: 'POST',

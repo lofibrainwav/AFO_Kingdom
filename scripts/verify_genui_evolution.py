@@ -24,7 +24,7 @@ class TestGenUIEvolution(unittest.TestCase):
 
         result = self.orchestrator.create_project("test_blocked", "dashboard")
 
-        self.assertEqual(result.get("status"), "BLOCKED_BY_GOVERNANCE")
+        assert result.get("status") == "BLOCKED_BY_GOVERNANCE"
         print("✅ Correctly BLOCKED by Governance.")
 
     @patch.object(antigravity, "get_feature_flag")
@@ -40,8 +40,8 @@ class TestGenUIEvolution(unittest.TestCase):
 
         result = self.orchestrator.create_project("test_allowed", "dashboard")
 
-        self.assertNotEqual(result.get("status"), "BLOCKED_BY_GOVERNANCE")
-        self.assertIn("code_path", result)
+        assert result.get("status") != "BLOCKED_BY_GOVERNANCE"
+        assert "code_path" in result
         print("✅ Correctly ALLOWED by Governance.")
 
     @patch.object(antigravity, "get_feature_flag")
@@ -56,11 +56,11 @@ class TestGenUIEvolution(unittest.TestCase):
 
         result = self.orchestrator.create_project("test_vision_block", "dashboard")
 
-        self.assertNotEqual(result.get("status"), "BLOCKED_BY_GOVERNANCE")
+        assert result.get("status") != "BLOCKED_BY_GOVERNANCE"
 
         # Verify vision result failure message or state
         vision = result.get("vision_result", {})
-        self.assertEqual(vision.get("success"), False)
+        assert not vision.get("success")
         print("✅ Correctly BLOCKED Vision while allowing Creation.")
 
 

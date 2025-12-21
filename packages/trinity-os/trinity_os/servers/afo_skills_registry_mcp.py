@@ -35,7 +35,7 @@ class AfoSkillsRegistryMCP:
     """
 
     @classmethod
-    def run_loop(cls):
+    def run_loop(cls) -> None:
         """JSON-RPC Main Loop"""
         if not SKILLS_REGISTRY_AVAILABLE:
             print("❌ Skills Registry를 로드할 수 없습니다.", file=sys.stderr)
@@ -169,7 +169,12 @@ class AfoSkillsRegistryMCP:
                             }
 
                 else:
-                    result = {"error": {"code": -32601, "message": f"Method not found: {method}"}}
+                    result = {
+                        "error": {
+                            "code": -32601,
+                            "message": f"Method not found: {method}",
+                        }
+                    }
 
                 response = {"jsonrpc": "2.0", "id": request_id, "result": result}
                 print(json.dumps(response))

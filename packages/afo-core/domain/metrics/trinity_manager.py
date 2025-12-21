@@ -24,7 +24,7 @@ class TrinityManager:
         "PERSISTENCE_SAVE": {"eternity": 5.0},  # Checking point
     }
 
-    def __init__(self):
+    def __init__(self) -> None:
         # Initial State: Perfect Harmony
         self.base_inputs = TrinityInputs(1.0, 1.0, 1.0, 1.0)  # 100%
         self.eternity = 1.0

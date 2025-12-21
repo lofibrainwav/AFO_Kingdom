@@ -59,7 +59,9 @@ class VaultKMS:
         try:
             # [대학] 성의정심 - 뜻을 성실히 하고 마음을 바르게 함
             self.client.secrets.kv.v2.create_or_update_secret(
-                mount_point=self.mount_point, path=self.secret_path, secret={"encryption_key": key}
+                mount_point=self.mount_point,
+                path=self.secret_path,
+                secret={"encryption_key": key},
             )
             return True
         except Exception as e:

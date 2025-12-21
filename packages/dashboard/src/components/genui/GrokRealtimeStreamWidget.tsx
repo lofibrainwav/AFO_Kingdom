@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Zap, Activity } from 'lucide-react';
+import { logError } from '@/lib/logger';
 
 interface StreamMessage {
   id: number;
@@ -27,7 +28,7 @@ export default function GrokRealtimeStreamWidget() {
          // Keep only the latest 30 messages to avoid clutter (Beauty)
         setMessages(prev => [newMsg, ...prev].slice(0, 30));
       } catch (e) {
-        console.error("Stream parse error", e);
+        logError("Stream parse error", { error: e instanceof Error ? e.message : 'Unknown error' });
       }
     };
 

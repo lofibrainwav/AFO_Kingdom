@@ -18,8 +18,11 @@ class Historian:
 
     @staticmethod
     def record(
-        query: str, trinity_score: float, status: str, metadata: dict[str, Any] | None = None
-    ):
+        query: str,
+        trinity_score: float,
+        status: str,
+        metadata: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
         """
         Records a major event/decision to the Chronicles.
         """
@@ -46,14 +49,19 @@ class Historian:
         return record_entry
 
     @staticmethod
-    def log_chronicle(content: str):
+    def log_chronicle(content: str) -> None:
         """
         Logs a free-form chronicle entry.
+
+        Args:
+            content: Chronicle content to log
         """
         logger.info(f"📜 [Historian] {content}")
 
     @staticmethod
-    def log_preference(query: str, rejected: str, chosen: str, critique: str = ""):
+    def log_preference(
+        query: str, rejected: str, chosen: str, critique: str = ""
+    ) -> dict[str, Any]:
         """
         [RLAIF] Records 'Chosen' vs 'Rejected' responses based on 헌법(Constitution).
         Used for future model alignment and moral fine-tuning.

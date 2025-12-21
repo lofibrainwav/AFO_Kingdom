@@ -1,10 +1,10 @@
 # scripts/test_modular_architecture.py
-import os
+import pathlib
 import sys
 
 
 # Ensure packages/afo-core is in python path
-sys.path.append(os.path.abspath("packages/afo-core"))
+sys.path.append(pathlib.Path("packages/afo-core").resolve())
 
 
 def test_modules():

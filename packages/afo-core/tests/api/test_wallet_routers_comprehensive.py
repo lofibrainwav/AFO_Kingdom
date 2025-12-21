@@ -160,11 +160,12 @@ def test_save_browser_token_success():
     mock_wallet = MagicMock()
     mock_wallet.get.return_value = None
 
-    with patch("AFO.api.routes.wallet.browser_bridge.APIWallet", return_value=mock_wallet):
-        with patch("os.urandom", return_value=b"\x00\x00"):  # hex '0000'
-            response = client.post("/browser/save-token", json={"service": "n8n", "token": "abc"})
-            assert response.status_code == 200
-            assert "session_0000" in response.json()["key_name"]
+    with patch("AFO.api.routes.wallet.browser_bridge.APIWallet", return_value=mock_wallet), patch(
+        "os.urandom", return_value=b"\x00\x00"
+    ):  # hex '0000'
+        response = client.post("/browser/save-token", json={"service": "n8n", "token": "abc"})
+        assert response.status_code == 200
+        assert "session_0000" in response.json()["key_name"]
 
 
 def test_get_extraction_script_found():
@@ -203,7 +204,8 @@ def test_extract_session_invalid_provider():
 def test_set_api_key_success():
     with patch.dict(sys.modules, {"afo_soul_engine.api_server": MagicMock()}):
         response = client.post(
-            "/api/wallet/setup/api-key", json={"provider": "openai", "api_key": "sk-..."}
+            "/api/wallet/setup/api-key",
+            json={"provider": "openai", "api_key": "sk-..."},
         )
         assert response.status_code == 200
 

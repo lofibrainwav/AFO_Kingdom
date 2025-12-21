@@ -1,10 +1,13 @@
 import asyncio
 import os
+import pathlib
 import sys
 
 
 # Set path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../packages/afo-core")))
+sys.path.append(
+    pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")).resolve()
+)
 
 import pathlib
 
@@ -19,12 +22,12 @@ async def main():
 
     # Read existing
     if pathlib.Path(target_path).exists():
-        with pathlib.Path(target_path).open() as f:
+        with pathlib.Path(target_path).open(encoding="utf-8") as f:
             original = f.read()
 
     # Sabotage it (Remove Glassmorphism) to test Juyu
     rough_code = original.replace("glass-card", "bg-gray-500")
-    with pathlib.Path(target_path).open("w") as f:
+    with pathlib.Path(target_path).open("w", encoding="utf-8") as f:
         f.write(rough_code)
     print("\n[Setup] Sabotaged Widget (Removed 'glass-card' token)")
 
@@ -34,7 +37,7 @@ async def main():
     print(f"Result: {result}")
 
     # 3. Verify
-    with pathlib.Path(target_path).open() as f:
+    with pathlib.Path(target_path).open(encoding="utf-8") as f:
         final_code = f.read()
 
     if "glass-card" in final_code:

@@ -32,77 +32,31 @@ const phases: Phase[] = [
 
 export function KingdomChronicleTimeline() {
   return (
-    <div 
-      className="chronicle-timeline"
-      style={{
-        background: 'linear-gradient(135deg, rgba(17, 24, 39, 0.9), rgba(88, 28, 135, 0.3))',
-        backdropFilter: 'blur(20px)',
-        borderRadius: '24px',
-        border: '1px solid rgba(255, 255, 255, 0.1)',
-        padding: '32px',
-        maxWidth: '800px',
-        margin: '0 auto',
-        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
-      }}
-    >
+    <div className="chronicle-timeline bg-gradient-to-br from-gray-900/90 to-purple-900/30 backdrop-blur-xl rounded-3xl border border-white/10 p-8 max-w-[800px] mx-auto shadow-2xl">
       {/* Header */}
-      <h2 
-        style={{
-          fontSize: '28px',
-          fontWeight: 'bold',
-          textAlign: 'center',
-          background: 'linear-gradient(to right, #22D3EE, #A855F7)',
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-          marginBottom: '8px',
-        }}
-      >
+      <h2 className="text-3xl font-bold text-center bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent mb-2">
         🏰 AFO 왕국 진화 연대기
       </h2>
-      <p style={{ textAlign: 'center', color: 'rgba(255,255,255,0.7)', marginBottom: '32px', fontStyle: 'italic' }}>
+      <p className="text-center text-white/70 mb-8 italic">
         "역사를 모르는 자는 미래를 만들 수 없다." — 孫子
       </p>
 
       {/* Timeline */}
-      <div style={{ position: 'relative', paddingLeft: '40px' }}>
+      <div className="relative pl-10">
         {/* Vertical Line */}
-        <div 
-          style={{
-            position: 'absolute',
-            left: '16px',
-            top: '0',
-            bottom: '0',
-            width: '2px',
-            background: 'linear-gradient(to bottom, #22D3EE, #A855F7, #FBBF24)',
-          }}
-        />
+        <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-gradient-to-b from-cyan-400 via-purple-500 to-amber-400" />
 
         {phases.map((p, i) => (
           <div 
             key={i}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '20px',
-              marginBottom: '24px',
-              position: 'relative',
-            }}
+            className="flex items-center gap-5 mb-6 relative"
           >
             {/* Circle Node */}
             <div 
+              className="absolute -left-8 w-8 h-8 rounded-full flex items-center justify-center text-base z-10"
               style={{
-                position: 'absolute',
-                left: '-32px',
-                width: '32px',
-                height: '32px',
-                borderRadius: '50%',
                 background: p.color,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '16px',
                 boxShadow: `0 0 20px ${p.color}50`,
-                zIndex: 1,
               }}
             >
               {p.icon}
@@ -110,46 +64,28 @@ export function KingdomChronicleTimeline() {
 
             {/* Content Card */}
             <div 
+              className="flex-1 bg-white/5 rounded-xl px-5 py-4 transition-all duration-300 ease-in-out hover:bg-white/10 hover:translate-x-2"
               style={{
-                flex: 1,
-                background: 'rgba(255, 255, 255, 0.05)',
-                borderRadius: '12px',
-                padding: '16px 20px',
                 border: `1px solid ${p.color}30`,
-                transition: 'all 0.3s ease',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
-                e.currentTarget.style.transform = 'translateX(8px)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)';
-                e.currentTarget.style.transform = 'translateX(0)';
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div className="flex items-center gap-3">
                 <span 
-                  style={{
-                    background: p.color,
-                    color: 'white',
-                    padding: '4px 12px',
-                    borderRadius: '20px',
-                    fontSize: '12px',
-                    fontWeight: 'bold',
-                  }}
+                  className="text-white px-3 py-1 rounded-full text-xs font-bold"
+                  style={{ background: p.color }}
                 >
                   Phase {p.phase}
                 </span>
                 {p.commits && (
-                  <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '12px' }}>
+                  <span className="text-white/50 text-xs">
                     {p.commits} commits
                   </span>
                 )}
               </div>
-              <h3 style={{ color: 'white', fontSize: '18px', fontWeight: 'bold', marginTop: '8px' }}>
+              <h3 className="text-white text-lg font-bold mt-2">
                 {p.title}
               </h3>
-              <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '14px', marginTop: '4px' }}>
+              <p className="text-white/70 text-sm mt-1">
                 {p.desc}
               </p>
             </div>
@@ -158,31 +94,22 @@ export function KingdomChronicleTimeline() {
       </div>
 
       {/* Footer Stats */}
-      <div 
-        style={{
-          marginTop: '32px',
-          padding: '20px',
-          background: 'linear-gradient(135deg, rgba(34, 211, 238, 0.1), rgba(168, 85, 247, 0.1))',
-          borderRadius: '16px',
-          border: '1px solid rgba(255,255,255,0.1)',
-          textAlign: 'center',
-        }}
-      >
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '40px', flexWrap: 'wrap' }}>
+      <div className="mt-8 p-5 bg-gradient-to-br from-cyan-500/10 to-purple-500/10 rounded-2xl border border-white/10 text-center">
+        <div className="flex justify-center gap-10 flex-wrap">
           <div>
-            <div style={{ color: '#22D3EE', fontSize: '32px', fontWeight: 'bold' }}>92</div>
-            <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '14px' }}>Total Commits</div>
+            <div className="text-cyan-400 text-3xl font-bold">92</div>
+            <div className="text-white/70 text-sm">Total Commits</div>
           </div>
           <div>
-            <div style={{ color: '#A855F7', fontSize: '32px', fontWeight: 'bold' }}>100.0</div>
-            <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '14px' }}>SSOT Score</div>
+            <div className="text-purple-500 text-3xl font-bold">100.0</div>
+            <div className="text-white/70 text-sm">SSOT Score</div>
           </div>
           <div>
-            <div style={{ color: '#22C55E', fontSize: '32px', fontWeight: 'bold' }}>290+</div>
-            <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '14px' }}>Tests Passing</div>
+            <div className="text-green-500 text-3xl font-bold">290+</div>
+            <div className="text-white/70 text-sm">Tests Passing</div>
           </div>
         </div>
-        <p style={{ color: '#FBBF24', marginTop: '16px', fontWeight: 'bold', fontSize: '16px' }}>
+        <p className="text-amber-400 mt-4 font-bold text-base">
           眞善美孝永 — 다섯 기둥이 왕국을 지탱합니다
         </p>
       </div>

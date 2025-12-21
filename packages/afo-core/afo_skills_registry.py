@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from enum import Enum
-from typing import Annotated, Any
+from typing import Annotated, Any, ClassVar
 
 from pydantic import BaseModel, ConfigDict, Field, HttpUrl, field_validator
 
@@ -104,7 +104,8 @@ class MCPConfig(BaseModel):
     )
     mcp_version: str = Field(default="2025.1", description="MCP protocol version")
     capabilities: list[str] = Field(
-        default_factory=list, description="MCP capabilities (e.g., 'tools', 'prompts', 'resources')"
+        default_factory=list,
+        description="MCP capabilities (e.g., 'tools', 'prompts', 'resources')",
     )
     authentication_required: bool = Field(
         default=False, description="Whether MCP server requires authentication"
@@ -164,7 +165,12 @@ class AFOSkillCard(BaseModel):
                     "llm_spec_generation",
                     "n8n_workflow_creation",
                 ],
-                "philosophy_scores": {"truth": 95, "goodness": 90, "beauty": 92, "serenity": 88},
+                "philosophy_scores": {
+                    "truth": 95,
+                    "goodness": 90,
+                    "beauty": 92,
+                    "serenity": 88,
+                },
             }
         }
     )
@@ -299,7 +305,10 @@ class SkillFilterParams(BaseModel):
     status: SkillStatus | None = Field(default=None, description="Filter by status")
     tags: list[str] | None = Field(default=None, description="Filter by tags (OR logic)")
     search: str | None = Field(
-        default=None, min_length=2, max_length=100, description="Search in name/description"
+        default=None,
+        min_length=2,
+        max_length=100,
+        description="Search in name/description",
     )
     min_philosophy_avg: int | None = Field(
         default=None, ge=0, le=100, description="Minimum average philosophy score"
@@ -324,7 +333,7 @@ class SkillRegistry:
     """
 
     _instance = None
-    _skills: dict[str, AFOSkillCard] = {}
+    _skills: ClassVar[dict[str, AFOSkillCard]] = {}
 
     def __new__(cls) -> Any:
         if cls._instance is None:
@@ -529,7 +538,12 @@ def register_core_skills() -> SkillRegistry:
         category=SkillCategory.RAG_SYSTEMS,
         tags=["rag", "crag", "self-rag", "hybrid", "lyapunov"],
         version="2.0.0",
-        capabilities=["corrective_rag", "self_rag", "lyapunov_convergence", "multi_hop_reasoning"],
+        capabilities=[
+            "corrective_rag",
+            "self_rag",
+            "lyapunov_convergence",
+            "multi_hop_reasoning",
+        ],
         dependencies=["openai_api", "langchain"],
         execution_mode=ExecutionMode.STREAMING,
         estimated_duration_ms=3000,
@@ -791,7 +805,12 @@ def register_core_skills() -> SkillRegistry:
         category=SkillCategory.INTEGRATION,
         tags=["mcp", "integration", "tools", "bridge", "universal"],
         version="1.0.0",
-        capabilities=["list_mcp_resources", "list_mcp_tools", "call_mcp_tool", "read_mcp_resource"],
+        capabilities=[
+            "list_mcp_resources",
+            "list_mcp_tools",
+            "call_mcp_tool",
+            "read_mcp_resource",
+        ],
         dependencies=["mcp"],
         execution_mode=ExecutionMode.ASYNC,
         estimated_duration_ms=1000,
@@ -859,7 +878,12 @@ def register_core_skills() -> SkillRegistry:
         category=SkillCategory.WORKFLOW_AUTOMATION,
         tags=["suno", "music", "creative", "ai-art", "audio"],
         version="1.0.0",
-        capabilities=["generate_music", "generate_lyrics", "download_audio", "get_credits"],
+        capabilities=[
+            "generate_music",
+            "generate_lyrics",
+            "download_audio",
+            "get_credits",
+        ],
         dependencies=["suno-api", "requests"],
         execution_mode=ExecutionMode.ASYNC,
         estimated_duration_ms=60000,
@@ -904,7 +928,12 @@ def register_core_skills() -> SkillRegistry:
         category=SkillCategory.HEALTH_MONITORING,
         tags=["data-pipeline", "real-time", "friction", "complexity", "metrics"],
         version="1.0.0",
-        capabilities=["ingest_logs", "calculate_friction", "track_complexity", "stream_metrics"],
+        capabilities=[
+            "ingest_logs",
+            "calculate_friction",
+            "track_complexity",
+            "stream_metrics",
+        ],
         dependencies=["kafka", "redis", "pandas"],
         execution_mode=ExecutionMode.STREAMING,
         estimated_duration_ms=100,
@@ -924,7 +953,12 @@ def register_core_skills() -> SkillRegistry:
         category=SkillCategory.HEALTH_MONITORING,
         tags=["docker", "recovery", "self-healing", "sima-yi", "uptime"],
         version="1.0.0",
-        capabilities=["monitor_containers", "restart_container", "detect_deadlock", "analyze_logs"],
+        capabilities=[
+            "monitor_containers",
+            "restart_container",
+            "detect_deadlock",
+            "analyze_logs",
+        ],
         dependencies=["docker", "ai-analysis"],
         execution_mode=ExecutionMode.BACKGROUND,
         estimated_duration_ms=5000,
@@ -942,7 +976,13 @@ def register_core_skills() -> SkillRegistry:
         name="Hybrid GraphRAG",
         description="Advanced knowledge retrieval combining Vector Search with Knowledge Graphs for deep context understanding (Roadmap S4-P3).",
         category=SkillCategory.RAG_SYSTEMS,
-        tags=["graph-rag", "knowledge-graph", "vector-search", "hybrid", "deep-context"],
+        tags=[
+            "graph-rag",
+            "knowledge-graph",
+            "vector-search",
+            "hybrid",
+            "deep-context",
+        ],
         version="1.0.0",
         capabilities=[
             "graph_traversal",
@@ -986,6 +1026,40 @@ def register_core_skills() -> SkillRegistry:
 
     for skill in skills:
         registry.register(skill)
+
+    # 자동화 디버깅 스킬 등록
+    try:
+        debugging_skill = AFOSkillCard(
+            skill_id="skill_020_automated_debugging",
+            name="자동화 디버깅",
+            description="AFO 왕국의 모든 기술과 도구를 통합한 완벽한 자동화 디버깅 시스템. 에러 감지, 분류, 진단, 해결책 제안, 자동 수정까지 모든 과정을 자동화합니다.",
+            category=SkillCategory.WORKFLOW_AUTOMATION,
+            tags=["debugging", "automation", "error-detection", "auto-fix"],
+            version="1.0.0",
+            capabilities=[
+                "error_detection",
+                "error_classification",
+                "auto_diagnosis",
+                "solution_suggestion",
+                "auto_fix",
+                "trinity_score_calculation",
+            ],
+            dependencies=["ruff", "black", "mypy"],
+            execution_mode=ExecutionMode.ASYNC,
+            estimated_duration_ms=30000,
+            philosophy_scores=PhilosophyScore(
+                truth=95,  # 정확한 에러 감지
+                goodness=90,  # 안전한 자동 수정
+                beauty=88,  # 우아한 워크플로우
+                serenity=92,  # 개발자 경험 최적화
+            ),
+        )
+        registry.register(debugging_skill)
+    except Exception as e:
+        import logging
+
+        logger = logging.getLogger(__name__)
+        logger.warning(f"자동화 디버깅 스킬 등록 실패: {e}")
 
     return registry
 

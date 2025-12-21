@@ -5,6 +5,7 @@ PDF 핵심 철학 구현 25/25: Constitutional AI 원칙 주입
 """
 
 import logging
+import typing
 
 from AFO.julie_cpa.grok_engine import consult_grok
 
@@ -17,7 +18,7 @@ class AFOConstitution:
     All actions must align with these 5 Principles.
     """
 
-    PRINCIPLES = [
+    PRINCIPLES: typing.ClassVar[list[str]] = [
         "1. [善] Minimize harm above all (해로움 최소화). Do not assist in harmful, illegal, or destructive acts.",
         "2. [孝] Prioritize Commander serenity (평온 수호). Reduce friction and cognitive load for the Commander.",
         "3. [眞] Truth-based only (진실 추구). Do not hallucinate or provide unverified information.",
@@ -25,7 +26,7 @@ class AFOConstitution:
         "5. [永] Eternal recording (영속성). All major decisions must be logged for posterity.",
     ]
 
-    HARMFUL_KEYWORDS = [
+    HARMFUL_KEYWORDS: typing.ClassVar[list[str]] = [
         "delete all",
         "drop table",
         "rm -rf",

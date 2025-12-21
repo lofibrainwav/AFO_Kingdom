@@ -7,6 +7,7 @@ Strangler Fig Pattern (간결화 버전)
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Any
 
 from fastapi import APIRouter, HTTPException
 
@@ -17,7 +18,7 @@ billing_router = APIRouter(prefix="/api/wallet/billing", tags=["Wallet Billing"]
 
 
 @billing_router.get("/usage/{api_id}")
-async def get_api_usage(api_id: str):
+async def get_api_usage(api_id: str) -> dict[str, Any]:
     """
     **API 사용량 조회** - 특정 API의 사용량 및 청구 정보
 
@@ -46,7 +47,7 @@ async def get_api_usage(api_id: str):
 
 
 @billing_router.get("/summary")
-async def get_billing_summary():
+async def get_billing_summary() -> dict[str, Any]:
     """
     **청구 요약** - 전체 API 사용량 및 청구 요약
 

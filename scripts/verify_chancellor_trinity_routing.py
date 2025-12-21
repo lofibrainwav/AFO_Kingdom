@@ -6,11 +6,14 @@ Tests AUTO_RUN and ASK_COMMANDER scenarios.
 
 import asyncio
 import os
+import pathlib
 import sys
 
 
 # Ensure AFO package is importable
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../packages/afo-core")))
+sys.path.append(
+    pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")).resolve()
+)
 
 from langchain_core.messages import HumanMessage
 

@@ -43,7 +43,9 @@ class LangChainRetrievalQAResponse(BaseModel):
 
     question: str = Field(..., description="User question")
     answer: str = Field(..., description="Generated answer")
-    confidence: dict = Field(..., description="Confidence information (score, level, threshold)")
-    sources: list[dict] = Field(default=[], description="Source document information")
-    metadata: dict = Field(..., description="Metadata (model, processing time, etc.)")
+    confidence: dict[str, Any] = Field(
+        ..., description="Confidence information (score, level, threshold)"
+    )
+    sources: list[dict[str, Any]] = Field(default=[], description="Source document information")
+    metadata: dict[str, Any] = Field(..., description="Metadata (model, processing time, etc.)")
     warning: str | None = Field(default=None, description="Confidence warning message")

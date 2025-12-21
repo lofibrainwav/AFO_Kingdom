@@ -6,7 +6,7 @@ import random
 OUTPUT_FILE = "data/afo_thoughts_500.csv"
 
 # 5 Pillars Definitions for Synthetic Data
-PILLARS = {
+PILLARS: dict[str, list[str]] = {
     "眞": [
         "type checking",
         "mypy strict",
@@ -70,8 +70,9 @@ PILLARS = {
 }
 
 
-def generate_data():
-    data = []
+def generate_data() -> None:
+    """Generate synthetic evolution data for AFO Kingdom training."""
+    data: list[list[str]] = []
 
     # Generate 100 samples per pillar for perfect balance
     for pillar, phrases in PILLARS.items():

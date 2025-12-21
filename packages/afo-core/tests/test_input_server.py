@@ -67,7 +67,13 @@ def test_home_page_no_keys(mock_get):
 def test_home_page_with_keys(mock_get):
     mock_response = MagicMock(status_code=200)
     mock_response.json.return_value = {
-        "keys": [{"name": "test_key", "provider": "openai", "created_at": "2024-01-01T00:00:00"}]
+        "keys": [
+            {
+                "name": "test_key",
+                "provider": "openai",
+                "created_at": "2024-01-01T00:00:00",
+            }
+        ]
     }
     mock_get.return_value = mock_response
 

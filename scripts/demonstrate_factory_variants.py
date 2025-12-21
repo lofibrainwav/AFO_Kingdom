@@ -30,7 +30,8 @@ class SimpleSkillFactory:
             return YoutubeSkill()
         if skill_type == "rag":
             return RAGSkill()
-        raise ValueError("Unknown Skill")
+        msg = "Unknown Skill"
+        raise ValueError(msg)
 
 
 # ==========================================

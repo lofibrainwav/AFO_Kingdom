@@ -17,7 +17,12 @@ class TestLLMRouterConfig:
 
     def test_ollama_is_local(self) -> None:
         """Ollama가 로컬(무료)인지 확인"""
-        provider_costs = {"ollama": 0.0, "gemini": 0.001, "claude": 0.008, "openai": 0.01}
+        provider_costs = {
+            "ollama": 0.0,
+            "gemini": 0.001,
+            "claude": 0.008,
+            "openai": 0.01,
+        }
         assert provider_costs["ollama"] == 0.0
 
     def test_fallback_order(self) -> None:
@@ -57,7 +62,12 @@ class TestLLMProviderSelection:
 
     def test_context_length_limits(self) -> None:
         """컨텍스트 길이 제한 테스트"""
-        context_limits = {"ollama": 2048, "gemini": 32000, "claude": 100000, "openai": 128000}
+        context_limits = {
+            "ollama": 2048,
+            "gemini": 32000,
+            "claude": 100000,
+            "openai": 128000,
+        }
         # Ollama는 가장 짧은 컨텍스트
         assert context_limits["ollama"] < context_limits["gemini"]
 

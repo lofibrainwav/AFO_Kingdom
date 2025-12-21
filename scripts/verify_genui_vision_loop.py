@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
-import os
 import pathlib
 import sys
 
 
 # Add package root to path
-sys.path.append(os.path.abspath("packages/afo-core"))
-sys.path.append(os.path.abspath("packages/trinity-os"))
+sys.path.append(pathlib.Path("packages/afo-core").resolve())
+sys.path.append(pathlib.Path("packages/trinity-os").resolve())
 
 try:
     from AFO.genui.genui_orchestrator import GenUIOrchestrator

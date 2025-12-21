@@ -12,6 +12,7 @@
 
 import json
 import re
+import sys
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -139,7 +140,10 @@ class ObsidianTemplateValidator:
             errors.append(f"파일 읽기 오류: {e!s}")
 
         return TemplateValidationResult(
-            template_name=template_name, is_valid=len(errors) == 0, errors=errors, warnings=warnings
+            template_name=template_name,
+            is_valid=len(errors) == 0,
+            errors=errors,
+            warnings=warnings,
         )
 
     def validate_frontmatter(self, content: str) -> tuple[list[str], list[str]]:
@@ -161,9 +165,11 @@ class ObsidianTemplateValidator:
 
             # 필수 필드 검증
             required_fields = ["tags"]
-            for field in required_fields:
-                if field not in frontmatter:
-                    errors.append(f"필수 필드가 누락됨: {field}")
+            errors.extend(
+                f"필수 필드가 누락됨: {field}"
+                for field in required_fields
+                if field not in frontmatter
+            )
 
             # 태그 형식 검증
             if "tags" in frontmatter and not isinstance(frontmatter["tags"], list):
@@ -290,7 +296,10 @@ class ObsidianTemplateValidator:
                         SystemValidationResult(
                             component="template_folder",
                             status="warning",
-                            details={"expected": "_templates", "actual": template_folder},
+                            details={
+                                "expected": "_templates",
+                                "actual": template_folder,
+                            },
                         )
                     )
                 else:
@@ -305,7 +314,9 @@ class ObsidianTemplateValidator:
             except Exception as e:
                 results.append(
                     SystemValidationResult(
-                        component="app_config", status="error", details={"error": str(e)}
+                        component="app_config",
+                        status="error",
+                        details={"error": str(e)},
                     )
                 )
         else:
@@ -347,7 +358,9 @@ class ObsidianTemplateValidator:
             except Exception as e:
                 results.append(
                     SystemValidationResult(
-                        component="plugins_config", status="error", details={"error": str(e)}
+                        component="plugins_config",
+                        status="error",
+                        details={"error": str(e)},
                     )
                 )
 
@@ -456,14 +469,19 @@ def main():
         print(f"  🔴 총 오류 수: {summary['total_errors']}")
         print(f"  🟡 총 경고 수: {summary['total_warnings']}")
 
-        status_emoji = {"excellent": "🌟", "good": "✅", "acceptable": "⚠️", "needs_attention": "🔴"}
+        status_emoji = {
+            "excellent": "🌟",
+            "good": "✅",
+            "acceptable": "⚠️",
+            "needs_attention": "🔴",
+        }
 
         print(
             f"  {status_emoji.get(summary['system_status'], '❓')} 시스템 상태: {summary['system_status'].upper()}"
         )
 
         # 검증 성공/실패 결정
-        if summary["system_status"] in ["excellent", "good"]:
+        if summary["system_status"] in {"excellent", "good"}:
             print("\n🎉 옵시디언 템플릿 시스템 검증 완료!")
             return 0
         print("\n⚠️ 옵시디언 템플릿 시스템 검증 실패 - 개선 필요")
@@ -475,4 +493,4 @@ def main():
 
 
 if __name__ == "__main__":
-    exit(main())
+    sys.exit(main())

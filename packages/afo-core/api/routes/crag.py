@@ -8,9 +8,13 @@ from __future__ import annotations
 import logging
 import os
 import time
+from typing import TYPE_CHECKING
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 logger = logging.getLogger("crag")
 
@@ -23,8 +27,8 @@ except ImportError:
     LANGSMITH_AVAILABLE = False
 
     # Fallback: no-op decorator
-    def traceable(name: str | None = None):  # type: ignore[no-redef]
-        def decorator(func):
+    def traceable(name: str | None = None) -> Callable[[Callable], Callable]:  # type: ignore[no-redef]
+        def decorator(func: Callable) -> Callable:
             return func
 
         return decorator
@@ -122,7 +126,11 @@ async def grade_documents(question: str, documents: list[str]) -> dict[str, floa
             # AFO LLM Router를 사용하여 답변 생성
             result = await llm_router.execute_with_routing(
                 query=prompt,
-                context={"task": "relevance_grading", "question": question, "document": doc[:500]},
+                context={
+                    "task": "relevance_grading",
+                    "question": question,
+                    "document": doc[:500],
+                },
             )
 
             # 응답에서 숫자 추출

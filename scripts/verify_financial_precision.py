@@ -1,13 +1,16 @@
 import asyncio
 import os
+import pathlib
 import sys
 from decimal import Decimal
 
 
 # Setup path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../packages")))
+sys.path.append(pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages")).resolve())
 # Also add packages/afo-core directly for internal imports if needed
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../packages/afo-core")))
+sys.path.append(
+    pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")).resolve()
+)
 
 try:
     from julie_cpa.core.julie_engine import AdjustBudgetCommand, julie

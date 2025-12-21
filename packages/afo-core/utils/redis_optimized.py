@@ -18,6 +18,8 @@ import json
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     import redis.asyncio as redis
 
 
@@ -42,7 +44,8 @@ class OptimizedRedisCache:
             return
 
         # GET-OR-COMPUTE 스크립트
-        self.get_or_compute_script = self.client.register_script("""
+        self.get_or_compute_script = self.client.register_script(
+            """
             local key = KEYS[1]
             local ttl = ARGV[1]
 
@@ -55,10 +58,12 @@ class OptimizedRedisCache:
             -- 없으면 placeholder 설정 후 miss 반환
             redis.call('SETEX', key, ttl, '__COMPUTING__')
             return {'miss', ''}
-        """)
+        """
+        )
 
         # 배치 GET 스크립트
-        self.batch_get_script = self.client.register_script("""
+        self.batch_get_script = self.client.register_script(
+            """
             local results = {}
             for i, key in ipairs(KEYS) do
                 local value = redis.call('GET', key)
@@ -69,10 +74,16 @@ class OptimizedRedisCache:
                 end
             end
             return results
-        """)
+        """
+        )
 
     async def get_or_compute(
-        self, key: str, compute_func, ttl_seconds: int = 300, *args, **kwargs
+        self,
+        key: str,
+        compute_func: Callable[..., Any],
+        ttl_seconds: int = 300,
+        *args: Any,
+        **kwargs: Any,
     ) -> Any:
         """
         GET-OR-COMPUTE 패턴 구현
@@ -92,7 +103,7 @@ class OptimizedRedisCache:
 
         try:
             # Lua Script 실행
-            result = await self.get_or_compute_script(keys=[key], args=[ttl_seconds])  # type: ignore
+            result = await self.get_or_compute_script(keys=[key], args=[ttl_seconds])
 
             if result[0] == "hit":
                 self.hit_count += 1
@@ -126,7 +137,7 @@ class OptimizedRedisCache:
 
         try:
             # Lua Script로 배치 조회
-            results = await self.batch_get_script(keys=keys)  # type: ignore
+            results = await self.batch_get_script(keys=keys)
 
             self.pipeline_count += 1
             sum(1 for r in results if r is not False)
@@ -188,7 +199,14 @@ def get_redis_cache(client: redis.Redis | None = None) -> OptimizedRedisCache:
 
 
 # 편의 함수들
-async def cached_get_or_compute(key: str, compute_func, ttl_seconds: int = 300, *args, **kwargs):
+async def cached_get_or_compute(
+    key: str,
+    compute_func: Callable[..., Any],
+    ttl_seconds: int = 300,
+    *args: Any,
+    **kwargs: Any,
+) -> Any:
+    """편의 함수 - 캐시된 GET-OR-COMPUTE"""
     """편의 함수 - 캐시된 GET-OR-COMPUTE"""
     cache = get_redis_cache()
     return await cache.get_or_compute(key, compute_func, ttl_seconds, *args, **kwargs)
@@ -213,7 +231,7 @@ def get_cache_stats() -> dict[str, Any]:
 
 
 # 캐시 키 생성 헬퍼
-def make_cache_key(prefix: str, *args, **kwargs) -> str:
+def make_cache_key(prefix: str, *args: Any, **kwargs: Any) -> str:
     """표준화된 캐시 키 생성"""
     key_data = f"{prefix}:{args}:{sorted(kwargs.items())}"
     return hashlib.md5(key_data.encode()).hexdigest()

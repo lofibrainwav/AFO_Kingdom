@@ -1,49 +1,200 @@
 """
-Prometheus Middleware for AFO Kingdom (Phase 20)
-Collects metrics for all incoming requests: Latency, Count, Errors.
+Prometheus Metrics Middleware for AFO Kingdom API
+
+Provides comprehensive monitoring metrics including:
+- HTTP request/response metrics
+- Trinity score tracking
+- API performance monitoring
+- Error rate tracking
 """
 
+from typing import Callable
+from fastapi import Request, Response
+from starlette.middleware.base import BaseHTTPMiddleware
 import time
+import prometheus_client as prom
 
-from fastapi import FastAPI, Request
-from prometheus_client import Counter, Gauge, Histogram, start_http_server
-
-# Metrics Definitions
-REQUEST_COUNT = Counter(
-    "http_requests_total", "Total HTTP requests", ["method", "endpoint", "status"]
+# HTTP Metrics
+REQUEST_COUNT = prom.Counter(
+    'http_requests_total',
+    'Total number of HTTP requests',
+    ['method', 'endpoint', 'status_code', 'service']
 )
-REQUEST_LATENCY = Histogram("http_request_latency_seconds", "HTTP request latency", ["endpoint"])
-DB_CONNECTIONS = Gauge("db_connections", "Current DB connections")
-TRINITY_SCORE = Gauge("trinity_score", "Current Trinity Score")
-RISK_SCORE = Gauge("risk_score_current", "Current System Risk Score")
+
+REQUEST_LATENCY = prom.Histogram(
+    'http_request_duration_seconds',
+    'HTTP request latency in seconds',
+    ['method', 'endpoint', 'status_code', 'service'],
+    buckets=[0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1.0, 2.0, 5.0]
+)
+
+# Business Logic Metrics
+ACTIVE_CONNECTIONS = prom.Gauge(
+    'active_connections',
+    'Number of active connections',
+    ['service']
+)
+
+TRINITY_SCORE = prom.Gauge(
+    'trinity_score',
+    'Current Trinity score (Truth/Goodness/Beauty)',
+    ['pillar', 'service']
+)
+
+SKILLS_EXECUTIONS = prom.Counter(
+    'skills_executions_total',
+    'Total number of skill executions',
+    ['skill_id', 'category', 'status']
+)
+
+API_ERRORS = prom.Counter(
+    'api_errors_total',
+    'Total number of API errors',
+    ['error_type', 'endpoint', 'service']
+)
+
+# System Metrics
+MEMORY_USAGE = prom.Gauge(
+    'memory_usage_bytes',
+    'Current memory usage in bytes',
+    ['service']
+)
+
+CPU_USAGE = prom.Gauge(
+    'cpu_usage_percent',
+    'Current CPU usage percentage',
+    ['service']
+)
 
 
-def setup_prometheus_metrics(app: FastAPI, port: int = 8001):
-    """
-    Starts Prometheus HTTP Server on separate port and adds middleware.
-    """
-    try:
-        start_http_server(port)
-        print(f"✅ Prometheus Metrics Exporter started on port {port}")
-    except Exception as e:
-        print(f"⚠️ Prometheus Exporter failed to start (might satisfy multiple workers): {e}")
+class PrometheusMiddleware(BaseHTTPMiddleware):
+    """FastAPI middleware for Prometheus metrics collection"""
 
-    @app.middleware("http")
-    async def prometheus_middleware(request: Request, call_next):
+    def __init__(self, app, service_name: str = "afo-kingdom-api"):
+        super().__init__(app)
+        self.service_name = service_name
+
+    async def dispatch(self, request: Request, call_next: Callable) -> Response:
+        # Increment active connections
+        ACTIVE_CONNECTIONS.labels(service=self.service_name).inc()
+
+        # Record request start time
         start_time = time.time()
-        method = request.method
-        # Simplify endpoint to avoid high cardinality
-        endpoint = request.url.path
+
+        # Extract endpoint info
+        endpoint = self._get_endpoint_path(request)
 
         try:
+            # Process the request
             response = await call_next(request)
-            status_code = response.status_code
-        except Exception as e:
-            status_code = 500
-            raise e
-        finally:
-            latency = time.time() - start_time
-            REQUEST_LATENCY.labels(endpoint=endpoint).observe(latency)
-            REQUEST_COUNT.labels(method=method, endpoint=endpoint, status=status_code).inc()
 
-        return response
+            # Calculate latency
+            latency = time.time() - start_time
+
+            # Record metrics
+            REQUEST_COUNT.labels(
+                method=request.method,
+                endpoint=endpoint,
+                status_code=str(response.status_code),
+                service=self.service_name
+            ).inc()
+
+            REQUEST_LATENCY.labels(
+                method=request.method,
+                endpoint=endpoint,
+                status_code=str(response.status_code),
+                service=self.service_name
+            ).observe(latency)
+
+            # Record errors
+            if response.status_code >= 400:
+                API_ERRORS.labels(
+                    error_type=self._get_error_type(response.status_code),
+                    endpoint=endpoint,
+                    service=self.service_name
+                ).inc()
+
+            return response
+
+        except Exception as e:
+            # Record exception metrics
+            latency = time.time() - start_time
+
+            REQUEST_COUNT.labels(
+                method=request.method,
+                endpoint=endpoint,
+                status_code="500",
+                service=self.service_name
+            ).inc()
+
+            REQUEST_LATENCY.labels(
+                method=request.method,
+                endpoint=endpoint,
+                status_code="500",
+                service=self.service_name
+            ).observe(latency)
+
+            API_ERRORS.labels(
+                error_type="exception",
+                endpoint=endpoint,
+                service=self.service_name
+            ).inc()
+
+            raise
+
+        finally:
+            # Decrement active connections
+            ACTIVE_CONNECTIONS.labels(service=self.service_name).dec()
+
+    def _get_endpoint_path(self, request: Request) -> str:
+        """Extract clean endpoint path for metrics"""
+        path = request.url.path
+
+        # Remove path parameters (e.g., /api/skills/detail/123 -> /api/skills/detail/{id})
+        for param in request.path_params:
+            if param in path:
+                path = path.replace(str(request.path_params[param]), f"{{{param}}}")
+
+        return path
+
+    def _get_error_type(self, status_code: int) -> str:
+        """Categorize error types based on status code"""
+        if status_code >= 500:
+            return "server_error"
+        elif status_code >= 400:
+            return "client_error"
+        else:
+            return "unknown"
+
+
+# Utility functions for business metrics
+def record_trinity_score(pillar: str, score: float, service: str = "afo-kingdom-api"):
+    """Record Trinity score metrics"""
+    TRINITY_SCORE.labels(pillar=pillar, service=service).set(score)
+
+
+def record_skill_execution(skill_id: str, category: str, status: str = "success"):
+    """Record skill execution metrics"""
+    SKILLS_EXECUTIONS.labels(skill_id=skill_id, category=category, status=status).inc()
+
+
+def record_memory_usage(bytes_used: int, service: str = "afo-kingdom-api"):
+    """Record memory usage metrics"""
+    MEMORY_USAGE.labels(service=service).set(bytes_used)
+
+
+def record_cpu_usage(percent: float, service: str = "afo-kingdom-api"):
+    """Record CPU usage metrics"""
+    CPU_USAGE.labels(service=service).set(percent)
+
+
+# Health check endpoint for metrics
+async def metrics_endpoint():
+    """Prometheus metrics endpoint"""
+    return prom.generate_latest()
+
+
+# Middleware factory function
+def create_prometheus_middleware(service_name: str = "afo-kingdom-api"):
+    """Factory function to create Prometheus middleware"""
+    return PrometheusMiddleware(service_name=service_name)

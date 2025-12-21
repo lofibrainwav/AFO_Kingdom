@@ -1,11 +1,14 @@
 import asyncio
 import os
+import pathlib
 import sys
 
 
 # Setup path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../packages")))
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../packages/afo-core")))
+sys.path.append(pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages")).resolve())
+sys.path.append(
+    pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")).resolve()
+)
 
 from services.truth_metrics_calculator import truth_metrics
 
@@ -23,7 +26,7 @@ async def verify_truth_metrics():
             except Exception as e:
                 logger.error(f"Error: {e}")
                 return False
-    
+
     def test_safe_system():
         assert SafeSystem().process_data({}) == True
     """

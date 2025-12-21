@@ -43,7 +43,12 @@ def run_advanced_dpo_lora(
         lora_dropout=0.05,
         bias="none",
         task_type=TaskType.CAUSAL_LM,
-        target_modules=["q_proj", "v_proj", "k_proj", "o_proj"],  # Target Attention layers
+        target_modules=[
+            "q_proj",
+            "v_proj",
+            "k_proj",
+            "o_proj",
+        ],  # Target Attention layers
     )
 
     # 3. Load Data

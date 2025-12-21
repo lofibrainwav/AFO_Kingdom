@@ -24,8 +24,13 @@ except ImportError:
         _CORE_ROOT = Path(__file__).resolve().parent.parent.parent
         if str(_CORE_ROOT) not in sys.path:
             sys.path.insert(0, str(_CORE_ROOT))
-        from api.utils.auth import hash_password, verify_password
-        from services.database import get_db_connection
+        from api.utils.auth import hash_password as hp
+        from api.utils.auth import verify_password as vp
+        from services.database import get_db_connection as gdc
+
+        hash_password = hp
+        verify_password = vp
+        get_db_connection = gdc
 
         DB_AVAILABLE = True
         AUTH_UTILS_AVAILABLE = True
@@ -146,7 +151,7 @@ async def create_user(request: UserCreateRequest) -> dict[str, Any]:
                     "id": str(user["id"]),
                     "username": user["username"],
                     "email": user["email"],
-                    "created_at": user["created_at"].isoformat() if user["created_at"] else None,
+                    "created_at": (user["created_at"].isoformat() if user["created_at"] else None),
                 }
             except HTTPException:
                 await conn.close()
@@ -205,7 +210,7 @@ async def get_user(user_id: str) -> dict[str, Any]:
                     "id": str(user["id"]),
                     "username": user["username"],
                     "email": user["email"],
-                    "created_at": user["created_at"].isoformat() if user["created_at"] else None,
+                    "created_at": (user["created_at"].isoformat() if user["created_at"] else None),
                 }
             except ValueError:
                 await conn.close()

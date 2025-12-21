@@ -1,6 +1,9 @@
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from fastapi import HTTPException
+
+if TYPE_CHECKING:
+    import asyncpg
 
 # 중앙 설정 사용
 # 중앙 설정 사용
@@ -18,7 +21,12 @@ except ImportError:
 
 # [論語]學而不思則罔 - 배우되 생각하지 않으면 어둡다
 async def get_db_connection() -> Any:
-    """비동기 PostgreSQL 연결 함수 (중앙 설정 사용)"""
+    """
+    비동기 PostgreSQL 연결 함수 (중앙 설정 사용)
+
+    Returns:
+        asyncpg.Connection: PostgreSQL 연결 객체
+    """
     if not ASYNCPG_AVAILABLE or asyncpg is None:
         raise HTTPException(status_code=503, detail="PostgreSQL async support not available")
 

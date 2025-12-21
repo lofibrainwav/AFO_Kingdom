@@ -36,7 +36,12 @@ class PlaywrightBridgeMCP:
             cls._ensure_browser()
             cls._page.goto(url)
             title = cls._page.title()
-            return {"success": True, "url": url, "title": title, "message": f"Navigated to {title}"}
+            return {
+                "success": True,
+                "url": url,
+                "title": title,
+                "message": f"Navigated to {title}",
+            }
         except Exception as e:
             return {"success": False, "error": str(e)}
 
@@ -51,7 +56,11 @@ class PlaywrightBridgeMCP:
             # For safety, we force writing to /tmp or current dir if safe
             # Here we just use the provided path but valid absolute path should be enforced by caller
             cls._page.screenshot(path=path)
-            return {"success": True, "path": path, "message": f"Screenshot saved to {path}"}
+            return {
+                "success": True,
+                "path": path,
+                "message": f"Screenshot saved to {path}",
+            }
         except Exception as e:
             return {"success": False, "error": str(e)}
 
@@ -97,7 +106,11 @@ class PlaywrightBridgeMCP:
                 }
 
             content = cls._page.inner_text(selector)
-            return {"success": True, "content": content, "message": f"Scraped content from {selector}"}
+            return {
+                "success": True,
+                "content": content,
+                "message": f"Scraped content from {selector}",
+            }
         except Exception as e:
             return {"success": False, "error": str(e)}
 

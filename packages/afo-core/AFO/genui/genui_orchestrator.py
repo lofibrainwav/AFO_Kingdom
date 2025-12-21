@@ -13,6 +13,7 @@ except ImportError:
     PlaywrightBridgeMCP = None  # type: ignore
 
 from AFO.api.compat import get_antigravity_control
+from AFO.config.settings import get_settings
 
 
 class GenUIOrchestrator:
@@ -79,12 +80,18 @@ class GenUIOrchestrator:
 
         # 4. See (Screenshot) - Governance Gated (Vision)
         screenshot_path = os.path.join(self.workspace_root, "artifacts", f"genui_{project_id}.png")
-        vision_result = {"success": False, "message": "Playwright not loaded or blocked"}
+        vision_result = {
+            "success": False,
+            "message": "Playwright not loaded or blocked",
+        }
 
         # Check 'genui_vision' governance
         if self.antigravity and self.antigravity.check_governance("genui_vision"):
             if PlaywrightBridgeMCP:
-                target_url = f"http://localhost:3000/genui/{project_id}"
+                # Phase 1 리팩터링: settings에서 대시보드 URL 가져오기
+                settings = get_settings()
+                dashboard_url = settings.DASHBOARD_URL
+                target_url = f"{dashboard_url}/genui/{project_id}"
                 print(f"👀 [GenUI] Navigating to {target_url}...")
                 # Note: This assumes the dashboard is running
                 nav_res = PlaywrightBridgeMCP.navigate(url=target_url)
@@ -99,6 +106,7 @@ class GenUIOrchestrator:
             "project_id": project_id,
             "status": "APPROVED" if trinity_result["passed"] else "RISKY_DRAFT",
             "code_path": file_path,
+            "code": page_code,
             "vision_result": vision_result,
             "trinity_score": trinity_result,
         }

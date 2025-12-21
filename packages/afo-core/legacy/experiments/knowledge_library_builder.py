@@ -180,7 +180,12 @@ class KnowledgeLibraryBuilder:
             except Exception as e:
                 print(f"⚠️ 메타데이터 로드 실패: {e}")
                 return {}
-        return {"processed_files": {}, "last_update": None, "total_documents": 0, "total_chunks": 0}
+        return {
+            "processed_files": {},
+            "last_update": None,
+            "total_documents": 0,
+            "total_chunks": 0,
+        }
 
     def _save_metadata(self):
         """Save metadata to file"""
@@ -344,7 +349,11 @@ class KnowledgeLibraryBuilder:
                 stored_hash = self.metadata["processed_files"][str(relative_path)].get("hash")
                 if stored_hash == file_hash:
                     print(f"⏭️  변경 없음 (스킵): {relative_path}")
-                    return {"status": "skipped", "reason": "no_changes", "file": str(relative_path)}
+                    return {
+                        "status": "skipped",
+                        "reason": "no_changes",
+                        "file": str(relative_path),
+                    }
 
         print(f"\n📄 처리 중: {relative_path}")
 
@@ -397,7 +406,10 @@ class KnowledgeLibraryBuilder:
                     chunk.metadata["quality_score"] = chunk_validation["score"]
                 else:
                     rejected_chunks.append(
-                        {"chunk": chunk.page_content[:100], "reasons": chunk_validation["reasons"]}
+                        {
+                            "chunk": chunk.page_content[:100],
+                            "reasons": chunk_validation["reasons"],
+                        }
                     )
 
             print(f"   ✅ {len(validated_chunks)}개 청크 생성 (거부: {len(rejected_chunks)}개)")
@@ -530,7 +542,11 @@ class KnowledgeLibraryBuilder:
 
         print("=" * 70)
 
-        return {"results": results, "total_chunks": total_chunks, "metadata": self.metadata}
+        return {
+            "results": results,
+            "total_chunks": total_chunks,
+            "metadata": self.metadata,
+        }
 
     def search_knowledge(self, query: str, top_k: int = 5) -> list[dict[str, Any]]:
         """
@@ -562,7 +578,11 @@ class KnowledgeLibraryBuilder:
             formatted_results = []
             for doc, score in results:
                 formatted_results.append(
-                    {"content": doc.page_content, "metadata": doc.metadata, "score": float(score)}
+                    {
+                        "content": doc.page_content,
+                        "metadata": doc.metadata,
+                        "score": float(score),
+                    }
                 )
 
             return formatted_results

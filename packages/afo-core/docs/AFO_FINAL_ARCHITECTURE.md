@@ -11,9 +11,9 @@
 
 ### 2. ⚔️ The Hands: Strategists (Nodes)
 **Implementation**: CrewAI / AutoGen / LangChain
-- **Jegalryang (Truth/Spear)**: Architecture & Strategy.
-- **Samaui (Goodness/Shield)**: Risk & Ethics.
-- **Juyu (Beauty/Bridge)**: Narrative & UX.
+- **Zhuge Liang (Truth/Spear)**: Architecture & Strategy.
+- **Sima Yi (Goodness/Shield)**: Risk & Ethics.
+- **Zhou Yu (Beauty/Bridge)**: Narrative & UX.
 
 ### 3. 🛠️ The Tools: LangChain & MCP
 **Role**: The Glue & The Toolkit

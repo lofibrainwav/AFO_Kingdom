@@ -1,3 +1,5 @@
+from typing import Any
+
 from strategists.base import log_action, robust_execute
 
 try:
@@ -8,7 +10,7 @@ except ImportError:
         AUTO_DEPLOY = True
         DRY_RUN_DEFAULT = True
 
-    antigravity = MockAntiGravity()
+    antigravity: Any = MockAntiGravity()  # type: ignore[no-redef]
 
 
 def deploy(config: dict) -> str:

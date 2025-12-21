@@ -81,7 +81,11 @@ def dream_planner(state: EnhancedAgentState) -> dict[str, Any]:
         "timestamp": datetime.now(UTC).isoformat(),
     }
 
-    return {"execution_plan": execution_plan, "current_phase": "PLANNED", "bridge_logs": [bridge_log]}
+    return {
+        "execution_plan": execution_plan,
+        "current_phase": "PLANNED",
+        "bridge_logs": [bridge_log],
+    }
 
 
 def dream_executor(state: EnhancedAgentState) -> dict[str, Any]:
@@ -136,7 +140,9 @@ def dream_reviewer(state: EnhancedAgentState) -> dict[str, Any]:
     }
 
 
-def enhanced_audit_gate(state: EnhancedAgentState) -> Literal["dream_executor", "dream_planner", "__end__"]:
+def enhanced_audit_gate(
+    state: EnhancedAgentState,
+) -> Literal["dream_executor", "dream_planner", "__end__"]:
     """Enhanced audit gate with Dream Protocol integration"""
     score = state.get("trinity_score", {})
     risk = state.get("risk_score", 0)
@@ -186,7 +192,11 @@ def build_enhanced_dream_hub():
     graph.add_conditional_edges(
         "dream_reviewer",
         enhanced_audit_gate,
-        {"dream_executor": "dream_executor", "dream_planner": "dream_planner", "__end__": END},
+        {
+            "dream_executor": "dream_executor",
+            "dream_planner": "dream_planner",
+            "__end__": END,
+        },
     )
 
     # Persistence
@@ -230,7 +240,7 @@ def run_enhanced_dream_hub(human_dream: str, thread_id: str = "default") -> dict
         result = {
             "status": "COMPLETED",
             "dream_id": final_state.get("dream_id", ""),
-            "final_message": final_state["messages"][-1].content if final_state["messages"] else "",
+            "final_message": (final_state["messages"][-1].content if final_state["messages"] else ""),
             "trinity_score": final_state.get("trinity_score", {}),
             "risk_score": final_state.get("risk_score", 0.0),
             "audit_history": final_state.get("audit_history", []),
@@ -241,7 +251,11 @@ def run_enhanced_dream_hub(human_dream: str, thread_id: str = "default") -> dict
         return result
 
     except Exception as e:
-        return {"status": "ERROR", "error": str(e), "dream_id": initial_state.get("dream_id", "")}
+        return {
+            "status": "ERROR",
+            "error": str(e),
+            "dream_id": initial_state.get("dream_id", ""),
+        }
 
 
 if __name__ == "__main__":

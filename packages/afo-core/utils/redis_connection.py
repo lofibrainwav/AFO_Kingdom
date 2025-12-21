@@ -80,8 +80,12 @@ async def get_shared_async_redis_client() -> AsyncRedis:
     return _async_redis_client
 
 
-async def close_redis_connections():
-    """Redis 연결 종료 (애플리케이션 종료 시 호출)"""
+async def close_redis_connections() -> None:
+    """
+    Redis 연결 종료 (애플리케이션 종료 시 호출)
+
+    Closes all Redis connections (sync and async).
+    """
     global _redis_client, _async_redis_client
 
     if _redis_client:
