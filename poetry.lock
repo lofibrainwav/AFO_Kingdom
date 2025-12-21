@@ -7112,7 +7112,7 @@ version = "1.0.7"
 description = "Python API for interacting with the Suno AI music generator - Unofficial"
 optional = false
 python-versions = ">=3.7"
-groups = ["dev"]
+groups = ["main", "dev"]
 files = [
     {file = "SunoAI-1.0.7-py3-none-any.whl", hash = "sha256:ef4ee504d6493b4927339403ba6ceef04cc1fee7c2ceab14d0e7217338bdd51c"},
     {file = "sunoai-1.0.7.tar.gz", hash = "sha256:4f8f130beca601e1573704ae09f421bacdbcbc3242afa677f47fe6e2d8174bcf"},
@@ -8543,4 +8543,4 @@ cffi = ["cffi (>=1.17,<2.0) ; platform_python_implementation != \"PyPy\" and pyt
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.12"
-content-hash = "eae8d2620abd7ed9abc3af10f97af231ae496cddfc300df30543a3da6d8cc0ae"
+content-hash = "3d8db4047fae6ec4bd7a213e09578fb4895190d3bc74a90b29845dcfe48fcbfc"

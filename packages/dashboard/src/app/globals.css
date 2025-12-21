@@ -1,26 +1,86 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Neudash 2025 Palette - Platinum/Soft Clay */
+  --bg-platinum: #EFEEEE;
+  --text-main: #4A5568;
+  --text-light: #A0AEC0;
+  
+  /* Shadows for Depth (Light Source: Top Left) */
+  --shadow-light: #FFFFFF;
+  --shadow-dark: #D1D9E6;
+  
+  /* Accents */
+  --accent-primary: #5A67D8; /* Royal Blue */
+  --accent-success: #10B981; /* Emerald */
+  --accent-warning: #F59E0B; /* Amber */
+  --accent-danger: #EF4444; /* Red */
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@theme {
+  --color-platinum: var(--bg-platinum);
+  --color-neu-text: var(--text-main);
+  --color-neu-light: var(--text-light);
+  --color-neu-primary: var(--accent-primary);
+  
+  --shadow-neu-flat: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light);
+  --shadow-neu-pressed: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light);
+  --shadow-neu-icon: 8px 8px 16px var(--shadow-dark), -8px -8px 16px var(--shadow-light);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--bg-platinum);
+  color: var(--text-main);
+  font-family: var(--font-family-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Neudash Component Utilities */
+@layer utilities {
+  .neu-card {
+    @apply bg-platinum rounded-3xl p-8;
+    box-shadow: var(--shadow-neu-flat);
+    border: 1px solid rgba(255,255,255,0.4);
+  }
+
+  .neu-btn {
+    @apply flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200 cursor-pointer text-neu-text;
+    background-color: var(--bg-platinum);
+    box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
+  }
+
+  .neu-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 8px 8px 16px var(--shadow-dark), -8px -8px 16px var(--shadow-light);
+  }
+
+  .neu-btn:active, .neu-btn.active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-neu-pressed);
+  }
+
+  .neu-icon-box {
+    @apply flex items-center justify-center w-16 h-16 rounded-full text-2xl;
+    background-color: var(--bg-platinum);
+    box-shadow: var(--shadow-neu-icon);
+    color: var(--text-main);
+    border: 2px solid rgba(255,255,255,0.1);
+  }
+  
+  .neu-convex {
+    background: var(--bg-platinum);
+    box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
+  }
+  
+  .neu-concave {
+    background: var(--bg-platinum);
+    box-shadow: var(--shadow-neu-pressed);
+  }
+  
+  .neu-pill {
+    @apply px-4 py-2 rounded-full font-bold text-sm flex items-center gap-2;
+    background: var(--bg-platinum);
+    box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+  }
 }

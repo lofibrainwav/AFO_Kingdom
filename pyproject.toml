@@ -37,6 +37,7 @@ hcloud = "^2.13.0"
 kafka-python = "^2.3.0"
 sentence-transformers = "^5.2.0"
 sqlmodel = "^0.0.14"
+sunoai = "^1.0.7"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.0"

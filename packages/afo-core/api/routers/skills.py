@@ -9,14 +9,16 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
 # Skills Registry
-try:
-    from afo_skills_registry import SkillRegistry, register_core_skills
-
-    SKILLS_REGISTRY_AVAILABLE = True
-except ImportError:
-    SkillRegistry = None
-    register_core_skills = None
-    SKILLS_REGISTRY_AVAILABLE = False
+# try:
+#     from afo_skills_registry import SkillRegistry, register_core_skills
+#     SKILLS_REGISTRY_AVAILABLE = True
+# except ImportError:
+#     SkillRegistry = None
+#     register_core_skills = None
+#     SKILLS_REGISTRY_AVAILABLE = False
+SKILLS_REGISTRY_AVAILABLE = False
+SkillRegistry = None
+register_core_skills = None
 
 router = APIRouter(tags=["Skills"])
 
@@ -27,51 +29,45 @@ class MockSkillRegistry:
 
     def __init__(self):
         self.skills = [
-            {
-                "id": "truth_evaluate",
-                "name": "Truth Evaluation",
-                "description": "Technical accuracy and fact verification",
-                "category": "truth",
-                "status": "active",
-                "philosophy_score": 35.0,
-            },
-            {
-                "id": "goodness_review",
-                "name": "Goodness Review",
-                "description": "Safety and ethics assessment",
-                "category": "goodness",
-                "status": "active",
-                "philosophy_score": 35.0,
-            },
-            {
-                "id": "beauty_optimize",
-                "name": "Beauty Optimization",
-                "description": "UX and design improvements",
-                "category": "beauty",
-                "status": "active",
-                "philosophy_score": 20.0,
-            },
-            {
-                "id": "serenity_deploy",
-                "name": "Serenity Deployment",
-                "description": "Smooth automated deployment",
-                "category": "serenity",
-                "status": "active",
-                "philosophy_score": 8.0,
-            },
-            {
-                "id": "eternity_log",
-                "name": "Eternity Logging",
-                "description": "Comprehensive audit trails",
-                "category": "eternity",
-                "status": "active",
-                "philosophy_score": 2.0,
-            },
+            # Truth (眞) - 7 Skills
+            {"id": "truth_evaluate", "name": "Truth Evaluation", "description": "Technical accuracy verification", "category": "truth", "status": "active", "philosophy_score": 35.0},
+            {"id": "arch_audit", "name": "Architecture Audit", "description": "System structural integrity check", "category": "truth", "status": "active", "philosophy_score": 30.0},
+            {"id": "code_refactor", "name": "Self-Refactoring", "description": "Autonomous code improvement", "category": "truth", "status": "active", "philosophy_score": 33.0},
+            {"id": "dependency_scan", "name": "Dependency Scan", "description": "42-Core dependency analysis", "category": "truth", "status": "active", "philosophy_score": 28.0},
+            {"id": "perf_optimize", "name": "Performance Opt", "description": "System latency reduction", "category": "truth", "status": "active", "philosophy_score": 32.0},
+            {"id": "db_integrity", "name": "DB Integrity Check", "description": "PostgreSQL/Redis health", "category": "truth", "status": "active", "philosophy_score": 34.0},
+            {"id": "api_test", "name": "End-to-End Test", "description": "Comprehensive API testing", "category": "truth", "status": "active", "philosophy_score": 31.0},
+
+            # Goodness (善) - 5 Skills
+            {"id": "goodness_review", "name": "Goodness Review", "description": "Safety & Ethical boundaries", "category": "goodness", "status": "active", "philosophy_score": 35.0},
+            {"id": "risk_sentinel", "name": "Risk Sentinel", "description": "Real-time threat detection", "category": "goodness", "status": "active", "philosophy_score": 34.0},
+            {"id": "tax_complince", "name": "Tax Simulation", "description": "AICPA/Julie tax compliance", "category": "goodness", "status": "active", "philosophy_score": 33.0},
+            {"id": "security_shield", "name": "Security Shield", "description": "Active defense protocol", "category": "goodness", "status": "active", "philosophy_score": 32.0},
+            {"id": "privacy_guard", "name": "Privacy Guard", "description": "Data leak prevention", "category": "goodness", "status": "active", "philosophy_score": 35.0},
+
+            # Beauty (美) - 3 Skills
+            {"id": "beauty_optimize", "name": "Beauty Optimize", "description": "UX/UI aesthetic refinement", "category": "beauty", "status": "active", "philosophy_score": 20.0},
+            {"id": "emotional_mirror", "name": "Emotional Mirror", "description": "User sentiment reflection", "category": "beauty", "status": "active", "philosophy_score": 19.0},
+            {"id": "voice_synthesis", "name": "Royal Voice", "description": "Natural voice interaction", "category": "beauty", "status": "active", "philosophy_score": 18.0},
+
+            # Serenity (孝) - 3 Skills 
+            {"id": "serenity_deploy", "name": "Serenity Deploy", "description": "Frictionless auto-deploy", "category": "serenity", "status": "active", "philosophy_score": 8.0},
+            {"id": "auto_healer", "name": "Auto Healer", "description": "Self-correction of errors", "category": "serenity", "status": "active", "philosophy_score": 7.9},
+            {"id": "friction_radar", "name": "Friction Radar", "description": "User pain-point detection", "category": "serenity", "status": "active", "philosophy_score": 7.8},
+
+            # Eternity (永) - 1 Skill
+            {"id": "eternity_log", "name": "Eternity Archive", "description": "Permanent knowledge storage", "category": "eternity", "status": "active", "philosophy_score": 2.0},
         ]
 
     def list_skills(self):
-        """List all available skills"""
-        return self.skills
+        """List all available skills as objects"""
+        # Define a simple class for object-like access
+        class MockSkillObj:
+            def __init__(self, d):
+                for k, v in d.items():
+                    setattr(self, k, v)
+        
+        return [MockSkillObj(s) for s in self.skills]
 
     def get_skill(self, skill_id: str):
         """Get skill by ID"""
@@ -153,15 +149,7 @@ async def list_skills() -> dict[str, Any]:
     등록된 모든 Skills 목록 조회
     """
     try:
-        if SkillRegistry is None:
-            raise HTTPException(status_code=503, detail="Skills Registry not available")
-
-        # Skills Registry 초기화
-        if register_core_skills:
-            registry = register_core_skills()
-        else:
-            registry = SkillRegistry()
-
+        # Use global registry instance
         skills = registry.list_skills()
         skills_data = []
 

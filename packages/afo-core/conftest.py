@@ -13,10 +13,9 @@ from collections.abc import Generator
 from typing import Any
 
 
-@pytest.fixture(autouse=True)
-def mock_workflow() -> Generator[Any, None, None]:
-    """Global patch for workflow to ensure api_server lifespan starts correctly."""
-    # We patch both potential import paths to be safe
-    with patch("api_server.workflow", MagicMock()) as mock_wf:
-        mock_wf.compile.return_value = MagicMock()
-        yield mock_wf
+# @pytest.fixture(autouse=True)
+# def mock_workflow() -> Generator[Any, None, None]:
+#     """Global patch for workflow to ensure api_server lifespan starts correctly."""
+#     # We patch both potential import paths to be safe
+#     yield MagicMock()
+

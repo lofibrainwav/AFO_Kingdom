@@ -1,9 +1,9 @@
-import AFOPantheon from "@/components/AFOPantheon";
+import RoyalLayout from "@/components/royal/RoyalLayout";
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-black overflow-hidden relative">
-      <AFOPantheon />
+    <main className="min-h-screen bg-[#e0e5ec]">
+      <RoyalLayout />
     </main>
   );
 }

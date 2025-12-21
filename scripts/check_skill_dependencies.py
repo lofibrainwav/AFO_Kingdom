@@ -28,8 +28,8 @@ PACKAGE_MAPPING = {
     "ai-analysis": None,  # 내부 모듈
     "react": None,  # 프론트엔드
     "iframe": None,  # 프론트엔드
-    "git": None,  # 시스템 도구
-    "docker": None,  # 시스템 도구
+    "git": "git",  # 시스템 도구 (Python Wrapper)
+    "docker": "docker",  # 시스템 도구 (Python Wrapper)
     "redis": "redis",
     "langchain": "langchain",
     "langgraph": "langgraph",
@@ -48,6 +48,16 @@ PACKAGE_MAPPING = {
     "ruff": "ruff",
     "pytest": "pytest",
     "mcp": "mcp",
+    # Deep Research 발견 항목 (2025-12-21 추가)
+    "anthropic": "anthropic",
+    "playwright": "playwright",
+    "qdrant-client": "qdrant_client",
+    "psutil": "psutil",
+    "prometheus-client": "prometheus_client",
+    "sse-starlette": "sse_starlette",
+    "fastapi": "fastapi",
+    "uvicorn": "uvicorn",
+    "watchdog": "watchdog",
 }
 
 
@@ -61,6 +71,27 @@ def check_package(package_name: str) -> tuple[bool, str | None]:
     except Exception as e:
         return False, f"Unexpected error: {e}"
 
+
+
+def check_custom_verification(dep_name: str) -> tuple[bool, str]:
+    """비-Python 의존성 (프론트엔드 등) 커스텀 체크"""
+    repo_root = Path(__file__).parent.parent
+    
+    if dep_name in ["react", "iframe"]:
+        # Dashboard 패키지 존재 확인
+        dashboard_path = repo_root / "packages" / "dashboard" / "package.json"
+        if dashboard_path.exists():
+            return True, "Dashboard (Next.js) Verified"
+        return False, "Dashboard Package Missing"
+        
+    if dep_name == "ai-analysis":
+        # AFO Core 존재 확인
+        core_path = repo_root / "packages" / "afo-core" / "AFO"
+        if core_path.exists():
+            return True, "AFO Core Analysis Verified"
+        return False, "AFO Core Missing"
+        
+    return False, "Unknown Custom Dependency"
 
 def main():
     """메인 함수"""
@@ -81,6 +112,13 @@ def main():
         if skill.dependencies:
             all_dependencies.update(skill.dependencies)
 
+    # Deep Research 발견 항목 추가 (시스템 코어)
+    deep_research_deps = {
+        "anthropic", "playwright", "qdrant-client", "psutil", 
+        "prometheus-client", "sse-starlette", "fastapi", "uvicorn", "watchdog"
+    }
+    all_dependencies.update(deep_research_deps)
+
     print(f"📦 스킬 의존성 총 {len(all_dependencies)}개\n")
 
     # 패키지 매핑 및 확인
@@ -92,8 +130,14 @@ def main():
         package_name = PACKAGE_MAPPING.get(dep, dep)
 
         if package_name is None:
-            optional.append(dep)
-            print(f"ℹ️  {dep:30s} (시스템/내부 모듈)")
+            # 커스텀 검증 시도
+            is_verified, message = check_custom_verification(dep)
+            if is_verified:
+                installed.append((dep, message))
+                print(f"✅ {dep:30s} ({message})")
+            else:
+                optional.append(dep)
+                print(f"ℹ️  {dep:30s} (시스템/내부 모듈)")
             continue
 
         is_installed, error = check_package(package_name)

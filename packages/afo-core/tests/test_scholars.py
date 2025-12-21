@@ -109,9 +109,10 @@ class TestScholarsBehavior(unittest.IsolatedAsyncioTestCase):
 
     # --- Yeongdeok (Ollama) Tests ---
 
+    @patch("AFO.scholars.yeongdeok.YeongdeokScholar._check_mlx_availability", return_value=False)
     @patch("AFO.scholars.yeongdeok.httpx.AsyncClient")
-    async def test_yeongdeok_document_code(self, mock_client_cls):
-        """Yeongdeok document code using mocked HTTP client"""
+    async def test_yeongdeok_document_code(self, mock_client_cls, mock_mlx_check):
+        """Yeongdeok document code using mocked HTTP client (Force fallback by disabling MLX)"""
         # Setup mock client
         mock_client_instance = AsyncMock()
         mock_client_cls.return_value.__aenter__.return_value = mock_client_instance
@@ -122,6 +123,7 @@ class TestScholarsBehavior(unittest.IsolatedAsyncioTestCase):
         mock_response.json.return_value = {"response": "Documentation Content"}
         mock_client_instance.post.return_value = mock_response
 
+        # Re-instantiate to trigger mocked check
         scholar = YeongdeokScholar()
         scholar.base_url = "http://test-ollama:11434"
 

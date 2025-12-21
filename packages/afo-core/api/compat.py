@@ -262,6 +262,7 @@ ssot_router = _get_fallback_router()
 modal_data_router = _get_fallback_router()
 n8n_router = _get_fallback_router()
 wallet_router = _get_fallback_router()
+chat_router = _get_fallback_router()
 # [손자병법] 지피지기 - thoughts_router는 왕국의 사고를 투명하게 드러내는 창
 thoughts_router = _get_fallback_router()
 got_router = _get_fallback_router()
@@ -360,6 +361,9 @@ def load_routers() -> None:
         trinity_router, \
         thoughts_router, \
         pillars_router, \
+        thoughts_router, \
+        pillars_router, \
+        chat_router, \
         wallet_router
 
     try:
@@ -449,6 +453,18 @@ def load_routers() -> None:
     except ImportError:
         pass
 
+    try:
+        from api.routes.chat import router as chat
+
+        chat_router = chat
+    except ImportError:
+        try:
+            from AFO.api.routes.chat import router as chat
+
+            chat_router = chat
+        except ImportError:
+            pass
+
     # Try to load others if possible
     # (Assuming paths based on naming convention)
     # If not found, they remain fallback routers (Safe)
@@ -476,6 +492,19 @@ def load_routers() -> None:
         wallet_router = wallet
     except ImportError:
         pass
+
+    # System Health (Crucial for Neudash)
+    try:
+        from AFO.api.routes.system_health import router as sys_health
+        
+        global system_health_router
+        system_health_router = sys_health
+    except ImportError:
+        try:
+             from api.routes.system_health import router as sys_health
+             system_health_router = sys_health
+        except ImportError:
+             pass
 
     # Phase-specific routers
     try:

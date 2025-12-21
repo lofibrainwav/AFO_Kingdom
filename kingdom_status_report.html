@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AFO Kingdom Status: Neudash 2025</title>
+    <!-- Import Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Neudash 2025 Palette - Platinum/Soft Clay */
+            --bg-color: #EFEEEE;
+            --text-main: #4A5568;
+            --text-light: #A0AEC0;
+            
+            /* Shadows for Depth (Light Source: Top Left) */
+            --shadow-light: #FFFFFF;
+            --shadow-dark: #D1D9E6;
+            
+            /* Accents */
+            --accent-primary: #5A67D8; /* Royal Blue */
+            --accent-success: #10B981; /* Emerald */
+            --accent-warning: #F59E0B; /* Amber */
+            --accent-danger: #EF4444; /* Red */
+            
+            /* Neumorphic Utilities */
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --radius-sm: 12px;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex; /* Dashboard Layout */
+        }
+
+        /* Sidebar (Mock for Neudash feel) */
+        .sidebar {
+            width: 260px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            display: none; /* Hidden on mobile, shown on desktop */
+        }
+
+        @media (min-width: 1024px) {
+            .sidebar { display: flex; }
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--accent-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-item {
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            color: var(--text-main);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            /* Neu Flat by default */
+        }
+
+        .nav-item.active {
+            color: var(--accent-primary);
+            /* Neu Pressed/Inset */
+            box-shadow: inset 6px 6px 12px var(--shadow-dark), 
+                        inset -6px -6px 12px var(--shadow-light);
+        }
+
+        .nav-item:hover:not(.active) {
+            /* Neu Extruded */
+            box-shadow: 6px 6px 12px var(--shadow-dark), 
+                        -6px -6px 12px var(--shadow-light);
+            transform: translateY(-2px);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+            max-height: 100vh;
+        }
+
+        header {
+            margin-bottom: 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin: 0;
+        }
+
+        .breadcrumb {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        /* Cards & Containers - Extruded */
+        .neu-card {
+            background-color: var(--bg-color);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            box-shadow: 12px 12px 24px var(--shadow-dark), 
+                        -12px -12px 24px var(--shadow-light);
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255,255,255,0.4);
+        }
+
+        /* KPI Grid */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .kpi-title {
+            font-size: 1rem;
+            color: var(--text-light);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .kpi-value {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--text-main);
+            display: block;
+        }
+
+        .kpi-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 99px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+        
+        /* Specific KPI Accents */
+        .kpi-status.success {
+            color: var(--accent-success);
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), 
+                        inset -3px -3px 6px var(--shadow-light);
+        }
+
+        /* Pillars - Inset Bars */
+        .pillar-row {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .pillar-name {
+            width: 100px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .pillar-track {
+            flex: 1;
+            height: 16px;
+            border-radius: 99px;
+            background-color: var(--bg-color);
+            /* Inset Shadow for Track */
+            box-shadow: inset 6px 6px 12px var(--shadow-dark), 
+                        inset -6px -6px 12px var(--shadow-light);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .pillar-fill {
+            height: 100%;
+            border-radius: 99px;
+            /* Gradient for polish */
+            transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Scholar Cards */
+        .scholar-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .scholar-profile {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .scholar-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            /* Convex Button Shape */
+            background: var(--bg-color);
+            box-shadow: 8px 8px 16px var(--shadow-dark), 
+                        -8px -8px 16px var(--shadow-light);
+            color: var(--text-main);
+            border: 2px solid rgba(255,255,255,0.1);
+        }
+
+        /* Dependency Matrix - Button Grid */
+        .dep-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 1rem;
+        }
+
+        .dep-chip {
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            background: var(--bg-color);
+            /* Soft Convex */
+            box-shadow: 6px 6px 12px var(--shadow-dark), 
+                        -6px -6px 12px var(--shadow-light);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-main);
+            transition: transform 0.2s;
+            border: 1px solid rgba(255,255,255,0.5);
+        }
+        
+        .dep-chip:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Indicator Light (Inset) */
+        .status-light {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--accent-success);
+            /* Glowing Effect? Or Inset for off? Let's do glowing "on" state */
+            box-shadow: 0 0 10px var(--accent-success);
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(0,0,0,0.05);
+            text-align: center;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Layout -->
+    <div class="sidebar">
+        <div class="logo">
+            <span>💠</span> AFO BOARD
+        </div>
+        <div class="nav-item active">Status Report</div>
+        <div class="nav-item">Chancellor Rules</div>
+        <div class="nav-item">Trinity Metrics</div>
+        <div class="nav-item">Logs</div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <header>
+            <div>
+                <div class="breadcrumb">Kingdom / Overview / Deep Research</div>
+                <h1>Status Report 2025</h1>
+            </div>
+            <!-- Profile / Actions style -->
+            <div class="scholar-avatar" style="width: 50px; height: 50px; font-size: 1.2rem; margin:0;">
+                👑
+            </div>
+        </header>
+
+        <!-- KPI ROW -->
+        <div class="kpi-grid">
+            <!-- Health -->
+            <div class="neu-card" style="padding: 2rem;">
+                <div class="kpi-title">SYSTEM HEARTBEAT</div>
+                <div class="kpi-value">100%</div>
+                <div class="kpi-status success">
+                    <span>●</span> OPERATIONAL
+                </div>
+            </div>
+
+            <!-- Dependencies -->
+            <div class="neu-card" style="padding: 2rem;">
+                <div class="kpi-title">DEPENDENCY CORE</div>
+                <div class="kpi-value">42<span style="font-size:1.5rem; color:var(--text-light)">/42</span></div>
+                <div class="kpi-status success" style="color: var(--accent-primary); box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);">
+                    <span>●</span> VERIFIED
+                </div>
+            </div>
+
+            <!-- Entropy -->
+            <div class="neu-card" style="padding: 2rem;">
+                <div class="kpi-title">ENTROPY LEVEL</div>
+                <div class="kpi-value">0%</div>
+                <div class="kpi-status success" style="color: var(--accent-warning);">
+                    <span>●</span> OPTIMIZED
+                </div>
+            </div>
+        </div>
+
+        <!-- TWO COLUMN LAYOUT -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 2rem;">
+            
+            <!-- SCHOLARS (AGENTS) -->
+            <div class="neu-card">
+                <h3 style="margin-top:0; margin-bottom: 2rem; color: var(--text-main);">Active Scholars</h3>
+                <div class="scholar-grid" style="margin-bottom: 0;">
+                    <div class="scholar-profile">
+                        <div class="scholar-avatar">🐉</div>
+                        <div class="pillar-name" style="width: auto;">Jaryong</div>
+                        <span style="font-size:0.8rem; color:var(--text-light)">Logic</span>
+                    </div>
+                    <div class="scholar-profile">
+                        <div class="scholar-avatar">🐥</div>
+                        <div class="pillar-name" style="width: auto;">Bangtong</div>
+                        <span style="font-size:0.8rem; color:var(--text-light)">Implement</span>
+                    </div>
+                    <div class="scholar-profile">
+                        <div class="scholar-avatar">🛡️</div>
+                        <div class="pillar-name" style="width: auto;">Yeongdeok</div>
+                        <span style="font-size:0.8rem; color:var(--text-light)">Security</span>
+                    </div>
+                    <div class="scholar-profile">
+                        <div class="scholar-avatar">🏛️</div>
+                        <div class="pillar-name" style="width: auto;">Yukson</div>
+                        <span style="font-size:0.8rem; color:var(--text-light)">Strategy</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TRINITY METRICS -->
+            <div class="neu-card">
+                <h3 style="margin-top:0; margin-bottom: 2rem; color: var(--text-main);">Trinity Pillars</h3>
+                
+                <div class="pillar-row">
+                    <div class="pillar-name">Truth 眞</div>
+                    <div class="pillar-track">
+                        <div class="pillar-fill" style="width: 100%; background: linear-gradient(90deg, #4299E1, #667EEA);"></div>
+                    </div>
+                </div>
+                
+                <div class="pillar-row">
+                    <div class="pillar-name">Good 善</div>
+                    <div class="pillar-track">
+                        <div class="pillar-fill" style="width: 100%; background: linear-gradient(90deg, #48BB78, #38B2AC);"></div>
+                    </div>
+                </div>
+                
+                <div class="pillar-row">
+                    <div class="pillar-name">Beauty 美</div>
+                    <div class="pillar-track">
+                        <div class="pillar-fill" style="width: 100%; background: linear-gradient(90deg, #ED64A6, #9F7AEA);"></div>
+                    </div>
+                </div>
+
+                <div class="pillar-row">
+                    <div class="pillar-name">Serenity 孝</div>
+                    <div class="pillar-track">
+                        <div class="pillar-fill" style="width: 100%; background: linear-gradient(90deg, #ECC94B, #D69E2E);"></div>
+                    </div>
+                </div>
+
+                <div class="pillar-row">
+                    <div class="pillar-name">Eternity 永</div>
+                    <div class="pillar-track">
+                        <div class="pillar-fill" style="width: 100%; background: linear-gradient(90deg, #667EEA, #5A67D8);"></div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- DEPENDENCY GRID -->
+        <h3 style="margin: 2rem 0 1.5rem 0; color: var(--text-main); display: flex; align-items: center; gap: 1rem;">
+             Framework Matrix <div style="display:inline-block; padding: 0.2rem 0.6rem; background: var(--bg-color); box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light); border-radius: 99px; font-size: 0.8rem;">42 Active</div>
+        </h3>
+        
+        <!-- We use JS to populate or verify checkmarks -->
+        <div class="dep-grid">
+            <div class="dep-chip"><div class="status-light"></div>openai</div>
+            <div class="dep-chip"><div class="status-light"></div>anthropic</div>
+            <div class="dep-chip"><div class="status-light"></div>langchain</div>
+            <div class="dep-chip"><div class="status-light"></div>langgraph</div>
+            <div class="dep-chip"><div class="status-light"></div>ragas</div>
+            <div class="dep-chip"><div class="status-light"></div>sentence-tx</div>
+            <div class="dep-chip"><div class="status-light"></div>suno</div>
+            <div class="dep-chip"><div class="status-light"></div>numpy</div>
+            <div class="dep-chip"><div class="status-light"></div>pandas</div>
+            <div class="dep-chip"><div class="status-light"></div>scipy</div>
+            <div class="dep-chip"><div class="status-light"></div>sympy</div>
+            <div class="dep-chip"><div class="status-light"></div>boto3</div>
+            <div class="dep-chip"><div class="status-light"></div>hcloud</div>
+            <div class="dep-chip"><div class="status-light"></div>docker</div>
+            <div class="dep-chip"><div class="status-light"></div>git</div>
+            <div class="dep-chip"><div class="status-light"></div>kafka</div>
+            <div class="dep-chip"><div class="status-light"></div>redis</div>
+            <div class="dep-chip"><div class="status-light"></div>chromadb</div>
+            <div class="dep-chip"><div class="status-light"></div>qdrant</div>
+            <div class="dep-chip"><div class="status-light"></div>neo4j</div>
+            <div class="dep-chip"><div class="status-light"></div>postgres</div>
+            <div class="dep-chip"><div class="status-light"></div>fastapi</div>
+            <div class="dep-chip"><div class="status-light"></div>uvicorn</div>
+            <div class="dep-chip"><div class="status-light"></div>requests</div>
+            <div class="dep-chip"><div class="status-light"></div>sse-starlette</div>
+            <div class="dep-chip"><div class="status-light"></div>web3</div>
+            <div class="dep-chip"><div class="status-light"></div>eth-account</div>
+            <div class="dep-chip"><div class="status-light"></div>psutil</div>
+            <div class="dep-chip"><div class="status-light"></div>prometheus</div>
+            <div class="dep-chip"><div class="status-light"></div>watchdog</div>
+            <div class="dep-chip"><div class="status-light"></div>playwright</div>
+            <div class="dep-chip"><div class="status-light"></div>mcp</div>
+            <div class="dep-chip"><div class="status-light"></div>black</div>
+            <div class="dep-chip"><div class="status-light"></div>ruff</div>
+            <div class="dep-chip"><div class="status-light"></div>pytest</div>
+            <div class="dep-chip"><div class="status-light"></div>mypy</div>
+            <div class="dep-chip"><div class="status-light"></div>markdown</div>
+            <div class="dep-chip"><div class="status-light"></div>frontmatter</div>
+            <div class="dep-chip" style="color:var(--accent-primary);"><div class="status-light"></div>ai-analysis</div>
+            <div class="dep-chip" style="color:var(--accent-primary);"><div class="status-light"></div>react</div>
+            <div class="dep-chip" style="color:var(--accent-primary);"><div class="status-light"></div>iframe</div>
+            <div class="dep-chip" style="color:var(--accent-primary);"><div class="status-light"></div>trinity-mcp</div>
+        </div>
+
+        <footer>
+            Neudash 2025 • AFO Chancellor System • All Rights Reserved
+        </footer>
+
+    </div>
+
+<script>
+    // Animation for Pillar Bars
+    window.onload = function() {
+        const bars = document.querySelectorAll('.pillar-fill');
+        bars.forEach(bar => {
+            const width = bar.style.width;
+            bar.style.width = '0%';
+            setTimeout(() => {
+                bar.style.width = width;
+            }, 300);
+        });
+    };
+</script>
+</body>
+</html>

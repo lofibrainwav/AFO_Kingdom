@@ -1,5 +1,5 @@
 {
-  "timestamp": 1766040352.224043,
+  "timestamp": 1766321353.7369769,
   "summary": {
     "total_tested": 11,
     "total_passed": 11,
@@ -82,15 +82,15 @@
           "tool": "kingdom_health",
           "status": "passed",
           "trinity_score": {
-            "truth": 0.895,
-            "goodness": 0.86,
+            "truth": 0.685,
+            "goodness": 0.68,
             "beauty": 0.705,
-            "filial_serenity": 0.93,
+            "filial_serenity": 0.72,
             "eternity": 0.5,
-            "serenity_core": 0.8156,
-            "trinity_score": 0.8397,
-            "balance_delta": 0.43,
-            "balance_status": "warning",
+            "serenity_core": 0.6899,
+            "trinity_score": 0.6863,
+            "balance_delta": 0.22,
+            "balance_status": "balanced",
             "weights": {
               "truth": 0.35,
               "goodness": 0.35,

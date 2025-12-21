@@ -16,14 +16,8 @@ from fastapi.testclient import TestClient
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 # Late import to ensure path is set
-try:
-    from api_server import API_DESCRIPTION, API_TITLE, API_VERSION, app
-except Exception:  # Catch all initialization errors including TypeError from legacy deps
-    # If import fails (e.g. strict dependency check), mock it
-    app = MagicMock()
-    API_TITLE = "AFO Kingdom Soul Engine API"
-    API_VERSION = "6.3.0"
-    API_DESCRIPTION = "Description"
+# Late import to ensure path is set
+from api_server import app
 
 
 class TestAPIServerConfig:
@@ -31,15 +25,16 @@ class TestAPIServerConfig:
 
     def test_api_metadata(self) -> None:
         """API 메타데이터 테스트"""
-        assert "AFO" in API_TITLE
-        assert "Soul Engine" in API_TITLE
+        assert "AFO" in app.title
+        assert "Soul Engine" in app.title
         # Version check - actual version might change, just check structure
-        assert len(API_VERSION.split(".")) >= 2
+        assert len(app.version.split(".")) >= 2
 
     def test_app_configured(self) -> None:
         """App 설정 확인"""
-        assert app.title == API_TITLE
-        assert app.version == API_VERSION
+        # Ensure title and version are set (non-empty)
+        assert app.title
+        assert app.version
 
 
 class TestAPIServerRoutes:
@@ -75,16 +70,15 @@ class TestLifespan:
     @pytest.mark.asyncio
     async def test_lifespan(self) -> None:
         """Lifespan 컨텍스트 매니저 테스트"""
-        from api_server import lifespan
+        from AFO.api.config import get_lifespan_manager as lifespan
 
         # Use Any to avoid MyPy strictness on lifespan type
         # Disable strict startup checks by mocking
         # get_settings is imported in api_server, so we can patch it
-        with patch("api_server.get_settings"):
-            with patch("api_server.workflow"):  # Patch workflow to mock compile()
-                async with lifespan(app):
-                    # Startup logic runs here
-                    pass
+        with patch("AFO.api.config.get_settings_safe"):
+            async with lifespan(app):
+                # Startup logic runs here
+                pass
             # Shutdown logic runs here
 
 
@@ -93,7 +87,7 @@ class TestDependencyInjection:
 
     def test_get_settings_injection(self) -> None:
         """설정 주입 테스트"""
-        from api_server import get_settings
+        from AFO.config.settings import get_settings
 
         # Explicitly check if the function object exists to satisfy MyPy
         assert callable(get_settings)

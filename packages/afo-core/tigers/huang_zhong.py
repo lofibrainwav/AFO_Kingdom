@@ -15,7 +15,7 @@ def log(action: str, details: dict | None = None) -> str:
     if details is None:
         details = {}
 
-    def _logic(val):
+    def _logic(val: tuple[str, dict]) -> str:
         act, dets = val
         {
             "action": act,
