@@ -7,14 +7,16 @@ PDF 페이지 3: DRY_RUN, 권한 검증, 폴백
 import logging
 from collections.abc import Callable
 from functools import wraps
-from typing import Any
+from typing import Any, TypeVar
 
 from AFO.config.antigravity import antigravity
 
 logger = logging.getLogger(__name__)
 
+T = TypeVar("T")
 
-def safe_execute(func: Callable) -> Callable:
+
+def safe_execute(func: Callable[..., T]) -> Callable[..., dict[str, Any]]:
     """
     안전한 실행 데코레이터 (善: Goodness)
 
@@ -37,7 +39,11 @@ def safe_execute(func: Callable) -> Callable:
             return {"status": "safe_simulation", "function": func.__name__}
 
         try:
-            result = await func(*args, **kwargs)
+            import asyncio
+
+            result = func(*args, **kwargs)
+            if asyncio.iscoroutine(result):
+                result = await result
             return {"status": "success", "result": result}
         except Exception as e:
             logger.warning(f"[善: 폴백] {func.__name__} - 에러 발생, 안전 폴백: {e}")

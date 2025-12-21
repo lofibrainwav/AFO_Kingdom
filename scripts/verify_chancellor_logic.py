@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-import os
+import pathlib
 import sys
 
 from langchain_core.messages import AIMessage
 
 
 # Add package root to path
-sys.path.append(os.path.abspath("packages/afo-core"))
+sys.path.append(pathlib.Path("packages/afo-core").resolve())
 
 try:
     from chancellor_graph import chancellor_router_node
@@ -31,7 +31,7 @@ def test_routing(trinity: float, risk: float, dry_run: bool):
     }
 
     # Run Node Logic
-    result = chancellor_router_node(state)
+    chancellor_router_node(state)
 
     # Check Result (Logic modifies state in-place in current implementation or returns next step)
     # Note: Our implementation modifies state["auto_run_eligible"] in place inside the function before returning

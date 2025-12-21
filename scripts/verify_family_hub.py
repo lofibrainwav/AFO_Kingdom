@@ -50,7 +50,11 @@ def verify_family_hub():
 
     # 4. Log Activity
     print_step("Logging Activity (Playing)...")
-    activity = {"member_id": "mireu", "type": "Play", "description": "Playing with fireballs"}
+    activity = {
+        "member_id": "mireu",
+        "type": "Play",
+        "description": "Playing with fireballs",
+    }
     res = requests.post(f"{BASE_URL}/family/activity", json=activity)
     print(json.dumps(res.json(), indent=2, ensure_ascii=False))
     assert res.status_code == 200

@@ -6,6 +6,8 @@ Wallet Models - Pydantic 모델 및 상수 정의 (DRY 원칙)
 
 from __future__ import annotations
 
+from typing import Any
+
 from pydantic import BaseModel, Field
 
 # 승상의 간결화: API Provider 상수 정의 (DRY 원칙)
@@ -34,7 +36,7 @@ class WalletStatusResponse(BaseModel):
     """Wallet 상태 응답 모델"""
 
     status: str
-    providers: dict
+    providers: dict[str, Any]
     total_apis: int
     timestamp: str
 

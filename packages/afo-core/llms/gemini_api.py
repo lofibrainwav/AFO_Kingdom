@@ -110,7 +110,10 @@ class GeminiAPIWrapper:
                         "usage": result.get("usageMetadata", {}),
                     }
                 else:
-                    return {"error": "No candidates in Gemini response", "full_response": result}
+                    return {
+                        "error": "No candidates in Gemini response",
+                        "full_response": result,
+                    }
             else:
                 error_msg = response.text
                 try:

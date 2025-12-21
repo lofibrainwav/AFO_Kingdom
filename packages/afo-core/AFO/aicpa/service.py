@@ -11,8 +11,10 @@ AICPA Service Layer - 에이전트 군단 서비스
 """
 
 import logging
+import tempfile
 from dataclasses import asdict
 from datetime import datetime
+from pathlib import Path
 
 from .report_generator import (
     generate_email_draft,
@@ -42,7 +44,11 @@ class AICPAService:
 
     def log_mission(self, action: str, result: str):
         """미션 로그 기록 (永 - Eternity)"""
-        entry = {"timestamp": datetime.now().isoformat(), "action": action, "result": result}
+        entry = {
+            "timestamp": datetime.now().isoformat(),
+            "action": action,
+            "result": result,
+        }
         self.mission_log.append(entry)
         logger.info(f"[AICPAService] {action}: {result}")
 
@@ -205,19 +211,23 @@ class AICPAService:
         client_name: str,
         tax_result: dict,
         roth_simulation: dict | None = None,
-        output_dir: str = "/tmp",
+        output_dir: str | None = None,
     ) -> dict:
         """
         모든 문서 일괄 생성
 
         孝 (Serenity): 버튼 하나로 모든 파일 생성
         """
+        # Use tempfile if output_dir not provided
+        if output_dir is None:
+            output_dir = tempfile.gettempdir()
+
         safe_name = client_name.replace(" ", "_")
         files = {}
 
         # 1. Word 보고서
         try:
-            word_path = f"{output_dir}/{safe_name}_Strategy_Report.docx"
+            word_path = str(Path(output_dir) / f"{safe_name}_Strategy_Report.docx")
             files["word_report"] = generate_strategy_report(
                 client_name, tax_result, roth_simulation, word_path
             )
@@ -226,14 +236,14 @@ class AICPAService:
 
         # 2. TurboTax CSV
         try:
-            tt_path = f"{output_dir}/{safe_name}_TurboTax.csv"
+            tt_path = str(Path(output_dir) / f"{safe_name}_TurboTax.csv")
             files["turbotax_csv"] = generate_turbotax_csv(client_name, tax_result, tt_path)
         except Exception as e:
             files["turbotax_csv"] = f"Error: {e!s}"
 
         # 3. QuickBooks CSV
         try:
-            qb_path = f"{output_dir}/{safe_name}_QuickBooks.csv"
+            qb_path = str(Path(output_dir) / f"{safe_name}_QuickBooks.csv")
             files["quickbooks_csv"] = generate_quickbooks_csv(client_name, tax_result, qb_path)
         except Exception as e:
             files["quickbooks_csv"] = f"Error: {e!s}"

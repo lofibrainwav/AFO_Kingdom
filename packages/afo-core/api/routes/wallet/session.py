@@ -7,6 +7,7 @@ Strangler Fig Pattern (간결화 버전)
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Any
 
 from fastapi import APIRouter, HTTPException
 
@@ -17,7 +18,7 @@ session_router = APIRouter(prefix="/api/wallet/session", tags=["Wallet Session"]
 
 
 @session_router.get("/{session_id}")
-async def get_wallet_session(session_id: str):
+async def get_wallet_session(session_id: str) -> dict[str, Any]:
     """
     **Wallet 세션 조회** - 특정 세션 정보 조회
 
@@ -46,7 +47,7 @@ async def get_wallet_session(session_id: str):
 
 
 @session_router.post("/extract")
-async def extract_wallet_session(request: WalletSessionRequest):
+async def extract_wallet_session(request: WalletSessionRequest) -> dict[str, Any]:
     """
     **Wallet 세션 추출** - 브라우저 세션에서 API 키 추출
 

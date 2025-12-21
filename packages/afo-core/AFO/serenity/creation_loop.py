@@ -23,19 +23,19 @@ from AFO.utils.logging import log_sse
 try:
     from AFO.genui.genui_orchestrator import GenUIOrchestrator
 except ImportError:
-    GenUIOrchestrator = None
+    GenUIOrchestrator = None  # type: ignore
 
 # Playwright Bridge
 try:
     from AFO.utils.playwright_bridge import bridge as playwright_bridge
 except ImportError:
-    playwright_bridge = None
+    playwright_bridge = None  # type: ignore
 
 # Trinity Manager
 try:
     from AFO.domain.metrics.trinity_manager import trinity_manager
 except ImportError:
-    trinity_manager = None
+    trinity_manager = None  # type: ignore
 
 logger = logging.getLogger(__name__)
 
@@ -66,7 +66,7 @@ class SerenityCreationLoop:
 
     def __init__(self, sandbox_dir: str | None = None):
         self.sandbox_dir = sandbox_dir or tempfile.mkdtemp(prefix="serenity_")
-        self.genui = GenUIOrchestrator() if GenUIOrchestrator else None
+        self.genui = GenUIOrchestrator() if GenUIOrchestrator is not None else None
         self.bridge = playwright_bridge
 
     async def create_ui(self, prompt: str) -> CreationResult:
@@ -140,7 +140,15 @@ class SerenityCreationLoop:
             log_sse(f"🔄 [Serenity] Refining: {feedback[:50]}...")
 
         log_sse("⚠️ [Serenity] Max iterations reached. Returning best effort.")
-        return last_result
+        return last_result or CreationResult(
+            code="",
+            screenshot_path=None,
+            trinity_score=0,
+            risk_score=1,
+            iteration=iteration,
+            success=False,
+            feedback="Failed to generate result",
+        )
 
     async def _generate_code(self, prompt: str, feedback: str = "") -> str:
         """Generate React component via GenUI."""
@@ -152,9 +160,10 @@ class SerenityCreationLoop:
             full_prompt = f"{prompt}\n\n[REFINEMENT FEEDBACK]: {feedback}"
 
         try:
-            # Note: Assuming self.genui.generate returns a dict with 'code'
-            result = await self.genui.generate(full_prompt)
-            return result.get("code", "")
+            # self.genui is already checked above, so it's not None here
+            # GenUIOrchestrator.create_project returns dict, we need 'code' key
+            res = self.genui.create_project("serenity_loop", full_prompt)
+            return str(res.get("code", ""))
         except Exception as e:
             logger.error(f"GenUI generation error: {e}")
             return ""

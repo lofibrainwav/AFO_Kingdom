@@ -21,7 +21,7 @@ from typing import Any
 class ContainerDetector:
     """Docker 컨테이너 이름 자동 감지 클래스"""
 
-    def __init__(self, project_prefix: str = "afo"):
+    def __init__(self, project_prefix: str = "afo") -> None:
         """
         Args:
             project_prefix: Docker 컨테이너 이름 접두사 (기본: "afo")
@@ -97,10 +97,16 @@ class ContainerDetector:
             afo_soul_engine_home = os.getenv("AFO_SOUL_ENGINE_HOME", "")
 
         possible_paths = [
-            Path(afo_home) / "afo_soul_engine" / "api_wallet_storage.json" if afo_home else Path(),
-            Path(afo_soul_engine_home) / "api_wallet_storage.json"
-            if afo_soul_engine_home
-            else Path(),
+            (
+                Path(afo_home) / "afo_soul_engine" / "api_wallet_storage.json"
+                if afo_home
+                else Path()
+            ),
+            (
+                Path(afo_soul_engine_home) / "api_wallet_storage.json"
+                if afo_soul_engine_home
+                else Path()
+            ),
             Path.home() / "AFO" / "afo_soul_engine" / "api_wallet_storage.json",
             Path("/Users/brnestrm/AFO/afo_soul_engine/api_wallet_storage.json"),
             Path("/home/user/AFO/afo_soul_engine/api_wallet_storage.json"),
@@ -117,14 +123,14 @@ class ContainerDetector:
         self._cache["api_wallet_path"] = default
         return default
 
-    def get_all_containers(self) -> dict:
+    def get_all_containers(self) -> dict[str, str]:
         """모든 감지된 컨테이너 이름 반환"""
         return {
             "redis": self.detect_redis_container(),
             "postgres": self.detect_postgres_container(),
         }
 
-    def clear_cache(self):
+    def clear_cache(self) -> None:
         """캐시 초기화 (테스트용)"""
         self._cache.clear()
 

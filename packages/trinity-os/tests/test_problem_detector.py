@@ -9,7 +9,7 @@ import sys
 from pathlib import Path
 
 
-def test_problem_detector():
+def test_problem_detector() -> None:
     """문제 감지 스크립트 테스트"""
     script_path = Path(__file__).parent.parent / "scripts" / "kingdom_problem_detector.py"
 
@@ -34,7 +34,7 @@ def test_problem_detector():
     print("✅ Problem detector test passed")
 
 
-def test_health_report():
+def test_health_report() -> None:
     """건강 리포트 스크립트 테스트"""
     script_path = Path(__file__).parent.parent / "scripts" / "kingdom_health_report.py"
 
@@ -55,7 +55,7 @@ def test_health_report():
     print("✅ Health report test passed")
 
 
-def test_spirit_integration():
+def test_spirit_integration() -> None:
     """정신 통합 스크립트 테스트"""
     script_path = Path(__file__).parent.parent / "scripts" / "kingdom_spirit_integration.py"
 

@@ -43,7 +43,10 @@ def main():
             wallet.delete("openai")
 
         key_id = wallet.add(
-            name="openai", api_key=token, service="openai", description="Manually added via script"
+            name="openai",
+            api_key=token,
+            service="openai",
+            description="Manually added via script",
         )
         print(f"\n✅ Success! Token added with ID {key_id}")
 

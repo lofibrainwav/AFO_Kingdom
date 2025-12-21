@@ -32,7 +32,10 @@ class HealthReportGenerator:
         """오장육부 건강 체크 실행"""
         try:
             result = subprocess.run(
-                ["python3", str(AFO_ROOT / ".claude" / "scripts" / "check_11_organs.py")],
+                [
+                    "python3",
+                    str(AFO_ROOT / ".claude" / "scripts" / "check_11_organs.py"),
+                ],
                 capture_output=True,
                 text=True,
                 timeout=30,
@@ -98,7 +101,10 @@ class HealthReportGenerator:
         """왕국 상태 검증 실행"""
         try:
             result = subprocess.run(
-                ["python3", str(AFO_ROOT / "scripts" / "verification" / "verify_kingdom_status.py")],
+                [
+                    "python3",
+                    str(AFO_ROOT / "scripts" / "verification" / "verify_kingdom_status.py"),
+                ],
                 capture_output=True,
                 text=True,
                 timeout=120,
@@ -217,7 +223,13 @@ class HealthReportGenerator:
         overall_score = self.calculate_overall_score(trinity)
 
         # Balance Gap 계산
-        scores = [trinity["truth"], trinity["goodness"], trinity["beauty"], trinity["serenity"], trinity["eternity"]]
+        scores = [
+            trinity["truth"],
+            trinity["goodness"],
+            trinity["beauty"],
+            trinity["serenity"],
+            trinity["eternity"],
+        ]
         balance_gap = max(scores) - min(scores)
         balanced = balance_gap < 0.3
 

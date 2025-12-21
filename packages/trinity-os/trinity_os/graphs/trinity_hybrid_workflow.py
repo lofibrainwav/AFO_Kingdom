@@ -75,7 +75,9 @@ def reviewer_node(state: AgentState) -> dict:
     }
 
 
-def audit_gate(state: AgentState) -> Literal["executor_node", "planner_node", "__end__"]:
+def audit_gate(
+    state: AgentState,
+) -> Literal["executor_node", "planner_node", "__end__"]:
     """
     The 'Conditional Edge'.
     Decides flow based on Trinity Score (The Energy Flow).

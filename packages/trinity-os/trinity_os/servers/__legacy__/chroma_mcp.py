@@ -61,7 +61,11 @@ class ChromaMCP:
         try:
             self.client.get_or_create_collection(name=name)
             return json.dumps(
-                {"success": True, "collection_name": name, "message": f"컬렉션 '{name}'이(가) 준비되었습니다."}
+                {
+                    "success": True,
+                    "collection_name": name,
+                    "message": f"컬렉션 '{name}'이(가) 준비되었습니다.",
+                }
             )
         except Exception as e:
             return json.dumps({"success": False, "error": f"컬렉션 가져오기 실패: {e!s}"})
@@ -125,7 +129,10 @@ class ChromaMCP:
             collection = self.client.get_collection(name=collection_name)
 
             results = collection.query(
-                query_texts=query_texts, n_results=n_results, where=where, where_document=where_document
+                query_texts=query_texts,
+                n_results=n_results,
+                where=where,
+                where_document=where_document,
             )
 
             # 안전하게 결과 길이 계산
@@ -159,12 +166,17 @@ class ChromaMCP:
                         "success": True,
                         "collection_name": collection_name,
                         "document": result["documents"][0],
-                        "metadata": result["metadatas"][0] if result["metadatas"] else {},
+                        "metadata": (result["metadatas"][0] if result["metadatas"] else {}),
                         "id": doc_id,
                     }
                 )
             else:
-                return json.dumps({"success": False, "error": f"문서 ID '{doc_id}'를 찾을 수 없습니다."})
+                return json.dumps(
+                    {
+                        "success": False,
+                        "error": f"문서 ID '{doc_id}'를 찾을 수 없습니다.",
+                    }
+                )
         except Exception as e:
             return json.dumps({"success": False, "error": f"문서 조회 실패: {e!s}"})
 
@@ -173,7 +185,11 @@ class ChromaMCP:
         try:
             self.client.delete_collection(name=name)
             return json.dumps(
-                {"success": True, "collection_name": name, "message": f"컬렉션 '{name}'이(가) 삭제되었습니다."}
+                {
+                    "success": True,
+                    "collection_name": name,
+                    "message": f"컬렉션 '{name}'이(가) 삭제되었습니다.",
+                }
             )
         except Exception as e:
             return json.dumps({"success": False, "error": f"컬렉션 삭제 실패: {e!s}"})
@@ -239,7 +255,11 @@ def main():
                             where = arguments.get("where")
                             where_document = arguments.get("where_document")
                             response_text = chroma_mcp.query_collection(
-                                collection_name, query_texts, n_results, where, where_document
+                                collection_name,
+                                query_texts,
+                                n_results,
+                                where,
+                                where_document,
                             )
 
                         elif tool_name == "get_document":
@@ -269,7 +289,10 @@ def main():
                             "result": {
                                 "protocolVersion": "2024-11-05",
                                 "capabilities": {"tools": {}},
-                                "serverInfo": {"name": "chroma-mcp", "version": "1.0.0"},
+                                "serverInfo": {
+                                    "name": "chroma-mcp",
+                                    "version": "1.0.0",
+                                },
                             },
                         }
                         print(json.dumps(result))

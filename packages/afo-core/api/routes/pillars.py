@@ -101,7 +101,13 @@ async def calculate_five_pillars_from_system() -> dict[str, float]:
     except Exception as e:
         # Fallback: 기본 점수 반환
         print(f"⚠️  5기둥 점수 계산 실패, 기본값 사용: {e}")
-        return {"truth": 0.95, "goodness": 0.92, "beauty": 0.88, "serenity": 0.96, "forever": 0.99}
+        return {
+            "truth": 0.95,
+            "goodness": 0.92,
+            "beauty": 0.88,
+            "serenity": 0.96,
+            "forever": 0.99,
+        }
 
 
 @router.get("/current", response_model=FivePillarsResponse, summary="현재 5기둥 점수 조회")
@@ -149,7 +155,11 @@ async def get_current_pillars() -> FivePillarsResponse:
         raise HTTPException(status_code=500, detail=f"5기둥 점수 조회 실패: {e!s}") from e
 
 
-@router.post("/live", response_model=LiveFivePillarsResponse, summary="LangFlow 실시간 5기둥 평가")
+@router.post(
+    "/live",
+    response_model=LiveFivePillarsResponse,
+    summary="LangFlow 실시간 5기둥 평가",
+)
 async def evaluate_five_pillars_live(
     request: LangFlowFivePillarsRequest,
 ) -> LiveFivePillarsResponse:
@@ -175,7 +185,8 @@ async def evaluate_five_pillars_live(
 
         if result.get("status") == "error":
             raise HTTPException(
-                status_code=400, detail=f"5기둥 평가 실패: {result.get('error', 'Unknown error')}"
+                status_code=400,
+                detail=f"5기둥 평가 실패: {result.get('error', 'Unknown error')}",
             )
 
         # 응답 포맷팅
@@ -380,7 +391,13 @@ async def calculate_family_pillars(members_status: dict[str, Any]) -> dict[str, 
     # 각 구성원의 기여도 가중치 적용
     weights = {"jay": 0.4, "julie": 0.35, "jayden": 0.25}
 
-    family_pillars = {"truth": 0, "goodness": 0, "beauty": 0, "serenity": 0, "forever": 0}
+    family_pillars = {
+        "truth": 0,
+        "goodness": 0,
+        "beauty": 0,
+        "serenity": 0,
+        "forever": 0,
+    }
 
     total_weight = 0
     for member_id, member_data in members_status.items():
@@ -495,7 +512,11 @@ async def update_member_data(member: MemberScore) -> dict[str, Any]:
     save_family_data(family_members_data)
 
     print(f"📝 가족 데이터 업데이트: {member.name}")
-    return {"status": "success", "member": member.name, "updated_at": datetime.now().isoformat()}
+    return {
+        "status": "success",
+        "member": member.name,
+        "updated_at": datetime.now().isoformat(),
+    }
 
 
 @router.get("/family/hub/data", summary="실시간 가족 허브 데이터 조회")

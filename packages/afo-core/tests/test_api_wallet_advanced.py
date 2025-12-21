@@ -53,8 +53,8 @@ def test_mock_fernet_fallback():
         # The code checks: try: from cryptography.fernet import Fernet ... except ImportError: ...
 
         # Let's force ImportError for cryptography
-        sys.modules["cryptography"] = None
-        sys.modules["cryptography.fernet"] = None
+        sys.modules["cryptography"] = None  # type: ignore[assignment]
+        sys.modules["cryptography.fernet"] = None  # type: ignore[assignment]
 
         # Now import
         # Use import_module to ensure it loads freshly and registers in sys.modules

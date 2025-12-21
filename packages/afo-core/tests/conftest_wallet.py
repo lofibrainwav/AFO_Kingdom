@@ -13,7 +13,7 @@ _original_modules = {}
 
 
 @pytest.fixture(autouse=True)
-def isolate_api_wallet_module():
+def isolate_api_wallet_module() -> None:
     """
     Autouse fixture that cleans up api_wallet module state before and after each test.
     This prevents test pollution when tests reload the module with different configurations.

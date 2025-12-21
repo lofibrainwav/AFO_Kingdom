@@ -1,10 +1,13 @@
 import asyncio
 import os
+import pathlib
 import sys
 
 
 # 프로젝트 루트 경로 추가
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../packages/afo-core")))
+sys.path.append(
+    pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")).resolve()
+)
 
 from AFO.utils.playwright_bridge import bridge
 
@@ -38,7 +41,7 @@ async def verify_genui_self_evolution():
         # In this environment without Keys, we expect a graceful FAIL or Fallback message,
         # which STILL confirms the architecture is working (it TRIED to evolve).
 
-        if result.get("status") in ["PASS", "FAIL", "simulation"]:
+        if result.get("status") in {"PASS", "FAIL", "simulation"}:
             print("✅ Self-Evolution Loop Verified (Architecture works)")
         else:
             print("❌ Unexpected State")

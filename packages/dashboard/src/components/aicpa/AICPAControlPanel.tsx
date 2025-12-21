@@ -25,6 +25,7 @@ import {
   AlertTriangle,
   Crown
 } from 'lucide-react';
+import { logError } from '@/lib/logger';
 
 interface MissionResult {
   client: {
@@ -54,7 +55,8 @@ interface MissionResult {
   summary: string;
 }
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8010';
+import { API_BASE_URL } from '@/lib/constants';
+const API_BASE = API_BASE_URL;
 
 export const AICPAControlPanel: React.FC = () => {
   const [clientName, setClientName] = useState('');
@@ -82,7 +84,7 @@ export const AICPAControlPanel: React.FC = () => {
       setResult(data);
     } catch (e) {
       setError('에이전트 연결 실패 - 서버 상태를 확인하세요');
-      console.error('[AICPA] Error:', e);
+      logError('[AICPA] Error', { error: e instanceof Error ? e.message : 'Unknown error' });
     } finally {
       setLoading(false);
     }

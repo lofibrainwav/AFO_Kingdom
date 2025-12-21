@@ -64,7 +64,11 @@ class JulieService:
 
         # 3. Dynamic Advice via LLM Router (Server-Side AI Shift)
         # VaultManager already secures keys inside llm_router
-        context_data = {"health": financial_health_score, "spending": 2450000, "budget": 550000}
+        context_data = {
+            "health": financial_health_score,
+            "spending": 2450000,
+            "budget": 550000,
+        }
 
         try:
             # Simple prompt for advice
@@ -104,7 +108,10 @@ class JulieService:
                 },
             ],
             "risk_alerts": [
-                {"level": "warning", "message": "Subscription cost increased by 15% vs last month"},
+                {
+                    "level": "warning",
+                    "message": "Subscription cost increased by 15% vs last month",
+                },
                 {"level": "info", "message": "Budget utilization at 82%"},
             ],
             "advice": advice,

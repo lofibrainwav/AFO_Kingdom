@@ -4,6 +4,7 @@
 
 import React, { Suspense } from 'react';
 import useSWR, { useSWRConfig } from 'swr';
+import { logInfo } from '@/lib/logger';
 
 // === Types ===
 interface Skill {
@@ -80,7 +81,7 @@ export default function SkillsDashboard() {
     try {
         // 3. Perform actual API call
         // await api.levelUpSkill('1');
-        console.log("API Call Simulated");
+        logInfo("API Call Simulated");
         
         // 4. Trigger revalidation to ensure truth
         mutate('/api/skills');

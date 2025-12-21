@@ -1,3 +1,5 @@
+from typing import Any
+
 from fastapi import APIRouter
 
 from AFO.julie_cpa.services.julie_service import JulieService
@@ -11,7 +13,7 @@ julie_service = JulieService()
 
 
 @router.get("/status")
-async def get_status():
+async def get_status() -> dict[str, Any]:
     """
     Legacy-compatible Status Endpoint.
     Used by: AICPA Julie Frontend (Port 3000)
@@ -20,7 +22,7 @@ async def get_status():
 
 
 @router.get("/dashboard")
-async def get_dashboard():
+async def get_dashboard() -> dict[str, Any]:
     """
     [GenUI Support]
     Full Financial Dashboard Data (Health, Alerts, Tx).

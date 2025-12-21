@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
+import { logError } from '@/lib/logger';
 import FinancialHealthDial from '@/components/julie/FinancialHealthDial';
 import TransactionLedger from '@/components/julie/TransactionLedger';
 import ApprovalQueue from '@/components/julie/ApprovalQueue';
@@ -40,7 +41,7 @@ export default function CPADashboard({}: CPADashboardProps) {
             const jsonData = await res.json();
             setData(jsonData);
         } catch (err) {
-            console.error("GenUI Fetch Error:", err);
+            logError("GenUI Fetch Error", { error: err instanceof Error ? err.message : 'Unknown error' });
             setError("Backend Sync Failed (Using Cached Royal Data)");
         } finally {
             setLoading(false);

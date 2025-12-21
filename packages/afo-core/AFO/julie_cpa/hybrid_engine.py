@@ -79,9 +79,19 @@ HYBRID_CONFIG = {
 
 # 왕국 이벤트
 KINGDOM_EVENTS = [
-    {"holiday": "phase_reward", "ds": "2025-06-30", "lower_window": 0, "upper_window": 7},
+    {
+        "holiday": "phase_reward",
+        "ds": "2025-06-30",
+        "lower_window": 0,
+        "upper_window": 7,
+    },
     {"holiday": "year_end", "ds": "2025-12-31", "lower_window": -3, "upper_window": 7},
-    {"holiday": "tax_season", "ds": "2025-04-15", "lower_window": -7, "upper_window": 0},
+    {
+        "holiday": "tax_season",
+        "ds": "2025-04-15",
+        "lower_window": -7,
+        "upper_window": 0,
+    },
 ]
 
 # Mock 데이터 (실제로는 DB에서)
@@ -220,7 +230,9 @@ def _calculate_metrics(
 
 
 def _generate_forecast_advice(
-    historical_data: pd.DataFrame, predictions: list[dict[str, Any]], metrics: dict[str, Any]
+    historical_data: pd.DataFrame,
+    predictions: list[dict[str, Any]],
+    metrics: dict[str, Any],
 ) -> str:
     """Step 5: 조언 및 메시지 생성"""
     if not predictions:

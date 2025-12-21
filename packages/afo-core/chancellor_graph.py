@@ -15,8 +15,8 @@ try:
     from langchain_qdrant import Qdrant
     from qdrant_client import QdrantClient
 except ImportError:
-    Qdrant = None
-    VectorStoreRetrieverMemory = None
+    Qdrant: Any = None  # type: ignore[no-redef]
+    VectorStoreRetrieverMemory: Any = None  # type: ignore[no-redef]
 
 # Internal Modules
 try:
@@ -32,7 +32,7 @@ except ImportError as e:
     # Fallback for when running in strictly isolated environments
     print(f"⚠️ Import Warning: {e} - Running in Safe Mode")
     # Define mocks or allow failure
-    zhuge_liang = None
+    zhuge_liang: Any = None  # type: ignore[no-redef]
 
 
 class ChancellorState(TypedDict):
@@ -79,8 +79,6 @@ async def constitutional_node(state: ChancellorState) -> dict[str, Any]:
         return {"status": "BLOCKED", "trinity_score": 0.0}
 
     # [ADVANCED CAI] Anthropic-style Self-Critique & Revision Loop
-    # We critique the query intent or a hypothetical baseline response if available.
-    # For the entry gate, we focus on intent refinement.
     critique, revised_query, critique_status = await AFOConstitution.critique_and_revise(
         query, query
     )
@@ -110,7 +108,7 @@ async def memory_recall_node(state: ChancellorState) -> dict[str, Any]:
     query = state.get("query", "")
     context = state.get("context", {})
 
-    if VectorStoreRetrieverMemory and Qdrant:
+    if VectorStoreRetrieverMemory is not None and Qdrant is not None:
         try:
             settings = get_settings()
             client = QdrantClient(url=settings.QDRANT_URL)
@@ -132,7 +130,7 @@ async def memory_recall_node(state: ChancellorState) -> dict[str, Any]:
                 context["semantic_memory"] = history
                 state["search_results"] = [
                     {"content": doc.page_content, "metadata": doc.metadata}
-                    for doc in retriever.get_relevant_documents(query)
+                    for doc in retriever.invoke(query)
                 ]
 
         except Exception as e:
@@ -348,7 +346,9 @@ def check_compliance(state: ChancellorState) -> str:
 
 
 graph.add_conditional_edges(
-    "constitutional", check_compliance, {"historian": "historian", "memory_recall": "memory_recall"}
+    "constitutional",
+    check_compliance,
+    {"historian": "historian", "memory_recall": "memory_recall"},
 )
 
 # Rerank after recall
@@ -368,23 +368,22 @@ graph.add_edge("tigers", "historian")
 graph.add_edge("historian", END)
 
 # === 4. Compile ===
-# Use AsyncRedisSaver for persistent Checkpointing (Eternity 永)
+# Use MemorySaver for development, RedisSaver for production (Eternity 永)
 try:
-    from langgraph.checkpoint.redis.aio import AsyncRedisSaver
+    from langgraph.checkpoint.memory import MemorySaver
 
-    from utils.redis_connection import get_redis_url
-
-    # Use a separate pool for the checkpointer if needed, or get url
-    redis_url = get_redis_url()
-    checkpointer = AsyncRedisSaver.from_conn_string(redis_url)
-    log_sse("✅ [Memory] Eternal Redis Checkpointer initialized")
+    # Development: Use MemorySaver for fast prototyping
+    # Production: Use build_chancellor_graph(checkpointer) with RedisSaver for persistence
+    checkpointer = MemorySaver()
+    # Info level log instead of warning - this is expected behavior for development
+    log_sse(
+        "ℹ️ [Memory] Using MemorySaver for development. For Redis persistence, use build_chancellor_graph(checkpointer) with RedisSaver."
+    )
 except ImportError:
     from langgraph.checkpoint.memory import MemorySaver
 
     checkpointer = MemorySaver()
-    log_sse(
-        "⚠️ [Memory] langgraph-checkpoint-redis not found. Falling back to MemorySaver (Degraded Memory)"
-    )
+    log_sse("ℹ️ [Memory] MemorySaver active (fallback mode).")
 
 chancellor_graph = graph.compile(checkpointer=checkpointer)
 

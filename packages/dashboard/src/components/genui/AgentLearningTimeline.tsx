@@ -3,6 +3,7 @@
 
 import { useEffect, useState, useCallback, memo } from 'react';
 import { Bot, Swords, Palette, Search, X, Sparkles } from 'lucide-react';
+import { logError } from '@/lib/logger';
 
 interface LogEntry {
   id: number;
@@ -44,7 +45,7 @@ const AgentLearningTimeline = memo(function AgentLearningTimeline() {
           return updated.slice(0, LOG_LIMIT);
         });
       } catch (e) {
-        console.error("Failed to parse log:", e);
+        logError("Failed to parse log", { error: e instanceof Error ? e.message : 'Unknown error' });
       }
     };
 

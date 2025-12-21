@@ -98,13 +98,15 @@ async def test_bulk_import_via_http_api():
     with patch.dict(sys.modules, {"api_wallet": mock_wallet_module}):
         with patch("httpx.AsyncClient", return_value=mock_client):
             response = client.post(
-                "/bulk_import", data={"bulk_text": "HTTP_KEY=sk-http"}, follow_redirects=False
+                "/bulk_import",
+                data={"bulk_text": "HTTP_KEY=sk-http"},
+                follow_redirects=False,
             )
 
             # The input_server returns RedirectResponse(303)
-            assert response.status_code == 303, (
-                f"Response was {response.status_code}: {response.text}"
-            )
+            assert (
+                response.status_code == 303
+            ), f"Response was {response.status_code}: {response.text}"
             assert "success" in response.headers["location"]
             # Verify URL encoding logic implicitly by checking substring
             # "1개 저장 성공" might be percent encoded

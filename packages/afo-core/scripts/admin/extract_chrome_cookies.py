@@ -40,7 +40,8 @@ def find_chrome_cookies():
             cursor = conn.cursor()
 
             # OpenAI 관련 쿠키 찾기
-            cursor.execute("""
+            cursor.execute(
+                """
                 SELECT name, value, host_key, expires_utc
                 FROM cookies
                 WHERE (host_key LIKE '%openai%'
@@ -51,7 +52,8 @@ def find_chrome_cookies():
                    OR name LIKE '%session%'
                    OR name LIKE '%access%')
             ORDER BY expires_utc DESC
-            """)
+            """
+            )
 
             cookies = cursor.fetchall()
 

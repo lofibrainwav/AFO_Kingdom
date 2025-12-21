@@ -10,7 +10,7 @@ echo "   🔄 OPERATION CLEAN SLATE: SYSTEM REBOOT         "
 echo "==================================================="
 
 # 1. Kill confirmed ports
-PORTS=(3000 3001 3002 3003 3004 3005 8000 8010 8011)
+PORTS=(3000 3001 3002 3003 3004 3005 8000 8010)
 
 echo ">> 🧹 Cleaning ports: ${PORTS[*]}"
 

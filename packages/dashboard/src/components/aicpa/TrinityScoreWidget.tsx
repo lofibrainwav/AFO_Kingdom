@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Compass, Star } from 'lucide-react';
+import { logError } from '@/lib/logger';
 
 interface SSOTData {
   trinity_score: number;
@@ -14,7 +15,7 @@ export function TrinityScoreWidget() {
     fetch('/api/ssot-status')
       .then(res => res.json())
       .then(setData)
-      .catch(console.error)
+      .catch((err) => logError('Failed to fetch trinity score', { error: err instanceof Error ? err.message : 'Unknown error' }))
       .finally(() => setLoading(false));
   }, []);
 

@@ -5,6 +5,8 @@
 import logging
 from typing import Any
 
+from AFO.utils.trinity_type_validator import validate_with_trinity
+
 logger = logging.getLogger(__name__)
 
 
@@ -16,10 +18,11 @@ class GracefulService:
     Implements the 'Fail Safe' and 'Degrade Gracefully' patterns.
     """
 
-    def __init__(self, dry_run: bool = False):
+    def __init__(self, dry_run: bool = False) -> None:
         self.core_functional = True  # 핵심 기능 상태
         self.dry_run = dry_run
 
+    @validate_with_trinity
     def execute_core(self, query: str) -> str:
         """
         핵심 기능: 형님 쿼리 응답 (항상 유지)
@@ -28,6 +31,7 @@ class GracefulService:
         # In a real scenario, this might be a DB query or basic echo
         return f"핵심 응답 (Core Response): {query}"
 
+    @validate_with_trinity
     def execute_optional(self, feature: str) -> str | None:
         """
         선택 기능: 실패 시 폴백 (Graceful Degradation)
@@ -47,6 +51,7 @@ class GracefulService:
             )
             return None  # 폴백: None 반환 (점진적 저하)
 
+    @validate_with_trinity
     def handle_query(self, query: str, optional_features: list[str]) -> dict[str, Any]:
         """
         통합 실행: 핵심 + 선택 기능 (형님 평온 100%)

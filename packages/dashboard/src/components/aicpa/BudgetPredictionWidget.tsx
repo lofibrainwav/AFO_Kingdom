@@ -21,6 +21,7 @@ import {
   CheckCircle,
   Sparkles
 } from 'lucide-react';
+import { logError } from '@/lib/logger';
 
 interface Prediction {
   date: string;
@@ -46,7 +47,8 @@ interface ForecastResult {
   last_updated: string;
 }
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8010';
+import { API_BASE_URL } from '@/lib/constants';
+const API_BASE = API_BASE_URL;
 
 export const BudgetPredictionWidget: React.FC = () => {
   const [periods, setPeriods] = useState(3);
@@ -68,7 +70,7 @@ export const BudgetPredictionWidget: React.FC = () => {
       setResult(data);
     } catch (e) {
       setError('예측 실패 - 서버 상태를 확인하세요');
-      console.error('[BudgetPrediction] Error:', e);
+      logError('[BudgetPrediction] Error', { error: e instanceof Error ? e.message : 'Unknown error' });
     } finally {
       setLoading(false);
     }

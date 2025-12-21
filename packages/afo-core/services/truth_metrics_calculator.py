@@ -9,6 +9,8 @@ from typing import Any
 
 from pydantic import BaseModel, ValidationError
 
+from AFO.utils.trinity_type_validator import validate_with_trinity
+
 logger = logging.getLogger("AFO.TruthMetrics")
 
 
@@ -17,6 +19,10 @@ class TruthMetricsCalculator:
     TruthMetricsCalculator: 진실 점수(25점 만점) 계산기
     """
 
+    def __init__(self) -> None:
+        pass
+
+    @validate_with_trinity
     def calculate_technical_score(
         self, code_snippet: str, data: dict[str, Any], test_mode: bool = True
     ) -> dict[str, Any]:

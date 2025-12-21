@@ -25,7 +25,6 @@ from typing import Any
 # [장자] 무용지용 - 불필요한 주석은 제거하여 진실을 드러냄
 try:
     from AFO.llms.claude_api import claude_api
-    from AFO.llms.gemini_api import gemini_api
     from AFO.llms.openai_api import openai_api
 
     API_WRAPPERS_AVAILABLE = True
@@ -109,9 +108,9 @@ class LLMRouter:
             except ImportError:
                 try:
                     # [맹자] 득도다조 = 여러 길을 시도하여 도움을 구함
-                    from config.settings import get_settings  # type: ignore[assignment]
+                    from config.settings import get_settings as gs
 
-                    settings = get_settings()
+                    settings = gs()  # type: ignore[assignment]  # type: ignore[assignment]
                 except ImportError:
                     settings = None
 
@@ -122,7 +121,9 @@ class LLMRouter:
             ollama_base_url = (
                 settings.OLLAMA_BASE_URL
                 if settings
-                else os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+                else os.getenv(
+                    "OLLAMA_BASE_URL", "http://localhost:11434"
+                )  # Fallback (settings 기본값과 일치)
             )
 
             self.llm_configs[LLMProvider.OLLAMA] = LLMConfig(
@@ -210,10 +211,25 @@ class LLMRouter:
             logger.error(f"❌ LLM Router 초기화 실패: {e}")
             # 최소한의 기본 설정 보장
             if LLMProvider.OLLAMA not in self.llm_configs:
+                # Phase 1 리팩터링: settings에서 기본값 가져오기
+                try:
+                    from AFO.config.settings import get_settings
+
+                    settings = get_settings()
+                    ollama_url = settings.OLLAMA_BASE_URL
+                except ImportError:
+                    try:
+                        from config.settings import get_settings  # type: ignore
+
+                        settings = get_settings()
+                        ollama_url = settings.OLLAMA_BASE_URL
+                    except ImportError:
+                        ollama_url = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+
                 self.llm_configs[LLMProvider.OLLAMA] = LLMConfig(
                     provider=LLMProvider.OLLAMA,
                     model="qwen3-vl:8b",
-                    base_url="http://localhost:11434",
+                    base_url=ollama_url,
                     quality_tier=QualityTier.STANDARD,
                 )
 
@@ -528,7 +544,10 @@ class LLMRouter:
                 }
 
                 # Cache Success Response
-                self._response_cache[cache_key] = {"timestamp": time.time(), "data": response_data}
+                self._response_cache[cache_key] = {
+                    "timestamp": time.time(),
+                    "data": response_data,
+                }
                 if len(self._response_cache) > self._cache_max_size:
                     self._response_cache.popitem(last=False)  # Remove oldest
 
@@ -540,7 +559,11 @@ class LLMRouter:
                         routing_decision.fallback_providers[0], query, context
                     )
                 else:
-                    return {"success": False, "error": str(e), "routing": routing_decision.__dict__}
+                    return {
+                        "success": False,
+                        "error": str(e),
+                        "routing": routing_decision.__dict__,
+                    }
         except Exception as e:
             # Absolute last resort error handling
             logger.critical(f"Critical Failure in execute_with_routing: {e}")
@@ -550,82 +573,59 @@ class LLMRouter:
                 "routing": {"provider": "error", "model": "none"},
             }
 
-    def _get_google_module(self) -> Any:
-        """Helper for testability"""
-        import google.generativeai as genai
-
-        return genai
-
     async def _query_google(
         self, query: str, config: LLMConfig, context: dict[str, Any] | None
     ) -> str:
-        """Google Gemini 쿼리 실행 (모델 Fallback 적용)"""
+        """
+        Google Gemini 쿼리 실행 (REST API 사용)
+        Phase 5: google.generativeai → REST API 마이그레이션
+        """
         try:
-            genai = self._get_google_module()
-
-            # Phase 2-4: settings 사용
-            vault_client = None
+            # Phase 5: REST API 사용 (google.generativeai 대체)
             try:
-                from AFO.security.vault_manager import vault as v1_client
-
-                vault_client = v1_client
+                from AFO.llms.gemini_api import gemini_api
             except ImportError:
                 try:
-                    # [맹자] 득도다조 - 진실된 경로를 찾으면 도움이 따름
-                    from security.vault_manager import vault as v2_client
+                    from llms.gemini_api import (
+                        gemini_api,  # type: ignore[assignment]  # type: ignore[assignment]
+                    )
+                except ImportError as e:
+                    raise ImportError("Gemini API Wrapper not available") from e
 
-                    vault_client = v2_client
-                except ImportError:
-                    vault_client = None
-
-            if vault_client and config.api_key_env:
-                api_key = vault_client.get_secret(config.api_key_env)
-            else:
-                # Fallback
-                try:
-                    from AFO.config.settings import get_settings
-
-                    settings = get_settings()
-                    api_key = getattr(settings, config.api_key_env or "", None)
-                except ImportError:
-                    api_key = os.getenv(config.api_key_env or "")
-
-            if not api_key:
-                raise ValueError(f"API Key not found for env var: {config.api_key_env}")
-
-            genai.configure(api_key=api_key)
+            if not gemini_api.is_available():
+                raise ValueError("Gemini API not available (API key not set)")
 
             # 시도할 모델 목록 (실제 API 조회 결과 기반)
-            models_to_try = ["gemini-2.0-flash-exp", "gemini-flash-latest", "gemini-pro-latest"]
+            models_to_try = [
+                "gemini-2.0-flash-exp",
+                "gemini-1.5-flash",
+                "gemini-1.5-pro",
+            ]
             last_error = None
+
+            # context가 None일 수 있으므로 기본값 처리
+            context_dict = context or {}
 
             for model_name in models_to_try:
                 try:
-                    model = genai.GenerativeModel(model_name)
-
-                    # 안전 설정 완화
-                    safety_settings: list[dict[str, str]] = [
-                        {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
-                        {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
-                        {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
-                        {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"},
-                    ]
-
-                    # context가 None일 수 있으므로 기본값 처리
-                    context_dict = context or {}
-                    response = await model.generate_content_async(
+                    result = await gemini_api.generate(
                         query,
-                        generation_config=genai.types.GenerationConfig(
-                            temperature=context_dict.get("temperature", 0.7),
-                            max_output_tokens=context_dict.get("max_tokens", 1000),
-                        ),
-                        safety_settings=safety_settings,
+                        model=model_name,
+                        temperature=context_dict.get("temperature", 0.7),
+                        max_tokens=context_dict.get("max_tokens", 1000),
                     )
 
-                    return str(response.text)
+                    if result.get("success"):
+                        return str(result["content"])
+                    else:
+                        error_msg = result.get("error", "Unknown error")
+                        logger.warning(f"⚠️ Gemini 모델({model_name}) 실패: {error_msg}")
+                        last_error = Exception(error_msg)
+                        continue
+
                 except Exception as e:
-                    print(f"⚠️ Gemini 모델({model_name}) 실패: {e}")
-                    last_error = e  # Update with the actual error
+                    logger.warning(f"⚠️ Gemini 모델({model_name}) 실패: {e}")
+                    last_error = e
                     continue  # 다음 모델 시도
 
             # 모든 모델 실패 시
@@ -657,7 +657,9 @@ class LLMRouter:
 
                     base_url = get_settings().OLLAMA_BASE_URL
                 except ImportError:
-                    base_url = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+                    base_url = os.getenv(
+                        "OLLAMA_BASE_URL", "http://localhost:11434"
+                    )  # Fallback (settings 기본값과 일치)
 
         timeout_seconds = float(
             (context or {}).get("ollama_timeout_seconds", os.getenv("OLLAMA_TIMEOUT_SECONDS", "30"))
@@ -790,9 +792,9 @@ class LLMRouter:
                 r["decision"]["confidence"] for r in self.routing_history[-100:]
             )
             / min(100, len(self.routing_history)),
-            "ollama_preference_ratio": provider_usage.get("ollama", 0) / total_requests
-            if total_requests > 0
-            else 0,
+            "ollama_preference_ratio": (
+                provider_usage.get("ollama", 0) / total_requests if total_requests > 0 else 0
+            ),
         }
 
 

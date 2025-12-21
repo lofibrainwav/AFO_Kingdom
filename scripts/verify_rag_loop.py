@@ -1,10 +1,13 @@
 import asyncio
 import os
+import pathlib
 import sys
 
 
 # Add project root to path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../packages/afo-core")))
+sys.path.append(
+    pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")).resolve()
+)
 
 from AFO.api.routers.rag_query import RAGQueryRequest, query_kingdom_memory
 

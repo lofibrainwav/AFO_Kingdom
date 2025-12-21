@@ -1,9 +1,12 @@
 import os
+import pathlib
 import sys
 
 
 # 프로젝트 루트 경로 추가
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../packages/afo-core")))
+sys.path.append(
+    pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")).resolve()
+)
 
 from AFO.security.vault_manager import VaultManager, vault
 
@@ -19,7 +22,9 @@ def verify_vault_manager():
 
     # Check Fallback (Since we don't have Vault, it should use Env)
     print("\n[Step 1] Verifying Get Secret (Fallback)...")
-    os.environ["TEST_SECRET_KEY"] = "EnvValue123"
+    # Test value - not a real secret (safe for testing)
+    test_value = "EnvValue123"
+    os.environ["TEST_SECRET_KEY"] = test_value
 
     val = vault.get_secret("TEST_SECRET_KEY", default="DefaultValue")
     print(f"Result: {val}")

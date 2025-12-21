@@ -11,12 +11,7 @@ from pydantic import BaseModel, Field
 
 # Auth utilities import
 try:
-    from AFO.api.utils.auth import (
-        create_access_token,
-        hash_password,
-        verify_password,
-        verify_token,
-    )
+    from AFO.api.utils.auth import create_access_token, hash_password, verify_password, verify_token
 
     AUTH_UTILS_AVAILABLE = True
 except ImportError:
@@ -27,12 +22,15 @@ except ImportError:
         _CORE_ROOT = Path(__file__).resolve().parent.parent.parent
         if str(_CORE_ROOT) not in sys.path:
             sys.path.insert(0, str(_CORE_ROOT))
-        from api.utils.auth import (
-            create_access_token,
-            hash_password,
-            verify_password,
-            verify_token,
-        )
+        from api.utils.auth import create_access_token as cat
+        from api.utils.auth import hash_password as hp
+        from api.utils.auth import verify_password as vp
+        from api.utils.auth import verify_token as vt
+
+        create_access_token = cat
+        hash_password = hp
+        verify_password = vp
+        verify_token = vt
 
         AUTH_UTILS_AVAILABLE = True
     except ImportError:

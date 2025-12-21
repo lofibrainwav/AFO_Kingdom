@@ -3,6 +3,8 @@
 # 眞95% 善100% 美90% 孝95%
 
 
+from typing import Any
+
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
@@ -26,7 +28,7 @@ class SerenityCreateResponse(BaseModel):
 
 
 @router.post("/create", response_model=SerenityCreateResponse)
-async def create_ui(request: SerenityCreateRequest):
+async def create_ui(request: SerenityCreateRequest) -> SerenityCreateResponse:
     """
     [Project Serenity] Autonomous UI Creation Engine
     Triggers the GenUI-Playwright-Trinity loop to generate a verified component.
@@ -43,10 +45,14 @@ async def create_ui(request: SerenityCreateRequest):
             feedback=result.feedback,
         )
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Serenity creation failed: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Serenity creation failed: {e!s}") from e
 
 
 @router.get("/status")
-async def get_serenity_status():
+async def get_serenity_status() -> dict[str, Any]:
     """Returns the status of the Serenity sandbox."""
-    return {"sandbox_active": True, "sandbox_path": serenity_loop.sandbox_dir, "mode": "autonomous"}
+    return {
+        "sandbox_active": True,
+        "sandbox_path": serenity_loop.sandbox_dir,
+        "mode": "autonomous",
+    }

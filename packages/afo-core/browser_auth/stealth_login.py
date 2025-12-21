@@ -41,30 +41,38 @@ class Stealther:
     @staticmethod
     async def apply_stealth(page):
         # 1. Mask Webdriver
-        await page.add_init_script("""
+        await page.add_init_script(
+            """
             Object.defineProperty(navigator, 'webdriver', {
                 get: () => undefined
             });
-        """)
+        """
+        )
 
         # 2. Mock Languages
-        await page.add_init_script("""
+        await page.add_init_script(
+            """
             Object.defineProperty(navigator, 'languages', {
                 get: () => ['en-US', 'en']
             });
-        """)
+        """
+        )
 
         # 3. Mock Plugins (Basic)
-        await page.add_init_script("""
+        await page.add_init_script(
+            """
             Object.defineProperty(navigator, 'plugins', {
                 get: () => [1, 2, 3, 4, 5]
             });
-        """)
+        """
+        )
 
         # 4. Chrome Runtime
-        await page.add_init_script("""
+        await page.add_init_script(
+            """
             window.chrome = { runtime: {} };
-        """)
+        """
+        )
 
 
 async def run_stealth_login(service="openai"):
@@ -144,7 +152,10 @@ async def run_stealth_login(service="openai"):
             if not found_token:
                 attempt += 1
                 if attempt % 5 == 0:
-                    print(f"⏳ Waiting for login... ({len(cookies)} cookies seen)", flush=True)
+                    print(
+                        f"⏳ Waiting for login... ({len(cookies)} cookies seen)",
+                        flush=True,
+                    )
                 await asyncio.sleep(2)
 
             if not found_token:

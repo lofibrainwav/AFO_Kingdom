@@ -92,7 +92,7 @@ def main():
 
     print("🔑 Keychain Access Granted.")
 
-    profiles = []
+    profiles: list[Path] = []
 
     # Check for arguments
     if len(sys.argv) > 1 and sys.argv[1] == "--scan-playwright":
@@ -118,7 +118,7 @@ def main():
 
         for p in base_path.glob("*"):
             if (p / "Cookies").exists():
-                profiles.append(p)
+                profiles.append(p)  # type: ignore[arg-type]
             elif (p / "Default" / "Cookies").exists():
                 print(f"📂 Detected User Data Dir: {p.name}")
                 for sub in p.glob("*"):

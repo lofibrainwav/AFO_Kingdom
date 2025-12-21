@@ -61,7 +61,10 @@ def _get_redis_client() -> redis.Redis | None:
         client = cast(
             "redis.Redis",
             redis.from_url(
-                redis_url, decode_responses=True, socket_connect_timeout=2, socket_timeout=2
+                redis_url,
+                decode_responses=True,
+                socket_connect_timeout=2,
+                socket_timeout=2,
             ),
         )
         client.ping()
@@ -139,16 +142,28 @@ async def get_system_metrics() -> dict[str, Any]:
         organs_data = [
             {"name": "Brain", "score": brain_score, "metric": f"Mem {memory_percent}%"},
             {"name": "Heart", "score": heart_score, "metric": "Redis Connected"},
-            {"name": "Digestive", "score": digestive_score, "metric": f"Disk {disk_percent}%"},
+            {
+                "name": "Digestive",
+                "score": digestive_score,
+                "metric": f"Disk {disk_percent}%",
+            },
             {"name": "Lungs", "score": lungs_score, "metric": f"Swap {swap_percent}%"},
             # Fill others with general health
             {"name": "Immune", "score": general_score, "metric": "General Protection"},
-            {"name": "Musculoskeletal", "score": general_score, "metric": "Infrastructure"},
+            {
+                "name": "Musculoskeletal",
+                "score": general_score,
+                "metric": "Infrastructure",
+            },
             {"name": "Endocrine", "score": general_score, "metric": "Scheduling"},
             {"name": "Nervous", "score": brain_score, "metric": "Network/API"},
             {"name": "Reproductive", "score": 100, "metric": "Backups"},
             {"name": "Circulatory", "score": heart_score, "metric": "Data Flow"},
-            {"name": "Integumentary", "score": general_score, "metric": "Firewall/API Gateway"},
+            {
+                "name": "Integumentary",
+                "score": general_score,
+                "metric": "Firewall/API Gateway",
+            },
         ]
 
         return {

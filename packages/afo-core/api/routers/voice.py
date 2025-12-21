@@ -4,6 +4,7 @@ Handles voice command processing and TTS responses.
 """
 
 import logging
+from typing import Any
 
 from fastapi import APIRouter
 from pydantic import BaseModel
@@ -25,7 +26,7 @@ class VoiceResponse(BaseModel):
 
 
 @router.post("/command", response_model=VoiceResponse)
-async def process_voice_command(command: VoiceCommand):
+async def process_voice_command(command: VoiceCommand) -> VoiceResponse:
     """
     Process a voice command from the Commander.
     Routes to Chancellor Graph for decision making.
@@ -53,7 +54,7 @@ async def process_voice_command(command: VoiceCommand):
 
 
 @router.get("/health")
-async def voice_health():
+async def voice_health() -> dict[str, Any]:
     """Check voice service health."""
     return {
         "status": "healthy",

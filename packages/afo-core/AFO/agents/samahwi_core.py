@@ -44,6 +44,10 @@ class SamahwiAgent:
 
             if tool_name in self.tools:
                 logger.info(f"[{self.name}] Executing tool: {tool_name}")
+                if tool_input is None:
+                    tool_input = ""
+                elif not isinstance(tool_input, str):
+                    tool_input = str(tool_input)
                 result = await self.tools[tool_name](tool_input)
                 return f"Task executed. Result: {result}"
             else:

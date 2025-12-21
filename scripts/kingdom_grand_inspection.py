@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import os
+import pathlib
 import sys
 
 
@@ -9,8 +10,10 @@ logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger("AFO.GrandInspection")
 
 # Setup path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../packages")))
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../packages/afo-core")))
+sys.path.append(pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages")).resolve())
+sys.path.append(
+    pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")).resolve()
+)
 
 # Import Verification Modules
 try:
@@ -20,7 +23,7 @@ try:
     from scripts.verify_full_pillars_metrics import verify_full_pillars
     from scripts.verify_sejong_research import verify_sejong_system
 except ImportError as e:
-    logger.error("❌ Metacognition Fail: Could not import verification modules. %s", e)
+    logger.exception("❌ Metacognition Fail: Could not import verification modules. %s", e)
     sys.exit(1)
 
 

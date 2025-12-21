@@ -11,7 +11,9 @@ AICPA Report Generator - 문서 생성기
 import csv
 import io
 import logging
+import tempfile
 from datetime import datetime
+from pathlib import Path
 from typing import Any
 
 logger = logging.getLogger(__name__)
@@ -84,7 +86,8 @@ def _add_sweet_spot_analysis(doc: Any, tax_result: dict) -> None:
     roth_rec = tax_result.get("roth_conversion_recommendation", 0)
 
     if headroom > 0:
-        doc.add_paragraph(f"""
+        doc.add_paragraph(
+            f"""
 ✅ OPPORTUNITY IDENTIFIED
 
 Your current taxable income is within the 12% bracket with ${headroom:,} of headroom.
@@ -94,7 +97,8 @@ this year to take advantage of the lower tax rate.
 
 This strategy allows you to pay taxes now at 12% instead of potentially higher rates
 in the future when Required Minimum Distributions (RMDs) begin.
-""")
+"""
+        )
     else:
         doc.add_paragraph("No additional Sweet Spot opportunity available at current income level.")
 
@@ -102,11 +106,13 @@ in the future when Required Minimum Distributions (RMDs) begin.
 def _add_roth_simulation(doc: Any, roth_simulation: dict) -> None:
     """Step 5: Roth Ladder 시뮬레이션 테이블 추가"""
     doc.add_heading("Roth Ladder Strategy (Multi-Year)", level=1)
-    doc.add_paragraph(f"""
+    doc.add_paragraph(
+        f"""
 Based on the OBBBA provisions (2025-2028), we recommend a phased Roth Conversion strategy:
 
 Estimated Total Savings: ${roth_simulation.get("estimated_savings", 0):,}
-""")
+"""
+    )
     ladder_table = doc.add_table(rows=1, cols=4)
     ladder_table.style = "Table Grid"
     headers = ["Year", "Conversion", "Tax Paid", "Remaining IRA"]
@@ -125,12 +131,14 @@ def _add_risk_alerts(doc: Any, tax_result: dict) -> None:
     """Step 6: 리스크 경고 추가"""
     if tax_result.get("irmaa_warning"):
         doc.add_heading("⚠️ Risk Alert: IRMAA", level=1)
-        doc.add_paragraph("""
+        doc.add_paragraph(
+            """
 WARNING: Your Modified Adjusted Gross Income (MAGI) may trigger
 Income-Related Monthly Adjustment Amount (IRMAA) surcharges for Medicare Part B and D.
 
 Consider income smoothing strategies to avoid crossing IRMAA thresholds.
-""")
+"""
+        )
 
 
 def _add_advice_and_closing(doc: Any, tax_result: dict) -> None:
@@ -168,7 +176,9 @@ def generate_strategy_report(
 
         if not output_path:
             safe_name = client_name.replace(" ", "_")
-            output_path = f"/tmp/{safe_name}_Tax_Strategy_Report.docx"
+            # Use tempfile for secure temporary file creation
+            temp_dir = Path(tempfile.gettempdir())
+            output_path = str(temp_dir / f"{safe_name}_Tax_Strategy_Report.docx")
 
         doc.save(output_path)
         logger.info(f"[ReportGenerator] Word 보고서 생성 완료: {output_path}")
@@ -193,14 +203,24 @@ def generate_turbotax_csv(client_name: str, tax_data: dict, output_path: str | N
     # 데이터 매핑
     rows = [
         ["Taxpayer Name", client_name, "System", ""],
-        ["Filing Status", tax_data.get("filing_status", "Single").upper(), "Client Input", ""],
+        [
+            "Filing Status",
+            tax_data.get("filing_status", "Single").upper(),
+            "Client Input",
+            "",
+        ],
         [
             "Gross Income (AGI)",
             tax_data.get("gross_income", 0),
             "W-2/1099",
             "Verify with documents",
         ],
-        ["Taxable Income", tax_data.get("taxable_income", 0), "AFO Calc", "After deductions"],
+        [
+            "Taxable Income",
+            tax_data.get("taxable_income", 0),
+            "AFO Calc",
+            "After deductions",
+        ],
         ["Federal Tax", tax_data.get("federal_tax", 0), "AFO Calc", "2025 OBBBA rates"],
         ["State Tax (CA)", tax_data.get("state_tax", 0), "AFO Calc", ""],
         [

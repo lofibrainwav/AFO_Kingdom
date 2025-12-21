@@ -29,7 +29,9 @@ def interactive_login():
             # We use a temporary user data dir to avoid 'Profile Locked' errors
             # The user will need to login freshly, but this guarantees it works.
             browser = p.chromium.launch(
-                channel="chrome", headless=False, args=["--no-sandbox", "--disable-infobars"]
+                channel="chrome",
+                headless=False,
+                args=["--no-sandbox", "--disable-infobars"],
             )
 
             # Create a context

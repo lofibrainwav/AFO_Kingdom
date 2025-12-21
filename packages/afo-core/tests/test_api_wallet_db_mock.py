@@ -130,7 +130,8 @@ def test_update_access_stats_db(mock_db_conn):
             wallet = APIWallet(db_connection=conn, use_vault=False)
 
             with patch.dict(
-                sys.modules, {"redis": MagicMock(), "AFO.utils.redis_connection": MagicMock()}
+                sys.modules,
+                {"redis": MagicMock(), "AFO.utils.redis_connection": MagicMock()},
             ):
                 wallet._update_access_stats("k")
 

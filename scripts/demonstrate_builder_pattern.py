@@ -1,9 +1,10 @@
 import os
+import pathlib
 import sys
 
 
 # Add package root to sys.path for direct imports if needed
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../packages")))
+sys.path.append(pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages")).resolve())
 
 try:
     from afo_core.builders.trinity_query_builder import TrinityQueryBuilder
@@ -11,7 +12,7 @@ try:
 except ImportError:
     # Adjust path if running from root relative to packages
     sys.path.append(
-        os.path.abspath(os.path.join(os.path.dirname(__file__), "../packages/afo-core"))
+        pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")).resolve()
     )
     from builders.trinity_query_builder import TrinityQueryBuilder
     from factories.skill_factory import AFO_SkillFactory

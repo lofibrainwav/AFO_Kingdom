@@ -11,13 +11,12 @@ AFO Kingdom AICPA 엔드포인트
 """
 
 import logging
+from typing import Any
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
-from AFO.aicpa import (
-    get_aicpa_service,
-)
+from AFO.aicpa import get_aicpa_service
 
 logger = logging.getLogger(__name__)
 
@@ -68,7 +67,7 @@ class ReportRequest(BaseModel):
 
 
 @router.post("/execute")
-async def execute_aicpa_mission(request: MissionRequest):
+async def execute_aicpa_mission(request: MissionRequest) -> dict[str, Any]:
     """
     AICPA 에이전트 군단에게 전체 미션 실행
 
@@ -91,11 +90,11 @@ async def execute_aicpa_mission(request: MissionRequest):
 
     except Exception as e:
         logger.error(f"[AICPA] Mission failed: {e!s}")
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @router.post("/tax-simulate")
-async def simulate_tax(request: TaxSimulationRequest):
+async def simulate_tax(request: TaxSimulationRequest) -> dict[str, Any]:
     """
     2025 OBBBA 세금 시뮬레이션
 
@@ -124,11 +123,11 @@ async def simulate_tax(request: TaxSimulationRequest):
 
     except Exception as e:
         logger.error(f"[AICPA] Tax simulation failed: {e!s}")
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @router.post("/roth-ladder")
-async def simulate_roth_ladder_strategy(request: RothLadderRequest):
+async def simulate_roth_ladder_strategy(request: RothLadderRequest) -> dict[str, Any]:
     """
     Roth Ladder 전략 시뮬레이션
 
@@ -153,11 +152,11 @@ async def simulate_roth_ladder_strategy(request: RothLadderRequest):
 
     except Exception as e:
         logger.error(f"[AICPA] Roth Ladder simulation failed: {e!s}")
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @router.post("/generate-report")
-async def generate_client_report(request: ReportRequest):
+async def generate_client_report(request: ReportRequest) -> dict[str, Any]:
     """
     클라이언트 보고서 생성
 
@@ -203,11 +202,11 @@ async def generate_client_report(request: ReportRequest):
 
     except Exception as e:
         logger.error(f"[AICPA] Report generation failed: {e!s}")
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @router.get("/client/{client_name}")
-async def get_client_data(client_name: str):
+async def get_client_data(client_name: str) -> dict[str, Any]:
     """
     고객 데이터 조회
 
@@ -225,11 +224,11 @@ async def get_client_data(client_name: str):
 
     except Exception as e:
         logger.error(f"[AICPA] Client lookup failed: {e!s}")
-        raise HTTPException(status_code=404, detail=f"Client not found: {client_name}")
+        raise HTTPException(status_code=404, detail=f"Client not found: {client_name}") from e
 
 
 @router.get("/status")
-async def get_aicpa_status():
+async def get_aicpa_status() -> dict[str, Any]:
     """
     AICPA 에이전트 군단 상태 확인
     """

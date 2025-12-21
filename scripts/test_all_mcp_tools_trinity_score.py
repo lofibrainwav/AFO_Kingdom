@@ -136,7 +136,10 @@ def test_mcp_server(server_config: dict[str, Any]) -> dict[str, Any]:
             elif tool_name == "cupy_weighted_sum":
                 test_args = {"data": [1.0, 2.0, 3.0], "weights": [0.5, 0.3, 0.2]}
             elif tool_name == "verify_fact":
-                test_args = {"claim": "AFO Kingdom uses Trinity Score", "context": "AFO"}
+                test_args = {
+                    "claim": "AFO Kingdom uses Trinity Score",
+                    "context": "AFO",
+                }
             elif tool_name == "kingdom_health":
                 test_args = {}
 
@@ -327,14 +330,14 @@ def main():
 
     # 결과를 JSON 파일로 저장
     output_file = Path("test_results_trinity_score.json")
-    with output_file.open("w") as f:
+    with output_file.open("w", encoding="utf-8") as f:
         json.dump(
             {
                 "timestamp": time.time(),
                 "summary": {
                     "total_tested": total_tested,
                     "total_passed": total_passed,
-                    "pass_rate": total_passed / total_tested * 100 if total_tested > 0 else 0,
+                    "pass_rate": (total_passed / total_tested * 100 if total_tested > 0 else 0),
                 },
                 "results": all_results,
             },

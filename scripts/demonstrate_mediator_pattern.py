@@ -1,9 +1,10 @@
 import os
+import pathlib
 import sys
 
 
 # Add package root to sys.path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../packages")))
+sys.path.append(pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages")).resolve())
 
 try:
     from afo_core.mediators.chancellor_mediator import (
@@ -14,7 +15,7 @@ try:
 except ImportError:
     # Adjust path if running from root relative to packages
     sys.path.append(
-        os.path.abspath(os.path.join(os.path.dirname(__file__), "../packages/afo-core"))
+        pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")).resolve()
     )
     from mediators.chancellor_mediator import ChancellorMediator, StrategistSquad, TigerGeneralsUnit
 
@@ -28,7 +29,7 @@ def demonstrate_mediator_pattern():
 
     # 2. Create Mediator (Connects them)
     # The mediator automatically registers itself with the colleagues
-    chancellor = ChancellorMediator(strategists, tigers)
+    ChancellorMediator(strategists, tigers)
 
     print("\n--- Flow Start: User Query ---")
     # 3. Component triggers an event

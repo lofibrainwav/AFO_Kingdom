@@ -1,4 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useApi } from '@/hooks/useApi';
+import { LoadingSpinner } from '@/components/common';
+import { REFRESH_INTERVALS } from '@/lib/constants';
 
 interface SSOTData {
   status: string;
@@ -18,30 +20,20 @@ interface SSOTData {
 }
 
 export function SSOTMonitor() {
-  const [ssot, setSsot] = useState<SSOTData | null>(null);
+  const {
+    data: ssot,
+    loading,
+  } = useApi<SSOTData>('/api/ssot-status', {
+    refetchInterval: REFRESH_INTERVALS.NORMAL, // 30초마다 자동 업데이트
+  });
 
-  useEffect(() => {
-    const fetchSSOT = async () => {
-      try {
-        const res = await fetch('/api/ssot-status');
-        if (res.ok) {
-           const data = await res.json();
-           setSsot(data);
-        }
-      } catch (e) {
-        console.error("SSOT Fetch Error", e);
-      }
-    };
-    fetchSSOT();
-    const interval = setInterval(fetchSSOT, 30000); // 30s update
-    return () => clearInterval(interval);
-  }, []);
-
-  if (!ssot) return (
-     <div className="glass-card p-6 max-w-md mx-auto bg-black/40 rounded-3xl border border-white/10 animate-pulse text-center">
-        <p className="text-white/70">SSOT 점검 중... 곧 정렬 완료돼요 ✨</p>
-     </div>
-  );
+  if (loading || !ssot) {
+    return (
+      <div className="glass-card p-6 max-w-md mx-auto bg-black/40 rounded-3xl border border-white/10">
+        <LoadingSpinner size="sm" text="SSOT 점검 중... 곧 정렬 완료돼요 ✨" />
+      </div>
+    );
+  }
 
   const pillarScores = {
     '眞': ssot.trinity.truth,

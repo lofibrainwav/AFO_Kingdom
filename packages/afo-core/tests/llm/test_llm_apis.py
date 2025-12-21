@@ -43,7 +43,10 @@ class TestGeminiAPI:
 
     def test_gemini_safety_settings(self) -> None:
         """Gemini 안전 설정 테스트"""
-        settings = {"harassment": "BLOCK_MEDIUM_AND_ABOVE", "hate_speech": "BLOCK_MEDIUM_AND_ABOVE"}
+        settings = {
+            "harassment": "BLOCK_MEDIUM_AND_ABOVE",
+            "hate_speech": "BLOCK_MEDIUM_AND_ABOVE",
+        }
         assert "harassment" in settings
 
 

@@ -26,9 +26,9 @@ load_dotenv(ENV_FILE)
 
 # LangChain 및 Qdrant 임포트 (ChromaDB → Qdrant 마이그레이션)
 try:
-    from langchain_core.documents import Document  # type: ignore[import-not-found]
-    from langchain_openai import OpenAIEmbeddings  # type: ignore[import-not-found]
-    from langchain_qdrant import Qdrant  # type: ignore[import-not-found]
+    from langchain_core.documents import Document
+    from langchain_openai import OpenAIEmbeddings
+    from langchain_qdrant import Qdrant
 except ImportError:
     print("❌ 필수 라이브러리가 설치되지 않았습니다.")
     print("   설치: pip install langchain-qdrant langchain-openai")
@@ -206,6 +206,8 @@ def add_to_rag():
     print(f"   컬렉션: {COLLECTION_NAME}")
 
     # 임베딩 생성
+    if not OPENAI_API_KEY:
+        raise ValueError("OPENAI_API_KEY environment variable is not set")
     embeddings = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
 
     # 워크플로우 문서 생성

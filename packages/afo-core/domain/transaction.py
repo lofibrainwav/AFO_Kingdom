@@ -1,5 +1,6 @@
 # packages/afo-core/domain/transaction.py
 from datetime import datetime
+from typing import Any
 
 from pydantic import BaseModel
 
@@ -13,7 +14,8 @@ class Transaction(BaseModel):
     source: str = "manual"
 
     @classmethod
-    def mock(cls):
+    def mock(cls) -> "Transaction":
+        """Create a mock transaction for testing."""
         return cls(
             id="mock-tx-1",
             amount=15000.0,
@@ -24,5 +26,6 @@ class Transaction(BaseModel):
         )
 
     @classmethod
-    def from_raw(cls, data: dict):
+    def from_raw(cls, data: dict[str, Any]) -> "Transaction":
+        """Create a transaction from raw dictionary data."""
         return cls(**data)

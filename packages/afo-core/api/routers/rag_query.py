@@ -4,7 +4,6 @@ Phase 12: Ask the Kingdom
 """
 
 import logging
-from typing import Any
 
 from fastapi import APIRouter
 from pydantic import BaseModel
@@ -27,7 +26,7 @@ class RAGQueryResponse(BaseModel):
 
 
 @router.post("/rag-query", response_model=RAGQueryResponse)
-async def query_kingdom_memory(payload: RAGQueryRequest) -> Any:
+async def query_kingdom_memory(payload: RAGQueryRequest) -> RAGQueryResponse:
     """
     Ask the Kingdom.
     Retrieves knowledge from AFO Logs using Custom BERT embeddings.
@@ -52,4 +51,4 @@ async def query_kingdom_memory(payload: RAGQueryRequest) -> Any:
         answer = "왕국의 기록에 따르면, 현재 시스템은 헌법(Constitution)에 따라 자율 진화 중입니다. 더 구체적인 질문을 주시면 기록을 찾아보겠습니다."
         sources = ["General Logs", "Memory Bank"]
 
-    return {"answer": answer, "sources": sources}
+    return RAGQueryResponse(answer=answer, sources=sources)

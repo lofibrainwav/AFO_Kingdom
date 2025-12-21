@@ -32,12 +32,14 @@ def main():
 
         # 테이블 확인
         with conn.cursor() as cur:
-            cur.execute("""
+            cur.execute(
+                """
                 SELECT table_name
                 FROM information_schema.tables
                 WHERE table_schema = 'public'
                 AND table_name = 'api_keys';
-            """)
+            """
+            )
             if cur.fetchone():
                 print("   ✅ api_keys 테이블 존재")
             else:
@@ -58,11 +60,13 @@ def main():
 
         # 모든 키 목록
         with conn.cursor(cursor_factory=RealDictCursor) as cur:
-            cur.execute("""
+            cur.execute(
+                """
                 SELECT name, service, key_type, created_at, access_count
                 FROM api_keys
                 ORDER BY created_at DESC;
-            """)
+            """
+            )
             keys = cur.fetchall()
 
             print(f"\n2️⃣ 저장된 키 목록 ({len(keys)}개):")
@@ -75,14 +79,16 @@ def main():
 
         # OpenAI 키 검색
         with conn.cursor(cursor_factory=RealDictCursor) as cur:
-            cur.execute("""
+            cur.execute(
+                """
                 SELECT name, service
                 FROM api_keys
                 WHERE service ILIKE '%openai%'
                    OR service ILIKE '%gpt%'
                    OR name ILIKE '%openai%'
                    OR name ILIKE '%gpt%';
-            """)
+            """
+            )
             openai_keys = cur.fetchall()
 
             print("\n3️⃣ OpenAI 관련 키 검색:")

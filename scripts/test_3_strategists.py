@@ -1,11 +1,11 @@
 # scripts/test_3_strategists.py (Phase 2 Verification)
 import asyncio
-import os
+import pathlib
 import sys
 
 
 # Ensure packages/afo-core is in python path
-sys.path.append(os.path.abspath("packages/afo-core"))
+sys.path.append(pathlib.Path("packages/afo-core").resolve())
 
 try:
     # Dynamic import to handle the module name starting with a number if needed,

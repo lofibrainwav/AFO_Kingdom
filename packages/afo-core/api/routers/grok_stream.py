@@ -5,15 +5,16 @@ The Pulse of the Kingdom - Connecting the Cloud to the Dashboard.
 
 import asyncio
 import json
+from collections.abc import AsyncGenerator
 from datetime import datetime
 
 from fastapi import APIRouter
 from fastapi.responses import StreamingResponse
 
-router = APIRouter()
+router = APIRouter(prefix="/api/grok", tags=["Grok Stream"])
 
 
-async def grok_event_stream():
+async def grok_event_stream() -> AsyncGenerator[str, None]:
     """
     Generates a stream of 'Grok Insights' simulating real-time cloud analysis.
     In a real scenario, this would subscribe to a Redis channel or actual LLM stream.
@@ -54,14 +55,19 @@ async def grok_event_stream():
             content = f"💡 Strategy Insight #{message_id}: User intent detected in 'Phase 18'. Execution optimal."
             source = "grok"
 
-        payload = {"id": message_id, "timestamp": qt, "content": content, "source": source}
+        payload = {
+            "id": message_id,
+            "timestamp": qt,
+            "content": content,
+            "source": source,
+        }
 
         yield f"data: {json.dumps(payload)}\n\n"
         message_id += 1
 
 
-@router.get("/api/grok/stream")
-async def grok_stream():
+@router.get("/stream")
+async def grok_stream() -> StreamingResponse:
     """
     SSE Endpoint for Grok's Real-time Stream.
     """

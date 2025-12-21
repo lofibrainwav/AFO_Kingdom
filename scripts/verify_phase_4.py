@@ -6,7 +6,7 @@ import sys
 def verify_graph_naming():
     print("[Phase 4 Verification] Checking Chancellor Graph Naming...")
     try:
-        with pathlib.Path("packages/afo-core/chancellor_graph.py").open() as f:
+        with pathlib.Path("packages/afo-core/chancellor_graph.py").open(encoding="utf-8") as f:
             content = f.read()
 
         required_names = [

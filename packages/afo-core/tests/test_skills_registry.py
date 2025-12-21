@@ -3,12 +3,7 @@ from unittest.mock import patch
 
 import pytest
 
-from AFO.afo_skills_registry import (
-    AFOSkillCard,
-    PhilosophyScore,
-    SkillCategory,
-    SkillRegistry,
-)
+from AFO.afo_skills_registry import AFOSkillCard, PhilosophyScore, SkillCategory, SkillRegistry
 
 
 class TestSkillRegistry:
@@ -136,7 +131,10 @@ class TestSkillRegistry:
         from AFO.afo_skills_registry import register_core_skills
 
         # Mock settings if needed, or rely on defaults/env
-        with patch("AFO.afo_skills_registry._get_mcp_server_url", return_value="http://mock-mcp"):
+        with patch(
+            "AFO.afo_skills_registry._get_mcp_server_url",
+            return_value="http://mock-mcp",
+        ):
             registry: Any = register_core_skills()
             assert registry.count() > 0
             assert registry.get("skill_001_youtube_spec_gen") is not None

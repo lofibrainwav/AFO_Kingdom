@@ -35,7 +35,8 @@ class ChatMessageRequest(BaseModel):
 
     message: str = Field(..., min_length=1, max_length=10000, description="사용자 메시지")
     provider: str = Field(
-        default="auto", description="LLM 제공자 (auto, ollama, gemini, anthropic, openai)"
+        default="auto",
+        description="LLM 제공자 (auto, ollama, gemini, anthropic, openai)",
     )
     quality_tier: str = Field(
         default="standard", description="품질 등급 (basic, standard, premium, ultra)"
@@ -131,7 +132,11 @@ async def send_chat_message(request: ChatMessageRequest) -> ChatMessageResponse:
         )
 
 
-@router.get("/providers", response_model=ProvidersResponse, summary="사용 가능한 LLM 제공자 목록")
+@router.get(
+    "/providers",
+    response_model=ProvidersResponse,
+    summary="사용 가능한 LLM 제공자 목록",
+)
 async def get_providers() -> ProvidersResponse:
     """현재 설정된 LLM 제공자 목록 반환"""
     if llm_router is None:

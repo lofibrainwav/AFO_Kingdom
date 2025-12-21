@@ -32,7 +32,7 @@ def verify_genui():
         # Check if file exists
         if pathlib.Path(result["code_path"]).exists():
             print("✅ File System Check: PASS")
-            with pathlib.Path(result["code_path"]).open() as f:
+            with pathlib.Path(result["code_path"]).open(encoding="utf-8") as f:
                 content = f.read()
                 if "calculator" in content.lower():
                     print("✅ Content Logic Check: PASS")

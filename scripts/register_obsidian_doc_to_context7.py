@@ -53,7 +53,7 @@ def extract_frontmatter(file_path: Path) -> dict[str, Any]:
         if value.startswith("[") and value.endswith("]"):
             value = [v.strip().strip('"').strip("'") for v in value[1:-1].split(",")]
         # 불린 처리
-        elif value.lower() in ("true", "false"):
+        elif value.lower() in {"true", "false"}:
             value = value.lower() == "true"
         # 숫자 처리
         elif value.isdigit():
@@ -99,9 +99,7 @@ def generate_context7_entry(file_path: Path, metadata: dict[str, Any]) -> str:
     if metadata.get("trinity_score"):
         summary_parts.append(f"**Trinity Score**: {metadata.get('trinity_score')}/100")
 
-    summary = "\n".join(summary_parts)
-
-    return summary
+    return "\n".join(summary_parts)
 
 
 def register_to_context7(file_path: Path) -> bool:
@@ -134,7 +132,10 @@ def register_to_context7(file_path: Path) -> bool:
 def main():
     """메인 함수"""
     if len(sys.argv) < 2:
-        print("사용법: python register_obsidian_doc_to_context7.py <파일경로>", file=sys.stderr)
+        print(
+            "사용법: python register_obsidian_doc_to_context7.py <파일경로>",
+            file=sys.stderr,
+        )
         sys.exit(1)
 
     file_path = Path(sys.argv[1])

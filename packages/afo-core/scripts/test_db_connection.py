@@ -43,12 +43,14 @@ async def test_connection():
         print(f"📋 PostgreSQL 버전: {result}\n")
 
         # 테이블 확인
-        tables = await conn.fetch("""
+        tables = await conn.fetch(
+            """
             SELECT table_name
             FROM information_schema.tables
             WHERE table_schema = 'public'
             ORDER BY table_name;
-        """)
+        """
+        )
 
         if tables:
             print("📊 생성된 테이블:")

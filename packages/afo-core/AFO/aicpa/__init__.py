@@ -8,10 +8,7 @@ from .report_generator import (
     generate_strategy_report,
     generate_turbotax_csv,
 )
-from .service import (
-    AICPAService,
-    get_aicpa_service,
-)
+from .service import AICPAService, get_aicpa_service
 from .tax_engine import (
     FilingStatus,
     TaxInput,

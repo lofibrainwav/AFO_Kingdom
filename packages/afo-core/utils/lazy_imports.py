@@ -32,7 +32,7 @@ class LazyModule:
         agent = autogen.AssistantAgent(...)  # 여기서 실제 import 발생
     """
 
-    def __init__(self, module_name: str, fallback: Any = None):
+    def __init__(self, module_name: str, fallback: Any = None) -> None:
         """
         Args:
             module_name: 실제 import할 모듈 이름

@@ -16,7 +16,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from math import isclose, prod
-from typing import Literal
+from typing import Any, Literal
 
 from AFO.domain.metrics.trinity_ssot import TrinityWeights
 
@@ -190,7 +190,7 @@ class TrinityMetrics:
         except Exception:
             return self
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, Any]:
         """딕셔너리로 변환 (API 응답용) - 5기둥 SSOT"""
         try:
             return {

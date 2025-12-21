@@ -1,3 +1,5 @@
+from typing import Any
+
 from strategists.base import log_action, robust_execute
 
 try:
@@ -7,7 +9,7 @@ except ImportError:
     class MockAntiGravity:
         DRY_RUN_DEFAULT = True
 
-    antigravity = MockAntiGravity()
+    antigravity: Any = MockAntiGravity()  # type: ignore[no-redef]
 
 
 def gate(risk_score: float, context: dict | None = None) -> float:

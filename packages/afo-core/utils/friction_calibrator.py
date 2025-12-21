@@ -13,6 +13,10 @@ from __future__ import annotations
 
 import time
 from dataclasses import dataclass
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
 @dataclass
@@ -73,8 +77,8 @@ class FrictionCalibrator:
         target_friction: float = 0.02,  # 2% 목표 Friction
         min_concurrency: int = 1,
         max_concurrency: int = 64,
-        reduction_factor: float = 0.7,
-    ):  # 30% 감소
+        reduction_factor: float = 0.7,  # 30% 감소
+    ) -> None:
         self.target_friction = target_friction
         self.min_concurrency = min_concurrency
         self.max_concurrency = max_concurrency
@@ -109,7 +113,11 @@ class FrictionCalibrator:
         return new_concurrency
 
     def measure_and_recommend(
-        self, concurrency: int, sequential_fn, parallel_fn, tasks_data
+        self,
+        concurrency: int,
+        sequential_fn: Callable[[Any], None],
+        parallel_fn: Callable[[list[Any], int], None],
+        tasks_data: list[Any],
     ) -> tuple[FrictionStats, int]:
         """
         순차/병렬 실행 측정 + 추천 계산
@@ -148,14 +156,18 @@ class FrictionCalibrator:
 calibrator = FrictionCalibrator()
 
 
-def demo_friction():
-    """데모: Friction 측정"""
+def demo_friction() -> None:
+    """
+    데모: Friction 측정
+
+    Demonstrates friction measurement between sequential and parallel execution.
+    """
     import asyncio
 
-    async def mock_task(delay: float):
+    async def mock_task(delay: float) -> None:
         await asyncio.sleep(delay)
 
-    async def sequential_run(tasks):
+    async def sequential_run(tasks: list[float]) -> None:
         for delay in tasks:
             await mock_task(delay)
 

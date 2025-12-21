@@ -19,12 +19,6 @@ def verify_dashboard():
             f"Dashboard Data: Health={data.get('financial_health_score')}, Advice='{data.get('advice')[:30]}...'"
         )
 
-        required_keys = [
-            "financial_health_score",
-            "monthly_spending",
-            "recent_transactions",
-            "advisor",
-        ]
         # Note: 'advice' might be the key, checking source.
 
         return True

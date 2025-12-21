@@ -32,7 +32,9 @@ class RetryConfig:
         self.exponential = exponential
 
 
-def auto_retry(config: RetryConfig | None = None) -> Callable[[Callable[..., T]], Callable[..., T]]:
+def auto_retry(
+    config: RetryConfig | None = None,
+) -> Callable[[Callable[..., T]], Callable[..., T]]:
     """
     자동 재시도 데코레이터 (孝 패턴)
 
@@ -178,7 +180,9 @@ class CircuitBreaker:
         return wrapper
 
 
-def cache_result(ttl_seconds: float = 300.0) -> Callable[[Callable[..., T]], Callable[..., T]]:
+def cache_result(
+    ttl_seconds: float = 300.0,
+) -> Callable[[Callable[..., T]], Callable[..., T]]:
     """
     결과 캐싱 데코레이터 (孝 패턴)
 

@@ -1,4 +1,5 @@
 import logging
+from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
@@ -35,8 +36,8 @@ class FinanceDashboardResponse(BaseModel):
     financial_health_score: float
     monthly_spending: float
     budget_remaining: float
-    recent_transactions: list[dict]
-    risk_alerts: list[dict]
+    recent_transactions: list[dict[str, Any]]
+    risk_alerts: list[dict[str, Any]]
     advice: str
 
 
@@ -44,21 +45,24 @@ class FinanceDashboardResponse(BaseModel):
 
 
 @router.get("/dashboard", response_model=FinanceDashboardResponse)
-async def get_finance_dashboard(julie: JulieService = Depends(get_julie_service)):
+async def get_finance_dashboard(
+    julie: JulieService = Depends(get_julie_service),
+) -> FinanceDashboardResponse:
     """
     Get the Financial Guardian Dashboard data.
     """
     try:
-        return await julie.get_financial_dashboard()
+        dashboard_data = await julie.get_financial_dashboard()
+        return FinanceDashboardResponse(**dashboard_data)
     except Exception as e:
         logger.error(f"Julie Dashboard Error: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @router.post("/transaction/dry-run", response_model=DryRunResponse)
 async def dry_run_transaction(
     tx: TransactionRequest, julie: JulieService = Depends(get_julie_service)
-):
+) -> DryRunResponse:
     """
     Simulate a transaction to check against Friction (Warfare Deception).
     """
@@ -76,12 +80,12 @@ async def dry_run_transaction(
             request_data=request_data, account_id=tx.account_id, dry_run=True
         )
 
-        return {
-            "success": result["success"],
-            "mode": result.get("mode", "UNKNOWN"),
-            "friction_score": result.get("friction_score", 0.0),
-            "reason": result.get("reason"),
-        }
+        return DryRunResponse(
+            success=result["success"],
+            mode=result.get("mode", "UNKNOWN"),
+            friction_score=result.get("friction_score", 0.0),
+            reason=result.get("reason"),
+        )
     except Exception as e:
         logger.error(f"Julie Dry Run Error: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e

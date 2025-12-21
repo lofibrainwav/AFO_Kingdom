@@ -85,7 +85,7 @@ class RoyalLibrarySkill:
             principle_name="지피지기",
             classic=Classic.SUN_TZU,
             success=success,
-            message="眞 100% 확보 완료" if success else "출처 2개 이상 필요 (Rule #0 위반)",
+            message=("眞 100% 확보 완료" if success else "출처 2개 이상 필요 (Rule #0 위반)"),
             data={
                 "sources_count": len(sources),
                 "context_loaded": context_loaded,
@@ -112,7 +112,7 @@ class RoyalLibrarySkill:
                 success=True,
                 message="[DRY_RUN] 시뮬레이션 완료 - 실제 실행 전 검토 필요",
                 data={
-                    "action": action.__name__ if hasattr(action, "__name__") else str(action),
+                    "action": (action.__name__ if hasattr(action, "__name__") else str(action)),
                     "args": str(args)[:100],
                     "kwargs": str(kwargs)[:100],
                     "mode": "dry_run",
@@ -281,13 +281,25 @@ class RoyalLibrarySkill:
     async def principle_11_mvp_deploy(self) -> PrincipleResult:
         """[11] 졸속 - 완벽하게 늦는 것보다, 부족해도 빨리 배포하고 고치는 게 낫다."""
         return PrincipleResult(
-            11, "졸속", Classic.SUN_TZU, True, "MVP 배포 우선", {}, {"眞": 0.70, "孝": 0.30}
+            11,
+            "졸속",
+            Classic.SUN_TZU,
+            True,
+            "MVP 배포 우선",
+            {},
+            {"眞": 0.70, "孝": 0.30},
         )
 
     async def principle_12_full_automation(self) -> PrincipleResult:
         """[12] 부전이굴 - 최고의 자동화는 사용자가 아무것도 하지 않게 하는 것이다."""
         return PrincipleResult(
-            12, "부전이굴", Classic.SUN_TZU, True, "완전 자동화 목표", {}, {"眞": 0.70, "孝": 0.30}
+            12,
+            "부전이굴",
+            Classic.SUN_TZU,
+            True,
+            "완전 자동화 목표",
+            {},
+            {"眞": 0.70, "孝": 0.30},
         )
 
     # =========================================================================
@@ -516,7 +528,10 @@ class RoyalLibrarySkill:
                 classic=Classic.THE_PRINCE,
                 success=False,
                 message=f"타입 불일치: {type(value).__name__} != {expected_type.__name__}",
-                data={"actual_type": type(value).__name__, "expected_type": expected_type.__name__},
+                data={
+                    "actual_type": type(value).__name__,
+                    "expected_type": expected_type.__name__,
+                },
                 trinity_impact={"善": 0.50, "眞": 0.50},
             )
 
@@ -703,7 +718,10 @@ class RoyalLibrarySkill:
                 classic=Classic.ON_WAR,
                 success=True,
                 message=f"핵심 원인 식별: {root_cause}",
-                data={"root_cause": root_cause, "all_causes": list(set(identified_causes))},
+                data={
+                    "root_cause": root_cause,
+                    "all_causes": list(set(identified_causes)),
+                },
                 trinity_impact={"眞": 0.60, "孝": 0.40},
             )
         else:
@@ -804,10 +822,22 @@ class RoyalLibrarySkill:
         """원칙 정보 조회"""
         principles = {
             1: {"name": "지피지기", "classic": "손자병법", "tool": "preflight_check"},
-            3: {"name": "병자궤도야", "classic": "손자병법", "tool": "dry_run_simulation"},
+            3: {
+                "name": "병자궤도야",
+                "classic": "손자병법",
+                "tool": "dry_run_simulation",
+            },
             14: {"name": "삼고초려", "classic": "삼국지", "tool": "retry_with_backoff"},
-            25: {"name": "사랑보다두려움", "classic": "군주론", "tool": "strict_typing"},
-            34: {"name": "전장의안개", "classic": "전쟁론", "tool": "null_check_validation"},
+            25: {
+                "name": "사랑보다두려움",
+                "classic": "군주론",
+                "tool": "strict_typing",
+            },
+            34: {
+                "name": "전장의안개",
+                "classic": "전쟁론",
+                "tool": "null_check_validation",
+            },
             36: {"name": "중심", "classic": "전쟁론", "tool": "root_cause_analysis"},
         }
         return principles.get(principle_id, {"name": "미구현", "classic": "N/A"})

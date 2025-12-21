@@ -23,6 +23,7 @@ try:
     )
     from AFO.utils.friction_calibrator import FrictionCalibrator
     from AFO.utils.lazy_imports import LazyModule
+
     # Standardized for Trinity 100%
 except ImportError:
     pass
@@ -303,7 +304,8 @@ class TestRedisConnectionReal:
                 "AFO.utils.redis_connection.get_redis_client", return_value=MagicMock()
             ) as mock_sync_getter,
             patch(
-                "AFO.utils.redis_connection.get_async_redis_client", return_value=AsyncMock()
+                "AFO.utils.redis_connection.get_async_redis_client",
+                return_value=AsyncMock(),
             ) as mock_async_getter,
         ):
             # Test shared sync
@@ -387,7 +389,6 @@ class TestFrictionCalibratorExtended:
 
         # very high friction -> reduce
         # 0.7 * 10 = 7. But if we try to reduce below min?
-
         # Case: Reduction goes below min
         stats_bad = FrictionStats(2, 1.0, 2.0)  # Friction huge
         rec = calibrator.recommend(stats_bad)

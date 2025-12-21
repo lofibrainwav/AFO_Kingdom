@@ -54,10 +54,13 @@ async def _get_redis_client() -> redis.Redis | None:
         client = cast(
             "redis.Redis",
             redis.from_url(
-                redis_url, decode_responses=True, socket_connect_timeout=2, socket_timeout=2
+                redis_url,
+                decode_responses=True,
+                socket_connect_timeout=2,
+                socket_timeout=2,
             ),
         )
-        await client.ping()  # type: ignore
+        await client.ping()
         return client
     except Exception as e:
         logger.warning(f"Redis connection failed in Ragas Router: {e}")
@@ -150,7 +153,8 @@ async def evaluate_ragas(request: RagasEvalRequest) -> RagasEvalResponse:
                 # Explicitly await the coroutines
                 # Note: redis.asyncio methods are awaitable
                 await redis_client.hset(  # type: ignore
-                    "ragas:latest_metrics", mapping={k: str(v) for k, v in scores.items()}
+                    "ragas:latest_metrics",
+                    mapping={k: str(v) for k, v in scores.items()},
                 )
                 await redis_client.hset("ragas:latest_metrics", "timestamp", timestamp)  # type: ignore
             except Exception as e:
@@ -207,4 +211,8 @@ async def get_ragas_metrics() -> dict[str, Any]:
         except Exception as e:
             logger.warning(f"Failed to fetch Ragas metrics from Redis: {e}")
 
-    return {"metrics": metrics, "timestamp": timestamp, "available_metrics": RAGAS_METRICS}
+    return {
+        "metrics": metrics,
+        "timestamp": timestamp,
+        "available_metrics": RAGAS_METRICS,
+    }

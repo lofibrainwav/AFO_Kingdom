@@ -41,7 +41,13 @@ class TrinityScoreEngineHybrid:
 
     # SSOT 가중치 (TRINITY_OS_PERSONAS.yaml)
     # Truth: 0.35, Goodness: 0.35, Beauty: 0.20, Serenity: 0.08, Eternity: 0.02
-    WEIGHTS = {"Truth": 0.35, "Goodness": 0.35, "Beauty": 0.20, "Serenity": 0.08, "Eternity": 0.02}
+    WEIGHTS = {
+        "Truth": 0.35,
+        "Goodness": 0.35,
+        "Beauty": 0.20,
+        "Serenity": 0.08,
+        "Eternity": 0.02,
+    }
     TOTAL_WEIGHT = sum(WEIGHTS.values())  # Should be 1.0
     THRESHOLD = 100_000
 

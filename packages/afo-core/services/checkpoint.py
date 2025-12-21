@@ -1,13 +1,23 @@
-# mypy: ignore-errors
 """
 Checkpoint Service
 永 (Eternity): Redis Checkpoint + DB 영속 저장
 PDF 페이지 4: 문서화 + 지속 아키텍처
+
+Phase 5: Trinity Type Validator 적용 - 런타임 Trinity Score 검증
 """
 
 import json
 import logging
 from typing import Any
+
+try:
+    from AFO.utils.trinity_type_validator import validate_with_trinity
+except ImportError:
+    # Fallback for import issues
+    def validate_with_trinity(func: Any) -> Any:
+        """Fallback decorator when trinity_type_validator is not available."""
+        return func
+
 
 logger = logging.getLogger(__name__)
 
@@ -38,9 +48,10 @@ class CheckpointService:
     - DB 영속 저장: 장기 유지보수성
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._memory_store: dict[str, Any] = {}  # Fallback: 메모리 저장
 
+    @validate_with_trinity
     async def save_persona_state(self, persona: Any) -> dict[str, Any]:
         """
         페르소나 상태 저장 (永: Eternity)
@@ -48,6 +59,8 @@ class CheckpointService:
         PDF 페이지 4: 지속 아키텍처
         - Redis Checkpoint: 7일 영속
         - DB 영속 저장: 장기 유지보수성
+
+        Phase 5: Trinity 검증 적용 - 런타임 품질 모니터링
 
         Args:
             persona: 저장할 페르소나 객체
@@ -77,7 +90,9 @@ class CheckpointService:
                     redis_url = get_redis_url()
                     r = redis.from_url(redis_url)
                     await r.set(
-                        f"persona:{persona_data.get('id', 'unknown')}", persona_json, ex=604800
+                        f"persona:{persona_data.get('id', 'unknown')}",
+                        persona_json,
+                        ex=604800,
                     )  # 7일
                     await r.close()
                     logger.info(
@@ -85,16 +100,20 @@ class CheckpointService:
                     )
                 except Exception as e:
                     logger.warning(f"[永: Checkpoint] Redis 저장 실패, 메모리 저장으로 폴백: {e}")
-                    self._memory_store[f"persona:{persona_data.get('id', 'unknown')}"] = (
-                        persona_data
-                    )
+                    self._memory_store[
+                        f"persona:{persona_data.get('id', 'unknown')}"
+                    ] = persona_data
 
             # DB 영속 저장
             if DB_AVAILABLE:
                 try:
                     conn = await get_db_connection()
-                    # TODO: 실제 DB INSERT 쿼리 구현
-                    # await conn.execute("INSERT INTO persona_history (persona_id, state, created_at) VALUES ($1, $2, NOW())", ...)
+                    # 실제 DB INSERT 쿼리 구현
+                    await conn.execute(
+                        "INSERT INTO persona_history (persona_id, state, created_at) VALUES ($1, $2, NOW())",
+                        persona_data.get("id"),
+                        persona_json,
+                    )
                     await conn.close()
                     logger.info(f"[永: Eternity] DB에 페르소나 상태 저장: {persona_data.get('id')}")
                 except Exception as e:
@@ -103,7 +122,7 @@ class CheckpointService:
             return {
                 "status": "success",
                 "persona_id": persona_data.get("id"),
-                "storage": "redis+db" if (REDIS_AVAILABLE and DB_AVAILABLE) else "memory",
+                "storage": ("redis+db" if (REDIS_AVAILABLE and DB_AVAILABLE) else "memory"),
             }
 
         except Exception as e:
@@ -113,6 +132,7 @@ class CheckpointService:
                 "error": str(e),
             }
 
+    @validate_with_trinity
     async def load_persona_state(self, persona_id: str) -> dict[str, Any] | None:
         """
         페르소나 상태 로드 (永: Eternity)
@@ -141,7 +161,11 @@ class CheckpointService:
 
             # 메모리에서 로드 (폴백)
             if f"persona:{persona_id}" in self._memory_store:
-                return self._memory_store[f"persona:{persona_id}"]
+                result = self._memory_store[f"persona:{persona_id}"]
+                # 타입 명시: dict[str, Any] | None
+                if isinstance(result, dict):
+                    return result
+                return None
 
             return None
 

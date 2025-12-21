@@ -40,10 +40,12 @@ import logging
 import random
 import time
 from functools import wraps
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 if TYPE_CHECKING:
     from collections.abc import Callable
+
+T = TypeVar("T")
 
 # Prometheus 메트릭 연동 (옵션)
 try:
@@ -152,7 +154,7 @@ class ExponentialBackoff:
         jitter: bool = True,
         retryable_exceptions: tuple[type[BaseException], ...] = (Exception,),
         on_retry: Callable[[int, BaseException], None] | None = None,
-    ):
+    ) -> None:
         """
         Args:
             max_retries: 최대 재시도 횟수 (기본 5회)
@@ -196,7 +198,7 @@ class ExponentialBackoff:
 
         return delay
 
-    def execute(self, func: Callable, *args, **kwargs) -> Any:
+    def execute(self, func: Callable[..., T], *args: Any, **kwargs: Any) -> T:
         """
         함수를 지수 백오프로 실행
 
@@ -279,8 +281,18 @@ class ExponentialBackoff:
                 if self.on_retry:
                     try:
                         self.on_retry(attempt, e)
-                    except Exception as callback_error:
-                        logger.error(f"재시도 콜백 오류: {callback_error}")
+                    except (TypeError, AttributeError, ValueError) as callback_error:
+                        logger.error(
+                            "재시도 콜백 오류 (타입/속성/값 에러): %s",
+                            str(callback_error),
+                        )
+                    except (
+                        Exception
+                    ) as callback_error:  # - Intentional fallback for callback errors
+                        logger.error(
+                            "재시도 콜백 오류 (예상치 못한 에러): %s",
+                            str(callback_error),
+                        )
 
                 # 대기
                 time.sleep(delay)
@@ -288,9 +300,10 @@ class ExponentialBackoff:
         # 이 코드는 실행되지 않음 (위에서 raise 또는 return)
         if last_exception:
             raise last_exception
-        return None  # Should not be reached if max_retries > 0
+        # max_retries > 0이면 항상 위에서 return하거나 raise하므로 실행되지 않음
+        raise RuntimeError("Unexpected execution path in ExponentialBackoff.execute")
 
-    def get_stats(self) -> dict:
+    def get_stats(self) -> dict[str, Any]:
         """
         재시도 통계 반환
 
@@ -332,7 +345,7 @@ def retry_with_exponential_backoff(
     jitter: bool = True,
     retryable_exceptions: tuple[type[BaseException], ...] = (Exception,),
     on_retry: Callable[[int, BaseException], None] | None = None,
-):
+) -> Callable[[Callable[..., T]], Callable[..., T]]:
     """
     지수 백오프 재시도 데코레이터
 
@@ -391,7 +404,8 @@ class BackoffStrategies:
 
     @staticmethod
     def api(
-        max_retries: int = 5, retryable_exceptions: tuple[type[BaseException], ...] = (Exception,)
+        max_retries: int = 5,
+        retryable_exceptions: tuple[type[BaseException], ...] = (Exception,),
     ) -> ExponentialBackoff:
         """
         API 호출용 백오프 (빠른 재시도)
@@ -412,7 +426,8 @@ class BackoffStrategies:
 
     @staticmethod
     def network(
-        max_retries: int = 10, retryable_exceptions: tuple[type[BaseException], ...] = (Exception,)
+        max_retries: int = 10,
+        retryable_exceptions: tuple[type[BaseException], ...] = (Exception,),
     ) -> ExponentialBackoff:
         """
         네트워크 연결용 백오프 (느린 재시도)
@@ -433,7 +448,8 @@ class BackoffStrategies:
 
     @staticmethod
     def database(
-        max_retries: int = 7, retryable_exceptions: tuple[type[BaseException], ...] = (Exception,)
+        max_retries: int = 7,
+        retryable_exceptions: tuple[type[BaseException], ...] = (Exception,),
     ) -> ExponentialBackoff:
         """
         데이터베이스 연결용 백오프 (중간 속도)
@@ -454,7 +470,8 @@ class BackoffStrategies:
 
     @staticmethod
     def aggressive(
-        max_retries: int = 3, retryable_exceptions: tuple[type[BaseException], ...] = (Exception,)
+        max_retries: int = 3,
+        retryable_exceptions: tuple[type[BaseException], ...] = (Exception,),
     ) -> ExponentialBackoff:
         """
         공격적 백오프 (매우 빠른 재시도)
@@ -477,7 +494,8 @@ class BackoffStrategies:
 
     @staticmethod
     def conservative(
-        max_retries: int = 15, retryable_exceptions: tuple[type[BaseException], ...] = (Exception,)
+        max_retries: int = 15,
+        retryable_exceptions: tuple[type[BaseException], ...] = (Exception,),
     ) -> ExponentialBackoff:
         """
         보수적 백오프 (매우 느린 재시도)
@@ -497,3 +515,91 @@ class BackoffStrategies:
             jitter=True,
             retryable_exceptions=retryable_exceptions,
         )
+
+
+# Async wrapper for ExponentialBackoff (for use in async contexts)
+async def exponential_backoff(
+    func: Callable[..., T],
+    max_retries: int = 5,
+    base_delay: float = 1.0,
+    exponential_base: float = 2.0,
+    max_delay: float = 60.0,
+    jitter: bool = True,
+    retryable_exceptions: tuple[type[BaseException], ...] = (Exception,),
+    *args: Any,
+    **kwargs: Any,
+) -> T:
+    """
+    Async wrapper for ExponentialBackoff.execute()
+
+    This function allows using ExponentialBackoff in async contexts.
+
+    Args:
+        func: 실행할 함수 (동기 또는 비동기)
+        max_retries: 최대 재시도 횟수
+        base_delay: 초기 지연 시간
+        exponential_base: 지수 밑수
+        max_delay: 최대 지연 시간
+        jitter: Jitter 사용 여부
+        retryable_exceptions: 재시도할 예외 튜플
+        *args, **kwargs: 함수 인자
+
+    Returns:
+        함수 실행 결과
+
+    Example:
+        >>> await exponential_backoff(
+        ...     lambda: redis_client.ping(),
+        ...     max_retries=3,
+        ...     base_delay=1.0
+        ... )
+    """
+    import asyncio
+
+    backoff = ExponentialBackoff(
+        max_retries=max_retries,
+        base_delay=base_delay,
+        exponential_base=exponential_base,
+        max_delay=max_delay,
+        jitter=jitter,
+        retryable_exceptions=retryable_exceptions,
+    )
+
+    # Check if func is async
+    if asyncio.iscoroutinefunction(func):
+        # For async functions, we need to await them
+        async def async_wrapper():
+            last_exception = None
+            for attempt in range(backoff.max_retries):
+                try:
+                    result = await func(*args, **kwargs)
+                    if attempt > 0:
+                        logger.info(
+                            f"✅ [{getattr(func, '__name__', 'unknown')}] 재시도 성공 "
+                            f"(시도 {attempt + 1}/{backoff.max_retries})"
+                        )
+                    return result
+                except backoff.retryable_exceptions as e:
+                    last_exception = e
+                    if attempt == backoff.max_retries - 1:
+                        logger.error(
+                            f"❌ [{getattr(func, '__name__', 'unknown')}] "
+                            f"재시도 최종 실패 (최대 {backoff.max_retries}회 초과)"
+                        )
+                        raise
+                    delay = backoff._calculate_delay(attempt)
+                    logger.warning(
+                        f"⚠️ [{getattr(func, '__name__', 'unknown')}] "
+                        f"재시도 {attempt + 1}/{backoff.max_retries} "
+                        f"(오류: {type(e).__name__}: {str(e)[:100]}, 대기: {delay:.2f}초)"
+                    )
+                    await asyncio.sleep(delay)
+            if last_exception:
+                raise last_exception
+            raise RuntimeError("Unexpected execution path in async exponential_backoff")
+
+        return await async_wrapper()  # type: ignore[no-any-return]
+    else:
+        # For sync functions, run in executor
+        loop = asyncio.get_event_loop()
+        return await loop.run_in_executor(None, backoff.execute, func, *args, **kwargs)

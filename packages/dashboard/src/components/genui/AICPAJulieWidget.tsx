@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Shield, TrendingUp, AlertTriangle, CheckCircle, CreditCard, PieChart } from 'lucide-react';
+import { logError } from '@/lib/logger';
 
 interface Transaction {
   id: string;
@@ -29,7 +30,7 @@ export function AICPAJulieWidget() {
     fetch('/api/finance/dashboard')
       .then(res => res.json())
       .then(setData)
-      .catch(console.error)
+      .catch((err) => logError('Failed to fetch AICPA Julie data', { error: err instanceof Error ? err.message : 'Unknown error' }))
       .finally(() => setLoading(false));
   }, []);
 

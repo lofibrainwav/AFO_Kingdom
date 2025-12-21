@@ -151,7 +151,10 @@ def main():
                     # Let's be strict for now on sk-ant or just trust lenient decode
                     if "sk-ant" in val:  # Double check
                         wallet.add_key(
-                            name="anthropic", key=val, service="anthropic", read_only=False
+                            name="anthropic",
+                            key=val,
+                            service="anthropic",
+                            read_only=False,
                         )
                         captured = True
                         break

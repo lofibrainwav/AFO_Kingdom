@@ -62,7 +62,12 @@ class AfoUltimateMCPServer:
         # Jipijigi Rule: "Power requires Trust". We allow it for now.
         try:
             result = subprocess.run(
-                command, shell=True, capture_output=True, text=True, timeout=60, executable="/bin/zsh"
+                command,
+                shell=True,
+                capture_output=True,
+                text=True,
+                timeout=60,
+                executable="/bin/zsh",
             )
             if result.returncode == 0:
                 return result.stdout.strip()
@@ -154,7 +159,10 @@ class AfoUltimateMCPServer:
                             "description": "Write text to file.",
                             "inputSchema": {
                                 "type": "object",
-                                "properties": {"path": {"type": "string"}, "content": {"type": "string"}},
+                                "properties": {
+                                    "path": {"type": "string"},
+                                    "content": {"type": "string"},
+                                },
                                 "required": ["path", "content"],
                             },
                         },
@@ -192,7 +200,10 @@ class AfoUltimateMCPServer:
                                 "description": "Verify a factual claim against context (Hallucination Defense).",
                                 "inputSchema": {
                                     "type": "object",
-                                    "properties": {"claim": {"type": "string"}, "context": {"type": "string"}},
+                                    "properties": {
+                                        "claim": {"type": "string"},
+                                        "context": {"type": "string"},
+                                    },
                                     "required": ["claim"],
                                 },
                             }
@@ -204,8 +215,14 @@ class AfoUltimateMCPServer:
                                 "inputSchema": {
                                     "type": "object",
                                     "properties": {
-                                        "data": {"type": "array", "items": {"type": "number"}},
-                                        "weights": {"type": "array", "items": {"type": "number"}},
+                                        "data": {
+                                            "type": "array",
+                                            "items": {"type": "number"},
+                                        },
+                                        "weights": {
+                                            "type": "array",
+                                            "items": {"type": "number"},
+                                        },
                                     },
                                     "required": ["data", "weights"],
                                 },
@@ -223,7 +240,12 @@ class AfoUltimateMCPServer:
                                         "total_thoughts": {"type": "integer"},
                                         "next_thought_needed": {"type": "boolean"},
                                     },
-                                    "required": ["thought", "thought_number", "total_thoughts", "next_thought_needed"],
+                                    "required": [
+                                        "thought",
+                                        "thought_number",
+                                        "total_thoughts",
+                                        "next_thought_needed",
+                                    ],
                                 },
                             }
                         )
@@ -281,7 +303,10 @@ class AfoUltimateMCPServer:
                                 "description": "Type text into an element on the current page.",
                                 "inputSchema": {
                                     "type": "object",
-                                    "properties": {"selector": {"type": "string"}, "text": {"type": "string"}},
+                                    "properties": {
+                                        "selector": {"type": "string"},
+                                        "text": {"type": "string"},
+                                    },
                                     "required": ["selector", "text"],
                                 },
                             }
@@ -368,7 +393,7 @@ class AfoUltimateMCPServer:
                             res = AfoSkillsMCP.verify_fact(args.get("claim"), args.get("context", ""))
                             content = json.dumps(res, indent=2, ensure_ascii=False)
                             # Implied Trinity Score for fact verification
-                            trinity_metadata = {"truth_impact": 10 if res["verdict"] == "PLAUSIBLE" else -10}
+                            trinity_metadata = {"truth_impact": (10 if res["verdict"] == "PLAUSIBLE" else -10)}
 
                         elif tool_name == "cupy_weighted_sum":
                             res = AfoSkillsMCP.cupy_weighted_sum(args.get("data", []), args.get("weights", []))
@@ -400,20 +425,33 @@ class AfoUltimateMCPServer:
                             content = json.dumps(PlaywrightBridgeMCP.navigate(args.get("url")), indent=2)
                         elif tool_name == "browser_screenshot":
                             content = json.dumps(
-                                PlaywrightBridgeMCP.screenshot(args.get("path", "screenshot.png")), indent=2
+                                PlaywrightBridgeMCP.screenshot(args.get("path", "screenshot.png")),
+                                indent=2,
                             )
                         elif tool_name == "browser_click":
-                            content = json.dumps(PlaywrightBridgeMCP.click(args.get("selector")), indent=2)
+                            content = json.dumps(
+                                PlaywrightBridgeMCP.click(args.get("selector")),
+                                indent=2,
+                            )
                         elif tool_name == "browser_type":
                             content = json.dumps(
-                                PlaywrightBridgeMCP.type_text(args.get("selector"), args.get("text")), indent=2
+                                PlaywrightBridgeMCP.type_text(args.get("selector"), args.get("text")),
+                                indent=2,
                             )
                         elif tool_name == "browser_scrape":
-                            content = json.dumps(PlaywrightBridgeMCP.scrape(args.get("selector")), indent=2)
+                            content = json.dumps(
+                                PlaywrightBridgeMCP.scrape(args.get("selector")),
+                                indent=2,
+                            )
 
                         else:
                             content = f"Unknown tool: {tool_name}"
-                    elif tool_name not in ["shell_execute", "read_file", "write_file", "kingdom_health"]:
+                    elif tool_name not in [
+                        "shell_execute",
+                        "read_file",
+                        "write_file",
+                        "kingdom_health",
+                    ]:
                         content = f"Tool not available (Modules failed to load): {tool_name}"
 
                     # Construct Response
@@ -452,7 +490,11 @@ class AfoUltimateMCPServer:
             except Exception as e:
                 # Catch-all to prevent crash
                 if msg_id is not None:
-                    error_resp = {"jsonrpc": "2.0", "error": {"code": -32603, "message": str(e)}, "id": msg_id}
+                    error_resp = {
+                        "jsonrpc": "2.0",
+                        "error": {"code": -32603, "message": str(e)},
+                        "id": msg_id,
+                    }
                     print(json.dumps(error_resp))
                     sys.stdout.flush()
 

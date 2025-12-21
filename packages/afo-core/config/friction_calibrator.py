@@ -72,26 +72,28 @@ class FrictionCalibrator:
         try:
             # Lazy import to avoid circular dependency
             try:
-                from julie_cpa.core.julie_engine import julie
+                from julie_cpa.core.julie_engine import julie as julie_engine
             except ImportError:
-                from packages.afo_core.julie_cpa.core.julie_engine import (
-                    julie,  # type: ignore[no-redef]
-                )
-
-            if isinstance(julie.monthly_spending, Decimal) and isinstance(
-                julie.budget_limit, Decimal
-            ):
-                pass  # Precision OK
+                # Julie module not available, skip financial checks
+                score -= 2
+                friction_reasons.append("Financial Module Not Available")
+                julie_engine = None
             else:
-                score -= 15
-                friction_reasons.append("Financial Precision Risk (Float Usage)")
+                # Check if using Decimal for precision
+                monthly_spending = getattr(julie_engine, "monthly_spending", None)
+                budget_limit = getattr(julie_engine, "budget_limit", None)
+                if not (
+                    isinstance(monthly_spending, Decimal) and isinstance(budget_limit, Decimal)
+                ):
+                    score -= 15
+                    friction_reasons.append("Financial Precision Risk (Float Usage)")
 
-            # Check Undo Capability (Command History)
-            if hasattr(julie, "command_history"):
-                pass
-            else:
-                score -= 5
-                friction_reasons.append("Financial Irreversibility (No Undo)")
+                # Check Undo Capability (Command History)
+                if hasattr(julie_engine, "command_history"):
+                    pass
+                else:
+                    score -= 5
+                    friction_reasons.append("Financial Irreversibility (No Undo)")
 
         except Exception as e:
             # If Julie module is missing or error, slight friction

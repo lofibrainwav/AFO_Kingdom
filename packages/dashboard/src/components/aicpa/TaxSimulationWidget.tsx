@@ -21,6 +21,7 @@ import {
   RefreshCw,
   Sparkles
 } from 'lucide-react';
+import { logError } from '@/lib/logger';
 
 interface TaxResult {
   filing_status: string;
@@ -38,7 +39,8 @@ interface TaxResult {
   advice: string;
 }
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8010';
+import { API_BASE_URL } from '@/lib/constants';
+const API_BASE = API_BASE_URL;
 
 export const TaxSimulationWidget: React.FC = () => {
   // Form State
@@ -76,7 +78,7 @@ export const TaxSimulationWidget: React.FC = () => {
       setResult(data.simulation);
     } catch (e) {
       setError('연결 실패 - 서버 상태를 확인하세요');
-      console.error('[TaxSim] Error:', e);
+      logError('[TaxSim] Error', { error: e instanceof Error ? e.message : 'Unknown error' });
     } finally {
       setLoading(false);
     }

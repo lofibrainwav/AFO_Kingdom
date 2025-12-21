@@ -38,7 +38,9 @@ vibecoding_compliance = Gauge(
 # ============================================================
 
 health_organ_status = Gauge(
-    "afo_health_organ_status", "11장기 건강 상태 (1=정상, 0=비정상)", ["organ_name", "organ_korean"]
+    "afo_health_organ_status",
+    "11장기 건강 상태 (1=정상, 0=비정상)",
+    ["organ_name", "organ_korean"],
 )
 
 health_total_score = Gauge("afo_health_total_score", "전체 건강도 점수 (0-100)")
@@ -58,13 +60,17 @@ trinity_truth_score = Gauge(
     "afo_trinity_truth_score", "眞 (Truth) 기술 정확성 점수", ["service", "component"]
 )
 trinity_goodness_score = Gauge(
-    "afo_trinity_goodness_score", "善 (Goodness) 윤리적 안정성 점수", ["service", "component"]
+    "afo_trinity_goodness_score",
+    "善 (Goodness) 윤리적 안정성 점수",
+    ["service", "component"],
 )
 trinity_beauty_score = Gauge(
     "afo_trinity_beauty_score", "美 (Beauty) 사용자 경험 점수", ["service", "component"]
 )
 trinity_filial_serenity_score = Gauge(
-    "afo_trinity_filial_serenity_score", "孝 (Filial Serenity) 점수", ["service", "component"]
+    "afo_trinity_filial_serenity_score",
+    "孝 (Filial Serenity) 점수",
+    ["service", "component"],
 )
 trinity_serenity_core = Gauge(
     "afo_trinity_serenity_core", "Serenity(§) = ∛(T × G × B)", ["service", "component"]
@@ -83,7 +89,9 @@ trinity_calculations_total = Counter(
 
 # Trinity 승상별 점수
 trinity_strategist_score = Gauge(
-    "afo_trinity_strategist_score", "Trinity 승상별 점수", ["strategist", "aspect", "weight"]
+    "afo_trinity_strategist_score",
+    "Trinity 승상별 점수",
+    ["strategist", "aspect", "weight"],
 )
 
 # Trinity 균형 델타 (Phase 8.1.3)
@@ -209,7 +217,9 @@ prompt_cache_cached_requests = Counter(
 
 # Prompt Cache Estimated Savings (USD)
 prompt_cache_estimated_savings = Gauge(
-    "afo_prompt_cache_estimated_savings_usd", "Prompt Caching 예상 절감 비용 (USD)", ["provider"]
+    "afo_prompt_cache_estimated_savings_usd",
+    "Prompt Caching 예상 절감 비용 (USD)",
+    ["provider"],
 )
 
 # ============================================================
@@ -234,7 +244,9 @@ truth_accuracy_score = Gauge("truth_loop_accuracy_score", "眞 루프 정확성 
 
 # 4단계: 테스트 결과 - 순환 완료
 truth_loop_duration = Histogram(
-    "truth_loop_duration_seconds", "眞 루프 순환 소요 시간 (초)", buckets=[0.1, 0.5, 1.0, 2.0, 5.0]
+    "truth_loop_duration_seconds",
+    "眞 루프 순환 소요 시간 (초)",
+    buckets=[0.1, 0.5, 1.0, 2.0, 5.0],
 )
 
 

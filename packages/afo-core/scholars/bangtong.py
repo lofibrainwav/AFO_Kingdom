@@ -57,7 +57,10 @@ class BangtongScholar:
 
         messages = [
             {"role": "system", "content": self.SYSTEM_PROMPT},
-            {"role": "user", "content": f"다음 요구사항을 구현하시오:\n{request}{context_prompt}"},
+            {
+                "role": "user",
+                "content": f"다음 요구사항을 구현하시오:\n{request}{context_prompt}",
+            },
         ]
 
         logger.info(f"📜 [Bangtong] Implementing: {request[:50]}...")

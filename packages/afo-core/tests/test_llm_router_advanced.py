@@ -27,7 +27,10 @@ def test_router_initialization_env_vars() -> None:
     # Patch sys.modules to inject mock config
     with patch.dict(
         sys.modules,
-        {"config.settings": mock_config_module, "AFO.config.settings": mock_config_module},
+        {
+            "config.settings": mock_config_module,
+            "AFO.config.settings": mock_config_module,
+        },
     ):
         router = LLMRouter()
         assert LLMProvider.ANTHROPIC in router.llm_configs
@@ -73,7 +76,10 @@ def test_route_upgrade_to_ultra() -> None:
     router: Any = LLMRouter()
     # Ensure we have an ULTRA provider
     router.llm_configs[LLMProvider.ANTHROPIC] = LLMConfig(
-        LLMProvider.ANTHROPIC, "claude-3-opus", quality_tier=QualityTier.ULTRA, cost_per_token=0.01
+        LLMProvider.ANTHROPIC,
+        "claude-3-opus",
+        quality_tier=QualityTier.ULTRA,
+        cost_per_token=0.01,
     )
     router.llm_configs[LLMProvider.OLLAMA] = LLMConfig(LLMProvider.OLLAMA, "local")
 
@@ -93,7 +99,10 @@ def test_route_api_selection() -> None:
         LLMProvider.OPENAI, "gpt-4", quality_tier=QualityTier.ULTRA, latency_ms=100
     )
     router.llm_configs[LLMProvider.ANTHROPIC] = LLMConfig(
-        LLMProvider.ANTHROPIC, "claude-3", quality_tier=QualityTier.ULTRA, latency_ms=2000
+        LLMProvider.ANTHROPIC,
+        "claude-3",
+        quality_tier=QualityTier.ULTRA,
+        latency_ms=2000,
     )
 
     with patch.object(router, "_is_ollama_available", return_value=False):
@@ -152,7 +161,10 @@ async def test_call_gemini_retry() -> None:
         with patch.object(router, "_is_ollama_available", return_value=False):
             with patch.dict(
                 sys.modules,
-                {"config.settings": mock_config_module, "AFO.config.settings": mock_config_module},
+                {
+                    "config.settings": mock_config_module,
+                    "AFO.config.settings": mock_config_module,
+                },
             ):
                 response = await router._query_google("query", config, None)
 

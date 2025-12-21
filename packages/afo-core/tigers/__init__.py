@@ -5,4 +5,10 @@ from .ma_chao import deploy as serenity_deploy
 from .zhang_fei import gate as goodness_gate
 from .zhao_yun import craft as beauty_craft
 
-__all__ = ["beauty_craft", "eternity_log", "goodness_gate", "serenity_deploy", "truth_guard"]
+__all__ = [
+    "beauty_craft",
+    "eternity_log",
+    "goodness_gate",
+    "serenity_deploy",
+    "truth_guard",
+]

@@ -7,14 +7,12 @@ Phase 12 Extension: 실시간 예산 추적 및 리스크 알림
 
 import logging
 from datetime import datetime
+from typing import Any
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
-from AFO.julie_cpa.models.budget import (
-    MOCK_BUDGETS,
-    BudgetSummary,
-)
+from AFO.julie_cpa.models.budget import MOCK_BUDGETS, BudgetSummary
 
 router = APIRouter(prefix="/api/julie/budget", tags=["Julie CPA - Budget"])
 logger = logging.getLogger(__name__)
@@ -57,7 +55,7 @@ def generate_summary(risk_level: str, utilization_rate: float) -> str:
 
 
 @router.get("", response_model=BudgetSummary)
-async def get_budget_summary():
+async def get_budget_summary() -> BudgetSummary:
     """
     예산 현황 조회
 
@@ -85,11 +83,38 @@ async def get_budget_summary():
 
 
 @router.get("/category/{category_name}")
-async def get_category_budget(category_name: str):
-    """특정 카테고리 예산 조회"""
+async def get_category_budget(category_name: str) -> BudgetSummary:
+    """
+    특정 카테고리 예산 조회
+
+    Args:
+        category_name: 조회할 카테고리 이름
+
+    Returns:
+        BudgetSummary: 해당 카테고리의 예산 정보
+
+    Raises:
+        HTTPException: 카테고리를 찾을 수 없는 경우 404
+    """
     for budget in MOCK_BUDGETS:
         if budget.category.lower() == category_name.lower():
-            return budget
+            # BudgetCategory를 BudgetSummary로 변환
+            total_allocated = budget.allocated
+            total_spent = budget.spent
+            total_remaining = budget.remaining
+            utilization_rate = budget.utilization_rate()
+            risk_score, risk_level = calculate_risk_score(total_remaining, total_allocated)
+            return BudgetSummary(
+                budgets=[budget],
+                total_allocated=total_allocated,
+                total_spent=total_spent,
+                total_remaining=total_remaining,
+                utilization_rate=utilization_rate,
+                risk_score=round(risk_score, 2),
+                risk_level=risk_level,
+                summary=generate_summary(risk_level, utilization_rate),
+                timestamp=datetime.now().isoformat(),
+            )
     raise HTTPException(status_code=404, detail=f"카테고리 '{category_name}' 없음")
 
 
@@ -101,11 +126,17 @@ class SpendRequest(BaseModel):
 
 
 @router.post("/spend")
-async def record_spending(request: SpendRequest):
+async def record_spending(request: SpendRequest) -> dict[str, Any]:
     """
     지출 기록 (DRY_RUN 기본)
 
     善 (Goodness): 안전 우선 - dry_run=True가 기본값
+
+    Args:
+        request: 지출 요청 정보
+
+    Returns:
+        dict: 지출 기록 결과
     """
     for budget in MOCK_BUDGETS:
         if budget.category.lower() == request.category.lower():
@@ -149,11 +180,14 @@ async def record_spending(request: SpendRequest):
 
 
 @router.get("/risk-alert")
-async def get_risk_alerts():
+async def get_risk_alerts() -> dict[str, Any]:
     """
     리스크 알림 조회
 
     SSOT 연동: 위험 카테고리만 반환
+
+    Returns:
+        dict: 리스크 알림 목록 및 요약
     """
     alerts = []
 
@@ -175,9 +209,11 @@ async def get_risk_alerts():
     return {
         "count": len(alerts),
         "alerts": alerts,
-        "summary": "금고 문제? Julie가 자동 복구 중 – 조금만 기다려주세요!"
-        if alerts
-        else "✅ 모든 예산 안정",
+        "summary": (
+            "금고 문제? Julie가 자동 복구 중 – 조금만 기다려주세요!"
+            if alerts
+            else "✅ 모든 예산 안정"
+        ),
     }
 
 
@@ -187,7 +223,7 @@ async def get_risk_alerts():
 
 
 @router.get("/suggestions")
-async def get_budget_suggestions():
+async def get_budget_suggestions() -> dict[str, Any]:
     """
     Julie CPA의 스마트 제안
 
@@ -195,6 +231,9 @@ async def get_budget_suggestions():
     - 지출율 50% 이상: 절감 제안
     - 지출율 80% 이상: 긴급 제안
     - 카테고리별 맞춤 제안
+
+    Returns:
+        dict: 예산 제안 목록 및 잠재 절감액
     """
     total_allocated = sum(b.allocated for b in MOCK_BUDGETS)
     total_spent = sum(b.spent for b in MOCK_BUDGETS)
@@ -268,7 +307,7 @@ async def get_budget_suggestions():
             }
         )
 
-    total_potential_saving = sum(s["expected_saving"] for s in suggestions)
+    total_potential_saving = sum(int(s.get("expected_saving", 0)) for s in suggestions)
 
     return {
         "spend_rate": round(spend_rate, 2),
@@ -295,7 +334,7 @@ MOCK_HISTORY = [
 ]
 
 
-def predict_next_month_spending(history: list[dict]) -> dict:
+def predict_next_month_spending(history: list[dict[str, Any]]) -> dict[str, Any]:
     """
     간단 선형회귀로 다음 달 지출 예측
 
@@ -352,7 +391,7 @@ def predict_next_month_spending(history: list[dict]) -> dict:
 
 
 @router.get("/prediction")
-async def get_budget_prediction():
+async def get_budget_prediction() -> dict[str, Any]:
     """
     Julie CPA의 미래 예측
 
@@ -360,11 +399,17 @@ async def get_budget_prediction():
     - 6개월 과거 데이터 기반
     - 신뢰도 (R²) 포함
     - 추세 분석 (증가/감소/안정)
+
+    Returns:
+        dict: 예측 결과 및 조언
     """
     prediction = predict_next_month_spending(MOCK_HISTORY)
 
-    current_spending = MOCK_HISTORY[-1]["spent"]
-    predicted = prediction["predicted_spending"]
+    current_spending = int(MOCK_HISTORY[-1]["spent"])
+    predicted_val = prediction.get("predicted_spending", 0)
+    predicted: int = (
+        int(predicted_val) if isinstance(predicted_val, (int, float)) else current_spending
+    )
 
     # 예측 vs 현재 비교
     diff = predicted - current_spending
@@ -413,7 +458,7 @@ async def get_budget_prediction():
 
 
 @router.get("/forecast")
-async def get_budget_forecast(periods: int = 3):
+async def get_budget_forecast(periods: int = 3) -> dict[str, Any]:
     """
     Prophet 기반 미래 예산 예측
 
@@ -427,6 +472,9 @@ async def get_budget_forecast(periods: int = 3):
 
     眞 (Truth): 데이터 기반 정확한 예측
     善 (Goodness): 형님 안심을 위한 명확한 결과
+
+    Returns:
+        dict: 예측 결과 및 요약
     """
     try:
         from AFO.julie_cpa.prophet_engine import get_kingdom_forecast
@@ -451,7 +499,7 @@ async def get_budget_forecast(periods: int = 3):
 
     except Exception as e:
         logger.error(f"[Julie] 예측 실패: {e}")
-        raise HTTPException(status_code=500, detail=f"예측 실패: {e!s}")
+        raise HTTPException(status_code=500, detail=f"예측 실패: {e!s}") from e
 
 
 # ============================================================
@@ -460,7 +508,7 @@ async def get_budget_forecast(periods: int = 3):
 
 
 @router.get("/forecast-hybrid")
-async def get_hybrid_budget_forecast(periods: int = 3):
+async def get_hybrid_budget_forecast(periods: int = 3) -> dict[str, Any]:
     """
     Prophet + auto_arima 하이브리드 예측
 
@@ -472,6 +520,9 @@ async def get_hybrid_budget_forecast(periods: int = 3):
         periods: 예측 기간 (기본 3개월, 최대 12개월)
 
     眞 (Truth): 형님의 경제적 진실 - 돈을 담당하는 매우 중요한 시스템
+
+    Returns:
+        dict: 하이브리드 예측 결과
     """
     try:
         from AFO.julie_cpa.hybrid_engine import get_hybrid_forecast
@@ -494,7 +545,7 @@ async def get_hybrid_budget_forecast(periods: int = 3):
 
     except Exception as e:
         logger.error(f"[Julie] Hybrid 예측 실패: {e}")
-        raise HTTPException(status_code=500, detail=f"Hybrid 예측 실패: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Hybrid 예측 실패: {e!s}") from e
 
 
 # ============================================================
@@ -503,12 +554,18 @@ async def get_hybrid_budget_forecast(periods: int = 3):
 
 
 @router.get("/consult-grok")
-async def consult_grok_advisor(periods: int = 3):
+async def consult_grok_advisor(periods: int = 3) -> dict[str, Any]:
     """
     Phase 15: The Grok Singularity - 외부 지능(xAI) 자문
 
     왕국의 예산 예측 데이터를 바탕으로 Grok에게 거시경제적 조언을 구합니다.
     - 智 (Wisdom): 외부 데이터와 내부 데이터의 융합
+
+    Args:
+        periods: 예측 기간 (기본 3개월)
+
+    Returns:
+        dict: Grok 분석 결과 및 예측 요약
     """
     try:
         from AFO.julie_cpa.grok_engine import consult_grok
@@ -530,4 +587,4 @@ async def consult_grok_advisor(periods: int = 3):
 
     except Exception as e:
         logger.error(f"[Julie] Grok 자문 실패: {e}")
-        raise HTTPException(status_code=500, detail=f"Grok 통신 실패: {e!s}")
+        raise HTTPException(status_code=500, detail=f"Grok 통신 실패: {e!s}") from e

@@ -9,6 +9,7 @@ try:
 except ImportError:
     GPU_AVAILABLE = False
     import numpy as np
+
 import json
 import os
 
@@ -155,8 +156,14 @@ class AfoSkillsMCP:
                                 "inputSchema": {
                                     "type": "object",
                                     "properties": {
-                                        "data": {"type": "array", "items": {"type": "number"}},
-                                        "weights": {"type": "array", "items": {"type": "number"}},
+                                        "data": {
+                                            "type": "array",
+                                            "items": {"type": "number"},
+                                        },
+                                        "weights": {
+                                            "type": "array",
+                                            "items": {"type": "number"},
+                                        },
                                     },
                                     "required": ["data", "weights"],
                                 },

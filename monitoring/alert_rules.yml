@@ -1,0 +1,91 @@
+groups:
+  - name: AFO Kingdom Alerts
+    rules:
+      # High Error Rate Alert
+      - alert: HighErrorRate
+        expr: rate(http_requests_total{status_code=~"4..|5..",service="afo-kingdom-api"}[5m]) / rate(http_requests_total{service="afo-kingdom-api"}[5m]) > 0.05
+        for: 5m
+        labels:
+          severity: critical
+          service: afo-kingdom-api
+        annotations:
+          summary: "High error rate detected"
+          description: "Error rate is {{ $value | printf \"%.2f\" }}% (threshold: 5%)"
+          runbook_url: "https://docs.afo-kingdom.com/runbooks/high-error-rate"
+
+      # High Response Time Alert
+      - alert: HighResponseTime
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{service="afo-kingdom-api"}[5m])) > 2.0
+        for: 3m
+        labels:
+          severity: warning
+          service: afo-kingdom-api
+        annotations:
+          summary: "High response time detected"
+          description: "95th percentile response time is {{ $value | printf \"%.2f\" }}s (threshold: 2.0s)"
+
+      # API Down Alert
+      - alert: APIDown
+        expr: up{service="afo-kingdom-api"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: afo-kingdom-api
+        annotations:
+          summary: "AFO Kingdom API is down"
+          description: "AFO Kingdom API has been down for more than 1 minute"
+
+      # High Memory Usage Alert
+      - alert: HighMemoryUsage
+        expr: (1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) > 0.85
+        for: 5m
+        labels:
+          severity: warning
+          component: system
+        annotations:
+          summary: "High memory usage detected"
+          description: "Memory usage is {{ $value | printf \"%.1f\" }}% (threshold: 85%)"
+
+      # High CPU Usage Alert
+      - alert: HighCPUUsage
+        expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 5m
+        labels:
+          severity: warning
+          component: system
+        annotations:
+          summary: "High CPU usage detected"
+          description: "CPU usage is {{ $value | printf \"%.1f\" }}% (threshold: 80%)"
+
+      # Trinity Score Degradation Alert
+      - alert: TrinityScoreLow
+        expr: trinity_score{service="afo-kingdom-api"} < 30
+        for: 10m
+        labels:
+          severity: info
+          service: afo-kingdom-api
+        annotations:
+          summary: "Low Trinity score detected"
+          description: "{{ $labels.pillar }} Trinity score is {{ $value | printf \"%.1f\" }} (threshold: 30)"
+
+      # Skills Execution Errors
+      - alert: SkillsExecutionErrors
+        expr: rate(skills_executions_total{status="error"}[5m]) > 5
+        for: 3m
+        labels:
+          severity: warning
+          service: skills
+        annotations:
+          summary: "High skills execution error rate"
+          description: "Skills execution errors: {{ $value | printf \"%.1f\" }}/min (threshold: 5/min)"
+
+      # Redis Down Alert
+      - alert: RedisDown
+        expr: up{service="redis"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: redis
+        annotations:
+          summary: "Redis is down"
+          description: "Redis has been down for more than 1 minute"

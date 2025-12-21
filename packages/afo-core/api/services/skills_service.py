@@ -60,7 +60,7 @@ except ImportError:
 
 # Import types for type checking only
 if TYPE_CHECKING:
-    from AFO.afo_skills_registry import AFOSkillCard
+    from AFO.afo_skills_registry import AFOSkillCard, SkillRegistry
 else:
     # Runtime fallback
     try:
@@ -72,13 +72,13 @@ else:
 class SkillsService(BaseService):
     """Skill Registry 비즈니스 로직 서비스 (眞善美孝)"""
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
-        self.skill_registry = None
+        self.skill_registry: SkillRegistry | None = None
         self.execution_stats: dict[str, dict[str, Any]] = defaultdict(dict)
         self._initialize_registry()
 
-    def _initialize_registry(self):
+    def _initialize_registry(self) -> None:
         """Skill Registry 초기화"""
         # 직접 스킬 레지스트리 초기화
         try:
@@ -223,16 +223,20 @@ class SkillsService(BaseService):
                 execution_mode=skill.execution_mode,
                 status=skill.status,
                 philosophy=PhilosophyScores(
-                    truth=getattr(skill.philosophy, "truth", 85.0),
-                    goodness=getattr(skill.philosophy, "goodness", 80.0),
-                    beauty=getattr(skill.philosophy, "beauty", 75.0),
-                    serenity=getattr(skill.philosophy, "serenity", 90.0),
+                    truth=getattr(skill.philosophy_scores, "truth", 85.0),
+                    goodness=getattr(skill.philosophy_scores, "goodness", 80.0),
+                    beauty=getattr(skill.philosophy_scores, "beauty", 75.0),
+                    serenity=getattr(skill.philosophy_scores, "serenity", 90.0),
                 ),
                 tags=skill.tags,
                 parameters=skill.parameters,
-                execution_count=skill.execution_count,
-                created_at=skill.created_at if hasattr(skill, "created_at") else datetime.utcnow(),
-                updated_at=skill.updated_at if hasattr(skill, "updated_at") else datetime.utcnow(),
+                execution_count=getattr(skill, "execution_count", 0),
+                created_at=(
+                    skill.created_at if hasattr(skill, "created_at") else datetime.utcnow()
+                ),
+                updated_at=(
+                    skill.updated_at if hasattr(skill, "updated_at") else datetime.utcnow()
+                ),
             )
 
         except Exception as e:
@@ -283,16 +287,16 @@ class SkillsService(BaseService):
                     status=status_enum,
                     tags=filters.tags,
                     search=filters.search,
-                    min_philosophy_avg=int(filters.min_philosophy_avg)
-                    if filters.min_philosophy_avg
-                    else None,
+                    min_philosophy_avg=(
+                        int(filters.min_philosophy_avg) if filters.min_philosophy_avg else None
+                    ),
                     execution_mode=execution_mode_enum,
                     offset=filters.offset,
                     limit=filters.limit,
                 )
                 filtered_skills = self.skill_registry.filter(filter_params)
             else:
-                filtered_skills = self.skill_registry.get_all()
+                filtered_skills = self.skill_registry.list_all()  # type: ignore[attr-defined]
 
             # 응답 변환 (DRY: list comprehension)
             skills = [
@@ -304,14 +308,14 @@ class SkillsService(BaseService):
                     execution_mode=skill.execution_mode,
                     status=skill.status,
                     philosophy=PhilosophyScores(
-                        truth=getattr(skill.philosophy, "truth", 85.0),
-                        goodness=getattr(skill.philosophy, "goodness", 80.0),
-                        beauty=getattr(skill.philosophy, "beauty", 75.0),
-                        serenity=getattr(skill.philosophy, "serenity", 90.0),
+                        truth=getattr(skill.philosophy_scores, "truth", 85.0),
+                        goodness=getattr(skill.philosophy_scores, "goodness", 80.0),
+                        beauty=getattr(skill.philosophy_scores, "beauty", 75.0),
+                        serenity=getattr(skill.philosophy_scores, "serenity", 90.0),
                     ),
                     tags=skill.tags,
                     parameters=skill.parameters,
-                    execution_count=skill.execution_count,
+                    execution_count=getattr(skill, "execution_count", 0),
                     created_at=getattr(skill, "created_at", datetime.utcnow()),
                     updated_at=getattr(skill, "updated_at", datetime.utcnow()),
                 )
@@ -365,19 +369,27 @@ class SkillsService(BaseService):
             execution_time = (time.time() - start_time) * 1000
 
             # 실행 통계 업데이트
-            self.skill_registry.increment_execution_count(request.skill_id)
+            if hasattr(self.skill_registry, "increment_execution_count"):
+                self.skill_registry.increment_execution_count(request.skill_id)  # type: ignore[attr-defined]
+            else:
+                # Fallback: execution_stats에 직접 기록
+                if request.skill_id not in self.execution_stats:
+                    self.execution_stats[request.skill_id] = {}
+                self.execution_stats[request.skill_id]["execution_count"] = (
+                    self.execution_stats[request.skill_id].get("execution_count", 0) + 1
+                )
 
             # 동적 Trinity Score 계산 (眞善美孝永 5기둥)
             dynamic_trinity_score = None
             base_philosophy_scores = None
 
             # 기본 철학 점수 추출 (정적 점수)
-            if skill.philosophy and hasattr(skill.philosophy, "truth"):
+            if skill.philosophy_scores and hasattr(skill.philosophy_scores, "truth"):
                 base_philosophy_scores = {
-                    "truth": getattr(skill.philosophy, "truth", 85),
-                    "goodness": getattr(skill.philosophy, "goodness", 80),
-                    "beauty": getattr(skill.philosophy, "beauty", 75),
-                    "serenity": getattr(skill.philosophy, "serenity", 90),
+                    "truth": getattr(skill.philosophy_scores, "truth", 85),
+                    "goodness": getattr(skill.philosophy_scores, "goodness", 80),
+                    "beauty": getattr(skill.philosophy_scores, "beauty", 75),
+                    "serenity": getattr(skill.philosophy_scores, "serenity", 90),
                 }
 
             # 실행 결과를 문자열로 변환하여 분석
@@ -409,14 +421,16 @@ class SkillsService(BaseService):
             if final_philosophy_score is None:
                 final_philosophy_score = (
                     PhilosophyScores(
-                        truth=base_philosophy_scores["truth"] if base_philosophy_scores else 85.0,
-                        goodness=base_philosophy_scores["goodness"]
-                        if base_philosophy_scores
-                        else 80.0,
-                        beauty=base_philosophy_scores["beauty"] if base_philosophy_scores else 75.0,
-                        serenity=base_philosophy_scores["serenity"]
-                        if base_philosophy_scores
-                        else 90.0,
+                        truth=(base_philosophy_scores["truth"] if base_philosophy_scores else 85.0),
+                        goodness=(
+                            base_philosophy_scores["goodness"] if base_philosophy_scores else 80.0
+                        ),
+                        beauty=(
+                            base_philosophy_scores["beauty"] if base_philosophy_scores else 75.0
+                        ),
+                        serenity=(
+                            base_philosophy_scores["serenity"] if base_philosophy_scores else 90.0
+                        ),
                     )
                     if base_philosophy_scores
                     else None
@@ -517,7 +531,7 @@ class SkillsService(BaseService):
         # 실제로는 HTTP 요청
         return {"message": f"Executed API call for {skill.skill_id}"}
 
-    def _record_execution_stats(self, skill_id: str, result: SkillExecutionResult):
+    def _record_execution_stats(self, skill_id: str, result: SkillExecutionResult) -> None:
         """실행 통계 기록"""
         self.execution_stats[skill_id].update(
             {
@@ -685,9 +699,9 @@ class SkillsService(BaseService):
             "status": "healthy" if self.skill_registry else "degraded",
             "philosophy": "眞善美孝",
             "registry_available": self.skill_registry is not None,
-            "total_skills": len(self.skill_registry.__class__._skills)
-            if self.skill_registry
-            else 0,
+            "total_skills": (
+                len(self.skill_registry.__class__._skills) if self.skill_registry else 0
+            ),
         }
 
 

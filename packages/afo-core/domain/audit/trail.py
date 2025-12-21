@@ -35,7 +35,7 @@ class AuditRecord:
     timestamp: datetime = field(default_factory=datetime.utcnow)
     context: dict[str, Any] = field(default_factory=dict)
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for storage."""
         return {
             **asdict(self),
@@ -60,8 +60,13 @@ class AuditTrail:
         self._connection = None
         self._records: list[AuditRecord] = []  # In-memory fallback
 
-    async def _get_connection(self):
-        """Lazy connection to PostgreSQL."""
+    async def _get_connection(self) -> Any | None:
+        """
+        Lazy connection to PostgreSQL.
+
+        Returns:
+            asyncpg connection object or None if connection failed
+        """
         global _db_connection
         if _db_connection is None:
             try:
@@ -75,11 +80,12 @@ class AuditTrail:
                 print(f"⚠️ [Audit] DB connection failed: {e}, using in-memory")
         return _db_connection
 
-    async def _ensure_table(self):
+    async def _ensure_table(self) -> None:
         """Create audit table if not exists."""
         conn = await self._get_connection()
         if conn:
-            await conn.execute(f"""
+            await conn.execute(
+                f"""
                 CREATE TABLE IF NOT EXISTS {self.TABLE_NAME} (
                     decision_id UUID PRIMARY KEY,
                     trinity_score REAL NOT NULL,
@@ -89,7 +95,8 @@ class AuditTrail:
                     context JSONB,
                     created_at TIMESTAMPTZ DEFAULT NOW()
                 )
-            """)
+            """
+            )
 
     async def log(
         self,
@@ -175,7 +182,8 @@ class AuditTrail:
         """Get audit trail statistics."""
         conn = await self._get_connection()
         if conn:
-            stats = await conn.fetchrow(f"""
+            stats = await conn.fetchrow(
+                f"""
                 SELECT
                     COUNT(*) as total_decisions,
                     AVG(trinity_score) as avg_trinity,
@@ -183,7 +191,8 @@ class AuditTrail:
                     SUM(CASE WHEN action = 'AUTO_RUN' THEN 1 ELSE 0 END) as auto_run_count,
                     SUM(CASE WHEN action = 'ASK_COMMANDER' THEN 1 ELSE 0 END) as ask_count
                 FROM {self.TABLE_NAME}
-            """)
+            """
+            )
             return dict(stats) if stats else {}
 
         # In-memory fallback
@@ -203,7 +212,10 @@ audit_trail = AuditTrail()
 
 
 async def log_decision(
-    trinity_score: float, risk_score: float, action: str, context: dict[str, Any] | None = None
+    trinity_score: float,
+    risk_score: float,
+    action: str,
+    context: dict[str, Any] | None = None,
 ) -> AuditRecord:
     """Convenience function for logging decisions."""
     return await audit_trail.log(trinity_score, risk_score, action, context)

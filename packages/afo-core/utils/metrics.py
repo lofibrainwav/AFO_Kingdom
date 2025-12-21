@@ -16,15 +16,17 @@ except ImportError:
     PROMETHEUS_AVAILABLE = False
     print("⚠️ prometheus_client not installed. Run: pip install prometheus-client")
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, TypeVar
 
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import Response
 
 if TYPE_CHECKING:
-    from collections.abc import Callable
+    from collections.abc import Awaitable, Callable
 
     from starlette.requests import Request
+
+T = TypeVar("T")
 
 # ============================================================================
 # Core Metrics Definition
@@ -33,7 +35,13 @@ if TYPE_CHECKING:
 if PROMETHEUS_AVAILABLE:
     from prometheus_client import REGISTRY
 
-    def get_or_create_metric(metric_class, name, documentation, labelnames=(), **kwargs):
+    def get_or_create_metric(
+        metric_class: type[Any],
+        name: str,
+        documentation: str,
+        labelnames: tuple[str, ...] = (),
+        **kwargs: Any,
+    ) -> Any:
         """Helper to avoid duplicated timeseries error."""
         if name in REGISTRY._names_to_collectors:
             return REGISTRY._names_to_collectors[name]
@@ -44,14 +52,14 @@ if PROMETHEUS_AVAILABLE:
         Counter,
         "afo_http_requests_total",
         "Total HTTP requests",
-        ["method", "endpoint", "status_code"],
+        ("method", "endpoint", "status_code"),
     )
 
     http_request_duration_seconds = get_or_create_metric(
         Histogram,
         "afo_http_request_duration_seconds",
         "HTTP request duration in seconds",
-        ["method", "endpoint"],
+        ("method", "endpoint"),
         buckets=(0.01, 0.05, 0.1, 0.25, 0.5, 1.0, 2.5, 5.0, 10.0),
     )
 
@@ -60,11 +68,14 @@ if PROMETHEUS_AVAILABLE:
         Gauge,
         "afo_circuit_breaker_state",
         "Circuit breaker state (0=CLOSED, 1=OPEN, 2=HALF_OPEN)",
-        ["service"],
+        ("service",),
     )
 
     circuit_breaker_failures = get_or_create_metric(
-        Counter, "afo_circuit_breaker_failures_total", "Total circuit breaker failures", ["service"]
+        Counter,
+        "afo_circuit_breaker_failures_total",
+        "Total circuit breaker failures",
+        ("service",),
     )
 
     # Ollama Metrics
@@ -72,14 +83,14 @@ if PROMETHEUS_AVAILABLE:
         Counter,
         "afo_ollama_calls_total",
         "Total Ollama API calls",
-        ["status", "model"],  # status: success, failure, timeout
+        ("status", "model"),  # status: success, failure, timeout
     )
 
     ollama_request_duration_seconds = get_or_create_metric(
         Histogram,
         "afo_ollama_request_duration_seconds",
         "Ollama request duration in seconds",
-        ["model"],
+        ("model",),
         buckets=(0.5, 1.0, 2.0, 5.0, 10.0, 30.0, 60.0),
     )
 
@@ -88,7 +99,7 @@ if PROMETHEUS_AVAILABLE:
         Counter,
         "afo_llm_router_calls_total",
         "Total LLM router calls",
-        ["provider", "status"],  # provider: ollama, gemini, claude, openai
+        ("provider", "status"),  # provider: ollama, gemini, claude, openai
     )
 
     # CRAG Metrics
@@ -96,7 +107,7 @@ if PROMETHEUS_AVAILABLE:
         Counter,
         "afo_crag_queries_total",
         "Total CRAG queries",
-        ["status"],  # status: success, no_docs, web_fallback
+        ("status",),  # status: success, no_docs, web_fallback
     )
 
     # Trinity Score Metrics
@@ -104,7 +115,7 @@ if PROMETHEUS_AVAILABLE:
         Gauge,
         "afo_trinity_score",
         "Current Trinity Score",
-        ["pillar"],  # pillar: truth, goodness, beauty, serenity, eternity
+        ("pillar",),  # pillar: truth, goodness, beauty, serenity, eternity
     )
 
     trinity_score_total = get_or_create_metric(
@@ -116,7 +127,7 @@ if PROMETHEUS_AVAILABLE:
         Gauge,
         "afo_organ_health",
         "Health status of organs (1=healthy, 0=unhealthy)",
-        ["organ"],  # organ: redis, postgres, ollama, api_server
+        ("organ",),  # organ: redis, postgres, ollama, api_server
     )
 
     # Memory System Metrics
@@ -124,7 +135,7 @@ if PROMETHEUS_AVAILABLE:
         Gauge,
         "afo_memory_entries",
         "Number of memory entries",
-        ["store"],  # store: short_term, long_term
+        ("store",),  # store: short_term, long_term
     )
 
 # ============================================================================
@@ -135,7 +146,9 @@ if PROMETHEUS_AVAILABLE:
 class MetricsMiddleware(BaseHTTPMiddleware):
     """Middleware to automatically collect HTTP metrics."""
 
-    async def dispatch(self, request: Request, call_next):
+    async def dispatch(
+        self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
+    ) -> Response:
         if not PROMETHEUS_AVAILABLE:
             return await call_next(request)
 
@@ -191,10 +204,20 @@ class MetricsMiddleware(BaseHTTPMiddleware):
 # ============================================================================
 
 
-def track_ollama_call(model: str = "default"):
-    """Decorator to track Ollama call metrics."""
+def track_ollama_call(
+    model: str = "default",
+) -> Callable[[Callable[..., Awaitable[T]]], Callable[..., Awaitable[T]]]:
+    """
+    Decorator to track Ollama call metrics.
 
-    def decorator(func: Callable):
+    Args:
+        model: Ollama model name
+
+    Returns:
+        Decorator function
+    """
+
+    def decorator(func: Callable[..., Awaitable[T]]) -> Callable[..., Awaitable[T]]:
         @wraps(func)
         async def wrapper(*args, **kwargs):
             if not PROMETHEUS_AVAILABLE:
@@ -220,10 +243,20 @@ def track_ollama_call(model: str = "default"):
     return decorator
 
 
-def track_llm_call(provider: str):
-    """Decorator to track LLM router calls."""
+def track_llm_call(
+    provider: str,
+) -> Callable[[Callable[..., Awaitable[T]]], Callable[..., Awaitable[T]]]:
+    """
+    Decorator to track LLM router calls.
 
-    def decorator(func: Callable):
+    Args:
+        provider: LLM provider name
+
+    Returns:
+        Decorator function
+    """
+
+    def decorator(func: Callable[..., Awaitable[T]]) -> Callable[..., Awaitable[T]]:
         @wraps(func)
         async def wrapper(*args, **kwargs):
             if not PROMETHEUS_AVAILABLE:
@@ -247,8 +280,14 @@ def track_llm_call(provider: str):
 # ============================================================================
 
 
-def update_circuit_breaker_metrics(service: str, state: str):
-    """Update circuit breaker metrics."""
+def update_circuit_breaker_metrics(service: str, state: str) -> None:
+    """
+    Update circuit breaker metrics.
+
+    Args:
+        service: Service name
+        state: Circuit breaker state (closed/open/half_open)
+    """
     if not PROMETHEUS_AVAILABLE:
         return
 
@@ -256,8 +295,13 @@ def update_circuit_breaker_metrics(service: str, state: str):
     circuit_breaker_state.labels(service=service).set(state_value)
 
 
-def record_circuit_breaker_failure(service: str):
-    """Record a circuit breaker failure."""
+def record_circuit_breaker_failure(service: str) -> None:
+    """
+    Record a circuit breaker failure.
+
+    Args:
+        service: Service name
+    """
     if not PROMETHEUS_AVAILABLE:
         return
 
@@ -269,16 +313,27 @@ def record_circuit_breaker_failure(service: str):
 # ============================================================================
 
 
-def update_organ_health(organ: str, is_healthy: bool):
-    """Update organ health metric."""
+def update_organ_health(organ: str, is_healthy: bool) -> None:
+    """
+    Update organ health metric.
+
+    Args:
+        organ: Organ name
+        is_healthy: Health status
+    """
     if not PROMETHEUS_AVAILABLE:
         return
 
     organ_health.labels(organ=organ).set(1 if is_healthy else 0)
 
 
-def update_trinity_scores(scores: dict):
-    """Update Trinity Score metrics."""
+def update_trinity_scores(scores: dict[str, float]) -> None:
+    """
+    Update Trinity Score metrics.
+
+    Args:
+        scores: Dictionary of pillar scores
+    """
     if not PROMETHEUS_AVAILABLE:
         return
 
@@ -290,8 +345,14 @@ def update_trinity_scores(scores: dict):
         trinity_score_total.set(scores["total"])
 
 
-def update_memory_metrics(short_term: int, long_term: int):
-    """Update memory system metrics."""
+def update_memory_metrics(short_term: int, long_term: int) -> None:
+    """
+    Update memory system metrics.
+
+    Args:
+        short_term: Short-term memory entries count
+        long_term: Long-term memory entries count
+    """
     if not PROMETHEUS_AVAILABLE:
         return
 
@@ -317,14 +378,19 @@ async def get_metrics_response() -> Response:
 # ============================================================================
 
 
-def create_metrics_router():
-    """Create a FastAPI router for metrics endpoint."""
+def create_metrics_router() -> Any:
+    """
+    Create a FastAPI router for metrics endpoint.
+
+    Returns:
+        FastAPI router with /metrics endpoint
+    """
     from fastapi import APIRouter
 
     router = APIRouter(tags=["Metrics"])
 
     @router.get("/metrics")
-    async def metrics():
+    async def metrics() -> Response:
         """Prometheus metrics endpoint."""
         return await get_metrics_response()
 

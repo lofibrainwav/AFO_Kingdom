@@ -49,7 +49,12 @@ class DreamContractManager:
         self.contracts: dict[str, DreamContract] = {}
 
     def create_contract(
-        self, dream_id: str, human_party: str, dream_description: str, execution_plan: list[str], **guarantee_params
+        self,
+        dream_id: str,
+        human_party: str,
+        dream_description: str,
+        execution_plan: list[str],
+        **guarantee_params,
     ) -> str:
         """Create new dream contract"""
         contract_id = f"contract_safe_{len(self.contracts)}"
@@ -106,7 +111,11 @@ class DreamContractManager:
 
         if violations:
             contract.status = "TERMINATED"
-            return {"valid": False, "reason": "Contract violations detected", "violations": violations}
+            return {
+                "valid": False,
+                "reason": "Contract violations detected",
+                "violations": violations,
+            }
 
         return {"valid": True, "status": "COMPLIANT"}
 
@@ -163,7 +172,13 @@ if __name__ == "__main__":
     print(f"✅ Contract created: {contract_id}")
 
     # Test validation
-    test_score = {"truth": 90.0, "goodness": 85.0, "beauty": 80.0, "serenity": 88.0, "eternity": 75.0}
+    test_score = {
+        "truth": 90.0,
+        "goodness": 85.0,
+        "beauty": 80.0,
+        "serenity": 88.0,
+        "eternity": 75.0,
+    }
 
     validation = contract_manager.validate_execution(contract_id, test_score, 10.0)
     print(f"✅ Contract validation: {validation['valid']}")

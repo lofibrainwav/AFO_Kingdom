@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { logError } from '@/lib/logger';
 
 interface VoiceMetrics {
   volume: number;    // 0-1 (normalized)
@@ -80,7 +81,7 @@ export function useVoiceReaction() {
       
       analyze();
     } catch (e) {
-      console.error('Microphone access denied:', e);
+      logError('Microphone access denied', { error: e instanceof Error ? e.message : 'Unknown error' });
     }
   }, []);
 

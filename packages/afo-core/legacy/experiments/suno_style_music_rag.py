@@ -90,7 +90,14 @@ class SunoStyleMusicRAG:
                 "future bass",
             ],
             "moods": ["chill", "energetic", "melancholic", "uplifting", "dreamy"],
-            "instruments": ["piano", "guitar", "synthesizer", "drums", "strings", "vocals"],
+            "instruments": [
+                "piano",
+                "guitar",
+                "synthesizer",
+                "drums",
+                "strings",
+                "vocals",
+            ],
         }
 
         # 자가학습 데이터
@@ -260,7 +267,11 @@ class SunoStyleMusicRAG:
         if MOCK_MODE:
             return [
                 {"title": "Chill Lofi Beat", "similarity": 0.85, "genre": prompt.genre},
-                {"title": "Ambient Techno Mix", "similarity": 0.78, "genre": "ambient techno"},
+                {
+                    "title": "Ambient Techno Mix",
+                    "similarity": 0.78,
+                    "genre": "ambient techno",
+                },
             ]
 
         try:

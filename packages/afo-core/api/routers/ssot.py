@@ -32,7 +32,13 @@ class SSOTData(BaseModel):
 
 
 @router.get("", response_model=SSOTData)
-async def get_ssot_status():
+async def get_ssot_status() -> SSOTData:
+    """
+    Get SSOT (Single Source of Truth) status showing the alignment of 5 Pillars.
+
+    Returns:
+        SSOTData containing trinity scores, pillar details, and compliance status
+    """
     # 1. Get Live Metrics from Manager
     metrics = trinity_manager.get_current_metrics()
 

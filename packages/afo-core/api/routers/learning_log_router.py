@@ -5,14 +5,16 @@ Endpoints for the Kingdom's Self-Learning Loop.
 
 import asyncio
 import json
+from collections.abc import AsyncGenerator
 from datetime import datetime
+from typing import Any
 
 from fastapi import APIRouter, Request
 from fastapi.responses import StreamingResponse
 
 from AFO.models.learning_log import LearningLog
 
-router = APIRouter()
+router = APIRouter(prefix="/api/learning", tags=["Learning Log"])
 
 # In-memory storage for MVP (Phase 16-4 Demo)
 # In production (Phase 17), this connects to PostgreSQL via LearningLog model
@@ -20,10 +22,16 @@ _learning_logs: list[LearningLog] = []
 _new_log_event = asyncio.Event()
 
 
-@router.post("/api/learning-log")
-async def create_learning_log(log: LearningLog):
+@router.post("/learning-log")
+async def create_learning_log(log: LearningLog) -> dict[str, Any]:
     """
-    Receives feedback from Agents (Samahwi/Juyu) and saves it.
+    Receives feedback from Agents (Sima Yi/Zhou Yu) and saves it.
+
+    Args:
+        log: Learning log to create
+
+    Returns:
+        dict: Status and log ID
     """
     log.timestamp = datetime.utcnow()
     # Simulating DB ID assignment
@@ -37,19 +45,25 @@ async def create_learning_log(log: LearningLog):
     return {"status": "success", "id": log.id}
 
 
-@router.get("/api/learning-log/latest")
-async def get_latest_logs():
+@router.get("/learning-log/latest")
+async def get_latest_logs() -> list[LearningLog]:
     """Returns the latest 10 logs."""
     return sorted(_learning_logs, key=lambda x: x.timestamp, reverse=True)[:10]
 
 
-@router.get("/api/learning-log/stream")
-async def stream_learning_logs(request: Request):
+@router.get("/learning-log/stream")
+async def stream_learning_logs(request: Request) -> StreamingResponse:
     """
     SSE Endpoint: Streams new learning logs to the Dashboard.
+
+    Args:
+        request: FastAPI request object
+
+    Returns:
+        StreamingResponse: SSE stream of learning logs
     """
 
-    async def event_generator():
+    async def event_generator() -> AsyncGenerator[str, None]:
         # First send existing logs
         for log in sorted(_learning_logs, key=lambda x: x.timestamp, reverse=True)[:5]:
             yield f"data: {json.dumps(log.dict(), default=str)}\n\n"

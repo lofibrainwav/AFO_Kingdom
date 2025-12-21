@@ -8,12 +8,12 @@ from datetime import datetime
 from sqlmodel import Field, SQLModel
 
 
-class LearningLog(SQLModel, table=True):
+class LearningLog(SQLModel, table=True):  # type: ignore[call-arg]
     __tablename__ = "learning_logs"
 
     id: int | None = Field(default=None, primary_key=True)
     timestamp: datetime = Field(default_factory=datetime.utcnow)
-    agent: str  # e.g., "samahwi", "juyu"
+    agent: str  # e.g., "samahwi", "zhou_yu"
     action: str  # e.g., "created_widget", "refactored_widget"
     trinity_before: float
     trinity_after: float

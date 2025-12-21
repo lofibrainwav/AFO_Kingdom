@@ -15,7 +15,12 @@ class Transaction:
     @staticmethod
     def mock() -> "Transaction":
         """Generate a mock transaction for DRY_RUN"""
-        amounts = [Decimal("10.50"), Decimal("4.25"), Decimal("100.00"), Decimal("42.99")]
+        amounts = [
+            Decimal("10.50"),
+            Decimal("4.25"),
+            Decimal("100.00"),
+            Decimal("42.99"),
+        ]
         merchants = ["Starbucks", "Uber", "Amazon", "K-Town Market"]
         return Transaction(
             id=f"txn_{random.randint(1000, 9999)}",

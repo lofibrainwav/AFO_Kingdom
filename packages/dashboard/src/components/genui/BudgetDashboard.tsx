@@ -6,7 +6,10 @@
  */
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { useApi } from '@/hooks/useApi';
+import { LoadingSpinner, ErrorMessage } from '@/components/common';
+import { REFRESH_INTERVALS } from '@/lib/constants';
 
 interface BudgetCategory {
   id: number;
@@ -28,32 +31,15 @@ interface BudgetData {
   timestamp: string;
 }
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8010';
-
 export function BudgetDashboard() {
-  const [data, setData] = useState<BudgetData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchBudget = async () => {
-      try {
-        const response = await fetch(`${API_BASE}/api/julie/budget`);
-        if (!response.ok) throw new Error('예산 데이터 로드 실패');
-        const json = await response.json();
-        setData(json);
-        setError(null);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Unknown error');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchBudget();
-    const interval = setInterval(fetchBudget, 60000); // 1분마다 갱신
-    return () => clearInterval(interval);
-  }, []);
+  const {
+    data,
+    loading,
+    error,
+    refetch,
+  } = useApi<BudgetData>('/api/julie/budget', {
+    refetchInterval: REFRESH_INTERVALS.NORMAL, // 30초마다 자동 업데이트
+  });
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('ko-KR', {
@@ -80,29 +66,19 @@ export function BudgetDashboard() {
 
   if (loading) {
     return (
-      <div style={{
-        background: 'linear-gradient(135deg, rgba(17, 24, 39, 0.9), rgba(34, 197, 94, 0.1))',
-        backdropFilter: 'blur(20px)',
-        borderRadius: '20px',
-        padding: '24px',
-        textAlign: 'center',
-        color: 'rgba(255,255,255,0.7)',
-      }}>
-        🔄 예산 데이터 로딩 중...
+      <div className="bg-gradient-to-br from-gray-900/90 to-green-500/10 backdrop-blur-xl rounded-2xl p-8">
+        <LoadingSpinner size="md" text="예산 데이터 로딩 중..." />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div style={{
-        background: 'linear-gradient(135deg, rgba(17, 24, 39, 0.9), rgba(239, 68, 68, 0.2))',
-        borderRadius: '20px',
-        padding: '24px',
-        textAlign: 'center',
-        color: '#EF4444',
-      }}>
-        ⚠️ {error}
+      <div className="bg-gradient-to-br from-gray-900/90 to-red-500/20 backdrop-blur-xl rounded-2xl p-8">
+        <ErrorMessage
+          message={error.message || '예산 데이터를 불러올 수 없습니다.'}
+          onRetry={refetch}
+        />
       </div>
     );
   }
@@ -110,119 +86,83 @@ export function BudgetDashboard() {
   if (!data) return null;
 
   return (
-    <div
-      style={{
-        background: 'linear-gradient(135deg, rgba(17, 24, 39, 0.95), rgba(34, 197, 94, 0.1))',
-        backdropFilter: 'blur(20px)',
-        borderRadius: '24px',
-        border: '1px solid rgba(255, 255, 255, 0.1)',
-        padding: '28px',
-        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
-      }}
-    >
+    <div className="bg-gradient-to-br from-gray-900/95 to-green-500/10 backdrop-blur-xl rounded-3xl border border-white/10 p-7 shadow-2xl">
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <span style={{ fontSize: '32px' }}>📊</span>
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <span className="text-4xl">📊</span>
           <div>
-            <h2 style={{ fontSize: '20px', fontWeight: 'bold', color: 'white', margin: 0 }}>
+            <h2 className="text-xl font-bold text-white m-0">
               예산 대시보드
             </h2>
-            <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '12px', margin: 0 }}>
+            <p className="text-white/60 text-xs m-0">
               Phase 12 · Julie CPA 확장
             </p>
           </div>
         </div>
         <div
+          className="rounded-xl px-4 py-2"
           style={{
             background: `${getRiskColor(data.risk_level)}20`,
             border: `1px solid ${getRiskColor(data.risk_level)}50`,
-            borderRadius: '12px',
-            padding: '8px 16px',
           }}
         >
-          <span style={{ color: getRiskColor(data.risk_level), fontWeight: 'bold', fontSize: '14px' }}>
+          <span className="font-bold text-sm" style={{ color: getRiskColor(data.risk_level) }}>
             Risk: {data.risk_score}
           </span>
         </div>
       </div>
 
       {/* Summary Stats */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(3, 1fr)',
-        gap: '16px',
-        marginBottom: '24px',
-      }}>
-        <div style={{
-          background: 'rgba(34, 197, 94, 0.1)',
-          borderRadius: '12px',
-          padding: '16px',
-          textAlign: 'center',
-        }}>
-          <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: '12px', marginBottom: '4px' }}>
+      <div className="grid grid-cols-3 gap-4 mb-6">
+        <div className="bg-green-500/10 rounded-xl p-4 text-center">
+          <div className="text-white/60 text-xs mb-1">
             총 예산
           </div>
-          <div style={{ color: '#22C55E', fontSize: '18px', fontWeight: 'bold' }}>
+          <div className="text-green-500 text-lg font-bold">
             {formatCurrency(data.total_allocated)}
           </div>
         </div>
-        <div style={{
-          background: 'rgba(251, 191, 36, 0.1)',
-          borderRadius: '12px',
-          padding: '16px',
-          textAlign: 'center',
-        }}>
-          <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: '12px', marginBottom: '4px' }}>
+        <div className="bg-amber-500/10 rounded-xl p-4 text-center">
+          <div className="text-white/60 text-xs mb-1">
             지출
           </div>
-          <div style={{ color: '#FBBF24', fontSize: '18px', fontWeight: 'bold' }}>
+          <div className="text-amber-400 text-lg font-bold">
             {formatCurrency(data.total_spent)}
           </div>
         </div>
-        <div style={{
-          background: 'rgba(59, 130, 246, 0.1)',
-          borderRadius: '12px',
-          padding: '16px',
-          textAlign: 'center',
-        }}>
-          <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: '12px', marginBottom: '4px' }}>
+        <div className="bg-blue-500/10 rounded-xl p-4 text-center">
+          <div className="text-white/60 text-xs mb-1">
             잔여
           </div>
-          <div style={{ color: '#3B82F6', fontSize: '18px', fontWeight: 'bold' }}>
+          <div className="text-blue-500 text-lg font-bold">
             {formatCurrency(data.total_remaining)}
           </div>
         </div>
       </div>
 
       {/* Utilization Bar */}
-      <div style={{ marginBottom: '24px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-          <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: '14px' }}>예산 사용률</span>
-          <span style={{ color: getUtilizationColor(data.utilization_rate), fontWeight: 'bold' }}>
+      <div className="mb-6">
+        <div className="flex justify-between mb-2">
+          <span className="text-white/80 text-sm">예산 사용률</span>
+          <span className="font-bold" style={{ color: getUtilizationColor(data.utilization_rate) }}>
             {data.utilization_rate}%
           </span>
         </div>
-        <div style={{
-          width: '100%',
-          height: '12px',
-          background: 'rgba(255,255,255,0.1)',
-          borderRadius: '6px',
-          overflow: 'hidden',
-        }}>
-          <div style={{
-            width: `${Math.min(data.utilization_rate, 100)}%`,
-            height: '100%',
-            background: `linear-gradient(90deg, ${getUtilizationColor(data.utilization_rate)}, ${getUtilizationColor(data.utilization_rate)}80)`,
-            borderRadius: '6px',
-            transition: 'width 0.5s ease',
-          }} />
+        <div className="w-full h-3 bg-white/10 rounded-full overflow-hidden">
+          <div 
+            className="h-full rounded-full transition-all duration-500 ease-out"
+            style={{
+              width: `${Math.min(data.utilization_rate, 100)}%`,
+              background: `linear-gradient(90deg, ${getUtilizationColor(data.utilization_rate)}, ${getUtilizationColor(data.utilization_rate)}80)`,
+            }}
+          />
         </div>
       </div>
 
       {/* Category Breakdown */}
-      <div style={{ marginBottom: '20px' }}>
-        <div style={{ color: 'rgba(255,255,255,0.8)', fontSize: '14px', marginBottom: '12px', fontWeight: '600' }}>
+      <div className="mb-5">
+        <div className="text-white/80 text-sm mb-3 font-semibold">
           📋 카테고리별 현황
         </div>
         {data.budgets.map((budget) => {
@@ -230,39 +170,27 @@ export function BudgetDashboard() {
           return (
             <div
               key={budget.id}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '12px',
-                marginBottom: '8px',
-                background: 'rgba(255,255,255,0.03)',
-                borderRadius: '8px',
-              }}
+              className="flex items-center justify-between p-3 mb-2 bg-white/5 rounded-lg"
             >
-              <div style={{ flex: 1 }}>
-                <div style={{ color: 'white', fontSize: '14px', marginBottom: '4px' }}>
+              <div className="flex-1">
+                <div className="text-white text-sm mb-1">
                   {budget.category}
                 </div>
-                <div style={{
-                  width: '100%',
-                  height: '4px',
-                  background: 'rgba(255,255,255,0.1)',
-                  borderRadius: '2px',
-                }}>
-                  <div style={{
-                    width: `${Math.min(rate, 100)}%`,
-                    height: '100%',
-                    background: getUtilizationColor(rate),
-                    borderRadius: '2px',
-                  }} />
+                <div className="w-full h-1 bg-white/10 rounded">
+                  <div 
+                    className="h-full rounded"
+                    style={{
+                      width: `${Math.min(rate, 100)}%`,
+                      background: getUtilizationColor(rate),
+                    }}
+                  />
                 </div>
               </div>
-              <div style={{ textAlign: 'right', marginLeft: '16px' }}>
-                <div style={{ color: getUtilizationColor(rate), fontSize: '14px', fontWeight: '600' }}>
+              <div className="text-right ml-4">
+                <div className="text-sm font-semibold" style={{ color: getUtilizationColor(rate) }}>
                   {formatCurrency(budget.remaining)}
                 </div>
-                <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '11px' }}>
+                <div className="text-white/50 text-[11px]">
                   {rate.toFixed(0)}% 사용
                 </div>
               </div>
@@ -272,18 +200,8 @@ export function BudgetDashboard() {
       </div>
 
       {/* Julie Summary */}
-      <div style={{
-        background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(59, 130, 246, 0.1))',
-        borderRadius: '12px',
-        padding: '16px',
-        textAlign: 'center',
-      }}>
-        <p style={{
-          color: getRiskColor(data.risk_level),
-          fontSize: '14px',
-          fontWeight: '600',
-          margin: 0,
-        }}>
+      <div className="bg-gradient-to-br from-green-500/10 to-blue-500/10 rounded-xl p-4 text-center">
+        <p className="text-sm font-semibold m-0" style={{ color: getRiskColor(data.risk_level) }}>
           {data.summary}
         </p>
       </div>

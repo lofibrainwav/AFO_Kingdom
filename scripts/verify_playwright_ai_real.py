@@ -1,11 +1,12 @@
 import asyncio
 import os
+import pathlib
 import sys
 
 
 # 프로젝트 루트 경로 추가
 sys.path.append(
-    os.path.abspath(os.path.join(os.path.dirname(__file__), "../packages/afo-core/AFO"))
+    pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core/AFO")).resolve()
 )
 
 from utils.playwright_bridge import bridge

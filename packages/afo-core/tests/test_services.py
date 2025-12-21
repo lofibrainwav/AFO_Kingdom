@@ -38,13 +38,21 @@ class TestHybridRAGService:
 
     def test_rag_query_structure(self) -> None:
         """RAG 쿼리 구조 테스트"""
-        query: dict[str, Any] = {"question": "테스트 질문", "top_k": 5, "include_sources": True}
+        query: dict[str, Any] = {
+            "question": "테스트 질문",
+            "top_k": 5,
+            "include_sources": True,
+        }
         assert "question" in query
         assert query["top_k"] > 0
 
     def test_rag_response_structure(self) -> None:
         """RAG 응답 구조 테스트"""
-        response: dict[str, Any] = {"answer": "테스트 답변", "sources": [], "confidence": 0.85}
+        response: dict[str, Any] = {
+            "answer": "테스트 답변",
+            "sources": [],
+            "confidence": 0.85,
+        }
         assert "answer" in response
         assert 0 <= response["confidence"] <= 1
 

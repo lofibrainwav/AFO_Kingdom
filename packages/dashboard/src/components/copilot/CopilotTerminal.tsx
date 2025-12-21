@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Terminal, Cpu, Shield, Activity } from 'lucide-react';
+import { API_BASE_URL } from '@/lib/constants';
+import { logInfo, logError } from '@/lib/logger';
 
 interface LogEntry {
   id: string;
@@ -15,11 +17,11 @@ const CopilotTerminal: React.FC = () => {
 
   // SSE Connection for Matrix Stream
   useEffect(() => {
-    // Determine API Base URL (Default to localhost:8010 if not proxied)
-    const apiBase = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8010';
+    // Determine API Base URL (Use constants)
+    const apiBase = API_BASE_URL;
     const streamUrl = `${apiBase}/api/stream/mcp/thoughts`;
 
-    console.log(`🔌 [Matrix] Connecting to Neural Stream: ${streamUrl}`);
+    logInfo(`[Matrix] Connecting to Neural Stream: ${streamUrl}`);
     const eventSource = new EventSource(streamUrl);
 
     eventSource.onmessage = (event) => {
@@ -39,12 +41,12 @@ const CopilotTerminal: React.FC = () => {
                 return newLogs.slice(-100);
             });
         } catch (e) {
-            console.error('Failed to parse stream message:', event.data);
+            logError('Failed to parse stream message', { data: event.data });
         }
     };
 
     eventSource.onerror = (err) => {
-        console.error('Stream Error:', err);
+        logError('Stream Error', { error: err });
         // Add error log
         setLogs(prev => [...prev, {
              id: Date.now().toString(),
@@ -58,7 +60,7 @@ const CopilotTerminal: React.FC = () => {
     };
 
     return () => {
-        console.log('🔌 [Matrix] Disconnecting Stream');
+        logInfo('[Matrix] Disconnecting Stream');
         eventSource.close();
     };
   }, []);

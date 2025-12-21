@@ -99,7 +99,8 @@ for i, doc in enumerate(docs_to_integrate, 1):
 print("\n" + "=" * 70)
 print("📝 Context7 통합 방법")
 print("=" * 70)
-print("""
+print(
+    """
 Context7은 MCP (Model Context Protocol) 서버를 통해 통합됩니다.
 
 통합 방법:
@@ -124,7 +125,8 @@ Context7은 MCP (Model Context Protocol) 서버를 통해 통합됩니다.
 다음 단계:
 - Cursor IDE에서 Context7 MCP 도구를 통해 문서 검색 테스트
 - 필요 시 수동으로 문서 추가
-""")
+"""
+)
 
 # 통합 상태 저장
 integration_status = {

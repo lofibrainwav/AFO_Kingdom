@@ -224,20 +224,12 @@ class APIWallet:
                             if existing_key and len(existing_key) == 44:
                                 return existing_key
 
-            # Generate new key only if not found
-            default_key = Fernet.generate_key().decode()
-
-            # Save to .env (only once!)
-            if env_path.exists():
-                with open(env_path, "a") as f:
-                    f.write("\n# Auto-generated encryption key (development only)\n")
-                    f.write(f"API_WALLET_ENCRYPTION_KEY={default_key}\n")
-
-            return default_key
+            # Generate new key if not found
+            return str(Fernet.generate_key().decode())
         except Exception as e:
             # If filesystem is read-only or other error, return a reliable temporary key
             print(f"⚠️  Failed to generate/save default key: {e}")
-            return Fernet.generate_key().decode()
+            return str(Fernet.generate_key().decode())
 
     def _ensure_storage_file(self) -> None:
         """Ensure JSON storage file exists"""
@@ -266,7 +258,7 @@ class APIWallet:
             self.storage_path.write_text(json.dumps(data, indent=2))
         except Exception as e:
             print(f"⚠️  Failed to save storage: {e}")
-            raise OSError(f"Failed to persist wallet data: {e}")
+            raise OSError(f"Failed to persist wallet data: {e}") from e
 
     def _audit_log(self, action: str, key_name: str, details: str = "") -> None:
         """Write to audit log"""
@@ -315,7 +307,7 @@ class APIWallet:
             try:
                 encrypted_key = self.cipher.encrypt(api_key.encode()).decode()
             except Exception as e:
-                raise ValueError(f"Encryption failed: {e}")
+                raise ValueError(f"Encryption failed: {e}") from e
 
             # Create hash for audit
             key_hash = self._hash_key(api_key)
@@ -363,7 +355,7 @@ class APIWallet:
             raise
         except Exception as e:
             self._audit_log("ADD_FAILED", name, str(e))
-            raise RuntimeError(f"Failed to add key '{name}': {e}")
+            raise RuntimeError(f"Failed to add key '{name}': {e}") from e
 
     def get(self, name: str, decrypt: bool = True) -> str | None:
         """
@@ -402,10 +394,10 @@ class APIWallet:
                     key_hash = self._hash_key(decrypted_key)
                     self._audit_log("GET_SUCCESS", name, f"hash={key_hash}")
 
-                    return decrypted_key
+                    return str(decrypted_key)
                 except Exception as e:
                     self._audit_log("DECRYPT_FAILED", name, str(e))
-                    raise ValueError(f"Failed to decrypt key '{name}': {e}")
+                    raise ValueError(f"Failed to decrypt key '{name}': {e}") from e
             else:
                 # Return encrypted key
                 return str(key_data["encrypted_key"])
@@ -546,7 +538,10 @@ class APIWallet:
                 redis_url = os.getenv("REDIS_URL", "redis://localhost:6379")
 
             client = redis.from_url(
-                redis_url, decode_responses=True, socket_connect_timeout=1, socket_timeout=1
+                redis_url,
+                decode_responses=True,
+                socket_connect_timeout=1,
+                socket_timeout=1,
             )
 
             # Use the same key format as Monitoring Service: wallet:usage:{provider}
@@ -576,7 +571,10 @@ class APIWallet:
                 redis_url = os.getenv("REDIS_URL", "redis://localhost:6379")
 
             client = redis.from_url(
-                redis_url, decode_responses=True, socket_connect_timeout=1, socket_timeout=1
+                redis_url,
+                decode_responses=True,
+                socket_connect_timeout=1,
+                socket_timeout=1,
             )
 
             redis_key = f"wallet:usage:{provider}"

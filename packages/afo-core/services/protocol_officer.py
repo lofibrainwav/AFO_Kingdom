@@ -2,21 +2,32 @@
 Protocol Officer Service (Phase 18)
 "Diplomatic Protocol & AI Manners" - 왕국의 의전관
 Ensures all outputs are dignified, respectful, and constitutionally compliant.
+
+Phase 5: Trinity Type Validator 적용 - 런타임 Trinity Score 검증
 """
 
 import logging
+from collections.abc import Callable
+from typing import Any, TypeVar
+
+F = TypeVar("F", bound=Callable[..., Any])
 
 # Lazy import to avoid circular dependency if constitution imports services later
 try:
     from AFO.constitution.constitutional_ai import AFOConstitution
+    from AFO.utils.trinity_type_validator import validate_with_trinity
 except ImportError:
-    # Fallback for compilation if constitution module structure is different in env
-    try:
-        from packages.afo_core.AFO.constitution.constitutional_ai import (
-            AFOConstitution,  # type: ignore
-        )
-    except ImportError:
-        AFOConstitution = None  # type: ignore
+    # Fallback for import issues - 시그니처를 실제 함수와 일치시킴
+    def validate_with_trinity(func: F) -> F:
+        """Fallback decorator when trinity_type_validator is not available."""
+        return func
+
+    # Mock constitution class
+    class AFOConstitution:  # type: ignore[no-redef]
+        @staticmethod
+        def evaluate_compliance(action: str, content: str) -> tuple[bool, str]:
+            return True, "Mock compliance check"
+
 
 logger = logging.getLogger("AFO.Protocol")
 
@@ -30,11 +41,17 @@ class ProtocolOfficer:
     AUDIENCE_COMMANDER = "COMMANDER"
     AUDIENCE_EXTERNAL = "EXTERNAL"
 
+    def __init__(self) -> None:
+        pass
+
+    @validate_with_trinity
     def compose_diplomatic_message(self, content: str, audience: str = AUDIENCE_COMMANDER) -> str:
         """
         Wraps the raw content in the appropriate diplomatic protocol.
         1. Validates against Constitution (Goodness/Serenity).
         2. Applies Tone/Manner based on Audience.
+
+        Phase 5: Trinity 검증 적용 - 런타임 품질 모니터링
         """
 
         # 1. Constitutional Check (The Internal Education)
@@ -52,6 +69,7 @@ class ProtocolOfficer:
         else:
             return content  # Raw fallback
 
+    @validate_with_trinity
     def _format_for_commander(self, content: str) -> str:
         """
         Format for 'Hyung-nim' (Brother/Commander).
@@ -66,6 +84,7 @@ class ProtocolOfficer:
 
         return f"{prefix}{polished_content}{suffix}"
 
+    @validate_with_trinity
     def _format_for_external(self, content: str) -> str:
         """
         Format for External Systems/AIs.

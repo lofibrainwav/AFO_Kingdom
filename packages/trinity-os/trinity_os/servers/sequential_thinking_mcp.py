@@ -6,7 +6,12 @@ class SequentialThinkingMCP:
     """
 
     @staticmethod
-    def process_thought(thought: str, thought_number: int, total_thoughts: int, next_thought_needed: bool) -> dict:
+    def process_thought(
+        thought: str,
+        thought_number: int,
+        total_thoughts: int,
+        next_thought_needed: bool,
+    ) -> dict:
         """
         Process a thinking step and return analysis metadata.
         """
@@ -25,5 +30,9 @@ class SequentialThinkingMCP:
             "thought_processed": True,
             "step": f"{thought_number}/{total_thoughts}",
             "status": "THINKING" if next_thought_needed else "CONCLUSION",
-            "metadata": {"complexity": complexity, "truth_impact": truth_impact, "serenity_impact": serenity_impact},
+            "metadata": {
+                "complexity": complexity,
+                "truth_impact": truth_impact,
+                "serenity_impact": serenity_impact,
+            },
         }

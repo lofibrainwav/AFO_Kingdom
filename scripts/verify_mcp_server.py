@@ -104,7 +104,10 @@ def verify_mcp():
             "method": "tools/call",
             "params": {
                 "name": "verify_fact",
-                "arguments": {"claim": "The sky is blue", "context": "General knowledge"},
+                "arguments": {
+                    "claim": "The sky is blue",
+                    "context": "General knowledge",
+                },
             },
         }
         process.stdin.write(json.dumps(fact_req) + "\n")
@@ -147,7 +150,10 @@ def verify_mcp():
             "method": "tools/call",
             "params": {
                 "name": "write_file",
-                "arguments": {"path": test_file_path, "content": "AFO Verification Content"},
+                "arguments": {
+                    "path": test_file_path,
+                    "content": "AFO Verification Content",
+                },
             },
         }
         process.stdin.write(json.dumps(write_req) + "\n")
@@ -263,7 +269,10 @@ def verify_mcp():
             "method": "tools/call",
             "params": {
                 "name": "retrieve_context",
-                "arguments": {"query": "Sixxon Body Trinity Soul", "domain": "philosophy"},
+                "arguments": {
+                    "query": "Sixxon Body Trinity Soul",
+                    "domain": "philosophy",
+                },
             },
         }
         process.stdin.write(json.dumps(soul_req) + "\n")

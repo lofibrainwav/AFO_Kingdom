@@ -1,10 +1,16 @@
-import pytest
-from unittest.mock import Mock, AsyncMock
-import sys
 import os
+import pathlib
+import sys
+from unittest.mock import AsyncMock, Mock
+
+import pytest
+
 
 # Ensure packages/afo-core is in python path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../packages/afo-core")))
+sys.path.append(
+    pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")).resolve()
+)
+
 
 @pytest.fixture
 def mock_antigravity():
@@ -13,17 +19,19 @@ def mock_antigravity():
     mock.DRY_RUN_DEFAULT = False
     return mock
 
+
 @pytest.fixture
 def mock_strategists():
     zhuge = AsyncMock()
     sima = AsyncMock()
     zhou = AsyncMock()
-    
+
     zhuge.evaluate.return_value = 1.0
     sima.review.return_value = 1.0
     zhou.optimize.return_value = 1.0
-    
+
     return zhuge, sima, zhou
+
 
 @pytest.fixture
 def mock_tigers():
@@ -37,5 +45,5 @@ def mock_tigers():
     ma.deploy.return_value = True
     huang = Mock()
     huang.log.return_value = True
-    
+
     return guan, zhang, zhao, ma, huang

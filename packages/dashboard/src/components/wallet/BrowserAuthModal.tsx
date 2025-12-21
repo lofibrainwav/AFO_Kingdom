@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, Copy, Check, Globe } from 'lucide-react';
+import { logError } from '@/lib/logger';
 
 interface BrowserAuthModalProps {
   isOpen: boolean;
@@ -20,7 +21,7 @@ export default function BrowserAuthModal({ isOpen, onClose, onSuccess }: Browser
     fetch('/api/proxy/api/wallet/browser/extraction-script')
       .then(res => res.json())
       .then(data => setExtractionScript(data.script))
-      .catch(err => console.error("Failed to load script", err));
+      .catch(err => logError("Failed to load script", { error: err instanceof Error ? err.message : 'Unknown error' }));
   }, []);
 
   const handleCopyScript = () => {
