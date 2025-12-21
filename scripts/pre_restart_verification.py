@@ -8,6 +8,7 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
+
 # #region agent log
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 
@@ -27,7 +28,7 @@ def log_debug(
             "runId": "pre-restart",
             "hypothesisId": hypothesis_id,
         }
-        with open(LOG_PATH, "a", encoding="utf-8") as f:
+        with Path(LOG_PATH).open("a", encoding="utf-8") as f:
             f.write(json.dumps(log_entry, ensure_ascii=False) + "\n")
     except Exception as e:
         print(f"Logging failed: {e}", file=sys.stderr)
@@ -59,8 +60,8 @@ def verify_code_changes():
     # 1. 라우터 prefix 확인
     try:
         from AFO.api.routers.chancellor_router import router as cr
-        from AFO.api.routers.learning_log_router import router as llr
         from AFO.api.routers.grok_stream import router as gsr
+        from AFO.api.routers.learning_log_router import router as llr
 
         results["chancellor_prefix"] = getattr(cr, "prefix", "")
         results["learning_log_prefix"] = getattr(llr, "prefix", "")
@@ -93,9 +94,9 @@ def verify_code_changes():
     # 2. compat.py에서 라우터 로딩 확인
     try:
         from AFO.api.compat import (
-            learning_log_router,
-            grok_stream_router,
             chancellor_router,
+            grok_stream_router,
+            learning_log_router,
         )
 
         results["compat_loading"] = {
@@ -104,10 +105,16 @@ def verify_code_changes():
             "chancellor": chancellor_router is not None,
         }
 
-        print(f"\n✅ compat.py 라우터 로딩:")
-        print(f"   - learning_log_router: {'✅' if results['compat_loading']['learning_log'] else '❌'}")
-        print(f"   - grok_stream_router: {'✅' if results['compat_loading']['grok_stream'] else '❌'}")
-        print(f"   - chancellor_router: {'✅' if results['compat_loading']['chancellor'] else '❌'}")
+        print("\n✅ compat.py 라우터 로딩:")
+        print(
+            f"   - learning_log_router: {'✅' if results['compat_loading']['learning_log'] else '❌'}"
+        )
+        print(
+            f"   - grok_stream_router: {'✅' if results['compat_loading']['grok_stream'] else '❌'}"
+        )
+        print(
+            f"   - chancellor_router: {'✅' if results['compat_loading']['chancellor'] else '❌'}"
+        )
 
         # #region agent log
         log_debug(
@@ -185,7 +192,13 @@ def verify_current_endpoints():
                 "status_code": response.status_code,
                 "endpoint": endpoint,
             }
-            status = "✅" if response.status_code == 200 else "⚠️" if response.status_code == 404 else "❌"
+            status = (
+                "✅"
+                if response.status_code == 200
+                else "⚠️"
+                if response.status_code == 404
+                else "❌"
+            )
             print(f"{status} {name}: {endpoint} - {response.status_code}")
 
             # #region agent log
@@ -263,4 +276,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

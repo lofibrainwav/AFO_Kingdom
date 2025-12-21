@@ -8,6 +8,7 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
+
 # #region agent log
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 
@@ -27,7 +28,7 @@ def log_debug(
             "runId": "final",
             "hypothesisId": hypothesis_id,
         }
-        with open(LOG_PATH, "a", encoding="utf-8") as f:
+        with Path(LOG_PATH).open("a", encoding="utf-8") as f:
             f.write(json.dumps(log_entry, ensure_ascii=False) + "\n")
     except Exception as e:
         print(f"Logging failed: {e}", file=sys.stderr)
@@ -201,9 +202,8 @@ def verify_openapi_schema():
             # #endregion agent log
 
             return {"found": found_paths, "missing": missing_paths, "total_paths": len(paths)}
-        else:
-            print(f"❌ OpenAPI 스키마 조회 실패: {response.status_code}")
-            return {"error": f"HTTP {response.status_code}"}
+        print(f"❌ OpenAPI 스키마 조회 실패: {response.status_code}")
+        return {"error": f"HTTP {response.status_code}"}
     except Exception as e:
         print(f"❌ OpenAPI 스키마 검증 실패: {e}")
         return {"error": str(e)}
@@ -226,15 +226,19 @@ def main():
     working = [
         name
         for name, data in endpoint_results.items()
-        if data.get("status_code") == 200 or (data.get("is_streaming") and "timeout" in str(data.get("status_code", "")))
+        if data.get("status_code") == 200
+        or (data.get("is_streaming") and "timeout" in str(data.get("status_code", "")))
     ]
     not_working = [
         name
         for name, data in endpoint_results.items()
-        if data.get("status_code") not in [200, "timeout (expected for streaming)"] and "error" not in data
+        if data.get("status_code") not in [200, "timeout (expected for streaming)"]
+        and "error" not in data
     ]
     connection_errors = [
-        name for name, data in endpoint_results.items() if "error" in data and "Connection" in str(data.get("error", ""))
+        name
+        for name, data in endpoint_results.items()
+        if "error" in data and "Connection" in str(data.get("error", ""))
     ]
 
     print(f"\n✅ 작동하는 엔드포인트: {len(working)}개")
@@ -257,7 +261,9 @@ def main():
         found_count = len(openapi_results["found"])
         missing_count = len(openapi_results["missing"])
         total_paths = openapi_results.get("total_paths", 0)
-        print(f"\n📋 OpenAPI 스키마: {found_count}개 경로 발견, {missing_count}개 누락 (총 {total_paths}개 경로)")
+        print(
+            f"\n📋 OpenAPI 스키마: {found_count}개 경로 발견, {missing_count}개 누락 (총 {total_paths}개 경로)"
+        )
 
     # #region agent log
     log_debug(
@@ -275,14 +281,12 @@ def main():
     if len(working) >= 7 and len(connection_errors) == 0:
         print("\n🎉 모든 검증 통과! 시스템이 정상 작동 중입니다.")
         return 0
-    elif len(working) >= 5:
+    if len(working) >= 5:
         print("\n✅ 대부분의 엔드포인트가 정상 작동 중입니다.")
         return 0
-    else:
-        print("\n⚠️  일부 엔드포인트가 작동하지 않습니다.")
-        return 1
+    print("\n⚠️  일부 엔드포인트가 작동하지 않습니다.")
+    return 1
 
 
 if __name__ == "__main__":
     sys.exit(main())
-

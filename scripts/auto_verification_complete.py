@@ -8,6 +8,7 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
+
 # #region agent log
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 
@@ -27,7 +28,7 @@ def log_debug(
             "runId": "auto",
             "hypothesisId": hypothesis_id,
         }
-        with open(LOG_PATH, "a", encoding="utf-8") as f:
+        with Path(LOG_PATH).open("a", encoding="utf-8") as f:
             f.write(json.dumps(log_entry, ensure_ascii=False) + "\n")
     except Exception as e:
         print(f"Logging failed: {e}", file=sys.stderr)
@@ -319,9 +320,8 @@ def verify_openapi_schema():
             # #endregion agent log
 
             return {"found": found_paths, "missing": missing_paths}
-        else:
-            print(f"❌ OpenAPI 스키마 조회 실패: {response.status_code}")
-            return {"error": f"HTTP {response.status_code}"}
+        print(f"❌ OpenAPI 스키마 조회 실패: {response.status_code}")
+        return {"error": f"HTTP {response.status_code}"}
     except requests.exceptions.ConnectionError:
         print("❌ 서버 연결 실패 (서버가 실행 중이지 않음)")
         return {"error": "Connection refused"}
@@ -379,7 +379,9 @@ def main():
 
     if connection_error:
         print("\n💡 서버가 실행 중이지 않습니다. 서버를 시작한 후 다시 검증하세요.")
-        print("   명령: cd packages/afo-core && poetry run python -m uvicorn api_server:app --reload --port 8010")
+        print(
+            "   명령: cd packages/afo-core && poetry run python -m uvicorn api_server:app --reload --port 8010"
+        )
 
     # OpenAPI 스키마 결과
     if isinstance(openapi_results, dict) and "found" in openapi_results:
@@ -404,14 +406,12 @@ def main():
     if all_imports_ok and len(working_endpoints) >= 5:
         print("\n🎉 모든 검증 통과! 시스템이 정상 작동 중입니다.")
         return 0
-    elif all_imports_ok and connection_error:
+    if all_imports_ok and connection_error:
         print("\n⚠️  Import는 성공했지만 서버가 실행 중이지 않습니다.")
         return 1
-    else:
-        print("\n❌ 일부 검증 실패. 위의 결과를 확인하세요.")
-        return 1
+    print("\n❌ 일부 검증 실패. 위의 결과를 확인하세요.")
+    return 1
 
 
 if __name__ == "__main__":
     sys.exit(main())
-

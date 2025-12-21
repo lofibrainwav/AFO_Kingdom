@@ -3,9 +3,10 @@
 Minimal test to isolate Skills API registration issue
 """
 
-import sys
 import os
+import sys
 from pathlib import Path
+
 
 # Add project root to path
 project_root = Path(__file__).resolve().parent.parent
@@ -13,7 +14,8 @@ sys.path.insert(0, str(project_root))
 sys.path.insert(0, str(project_root / "packages" / "afo-core"))
 
 # Disable AntiGravity for minimal testing
-os.environ['DISABLE_ANTIGRAVITY'] = '1'
+os.environ["DISABLE_ANTIGRAVITY"] = "1"
+
 
 def test_minimal_app():
     """Test with minimal FastAPI app"""
@@ -27,6 +29,7 @@ def test_minimal_app():
     # Manually add Skills router
     try:
         from AFO.api.compat import skills_router
+
         print("✅ Skills router imported from compat")
 
         if skills_router:
@@ -34,22 +37,25 @@ def test_minimal_app():
             print("✅ Skills router registered manually")
 
             # Check registered routes
-            skills_routes = [r for r in app.routes if hasattr(r, 'path') and 'skills' in r.path.lower()]
+            skills_routes = [
+                r for r in app.routes if hasattr(r, "path") and "skills" in r.path.lower()
+            ]
             print(f"📊 Skills routes: {len(skills_routes)}")
 
             for route in skills_routes:
                 print(f"   - {route.path} ({list(getattr(route, 'methods', set()))})")
 
             return len(skills_routes) > 0
-        else:
-            print("❌ Skills router is None")
-            return False
+        print("❌ Skills router is None")
+        return False
 
     except Exception as e:
         print(f"❌ Manual registration failed: {e}")
         import traceback
+
         traceback.print_exc()
         return False
+
 
 def test_full_setup():
     """Test with full AFO setup but minimal initialization"""
@@ -58,12 +64,14 @@ def test_full_setup():
     try:
         # Test config
         from AFO.api.config import get_app_config
+
         app = get_app_config()
         print("✅ App created")
 
         # Test middleware (skip if problematic)
         try:
             from AFO.api.middleware import setup_middleware
+
             setup_middleware(app)
             print("✅ Middleware setup")
         except Exception as e:
@@ -71,11 +79,12 @@ def test_full_setup():
 
         # Test router setup
         from AFO.api.routers import setup_routers
+
         setup_routers(app)
         print("✅ Routers setup")
 
         # Check skills routes
-        skills_routes = [r for r in app.routes if hasattr(r, 'path') and 'skills' in r.path.lower()]
+        skills_routes = [r for r in app.routes if hasattr(r, "path") and "skills" in r.path.lower()]
         print(f"📊 Skills routes after full setup: {len(skills_routes)}")
 
         for route in skills_routes:
@@ -86,8 +95,10 @@ def test_full_setup():
     except Exception as e:
         print(f"❌ Full setup failed: {e}")
         import traceback
+
         traceback.print_exc()
         return False
+
 
 if __name__ == "__main__":
     print("🚀 AFO Kingdom Skills API Minimal Test")

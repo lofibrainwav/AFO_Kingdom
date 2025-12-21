@@ -52,7 +52,7 @@ def run_cyclonedx_command(command: list[str], output_file: str | None = None) ->
                 # JSON 유효성 검증
                 if output_file.endswith(".json"):
                     try:
-                        with open(output_file, encoding="utf-8") as f:
+                        with Path(output_file).open(encoding="utf-8") as f:
                             data = json.load(f)
                         components_count = len(data.get("components", []))
                         print(f"✅ JSON 유효성 검증 통과: {components_count}개 컴포넌트")

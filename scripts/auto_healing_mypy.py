@@ -99,7 +99,7 @@ class MyPyPurifier:
                                 })
                             except (ValueError, IndexError) as e:
                                 # 파싱 실패 시 전체 라인 저장
-                                logger.debug(f"[眞] 파싱 실패: {line} - {e}")
+                                logger.debug("[眞] 파싱 실패: %s - %s", line, e)
                                 continue
 
             self.total_errors = len(errors)
@@ -110,7 +110,7 @@ class MyPyPurifier:
             logger.error("[眞] MyPy가 설치되지 않았습니다. 'pip install mypy' 실행 필요")
             return []
         except Exception as e:
-            logger.error(f"[眞] 오류 수집 실패: {e}")
+            logger.error("[眞] 오류 수집 실패: %s", e)
             return []
 
     def classify_errors(self, errors: list[dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:
@@ -190,7 +190,7 @@ class MyPyPurifier:
         for fix in plan["fixes"]:
             file_path = Path(fix["file"])
             if not file_path.exists():
-                logger.warning(f"[眞] 파일 없음: {file_path}")
+                logger.warning("[眞] 파일 없음: %s", file_path)
                 continue
 
             try:
@@ -219,7 +219,7 @@ class MyPyPurifier:
                     logger.info(f"[眞] 수정 완료: {file_path} ({len(fix['errors'])}개)")
 
             except Exception as e:
-                logger.error(f"[眞] 수정 실패: {file_path} - {e}")
+                logger.error("[眞] 수정 실패: %s - %s", file_path, e)
                 results["failed_files"].append({"file": str(file_path), "error": str(e)})
 
         return results

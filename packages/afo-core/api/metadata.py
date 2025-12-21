@@ -4,10 +4,10 @@ AFO Kingdom API Metadata Configuration
 Provides OpenAPI metadata and tags for the FastAPI application.
 """
 
-from typing import Any, Dict
+from typing import Any
 
 
-def get_api_metadata() -> Dict[str, Any]:
+def get_api_metadata() -> dict[str, Any]:
     """Get FastAPI application metadata for OpenAPI documentation."""
 
     return {
@@ -55,7 +55,7 @@ The AFO Soul Engine is a multi-agent RAG system with advanced monitoring and wor
     }
 
 
-def get_api_tags() -> list[Dict[str, Any]]:
+def get_api_tags() -> list[dict[str, Any]]:
     """Get OpenAPI tags for endpoint grouping."""
 
     return [

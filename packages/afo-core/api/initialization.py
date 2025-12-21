@@ -6,7 +6,6 @@ Handles system component initialization during FastAPI lifespan startup.
 
 import asyncio
 import logging
-from contextlib import suppress
 
 logger = logging.getLogger(__name__)
 
@@ -74,6 +73,7 @@ async def _initialize_query_expander() -> None:
 
     try:
         from query_expansion_advanced import QueryExpander as _QE
+
         query_expander = _QE()
         print("[Query Expander] WordNet + ChromaDB 하이브리드 확장 준비 완료")
     except ImportError:
@@ -85,10 +85,13 @@ async def _initialize_antigravity() -> None:
     """Initialize AntiGravity system controls."""
     try:
         from AFO.api.compat import get_antigravity_control
+
         antigravity = get_antigravity_control()
 
         if antigravity and antigravity.AUTO_DEPLOY:
-            print(f"🚀 [AntiGravity] 활성화: {antigravity.ENVIRONMENT} 환경 자동 배포 준비 완료 (孝)")
+            print(
+                f"🚀 [AntiGravity] 활성화: {antigravity.ENVIRONMENT} 환경 자동 배포 준비 완료 (孝)"
+            )
 
         if antigravity and antigravity.DRY_RUN_DEFAULT:
             print("🛡️ [AntiGravity] DRY_RUN 모드 활성화 - 모든 위험 동작 시뮬레이션 (善)")
@@ -113,11 +116,11 @@ async def _initialize_multimodal_rag() -> None:
     global multimodal_rag_engine
 
     try:
-        from multimodal_rag_engine import MultimodalRAGEngine as _MRAE
         from AFO.api.compat import get_settings_safe
+        from multimodal_rag_engine import MultimodalRAGEngine as _MRAE
 
         settings = get_settings_safe()
-        mock_mode = getattr(settings, 'MOCK_MODE', True) if settings else True
+        mock_mode = getattr(settings, "MOCK_MODE", True) if settings else True
 
         multimodal_rag_engine = _MRAE(
             vectorstore=None,  # 벡터 DB는 나중에 통합 가능
@@ -133,6 +136,7 @@ async def _initialize_multimodal_rag() -> None:
     # Initialize Multimodal RAG Cache
     try:
         from multimodal_rag_cache import set_redis_client as _src
+
         if _src and REDIS_CLIENT:
             _src(REDIS_CLIENT)
             print("[Multimodal RAG Cache] 캐시 시스템 초기화 완료 (Redis 통합)")
@@ -148,6 +152,7 @@ async def _initialize_skills_registry() -> None:
 
     try:
         from afo_skills_registry import register_core_skills as _rcs
+
         skill_registry = _rcs()
         skill_count = (
             skill_registry.count() if skill_registry and hasattr(skill_registry, "count") else 0
@@ -162,12 +167,12 @@ async def _initialize_yeongdeok() -> None:
     global yeongdeok
 
     try:
-        from AFO.memory_system.yeongdeok_complete import YeongdeokComplete as _YC
         from AFO.api.compat import get_settings_safe
+        from AFO.memory_system.yeongdeok_complete import YeongdeokComplete as _YC
 
         settings = get_settings_safe()
-        n8n_url = getattr(settings, 'N8N_URL', '') if settings else ''
-        n8n_key = getattr(settings, 'API_YUNGDEOK', '') if settings else ''
+        n8n_url = getattr(settings, "N8N_URL", "") if settings else ""
+        n8n_key = getattr(settings, "API_YUNGDEOK", "") if settings else ""
 
         yeongdeok = _YC(
             n8n_url=n8n_url,
@@ -179,9 +184,10 @@ async def _initialize_yeongdeok() -> None:
     except ImportError:
         try:
             from memory_system.yeongdeok_complete import YeongdeokComplete as _YC
+
             yeongdeok = _YC(
-                n8n_url='',
-                n8n_api_key='',
+                n8n_url="",
+                n8n_api_key="",
                 enable_llm_brain=False,
                 neural_event_queue=neural_event_queue,
             )
@@ -200,6 +206,7 @@ async def _initialize_strategy_engine() -> None:
     try:
         # Try Real Brain (Chancellor Graph)
         from chancellor_graph import chancellor_graph
+
         strategy_app_runnable = chancellor_graph
         print("[지휘소 v6】 '진정한 두뇌' (Chancellor Graph) 가동 준비 완료. (True Intelligence)")
     except ImportError:
@@ -232,19 +239,16 @@ async def _initialize_databases() -> None:
 
     # PostgreSQL connection
     try:
-        import psycopg2
         from psycopg2.pool import SimpleConnectionPool
 
-        pg_host = getattr(settings, 'POSTGRES_HOST', 'localhost')
-        pg_port = getattr(settings, 'POSTGRES_PORT', 5432)
-        pg_db = getattr(settings, 'POSTGRES_DB', 'afo_memory')
-        pg_user = getattr(settings, 'POSTGRES_USER', 'postgres')
-        pg_password = getattr(settings, 'POSTGRES_PASSWORD', '')
+        pg_host = getattr(settings, "POSTGRES_HOST", "localhost")
+        pg_port = getattr(settings, "POSTGRES_PORT", 5432)
+        pg_db = getattr(settings, "POSTGRES_DB", "afo_memory")
+        pg_user = getattr(settings, "POSTGRES_USER", "postgres")
+        pg_password = getattr(settings, "POSTGRES_PASSWORD", "")
 
         PG_POOL = SimpleConnectionPool(
-            1, 5,
-            host=pg_host, port=pg_port, database=pg_db,
-            user=pg_user, password=pg_password
+            1, 5, host=pg_host, port=pg_port, database=pg_db, user=pg_user, password=pg_password
         )
         print(f"✅ PostgreSQL 연결 성공 ({pg_host}:{pg_port}/{pg_db})")
     except Exception as e:
@@ -255,13 +259,16 @@ async def _initialize_databases() -> None:
     try:
         import redis
 
-        redis_host = getattr(settings, 'REDIS_HOST', 'localhost')
-        redis_port = getattr(settings, 'REDIS_PORT', 6379)
-        redis_password = getattr(settings, 'REDIS_PASSWORD', None)
+        redis_host = getattr(settings, "REDIS_HOST", "localhost")
+        redis_port = getattr(settings, "REDIS_PORT", 6379)
+        redis_password = getattr(settings, "REDIS_PASSWORD", None)
 
         REDIS_CLIENT = redis.Redis(
-            host=redis_host, port=redis_port, password=redis_password,
-            decode_responses=True, socket_connect_timeout=2
+            host=redis_host,
+            port=redis_port,
+            password=redis_password,
+            decode_responses=True,
+            socket_connect_timeout=2,
         )
         REDIS_CLIENT.ping()
         print(f"✅ Redis 연결 성공 ({redis_host}:{redis_port})")
@@ -274,13 +281,13 @@ async def _initialize_llm_clients() -> None:
     """Initialize LLM client connections."""
     global OPENAI_CLIENT, CLAUDE_CLIENT
 
-    from AFO.api.compat import OPENAI_AVAILABLE, ANTHROPIC_AVAILABLE, get_settings_safe
+    from AFO.api.compat import ANTHROPIC_AVAILABLE, OPENAI_AVAILABLE, get_settings_safe
 
     settings = get_settings_safe()
 
     # OpenAI client
     if OPENAI_AVAILABLE and settings:
-        openai_key = getattr(settings, 'OPENAI_API_KEY', None)
+        openai_key = getattr(settings, "OPENAI_API_KEY", None)
         if openai_key:
             print("✅ OpenAI API Key detected")
         else:

@@ -8,63 +8,48 @@ Provides comprehensive monitoring metrics including:
 - Error rate tracking
 """
 
-from typing import Callable
+import time
+from collections.abc import Callable
+
+import prometheus_client as prom
 from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
-import time
-import prometheus_client as prom
 
 # HTTP Metrics
 REQUEST_COUNT = prom.Counter(
-    'http_requests_total',
-    'Total number of HTTP requests',
-    ['method', 'endpoint', 'status_code', 'service']
+    "http_requests_total",
+    "Total number of HTTP requests",
+    ["method", "endpoint", "status_code", "service"],
 )
 
 REQUEST_LATENCY = prom.Histogram(
-    'http_request_duration_seconds',
-    'HTTP request latency in seconds',
-    ['method', 'endpoint', 'status_code', 'service'],
-    buckets=[0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1.0, 2.0, 5.0]
+    "http_request_duration_seconds",
+    "HTTP request latency in seconds",
+    ["method", "endpoint", "status_code", "service"],
+    buckets=[0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1.0, 2.0, 5.0],
 )
 
 # Business Logic Metrics
-ACTIVE_CONNECTIONS = prom.Gauge(
-    'active_connections',
-    'Number of active connections',
-    ['service']
-)
+ACTIVE_CONNECTIONS = prom.Gauge("active_connections", "Number of active connections", ["service"])
 
 TRINITY_SCORE = prom.Gauge(
-    'trinity_score',
-    'Current Trinity score (Truth/Goodness/Beauty)',
-    ['pillar', 'service']
+    "trinity_score", "Current Trinity score (Truth/Goodness/Beauty)", ["pillar", "service"]
 )
 
 SKILLS_EXECUTIONS = prom.Counter(
-    'skills_executions_total',
-    'Total number of skill executions',
-    ['skill_id', 'category', 'status']
+    "skills_executions_total",
+    "Total number of skill executions",
+    ["skill_id", "category", "status"],
 )
 
 API_ERRORS = prom.Counter(
-    'api_errors_total',
-    'Total number of API errors',
-    ['error_type', 'endpoint', 'service']
+    "api_errors_total", "Total number of API errors", ["error_type", "endpoint", "service"]
 )
 
 # System Metrics
-MEMORY_USAGE = prom.Gauge(
-    'memory_usage_bytes',
-    'Current memory usage in bytes',
-    ['service']
-)
+MEMORY_USAGE = prom.Gauge("memory_usage_bytes", "Current memory usage in bytes", ["service"])
 
-CPU_USAGE = prom.Gauge(
-    'cpu_usage_percent',
-    'Current CPU usage percentage',
-    ['service']
-)
+CPU_USAGE = prom.Gauge("cpu_usage_percent", "Current CPU usage percentage", ["service"])
 
 
 class PrometheusMiddleware(BaseHTTPMiddleware):
@@ -96,14 +81,14 @@ class PrometheusMiddleware(BaseHTTPMiddleware):
                 method=request.method,
                 endpoint=endpoint,
                 status_code=str(response.status_code),
-                service=self.service_name
+                service=self.service_name,
             ).inc()
 
             REQUEST_LATENCY.labels(
                 method=request.method,
                 endpoint=endpoint,
                 status_code=str(response.status_code),
-                service=self.service_name
+                service=self.service_name,
             ).observe(latency)
 
             # Record errors
@@ -111,7 +96,7 @@ class PrometheusMiddleware(BaseHTTPMiddleware):
                 API_ERRORS.labels(
                     error_type=self._get_error_type(response.status_code),
                     endpoint=endpoint,
-                    service=self.service_name
+                    service=self.service_name,
                 ).inc()
 
             return response
@@ -124,20 +109,18 @@ class PrometheusMiddleware(BaseHTTPMiddleware):
                 method=request.method,
                 endpoint=endpoint,
                 status_code="500",
-                service=self.service_name
+                service=self.service_name,
             ).inc()
 
             REQUEST_LATENCY.labels(
                 method=request.method,
                 endpoint=endpoint,
                 status_code="500",
-                service=self.service_name
+                service=self.service_name,
             ).observe(latency)
 
             API_ERRORS.labels(
-                error_type="exception",
-                endpoint=endpoint,
-                service=self.service_name
+                error_type="exception", endpoint=endpoint, service=self.service_name
             ).inc()
 
             raise

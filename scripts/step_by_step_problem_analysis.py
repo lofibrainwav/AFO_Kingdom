@@ -8,6 +8,7 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
+
 # #region agent log
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 
@@ -27,7 +28,7 @@ def log_debug(
             "runId": "analysis",
             "hypothesisId": hypothesis_id,
         }
-        with open(LOG_PATH, "a", encoding="utf-8") as f:
+        with Path(LOG_PATH).open("a", encoding="utf-8") as f:
             f.write(json.dumps(log_entry, ensure_ascii=False) + "\n")
     except Exception as e:
         print(f"Logging failed: {e}", file=sys.stderr)
@@ -59,7 +60,7 @@ def step1_check_server_process():
 
     try:
         result = subprocess.run(
-            ["ps", "aux"], capture_output=True, text=True, timeout=5
+            ["ps", "aux"], capture_output=True, text=True, timeout=5, check=False
         )
         processes = [
             line
@@ -76,22 +77,24 @@ def step1_check_server_process():
             log_debug(
                 "step_by_step_problem_analysis.py:step1_check_server_process",
                 "Server process found",
-                {"count": len(processes), "pids": [p.split()[1] for p in processes[:2] if len(p.split()) > 1]},
+                {
+                    "count": len(processes),
+                    "pids": [p.split()[1] for p in processes[:2] if len(p.split()) > 1],
+                },
                 "STEP1",
             )
             # #endregion agent log
             return {"status": "running", "processes": len(processes)}
-        else:
-            print("❌ 서버 프로세스 없음")
-            # #region agent log
-            log_debug(
-                "step_by_step_problem_analysis.py:step1_check_server_process",
-                "No server process found",
-                {},
-                "STEP1",
-            )
-            # #endregion agent log
-            return {"status": "not_running"}
+        print("❌ 서버 프로세스 없음")
+        # #region agent log
+        log_debug(
+            "step_by_step_problem_analysis.py:step1_check_server_process",
+            "No server process found",
+            {},
+            "STEP1",
+        )
+        # #endregion agent log
+        return {"status": "not_running"}
     except Exception as e:
         print(f"❌ 확인 실패: {e}")
         return {"status": "error", "error": str(e)}
@@ -127,9 +130,8 @@ def step2_check_basic_health():
             )
             # #endregion agent log
             return {"status": "ok", "status_code": 200}
-        else:
-            print(f"⚠️  /health - {response.status_code}")
-            return {"status": "unexpected", "status_code": response.status_code}
+        print(f"⚠️  /health - {response.status_code}")
+        return {"status": "unexpected", "status_code": response.status_code}
     except requests.exceptions.ConnectionError:
         print("❌ 서버 연결 실패")
         # #region agent log
@@ -173,7 +175,9 @@ def step3_check_critical_endpoints():
     for name, endpoint in endpoints:
         try:
             timeout = 2 if "stream" in endpoint else 3
-            response = requests.get(f"http://localhost:8010{endpoint}", timeout=timeout, stream="stream" in endpoint)
+            response = requests.get(
+                f"http://localhost:8010{endpoint}", timeout=timeout, stream="stream" in endpoint
+            )
             is_ok = response.status_code == 200
             results[name] = {
                 "status_code": response.status_code,
@@ -196,7 +200,11 @@ def step3_check_critical_endpoints():
             print(f"❌ {name}: {endpoint} - 서버 연결 실패")
         except requests.exceptions.Timeout:
             if "stream" in endpoint:
-                results[name] = {"status_code": "timeout (expected)", "ok": True, "endpoint": endpoint}
+                results[name] = {
+                    "status_code": "timeout (expected)",
+                    "ok": True,
+                    "endpoint": endpoint,
+                }
                 print(f"✅ {name}: {endpoint} - 타임아웃 (스트리밍, 정상)")
             else:
                 results[name] = {"error": "timeout", "endpoint": endpoint}
@@ -237,7 +245,7 @@ def step4_check_router_registration():
         missing = [p for p in target_paths if p not in routes]
 
         print(f"총 등록된 라우트: {len(routes)}개")
-        print(f"\n핵심 경로:")
+        print("\n핵심 경로:")
         for path in found:
             print(f"  ✅ {path}")
         for path in missing:
@@ -382,9 +390,8 @@ def step6_check_openapi_schema():
             # #endregion agent log
 
             return {"found": found, "missing": missing, "total": len(paths)}
-        else:
-            print(f"❌ OpenAPI 스키마 조회 실패: {response.status_code}")
-            return {"error": f"HTTP {response.status_code}"}
+        print(f"❌ OpenAPI 스키마 조회 실패: {response.status_code}")
+        return {"error": f"HTTP {response.status_code}"}
     except requests.exceptions.ConnectionError:
         print("❌ 서버 연결 실패")
         return {"error": "Connection refused"}
@@ -452,7 +459,8 @@ def main():
     endpoint_errors = [
         name
         for name, data in endpoint_results.items()
-        if "error" in data or (data.get("status_code") != 200 and "timeout" not in str(data.get("status_code", "")))
+        if "error" in data
+        or (data.get("status_code") != 200 and "timeout" not in str(data.get("status_code", "")))
     ]
     if endpoint_errors:
         issues.append({
@@ -496,7 +504,9 @@ def main():
     if issues:
         print("\n⚠️  발견된 문제점:\n")
         for i, issue in enumerate(issues, 1):
-            level_icon = "🔴" if issue["level"] == "CRITICAL" else "🟠" if issue["level"] == "HIGH" else "🟡"
+            level_icon = (
+                "🔴" if issue["level"] == "CRITICAL" else "🟠" if issue["level"] == "HIGH" else "🟡"
+            )
             print(f"{level_icon} [{issue['level']}] {issue['category']} (Step {issue['step']})")
             print(f"   {issue['description']}\n")
     else:
@@ -525,4 +535,3 @@ def main():
 if __name__ == "__main__":
     issues = main()
     sys.exit(0 if len(issues) == 0 else 1)
-

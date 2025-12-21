@@ -12,9 +12,8 @@ sys.path.append(
 
 import contextlib
 
-from services.trinity_calculator import trinity_calculator
-
 from config.friction_calibrator import friction_calibrator
+from services.trinity_calculator import trinity_calculator
 
 
 with contextlib.suppress(ImportError):

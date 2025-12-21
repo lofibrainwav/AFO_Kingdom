@@ -150,7 +150,7 @@ class RuffPurifier:
             logger.error("[美] Ruff가 설치되지 않았습니다. 'pip install ruff' 실행 필요")
             return []
         except Exception as e:
-            logger.error(f"[美] 오류 수집 실패: {e}")
+            logger.error("[美] 오류 수집 실패: %s", e)
             return []
 
     def classify_errors(self, errors: list[dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:
@@ -251,7 +251,7 @@ class RuffPurifier:
                                 except (ValueError, IndexError):
                                     pass
 
-            logger.info(f"[美] Ruff 자동 수정 완료: {fixed_count}개")
+            logger.info("[美] Ruff 자동 수정 완료: %s개", fixed_count)
 
             return {
                 "status": "success",
@@ -260,7 +260,7 @@ class RuffPurifier:
             }
 
         except Exception as e:
-            logger.error(f"[美] 자동 수정 실패: {e}")
+            logger.error("[美] 자동 수정 실패: %s", e)
             return {"status": "error", "message": str(e)}
 
     def verify_fixes(self) -> dict[str, Any]:

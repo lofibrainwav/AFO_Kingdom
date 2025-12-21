@@ -8,6 +8,7 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
+
 # #region agent log
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 
@@ -27,7 +28,7 @@ def log_debug(
             "runId": "final",
             "hypothesisId": hypothesis_id,
         }
-        with open(LOG_PATH, "a", encoding="utf-8") as f:
+        with Path(LOG_PATH).open("a", encoding="utf-8") as f:
             f.write(json.dumps(log_entry, ensure_ascii=False) + "\n")
     except Exception as e:
         print(f"Logging failed: {e}", file=sys.stderr)
@@ -85,7 +86,11 @@ def verify_app_routes():
             print("\n비슷한 경로:")
             for route in sorted(routes):
                 for missing in missing_paths:
-                    if any(part in route for part in missing.split("/") if part and part not in ["api", "chancellor", "learning", "grok"]):
+                    if any(
+                        part in route
+                        for part in missing.split("/")
+                        if part and part not in ["api", "chancellor", "learning", "grok"]
+                    ):
                         print(f"   {route}")
                         break
 
@@ -93,7 +98,11 @@ def verify_app_routes():
         log_debug(
             "final_router_verification.py:verify_app_routes",
             "App routes verification completed",
-            {"found_paths": found_paths, "missing_paths": missing_paths, "total_routes": len(routes)},
+            {
+                "found_paths": found_paths,
+                "missing_paths": missing_paths,
+                "total_routes": len(routes),
+            },
             "APP1",
         )
         # #endregion agent log
@@ -243,11 +252,9 @@ def main():
     if len(working_endpoints) >= 4:
         print("\n🎉 모든 검증 통과! 시스템이 정상 작동 중입니다.")
         return 0
-    else:
-        print("\n⚠️  일부 엔드포인트가 작동하지 않습니다. 서버를 재시작했는지 확인하세요.")
-        return 1
+    print("\n⚠️  일부 엔드포인트가 작동하지 않습니다. 서버를 재시작했는지 확인하세요.")
+    return 1
 
 
 if __name__ == "__main__":
     sys.exit(main())
-

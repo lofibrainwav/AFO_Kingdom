@@ -3,7 +3,7 @@ Skills Router
 AFO Kingdom Skills API - Phase 2.5 Skills Registry Integration
 """
 
-from typing import Any, Optional
+from typing import Any
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
@@ -11,6 +11,7 @@ from pydantic import BaseModel, Field
 # Skills Registry
 try:
     from afo_skills_registry import SkillRegistry, register_core_skills
+
     SKILLS_REGISTRY_AVAILABLE = True
 except ImportError:
     SkillRegistry = None
@@ -18,6 +19,7 @@ except ImportError:
     SKILLS_REGISTRY_AVAILABLE = False
 
 router = APIRouter(tags=["Skills"])
+
 
 # Mock Skills Registry for development
 class MockSkillRegistry:
@@ -80,6 +82,7 @@ class MockSkillRegistry:
                     def __init__(self, data):
                         for key, value in data.items():
                             setattr(self, key, value)
+
                 return MockSkill(skill)
         return None
 
@@ -91,6 +94,7 @@ class MockSkillRegistry:
 
         # Simulate processing time
         import asyncio
+
         await asyncio.sleep(0.1)
 
         # Return mock execution result
@@ -101,8 +105,9 @@ class MockSkillRegistry:
             "philosophy_score": skill.philosophy_score,
             "parameters": parameters,
             "result": f"Executed {skill.name} successfully",
-            "timestamp": "2025-12-21T11:42:57Z"
+            "timestamp": "2025-12-21T11:42:57Z",
         }
+
 
 # Initialize registry
 if SKILLS_REGISTRY_AVAILABLE and register_core_skills:
@@ -139,7 +144,7 @@ class SkillExecutionResponse(BaseModel):
     result: Any = Field(..., description="실행 결과")
     execution_time: float = Field(..., description="실행 시간")
     success: bool = Field(..., description="실행 성공 여부")
-    error: Optional[str] = Field(None, description="오류 메시지")
+    error: str | None = Field(None, description="오류 메시지")
 
 
 @router.get("/list")
