@@ -10,7 +10,7 @@ def craft(code_snippet: str, ux_level: int = 1) -> str:
     - Graceful Degradation: Returns original code if enhancement fails.
     """
 
-    def _logic(val):
+    def _logic(val: tuple[str, int]) -> str:
         code, level = val
         base = '<div class="glassmorphism p-4 rounded-xl">'
         enhanced = base * level

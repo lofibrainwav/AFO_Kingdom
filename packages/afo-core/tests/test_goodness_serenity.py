@@ -21,18 +21,34 @@ class TestErrorHandling:
     """善 에러 처리 테스트"""
 
     def test_safe_execute_success(self) -> None:
-        """정상 실행 테스트"""
-        result = safe_execute(lambda x: x * 2, 5, default=0)
+        """정상 실행 테스트 (Decorator Pattern)"""
+        @safe_execute
+        def multiply(x):
+            return x * 2
+
+        result = multiply(5)
+        # safe_execute in error_handling.py returns RAW result
         assert result == 10
 
     def test_safe_execute_failure_with_default(self) -> None:
-        """실패 시 기본값 반환 테스트"""
+        """실패 시 안전 폴백 테스트"""
 
+        @safe_execute
         def failing_func():
             raise ValueError("Test error")
 
-        result = safe_execute(failing_func, default="fallback", log_error=False)
-        assert result == "fallback"
+        # To test default behavior, we must manually wrap with default since decorator syntax doesn't support arg binding in this implementation easily without partial
+        # Or just verify that the wrapper catches error and returns default=None (default default)
+        
+        result = failing_func()
+        assert result is None 
+
+        # precise test with specific default
+        def failing_func_2():
+            raise ValueError("Test error 2")
+            
+        wrapped = safe_execute(failing_func_2, default="fallback", log_error=False)
+        assert wrapped() == "fallback"
 
     def test_validate_input_success(self) -> None:
         """입력 검증 성공 테스트"""

@@ -12,6 +12,7 @@ from AFO.api.compat import (
     # Phase-specific routers
     budget_router,
     chancellor_router,
+    chat_router,
     council_router,
     education_system_router,
     finance_router,
@@ -127,6 +128,11 @@ def _register_feature_routers(app: FastAPI) -> None:
     if auth_router:
         app.include_router(auth_router)
         print("✅ Auth API 라우터 등록 완료 (心 시스템 - 인증)")
+
+    # Chat API
+    if chat_router:
+        app.include_router(chat_router, prefix="/api/chat", tags=["Chat"])
+        print("✅ Chat API 라우터 등록 완료")
 
     # Education and modal systems
     if education_system_router:

@@ -12,7 +12,7 @@ def optimize(query_data: dict[str, Any]) -> float:
     - Modularity: Checks for concise narrative structure.
     """
 
-    def _logic(data):
+    def _logic(data: dict[str, Any]) -> float:
         narrative = data.get("narrative", "")
         if not narrative:
             return 0.5  # Default baseline

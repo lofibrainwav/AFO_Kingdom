@@ -35,7 +35,7 @@ class MultimodalDocument:
     embedding: list[float] | None = None
     created_at: float | None = None  # LRU용 타임스탬프
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         try:
             if self.metadata is None:
                 self.metadata = {}

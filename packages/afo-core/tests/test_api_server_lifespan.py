@@ -10,53 +10,27 @@ from fastapi.testclient import TestClient
 
 
 @pytest.mark.asyncio
-async def test_lifespan_components_enabled():
-    # Test the "Available" branches (partial)
-    # We verify that if components ARE present, they are initialized
+async def test_lifespan_manager_calls_init_cleanup():
+    """Test that lifespan manager calls initialize and cleanup systems."""
+    from AFO.api.config import get_lifespan_manager
+    from fastapi import FastAPI
+    app = FastAPI()
 
-    # Yeongdeok needs async methods
-    mock_yeongdeok_instance = MagicMock()
-    mock_yeongdeok_instance.close_eyes = AsyncMock()
-    # If open_eyes or similar is awaited on startup, mock that too.
-    # Checking code: initialization seems synchronous constructor?
-
-    mock_registry_instance = MagicMock()
-    mock_registry_instance.count = lambda: 10
-
-    mock_query_expander = MagicMock()
-    mock_multimodal = MagicMock()
-
-    patches = {
-        "QueryExpander": MagicMock(return_value=mock_query_expander),
-        "MultimodalRAGEngine": MagicMock(return_value=mock_multimodal),
-        "YeongdeokComplete": MagicMock(return_value=mock_yeongdeok_instance),
-        "register_core_skills": MagicMock(return_value=mock_registry_instance),
-        "workflow": MagicMock(),  # Patch workflow for compile call
-    }
-
-    # We need to construct this carefully because api_server.py might have already imported "None"
-    # if optional deps are missing in this environment.
-    # So we patch the Names in AFO.api_server.
-
-    from AFO import api_server
-
-    with patch.multiple(api_server, **patches):
-        # We also need to patch settings to avoid config errors if they are read in lifespan
-        mock_settings = MagicMock()
-        mock_settings.MOCK_MODE = True
-        mock_settings.N8N_URL = "http://test"
-
-        # Also patch DB connections to avoid real connection attempts if not fully mocked
-        # It seems PG_POOL and REDIS_CLIENT are initialized inside lifespan too?
-        # Lines 778 global definition.
-        # Lines 949 PG_POOL = SimpleConnectionPool(...)
-
-        with patch("AFO.api_server.get_settings", return_value=mock_settings):
-            with patch("AFO.api_server.SimpleConnectionPool", MagicMock()):
-                with patch("AFO.api_server.redis.Redis", MagicMock()):
-                    with TestClient(api_server.app):
-                        pass
-                        # Verify initializations happened
-                        # Since we mocked the classes, we expect their constructors to be called.
-                        patches["QueryExpander"].assert_called()
-                        patches["MultimodalRAGEngine"].assert_called()
+    # We patch import inside the function to avoid strict dependency issues if modules are missing
+    # But since we are testing flow, we just patch the imported functions in AFO.api.config
+    
+    # We need to patch where they are IMPORTED in AFO.api.config
+    # Usually this is tricky if they are imported inside the function.
+    # Looking at config.py:
+    #     from AFO.api.cleanup import cleanup_system
+    #     from AFO.api.initialization import initialize_system
+    
+    # We can patch the source modules 'AFO.api.cleanup.cleanup_system' and 'AFO.api.initialization.initialize_system'
+    
+    with patch("AFO.api.initialization.initialize_system", new_callable=AsyncMock) as mock_init:
+        with patch("AFO.api.cleanup.cleanup_system", new_callable=AsyncMock) as mock_cleanup:
+            async with get_lifespan_manager(app):
+                mock_init.assert_awaited_once()
+                mock_cleanup.assert_not_awaited()
+            
+            mock_cleanup.assert_awaited_once()
