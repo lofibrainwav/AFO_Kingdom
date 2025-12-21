@@ -21,11 +21,13 @@ def test_generate_default_key_reads_env() -> None:
         return ".env" in str(self)
 
     # Clear any existing env var that might interfere
-    with patch.dict(os.environ, {"API_WALLET_ENCRYPTION_KEY": ""}, clear=False), patch(
-        "pathlib.Path.exists", autospec=True, side_effect=exists_side_effect
-    ), patch(
-        "builtins.open",
-        mock_open(read_data=f"API_WALLET_ENCRYPTION_KEY={valid_key}"),
+    with (
+        patch.dict(os.environ, {"API_WALLET_ENCRYPTION_KEY": ""}, clear=False),
+        patch("pathlib.Path.exists", autospec=True, side_effect=exists_side_effect),
+        patch(
+            "builtins.open",
+            mock_open(read_data=f"API_WALLET_ENCRYPTION_KEY={valid_key}"),
+        ),
     ):
         wallet = APIWallet(use_vault=False, db_connection=None, encryption_key=None)
         # When .env has key, it should be used

@@ -54,8 +54,9 @@ def _setup_monitoring_middleware(app: FastAPI) -> None:
         print("✅ Prometheus Metrics Middleware 활성화")
 
         # Add metrics endpoint
-        from AFO.api.middleware.prometheus import metrics_endpoint
         from fastapi.routing import APIRouter
+
+        from AFO.api.middleware.prometheus import metrics_endpoint
 
         metrics_router = APIRouter()
         metrics_router.get("/metrics")(metrics_endpoint)
@@ -66,4 +67,5 @@ def _setup_monitoring_middleware(app: FastAPI) -> None:
     except Exception as e:
         print(f"⚠️ Prometheus Middleware 설정 실패: {e}")
         import traceback
+
         traceback.print_exc()

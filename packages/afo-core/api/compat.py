@@ -480,6 +480,7 @@ def load_routers() -> None:
     # Phase-specific routers
     try:
         from AFO.api.routers.budget import router as budget
+
         global budget_router
         budget_router = budget
     except ImportError:
@@ -487,6 +488,7 @@ def load_routers() -> None:
 
     try:
         from AFO.api.routers.aicpa import router as aicpa
+
         global aicpa_router
         aicpa_router = aicpa
     except ImportError:
@@ -494,6 +496,7 @@ def load_routers() -> None:
 
     try:
         from AFO.api.routers.voice import router as voice
+
         global voice_router
         voice_router = voice
     except ImportError:
@@ -501,6 +504,7 @@ def load_routers() -> None:
 
     try:
         from AFO.api.routers.council import router as council
+
         global council_router
         council_router = council
     except ImportError:
@@ -508,6 +512,7 @@ def load_routers() -> None:
 
     try:
         from AFO.api.routers.learning_pipeline import router as learning_pipe
+
         global learning_pipeline
         learning_pipeline = learning_pipe
     except ImportError:
@@ -515,6 +520,7 @@ def load_routers() -> None:
 
     try:
         from AFO.api.routers.serenity_router import router as serenity
+
         global serenity_router
         serenity_router = serenity
     except ImportError:
@@ -522,6 +528,7 @@ def load_routers() -> None:
 
     try:
         from AFO.api.routers.matrix import router as matrix
+
         global matrix_router
         matrix_router = matrix
     except ImportError:
@@ -529,6 +536,7 @@ def load_routers() -> None:
 
     try:
         from AFO.api.routers.rag_query import router as rag_query
+
         global rag_query_router
         rag_query_router = rag_query
     except ImportError:
@@ -536,6 +544,7 @@ def load_routers() -> None:
 
     try:
         from AFO.api.routers.finance import router as finance
+
         global finance_router
         finance_router = finance
     except ImportError:
@@ -543,6 +552,7 @@ def load_routers() -> None:
 
     try:
         from AFO.api.routers.ssot import router as ssot
+
         global ssot_router
         ssot_router = ssot
     except ImportError:

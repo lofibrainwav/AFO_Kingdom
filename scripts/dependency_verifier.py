@@ -188,7 +188,7 @@ class DependencyVerifier:
             try:
                 import tomllib
 
-                with open(pyproject_path, "rb") as f:
+                with Path(pyproject_path).open("rb") as f:
                     pyproject_data = tomllib.load(f)
 
                 declared_deps = []

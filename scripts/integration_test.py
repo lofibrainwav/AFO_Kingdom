@@ -10,16 +10,16 @@ Tests the complete system integration including:
 - Middleware functionality
 """
 
-import sys
 import asyncio
-import json
+import sys
 from pathlib import Path
-from typing import Dict, List, Any
+
 
 # Add project root to path
 project_root = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(project_root))
 sys.path.insert(0, str(project_root / "packages" / "afo-core"))
+
 
 def test_app_initialization():
     """Test FastAPI app initialization and configuration"""
@@ -33,9 +33,9 @@ def test_app_initialization():
 
         # Test metadata
         metadata = get_api_metadata()
-        assert metadata['title'] == "AFO Kingdom Soul Engine API"
-        assert metadata['version'] == "6.3.0"
-        assert 'openapi_tags' in metadata
+        assert metadata["title"] == "AFO Kingdom Soul Engine API"
+        assert metadata["version"] == "6.3.0"
+        assert "openapi_tags" in metadata
         print("✅ API metadata configuration valid")
 
         # Test app creation
@@ -49,8 +49,10 @@ def test_app_initialization():
     except Exception as e:
         print(f"❌ App initialization failed: {e}")
         import traceback
+
         traceback.print_exc()
         return None
+
 
 def test_middleware_setup(app):
     """Test middleware setup"""
@@ -68,7 +70,7 @@ def test_middleware_setup(app):
         # Check CORS middleware
         cors_middleware = None
         for middleware in app.user_middleware:
-            if hasattr(middleware, 'cls') and 'CORSMiddleware' in str(middleware.cls):
+            if hasattr(middleware, "cls") and "CORSMiddleware" in str(middleware.cls):
                 cors_middleware = middleware
                 break
 
@@ -82,6 +84,7 @@ def test_middleware_setup(app):
     except Exception as e:
         print(f"❌ Middleware setup failed: {e}")
         return False
+
 
 def test_router_registration(app):
     """Test router registration and API endpoints"""
@@ -99,17 +102,14 @@ def test_router_registration(app):
         # Check registered routes
         routes = []
         for route in app.routes:
-            if hasattr(route, 'path'):
-                methods = getattr(route, 'methods', set())
-                routes.append({
-                    'path': route.path,
-                    'methods': list(methods)
-                })
+            if hasattr(route, "path"):
+                methods = getattr(route, "methods", set())
+                routes.append({"path": route.path, "methods": list(methods)})
 
         # Categorize routes
-        health_routes = [r for r in routes if 'health' in r['path'].lower()]
-        skills_routes = [r for r in routes if 'skills' in r['path'].lower()]
-        api_routes = [r for r in routes if r['path'].startswith('/api/')]
+        health_routes = [r for r in routes if "health" in r["path"].lower()]
+        skills_routes = [r for r in routes if "skills" in r["path"].lower()]
+        api_routes = [r for r in routes if r["path"].startswith("/api/")]
 
         print(f"📊 Total routes registered: {len(routes)}")
         print(f"🏥 Health routes: {len(health_routes)}")
@@ -118,13 +118,13 @@ def test_router_registration(app):
 
         # Verify Skills API routes
         expected_skills_routes = [
-            '/api/skills/list',
-            '/api/skills/detail/{skill_id}',
-            '/api/skills/execute',
-            '/api/skills/health'
+            "/api/skills/list",
+            "/api/skills/detail/{skill_id}",
+            "/api/skills/execute",
+            "/api/skills/health",
         ]
 
-        registered_skills_paths = [r['path'] for r in skills_routes]
+        registered_skills_paths = [r["path"] for r in skills_routes]
         for expected in expected_skills_routes:
             if expected in registered_skills_paths:
                 print(f"✅ Skills route registered: {expected}")
@@ -132,9 +132,9 @@ def test_router_registration(app):
                 print(f"❌ Missing Skills route: {expected}")
 
         # Check for basic health endpoints
-        basic_health_endpoints = ['/health', '/api/health/comprehensive']
+        basic_health_endpoints = ["/health", "/api/health/comprehensive"]
         for endpoint in basic_health_endpoints:
-            if any(endpoint in r['path'] for r in routes):
+            if any(endpoint in r["path"] for r in routes):
                 print(f"✅ Health endpoint available: {endpoint}")
             else:
                 print(f"⚠️ Health endpoint missing: {endpoint}")
@@ -144,8 +144,10 @@ def test_router_registration(app):
     except Exception as e:
         print(f"❌ Router registration test failed: {e}")
         import traceback
+
         traceback.print_exc()
         return False
+
 
 def test_database_connectivity():
     """Test database connectivity"""
@@ -162,10 +164,7 @@ def test_database_connectivity():
         # Check if connections are established
         from AFO.api.initialization import PG_POOL, REDIS_CLIENT
 
-        db_status = {
-            'postgresql': PG_POOL is not None,
-            'redis': REDIS_CLIENT is not None
-        }
+        db_status = {"postgresql": PG_POOL is not None, "redis": REDIS_CLIENT is not None}
 
         for db, connected in db_status.items():
             if connected:
@@ -178,6 +177,7 @@ def test_database_connectivity():
     except Exception as e:
         print(f"❌ Database connectivity test failed: {e}")
         return False
+
 
 def test_external_services():
     """Test external service integrations"""
@@ -192,11 +192,11 @@ def test_external_services():
         asyncio.run(_initialize_llm_clients())
 
         # Check service availability
-        from AFO.api.compat import OPENAI_AVAILABLE, ANTHROPIC_AVAILABLE
+        from AFO.api.compat import ANTHROPIC_AVAILABLE, OPENAI_AVAILABLE
 
         services = {
-            'OpenAI': OPENAI_AVAILABLE,
-            'Anthropic': ANTHROPIC_AVAILABLE,
+            "OpenAI": OPENAI_AVAILABLE,
+            "Anthropic": ANTHROPIC_AVAILABLE,
         }
 
         for service, available in services.items():
@@ -211,6 +211,7 @@ def test_external_services():
         print(f"❌ External services test failed: {e}")
         return False
 
+
 def test_system_initialization():
     """Test complete system initialization"""
     print("=" * 60)
@@ -218,8 +219,8 @@ def test_system_initialization():
     print("=" * 60)
 
     try:
-        from AFO.api.initialization import initialize_system
         from AFO.api.cleanup import cleanup_system
+        from AFO.api.initialization import initialize_system
 
         # Test initialization
         asyncio.run(initialize_system())
@@ -234,8 +235,10 @@ def test_system_initialization():
     except Exception as e:
         print(f"❌ System initialization test failed: {e}")
         import traceback
+
         traceback.print_exc()
         return False
+
 
 def run_integration_tests():
     """Run all integration tests"""
@@ -246,28 +249,28 @@ def run_integration_tests():
 
     # Test 1: App Initialization
     app = test_app_initialization()
-    results.append(('App Initialization', app is not None))
+    results.append(("App Initialization", app is not None))
 
     if app:
         # Test 2: Middleware Setup
         middleware_ok = test_middleware_setup(app)
-        results.append(('Middleware Setup', middleware_ok))
+        results.append(("Middleware Setup", middleware_ok))
 
         # Test 3: Router Registration
         router_ok = test_router_registration(app)
-        results.append(('Router Registration', router_ok))
+        results.append(("Router Registration", router_ok))
 
     # Test 4: Database Connectivity
     db_ok = test_database_connectivity()
-    results.append(('Database Connectivity', db_ok))
+    results.append(("Database Connectivity", db_ok))
 
     # Test 5: External Services
     services_ok = test_external_services()
-    results.append(('External Services', services_ok))
+    results.append(("External Services", services_ok))
 
     # Test 6: System Initialization
     init_ok = test_system_initialization()
-    results.append(('System Initialization', init_ok))
+    results.append(("System Initialization", init_ok))
 
     # Summary
     print("\n" + "=" * 60)
@@ -288,9 +291,9 @@ def run_integration_tests():
     if passed == total:
         print("🎉 All integration tests passed!")
         return True
-    else:
-        print("⚠️ Some integration tests failed")
-        return False
+    print("⚠️ Some integration tests failed")
+    return False
+
 
 if __name__ == "__main__":
     success = run_integration_tests()

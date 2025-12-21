@@ -28,7 +28,7 @@ def log_debug(
             "runId": "check",
             "hypothesisId": hypothesis_id,
         }
-        with open(LOG_PATH, "a", encoding="utf-8") as f:
+        with Path(LOG_PATH).open("a", encoding="utf-8") as f:
             f.write(json.dumps(log_entry, ensure_ascii=False) + "\n")
     except Exception as e:
         print(f"Logging failed: {e}", file=sys.stderr)

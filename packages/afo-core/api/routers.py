@@ -7,40 +7,40 @@ Centralized router registration system for organized API management.
 from fastapi import FastAPI
 
 from AFO.api.compat import (
+    aicpa_router,
+    auth_router,
+    # Phase-specific routers
+    budget_router,
+    chancellor_router,
+    council_router,
+    education_system_router,
+    finance_router,
+    got_router,
+    grok_stream_router,
     # Core routers
     health_router,
-    root_router,
-    skills_router,
-    streams_router,
+    learning_log_router,
+    learning_pipeline,
+    matrix_router,
+    modal_data_router,
+    multi_agent_router,
+    n8n_router,
+    personas_router,
     # Feature routers
     pillars_router,
-    system_health_router,
-    multi_agent_router,
+    rag_query_router,
+    root_router,
+    serenity_router,
+    skills_router,
+    ssot_router,
     strangler_router,
-    got_router,
-    n8n_router,
-    wallet_router,
+    streams_router,
+    system_health_router,
     trinity_policy_router,
     trinity_sbt_router,
     users_router,
-    auth_router,
-    education_system_router,
-    modal_data_router,
-    personas_router,
-    # Phase-specific routers
-    budget_router,
-    aicpa_router,
-    learning_log_router,
-    grok_stream_router,
     voice_router,
-    council_router,
-    learning_pipeline,
-    serenity_router,
-    matrix_router,
-    rag_query_router,
-    finance_router,
-    ssot_router,
-    chancellor_router,
+    wallet_router,
 )
 
 
@@ -130,7 +130,9 @@ def _register_feature_routers(app: FastAPI) -> None:
 
     # Education and modal systems
     if education_system_router:
-        app.include_router(education_system_router, prefix="/api/education", tags=["Education System"])
+        app.include_router(
+            education_system_router, prefix="/api/education", tags=["Education System"]
+        )
 
     if modal_data_router:
         app.include_router(modal_data_router, prefix="/api/modal", tags=["Modal Data"])
@@ -138,7 +140,9 @@ def _register_feature_routers(app: FastAPI) -> None:
     # Personas system
     if personas_router:
         app.include_router(personas_router)
-        print("✅ Personas API 라우터 등록 완료 (Phase 2: Family Hub OS - TRINITY-OS 페르소나 통합)")
+        print(
+            "✅ Personas API 라우터 등록 완료 (Phase 2: Family Hub OS - TRINITY-OS 페르소나 통합)"
+        )
 
 
 def _register_phase_routers(app: FastAPI) -> None:
@@ -226,7 +230,7 @@ def _register_phase_routers(app: FastAPI) -> None:
 def _register_legacy_routers(app: FastAPI) -> None:
     """Register legacy and compatibility routers."""
     # Debug: Check current routes before Skills registration
-    existing_routes_before = len([r for r in app.routes if hasattr(r, 'path')])
+    existing_routes_before = len([r for r in app.routes if hasattr(r, "path")])
     print(f"🔍 Routes before Skills registration: {existing_routes_before}")
 
     # Skills API - Critical for AFO Kingdom functionality
@@ -237,7 +241,7 @@ def _register_legacy_routers(app: FastAPI) -> None:
         try:
             print(f"🔍 Skills router has {len(skills_router.routes)} internal routes")
             for route in skills_router.routes:
-                if hasattr(route, 'path'):
+                if hasattr(route, "path"):
                     print(f"   - Internal route: {route.path}")
 
             app.include_router(skills_router, prefix="/api/skills", tags=["Skills"])
@@ -246,21 +250,21 @@ def _register_legacy_routers(app: FastAPI) -> None:
             # Debug: Check ALL routes after Skills registration
             all_routes_after = []
             for route in app.routes:
-                if hasattr(route, 'path'):
+                if hasattr(route, "path"):
                     route_info = {
-                        'path': route.path,
-                        'methods': list(getattr(route, 'methods', set())),
-                        'name': getattr(route, 'name', 'unknown')
+                        "path": route.path,
+                        "methods": list(getattr(route, "methods", set())),
+                        "name": getattr(route, "name", "unknown"),
                     }
                     all_routes_after.append(route_info)
 
             existing_routes_after = len(all_routes_after)
-            skills_routes = [r for r in all_routes_after if 'skills' in r['path'].lower()]
+            skills_routes = [r for r in all_routes_after if "skills" in r["path"].lower()]
             print(f"🔍 Total routes after Skills registration: {existing_routes_after}")
             print(f"🔍 Skills routes found: {len(skills_routes)}")
 
             # Check for conflicts - routes with similar paths
-            api_routes = [r for r in all_routes_after if r['path'].startswith('/api/')]
+            api_routes = [r for r in all_routes_after if r["path"].startswith("/api/")]
             print(f"🔍 Total API routes: {len(api_routes)}")
             for route in api_routes:
                 print(f"   - API route: {route['path']} {route['methods']}")
@@ -271,7 +275,7 @@ def _register_legacy_routers(app: FastAPI) -> None:
             else:
                 print("❌ No skills routes found after registration!")
                 # Check if any routes contain 'skill' (typo check)
-                skill_like_routes = [r for r in all_routes_after if 'skill' in r['path'].lower()]
+                skill_like_routes = [r for r in all_routes_after if "skill" in r["path"].lower()]
                 if skill_like_routes:
                     print("🔍 Routes containing 'skill':")
                     for route in skill_like_routes:
@@ -280,6 +284,7 @@ def _register_legacy_routers(app: FastAPI) -> None:
         except Exception as e:
             print(f"❌ Skills router registration failed: {e}")
             import traceback
+
             traceback.print_exc()
     else:
         print("❌ Skills router is falsy - not registering")
@@ -287,11 +292,13 @@ def _register_legacy_routers(app: FastAPI) -> None:
     # Comprehensive Health Check (integrated)
     try:
         from AFO.api.routes.comprehensive_health import router as comprehensive_health_router
+
         app.include_router(comprehensive_health_router)
         print("✅ Comprehensive Health Check 라우터 등록 완료 (조기 등록)")
     except ImportError:
         try:
             from api.routes.comprehensive_health import router as comprehensive_health_router
+
             app.include_router(comprehensive_health_router)
             print("✅ Comprehensive Health Check 라우터 등록 완료 (fallback, 조기 등록)")
         except Exception as e:
@@ -300,11 +307,13 @@ def _register_legacy_routers(app: FastAPI) -> None:
     # Intake API
     try:
         from afo_soul_engine.routers.intake import router as intake_router
+
         app.include_router(intake_router)
         print("✅ Intake API 라우터 등록 완료 (조기 등록)")
     except ImportError:
         try:
             from AFO.afo_soul_engine.routers.intake import router as intake_router
+
             app.include_router(intake_router)
             print("✅ Intake API 라우터 등록 완료 (fallback, 조기 등록)")
         except Exception as e:
@@ -313,6 +322,7 @@ def _register_legacy_routers(app: FastAPI) -> None:
     # GenUI (Phase 9)
     try:
         from AFO.api.routers.gen_ui import router as gen_ui_router
+
         app.include_router(gen_ui_router)
         print("✅ GenUI Engine activated (Phase 9: Serenity)")
     except Exception as e:
@@ -321,14 +331,20 @@ def _register_legacy_routers(app: FastAPI) -> None:
     # Family Hub (Phase 2)
     try:
         from AFO.api.routers.family import router as family_router
+
         app.include_router(family_router)
         app.include_router(family_router, prefix="/api")
-        print("✅ Family Hub API 라우터 등록 완료 (Phase 2: Family Hub OS - 美: 모듈화 + 일관 네이밍) - /family and /api/family")
+        print(
+            "✅ Family Hub API 라우터 등록 완료 (Phase 2: Family Hub OS - 美: 모듈화 + 일관 네이밍) - /family and /api/family"
+        )
     except ImportError:
         try:
             from api.routers.family import router as family_router
+
             app.include_router(family_router)
             app.include_router(family_router, prefix="/api")
-            print("✅ Family Hub API 라우터 등록 완료 (Phase 2: Family Hub OS - fallback) - /family and /api/family")
+            print(
+                "✅ Family Hub API 라우터 등록 완료 (Phase 2: Family Hub OS - fallback) - /family and /api/family"
+            )
         except Exception as e:
             print(f"⚠️ Family Hub API 라우터 등록 건너뜀 (로드 실패: {e})")

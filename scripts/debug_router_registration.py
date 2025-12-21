@@ -4,13 +4,14 @@ Debug script to check router registration in AFO Kingdom API Server
 """
 
 import sys
-import os
 from pathlib import Path
+
 
 # Add project root to path
 project_root = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(project_root))
 sys.path.insert(0, str(project_root / "packages" / "afo-core"))
+
 
 def test_direct_import():
     """Test direct import of skills router"""
@@ -21,6 +22,7 @@ def test_direct_import():
     try:
         print("📦 Importing AFO.api.routers.skills...")
         from AFO.api.routers.skills import router
+
         print("✅ Direct import successful!")
         print(f"   Router type: {type(router)}")
         print(f"   Router is None: {router is None}")
@@ -28,8 +30,8 @@ def test_direct_import():
         if router:
             routes = []
             for route in router.routes:
-                if hasattr(route, 'path'):
-                    methods = getattr(route, 'methods', set())
+                if hasattr(route, "path"):
+                    methods = getattr(route, "methods", set())
                     routes.append(f"{route.path} ({list(methods)})")
 
             print("   Router routes:")
@@ -47,9 +49,11 @@ def test_direct_import():
     except Exception as e:
         print(f"❌ Direct import failed: {e}")
         import traceback
+
         traceback.print_exc()
 
     print()
+
 
 def test_compat_import():
     """Test import through compat layer"""
@@ -60,6 +64,7 @@ def test_compat_import():
     try:
         print("📦 Importing AFO.api.compat.skills_router...")
         from AFO.api.compat import skills_router
+
         print("✅ Compat layer import successful!")
         print(f"   Router type: {type(skills_router)}")
         print(f"   Router is None: {skills_router is None}")
@@ -67,8 +72,8 @@ def test_compat_import():
         if skills_router:
             routes = []
             for route in skills_router.routes:
-                if hasattr(route, 'path'):
-                    methods = getattr(route, 'methods', set())
+                if hasattr(route, "path"):
+                    methods = getattr(route, "methods", set())
                     routes.append(f"{route.path} ({list(methods)})")
 
             print("   Router routes:")
@@ -86,9 +91,11 @@ def test_compat_import():
     except Exception as e:
         print(f"❌ Compat layer import failed: {e}")
         import traceback
+
         traceback.print_exc()
 
     print()
+
 
 def test_app_registration():
     """Test FastAPI app registration"""
@@ -114,8 +121,8 @@ def test_app_registration():
         # Check registered routes
         skills_routes = []
         for route in app.routes:
-            if hasattr(route, 'path') and 'skills' in route.path:
-                methods = getattr(route, 'methods', set())
+            if hasattr(route, "path") and "skills" in route.path:
+                methods = getattr(route, "methods", set())
                 skills_routes.append(f"{route.path} ({list(methods)})")
 
         if skills_routes:
@@ -127,7 +134,11 @@ def test_app_registration():
 
         # Check all routes containing 'skills'
         print("📋 All routes containing 'skills':")
-        all_skills_routes = [route.path for route in app.routes if hasattr(route, 'path') and 'skills' in route.path.lower()]
+        all_skills_routes = [
+            route.path
+            for route in app.routes
+            if hasattr(route, "path") and "skills" in route.path.lower()
+        ]
         if all_skills_routes:
             for route in all_skills_routes:
                 print(f"   - {route}")
@@ -137,9 +148,11 @@ def test_app_registration():
     except Exception as e:
         print(f"❌ App registration test failed: {e}")
         import traceback
+
         traceback.print_exc()
 
     print()
+
 
 if __name__ == "__main__":
     print("🚀 AFO Kingdom Router Registration Debug")

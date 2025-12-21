@@ -10,6 +10,7 @@ import time
 from datetime import datetime
 from pathlib import Path
 
+
 # #region agent log
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 
@@ -29,7 +30,7 @@ def log_debug(
             "runId": "restart",
             "hypothesisId": hypothesis_id,
         }
-        with open(LOG_PATH, "a", encoding="utf-8") as f:
+        with Path(LOG_PATH).open("a", encoding="utf-8") as f:
             f.write(json.dumps(log_entry, ensure_ascii=False) + "\n")
     except Exception as e:
         print(f"Logging failed: {e}", file=sys.stderr)
@@ -56,7 +57,7 @@ def wait_for_server(max_wait=30):
         try:
             response = requests.get(f"{BASE_URL}/health", timeout=2)
             if response.status_code == 200:
-                print(f"✅ 서버 시작 완료 ({i+1}초 후)")
+                print(f"✅ 서버 시작 완료 ({i + 1}초 후)")
                 # #region agent log
                 log_debug(
                     "restart_and_verify.py:wait_for_server",
@@ -70,7 +71,7 @@ def wait_for_server(max_wait=30):
             pass
         time.sleep(1)
         if (i + 1) % 5 == 0:
-            print(f"   서버 시작 대기 중... ({i+1}초)")
+            print(f"   서버 시작 대기 중... ({i + 1}초)")
 
     print("❌ 서버 시작 타임아웃")
     # #region agent log
@@ -198,9 +199,8 @@ def verify_openapi_schema():
             # #endregion agent log
 
             return {"found": found_paths, "missing": missing_paths}
-        else:
-            print(f"❌ OpenAPI 스키마 조회 실패: {response.status_code}")
-            return {"error": f"HTTP {response.status_code}"}
+        print(f"❌ OpenAPI 스키마 조회 실패: {response.status_code}")
+        return {"error": f"HTTP {response.status_code}"}
     except Exception as e:
         print(f"❌ OpenAPI 스키마 검증 실패: {e}")
         return {"error": str(e)}
@@ -228,13 +228,23 @@ def main():
     try:
         # 서버를 백그라운드로 시작
         process = subprocess.Popen(
-            ["poetry", "run", "python", "-m", "uvicorn", "api_server:app", "--reload", "--port", "8010"],
+            [
+                "poetry",
+                "run",
+                "python",
+                "-m",
+                "uvicorn",
+                "api_server:app",
+                "--reload",
+                "--port",
+                "8010",
+            ],
             cwd=str(server_dir),
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
 
-        print("✅ 서버 프로세스 시작됨 (PID: {})".format(process.pid))
+        print(f"✅ 서버 프로세스 시작됨 (PID: {process.pid})")
 
         # 서버가 시작될 때까지 대기
         if not wait_for_server():
@@ -256,7 +266,9 @@ def main():
         print("📊 최종 요약")
         print("=" * 60)
 
-        working = [name for name, data in endpoint_results.items() if data.get("status_code") == 200]
+        working = [
+            name for name, data in endpoint_results.items() if data.get("status_code") == 200
+        ]
         not_working = [
             name
             for name, data in endpoint_results.items()
@@ -294,9 +306,8 @@ def main():
         if len(working) >= 7:
             print("\n🎉 모든 검증 통과! 시스템이 정상 작동 중입니다.")
             return 0
-        else:
-            print("\n⚠️  일부 엔드포인트가 작동하지 않습니다.")
-            return 1
+        print("\n⚠️  일부 엔드포인트가 작동하지 않습니다.")
+        return 1
 
     except KeyboardInterrupt:
         print("\n\n⚠️  사용자에 의해 중단됨")
@@ -315,4 +326,3 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
-

@@ -10,8 +10,9 @@ from AFO.api_wallet import APIWallet
 
 def test_vault_init_exception_handling() -> None:
     """Test that VaultKMS initialization exceptions are handled gracefully."""
-    with patch("AFO.api_wallet.VAULT_AVAILABLE", True), patch(
-        "AFO.api_wallet.VaultKMS", side_effect=Exception("Connection Error")
+    with (
+        patch("AFO.api_wallet.VAULT_AVAILABLE", True),
+        patch("AFO.api_wallet.VaultKMS", side_effect=Exception("Connection Error")),
     ):
         wallet = APIWallet(use_vault=True)
         assert wallet.use_vault is False

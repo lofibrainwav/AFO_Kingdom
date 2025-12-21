@@ -100,9 +100,9 @@ class CheckpointService:
                     )
                 except Exception as e:
                     logger.warning(f"[永: Checkpoint] Redis 저장 실패, 메모리 저장으로 폴백: {e}")
-                    self._memory_store[
-                        f"persona:{persona_data.get('id', 'unknown')}"
-                    ] = persona_data
+                    self._memory_store[f"persona:{persona_data.get('id', 'unknown')}"] = (
+                        persona_data
+                    )
 
             # DB 영속 저장
             if DB_AVAILABLE:

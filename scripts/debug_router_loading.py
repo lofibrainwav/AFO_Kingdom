@@ -8,6 +8,7 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
+
 # #region agent log
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 
@@ -27,7 +28,7 @@ def log_debug(
             "runId": "debug",
             "hypothesisId": hypothesis_id,
         }
-        with open(LOG_PATH, "a", encoding="utf-8") as f:
+        with Path(LOG_PATH).open("a", encoding="utf-8") as f:
             f.write(json.dumps(log_entry, ensure_ascii=False) + "\n")
     except Exception as e:
         print(f"Logging failed: {e}", file=sys.stderr)
@@ -64,9 +65,9 @@ def test_router_loading():
     for router_name, expected_prefix in routers_to_test:
         try:
             from AFO.api.compat import (
-                learning_log_router,
-                grok_stream_router,
                 chancellor_router,
+                grok_stream_router,
+                learning_log_router,
             )
 
             if router_name == "learning_log_router":
@@ -192,7 +193,11 @@ def test_router_registration():
         log_debug(
             "debug_router_loading.py:test_router_registration",
             "Router registration test completed",
-            {"found_paths": found_paths, "missing_paths": missing_paths, "total_routes": len(routes)},
+            {
+                "found_paths": found_paths,
+                "missing_paths": missing_paths,
+                "total_routes": len(routes),
+            },
             "REG1",
         )
         # #endregion agent log
@@ -248,4 +253,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

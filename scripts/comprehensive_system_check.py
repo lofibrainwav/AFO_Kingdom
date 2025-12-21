@@ -5,9 +5,9 @@
 
 import json
 import sys
-import time
 from datetime import datetime
 from pathlib import Path
+
 
 # #region agent log
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
@@ -28,7 +28,7 @@ def log_debug(
             "runId": "check",
             "hypothesisId": hypothesis_id,
         }
-        with open(LOG_PATH, "a", encoding="utf-8") as f:
+        with Path(LOG_PATH).open("a", encoding="utf-8") as f:
             f.write(json.dumps(log_entry, ensure_ascii=False) + "\n")
     except Exception as e:
         print(f"Logging failed: {e}", file=sys.stderr)
@@ -59,12 +59,10 @@ def check_server_status():
 
     try:
         result = subprocess.run(
-            ["ps", "aux"], capture_output=True, text=True, timeout=5
+            ["ps", "aux"], capture_output=True, text=True, timeout=5, check=False
         )
         processes = [
-            line
-            for line in result.stdout.split("\n")
-            if "uvicorn" in line or "api_server" in line
+            line for line in result.stdout.split("\n") if "uvicorn" in line or "api_server" in line
         ]
         processes = [p for p in processes if "grep" not in p]
 
@@ -81,17 +79,16 @@ def check_server_status():
             )
             # #endregion agent log
             return {"status": "running", "processes": len(processes)}
-        else:
-            print("❌ 서버 프로세스 없음")
-            # #region agent log
-            log_debug(
-                "comprehensive_system_check.py:check_server_status",
-                "No server processes found",
-                {},
-                "SERVER1",
-            )
-            # #endregion agent log
-            return {"status": "not_running", "processes": 0}
+        print("❌ 서버 프로세스 없음")
+        # #region agent log
+        log_debug(
+            "comprehensive_system_check.py:check_server_status",
+            "No server processes found",
+            {},
+            "SERVER1",
+        )
+        # #endregion agent log
+        return {"status": "not_running", "processes": 0}
     except Exception as e:
         print(f"❌ 서버 상태 확인 실패: {e}")
         return {"status": "error", "error": str(e)}
@@ -233,9 +230,8 @@ def check_openapi_schema():
                 "missing": missing_paths,
                 "total": len(paths),
             }
-        else:
-            print(f"❌ OpenAPI 스키마 조회 실패: {response.status_code}")
-            return {"error": f"HTTP {response.status_code}"}
+        print(f"❌ OpenAPI 스키마 조회 실패: {response.status_code}")
+        return {"error": f"HTTP {response.status_code}"}
     except requests.exceptions.ConnectionError:
         print("❌ 서버 연결 실패")
         return {"error": "Connection refused"}
@@ -276,7 +272,7 @@ def check_router_registration():
         missing = [p for p in target_paths if p not in routes]
 
         print(f"총 등록된 라우트: {len(routes)}개")
-        print(f"\n핵심 경로:")
+        print("\n핵심 경로:")
         for path in found:
             print(f"  ✅ {path}")
         for path in missing:
@@ -393,18 +389,17 @@ def main():
     working = [
         name
         for name, data in endpoint_results.items()
-        if data.get("status_code") == 200 or (data.get("ok") and "timeout" in str(data.get("status_code", "")))
+        if data.get("status_code") == 200
+        or (data.get("ok") and "timeout" in str(data.get("status_code", "")))
     ]
     not_working = [
         name
         for name, data in endpoint_results.items()
         if data.get("status_code") != 200 and "error" not in data
     ]
-    connection_errors = [
-        name for name, data in endpoint_results.items() if "error" in data
-    ]
+    connection_errors = [name for name, data in endpoint_results.items() if "error" in data]
 
-    print(f"\n2. 엔드포인트 상태:")
+    print("\n2. 엔드포인트 상태:")
     print(f"   - 작동: {len(working)}개")
     print(f"   - 작동 안 함: {len(not_working)}개")
     print(f"   - 연결 실패: {len(connection_errors)}개")
@@ -412,7 +407,7 @@ def main():
     if isinstance(openapi_results, dict) and "total" in openapi_results:
         found_count = len(openapi_results.get("found", []))
         missing_count = len(openapi_results.get("missing", []))
-        print(f"\n3. OpenAPI 스키마:")
+        print("\n3. OpenAPI 스키마:")
         print(f"   - 총 경로: {openapi_results['total']}개")
         print(f"   - 발견: {found_count}개")
         print(f"   - 누락: {missing_count}개")
@@ -420,15 +415,13 @@ def main():
     if isinstance(router_results, dict) and "found" in router_results:
         found_count = len(router_results.get("found", []))
         missing_count = len(router_results.get("missing", []))
-        print(f"\n4. 라우터 등록:")
+        print("\n4. 라우터 등록:")
         print(f"   - 총 라우트: {router_results.get('total', 0)}개")
         print(f"   - 발견: {found_count}개")
         print(f"   - 누락: {missing_count}개")
 
-    import_success = sum(
-        1 for r in import_results.values() if r.get("status") == "success"
-    )
-    print(f"\n5. Import 상태:")
+    import_success = sum(1 for r in import_results.values() if r.get("status") == "success")
+    print("\n5. Import 상태:")
     print(f"   - 성공: {import_success}/{len(import_results)}개")
 
     # 문제점 파악
@@ -476,4 +469,3 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
-

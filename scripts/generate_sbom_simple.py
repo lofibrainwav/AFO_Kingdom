@@ -36,15 +36,15 @@ except ImportError:
 
 def parse_requirements(requirements_path: Path) -> list[dict[str, Any]]:
     """requirements.txt 파싱"""
-    logger.info(f"[眞] requirements.txt 파싱 시작: {requirements_path}")
+    logger.info("[眞] requirements.txt 파싱 시작: %s", requirements_path)
     components = []
 
     if not requirements_path.exists():
-        logger.warning(f"[眞] 파일 없음: {requirements_path}")
+        logger.warning("[眞] 파일 없음: %s", requirements_path)
         return components
 
-    logger.info(f"[眞] 파일 읽기 시작: {requirements_path}")
-    with open(requirements_path, encoding="utf-8") as f:
+    logger.info("[眞] 파일 읽기 시작: %s", requirements_path)
+    with Path(requirements_path).open(encoding="utf-8") as f:
         for line in f:
             line = line.strip()
             if not line or line.startswith("#"):
@@ -103,11 +103,11 @@ def generate_sbom_json(components: list[dict[str, Any]], output_path: Path) -> N
         "components": components,
     }
 
-    logger.info(f"[永] JSON 파일 쓰기 시작: {output_path}")
-    with open(output_path, "w", encoding="utf-8") as f:
+    logger.info("[永] JSON 파일 쓰기 시작: %s", output_path)
+    with Path(output_path).open("w", encoding="utf-8") as f:
         json.dump(sbom, f, indent=2, ensure_ascii=False)
 
-    logger.info(f"[永] SBOM 생성 완료: {output_path}")
+    logger.info("[永] SBOM 생성 완료: %s", output_path)
     print(f"✅ SBOM generated: {output_path}")
 
 
@@ -143,7 +143,7 @@ def main() -> int:
 
     # 출력 디렉토리 생성
     output_dir = Path("sbom")
-    logger.info(f"[孝] 출력 디렉토리 생성: {output_dir}")
+    logger.info("[孝] 출력 디렉토리 생성: %s", output_dir)
     output_dir.mkdir(exist_ok=True)
 
     # 1. requirements.txt 파일들에서 SBOM 생성
@@ -158,20 +158,20 @@ def main() -> int:
 
     for req_path_str, name in requirements_files:
         req_path = Path(req_path_str)
-        logger.info(f"[眞] requirements 파일 확인: {req_path}")
+        logger.info("[眞] requirements 파일 확인: %s", req_path)
         if req_path.exists():
             components = parse_requirements(req_path)
             if components:
                 output_path = output_dir / f"{name}_sbom.json"
-                logger.info(f"[永] SBOM 생성 시작: {name}")
+                logger.info("[永] SBOM 생성 시작: %s", name)
                 generate_sbom_json(components, output_path)
                 all_components.extend(components)
                 success_count += 1
-                logger.info(f"[永] SBOM 생성 성공: {name}")
+                logger.info("[永] SBOM 생성 성공: %s", name)
             else:
-                logger.warning(f"[眞] 컴포넌트 없음: {name}")
+                logger.warning("[眞] 컴포넌트 없음: %s", name)
         else:
-            logger.warning(f"[眞] 파일 없음: {req_path}")
+            logger.warning("[眞] 파일 없음: %s", req_path)
 
     # 2. 현재 환경에서 SBOM 생성 (종합)
     logger.info("[眞] 환경 패키지 수집 시작")
@@ -210,7 +210,7 @@ def main() -> int:
     print()
     print("=" * 80)
     if success_count > 0:
-        logger.info(f"[永] SBOM 생성 완료: {success_count}개 파일")
+        logger.info("[永] SBOM 생성 완료: %s개 파일", success_count)
         logger.info(f"[永] 출력 디렉토리: {output_dir.absolute()}")
         print(f"✅ SBOM 생성 완료: {success_count}개 파일")
         print(f"   출력 디렉토리: {output_dir.absolute()}")

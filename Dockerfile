@@ -1,7 +1,7 @@
 # AFO Kingdom Docker Image
 # 眞善美孝永 (Truth·Goodness·Beauty·Serenity·Eternity)
 
-FROM python:3.12-slim
+FROM python:3.12.3-slim
 
 # 眞 (Truth): Metadata for transparency
 LABEL org.opencontainers.image.title="AFO Kingdom Soul Engine"
@@ -9,13 +9,13 @@ LABEL org.opencontainers.image.description="A-Philosophy-First Operating System 
 LABEL org.opencontainers.image.version="6.3.0"
 LABEL org.opencontainers.image.authors="AFO Kingdom"
 
-# 善 (Goodness): Security hardening
+# 善 (Goodness): Security hardening - Create user BEFORE setting WORKDIR
 RUN apt-get update && apt-get install -y \
     curl \
     && rm -rf /var/lib/apt/lists/* \
-    && useradd --create-home --shell /bin/bash app
+    && useradd --create-home --shell /bin/bash --uid 1000 app
 
-# Set working directory
+# Set working directory AFTER user creation to avoid root-owned files
 WORKDIR /app
 
 # Copy requirements first for better caching
