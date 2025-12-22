@@ -186,12 +186,18 @@ class HybridRAG:
     """Facade for Hybrid RAG services"""
 
     available: bool = False
+
+    # Explicitly define fields for MyPy (Strangler Fig)
+    # These will be populated by load()
     blend_results_async: Any = None
     generate_answer_async: Any = None
     get_embedding_async: Any = None
     query_pgvector_async: Any = None
     query_redis_async: Any = None
     select_context: Any = None
+    query_qdrant_async: Any = None
+    generate_hyde_query_async: Any = None
+    query_graph_context: Any = None
 
     @classmethod
     def load(cls) -> type[HybridRAG]:
@@ -376,10 +382,6 @@ def load_routers() -> None:
         julie_router, \
         skills_router, \
         trinity_router, \
-        skills_router, \
-        trinity_router, \
-        thoughts_router, \
-        pillars_router, \
         thoughts_router, \
         pillars_router, \
         chat_router, \
@@ -798,206 +800,3 @@ class TrinityOSMCPClient:
         if last_exception:
             logger.error("MCP 요청 최종 실패 (%d회 시도): %s", max_retries, str(last_exception))
         return None
-
-    async def _send_request_to_process(
-        self,
-        process: Any,
-        method: str,
-        params: dict[str, Any] | None = None,
-        request_id: int | None = None,
-        timeout: float = 5.0,
-    ) -> dict[str, Any] | None:
-        """
-        실행 중인 프로세스에 JSON-RPC 요청 전송 (프로세스 재사용)
-
-        Args:
-            process: 실행 중인 subprocess
-            method: JSON-RPC 메서드
-            params: 요청 파라미터
-            request_id: 요청 ID (None이면 자동 생성)
-            timeout: 타임아웃 (초)
-
-        Returns:
-            응답 결과 또는 None (실패 시)
-        """
-        import asyncio
-        import json
-        import logging
-
-        logger = logging.getLogger(__name__)
-
-        if request_id is None:
-            request_id = self._get_next_request_id()
-
-        request = {
-            "jsonrpc": "2.0",
-            "id": request_id,
-            "method": method,
-            "params": params or {},
-        }
-
-        try:
-            # 요청 전송
-            request_json = json.dumps(request) + "\n"
-            if process.stdin:
-                process.stdin.write(request_json.encode())
-                await process.stdin.drain()
-
-            # 응답 수신
-            if process.stdout:
-                response_line = await asyncio.wait_for(process.stdout.readline(), timeout=timeout)
-                if response_line:
-                    response = json.loads(response_line.decode())
-                    # 에러 체크
-                    if "error" in response:
-                        logger.debug(
-                            "MCP 서버 오류: %s",
-                            response.get("error", {}).get("message", "Unknown error"),
-                        )
-                        return None
-                    return response.get("result")
-            return None
-
-        except asyncio.TimeoutError:
-            logger.debug("MCP 요청 타임아웃: %s", method)
-            return None
-        except json.JSONDecodeError as e:
-            logger.debug("MCP 응답 JSON 파싱 오류: %s", str(e))
-            return None
-        except (ConnectionError, OSError, ValueError) as e:
-            logger.debug("MCP 요청 오류 (연결/시스템/값 에러): %s - %s", method, str(e))
-            return None
-        except Exception as e:  # - Intentional fallback for unexpected errors
-            logger.debug("MCP 요청 오류 (예상치 못한 에러): %s - %s", method, str(e))
-            return None
-
-    async def send_log_event(self, event_type: str, data: dict[str, Any]) -> None:
-        """
-        로그 이벤트를 TRINITY-OS MCP 서버로 전송 (프로세스 재사용 방식)
-
-        Args:
-            event_type: 이벤트 타입 (예: "persona_switch")
-            data: 이벤트 데이터
-        """
-        if not self._available or not self._server_path:
-            import logging
-
-            logger = logging.getLogger(__name__)
-            logger.debug("[MCP] 클라이언트 사용 불가, 로컬 로깅")
-            return
-
-        import asyncio
-        import json
-        import logging
-
-        logger = logging.getLogger(__name__)
-
-        process: Any = None
-
-        try:
-            # MCP 서버 프로세스 시작 (한 번만)
-            process = await asyncio.create_subprocess_exec(
-                "python3",
-                str(self._server_path),
-                stdin=asyncio.subprocess.PIPE,
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE,
-            )
-
-            # 1단계: Initialize 요청
-            init_result = await self._send_request_to_process(
-                process,
-                "initialize",
-                {
-                    "protocolVersion": "2024-11-05",
-                    "capabilities": {},
-                    "clientInfo": {"name": "AFO-PersonaService", "version": "1.0"},
-                },
-                request_id=1,
-                timeout=2.0,
-            )
-
-            if not init_result:
-                logger.debug("[MCP] Initialize 실패, 로컬 로깅으로 폴백")
-                logger.info(
-                    "[TRINITY-OS MCP] %s 이벤트 로컬 로깅: %s",
-                    event_type,
-                    data.get("persona_name", "unknown"),
-                )
-                return
-
-            # 2단계: Notifications/initialized (선택적, 서버가 요구하지 않으면 생략)
-            # 현재 구현에서는 생략 (서버가 자동 처리)
-
-            # 3단계: Tools/call - write_file을 통한 로그 저장
-            log_path = f"logs/persona_events/{event_type}_{data.get('persona_id', 'unknown')}.json"
-            tool_result = await self._send_request_to_process(
-                process,
-                "tools/call",
-                {
-                    "name": "write_file",
-                    "arguments": {
-                        "path": log_path,
-                        "content": json.dumps(data, indent=2, ensure_ascii=False),
-                    },
-                },
-                request_id=2,
-                timeout=3.0,
-            )
-
-            if tool_result:
-                logger.info(
-                    "[TRINITY-OS MCP] %s 이벤트 전송 성공: %s (경로: %s)",
-                    event_type,
-                    data.get("persona_name", "unknown"),
-                    log_path,
-                )
-            else:
-                logger.debug(
-                    "[TRINITY-OS MCP] %s 이벤트 MCP 전송 실패, 로컬 로깅: %s",
-                    event_type,
-                    data.get("persona_name", "unknown"),
-                )
-
-        except (OSError, ProcessLookupError, ValueError) as e:
-            logger.debug("MCP 로그 이벤트 전송 실패 (시스템/프로세스/값 에러): %s", str(e))
-        except Exception as e:  # - Intentional fallback for unexpected errors
-            logger.debug("MCP 로그 이벤트 전송 실패 (예상치 못한 에러): %s", str(e))
-        finally:
-            # 프로세스 정리
-            if process and process.returncode is None:
-                try:
-                    process.terminate()
-                    await asyncio.wait_for(process.wait(), timeout=2.0)
-                except (OSError, ProcessLookupError, asyncio.TimeoutError) as e:
-                    logger.debug("프로세스 종료 실패, 강제 종료 시도: %s", str(e))
-                    # 프로세스 종료 실패 시 강제 종료
-                    try:
-                        process.kill()
-                        await process.wait()
-                    except (OSError, ProcessLookupError) as e2:
-                        logger.debug("프로세스 강제 종료 실패: %s", str(e2))
-                    except Exception as e2:  # - Intentional fallback
-                        logger.debug("프로세스 강제 종료 중 예상치 못한 에러: %s", str(e2))
-
-    @property
-    def available(self) -> bool:
-        """MCP 클라이언트 사용 가능 여부"""
-        return self._available
-
-
-# 싱글톤 인스턴스
-_trinity_os_client: TrinityOSMCPClient | None = None
-
-
-def get_trinity_os_client() -> TrinityOSMCPClient | None:
-    """
-    TRINITY-OS MCP 클라이언트 인스턴스 반환
-
-    Returns:
-        TrinityOSMCPClient 인스턴스 또는 None (사용 불가 시)
-    """
-    global _trinity_os_client
-    if _trinity_os_client is None:
-        _trinity_os_client = TrinityOSMCPClient()
-    return _trinity_os_client if _trinity_os_client.available else None

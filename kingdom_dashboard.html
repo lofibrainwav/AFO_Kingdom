@@ -1993,19 +1993,19 @@ graph TB
                     <div style="display: grid; gap: 1rem;">
                         <div>
                             <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">MCP 서버 이름</label>
-                            <input type="text" id="mcp-name" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 8px; font-size: 1rem;" placeholder="예: my-custom-mcp">
+                            <input type="text" id="mcp-name" autocomplete="organization" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 8px; font-size: 1rem;" placeholder="예: my-custom-mcp">
                         </div>
                         <div>
                             <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">명령어 (Command)</label>
-                            <input type="text" id="mcp-command" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 8px; font-size: 1rem;" placeholder="예: npx -y @modelcontextprotocol/server-filesystem">
+                            <input type="text" id="mcp-command" autocomplete="off" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 8px; font-size: 1rem;" placeholder="예: npx -y @modelcontextprotocol/server-filesystem">
                         </div>
                         <div>
                             <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">인자 (Args) - 쉼표로 구분</label>
-                            <input type="text" id="mcp-args" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 8px; font-size: 1rem;" placeholder="예: /Users/brnestrm/AFO_Kingdom">
+                            <input type="text" id="mcp-args" autocomplete="off" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 8px; font-size: 1rem;" placeholder="예: /Users/brnestrm/AFO_Kingdom">
                         </div>
                         <div>
                             <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">API 키 (필요한 경우)</label>
-                            <input type="password" id="mcp-api-key" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 8px; font-size: 1rem;" placeholder="API 키를 입력하세요">
+                            <input type="password" id="mcp-api-key" autocomplete="current-password" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 8px; font-size: 1rem;" placeholder="API 키를 입력하세요">
                         </div>
                         <div>
                             <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">환경 변수 (JSON 형식)</label>
@@ -2733,7 +2733,7 @@ graph TB
                         <h3 class="card-title">Skills Registry (19개)</h3>
                         <div class="tools-controls">
                             <!-- 검색 -->
-                            <input type="text" id="skill-search" class="search-input" placeholder="🔍 스킬 검색..." />
+                            <input type="text" id="skill-search" autocomplete="off" class="search-input" placeholder="🔍 스킬 검색..." />
                             <!-- 카테고리 필터 -->
                             <select id="skill-category-filter" class="filter-select">
                                 <option value="all">전체 카테고리</option>

@@ -1,0 +1,55 @@
+
+> trinity-dashboard@0.1.0 build
+> next build
+
+ ⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of /Users/brnestrm/AFO_Kingdom/package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * /Users/brnestrm/AFO_Kingdom/packages/dashboard/package-lock.json
+
+   ▲ Next.js 16.0.10 (Turbopack)
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 5.1s
+   Running TypeScript ...
+   Collecting page data using 13 workers ...
+   Generating static pages using 13 workers (0/23) ...
+   Generating static pages using 13 workers (5/23) 
+   Generating static pages using 13 workers (11/23) 
+   Generating static pages using 13 workers (17/23) 
+ ✓ Generating static pages using 13 workers (23/23) in 460.6ms
+   Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ○ /aicpa_julie
+├ ƒ /api/chancellor
+├ ƒ /api/family
+├ ƒ /api/git-tree
+├ ƒ /api/health
+├ ƒ /api/kingdom-status
+├ ƒ /api/mcp/thoughts/sse
+├ ƒ /api/serenity/create
+├ ƒ /api/ssot-status
+├ ○ /docs
+├ ○ /docs/architecture
+├ ○ /docs/git-tree
+├ ○ /docs/philosophy
+├ ○ /docs/project-structure
+├ ○ /family
+├ ○ /genui/test_allowed
+├ ○ /genui/test_calc_v1
+├ ○ /genui/test_vision_block
+├ ○ /genui/verification_genui_v1
+├ ○ /git-tree
+├ ○ /kingdom-status
+└ ○ /wallet
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

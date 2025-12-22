@@ -23,9 +23,9 @@ except ImportError:
         from langchain.prompts import PromptTemplate  # type: ignore[no-redef]
         from langchain.schema import BaseMessage, HumanMessage, SystemMessage
 
-        LANGCHAIN_NEW_API = False
+        # LANGCHAIN_NEW_API = False (Redundant)
     except ImportError:
-        # 최종 fallback - 타입 체크를 우회하기 위해 Any 사용
+        # Fallback - Use Any for everything to silence MyPy on legacy paths
         ChatOpenAI = Any  # type: ignore[assignment, misc]
         PromptTemplate = Any  # type: ignore[assignment, misc]
         BaseMessage = Any  # type: ignore[assignment, misc]
@@ -288,7 +288,10 @@ class LangChainOpenAIService:
                     "timestamp": asyncio.get_event_loop().time(),
                 }
                 cache_ttl: int | None = (
-                    int(OPENAI_CONFIG["cache_ttl"]) if OPENAI_CONFIG.get("cache_ttl") else None
+                    int(OPENAI_CONFIG["cache_ttl"])
+                    if OPENAI_CONFIG.get("cache_ttl") is not None
+                    and isinstance(OPENAI_CONFIG["cache_ttl"], (int, str, float))
+                    else None
                 )
                 await cache_set(cache_key, cache_data, cache_ttl)
 
@@ -462,10 +465,10 @@ class LangChainOpenAIService:
                         "max_tokens": max_tokens or OPENAI_CONFIG["max_tokens"],
                     }
 
-                    max_retries_val: int = int(OPENAI_CONFIG["max_retries"])
+                    max_retries_val_legacy: int = int(OPENAI_CONFIG["max_retries"])
                     response = await exponential_backoff(
                         lambda: self.llm.agenerate([call_params]),
-                        max_retries=max_retries_val,
+                        max_retries=max_retries_val_legacy,
                         base_delay=1.0,
                     )
 
