@@ -21,52 +21,61 @@ class VisionVerifier:
     """
 
     def __init__(self) -> None:
+        # Ultimate Resolution: 1080p (美: Beauty & clarity)
+        self.viewport = {"width": 1920, "height": 1080}
         self.screenshot_dir = Path("packages/dashboard/public/artifacts/verification")
-        # Ensure directory exists relative to CWD or absolute
-        # Assuming CWD is project root
+        
         if not self.screenshot_dir.exists():
             try:
                 self.screenshot_dir.mkdir(parents=True, exist_ok=True)
             except Exception as e:
                 logger.warning(f"⚠️ [Vision] Could not create screenshot dir: {e}")
 
-    async def verify_component(self, component_name: str) -> dict[str, Any]:
+    async def verify_ui(self, url: str, screenshot_path: str) -> dict[str, Any]:
         """
-        Visits the Sandbox Preview URL and takes a screenshot.
+        [Ultimate Vision] Performs exhaustive visual inspection.
         """
-        # Determine Dashboard URL (default localhost:3000)
-        # The preview page is likely /gen-ui/preview/{component_name}
-        # But wait, we didn't build a specific route for individual component preview in Next.js yet.
-        # Ideally, we should view it on the SandboxCanvas or a dedicated page.
-        # For Phase 9-2 MVP, let's assume we visit the sandbox page and maybe component is loaded?
-        # Actually, let's implement a 'dedicated preview' URL logic on frontend side later.
-        # For now, we verify the generic sandbox.
-
-        target_url = f"http://localhost:3000/sandbox/{component_name}"  # Hypothetical route
-
-        logger.info(f"👁️ [Vision] Verifying {component_name} at {target_url}...")
-
+        logger.info(f"👁️ [Vision] Verifying {url}...")
+        
         try:
-            filename = f"{component_name}_verified.png"
-            path = str(self.screenshot_dir / filename)
-
-            # Using the bridge to capture
-            result = await bridge.verify_ui(url=target_url, screenshot_path=path)
-
+            # Using the bridge for implementation stability
+            # We enforce the resolution via bridge if possible, or directly in bridge
+            result = await bridge.verify_ui(
+                url=url, 
+                screenshot_path=screenshot_path,
+                enable_tracing=True
+            )
+            
             if result.get("status") == "PASS":
-                logger.info(f"✅ [Vision] Captured screenshot: {path}")
-                return {"success": True, "screenshot_path": path, "details": result}
+                logger.info(f"✅ [Vision] Captured 1080p snapshot: {screenshot_path}")
+                return {
+                    "success": True, 
+                    "screenshot_path": screenshot_path, 
+                    "details": result,
+                    "resolution": "1920x1080"
+                }
             else:
-                logger.warning(f"⚠️ [Vision] Verification simulation or failure: {result}")
+                logger.warning(f"⚠️ [Vision] Verification failed: {result}")
                 return {
                     "success": False,
-                    "error": "Verification failed or simulated",
-                    "details": result,
+                    "error": "Visual anomalies detected",
+                    "details": result
                 }
 
         except Exception as e:
-            logger.error(f"❌ [Vision] Verification error: {e}")
+            logger.error(f"❌ [Vision] Critical verification error: {e}")
             return {"success": False, "error": str(e)}
+
+    async def verify_component(self, component_name: str) -> dict[str, Any]:
+        """
+        Visits the Sandbox Preview URL (convenience wrapper).
+        """
+        # Note: Sandbox routes are usually under /sandbox or /gen-ui/preview
+        target_url = f"http://localhost:3000/sandbox/{component_name}" 
+        filename = f"{component_name}_v2025.png"
+        path = str(self.screenshot_dir / filename)
+        
+        return await self.verify_ui(target_url, path)
 
 
 vision_verifier = VisionVerifier()

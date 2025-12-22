@@ -11,6 +11,7 @@ Phase 5: Trinity Type Validator 적용 - 런타임 Trinity Score 검증
 """
 
 import logging
+print("🔥 [DEBUG] AFO.services.gen_ui is being loaded!")
 import uuid
 from collections.abc import Callable
 from pathlib import Path
@@ -81,52 +82,47 @@ class GenUIService:
         # 2. Call Scholar (The Execution)
         # Using Yeongdeok's localized logic or direct LLM Router
         try:
-            from AFO.llm_router import LLMRouter
+            from AFO.llm_router import LLMRouter, LLMProvider
 
             router = LLMRouter()
 
-            # Use specific model routing or generic generation
-            # For now, we simulate the LLM call or route it properly
-            # In Phase 9 real implementation, this should route to Qwen2.5
-
-            # Combine prompts for raw completion (Router uses /api/generate)
-            full_prompt = f"{system_prompt}\n\nUser Request: {user_prompt}\n\nCode:"
+            # 2025 Ultimate Stack System Prompt
+            full_prompt = f"""
+            System: You are Samahwi, the Royal Architect.
+            Task: Create a React component named '{request.component_name}'.
+            Stack: Next.js 16, Tailwind v4, Shadcn, Lucide.
+            Aesthetics: Indigo/purple gradient, glassmorphism, 100% Truth (types), 100% Beauty.
+            
+            Prompt: {request.prompt}
+            
+            Return ONLY the raw code. No markdown fences.
+            """
 
             response_dict: dict[str, Any] = await router.execute_with_routing(
                 query=full_prompt,
                 context={
                     "provider": "ollama",
-                    "ollama_model": "qwen2.5-coder-32b-instruct",  # Use recruited model
+                    "ollama_model": "qwen3-vl:8b",
                     "max_tokens": 4096,
-                    "temperature": 0.2,  # Precision for code
+                    "temperature": 0.1,
+                    "ollama_timeout_seconds": 300,
                 },
             )
 
             if not response_dict.get("success"):
                 raise RuntimeError(response_dict.get("error", "Unknown Router Error"))
 
+            print(f"DEBUG: Router response: {response_dict}")
             response_text: str = str(response_dict.get("response", ""))
+            print(f"DEBUG: Cleaned response text: {response_text[:100]}")
 
             # Clean up code (remove markdown fences if LLM disobeyed)
             code = self._clean_code(response_text)
 
         except Exception as e:
-            # Fallback for Dry Run / Mock Mode
-            # If Samahwi is sleeping, we simulate his work to verify the pipeline
-            from AFO.config.antigravity import antigravity
-            from AFO.config.settings import settings
-
-            if (
-                settings.MOCK_MODE
-                or antigravity.DRY_RUN_DEFAULT
-                or "test" in str(e).lower()
-                or "connection" in str(e).lower()
-            ):
-                logger.warning(f"⚠️ [GenUI] Router failed ({e}). Entering Mock/Simulation Mode.")
-                code = self._generate_mock_code(request.component_name)
-            else:
-                logger.error(f"❌ [GenUI] Generation failed: {e}")
-                return self._create_error_response(request, str(e))
+            # Fallback for Dry Run / Mock Mode - DISABLED to force real Samahwi
+            logger.error(f"❌ [GenUI] Generation failed: {e}")
+            return self._create_error_response(request, str(e))
 
         # 3. Validation (The Inspection)
         is_valid_syntax = self.validate_syntax(code)

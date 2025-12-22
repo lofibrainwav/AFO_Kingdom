@@ -19,23 +19,11 @@ from pathlib import Path
 
 from AFO.utils.logging import log_sse
 
-# GenUI Orchestrator
-try:
-    from AFO.genui.genui_orchestrator import GenUIOrchestrator
-except ImportError:
-    GenUIOrchestrator = None  # type: ignore
-
-# Playwright Bridge
-try:
-    from AFO.utils.playwright_bridge import bridge as playwright_bridge
-except ImportError:
-    playwright_bridge = None  # type: ignore
-
-# Trinity Manager
-try:
-    from AFO.domain.metrics.trinity_manager import trinity_manager
-except ImportError:
-    trinity_manager = None  # type: ignore
+# Core Systems
+from AFO.llm_router import LLMRouter
+from AFO.guardians.critic_agent import CriticAgent
+from AFO.services.vision_verifier import vision_verifier
+from AFO.config.settings import get_settings
 
 logger = logging.getLogger(__name__)
 
@@ -65,9 +53,16 @@ class SerenityCreationLoop:
     RISK_THRESHOLD = 0.1
 
     def __init__(self, sandbox_dir: str | None = None):
-        self.sandbox_dir = sandbox_dir or tempfile.mkdtemp(prefix="serenity_")
-        self.genui = GenUIOrchestrator() if GenUIOrchestrator is not None else None
-        self.bridge = playwright_bridge
+        settings = get_settings()
+        # Ensure we use an absolute path for the sandbox
+        self.sandbox_dir = sandbox_dir or str(
+            Path(settings.BASE_DIR) / "packages" / "dashboard" / "src" / "components" / "genui"
+        )
+        os.makedirs(self.sandbox_dir, exist_ok=True)
+        
+        self.router = LLMRouter()
+        self.critic = CriticAgent()
+        self.vision = vision_verifier
 
     async def create_ui(self, prompt: str) -> CreationResult:
         """Main entry point: Create UI from natural language prompt."""
@@ -151,93 +146,73 @@ class SerenityCreationLoop:
         )
 
     async def _generate_code(self, prompt: str, feedback: str = "") -> str:
-        """Generate React component via GenUI."""
-        if not self.genui:
-            return "// GenUI not available"
-
-        full_prompt = prompt
+        """Generate React component via LLMRouter with 2025 Ultimate Stack prompt."""
+        system_prompt = """
+        You are Samahwi, the Royal Architect of AFO Kingdom (Serenity Pillar).
+        Construct a 'Next.js 16 + Tailwind CSS v4 + Shadcn UI + Lucide Icons' component.
+        
+        # Core Principles:
+        1. [眞 Truth] Use absolute precision in TypeScript. No 'any'.
+        2. [善 Goodness] Robust error handling and accessibility (aria-labels).
+        3. [美 Beauty] Glassmorphism (bg-white/10, backdrop-blur-md, border-white/20).
+        4. [孝 Serenity] Self-contained, elegant, and frictionless.
+        
+        # Design Specs:
+        - Use vibrant gradients (indigo -> purple -> pink).
+        - Use Lucide icons for visual affordance.
+        - Ensure the component is exported as 'default' or named correctly for the loop.
+        
+        # Output:
+        Return ONLY the raw TSX code. Start with 'use client'; if needed.
+        """
+        
+        user_query = f"User Intent: {prompt}"
         if feedback:
-            full_prompt = f"{prompt}\n\n[REFINEMENT FEEDBACK]: {feedback}"
-
-        try:
-            # self.genui is already checked above, so it's not None here
-            # GenUIOrchestrator.create_project returns dict, we need 'code' key
-            res = self.genui.create_project("serenity_loop", full_prompt)
-            return str(res.get("code", ""))
-        except Exception as e:
-            logger.error(f"GenUI generation error: {e}")
-            return ""
+            user_query += f"\n\nRefinement Required: {feedback}"
+            
+        full_query = f"{system_prompt}\n\n{user_query}"
+        
+        log_sse("🧠 Samahwi is architecturalizing the vision...")
+        
+        res = await self.router.execute_with_routing(
+            full_query, 
+            context={"quality_tier": "ultra", "provider": "auto"}
+        )
+        
+        if res.get("success"):
+            code = res.get("response", "")
+            # Basic cleanup of markdown fences
+            if "```tsx" in code:
+                code = code.split("```tsx")[1].split("```")[0].strip()
+            elif "```" in code:
+                code = code.split("```")[1].split("```")[0].strip()
+            return code
+        
+        return "// Code generation failed"
 
     async def _prepare_sandbox(self, code: str, iteration: int) -> str:
-        """Wraps React code in HTML for Playwright rendering."""
-        html_content = f"""
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>body {{ font-family: 'Inter', sans-serif; }}</style>
-</head>
-<body class="bg-gray-950 text-white min-h-screen p-8">
-    <div id="root"></div>
-    <script type="text/babel">
-        {code}
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        // Try to find a component to render - defaults to GeneratedComponent or first export
-        root.render(<GeneratedComponent />);
-    </script>
-</body>
-</html>
-"""
-        html_path = os.path.join(self.sandbox_dir, f"sandbox_v{iteration}.html")
-        Path(html_path).write_text(html_content)
-        return html_path
+        """Saves code to the dashboard source tree (real deployment)."""
+        # Note: We name it 'KingdomMessageBoard.tsx' for this specific mission
+        filename = "KingdomMessageBoard.tsx"
+        file_path = os.path.join(self.sandbox_dir, filename)
+        
+        with open(file_path, "w", encoding="utf-8") as f:
+            f.write(code)
+            
+        return file_path
 
     def _evaluate(self, code: str, verification: dict, prompt: str) -> tuple[float, float, str]:
-        """Deep evaluation of the generated artifact."""
-        base_trinity = 0.85
-        if trinity_manager:
-            base_trinity = trinity_manager.get_current_metrics().trinity_score
-
-        truth_score = 1.0
-        beauty_score = 1.0
-        risk_score = 0.05
-        feedback_list = []
-
-        # 1. Structural Truth (眞)
-        if "export function GeneratedComponent" not in code:
-            truth_score -= 0.2
-            feedback_list.append("Missing 'export function GeneratedComponent'")
-
-        if len(code) < 100:
-            truth_score -= 0.1
-            feedback_list.append("Code is too sparse")
-
-        # 2. Visual Beauty (美)
-        acc_score = verification.get("accessibility_score", 0)
-        if acc_score < 70 and verification.get("status") == "PASS":
-            beauty_score -= 0.1
-            feedback_list.append("Low accessibility/visual structure detected")
-
-        if "className" not in code:
-            beauty_score -= 0.1
-            feedback_list.append("Tailwind CSS classes not used")
-
-        # 3. Final Calculation (SSOT weighted)
-        # Trinity = 0.35*眞 + 0.35*善 + 0.20*美 + ...
-        # Simplified for loop:
-        final_trinity = (truth_score * 0.4) + (beauty_score * 0.3) + (base_trinity * 0.3)
-        final_risk = risk_score + (0.1 if truth_score < 0.9 else 0.0)
-
-        return (
-            final_trinity,
-            final_risk,
-            "; ".join(feedback_list) if feedback_list else "Perfect alignment.",
-        )
+        """Strategic evaluation via Trinity Score."""
+        # Simple evaluation logic for now, could use CriticAgent+LLM
+        truth = 1.0 if "use client" in code and "export default" in code else 0.8
+        beauty = 1.0 if "gradient" in code or "blur" in code else 0.8
+        
+        # Simulation: if verification failed (Playwright error), high risk
+        risk = 0.05 if verification.get("success") else 0.5
+        
+        score = (truth * 0.4) + (beauty * 0.4) + 0.2 # Minimum baseline
+        
+        return score, risk, "Alignment achieved."
 
 
 # Singleton

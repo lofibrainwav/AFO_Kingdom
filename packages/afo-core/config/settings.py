@@ -137,6 +137,10 @@ class AFOSettings(BaseSettings):
     AFO_SOUL_ENGINE_HOME: str | None = Field(
         default=None, description="AFO Soul Engine 홈 디렉토리 경로"
     )
+    BASE_DIR: str = Field(
+        default=os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))),
+        description="프로젝트 루트 디렉토리",
+    )
 
     # ============================================================================
     # Helper Methods

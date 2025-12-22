@@ -82,6 +82,9 @@
 /Users/brnestrm/AFO_Kingdom/packages/dashboard/src/components/genui/AgentLearningTimeline.tsx
   4:31  warning  'useCallback' is defined but never used  @typescript-eslint/no-unused-vars
 
+/Users/brnestrm/AFO_Kingdom/packages/dashboard/src/components/genui/GenComponent.tsx
+  1:10  error  Parsing error: ',' expected
+
 /Users/brnestrm/AFO_Kingdom/packages/dashboard/src/components/genui/GenesisWidget.tsx
   7:11  warning  'CreationResult' is defined but never used  @typescript-eslint/no-unused-vars
 
@@ -131,31 +134,28 @@
   29:24  warning  'isLoading' is assigned a value but never used  @typescript-eslint/no-unused-vars
 
 /Users/brnestrm/AFO_Kingdom/packages/dashboard/src/components/royal/RoyalLibrary.tsx
-  4:10  warning  'BadgeCheck' is defined but never used  @typescript-eslint/no-unused-vars
-  4:35  warning  'FileText' is defined but never used    @typescript-eslint/no-unused-vars
+  4:10  warning  'Crown' is defined but never used       @typescript-eslint/no-unused-vars
+  4:17  warning  'BookOpen' is defined but never used    @typescript-eslint/no-unused-vars
+  4:27  warning  'Scroll' is defined but never used      @typescript-eslint/no-unused-vars
+  4:35  warning  'Star' is defined but never used        @typescript-eslint/no-unused-vars
+  4:41  warning  'Clock' is defined but never used       @typescript-eslint/no-unused-vars
+  4:54  warning  'Sparkles' is defined but never used    @typescript-eslint/no-unused-vars
+  4:64  warning  'BookMarked' is defined but never used  @typescript-eslint/no-unused-vars
+  4:76  warning  'History' is defined but never used     @typescript-eslint/no-unused-vars
+  4:85  warning  'Search' is defined but never used      @typescript-eslint/no-unused-vars
+  4:93  warning  'Filter' is defined but never used      @typescript-eslint/no-unused-vars
 
 /Users/brnestrm/AFO_Kingdom/packages/dashboard/src/components/royal/TrinityGlow.tsx
-  12:51  warning  'isActive' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  12:61  warning  '_isActive' is assigned a value but never used  @typescript-eslint/no-unused-vars
 
 /Users/brnestrm/AFO_Kingdom/packages/dashboard/src/components/royal/widgets/GitWidget.tsx
-  6:32  warning  'GitMerge' is defined but never used  @typescript-eslint/no-unused-vars
-
-/Users/brnestrm/AFO_Kingdom/packages/dashboard/src/components/royal/widgets/SystemStatusWidget.tsx
-  44:29  warning  Unused eslint-disable directive (no problems were reported)
-  57:29  warning  Unused eslint-disable directive (no problems were reported)
-  70:29  warning  Unused eslint-disable directive (no problems were reported)
+  6:32  warning  'GitPullRequest' is defined but never used  @typescript-eslint/no-unused-vars
+  6:48  warning  'Activity' is defined but never used        @typescript-eslint/no-unused-vars
+  6:58  warning  'Calendar' is defined but never used        @typescript-eslint/no-unused-vars
 
 /Users/brnestrm/AFO_Kingdom/packages/dashboard/src/components/wallet/BrowserAuthModal.tsx
-  13:10  warning  'step' is assigned a value but never used     @typescript-eslint/no-unused-vars
-  13:16  warning  'setStep' is assigned a value but never used  @typescript-eslint/no-unused-vars
-  51:14  warning  'err' is defined but never used               @typescript-eslint/no-unused-vars
+  50:14  warning  '_err' is defined but never used  @typescript-eslint/no-unused-vars
 
-/Users/brnestrm/AFO_Kingdom/packages/dashboard/src/hooks/useSpatialAudio.ts
-  6:11  warning  'SpatialAudioOptions' is defined but never used  @typescript-eslint/no-unused-vars
-
-/Users/brnestrm/AFO_Kingdom/packages/dashboard/src/lib/api-client.ts
-  11:15  warning  'ApiResponse' is defined but never used  @typescript-eslint/no-unused-vars
-
-✖ 77 problems (0 errors, 77 warnings)
-  0 errors and 4 warnings potentially fixable with the `--fix` option.
+✖ 81 problems (1 error, 80 warnings)
+  0 errors and 1 warning potentially fixable with the `--fix` option.
 

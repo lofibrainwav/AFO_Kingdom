@@ -783,7 +783,7 @@ class LLMRouter:
                 raise ValueError(f"설정되지 않은 provider: {fallback_provider}")
 
             # 간단한 fallback 호출
-            response = f"[Fallback {fallback_provider.value}] {query}에 대한 응답입니다."
+            response = f"[Fallback {fallback_provider.value}] {query}에 대한 응답입니다. Error: {error}"
 
             return {
                 "success": True,
