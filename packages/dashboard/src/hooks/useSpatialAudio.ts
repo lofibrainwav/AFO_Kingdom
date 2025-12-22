@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { logWarn } from '@/lib/logger';
 
-interface SpatialAudioOptions {
+export interface SpatialAudioOptions {
   trinityUp?: boolean;  // Bright chime from above
   riskUp?: boolean;     // Low rumble from behind
 }
@@ -59,8 +59,8 @@ export function useSpatialAudio() {
       // Play
       oscillator.start(ctx.currentTime);
       oscillator.stop(ctx.currentTime + 0.5);
-    } catch (e) {
-      logWarn('Spatial audio not available', { error: e instanceof Error ? e.message : 'Unknown error' });
+    } catch (err) {
+      logWarn('Spatial audio not available', { error: err instanceof Error ? err.message : 'Unknown error' });
     }
   }, [initAudio]);
 
@@ -94,8 +94,8 @@ export function useSpatialAudio() {
       
       oscillator.start(ctx.currentTime);
       oscillator.stop(ctx.currentTime + 0.8);
-    } catch (e) {
-      logWarn('Spatial audio not available', { error: e instanceof Error ? e.message : 'Unknown error' });
+    } catch (err) {
+      logWarn('Spatial audio not available', { error: err instanceof Error ? err.message : 'Unknown error' });
     }
   }, [initAudio]);
 

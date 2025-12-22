@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 import FamilyMemberCard from '@/components/family/FamilyMemberCard';
 import HappinessChart from '@/components/family/HappinessChart';
 import FamilyTimeline from '@/components/family/FamilyTimeline';
-import CopilotTerminal from '@/components/copilot/CopilotTerminal';
 import { Sparkles, RefreshCw } from 'lucide-react';
 import { logError } from '@/lib/logger';
 
@@ -23,8 +22,8 @@ export default function FamilyPage() {
             const data = JSON.parse(event.data);
             const logLine = `[${new Date().toLocaleTimeString()}] ${data.agent || 'SYSTEM'}: ${data.message || 'Processing...'}`;
             setMemories((prev) => [logLine, ...prev].slice(0, 50)); // Keep last 50 lines
-        } catch (e) {
-            logError("SSE Parse Error", { error: e instanceof Error ? e.message : 'Unknown error' });
+        } catch (err) {
+            logError("SSE Parse Error", { error: err instanceof Error ? err.message : 'Unknown error' });
         }
     };
     eventSource.onerror = (err) => {
@@ -70,8 +69,8 @@ export default function FamilyPage() {
         ];
         setTimeline(mockTimeline);
 
-    } catch (e) {
-        logError("Failed to fetch family data", { error: e instanceof Error ? e.message : 'Unknown error' });
+    } catch (err) {
+        logError("Failed to fetch family data", { error: err instanceof Error ? err.message : 'Unknown error' });
     } finally {
         setLoading(false);
     }

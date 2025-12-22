@@ -168,7 +168,7 @@ export default function ChancellorView() {
     // Simple console log for now, can be replaced with actual Audio() calls
     if (score >= 0.9) logInfo("🔔 [Audio] Playing: Clear Bell (Trinity Rise)");
     else if (score < 0.5) logInfo("⚠️ [Audio] Playing: Low Hum (Risk Rise)");
-  }, [health?.trinity?.trinity_score]);
+  }, [health?.trinity]);
 
   return (
     <div className="w-full max-w-4xl mx-auto p-4 space-y-6">

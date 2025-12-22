@@ -8,7 +8,13 @@
  * 孝 (Serenity): Zero Friction - 사용하기 쉬운 API
  */
 
-import type { ApiResponse, ApiClientOptions } from '@/types/common';
+import type { ApiClientOptions } from '@/types/common';
+
+export interface ApiResponse<T = any> {
+  data: T;
+  message?: string;
+  statusCode: number;
+}
 
 const DEFAULT_OPTIONS: Required<ApiClientOptions> = {
   timeout: 30000, // 30초

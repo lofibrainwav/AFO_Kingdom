@@ -4,8 +4,6 @@ import { useEffect, useState, useCallback } from 'react';
 import { TrinityGlowCard } from './TrinityGlowCard';
 import { VoiceReactivePanel } from './VoiceReactivePanel';
 
-import { SandboxCanvas } from './genui/SandboxCanvas';
-import { AICPAJulieWidget } from './genui/AICPAJulieWidget';
 import { SSOTMonitor } from './genui/SSOTMonitor';
 import { JulieCPAWidget } from './genui/JulieCPAWidget';
 import { JulieTaxWidget } from './genui/JulieTaxWidget';
@@ -14,7 +12,7 @@ import { FinalEternalVictoryWidget } from './genui/FinalEternalVictoryWidget';
 import AutomatedDebuggingStreamWidget from './genui/AutomatedDebuggingStreamWidget';
 import RoyalAnalyticsWidget from './genui/RoyalAnalyticsWidget';
 import { useSpatialAudio } from '../hooks/useSpatialAudio';
-import { logWarn, logError } from '@/lib/logger';
+import { logWarn } from '@/lib/logger';
 
 interface PantheonState {
   trinityScore: number | null;
@@ -32,27 +30,23 @@ interface PantheonState {
   };
 }
 
-// ... (omitted)
-
 export function AFOPantheon() {
   const [state, setState] = useState<PantheonState>({
-    trinityScore: null,      // ✅ Unknown until fetched (no more fake 100%)
+    trinityScore: null,
     riskScore: null,
-    healthStatus: 'loading', // ✅ Shows loading state until verified
-    servicesOnline: 0,       // ✅ Zero until backend confirms
+    healthStatus: 'loading',
+    servicesOnline: 0,
     totalServices: 0,
     lastUpdate: new Date().toISOString(),
   });
 
-  const [showVoicePanel, setShowVoicePanel] = useState(false);
-  const [showCreativeCanvas, setShowCreativeCanvas] = useState(false);
-  const [alerts, setAlerts] = useState<string[]>([]);
+  const [showVoicePanel] = useState(false);
+  const [alerts] = useState<string[]>([]);
   const [thoughts, setThoughts] = useState<string[]>([]);
   const [isMatrixActive, setIsMatrixActive] = useState(false);
 
-  const { playTrinityUp, playRiskUp, initAudio } = useSpatialAudio();
+  const { playTrinityUp: _playTrinityUp, playRiskUp: _playRiskUp, initAudio: _initAudio } = useSpatialAudio();
 
-  // Helper function for status color class
   const getStatusColorClass = () => {
     switch (state.healthStatus) {
       case 'excellent': return 'text-green-500 border-green-500 shadow-green-500/20';
@@ -63,7 +57,6 @@ export function AFOPantheon() {
     }
   };
 
-  // Matrix Stream Connection (SSE)
   useEffect(() => {
     const eventSource = new EventSource('/api/mcp/thoughts/sse');
 
@@ -78,11 +71,11 @@ export function AFOPantheon() {
         if (thoughtData.content) thoughtText += thoughtData.content;
         else thoughtText += JSON.stringify(thoughtData).slice(0, 100);
 
-        setThoughts(prev => [thoughtText, ...prev].slice(0, 50)); // Keep last 50
+        setThoughts(prev => [thoughtText, ...prev].slice(0, 50));
         setIsMatrixActive(true);
-        setTimeout(() => setIsMatrixActive(false), 2000); // Blink effect
-      } catch (e) {
-        logWarn('Matrix Parse Error', { error: e instanceof Error ? e.message : 'Unknown error' });
+        setTimeout(() => setIsMatrixActive(false), 2000);
+      } catch (err) {
+        logWarn('Matrix Parse Error', { error: err instanceof Error ? err.message : 'Unknown error' });
       }
     };
 
@@ -96,10 +89,9 @@ export function AFOPantheon() {
     };
   }, []);
 
-  // Fetch system state periodically from SSOT
   const fetchState = useCallback(async () => {
     try {
-      const res = await fetch('/api/ssot-status'); // SSOT: Single Source of Truth
+      const res = await fetch('/api/ssot-status');
       if (res.ok) {
         const data = await res.json();
 
@@ -111,38 +103,36 @@ export function AFOPantheon() {
           servicesOnline: data.services?.online ?? prev.servicesOnline,
           totalServices: data.services?.total ?? prev.totalServices,
           breakdown: {
-              truth: data.trinity?.truth ?? null,       // No fake fallback
-              goodness: data.trinity?.goodness ?? null, // No fake fallback
-              beauty: data.trinity?.beauty ?? null,     // No fake fallback
-              filial_serenity: data.trinity?.serenity ?? null, // No fake fallback
-              eternity: data.trinity?.eternity ?? null, // No fake fallback - 永 real value
+              truth: data.trinity?.truth ?? null,
+              goodness: data.trinity?.goodness ?? null,
+              beauty: data.trinity?.beauty ?? null,
+              filial_serenity: data.trinity?.serenity ?? null,
+              eternity: data.trinity?.eternity ?? null,
           },
           lastUpdate: data.timestamp ?? new Date().toISOString(),
         }));
       }
-    } catch (e) {
-      logWarn('SSOT fetch failed', { error: e instanceof Error ? e.message : 'Unknown error' });
+    } catch (err) {
+      logWarn('SSOT fetch failed', { error: err instanceof Error ? err.message : 'Unknown error' });
     }
   }, []);
 
-  // Initial fetch on mount
   useEffect(() => {
-    fetchState(); // eslint-disable-line react-hooks/set-state-in-effect
-    const interval = setInterval(fetchState, 15000); // Refresh every 15s
+    const initFetch = async () => {
+      await fetchState();
+    };
+    initFetch();
+    const interval = setInterval(fetchState, 15000);
     return () => clearInterval(interval);
   }, [fetchState]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 to-slate-900 p-8">
-      {/* Header */}
       <h1 className="text-white text-center text-3xl mb-8 font-sans">
         🏰 AFO Pantheon - Command Center
       </h1>
 
-      {/* Main Container - Vertical Stack of Sections */}
       <div className="max-w-[1600px] mx-auto space-y-12">
-        
-        {/* Section 1: Command Center (Vitals) */}
         <section>
             <h2 className="text-white/50 text-sm font-bold uppercase tracking-widest mb-4 border-b border-white/10 pb-2">
                 🏛️ Command Center
@@ -194,7 +184,7 @@ export function AFOPantheon() {
                     </div>
                   ) : (
                     <div className="flex-1 overflow-auto max-h-[120px] pr-2 scrollbar-thin scrollbar-thumb-white/20">
-                      {alerts.slice(-5).map((alert, i) => (
+                      {alerts.slice(-5).map((alert: string, i: number) => (
                         <div key={i} className="p-2 mb-2 bg-red-500/10 border-l-2 border-red-500 text-red-300 text-xs">
                           {alert}
                         </div>
@@ -205,18 +195,15 @@ export function AFOPantheon() {
             </div>
         </section>
 
-        {/* Section 2: Operational Intelligence (Eyes & Soul) */}
         <section>
             <h2 className="text-white/50 text-sm font-bold uppercase tracking-widest mb-4 border-b border-white/10 pb-2">
                 👁️ Intelligence Layer
             </h2>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                 {/* SSOT Monitor */}
                  <div className="lg:col-span-1">
                     <SSOTMonitor />
                  </div>
                  
-                 {/* Matrix Stream */}
                  <div 
                    className="lg:col-span-2 p-6 bg-black/80 rounded-2xl transition-all duration-300"
                    style={{
@@ -234,7 +221,7 @@ export function AFOPantheon() {
                       {thoughts.length === 0 ? (
                          <div className="text-green-900/50 italic p-4 text-center">Waiting for neural signals...</div>
                       ) : (
-                         thoughts.map((t, i) => (
+                         thoughts.map((t: string, i: number) => (
                            <div key={i} className="py-1 border-b border-green-500/10 leading-relaxed hover:bg-green-500/5 px-2">
                              {t}
                            </div>
@@ -244,55 +231,46 @@ export function AFOPantheon() {
                  </div>
             </div>
             
-            {/* Auto Debugging Stream (Full Width) */}
             <div className="mt-6">
                 <AutomatedDebuggingStreamWidget />
             </div>
         </section>
 
-        {/* Section 3: Royal Finance (Goodness) */}
         <section>
             <h2 className="text-white/50 text-sm font-bold uppercase tracking-widest mb-4 border-b border-white/10 pb-2">
                 💰 Royal Finance (Goodness)
             </h2>
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 items-start">
-                 {/* Julie CPA Widget */}
                  <div className="w-full">
                      <JulieCPAWidget />
                  </div>
                  
-                 {/* Tax Calculator */}
                  <div className="w-full">
                      <JulieTaxWidget /> 
                  </div>
             </div>
         </section>
 
-        {/* Section 4: Evolution & Creation (Serenity/Eternity) */}
         <section>
             <h2 className="text-white/50 text-sm font-bold uppercase tracking-widest mb-4 border-b border-white/10 pb-2">
                 🌌 Evolution Engine (Serenity)
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                 {/* Genesis Controller */}
                  <div className="w-full">
                     <GenesisWidget />
                  </div>
                  
-                 {/* Royal Analytics (Output) */}
                  <div className="w-full">
                     <RoyalAnalyticsWidget />
                  </div>
             </div>
         </section>
         
-        {/* Section 5: The Seal */}
         <section className="flex justify-center pb-20 pt-10 opacity-80 hover:opacity-100 transition-opacity">
              <FinalEternalVictoryWidget />
         </section>
       </div>
 
-      {/* Voice Panel Overlay */}
       {showVoicePanel && (
         <div className="fixed bottom-8 right-8 z-[100] bg-black/90 rounded-2xl border border-white/20 shadow-2xl">
           <VoiceReactivePanel baseTrinityScore={state.trinityScore ?? undefined} baseRiskScore={state.riskScore ?? undefined} />

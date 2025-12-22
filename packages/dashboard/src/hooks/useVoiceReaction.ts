@@ -80,8 +80,8 @@ export function useVoiceReaction() {
       };
       
       analyze();
-    } catch (e) {
-      logError('Microphone access denied', { error: e instanceof Error ? e.message : 'Unknown error' });
+    } catch (err) {
+      logError('Microphone access denied', { error: err instanceof Error ? err.message : 'Unknown error' });
     }
   }, []);
 

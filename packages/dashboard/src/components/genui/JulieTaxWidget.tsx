@@ -1,17 +1,11 @@
 "use client";
 
-import React, { useState, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import useSound from 'use-sound';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { TrendingDown, ShieldCheck, DollarSign, Calculator } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-
-// Shadcn UI (using div placeholders if specialized components not yet generated, 
-// but we have primitives from 'package.json' check earlier)
-// Simulating the Slider/Progress using standard HTML for speed/robustness in Phase 1
-// or simplified custom UI components.
+import { Calculator, ShieldCheck, TrendingDown } from "lucide-react";
 
 export const JulieTaxWidget = () => {
     const [income, setIncome] = useState(150000); // Gross Income
@@ -21,18 +15,17 @@ export const JulieTaxWidget = () => {
     const [taxData, setTaxData] = useState<any>({
         totalTax: 0, 
         netIncome: 150000, 
-        effective_rate: 0, // Note: Python returns snake_case
+        effective_rate: 0, 
         risk_level: 'neutral',
         fed_tax: 0,
         ca_tax: 0,
         standard_deduction: 0
     });
 
-    // Debounced API Call to avoid spamming the "Royal Advisor"
-    React.useEffect(() => {
+    // Debounced API Call
+    useEffect(() => {
         const fetchTaxTruth = async () => {
             try {
-                // Determine API Base URL (Environment aware)
                 const apiBase = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8010'; 
                 
                 const res = await fetch(`${apiBase}/api/julie/calculate-tax`, {
@@ -50,7 +43,7 @@ export const JulieTaxWidget = () => {
             }
         };
 
-        const timer = setTimeout(fetchTaxTruth, 300); // 300ms Debounce
+        const timer = setTimeout(fetchTaxTruth, 300); 
         return () => clearTimeout(timer);
     }, [income, filingStatus]);
 

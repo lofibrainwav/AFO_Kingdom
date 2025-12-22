@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Brain, Share2, Sparkles, Database, Network } from 'lucide-react';
+import { Search, Brain, Share2, Sparkles, Network } from 'lucide-react';
 
 interface GraphContext {
   source: string;

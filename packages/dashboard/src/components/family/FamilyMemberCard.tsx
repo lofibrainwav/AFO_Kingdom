@@ -1,5 +1,5 @@
 import React from 'react';
-import { User, Shield, Heart, Zap } from 'lucide-react';
+import { User, Heart } from 'lucide-react';
 
 interface FamilyMemberProps {
   name: string;

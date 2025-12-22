@@ -9,7 +9,7 @@ interface TrinityGlowProps {
   isActive?: boolean;
 }
 
-export default function TrinityGlow({ score = 85, isActive = false }: TrinityGlowProps) {
+export default function TrinityGlow({ score = 85, isActive: _isActive = false }: TrinityGlowProps) {
   const [audioLevel, setAudioLevel] = useState(0);
   const [initialized, setInitialized] = useState(false);
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -51,8 +51,8 @@ export default function TrinityGlow({ score = 85, isActive = false }: TrinityGlo
         await audioContextRef.current.resume();
         setInitialized(true);
       }
-    } catch (e) {
-      console.error("Audio initialization failed (Mic permission denied?):", e);
+    } catch (err) {
+      console.error("Audio initialization failed (Mic permission denied?):", err);
       // Fallback: simulate breathing if audio fails
       setInitialized(true); 
     }

@@ -10,7 +10,7 @@ async function runCmd(cmd: string, cwd: string): Promise<string> {
   try {
     const { stdout } = await execAsync(cmd, { cwd });
     return stdout.trim();
-  } catch (e) {
+  } catch {
     return '';
   }
 }
@@ -42,8 +42,8 @@ export async function GET() {
         eternity: scores.eternity || 1.0,
       };
     }
-  } catch (e) {
-    console.error('Failed to read trinity score:', e);
+  } catch {
+    // Failed to read trinity score, using defaults
   }
 
   // Tracked files

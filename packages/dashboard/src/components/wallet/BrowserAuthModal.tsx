@@ -10,7 +10,6 @@ interface BrowserAuthModalProps {
 
 export default function BrowserAuthModal({ isOpen, onClose, onSuccess }: BrowserAuthModalProps) {
   const [service, setService] = useState('openai');
-  const [step, setStep] = useState(1);
   const [token, setToken] = useState('');
   const [loading, setLoading] = useState(false);
   const [extractionScript, setExtractionScript] = useState('');
@@ -48,7 +47,7 @@ export default function BrowserAuthModal({ isOpen, onClose, onSuccess }: Browser
       
       onSuccess();
       onClose();
-    } catch (err) {
+    } catch {
       alert('Failed to save session token');
     } finally {
       setLoading(false);
@@ -89,6 +88,7 @@ export default function BrowserAuthModal({ isOpen, onClose, onSuccess }: Browser
                 value={service} 
                 onChange={(e) => setService(e.target.value)}
                 className="w-full bg-black border border-gray-700 rounded p-2 text-white"
+                aria-label="Select Service"
               >
                 <option value="openai">OpenAI (ChatGPT)</option>
                 <option value="anthropic">Anthropic (Claude)</option>

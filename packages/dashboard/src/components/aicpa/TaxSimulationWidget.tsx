@@ -14,7 +14,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   Calculator,
-  DollarSign,
   TrendingUp,
   AlertTriangle,
   CheckCircle,
@@ -76,9 +75,9 @@ export const TaxSimulationWidget: React.FC = () => {
 
       const data = await response.json();
       setResult(data.simulation);
-    } catch (e) {
+    } catch (err) {
       setError('연결 실패 - 서버 상태를 확인하세요');
-      logError('[TaxSim] Error', { error: e instanceof Error ? e.message : 'Unknown error' });
+      logError('Tax simulation failed', { error: err instanceof Error ? err.message : 'Unknown error' });
     } finally {
       setLoading(false);
     }
@@ -87,7 +86,7 @@ export const TaxSimulationWidget: React.FC = () => {
   // Auto-simulate on mount
   useEffect(() => {
     simulateTax();
-  }, []);
+    }, [simulateTax]); // Added simulateTax dependency
 
   // Format currency
   const formatCurrency = (value: number) => {

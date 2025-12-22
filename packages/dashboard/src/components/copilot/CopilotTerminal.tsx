@@ -40,7 +40,7 @@ const CopilotTerminal: React.FC = () => {
                 // Keep only last 100 logs to prevent memory leak
                 return newLogs.slice(-100);
             });
-        } catch (e) {
+        } catch {
             logError('Failed to parse stream message', { data: event.data });
         }
     };

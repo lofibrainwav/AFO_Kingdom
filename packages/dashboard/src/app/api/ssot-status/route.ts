@@ -10,7 +10,7 @@ async function runCmd(cmd: string, cwd: string): Promise<string> {
   try {
     const { stdout } = await execAsync(cmd, { cwd });
     return stdout.trim();
-  } catch (e) {
+  } catch {
     return '';
   }
 }
@@ -26,8 +26,8 @@ export async function GET() {
       const data = JSON.parse(fs.readFileSync(trinityPath, 'utf-8'));
       trinity = data?.trinity?.scores || trinity;
     }
-  } catch (e) {
-    console.error('Failed to read trinity_score.json:', e);
+  } catch {
+    // Failed to read trinity_score.json, using defaults
   }
 
   // Calculate overall Trinity score (SSOT weights)

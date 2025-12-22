@@ -1,7 +1,7 @@
 // app/(dashboard)/components/AgentLearningTimeline.tsx (성능 최적화 완성 버전)
 'use client';
 
-import { useEffect, useState, useCallback, memo } from 'react';
+import { useEffect, useState, memo } from 'react';
 import { Bot, Swords, Palette, Search, X, Sparkles } from 'lucide-react';
 import { logError } from '@/lib/logger';
 
@@ -44,8 +44,8 @@ const AgentLearningTimeline = memo(function AgentLearningTimeline() {
           const updated = [newLog, ...prev.filter(l => l.id !== newLog.id)];
           return updated.slice(0, LOG_LIMIT);
         });
-      } catch (e) {
-        logError("Failed to parse log", { error: e instanceof Error ? e.message : 'Unknown error' });
+      } catch (err) {
+        logError("Failed to parse log", { error: err instanceof Error ? err.message : 'Unknown error' });
       }
     };
 

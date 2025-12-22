@@ -82,9 +82,9 @@ export const AICPAControlPanel: React.FC = () => {
 
       const data = await response.json();
       setResult(data);
-    } catch (e) {
+    } catch (err) {
       setError('에이전트 연결 실패 - 서버 상태를 확인하세요');
-      logError('[AICPA] Error', { error: e instanceof Error ? e.message : 'Unknown error' });
+      logError('[AICPA] Error', { error: err instanceof Error ? err.message : 'Unknown error' });
     } finally {
       setLoading(false);
     }
@@ -305,7 +305,7 @@ const FileCard = ({
   icon,
   title,
   format,
-  path,
+  path: _path,
   hasPreview,
   content
 }: {

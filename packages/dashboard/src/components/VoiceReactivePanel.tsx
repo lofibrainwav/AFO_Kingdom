@@ -43,19 +43,22 @@ export function VoiceReactivePanel({
     
     const { trinityDelta, riskDelta } = getScoreAdjustments();
     
-    setTrinityScore(prev => { // eslint-disable-line react-hooks/set-state-in-effect
-      const newScore = Math.min(1.0, Math.max(0.0, prev + trinityDelta));
-      // Play audio on significant increase
-      if (newScore > prev + 0.03) playTrinityUp();
-      return newScore;
-    });
-    
-    setRiskScore(prev => { // eslint-disable-line react-hooks/set-state-in-effect
-      const newScore = Math.min(1.0, Math.max(0.0, prev + riskDelta));
-      // Play warning on risk increase
-      if (newScore > 0.25 && riskDelta > 0) playRiskUp();
-      return newScore;
-    });
+    // Use setTimeout to avoid synchronous setState in effect
+    setTimeout(() => {
+      setTrinityScore(prev => {
+        const newScore = Math.min(1.0, Math.max(0.0, prev + trinityDelta));
+        // Play audio on significant increase
+        if (newScore > prev + 0.03) playTrinityUp();
+        return newScore;
+      });
+      
+      setRiskScore(prev => {
+        const newScore = Math.min(1.0, Math.max(0.0, prev + riskDelta));
+        // Play warning on risk increase
+        if (newScore > 0.25 && riskDelta > 0) playRiskUp();
+        return newScore;
+      });
+    }, 0);
   }, [metrics, isListening, getScoreAdjustments, playTrinityUp, playRiskUp]);
 
   const handleToggleListening = () => {

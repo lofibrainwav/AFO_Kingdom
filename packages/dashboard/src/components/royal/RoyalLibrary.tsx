@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { BadgeCheck, Lock, Users, FileText, Server } from 'lucide-react';
+import { Lock, Users, Server } from "lucide-react";
 import { ROYAL_PERSONAS, ROYAL_LOCKS, SERVICE_PORTS } from '../../config/royal_constants';
 import { ROYAL_RULES } from '../../data/royal_rules';
 

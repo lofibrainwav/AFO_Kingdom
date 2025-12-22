@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { Mic, MicOff, Volume2, Loader2 } from 'lucide-react';
+import { Mic, MicOff, Volume2 } from 'lucide-react';
 import { logError } from '@/lib/logger';
 
 interface VoiceCommandWidgetProps {

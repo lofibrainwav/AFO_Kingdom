@@ -27,8 +27,8 @@ export default function GrokRealtimeStreamWidget() {
         const newMsg: StreamMessage = JSON.parse(event.data);
          // Keep only the latest 30 messages to avoid clutter (Beauty)
         setMessages(prev => [newMsg, ...prev].slice(0, 30));
-      } catch (e) {
-        logError("Stream parse error", { error: e instanceof Error ? e.message : 'Unknown error' });
+      } catch (err) {
+        logError("Stream parse error", { error: err instanceof Error ? err.message : 'Unknown error' });
       }
     };
 
