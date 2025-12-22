@@ -52,14 +52,21 @@ def _import_chancellor_graph() -> None:
         if str(_CORE_ROOT) not in sys.path:
             sys.path.insert(0, str(_CORE_ROOT))
 
+        from chancellor_graph import ChancellorState as _CS  # Import State Definition
         from chancellor_graph import build_chancellor_graph as _bcg
         from chancellor_graph import chancellor_graph as _cg
 
         build_chancellor_graph = _bcg
         chancellor_graph = _cg
+        ChancellorState = _CS
     except ImportError as e:
         print(f"⚠️  Chancellor Graph import 실패: {e}")
         _chancellor_import_error = str(e)
+
+        class MockState(dict):
+            pass
+
+        ChancellorState = MockState
 
 
 _import_chancellor_graph()
@@ -269,8 +276,10 @@ async def _execute_with_fallback(
         except ImportError:
             try:
                 from AFO.llm_router import (
-                    llm_router as _router,  # type: ignore[assignment]  # type: ignore[assignment]
+                    llm_router as _afol_router,  # type: ignore[assignment]
                 )
+
+                _router = _afol_router
             except ImportError as e:
                 logger.error("llm_router import 실패: %s", str(e))
                 raise RuntimeError(f"llm_router import failed: {e}") from e
@@ -393,7 +402,7 @@ async def _execute_full_mode(
     antigravity = get_antigravity_control()
     effective_auto_run = request.auto_run and not (antigravity and antigravity.DRY_RUN_DEFAULT)
 
-    initial_state = {
+    initial_state_dict = {
         "query": request.query,
         "messages": [],
         "summary": "",
@@ -417,9 +426,19 @@ async def _execute_full_mode(
         "actions": [],
     }
 
+    # Cast to ChancellorState (TypedDict) for MyPy compliance
+    from typing import cast
+
+    # We need to ensure ChancellorState is available in this scope or imported globally
+    if "ChancellorState" in globals():
+        initial_state = cast("ChancellorState", initial_state_dict)  # type: ignore
+    else:
+        initial_state = initial_state_dict  # type: ignore
+
     from langchain_core.messages import HumanMessage
 
-    initial_state["messages"].append(HumanMessage(content=request.query))
+    # We can modify the dict because TypedDict is a dict at runtime
+    cast("list", initial_state["messages"]).append(HumanMessage(content=request.query))
 
     config = {"configurable": {"thread_id": request.thread_id}}
 

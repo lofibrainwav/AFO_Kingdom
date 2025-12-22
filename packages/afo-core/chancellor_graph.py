@@ -371,11 +371,13 @@ graph.add_edge("historian", END)
 # Use AsyncRedisSaver for production persistence (Eternity 永)
 # Fallback to MemorySaver only if Redis is unavailable
 try:
+    from langgraph.checkpoint.base import BaseCheckpointSaver
+
     from AFO.utils.cache_utils import cache
     from AFO.utils.redis_saver import AsyncRedisSaver
 
     if cache.enabled:
-        checkpointer = AsyncRedisSaver()
+        checkpointer: BaseCheckpointSaver = AsyncRedisSaver()
         log_sse("✅ [Eternity] AsyncRedisSaver Active - Memories are Eternal.")
     else:
         from langgraph.checkpoint.memory import MemorySaver

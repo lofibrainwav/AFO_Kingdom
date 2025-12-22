@@ -285,6 +285,14 @@ class LLMRouter:
 
             # 1. Ollama 우선 선택 (내부 지력)
             if self._is_ollama_available():
+                # Filter strictly to configured providers (Goodness: Integrity)
+                fallback_candidates = [
+                    LLMProvider.GEMINI,
+                    LLMProvider.ANTHROPIC,
+                    LLMProvider.OPENAI,
+                ]
+                valid_fallbacks = [p for p in fallback_candidates if p in self.llm_configs]
+
                 decision = RoutingDecision(
                     selected_provider=LLMProvider.OLLAMA,
                     selected_model="qwen3-vl:8b",
@@ -292,11 +300,7 @@ class LLMRouter:
                     confidence=0.9,
                     estimated_cost=0.0,
                     estimated_latency=500,
-                    fallback_providers=[
-                        LLMProvider.GEMINI,
-                        LLMProvider.ANTHROPIC,
-                        LLMProvider.OPENAI,
-                    ],
+                    fallback_providers=valid_fallbacks,
                 )
 
                 # 품질 요구사항이 ULTRA인 경우 API LLM으로 업그레이드

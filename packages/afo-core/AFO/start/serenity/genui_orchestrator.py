@@ -50,12 +50,17 @@ class GenUIOrchestrator:
 
         if result["success"]:
             content = result["response"]
-            # Extract code block
-            if "```tsx" in content:
-                content = content.split("```tsx")[1].split("```")[0].strip()
-            elif "```" in content:
-                content = content.split("```")[1].split("```")[0].strip()
-            return content
+            try:
+                # Extract code block
+                if "```tsx" in content:
+                    content = content.split("```tsx")[1].split("```")[0].strip()
+                elif "```" in content:
+                    content = content.split("```")[1].split("```")[0].strip()
+                return content
+            except Exception as e:
+                # Mock generation as fallback
+                logger.warning(f"GenUI LLM Failed: {e}. Using mockup.")
+                return str(self._mock_generation(vibe_prompt))  # Fallback to mock
         else:
             logger.error(f"GenUI Generation Failed: {result.get('error')}")
             return self._mock_generation(vibe_prompt)  # Fallback to mock
@@ -168,3 +173,15 @@ export const GenComponent = () => (
             "trinity_score": review.score,
             "vibe": vibe_prompt,
         }
+
+    def _save_component(self, schema: ComponentSchema) -> str:
+        """
+        Saves the component to the filesystem (Eternity).
+        """
+        filename = f"{schema.name}.tsx"
+        file_path = os.path.join(self.output_dir, filename)
+
+        with open(file_path, "w") as f:
+            f.write(schema.code)
+
+        return file_path

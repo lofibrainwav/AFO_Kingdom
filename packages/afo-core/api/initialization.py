@@ -25,7 +25,9 @@ OPENAI_CLIENT = None
 CLAUDE_CLIENT = None
 
 # Neural event queue
-neural_event_queue = asyncio.Queue()
+from typing import Any
+
+neural_event_queue: asyncio.Queue[Any] = asyncio.Queue()
 
 
 async def initialize_system() -> None:
@@ -137,7 +139,7 @@ async def _initialize_multimodal_rag() -> None:
     try:
         from multimodal_rag_cache import set_redis_client as _src
 
-        if _src and REDIS_CLIENT:
+        if REDIS_CLIENT:
             _src(REDIS_CLIENT)
             print("[Multimodal RAG Cache] 캐시 시스템 초기화 완료 (Redis 통합)")
         else:
