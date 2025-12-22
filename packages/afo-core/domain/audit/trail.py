@@ -54,9 +54,24 @@ class AuditTrail:
     TABLE_NAME = "trinity_audit_trail"
 
     def __init__(self, database_url: str | None = None):
-        self.database_url = database_url or os.getenv(
-            "DATABASE_URL", "postgresql://localhost:5432/afo_kingdom"
-        )
+        if database_url:
+            self.database_url = database_url
+        else:
+            # Try to get from AFO settings, fallback to .env then hardcoded default
+            from AFO.api.compat import get_settings_safe
+            settings = get_settings_safe()
+            
+            if settings:
+                host = getattr(settings, "POSTGRES_HOST", "localhost")
+                port = getattr(settings, "POSTGRES_PORT", 5432)
+                db = getattr(settings, "POSTGRES_DB", "afo_memory")
+                user = getattr(settings, "POSTGRES_USER", "afo")
+                pw = getattr(settings, "POSTGRES_PASSWORD", "")
+                self.database_url = f"postgresql://{user}:{pw}@{host}:{port}/{db}"
+            else:
+                self.database_url = os.getenv(
+                    "DATABASE_URL", "postgresql://afo:afo_secret_change_me@localhost:15432/afo_memory"
+                )
         self._connection = None
         self._records: list[AuditRecord] = []  # In-memory fallback
 
