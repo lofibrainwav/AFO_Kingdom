@@ -1,10 +1,10 @@
-import { NextResponse } from 'next/server';
-import { exec } from 'child_process';
-import { promisify } from 'util';
+import { NextResponse } from "next/server";
+import { exec } from "child_process";
+import { promisify } from "util";
 
 const execAsync = promisify(exec);
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 export const maxDuration = 30;
 
 interface Commit {
@@ -32,48 +32,59 @@ interface GitTreeAnalysis {
 
 function detectPhase(message: string): string {
   const msg = message.toLowerCase();
-  
-  if (['genesis', 'initial', 'setup', 'first', '승상', 'cursor'].some(kw => msg.includes(kw))) {
-    return 'Phase 0: Genesis';
+
+  if (["genesis", "initial", "setup", "first", "승상", "cursor"].some((kw) => msg.includes(kw))) {
+    return "Phase 0: Genesis";
   }
-  if (['awakening', 'phase 1', 'trinity', 'philosophy', 'v1.0'].some(kw => msg.includes(kw))) {
-    return 'Phase 1: Awakening';
+  if (["awakening", "phase 1", "trinity", "philosophy", "v1.0"].some((kw) => msg.includes(kw))) {
+    return "Phase 1: Awakening";
   }
-  if (['harmony', 'phase 2', 'dashboard', 'cpa', 'family hub', 'v2.0'].some(kw => msg.includes(kw))) {
-    return 'Phase 2: Harmony';
+  if (
+    ["harmony", "phase 2", "dashboard", "cpa", "family hub", "v2.0"].some((kw) => msg.includes(kw))
+  ) {
+    return "Phase 2: Harmony";
   }
-  if (['expansion', 'phase 3', 'self-expanding', 'genui', 'serenity', 'v2.5'].some(kw => msg.includes(kw))) {
-    return 'Phase 3: Expansion';
+  if (
+    ["expansion", "phase 3", "self-expanding", "genui", "serenity", "v2.5"].some((kw) =>
+      msg.includes(kw)
+    )
+  ) {
+    return "Phase 3: Expansion";
   }
-  if (['v100', 'v100.0', 'eternal', 'perfect', 'ascended', 'digital robot'].some(kw => msg.includes(kw))) {
-    return 'Phase 4: Eternal';
+  if (
+    ["v100", "v100.0", "eternal", "perfect", "ascended", "digital robot"].some((kw) =>
+      msg.includes(kw)
+    )
+  ) {
+    return "Phase 4: Eternal";
   }
-  if (['fix', 'bug', 'chore', 'refactor', 'mypy', 'ruff', 'type'].some(kw => msg.includes(kw))) {
-    return 'Maintenance';
+  if (["fix", "bug", "chore", "refactor", "mypy", "ruff", "type"].some((kw) => msg.includes(kw))) {
+    return "Maintenance";
   }
-  if (['feat', 'add', 'implement', 'create'].some(kw => msg.includes(kw))) {
-    return 'Features';
+  if (["feat", "add", "implement", "create"].some((kw) => msg.includes(kw))) {
+    return "Features";
   }
-  return 'Other';
+  return "Other";
 }
 
 export async function GET() {
   try {
     // Git 트리 분석 실행
     // 프로젝트 루트로 이동 (packages/dashboard에서 상위로)
-    const repoRoot = process.cwd().includes('packages/dashboard')
-      ? process.cwd().replace('/packages/dashboard', '')
+    const repoRoot = process.cwd().includes("packages/dashboard")
+      ? process.cwd().replace("/packages/dashboard", "")
       : process.cwd();
-    
-    const { stdout } = await execAsync(
-      'git log --reverse --format="%h|%ad|%an|%s" --date=short',
-      { cwd: repoRoot, timeout: 10000, shell: '/bin/bash' }
-    );
+
+    const { stdout } = await execAsync('git log --reverse --format="%h|%ad|%an|%s" --date=short', {
+      cwd: repoRoot,
+      timeout: 10000,
+      shell: "/bin/bash",
+    });
 
     const commits: Commit[] = [];
-    for (const line of stdout.trim().split('\n')) {
+    for (const line of stdout.trim().split("\n")) {
       if (line) {
-        const parts = line.split('|', 4);
+        const parts = line.split("|", 4);
         if (parts.length === 4) {
           commits.push({
             hash: parts[0],
@@ -119,14 +130,13 @@ export async function GET() {
 
     return NextResponse.json(analysis);
   } catch (error) {
-    console.error('Git tree analysis error:', error);
+    console.error("Git tree analysis error:", error);
     return NextResponse.json(
       {
-        error: 'Failed to analyze git tree',
-        detail: error instanceof Error ? error.message : 'Unknown error',
+        error: "Failed to analyze git tree",
+        detail: error instanceof Error ? error.message : "Unknown error",
       },
       { status: 500 }
     );
   }
 }
-

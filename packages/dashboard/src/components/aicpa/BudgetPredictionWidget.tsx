@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 /**
  * Budget Prediction Widget (Prophet 기반)
@@ -10,7 +10,7 @@
  * 孝 (Serenity): 형님 안심을 위한 명확한 결과
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from "react";
 import {
   TrendingUp,
   AlertTriangle,
@@ -18,9 +18,9 @@ import {
   RefreshCw,
   Sparkles,
   Calendar,
-  Shield
-} from 'lucide-react';
-import { logError } from '@/lib/logger';
+  Shield,
+} from "lucide-react";
+import { logError } from "@/lib/logger";
 
 interface Prediction {
   date: string;
@@ -42,11 +42,11 @@ interface ForecastResult {
   };
   message: string;
   advice: string;
-  kingdom_status: 'healthy' | 'monitoring';
+  kingdom_status: "healthy" | "monitoring";
   last_updated: string;
 }
 
-import { API_BASE_URL } from '@/lib/constants';
+import { API_BASE_URL } from "@/lib/constants";
 const API_BASE = API_BASE_URL;
 
 export const BudgetPredictionWidget: React.FC = () => {
@@ -63,13 +63,15 @@ export const BudgetPredictionWidget: React.FC = () => {
     try {
       const response = await fetch(`${API_BASE}/api/julie/budget/forecast?periods=${periods}`);
 
-      if (!response.ok) throw new Error('API Error');
+      if (!response.ok) throw new Error("API Error");
 
       const data = await response.json();
       setResult(data);
     } catch (err) {
-      setError('예측 실패 - 서버 상태를 확인하세요');
-      logError('Budget prediction failed', { error: err instanceof Error ? err.message : 'Unknown error' });
+      setError("예측 실패 - 서버 상태를 확인하세요");
+      logError("Budget prediction failed", {
+        error: err instanceof Error ? err.message : "Unknown error",
+      });
     } finally {
       setLoading(false);
     }
@@ -78,22 +80,22 @@ export const BudgetPredictionWidget: React.FC = () => {
   // Auto-fetch on mount
   useEffect(() => {
     fetchForecast();
-    }, [fetchForecast]); // Added fetchForecast dependency
+  }, [fetchForecast]); // Added fetchForecast dependency
 
   // Format currency
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
       maximumFractionDigits: 0,
     }).format(value);
   };
 
   // Get confidence color
   const getConfidenceColor = (conf: number) => {
-    if (conf >= 80) return 'text-emerald-400';
-    if (conf >= 60) return 'text-amber-400';
-    return 'text-rose-400';
+    if (conf >= 80) return "text-emerald-400";
+    if (conf >= 60) return "text-amber-400";
+    return "text-rose-400";
   };
 
   // Get bar width for mini chart
@@ -120,7 +122,7 @@ export const BudgetPredictionWidget: React.FC = () => {
             disabled={loading}
             className="p-2 bg-white/10 hover:bg-white/20 rounded-xl transition-colors"
           >
-            <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-5 h-5 ${loading ? "animate-spin" : ""}`} />
           </button>
         </div>
       </div>
@@ -136,8 +138,8 @@ export const BudgetPredictionWidget: React.FC = () => {
                 onClick={() => setPeriods(p)}
                 className={`py-2 px-3 rounded-xl text-sm font-bold transition-all ${
                   periods === p
-                    ? 'bg-emerald-600 text-white'
-                    : 'bg-white/10 text-slate-300 hover:bg-white/20'
+                    ? "bg-emerald-600 text-white"
+                    : "bg-white/10 text-slate-300 hover:bg-white/20"
                 }`}
               >
                 {p}개월
@@ -177,21 +179,27 @@ export const BudgetPredictionWidget: React.FC = () => {
             <div className="bg-gradient-to-r from-emerald-600/20 to-teal-600/20 rounded-2xl p-6 border border-emerald-500/30">
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <div className="text-sm text-emerald-300 mb-1">향후 {result.periods}개월 예상 지출</div>
-                  <div className="text-4xl font-black text-white">{formatCurrency(result.summary.total)}</div>
+                  <div className="text-sm text-emerald-300 mb-1">
+                    향후 {result.periods}개월 예상 지출
+                  </div>
+                  <div className="text-4xl font-black text-white">
+                    {formatCurrency(result.summary.total)}
+                  </div>
                 </div>
-                <div className={`flex items-center gap-2 px-3 py-1 rounded-lg ${
-                  result.kingdom_status === 'healthy'
-                    ? 'bg-emerald-500/20 text-emerald-400'
-                    : 'bg-amber-500/20 text-amber-400'
-                }`}>
-                  {result.kingdom_status === 'healthy' ? (
+                <div
+                  className={`flex items-center gap-2 px-3 py-1 rounded-lg ${
+                    result.kingdom_status === "healthy"
+                      ? "bg-emerald-500/20 text-emerald-400"
+                      : "bg-amber-500/20 text-amber-400"
+                  }`}
+                >
+                  {result.kingdom_status === "healthy" ? (
                     <CheckCircle className="w-4 h-4" />
                   ) : (
                     <AlertTriangle className="w-4 h-4" />
                   )}
                   <span className="text-sm font-bold">
-                    {result.kingdom_status === 'healthy' ? 'Healthy' : 'Monitoring'}
+                    {result.kingdom_status === "healthy" ? "Healthy" : "Monitoring"}
                   </span>
                 </div>
               </div>
@@ -199,11 +207,15 @@ export const BudgetPredictionWidget: React.FC = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-black/20 rounded-xl p-3">
                   <div className="text-xs text-slate-400 uppercase">월 평균</div>
-                  <div className="text-lg font-bold text-white">{formatCurrency(result.summary.average)}</div>
+                  <div className="text-lg font-bold text-white">
+                    {formatCurrency(result.summary.average)}
+                  </div>
                 </div>
                 <div className="bg-black/20 rounded-xl p-3">
                   <div className="text-xs text-slate-400 uppercase">신뢰도</div>
-                  <div className={`text-lg font-bold ${getConfidenceColor(result.summary.confidence)}`}>
+                  <div
+                    className={`text-lg font-bold ${getConfidenceColor(result.summary.confidence)}`}
+                  >
                     {result.summary.confidence.toFixed(0)}%
                   </div>
                 </div>
@@ -220,12 +232,14 @@ export const BudgetPredictionWidget: React.FC = () => {
 
               <div className="space-y-3">
                 {result.predictions.map((pred) => {
-                  const maxValue = Math.max(...result.predictions.map(p => p.upper));
+                  const maxValue = Math.max(...result.predictions.map((p) => p.upper));
                   return (
                     <div key={pred.month} className="space-y-1">
                       <div className="flex justify-between text-sm">
                         <span className="text-slate-400">{pred.month}</span>
-                        <span className="text-white font-bold">{formatCurrency(pred.predicted)}</span>
+                        <span className="text-white font-bold">
+                          {formatCurrency(pred.predicted)}
+                        </span>
                       </div>
                       <div className="h-3 bg-slate-700 rounded-full overflow-hidden relative">
                         {/* Lower bound */}

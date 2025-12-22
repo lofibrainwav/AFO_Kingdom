@@ -12,7 +12,7 @@ export interface ApiResponse<T = unknown> {
 }
 
 // 로딩 상태
-export type LoadingState = 'idle' | 'loading' | 'success' | 'error';
+export type LoadingState = "idle" | "loading" | "success" | "error";
 
 // 에러 상태
 export interface ErrorState {
@@ -32,18 +32,18 @@ export interface TrinityScore {
 }
 
 // Health Status 타입
-export type HealthStatus = 'excellent' | 'good' | 'warning' | 'critical' | 'loading';
+export type HealthStatus = "excellent" | "good" | "warning" | "critical" | "loading";
 
 // Phase 타입
-export type Phase = 
-  | 'Phase 0: Genesis'
-  | 'Phase 1: Awakening'
-  | 'Phase 2: Harmony'
-  | 'Phase 3: Expansion'
-  | 'Phase 4: Eternal'
-  | 'Maintenance'
-  | 'Features'
-  | 'Other';
+export type Phase =
+  | "Phase 0: Genesis"
+  | "Phase 1: Awakening"
+  | "Phase 2: Harmony"
+  | "Phase 3: Expansion"
+  | "Phase 4: Eternal"
+  | "Maintenance"
+  | "Features"
+  | "Other";
 
 // Git Commit 타입
 export interface GitCommit {
@@ -96,7 +96,7 @@ export interface CardProps extends BaseComponentProps {
 
 // 로딩 컴포넌트 Props
 export interface LoadingProps extends BaseComponentProps {
-  size?: 'sm' | 'md' | 'lg';
+  size?: "sm" | "md" | "lg";
   text?: string;
   fullScreen?: boolean;
 }
@@ -107,4 +107,3 @@ export interface ErrorProps extends BaseComponentProps {
   onRetry?: () => void;
   retryText?: string;
 }
-

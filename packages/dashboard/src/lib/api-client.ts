@@ -1,14 +1,14 @@
 /**
  * 통합 API 클라이언트
  * AFO Kingdom Dashboard - Centralized API Client
- * 
+ *
  * 眞 (Truth): 타입 안전성 보장
  * 善 (Goodness): 에러 처리 및 재시도 로직
  * 美 (Beauty): 깔끔한 인터페이스
  * 孝 (Serenity): Zero Friction - 사용하기 쉬운 API
  */
 
-import type { ApiClientOptions } from '@/types/common';
+import type { ApiClientOptions } from "@/types/common";
 
 export interface ApiResponse<T = any> {
   data: T;
@@ -21,7 +21,7 @@ const DEFAULT_OPTIONS: Required<ApiClientOptions> = {
   retries: 2,
   retryDelay: 1000, // 1초
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 };
 
@@ -32,7 +32,7 @@ class ApiError extends Error {
     public details?: unknown
   ) {
     super(message);
-    this.name = 'ApiError';
+    this.name = "ApiError";
   }
 }
 
@@ -43,7 +43,7 @@ export class ApiClient {
   private baseUrl: string;
   private defaultOptions: Required<ApiClientOptions>;
 
-  constructor(baseUrl = '', options: ApiClientOptions = {}) {
+  constructor(baseUrl = "", options: ApiClientOptions = {}) {
     this.baseUrl = baseUrl;
     this.defaultOptions = { ...DEFAULT_OPTIONS, ...options };
   }
@@ -51,11 +51,8 @@ export class ApiClient {
   /**
    * GET 요청
    */
-  async get<T = unknown>(
-    endpoint: string,
-    options?: ApiClientOptions
-  ): Promise<T> {
-    return this.request<T>('GET', endpoint, undefined, options);
+  async get<T = unknown>(endpoint: string, options?: ApiClientOptions): Promise<T> {
+    return this.request<T>("GET", endpoint, undefined, options);
   }
 
   /**
@@ -66,28 +63,21 @@ export class ApiClient {
     body?: unknown,
     options?: ApiClientOptions
   ): Promise<T> {
-    return this.request<T>('POST', endpoint, body, options);
+    return this.request<T>("POST", endpoint, body, options);
   }
 
   /**
    * PUT 요청
    */
-  async put<T = unknown>(
-    endpoint: string,
-    body?: unknown,
-    options?: ApiClientOptions
-  ): Promise<T> {
-    return this.request<T>('PUT', endpoint, body, options);
+  async put<T = unknown>(endpoint: string, body?: unknown, options?: ApiClientOptions): Promise<T> {
+    return this.request<T>("PUT", endpoint, body, options);
   }
 
   /**
    * DELETE 요청
    */
-  async delete<T = unknown>(
-    endpoint: string,
-    options?: ApiClientOptions
-  ): Promise<T> {
-    return this.request<T>('DELETE', endpoint, undefined, options);
+  async delete<T = unknown>(endpoint: string, options?: ApiClientOptions): Promise<T> {
+    return this.request<T>("DELETE", endpoint, undefined, options);
   }
 
   /**
@@ -100,7 +90,7 @@ export class ApiClient {
     options?: ApiClientOptions
   ): Promise<T> {
     const opts = { ...this.defaultOptions, ...options };
-    const url = endpoint.startsWith('http') ? endpoint : `${this.baseUrl}${endpoint}`;
+    const url = endpoint.startsWith("http") ? endpoint : `${this.baseUrl}${endpoint}`;
 
     let lastError: Error | null = null;
 
@@ -114,28 +104,24 @@ export class ApiClient {
           headers: opts.headers,
           body: body ? JSON.stringify(body) : undefined,
           signal: controller.signal,
-          cache: 'no-store',
+          cache: "no-store",
         });
 
         clearTimeout(timeoutId);
 
         if (!response.ok) {
-          const errorText = await response.text().catch(() => 'Unknown error');
-          throw new ApiError(
-            `API Error: ${response.statusText}`,
-            response.status,
-            errorText
-          );
+          const errorText = await response.text().catch(() => "Unknown error");
+          throw new ApiError(`API Error: ${response.statusText}`, response.status, errorText);
         }
 
         const data = await response.json();
         return data as T;
       } catch (error) {
-        lastError = error instanceof Error ? error : new Error('Unknown error');
+        lastError = error instanceof Error ? error : new Error("Unknown error");
 
         // AbortError는 재시도하지 않음
-        if (error instanceof Error && error.name === 'AbortError') {
-          throw new ApiError('Request timeout', 504);
+        if (error instanceof Error && error.name === "AbortError") {
+          throw new ApiError("Request timeout", 504);
         }
 
         // 마지막 시도가 아니면 재시도
@@ -146,20 +132,20 @@ export class ApiClient {
       }
     }
 
-    throw lastError || new ApiError('Request failed');
+    throw lastError || new ApiError("Request failed");
   }
 }
 
 /**
  * 기본 API 클라이언트 인스턴스
  */
-export const apiClient = new ApiClient('');
+export const apiClient = new ApiClient("");
 
 /**
  * 백엔드 API 클라이언트 (포트 8010)
  */
 export const backendApi = new ApiClient(
-  process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8010',
+  process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8010",
   {
     timeout: 300000, // 5분 (LLM 호출용)
   }
@@ -170,7 +156,7 @@ export const backendApi = new ApiClient(
  */
 export async function fetchWithErrorHandling<T>(
   fn: () => Promise<T>,
-  errorMessage = 'Failed to fetch data'
+  errorMessage = "Failed to fetch data"
 ): Promise<T> {
   try {
     return await fn();
@@ -181,8 +167,7 @@ export async function fetchWithErrorHandling<T>(
     throw new ApiError(
       errorMessage,
       undefined,
-      error instanceof Error ? error.message : 'Unknown error'
+      error instanceof Error ? error.message : "Unknown error"
     );
   }
 }
-

@@ -102,7 +102,7 @@ class GenUIService:
                 query=full_prompt,
                 context={
                     "provider": "ollama",
-                    "ollama_model": "qwen3-vl:8b",
+                    "ollama_model": "deepseek-r1:14b",
                     "max_tokens": 4096,
                     "temperature": 0.1,
                     "ollama_timeout_seconds": 300,
@@ -112,9 +112,6 @@ class GenUIService:
             if not response_dict.get("success"):
                 raise RuntimeError(response_dict.get("error", "Unknown Router Error"))
 
-            print(f"DEBUG: Router response: {response_dict}")
-            response_text: str = str(response_dict.get("response", ""))
-            print(f"DEBUG: Cleaned response text: {response_text[:100]}")
 
             # Clean up code (remove markdown fences if LLM disobeyed)
             code = self._clean_code(response_text)

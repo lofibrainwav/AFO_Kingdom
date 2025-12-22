@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useCallback, useEffect, useState } from 'react';
-import { TrinityGlowCard } from './TrinityGlowCard';
-import { useSpatialAudio } from '../hooks/useSpatialAudio';
+import { useCallback, useEffect, useState } from "react";
+import { TrinityGlowCard } from "./TrinityGlowCard";
+import { useSpatialAudio } from "../hooks/useSpatialAudio";
 
 interface SerenityProgress {
-  status: 'idle' | 'generating' | 'capturing' | 'evaluating' | 'complete' | 'failed';
+  status: "idle" | "generating" | "capturing" | "evaluating" | "complete" | "failed";
   iteration: number;
   maxIterations: number;
   trinityScore: number;
@@ -22,27 +22,27 @@ interface SerenityMonitorProps {
 
 /**
  * SerenityMonitor - Project Serenity Frontend
- * 
+ *
  * Real-time visualization of autonomous UI creation:
  * - Progress through iteration loop
  * - Trinity/Risk scores with Glow animation
  * - Spatial audio feedback on state changes
  */
-export function SerenityMonitor({ 
-  apiEndpoint = '/api/serenity/create',
-  onComplete 
+export function SerenityMonitor({
+  apiEndpoint = "/api/serenity/create",
+  onComplete,
 }: SerenityMonitorProps) {
-  const [prompt, setPrompt] = useState('');
+  const [prompt, setPrompt] = useState("");
   const [progress, setProgress] = useState<SerenityProgress>({
-    status: 'idle',
+    status: "idle",
     iteration: 0,
     maxIterations: 3,
     trinityScore: 0.85,
     riskScore: 0.15,
-    feedback: '',
+    feedback: "",
   });
   const [isCreating, setIsCreating] = useState(false);
-  
+
   const { playTrinityUp, playRiskUp, initAudio } = useSpatialAudio();
   const [prevScore, setPrevScore] = useState(0.85);
 
@@ -58,24 +58,24 @@ export function SerenityMonitor({
 
   const startCreation = useCallback(async () => {
     if (!prompt.trim()) return;
-    
+
     initAudio(); // Initialize audio on user interaction
     setIsCreating(true);
-    
+
     try {
       // Simulate SSE connection for real-time updates
-      setProgress(p => ({ ...p, status: 'generating', iteration: 1 }));
-      
+      setProgress((p) => ({ ...p, status: "generating", iteration: 1 }));
+
       const response = await fetch(apiEndpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ prompt }),
       });
-      
+
       const result = await response.json();
-      
+
       setProgress({
-        status: result.success ? 'complete' : 'failed',
+        status: result.success ? "complete" : "failed",
         iteration: result.iteration,
         maxIterations: 3,
         trinityScore: result.trinity_score,
@@ -84,12 +84,12 @@ export function SerenityMonitor({
         code: result.code,
         screenshotUrl: result.screenshot_url,
       });
-      
+
       onComplete?.(result);
     } catch (error) {
-      setProgress(p => ({
+      setProgress((p) => ({
         ...p,
-        status: 'failed',
+        status: "failed",
         feedback: `Error: ${error}`,
       }));
     } finally {
@@ -99,32 +99,42 @@ export function SerenityMonitor({
 
   const getStatusIcon = () => {
     switch (progress.status) {
-      case 'idle': return '💭';
-      case 'generating': return '🎨';
-      case 'capturing': return '📸';
-      case 'evaluating': return '⚖️';
-      case 'complete': return '✅';
-      case 'failed': return '❌';
+      case "idle":
+        return "💭";
+      case "generating":
+        return "🎨";
+      case "capturing":
+        return "📸";
+      case "evaluating":
+        return "⚖️";
+      case "complete":
+        return "✅";
+      case "failed":
+        return "❌";
     }
   };
 
   const getStatusText = () => {
     switch (progress.status) {
-      case 'idle': return 'Ready to create';
-      case 'generating': return 'GenUI creating code...';
-      case 'capturing': return 'Capturing screenshot...';
-      case 'evaluating': return 'Chancellor evaluating...';
-      case 'complete': return 'Creation complete!';
-      case 'failed': return 'Creation failed';
+      case "idle":
+        return "Ready to create";
+      case "generating":
+        return "GenUI creating code...";
+      case "capturing":
+        return "Capturing screenshot...";
+      case "evaluating":
+        return "Chancellor evaluating...";
+      case "complete":
+        return "Creation complete!";
+      case "failed":
+        return "Creation failed";
     }
   };
 
   return (
     <div className="max-w-[600px] mx-auto p-8">
-      <h1 className="text-2xl font-bold text-white mb-4 text-center">
-        🌟 Project Serenity
-      </h1>
-      
+      <h1 className="text-2xl font-bold text-white mb-4 text-center">🌟 Project Serenity</h1>
+
       {/* Input */}
       <div className="mb-6">
         <textarea
@@ -138,34 +148,27 @@ export function SerenityMonitor({
           onClick={startCreation}
           disabled={isCreating || !prompt.trim()}
           className={`w-full py-3 mt-2 rounded-lg text-white font-bold border-none transition-colors ${
-            isCreating 
-              ? 'bg-gray-600 cursor-wait' 
-              : 'bg-green-500 hover:bg-green-600 cursor-pointer'
+            isCreating
+              ? "bg-gray-600 cursor-wait"
+              : "bg-green-500 hover:bg-green-600 cursor-pointer"
           }`}
         >
-          {isCreating ? '🔄 Creating...' : '✨ Create UI'}
+          {isCreating ? "🔄 Creating..." : "✨ Create UI"}
         </button>
       </div>
-      
+
       {/* Progress Display */}
-      <TrinityGlowCard 
-        trinityScore={progress.trinityScore} 
-        riskScore={progress.riskScore}
-      >
+      <TrinityGlowCard trinityScore={progress.trinityScore} riskScore={progress.riskScore}>
         <div className="text-center">
-          <div className="text-3xl mb-2">
-            {getStatusIcon()}
-          </div>
-          <div className="text-white font-semibold">
-            {getStatusText()}
-          </div>
+          <div className="text-3xl mb-2">{getStatusIcon()}</div>
+          <div className="text-white font-semibold">{getStatusText()}</div>
           {progress.iteration > 0 && (
             <div className="text-gray-400 text-sm mt-1">
               Iteration {progress.iteration}/{progress.maxIterations}
             </div>
           )}
         </div>
-        
+
         {/* Feedback */}
         {progress.feedback && (
           <div className="mt-4 p-3 bg-white/10 rounded-lg text-gray-300 text-sm">
@@ -173,12 +176,12 @@ export function SerenityMonitor({
           </div>
         )}
       </TrinityGlowCard>
-      
+
       {/* Screenshot Preview */}
       {progress.screenshotUrl && (
         <div className="mt-6">
           <h3 className="text-white mb-2">📸 Preview</h3>
-          <img 
+          <img
             src={progress.screenshotUrl}
             alt="Generated UI"
             className="w-full rounded-lg border border-white/20"

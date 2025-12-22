@@ -23,17 +23,17 @@ export default function TrinityGlow({ score = 85, isActive: _isActive = false }:
         audioContextRef.current = new AudioContextClass();
         analyserRef.current = audioContextRef.current.createAnalyser();
         analyserRef.current.fftSize = 256;
-        
+
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         const source = audioContextRef.current.createMediaStreamSource(stream);
         source.connect(analyserRef.current);
-        
+
         const update = () => {
           if (analyserRef.current) {
             const bufferLength = analyserRef.current.frequencyBinCount;
             const dataArray = new Uint8Array(bufferLength);
             analyserRef.current.getByteFrequencyData(dataArray);
-            
+
             // Calculate average volume
             let sum = 0;
             for (let i = 0; i < bufferLength; i++) {
@@ -41,20 +41,20 @@ export default function TrinityGlow({ score = 85, isActive: _isActive = false }:
             }
             const average = sum / bufferLength;
             // Normalize to 0-1 range roughly
-            setAudioLevel(Math.min(average / 50, 2.0)); 
+            setAudioLevel(Math.min(average / 50, 2.0));
           }
           rafRef.current = requestAnimationFrame(update);
         };
         update();
         setInitialized(true);
-      } else if (audioContextRef.current.state === 'suspended') {
+      } else if (audioContextRef.current.state === "suspended") {
         await audioContextRef.current.resume();
         setInitialized(true);
       }
     } catch (err) {
       console.error("Audio initialization failed (Mic permission denied?):", err);
       // Fallback: simulate breathing if audio fails
-      setInitialized(true); 
+      setInitialized(true);
     }
   };
 
@@ -71,8 +71,8 @@ export default function TrinityGlow({ score = 85, isActive: _isActive = false }:
   // < 70: Warning Red/Orange
   const getGradient = () => {
     if (score >= 90) return "from-indigo-500/20 via-purple-500/10 to-transparent"; // Platinum/Divine
-    if (score >= 70) return "from-emerald-500/20 via-teal-500/10 to-transparent";   // Goodness
-    return "from-rose-500/20 via-orange-500/10 to-transparent";                    // Warning
+    if (score >= 70) return "from-emerald-500/20 via-teal-500/10 to-transparent"; // Goodness
+    return "from-rose-500/20 via-orange-500/10 to-transparent"; // Warning
   };
 
   return (
@@ -84,16 +84,16 @@ export default function TrinityGlow({ score = 85, isActive: _isActive = false }:
           getGradient()
         )}
         animate={{
-          opacity: [0.3, 0.5 + (audioLevel * 0.2), 0.3],
-          scale: [1, 1.05 + (audioLevel * 0.1), 1],
+          opacity: [0.3, 0.5 + audioLevel * 0.2, 0.3],
+          scale: [1, 1.05 + audioLevel * 0.1, 1],
         }}
         transition={{
           duration: initialized && audioLevel > 0.1 ? 0.2 : 4, // Fast response to audio, slow breathe otherwise
           repeat: Infinity,
-          ease: "easeInOut"
+          ease: "easeInOut",
         }}
       />
-      
+
       {/* Initialize Button (Only visible if not initialized) */}
       {!initialized && (
         <div className="fixed bottom-8 right-8 z-50">
@@ -103,7 +103,7 @@ export default function TrinityGlow({ score = 85, isActive: _isActive = false }:
             onClick={initializeAudio}
             className="neu-btn px-6 py-3 rounded-full text-xs font-bold tracking-widest text-slate-500 bg-slate-200/50 backdrop-blur-md border border-white/50 shadow-lg flex items-center gap-2"
           >
-            <span className="w-2 h-2 rounded-full bg-red-400 animate-pulse"/>
+            <span className="w-2 h-2 rounded-full bg-red-400 animate-pulse" />
             INITIALIZE NERVOUS SYSTEM
           </motion.button>
         </div>

@@ -3,9 +3,9 @@
  * AFO Kingdom Dashboard - Unified API Hook
  */
 
-import { useState, useEffect, useCallback } from 'react';
-import { apiClient } from '@/lib/api-client';
-import type { LoadingState, ErrorState } from '@/types/common';
+import { useState, useEffect, useCallback } from "react";
+import { apiClient } from "@/lib/api-client";
+import type { LoadingState, ErrorState } from "@/types/common";
 
 interface UseApiOptions<T> {
   immediate?: boolean;
@@ -34,25 +34,25 @@ export function useApi<T = unknown>(
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(immediate);
   const [error, setError] = useState<ErrorState | null>(null);
-  const [state, setState] = useState<LoadingState>(immediate ? 'loading' : 'idle');
+  const [state, setState] = useState<LoadingState>(immediate ? "loading" : "idle");
 
   const fetchData = useCallback(async () => {
     setLoading(true);
-    setState('loading');
+    setState("loading");
     setError(null);
 
     try {
       const result = await apiClient.get<T>(endpoint);
       setData(result);
-      setState('success');
+      setState("success");
       onSuccess?.(result);
     } catch (err) {
       const errorState: ErrorState = {
-        message: err instanceof Error ? err.message : 'Unknown error',
+        message: err instanceof Error ? err.message : "Unknown error",
         details: err,
       };
       setError(errorState);
-      setState('error');
+      setState("error");
       onError?.(errorState);
     } finally {
       setLoading(false);
@@ -93,27 +93,27 @@ export function useApiPost<T = unknown, P = unknown>(
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<ErrorState | null>(null);
-  const [state, setState] = useState<LoadingState>('idle');
+  const [state, setState] = useState<LoadingState>("idle");
 
   const execute = useCallback(
     async (payload: P) => {
       setLoading(true);
-      setState('loading');
+      setState("loading");
       setError(null);
 
       try {
         const result = await apiClient.post<T>(endpoint, payload);
         setData(result);
-        setState('success');
+        setState("success");
         onSuccess?.(result);
         return result;
       } catch (err) {
         const errorState: ErrorState = {
-          message: err instanceof Error ? err.message : 'Unknown error',
+          message: err instanceof Error ? err.message : "Unknown error",
           details: err,
         };
         setError(errorState);
-        setState('error');
+        setState("error");
         onError?.(errorState);
         throw err;
       } finally {
@@ -131,4 +131,3 @@ export function useApiPost<T = unknown, P = unknown>(
     execute,
   };
 }
-

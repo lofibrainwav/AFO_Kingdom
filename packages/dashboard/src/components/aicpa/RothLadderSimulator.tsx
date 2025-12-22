@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 /**
  * Roth Ladder Simulator Widget
@@ -11,7 +11,7 @@
  * 永 (Eternity): 장기 부의 증식 전략
  */
 
-import React, { useState } from 'react';
+import React, { useState, useCallback, useMemo } from "react";
 import {
   TrendingUp,
   DollarSign,
@@ -19,9 +19,9 @@ import {
   Sparkles,
   RefreshCw,
   Shield,
-  ChevronRight
-} from 'lucide-react';
-import { logError } from '@/lib/logger';
+  ChevronRight,
+} from "lucide-react";
+import { logError } from "@/lib/logger";
 
 interface RothResult {
   strategy: string;
@@ -38,14 +38,14 @@ interface RothResult {
   }>;
 }
 
-import { API_BASE_URL } from '@/lib/constants';
+import { API_BASE_URL } from "@/lib/constants";
 const API_BASE = API_BASE_URL;
 
 export const RothLadderSimulator: React.FC = () => {
   // Form State
   const [iraBalance, setIraBalance] = useState(600000);
   const [currentIncome, setCurrentIncome] = useState(180000);
-  const [filingStatus, setFilingStatus] = useState('mfj');
+  const [filingStatus, setFilingStatus] = useState("mfj");
   const [years, setYears] = useState(4);
 
   // Result State
@@ -53,15 +53,15 @@ export const RothLadderSimulator: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Simulate
-  const runSimulation = async () => {
+  // Memoize simulation function
+  const runSimulation = useCallback(async () => {
     setLoading(true);
     setError(null);
 
     try {
       const response = await fetch(`${API_BASE}/api/aicpa/roth-ladder`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ira_balance: iraBalance,
           filing_status: filingStatus,
@@ -70,26 +70,50 @@ export const RothLadderSimulator: React.FC = () => {
         }),
       });
 
-      if (!response.ok) throw new Error('API Error');
+      if (!response.ok) throw new Error("API Error");
 
       const data = await response.json();
       setResult(data.strategy);
     } catch (err) {
-      setError('시뮬레이션 실패 - 서버 상태를 확인하세요');
-      logError('Roth ladder simulation failed', { error: err instanceof Error ? err.message : 'Unknown error' });
+      setError("시뮬레이션 실패 - 서버 상태를 확인하세요");
+      logError("Roth ladder simulation failed", {
+        error: err instanceof Error ? err.message : "Unknown error",
+      });
     } finally {
       setLoading(false);
     }
-  };
+  }, [iraBalance, filingStatus, currentIncome, years]);
 
-  // Format currency
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
+  // Memoize currency formatter
+  const formatCurrency = useCallback((value: number) => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
       maximumFractionDigits: 0,
     }).format(value);
-  };
+  }, []);
+
+  // Memoize input handlers
+  const handleIraBalanceChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setIraBalance(parseInt(e.target.value));
+  }, []);
+
+  const handleCurrentIncomeChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setCurrentIncome(parseInt(e.target.value));
+  }, []);
+
+  const handleYearsChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setYears(parseInt(e.target.value));
+  }, []);
+
+  // Memoize filing status options
+  const filingStatusOptions = useMemo(
+    () => [
+      { value: "single", label: "Single" },
+      { value: "mfj", label: "Married (MFJ)" },
+    ],
+    []
+  );
 
   return (
     <div className="bg-gradient-to-br from-purple-900/20 to-emerald-900/20 backdrop-blur-xl rounded-3xl border border-purple-500/30 shadow-2xl overflow-hidden">
@@ -109,19 +133,18 @@ export const RothLadderSimulator: React.FC = () => {
       <div className="p-6 space-y-6">
         {/* Filing Status */}
         <div>
-          <label className="block text-xs font-bold text-slate-400 uppercase mb-2">Filing Status</label>
-          <div className="grid grid-cols-2 gap-2">
-            {[
-              { value: 'single', label: 'Single' },
-              { value: 'mfj', label: 'Married (MFJ)' },
-            ].map((opt) => (
+          <label className="block text-xs font-bold text-slate-400 uppercase mb-2">
+            Filing Status
+          </label>
+          <div className="grid grid-cols-2 gap-2" role="radiogroup" aria-label="Filing status">
+            {filingStatusOptions.map((opt) => (
               <button
                 key={opt.value}
                 onClick={() => setFilingStatus(opt.value)}
                 className={`py-2 px-3 rounded-xl text-sm font-bold transition-all ${
                   filingStatus === opt.value
-                    ? 'bg-purple-600 text-white'
-                    : 'bg-white/10 text-slate-300 hover:bg-white/20'
+                    ? "bg-purple-600 text-white"
+                    : "bg-white/10 text-slate-300 hover:bg-white/20"
                 }`}
               >
                 {opt.label}
@@ -144,8 +167,9 @@ export const RothLadderSimulator: React.FC = () => {
             max={2000000}
             step={10000}
             value={iraBalance}
-            onChange={(e) => setIraBalance(parseInt(e.target.value))}
+            onChange={handleIraBalanceChange}
             className="w-full h-2 bg-white/20 rounded-full appearance-none cursor-pointer accent-purple-500"
+            aria-label="Traditional IRA balance slider"
           />
           <div className="flex justify-between text-xs text-slate-500 mt-1">
             <span>$100k</span>
@@ -165,8 +189,9 @@ export const RothLadderSimulator: React.FC = () => {
             max={400000}
             step={5000}
             value={currentIncome}
-            onChange={(e) => setCurrentIncome(parseInt(e.target.value))}
+            onChange={handleCurrentIncomeChange}
             className="w-full h-2 bg-white/20 rounded-full appearance-none cursor-pointer accent-emerald-500"
+            aria-label="Current income slider"
           />
         </div>
 
@@ -184,8 +209,9 @@ export const RothLadderSimulator: React.FC = () => {
             max={10}
             step={1}
             value={years}
-            onChange={(e) => setYears(parseInt(e.target.value))}
+            onChange={handleYearsChange}
             className="w-full h-2 bg-white/20 rounded-full appearance-none cursor-pointer accent-amber-500"
+            aria-label="Conversion years slider"
           />
           <div className="flex justify-between text-xs text-slate-500 mt-1">
             <span>2 yrs</span>
@@ -225,7 +251,9 @@ export const RothLadderSimulator: React.FC = () => {
               <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
               <div className="relative z-10">
                 <div className="text-emerald-100 text-sm mb-1">Estimated Tax Savings</div>
-                <div className="text-4xl font-black">{formatCurrency(result.estimated_savings)}</div>
+                <div className="text-4xl font-black">
+                  {formatCurrency(result.estimated_savings)}
+                </div>
                 <div className="text-emerald-200 text-sm mt-2 flex items-center justify-center gap-1">
                   <Shield className="w-4 h-4" />
                   미래 tax-free 인출 가능
@@ -237,11 +265,15 @@ export const RothLadderSimulator: React.FC = () => {
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-white/5 rounded-xl p-4 border border-white/10">
                 <div className="text-xs text-slate-400 uppercase">Total Converted</div>
-                <div className="text-xl font-bold text-white">{formatCurrency(result.total_converted)}</div>
+                <div className="text-xl font-bold text-white">
+                  {formatCurrency(result.total_converted)}
+                </div>
               </div>
               <div className="bg-white/5 rounded-xl p-4 border border-white/10">
                 <div className="text-xs text-slate-400 uppercase">Tax Paid (Ladder)</div>
-                <div className="text-xl font-bold text-amber-400">{formatCurrency(result.total_tax_paid)}</div>
+                <div className="text-xl font-bold text-amber-400">
+                  {formatCurrency(result.total_tax_paid)}
+                </div>
               </div>
             </div>
 
@@ -253,17 +285,26 @@ export const RothLadderSimulator: React.FC = () => {
               </div>
               <div className="space-y-2">
                 {result.years.map((yr) => (
-                  <div key={yr.year} className="flex items-center justify-between p-2 bg-white/5 rounded-lg">
+                  <div
+                    key={yr.year}
+                    className="flex items-center justify-between p-2 bg-white/5 rounded-lg"
+                  >
                     <div className="flex items-center gap-3">
                       <span className="w-12 h-8 bg-purple-600/30 rounded flex items-center justify-center text-purple-300 text-sm font-bold">
                         {yr.year}
                       </span>
                       <ChevronRight className="w-4 h-4 text-slate-500" />
-                      <span className="text-white font-medium">{formatCurrency(yr.conversion_amount)}</span>
+                      <span className="text-white font-medium">
+                        {formatCurrency(yr.conversion_amount)}
+                      </span>
                     </div>
                     <div className="text-right">
-                      <div className="text-amber-400 text-sm font-bold">{formatCurrency(yr.tax_paid)} tax</div>
-                      <div className="text-xs text-slate-500">{(yr.marginal_rate * 100).toFixed(0)}% bracket</div>
+                      <div className="text-amber-400 text-sm font-bold">
+                        {formatCurrency(yr.tax_paid)} tax
+                      </div>
+                      <div className="text-xs text-slate-500">
+                        {(yr.marginal_rate * 100).toFixed(0)}% bracket
+                      </div>
                     </div>
                   </div>
                 ))}

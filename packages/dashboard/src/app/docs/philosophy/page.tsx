@@ -1,58 +1,58 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X } from 'lucide-react';
-import { RoyalPhilosophy } from '@/components/royal/RoyalPhilosophy';
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { X } from "lucide-react";
+import { RoyalPhilosophy } from "@/components/royal/RoyalPhilosophy";
 
 export default function PhilosophyPage() {
   const [selectedPillar, setSelectedPillar] = useState<string | null>(null);
 
   const pillars = [
     {
-      id: 'truth',
-      name: '眞',
-      weight: '35%',
-      role: '제갈량 - 기술적 확실성',
-      description: 'Truth: 기술적 확실성, 타입 안전성, 테스트 무결성',
-      color: 'from-blue-500/20 to-cyan-500/20',
-      borderColor: 'border-blue-500/40',
+      id: "truth",
+      name: "眞",
+      weight: "35%",
+      role: "제갈량 - 기술적 확실성",
+      description: "Truth: 기술적 확실성, 타입 안전성, 테스트 무결성",
+      color: "from-blue-500/20 to-cyan-500/20",
+      borderColor: "border-blue-500/40",
     },
     {
-      id: 'goodness',
-      name: '善',
-      weight: '35%',
-      role: '사마의 - 윤리·안정성',
-      description: 'Goodness: 윤리/보안/리스크, 비용 최적화, 안전 게이트',
-      color: 'from-green-500/20 to-emerald-500/20',
-      borderColor: 'border-green-500/40',
+      id: "goodness",
+      name: "善",
+      weight: "35%",
+      role: "사마의 - 윤리·안정성",
+      description: "Goodness: 윤리/보안/리스크, 비용 최적화, 안전 게이트",
+      color: "from-green-500/20 to-emerald-500/20",
+      borderColor: "border-green-500/40",
     },
     {
-      id: 'beauty',
-      name: '美',
-      weight: '20%',
-      role: '주유 - 단순함·우아함',
-      description: 'Beauty: 구조적 단순함, 모듈화, 일관된 API/UI',
-      color: 'from-purple-500/20 to-pink-500/20',
-      borderColor: 'border-purple-500/40',
+      id: "beauty",
+      name: "美",
+      weight: "20%",
+      role: "주유 - 단순함·우아함",
+      description: "Beauty: 구조적 단순함, 모듈화, 일관된 API/UI",
+      color: "from-purple-500/20 to-pink-500/20",
+      borderColor: "border-purple-500/40",
     },
     {
-      id: 'serenity',
-      name: '孝',
-      weight: '8%',
-      role: '승상 - 평온 수호',
-      description: 'Serenity: 형님의 마찰 제거, 자동화, 실패 복구 용이성',
-      color: 'from-orange-500/20 to-amber-500/20',
-      borderColor: 'border-orange-500/40',
+      id: "serenity",
+      name: "孝",
+      weight: "8%",
+      role: "승상 - 평온 수호",
+      description: "Serenity: 형님의 마찰 제거, 자동화, 실패 복구 용이성",
+      color: "from-orange-500/20 to-amber-500/20",
+      borderColor: "border-orange-500/40",
     },
     {
-      id: 'eternity',
-      name: '永',
-      weight: '2%',
-      role: '승상 - 영속성',
-      description: 'Eternity: 재현 가능성, 문서화, 버전/결정 기록',
-      color: 'from-indigo-500/20 to-violet-500/20',
-      borderColor: 'border-indigo-500/40',
+      id: "eternity",
+      name: "永",
+      weight: "2%",
+      role: "승상 - 영속성",
+      description: "Eternity: 재현 가능성, 문서화, 버전/결정 기록",
+      color: "from-indigo-500/20 to-violet-500/20",
+      borderColor: "border-indigo-500/40",
     },
   ];
 
@@ -68,9 +68,7 @@ export default function PhilosophyPage() {
           <h1 className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-slate-600 to-slate-400 mb-4">
             眞善美孝永 - 왕국의 철학
           </h1>
-          <p className="text-slate-500 text-lg">
-            AFO Kingdom의 5기둥 철학과 Trinity Score 계산
-          </p>
+          <p className="text-slate-500 text-lg">AFO Kingdom의 5기둥 철학과 Trinity Score 계산</p>
         </motion.header>
 
         {/* Pillar Grid */}
@@ -85,9 +83,7 @@ export default function PhilosophyPage() {
               className={`bg-gradient-to-br ${pillar.color} backdrop-blur-sm rounded-3xl p-6 border-2 ${pillar.borderColor} shadow-inner cursor-pointer hover:scale-105 transition-all`}
             >
               <div className="text-center">
-                <div className="text-5xl font-bold text-slate-700 mb-2">
-                  {pillar.name}
-                </div>
+                <div className="text-5xl font-bold text-slate-700 mb-2">{pillar.name}</div>
                 <div className="text-sm text-slate-600 mb-1">{pillar.weight}</div>
                 <div className="text-xs text-slate-500">{pillar.role}</div>
               </div>
@@ -158,4 +154,3 @@ export default function PhilosophyPage() {
     </div>
   );
 }
-

@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useApi } from '@/hooks/useApi';
-import { LoadingSpinner, ErrorMessage } from '@/components/common';
-import { REFRESH_INTERVALS } from '@/lib/constants';
+import { useApi } from "@/hooks/useApi";
+import { LoadingSpinner, ErrorMessage } from "@/components/common";
+import { REFRESH_INTERVALS } from "@/lib/constants";
 
 interface KingdomStatus {
   git: {
@@ -40,7 +40,7 @@ export default function KingdomStatusPage() {
     loading,
     error,
     refetch,
-  } = useApi<KingdomStatus>('/api/kingdom-status', {
+  } = useApi<KingdomStatus>("/api/kingdom-status", {
     refetchInterval: REFRESH_INTERVALS.NORMAL, // 30초마다 자동 업데이트
   });
 
@@ -70,14 +70,13 @@ export default function KingdomStatusPage() {
         👑 AFO Kingdom Status
       </h1>
       <p className="text-center text-gray-400 mb-10">
-        Generated: {new Date(status.generatedAt).toLocaleString()} | {status.git.totalCommits} Commits
+        Generated: {new Date(status.generatedAt).toLocaleString()} | {status.git.totalCommits}{" "}
+        Commits
       </p>
 
       {/* Trinity Score */}
       <div className="text-center py-10 px-10 bg-gradient-to-br from-[rgba(255,215,0,0.1)] to-[rgba(255,165,0,0.1)] rounded-[30px] mb-7.5">
-        <div className="text-[5rem] font-bold text-[#FFD700]">
-          {status.trinity.total}
-        </div>
+        <div className="text-[5rem] font-bold text-[#FFD700]">{status.trinity.total}</div>
         <div className="text-gray-400 text-xl">Trinity Score (眞善美孝永)</div>
         <div className="flex justify-center gap-7.5 mt-5 flex-wrap">
           <div className="text-center">
@@ -112,7 +111,7 @@ export default function KingdomStatusPage() {
           <Stat label="Today's Commits" value={status.git.todayCommits.toString()} />
           <Stat label="HEAD" value={status.git.head} />
           <Stat label="Branch" value={status.git.branch} />
-          <Stat label="Synced" value={status.git.synced ? '✅ Synced' : '⚠️ Changes'} />
+          <Stat label="Synced" value={status.git.synced ? "✅ Synced" : "⚠️ Changes"} />
         </div>
 
         {/* Timeline Card */}
@@ -127,9 +126,7 @@ export default function KingdomStatusPage() {
         </div>
       </div>
 
-      <p className="text-center mt-10 text-gray-500">
-        승상 (Seungsang) | AFO Kingdom | 眞善美孝永
-      </p>
+      <p className="text-center mt-10 text-gray-500">승상 (Seungsang) | AFO Kingdom | 眞善美孝永</p>
     </div>
   );
 }

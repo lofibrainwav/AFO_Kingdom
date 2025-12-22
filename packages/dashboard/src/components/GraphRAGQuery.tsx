@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Brain, Share2, Sparkles, Network } from 'lucide-react';
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Search, Brain, Share2, Sparkles, Network } from "lucide-react";
 
 interface GraphContext {
   source: string;
@@ -19,7 +19,7 @@ interface RAGResponse {
 }
 
 export const GraphRAGQuery: React.FC = () => {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<RAGResponse | null>(null);
   const [logs, setLogs] = useState<string[]>([]);
@@ -34,22 +34,22 @@ export const GraphRAGQuery: React.FC = () => {
 
     try {
       // Simulate/Real Log Streaming
-      setLogs(['🧠 Connecting to Brain Organ...']);
-      
-      const res = await fetch('/api/query', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query, use_hyde: true, use_graph: true })
+      setLogs(["🧠 Connecting to Brain Organ..."]);
+
+      const res = await fetch("/api/query", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query, use_hyde: true, use_graph: true }),
       });
 
-      if (!res.ok) throw new Error('Failed to query kingdom');
+      if (!res.ok) throw new Error("Failed to query kingdom");
 
       const data = await res.json();
       setResult(data);
       if (data.processing_log) setLogs(data.processing_log);
     } catch (err) {
       console.error(err);
-      setLogs(prev => [...prev, '❌ Error connecting to neural network']);
+      setLogs((prev) => [...prev, "❌ Error connecting to neural network"]);
     } finally {
       setLoading(false);
     }
@@ -99,7 +99,7 @@ export const GraphRAGQuery: React.FC = () => {
           {(loading || logs.length > 0) && !result && (
             <motion.div
               initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
+              animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               className="mb-8 space-y-2 overflow-hidden"
             >
@@ -109,7 +109,7 @@ export const GraphRAGQuery: React.FC = () => {
                   initial={{ x: -10, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ delay: i * 0.1 }}
-                  style={{ caretColor: 'transparent' }}
+                  style={{ caretColor: "transparent" }}
                   className="flex items-center gap-2 text-sm text-green-400/80 font-mono"
                 >
                   <span className="w-1.5 h-1.5 rounded-full bg-green-500/50" />
@@ -153,7 +153,7 @@ export const GraphRAGQuery: React.FC = () => {
                     {result.graph_context.map((ctx, idx) => (
                       <motion.div
                         key={idx}
-                        whileHover={{ scale: 1.02, backgroundColor: 'rgba(255,255,255,0.08)' }}
+                        whileHover={{ scale: 1.02, backgroundColor: "rgba(255,255,255,0.08)" }}
                         className="p-4 bg-white/5 rounded-xl border border-white/5 flex flex-col gap-2 transition-colors cursor-default"
                       >
                         <div className="flex items-center justify-between text-xs text-white/40">
@@ -162,7 +162,9 @@ export const GraphRAGQuery: React.FC = () => {
                         </div>
                         <div className="flex items-center gap-2 text-sm">
                           <span className="font-bold text-blue-200">{ctx.source}</span>
-                          <span className="px-2 py-0.5 rounded-full bg-white/10 text-xs text-white/60">{ctx.relationship}</span>
+                          <span className="px-2 py-0.5 rounded-full bg-white/10 text-xs text-white/60">
+                            {ctx.relationship}
+                          </span>
                           <span className="font-bold text-purple-200">{ctx.target}</span>
                         </div>
                         {ctx.description && (
@@ -173,18 +175,16 @@ export const GraphRAGQuery: React.FC = () => {
                   </div>
                 </div>
               )}
-              
+
               {/* Zero State for Graph */}
               {(!result.graph_context || result.graph_context.length === 0) && (
                 <div className="p-4 rounded-xl border border-dashed border-white/10 text-center text-white/30 text-sm">
                   No direct graph connections found for this query context.
                 </div>
               )}
-
             </motion.div>
           )}
         </AnimatePresence>
-
       </motion.div>
     </div>
   );

@@ -1,16 +1,16 @@
-import { NextResponse } from 'next/server';
-import { API_BASE_URL } from '@/lib/constants';
+import { NextResponse } from "next/server";
+import { API_BASE_URL } from "@/lib/constants";
 
 const API_BASE = process.env.SOUL_ENGINE_URL || process.env.API_BASE_URL || API_BASE_URL;
 
 export async function GET() {
   try {
     const res = await fetch(`${API_BASE}/api/5pillars/family/hub`, {
-      method: 'GET',
+      method: "GET",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
-      cache: 'no-store'
+      cache: "no-store",
     });
 
     if (!res.ok) {
@@ -23,10 +23,7 @@ export async function GET() {
     const data = await res.json();
     return NextResponse.json(data);
   } catch (error) {
-    console.error('Family API Proxy Error:', error);
-    return NextResponse.json(
-      { error: 'Failed to connect to backend' },
-      { status: 500 }
-    );
+    console.error("Family API Proxy Error:", error);
+    return NextResponse.json({ error: "Failed to connect to backend" }, { status: 500 });
   }
 }

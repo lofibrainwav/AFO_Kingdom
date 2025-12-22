@@ -3,7 +3,7 @@
  * Dynamic Trinity Score & Health Integration
  */
 
-import { logError } from './logger';
+import { logError } from "./logger";
 
 export interface ChancellorResponse {
   response: string;
@@ -45,9 +45,9 @@ export interface HealthResponse {
  * Fetch real-time health status from backend
  */
 export async function fetchHealthStatus(): Promise<HealthResponse> {
-  const response = await fetch('/api/health', {
-    method: 'GET',
-    cache: 'no-store',
+  const response = await fetch("/api/health", {
+    method: "GET",
+    cache: "no-store",
   });
 
   if (!response.ok) {
@@ -71,10 +71,10 @@ export async function invokeChancellor(
 
   try {
     // Use dedicated API route instead of proxy for better timeout handling
-    const response = await fetch('/api/chancellor', {
-      method: 'POST',
+    const response = await fetch("/api/chancellor", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         query,
@@ -92,7 +92,9 @@ export async function invokeChancellor(
 
     return await response.json();
   } catch (error) {
-    logError('Failed to invoke Chancellor', { error: error instanceof Error ? error.message : 'Unknown error' });
+    logError("Failed to invoke Chancellor", {
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
     throw error;
   }
 }
@@ -101,14 +103,14 @@ export interface FamilyMember {
   name: string;
   role: string;
   pillars: {
-      truth: number;
-      goodness: number;
-      beauty: number;
-      serenity: number;
-      forever: number;
+    truth: number;
+    goodness: number;
+    beauty: number;
+    serenity: number;
+    forever: number;
   };
   message: string;
-  status: 'ACTIVE' | 'IDLE' | 'WORKING' | 'AUDITING';
+  status: "ACTIVE" | "IDLE" | "WORKING" | "AUDITING";
   updated_at: string;
 }
 
@@ -122,9 +124,9 @@ export interface FamilyHubResponse {
  * Fetch Family Hub Status (Julie, etc.)
  */
 export async function fetchFamilyStatus(): Promise<FamilyHubResponse> {
-  const response = await fetch('/api/family', {
-    method: 'GET',
-    cache: 'no-store',
+  const response = await fetch("/api/family", {
+    method: "GET",
+    cache: "no-store",
   });
 
   if (!response.ok) {

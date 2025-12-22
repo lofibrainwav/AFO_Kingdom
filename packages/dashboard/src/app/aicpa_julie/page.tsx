@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import React from 'react';
-import CPADashboard from './CPADashboard';
+import React from "react";
+import CPADashboard from "./CPADashboard";
 
 export default function AICPAJuliePage() {
-    return <CPADashboard />;
+  return <CPADashboard />;
 }

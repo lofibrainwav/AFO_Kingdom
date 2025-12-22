@@ -1,41 +1,41 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { Package, FileCode, Database, Layers } from 'lucide-react';
+import Link from "next/link";
+import { motion } from "framer-motion";
+import { Package, FileCode, Database, Layers } from "lucide-react";
 
 const packages = [
   {
-    id: 'afo-core',
-    name: 'afo-core',
-    description: '백엔드 코어 (FastAPI, Python 3.12+)',
+    id: "afo-core",
+    name: "afo-core",
+    description: "백엔드 코어 (FastAPI, Python 3.12+)",
     icon: Database,
     stats: { python: 1506, files: 291 },
-    color: 'from-blue-500/20 to-cyan-500/20',
+    color: "from-blue-500/20 to-cyan-500/20",
   },
   {
-    id: 'trinity-os',
-    name: 'trinity-os',
-    description: '오케스트레이션 계층 (MCP, Context7)',
+    id: "trinity-os",
+    name: "trinity-os",
+    description: "오케스트레이션 계층 (MCP, Context7)",
     icon: Layers,
     stats: { python: 823, files: 156 },
-    color: 'from-purple-500/20 to-pink-500/20',
+    color: "from-purple-500/20 to-pink-500/20",
   },
   {
-    id: 'sixXon',
-    name: 'sixXon',
-    description: '6Xon 통합 모듈',
+    id: "sixXon",
+    name: "sixXon",
+    description: "6Xon 통합 모듈",
     icon: Package,
     stats: { python: 245, files: 45 },
-    color: 'from-green-500/20 to-emerald-500/20',
+    color: "from-green-500/20 to-emerald-500/20",
   },
   {
-    id: 'dashboard',
-    name: 'dashboard',
-    description: '프론트엔드 (Next.js 16, React 19)',
+    id: "dashboard",
+    name: "dashboard",
+    description: "프론트엔드 (Next.js 16, React 19)",
     icon: FileCode,
     stats: { typescript: 5439, files: 189 },
-    color: 'from-orange-500/20 to-red-500/20',
+    color: "from-orange-500/20 to-red-500/20",
   },
 ];
 
@@ -54,9 +54,7 @@ export default function ProjectStructurePage() {
               <h1 className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-slate-600 to-slate-400">
                 📦 프로젝트 구조
               </h1>
-              <p className="text-slate-500 text-lg mt-2">
-                패키지별 상세 분석과 디렉토리 트리
-              </p>
+              <p className="text-slate-500 text-lg mt-2">패키지별 상세 분석과 디렉토리 트리</p>
             </div>
             <Link
               href="/docs"
@@ -111,9 +109,7 @@ export default function ProjectStructurePage() {
                       <Icon className="w-8 h-8 text-slate-700" />
                     </div>
                     <div className="flex-1">
-                      <h2 className="text-2xl font-bold text-slate-700 mb-2">
-                        {pkg.name}
-                      </h2>
+                      <h2 className="text-2xl font-bold text-slate-700 mb-2">{pkg.name}</h2>
                       <p className="text-slate-500 text-sm">{pkg.description}</p>
                     </div>
                   </div>
@@ -187,4 +183,3 @@ export default function ProjectStructurePage() {
     </div>
   );
 }
-

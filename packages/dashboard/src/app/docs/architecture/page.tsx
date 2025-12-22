@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { RoyalArchitecture } from '@/components/royal/RoyalArchitecture';
+import Link from "next/link";
+import { motion } from "framer-motion";
+import { RoyalArchitecture } from "@/components/royal/RoyalArchitecture";
 
 export default function ArchitecturePage() {
   return (
@@ -19,9 +19,7 @@ export default function ArchitecturePage() {
               <h1 className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-slate-600 to-slate-400">
                 🏛️ 시스템 아키텍처
               </h1>
-              <p className="text-slate-500 text-lg mt-2">
-                4계층 아키텍처와 데이터 플로우
-              </p>
+              <p className="text-slate-500 text-lg mt-2">4계층 아키텍처와 데이터 플로우</p>
             </div>
             <Link
               href="/docs"
@@ -43,28 +41,28 @@ export default function ArchitecturePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               {
-                layer: 'Presentation',
-                description: 'Next.js Dashboard, UI 컴포넌트',
-                color: 'from-blue-500/20 to-cyan-500/20',
-                border: 'border-blue-500/40',
+                layer: "Presentation",
+                description: "Next.js Dashboard, UI 컴포넌트",
+                color: "from-blue-500/20 to-cyan-500/20",
+                border: "border-blue-500/40",
               },
               {
-                layer: 'Application',
-                description: 'API 라우터, 비즈니스 로직',
-                color: 'from-purple-500/20 to-pink-500/20',
-                border: 'border-purple-500/40',
+                layer: "Application",
+                description: "API 라우터, 비즈니스 로직",
+                color: "from-purple-500/20 to-pink-500/20",
+                border: "border-purple-500/40",
               },
               {
-                layer: 'Domain',
-                description: '도메인 모델, 엔티티',
-                color: 'from-green-500/20 to-emerald-500/20',
-                border: 'border-green-500/40',
+                layer: "Domain",
+                description: "도메인 모델, 엔티티",
+                color: "from-green-500/20 to-emerald-500/20",
+                border: "border-green-500/40",
               },
               {
-                layer: 'Infrastructure',
-                description: 'DB, Redis, Qdrant, Ollama',
-                color: 'from-orange-500/20 to-red-500/20',
-                border: 'border-orange-500/40',
+                layer: "Infrastructure",
+                description: "DB, Redis, Qdrant, Ollama",
+                color: "from-orange-500/20 to-red-500/20",
+                border: "border-orange-500/40",
               },
             ].map((layer, index) => (
               <motion.div
@@ -74,12 +72,8 @@ export default function ArchitecturePage() {
                 transition={{ delay: 0.2 + index * 0.1 }}
                 className={`bg-gradient-to-br ${layer.color} backdrop-blur-sm rounded-2xl p-6 border-2 ${layer.border} shadow-inner`}
               >
-                <div className="text-3xl font-bold text-slate-700 mb-2">
-                  {index + 1}
-                </div>
-                <h3 className="text-xl font-bold text-slate-700 mb-2">
-                  {layer.layer}
-                </h3>
+                <div className="text-3xl font-bold text-slate-700 mb-2">{index + 1}</div>
+                <h3 className="text-xl font-bold text-slate-700 mb-2">{layer.layer}</h3>
                 <p className="text-slate-500 text-sm">{layer.description}</p>
               </motion.div>
             ))}
@@ -140,4 +134,3 @@ export default function ArchitecturePage() {
     </div>
   );
 }
-
