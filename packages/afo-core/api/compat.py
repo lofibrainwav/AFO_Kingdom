@@ -210,23 +210,25 @@ class HybridRAG:
             cls.query_pgvector_async = query_pgvector_async
             cls.query_redis_async = query_redis_async
             cls.select_context = select_context
-            
+
             # Advanced RAG (A+B)
             try:
                 from AFO.services.hybrid_rag import (
-                    query_qdrant_async,
                     generate_hyde_query_async,
+                    query_qdrant_async,
                 )
+
                 cls.query_qdrant_async = query_qdrant_async
                 cls.generate_hyde_query_async = generate_hyde_query_async
-                
+
                 # GraphRAG
                 from AFO.services.hybrid_rag import query_graph_context
+
                 cls.query_graph_context = query_graph_context
-                
+
             except ImportError:
-                pass # Optional Advanced RAG
-                
+                pass  # Optional Advanced RAG
+
         except ImportError:
             cls.available = False
 

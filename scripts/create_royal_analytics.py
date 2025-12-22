@@ -1,16 +1,19 @@
 import asyncio
-import sys
 import os
+import pathlib
+import sys
+
 
 # Add package root to path
-sys.path.append(os.path.join(os.getcwd(), "packages/afo-core"))
+sys.path.append(os.path.join(pathlib.Path.cwd(), "packages/afo-core"))
 
 from AFO.start.serenity.genui_orchestrator import GenUIOrchestrator
+
 
 async def main():
     print("🎨 [GenUI] Initializing Royal Architect...")
     orchestrator = GenUIOrchestrator()
-    
+
     prompt = """
     Create a 'RoyalAnalyticsWidget' using 'recharts' and 'framer-motion'.
     It should display a LineChart of the Kingdom's Trinity Scores (Truth, Goodness, Beauty) over 7 days.
@@ -26,17 +29,18 @@ async def main():
     - Colors: Truth=Cyan, Goodness=Emerald, Beauty=Purple.
     - Animation: Entry fade-in.
     """
-    
+
     print(f"🧠 [Prompt] {prompt.strip()[:100]}...")
     result = await orchestrator.generate_component(prompt)
-    
+
     if result["success"]:
-        print(f"✅ Creation Successful!")
+        print("✅ Creation Successful!")
         print(f"   Path: {result['path']}")
         print(f"   Trinity Score: {result['trinity_score']}")
     else:
         print(f"❌ Creation Failed: {result.get('reason')}")
         sys.exit(1)
+
 
 if __name__ == "__main__":
     asyncio.run(main())

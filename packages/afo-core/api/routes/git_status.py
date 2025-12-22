@@ -42,7 +42,7 @@ def _run_git_command(cmd: str) -> str:
 async def get_git_status() -> dict[str, Any]:
     """
     Git 저장소 상태 조회
-    
+
     Returns:
         - total_commits: 전체 커밋 수
         - today_commits: 오늘 커밋 수
@@ -58,7 +58,7 @@ async def get_git_status() -> dict[str, Any]:
         head_sha = _run_git_command("git rev-parse --short HEAD")
         branch = _run_git_command("git branch --show-current")
         status_output = _run_git_command("git status --porcelain")
-        
+
         # 오늘 커밋 수
         today_commits_cmd = "git log --oneline --since='midnight' | wc -l"
         try:
@@ -73,7 +73,7 @@ async def get_git_status() -> dict[str, Any]:
             today_commits = result.stdout.strip() if result.returncode == 0 else "0"
         except Exception:
             today_commits = "0"
-        
+
         # 최근 커밋 목록
         recent_commits_output = _run_git_command("git log --oneline -10")
         recent_commits = []
@@ -83,13 +83,13 @@ async def get_git_status() -> dict[str, Any]:
                     parts = line.split(" ", 1)
                     if len(parts) == 2:
                         recent_commits.append({"hash": parts[0], "message": parts[1][:50]})
-        
+
         # 동기화 상태
         synced = not bool(status_output)
-        
+
         # 추적 중인 파일 수
         tracked_files = _run_git_command("git ls-tree -r HEAD --name-only | wc -l")
-        
+
         return {
             "status": "success",
             "total_commits": int(total_commits) if total_commits.isdigit() else 0,
@@ -111,7 +111,7 @@ async def get_git_status() -> dict[str, Any]:
 async def get_git_info() -> dict[str, Any]:
     """
     Git 저장소 상세 정보 조회
-    
+
     Returns:
         - remote: 원격 저장소 정보
         - config: Git 설정 정보
@@ -120,15 +120,17 @@ async def get_git_info() -> dict[str, Any]:
     try:
         # 원격 저장소 정보
         remote_url = _run_git_command("git config --get remote.origin.url")
-        
+
         # 태그 목록
         tags_output = _run_git_command("git tag -l | tail -10")
-        tags = [tag.strip() for tag in tags_output.split("\n") if tag.strip()] if tags_output else []
-        
+        tags = (
+            [tag.strip() for tag in tags_output.split("\n") if tag.strip()] if tags_output else []
+        )
+
         # 사용자 정보
         user_name = _run_git_command("git config user.name")
         user_email = _run_git_command("git config user.email")
-        
+
         return {
             "status": "success",
             "remote": {
@@ -143,4 +145,3 @@ async def get_git_info() -> dict[str, Any]:
     except Exception as e:
         logger.error(f"Git info check failed: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to get git info: {e}") from e
-

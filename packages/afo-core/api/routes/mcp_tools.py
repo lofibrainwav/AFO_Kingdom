@@ -7,7 +7,6 @@ from __future__ import annotations
 
 import json
 import logging
-import subprocess
 from pathlib import Path
 from typing import Any
 
@@ -69,14 +68,14 @@ async def list_mcp_tools() -> dict[str, Any]:
 async def add_mcp_tool(request: MCPToolRequest) -> dict[str, Any]:
     """
     새 MCP 도구 추가
-    
+
     MCP 설정 파일(.cursor/mcp.json)에 새 서버를 추가합니다.
     """
     try:
         # MCP 설정 파일 읽기
         mcp_config = {}
         if MCP_CONFIG_PATH.exists():
-            with open(MCP_CONFIG_PATH, "r", encoding="utf-8") as f:
+            with open(MCP_CONFIG_PATH, encoding="utf-8") as f:
                 mcp_config = json.load(f)
         else:
             mcp_config = {"mcpServers": {}}
@@ -127,7 +126,7 @@ async def add_mcp_tool(request: MCPToolRequest) -> dict[str, Any]:
 async def test_mcp_connection(request: MCPTestRequest) -> dict[str, Any]:
     """
     MCP 서버 연결 테스트
-    
+
     서버가 실제로 실행 가능한지 확인합니다.
     """
     try:
@@ -137,7 +136,7 @@ async def test_mcp_connection(request: MCPTestRequest) -> dict[str, Any]:
         if not server:
             # MCP 설정 파일에서 확인
             if MCP_CONFIG_PATH.exists():
-                with open(MCP_CONFIG_PATH, "r", encoding="utf-8") as f:
+                with open(MCP_CONFIG_PATH, encoding="utf-8") as f:
                     mcp_config = json.load(f)
                     if request.server_name not in mcp_config.get("mcpServers", {}):
                         raise HTTPException(
@@ -209,4 +208,3 @@ async def get_mcp_status() -> dict[str, Any]:
     except Exception as e:
         logger.error(f"MCP status check failed: {e}")
         raise HTTPException(status_code=500, detail=str(e)) from e
-

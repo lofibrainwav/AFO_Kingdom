@@ -1,33 +1,37 @@
-import os
 import glob
-from typing import List, Dict, Any
-import asyncio
-from concurrent.futures import ThreadPoolExecutor
+import os
 
 # Try to import Qdrant/Neo4j via HybridRAG (or directly if not exposed)
 # We will use the hybrid_rag service functions where possible
 try:
-    from AFO.services.hybrid_rag import query_qdrant, query_graph_context
+    from neo4j import GraphDatabase
+
     # We need UPSERT methods which might not be in hybrid_rag yet.
-    # So we will implement direct clients here for ingestion, 
+    # So we will implement direct clients here for ingestion,
     # and later refactor common logic if needed.
     from qdrant_client import QdrantClient
     from qdrant_client.http import models as models
-    from neo4j import GraphDatabase
+
+    from AFO.services.hybrid_rag import query_graph_context, query_qdrant
 except ImportError:
     print("Warning: Missing dependencies for ingestion.")
     QdrantClient = None
     GraphDatabase = None
 
+
 class ScholarIngestionService:
     def __init__(self, dry_run: bool = True):
         self.dry_run = dry_run
         self.qdrant_client = QdrantClient("localhost", port=6333) if QdrantClient else None
-        self.neo4j_driver = GraphDatabase.driver("bolt://localhost:7687", auth=("neo4j", "password")) if GraphDatabase else None
-        
+        self.neo4j_driver = (
+            GraphDatabase.driver("bolt://localhost:7687", auth=("neo4j", "password"))
+            if GraphDatabase
+            else None
+        )
+
         # Collection settings
         self.collection_name = "afokingdom_knowledge"
-        
+
         if not self.dry_run and self.qdrant_client:
             self._init_qdrant()
 
@@ -46,27 +50,27 @@ class ScholarIngestionService:
         print(f"🔍 Scanning {path}...")
         files = glob.glob(os.path.join(path, "*.md"))
         print(f"📚 Found {len(files)} markdown files in {path}.")
-        
+
         for file_path in files:
             self.process_file(file_path)
 
     def process_file(self, file_path: str):
         try:
-            with open(file_path, "r", encoding="utf-8") as f:
+            with open(file_path, encoding="utf-8") as f:
                 content = f.read()
         except:
             return
-            
+
         filename = os.path.basename(file_path)
         chunks = self._chunk_text(content)
-        
+
         print(f"📄 Processing {filename}: {len(chunks)} chunks")
-        
+
         for i, chunk in enumerate(chunks):
             # In a real scenario, we'd use OpenAI to get embedding.
             # For this MVP/DryRun, we use random or mock if API key missing.
             embedding = self._get_embedding(chunk)
-            
+
             if self.dry_run:
                 print(f"  [DRY RUN] Would upsert chunk {i} to Qdrant & Neo4j")
                 # Entity extraction simulation
@@ -77,47 +81,60 @@ class ScholarIngestionService:
                 self._upsert_qdrant(filename, i, chunk, embedding)
                 self._upsert_neo4j(filename, i, chunk, self._extract_entities(chunk))
 
-    def _chunk_text(self, text: str) -> List[str]:
+    def _chunk_text(self, text: str) -> list[str]:
         # Simple paragraph splitter for MVP
         return [p for p in text.split("\n\n") if len(p.strip()) > 50]
 
-    def _get_embedding(self, text: str) -> List[float]:
+    def _get_embedding(self, text: str) -> list[float]:
         # Use services.hybrid_rag.get_embedding if available, else random
         from AFO.services.hybrid_rag import get_embedding
-        # Mock client for now or real
-        return get_embedding(text, None) 
 
-    def _extract_entities(self, text: str) -> List[str]:
+        # Mock client for now or real
+        return get_embedding(text, None)
+
+    def _extract_entities(self, text: str) -> list[str]:
         # Rule-based simple extraction for MVP
         # Identify Capitalized phrases or specific keywords
-        keywords = ["眞", "善", "美", "孝", "永", "Chancellor", "Commander", "Qdrant", "PostgreSQL", "Neo4j"]
+        keywords = [
+            "眞",
+            "善",
+            "美",
+            "孝",
+            "永",
+            "Chancellor",
+            "Commander",
+            "Qdrant",
+            "PostgreSQL",
+            "Neo4j",
+        ]
         found = [k for k in keywords if k in text]
         return list(set(found))
 
-    def _upsert_qdrant(self, filename: str, chunk_id: int, text: str, vector: List[float]):
-        if not self.qdrant_client: return
+    def _upsert_qdrant(self, filename: str, chunk_id: int, text: str, vector: list[float]):
+        if not self.qdrant_client:
+            return
         point_id = f"{filename}_{chunk_id}"
-        # Hashing ID to UUID/Int is better but string ID supported in some versions? 
+        # Hashing ID to UUID/Int is better but string ID supported in some versions?
         # Qdrant prefers UUID or Int. We'll use UUID generator from string.
         import uuid
+
         uid = str(uuid.uuid5(uuid.NAMESPACE_DNS, point_id))
-        
+
         try:
             self.qdrant_client.upsert(
                 collection_name=self.collection_name,
                 points=[
                     models.PointStruct(
-                        id=uid,
-                        vector=vector,
-                        payload={"source": filename, "content": text}
+                        id=uid, vector=vector, payload={"source": filename, "content": text}
                     )
-                ]
+                ],
             )
         except Exception as e:
             print(f"Error upserting Qdrant: {e}")
 
-    def _upsert_neo4j(self, filename: str, chunk_id: int, text: str, entities: List[str]):
-        if not self.neo4j_driver: return
+    def _upsert_neo4j(self, filename: str, chunk_id: int, text: str, entities: list[str]):
+        if not self.neo4j_driver:
+            return
         try:
             with self.neo4j_driver.session() as session:
                 for entity in entities:
@@ -127,13 +144,16 @@ class ScholarIngestionService:
                         MERGE (d:Document {name: $filename})
                         MERGE (d)-[:MENTIONS]->(e)
                         """,
-                        entity=entity, filename=filename
+                        entity=entity,
+                        filename=filename,
                     )
         except Exception as e:
             print(f"Error upserting Neo4j: {e}")
 
+
 if __name__ == "__main__":
     import sys
+
     dry = "--dry-run" in sys.argv
     service = ScholarIngestionService(dry_run=dry)
     # Ingest paths

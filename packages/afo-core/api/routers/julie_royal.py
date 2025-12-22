@@ -29,11 +29,14 @@ async def get_dashboard() -> dict[str, Any]:
     """
     return await julie_service.get_financial_dashboard()
 
+
 from pydantic import BaseModel
+
 
 class TaxCalcRequest(BaseModel):
     income: float
     filing_status: str = "single"
+
 
 @router.post("/calculate-tax")
 async def calculate_tax(request: TaxCalcRequest) -> dict[str, Any]:

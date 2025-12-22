@@ -40,6 +40,15 @@ open http://localhost:8000/kingdom_dashboard.html
 8. **🔍 Git 트리 분석** - Git 히스토리 전체 분석, Phase별 진화, 주요 마일스톤
 9. **📦 프로젝트 구조** - 패키지별 상세 분석, 디렉토리 트리, 아키텍처 매핑
 
+### 포트 통합 (2025-12-22)
+- **포트 8000 → 3000 통합 완료**: `kingdom_dashboard.html`의 핵심 섹션이 Next.js `/docs` 경로로 통합됨
+- **새로운 문서 경로**: `http://localhost:3000/docs`
+  - `/docs/philosophy` - 眞善美孝永 철학
+  - `/docs/git-tree` - Git 트리 분석
+  - `/docs/project-structure` - 프로젝트 구조
+  - `/docs/architecture` - 시스템 아키텍처
+- **Strangler Fig 패턴**: 점진적 마이그레이션을 위해 `/docs/legacy/:path*`로 기존 HTML 프록시 지원
+
 ### 최적화 내역
 - 인라인 스타일: 29개 → 1개 (96.6% 감소)
 - CSS 클래스 구조화

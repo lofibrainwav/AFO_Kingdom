@@ -25,8 +25,8 @@ from typing import Any
 # [장자] 무용지용 - 불필요한 주석은 제거하여 진실을 드러냄
 try:
     from AFO.llms.claude_api import claude_api
-    from AFO.llms.openai_api import openai_api
     from AFO.llms.cli_wrapper import CLIWrapper
+    from AFO.llms.openai_api import openai_api
 
     API_WRAPPERS_AVAILABLE = True
 except ImportError as e:
@@ -714,11 +714,11 @@ class LLMRouter:
                     try:
                         return await self._call_ollama(query, config, context)
                     except Exception:
-                         if CLIWrapper.is_available("ollama"):
-                              res = await CLIWrapper.execute_ollama(query)
-                              if res["success"]:
-                                   return res["content"]
-                         raise
+                        if CLIWrapper.is_available("ollama"):
+                            res = await CLIWrapper.execute_ollama(query)
+                            if res["success"]:
+                                return res["content"]
+                        raise
                 return "[Ollama Error] 설정이 없습니다."
 
             elif provider == LLMProvider.ANTHROPIC and API_WRAPPERS_AVAILABLE:
@@ -731,10 +731,10 @@ class LLMRouter:
                 else:
                     # Fallback to CLI Wrapper (Subscription Mode)
                     if CLIWrapper.is_available("claude"):
-                         res = await CLIWrapper.execute_claude(query)
-                         if res["success"]:
-                              return res["content"]
-                         return f"[Claude CLI Error] {res['error']}"
+                        res = await CLIWrapper.execute_claude(query)
+                        if res["success"]:
+                            return res["content"]
+                        return f"[Claude CLI Error] {res['error']}"
                     return "[Claude Unavailable] API 키가 설정되지 않았고 CLI 도구도 없습니다."
 
             elif provider == LLMProvider.GEMINI:
@@ -755,10 +755,10 @@ class LLMRouter:
                 else:
                     # Fallback to Codex CLI (Subscription Mode)
                     if CLIWrapper.is_available("codex"):
-                         res = await CLIWrapper.execute_codex(query)
-                         if res["success"]:
-                              return res["content"]
-                         return f"[Codex CLI Error] {res['error']}"
+                        res = await CLIWrapper.execute_codex(query)
+                        if res["success"]:
+                            return res["content"]
+                        return f"[Codex CLI Error] {res['error']}"
                     return "[OpenAI Unavailable] API 키가 설정되지 않았고 CLI 도구도 없습니다."
 
             else:

@@ -1,10 +1,12 @@
 import logging
 import os
-from AFO.start.serenity.schemas import ComponentSchema
+
 from AFO.guardians.critic_agent import CriticAgent
-from AFO.llm_router import LLMRouter, LLMProvider
+from AFO.llm_router import LLMRouter
+from AFO.start.serenity.schemas import ComponentSchema
 
 logger = logging.getLogger(__name__)
+
 
 class GenUIOrchestrator:
     """
@@ -16,7 +18,7 @@ class GenUIOrchestrator:
         self.router = LLMRouter()
         self.critic = CriticAgent()
         self.output_dir = "packages/dashboard/src/components/genui"
-        
+
         # Ensure output directory exists (Goodness)
         os.makedirs(self.output_dir, exist_ok=True)
 
@@ -38,15 +40,14 @@ class GenUIOrchestrator:
         Return ONLY the raw TSX code block.
         Start with 'use client';
         """
-        
+
         full_query = f"{system_prompt}\n\nUser Request: {vibe_prompt}"
-        
+
         # Request Ultra Quality (Claude/GPT-4o)
         result = await self.router.execute_with_routing(
-            full_query, 
-            context={"quality_tier": "ultra", "provider": "auto"}
+            full_query, context={"quality_tier": "ultra", "provider": "auto"}
         )
-        
+
         if result["success"]:
             content = result["response"]
             # Extract code block
@@ -64,7 +65,7 @@ class GenUIOrchestrator:
         Fallback mock if LLM fails.
         """
         if "RoyalAnalyticsWidget" in prompt or "recharts" in prompt:
-             return """
+            return """
 'use client';
 import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
@@ -133,25 +134,25 @@ export const GenComponent = () => (
         Main entry point for GenUI.
         """
         logger.info(f"🎨 GenUI Received Vibe: '{vibe_prompt}'")
-        
+
         # 1. Expand Vibe (Sequential Thinking - Simulated)
         logger.info("🧠 Expanding Vibe into Technical Specs...")
-        
+
         # 2. Generate Code (Real LLM)
         generated_code = await self._generate_with_llm(vibe_prompt)
-        
+
         schema = ComponentSchema(
             name="GenComponent",
             description=f"Generated from Vibe: {vibe_prompt}",
             code=generated_code,
             classification="Molecule",
-            trinity_score=90
+            trinity_score=90,
         )
 
         # 3. Guardian Review (CriticAgent)
         logger.info("🛡️ Requesting Guardian Review...")
         review = await self.critic.critique_code(schema.code)
-        
+
         if not review.passed:
             logger.warning(f"⚠️ Guardian Rejected: {review.feedback}")
             # In a real loop, we would re-prompt the LLM with feedback
@@ -162,8 +163,8 @@ export const GenComponent = () => (
         logger.info(f"💾 Component Saved: {file_path}")
 
         return {
-            "success": True, 
-            "path": file_path, 
+            "success": True,
+            "path": file_path,
             "trinity_score": review.score,
-            "vibe": vibe_prompt
+            "vibe": vibe_prompt,
         }
