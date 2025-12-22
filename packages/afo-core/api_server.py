@@ -27,7 +27,7 @@ from pathlib import Path
 from AFO.api.config import get_app_config
 from AFO.api.middleware import setup_middleware
 
-_routers_file = Path(__file__).parent / "AFO" / "api" / "routers.py"
+_routers_file = Path(__file__).parent / "api" / "routers.py"
 if _routers_file.exists():
     spec = importlib.util.spec_from_file_location("AFO.api.router_setup", _routers_file)
     router_setup_module = importlib.util.module_from_spec(spec)

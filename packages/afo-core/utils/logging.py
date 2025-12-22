@@ -1,17 +1,64 @@
+import json
+import logging
 import sys
 from datetime import datetime
+
+# Configure logger locally to avoid circular imports
+logger = logging.getLogger(__name__)
+
+
+class RedisLogPublisher:
+    """
+    [Serenity: 孝] Redis Pub/Sub Publisher for Real-time Logs.
+    Eliminates friction by streaming thoughts directly to the Commander.
+    """
+
+    CHANNEL = "kingdom:logs:stream"
+
+    def __init__(self):
+        self.redis = None
+        try:
+            from AFO.utils.cache_utils import cache
+
+            self.redis = cache.redis if cache.enabled else None
+        except ImportError:
+            pass
+
+    def publish(self, message: str, level: str = "INFO"):
+        """Publish log message to Redis Channel"""
+        if not self.redis:
+            # Fallback to stdout if Redis is down
+            print(f"[Fallback Log] {message}")
+            return
+
+        payload = {
+            "timestamp": datetime.now().isoformat(),
+            "level": level,
+            "message": message,
+            "source": "Chancellor",
+        }
+        try:
+            self.redis.publish(self.CHANNEL, json.dumps(payload))
+        except Exception as e:
+            print(f"⚠️ Redis Publish Failed: {e}")
+
+
+# Global Publisher Instance
+_publisher = RedisLogPublisher()
 
 
 def log_sse(message: str) -> None:
     """
-    Log message in a format compatible with Server-Sent Events (SSE) or structured logs.
-    Currently prints to stdout with timestamp.
+    Log message to Redis Pub/Sub (Primary) and Stdout (Secondary).
+    This fulfills the [Serenity] requirement of "Zero Friction Observability".
 
     Args:
-        message: Message to log
+        message: Message to stream
     """
+    # 1. Stdout for immediate terminal feedback (Backup)
     timestamp = datetime.utcnow().isoformat()
-    # In a real SSE setup, this might yield or write to a stream.
-    # For now, we print with a specific prefix for easy parsing.
     print(f"[SSE] {timestamp} - {message}")
     sys.stdout.flush()
+
+    # 2. Redis Pub/Sub for Dashboard Streaming (Primary)
+    _publisher.publish(message)

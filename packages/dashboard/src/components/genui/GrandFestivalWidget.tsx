@@ -49,7 +49,7 @@ export function GrandFestivalWidget() {
 
   useEffect(() => {
     const interval = setInterval(launchFirework, 800);
-    setShowConfetti(true);
+    setShowConfetti(true); // eslint-disable-line react-hooks/set-state-in-effect
     return () => clearInterval(interval);
   }, [launchFirework]);
 

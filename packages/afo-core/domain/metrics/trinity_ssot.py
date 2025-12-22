@@ -1,32 +1,35 @@
 """
-Trinity 5-Pillar SSOT (Single Source of Truth)
-眞善美孝永 (Truth·Goodness·Beauty·Serenity·Eternity)
-
-This module defines the canonical weights for the Trinity Score.
-All evaluators MUST import from here to ensure consistency.
-
-[Weights Reference]
-- Truth (眞): 35% - Technical Certainty, Type Safety
-- Goodness (善): 35% - Ethical Priority, Stability, Security
-- Beauty (美): 20% - UX, Aesthetics, Code Quality
-- Serenity (孝): 8% - Low Friction, Peace of Mind (Commander)
-- Eternity (永): 2% - Sustainability, Self-Healing, Long-term Vision
+[TRUTH WIRING]
+Trinity Pillar SSOT (Single Source of Truth)
+Defines the immutable weights for the 5 Pillars of the AFO Kingdom.
+This file must be treated as a constant law.
 """
 
 from typing import Final
 
+# 🏛️ 5 Pillar Weights (Total: 1.0)
+WEIGHT_TRUTH: Final[float] = 0.35  # 眞: 제갈량 (Technical Certainty)
+WEIGHT_GOODNESS: Final[float] = 0.35  # 善: 사마의 (Ethical Safety)
+WEIGHT_BEAUTY: Final[float] = 0.20  # 美: 주유 (UX/Aesthetics)
+WEIGHT_SERENITY: Final[float] = 0.08  # 孝: 승상 (Friction Reduction)
+WEIGHT_ETERNITY: Final[float] = 0.02  # 永: 승상 (Persistence/Legacy)
+
+# 🛡️ Governance Thresholds
+THRESHOLD_AUTO_RUN_SCORE: Final[float] = 90.0
+THRESHOLD_AUTO_RUN_RISK: Final[float] = 10.0
+
+# 🌉 System Constants
+DEFAULT_HEARTBEAT: Final[int] = 68
+
 
 class TrinityWeights:
-    """Canonical Weights for Trinity Score"""
+    """
+    [Compatibility Layer]
+    Namespace for Trinity Weights to match usage in trinity.py
+    """
 
-    TRUTH: Final[float] = 0.35
-    GOODNESS: Final[float] = 0.35
-    BEAUTY: Final[float] = 0.20
-    SERENITY: Final[float] = 0.08
-    ETERNITY: Final[float] = 0.02
-
-    @classmethod
-    def validate(cls) -> bool:
-        """Verify that weights sum to roughly 1.0"""
-        total = cls.TRUTH + cls.GOODNESS + cls.BEAUTY + cls.SERENITY + cls.ETERNITY
-        return 0.99 <= total <= 1.01
+    TRUTH = WEIGHT_TRUTH
+    GOODNESS = WEIGHT_GOODNESS
+    BEAUTY = WEIGHT_BEAUTY
+    SERENITY = WEIGHT_SERENITY
+    ETERNITY = WEIGHT_ETERNITY

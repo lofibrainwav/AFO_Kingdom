@@ -90,9 +90,18 @@ class TrinityCalculator:
 
         return [truth, goodness, beauty, serenity, eternity]
 
-    def calculate_trinity_score(self, raw_scores: list[float]) -> float:
+    def calculate_trinity_score(
+        self, raw_scores: list[float], static_score: float | None = None
+    ) -> float:
         """
         Calculates final Trinity Score using SSOT Weights.
+
+        [Option A: 7:3 Golden Ratio]
+        If static_score is provided:
+            Final = (Static Score * 0.7) + (Dynamic Score * 0.3)
+        Else:
+            Final = Dynamic Score (calculated from raw_scores)
+
         Range: 0.0 to 100.0
         """
         if len(raw_scores) != 5:
@@ -101,14 +110,23 @@ class TrinityCalculator:
         if not all(0.0 <= s <= 1.0 for s in raw_scores):
             raise AssertionError("Raw scores must be between 0.0 and 1.0")
 
-        # SSOT Weighted Sum
+        # 1. Calculate Dynamic Score (Execution Based) - 30% Weight
         weighted_sum = np.dot(raw_scores, SSOT_WEIGHTS)
+        dynamic_score = weighted_sum * 100
 
-        # Scale to 100 and Round
-        final_score = round(weighted_sum * 100, 1)
+        if static_score is not None:
+            # 2. Apply Golden Ratio (70% Static + 30% Dynamic)
+            # Static score is inherent value (0-100)
+            final_score = (static_score * 0.7) + (dynamic_score * 0.3)
+            logger.info(
+                f"[Trinity 7:3] Static({static_score})*0.7 + Dynamic({dynamic_score:.1f})*0.3 = {final_score:.1f}"
+            )
+        else:
+            # Fallback to pure dynamic if no static provided (Legacy compatibility)
+            final_score = dynamic_score
+            logger.info(f"[TrinityCalculator] Raw: {raw_scores} -> Score: {final_score:.1f}")
 
-        logger.info(f"[TrinityCalculator] Raw: {raw_scores} -> Score: {final_score}")
-        return float(final_score)
+        return float(round(final_score, 1))
 
     async def calculate_persona_scores(
         self, persona_data: dict[str, Any], context: dict[str, Any] | None = None

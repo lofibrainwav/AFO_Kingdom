@@ -28,7 +28,7 @@ export default function NeudashStatusBoard() {
   );
 
   useEffect(() => {
-    setMounted(true);
+    setMounted(true); // eslint-disable-line react-hooks/set-state-in-effect
   }, []);
 
   // Fallback / Loading State

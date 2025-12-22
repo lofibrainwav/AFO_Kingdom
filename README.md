@@ -39,12 +39,14 @@ mypy packages/afo-core --strict
 ## Documentation
 
 - **[Final Handover Report (MUST READ)](docs/AFO_FINAL_HANDOVER.md)**
+- **[대시보드 가이드](DASHBOARD_README.md)** - 메인 대시보드 사용법
 - [CI/CD Pipeline](docs/CI_CD_PIPELINE.md)
 - [OSS Strategy (세종대왕 정신)](docs/OSS_STRATEGY.md)
 - [Security Policy](SECURITY.md)
 - [Contributing](CONTRIBUTING.md)
 
 ## Key Features (New)
+- **Digital Royal Palace**: The Living Dashboard (Organs, Skills, Chancellor Stream).
 - **Family Hub**: Dashboard for Happiness Tracking (`/family`).
 - **Playwright Bridge**: Browser Automation Node.
 - **Context7**: Self-Awareness Knowledge Base.

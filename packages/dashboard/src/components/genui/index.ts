@@ -20,3 +20,4 @@ export { RothLadderSimulator } from '../aicpa/RothLadderSimulator';
 
 // Phase 14: Prophet Prediction
 export { BudgetPredictionWidget } from '../aicpa/BudgetPredictionWidget';
+export { default as FuturisticDashboard } from './FuturisticDashboard';

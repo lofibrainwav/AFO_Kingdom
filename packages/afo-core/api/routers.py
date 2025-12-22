@@ -143,6 +143,11 @@ def _register_feature_routers(app: FastAPI) -> None:
     if modal_data_router:
         app.include_router(modal_data_router, prefix="/api/modal", tags=["Modal Data"])
 
+    # Advanced RAG (GraphRAG)
+    if rag_query_router:
+        app.include_router(rag_query_router, prefix="/api", tags=["Brain Organ (RAG)"])
+        print("✅ GraphRAG API 라우터 등록 완료 (Brain Organ)")
+
     # Personas system
     if personas_router:
         app.include_router(personas_router)
@@ -232,6 +237,14 @@ def _register_phase_routers(app: FastAPI) -> None:
         app.include_router(chancellor_router)
         print("✅ 승상 API 라우터 등록 완료 (LangGraph Optimized: Chancellor + 3 Strategists)")
 
+    # Operation Gwanggaeto: Julie Royal Tax (Goodness)
+    try:
+        from AFO.api.routers.julie_royal import router as julie_royal_router
+        app.include_router(julie_royal_router)
+        print("✅ Julie Royal Router 등록 완료 (Operation Gwanggaeto: Tax Truth 2025)")
+    except Exception as e:
+        print(f"⚠️ Julie Royal Router 등록 실패: {e}")
+
 
 def _register_legacy_routers(app: FastAPI) -> None:
     """Register legacy and compatibility routers."""
@@ -309,6 +322,51 @@ def _register_legacy_routers(app: FastAPI) -> None:
             print("✅ Comprehensive Health Check 라우터 등록 완료 (fallback, 조기 등록)")
         except Exception as e:
             print(f"⚠️ Comprehensive Health Check 라우터 등록 실패 (조기 등록): {e}")
+
+    # MCP Tools Management API
+    try:
+        from AFO.api.routes.mcp_tools import router as mcp_tools_router
+
+        app.include_router(mcp_tools_router)
+        print("✅ MCP Tools Management 라우터 등록 완료")
+    except ImportError:
+        try:
+            from api.routes.mcp_tools import router as mcp_tools_router
+
+            app.include_router(mcp_tools_router)
+            print("✅ MCP Tools Management 라우터 등록 완료 (fallback)")
+        except Exception as e:
+            print(f"⚠️ MCP Tools Management 라우터 등록 실패: {e}")
+
+    # Integrity Check API
+    try:
+        from AFO.api.routes.integrity_check import router as integrity_check_router
+
+        app.include_router(integrity_check_router)
+        print("✅ Integrity Check 라우터 등록 완료")
+    except ImportError:
+        try:
+            from api.routes.integrity_check import router as integrity_check_router
+
+            app.include_router(integrity_check_router)
+            print("✅ Integrity Check 라우터 등록 완료 (fallback)")
+        except Exception as e:
+            print(f"⚠️ Integrity Check 라우터 등록 실패: {e}")
+
+    # Git Status API
+    try:
+        from AFO.api.routes.git_status import router as git_status_router
+
+        app.include_router(git_status_router)
+        print("✅ Git Status 라우터 등록 완료")
+    except ImportError:
+        try:
+            from api.routes.git_status import router as git_status_router
+
+            app.include_router(git_status_router)
+            print("✅ Git Status 라우터 등록 완료 (fallback)")
+        except Exception as e:
+            print(f"⚠️ Git Status 라우터 등록 실패: {e}")
 
     # Intake API
     try:

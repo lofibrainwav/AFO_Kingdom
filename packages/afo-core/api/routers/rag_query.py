@@ -1,54 +1,125 @@
-"""
-RAG Query Router (Eternal Memory)
-Phase 12: Ask the Kingdom
-"""
-
-import logging
-
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
+from typing import List, Optional, Any
+import asyncio
 
-# Import the RAG logic (or simulate it if script is standalone)
-# For simplicity and robustness, we implement the simulation logic here directly
-# or shell out to the script if needed. Detailed logic below.
+from AFO.api.compat import HybridRAG
 
 router = APIRouter()
-logger = logging.getLogger("afo.api.rag_query")
 
+class RAGRequest(BaseModel):
+    query: str
+    top_k: int = 5
+    # Optional flags
+    use_hyde: bool = True
+    use_graph: bool = True
+    use_qdrant: bool = True
 
-class RAGQueryRequest(BaseModel):
-    question: str
-
-
-class RAGQueryResponse(BaseModel):
+class RAGResponse(BaseModel):
     answer: str
-    sources: list[str]
+    sources: List[Any]
+    graph_context: List[Any]
+    processing_log: List[str]
 
-
-@router.post("/rag-query", response_model=RAGQueryResponse)
-async def query_kingdom_memory(payload: RAGQueryRequest) -> RAGQueryResponse:
+@router.post("/query", response_model=RAGResponse)
+async def query_knowledge_base(request: RAGRequest):
     """
-    Ask the Kingdom.
-    Retrieves knowledge from AFO Logs using Custom BERT embeddings.
+    Advanced GraphRAG Query Endpoint
+    Orchestrates HyDE -> Hybrid Retrieval -> Graph Expansion -> Rerank -> Generation
     """
-    logger.info(f"🧠 [RAG] Question received: {payload.question}")
+    if not HybridRAG.available:
+        raise HTTPException(status_code=503, detail="RAG Service Unavailable (Missing dependencies)")
 
-    # Simulation Logic (matching scripts/langchain_rag_integration.py for consistency)
-    q_lower = payload.question.lower()
+    logs = []
+    logs.append("🧠 Advanced RAG Pipeline Started")
 
-    if "accuracy" in q_lower or "bert" in q_lower:
-        answer = "Phase 11에서 학습된 Custom BERT 모델의 정확도는 98.25%입니다. 眞·善·美·孝·永 5기둥을 분류하도록 최적화되었습니다."
-        sources = ["AFO_EVOLUTION_LOG.md", "scripts/fine_tune_bert.py"]
-    elif "phase 10" in q_lower or "matrix" in q_lower:
-        answer = (
-            "Phase 10은 Matrix Stream Visualization으로, 실시간 사고 시각화(SSE)를 구현했습니다."
-        )
-        sources = ["walkthrough.md", "AFO/services/matrix_stream.py"]
-    elif "monitor" in q_lower or "trinity" in q_lower:
-        answer = "Trinity Monitor Widget은 5기둥(眞·善·美·孝·永) 점수를 실시간으로 시각화합니다. 현재 점수는 97.75점입니다."
-        sources = ["TrinityMonitorWidget.tsx", "trinity_ssot.py"]
+    # 1. HyDE (Hypothetical Document Embeddings)
+    search_query = request.query
+    client = None
+    
+    if request.use_hyde and getattr(HybridRAG, "generate_hyde_query_async", None):
+        try:
+            from openai import OpenAI
+            import os
+            client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+        except:
+            client = None
+            
+        search_query = await HybridRAG.generate_hyde_query_async(request.query, client)
+        logs.append(f"✨ HyDE Generated: {search_query[:50]}...")
     else:
-        answer = "왕국의 기록에 따르면, 현재 시스템은 헌법(Constitution)에 따라 자율 진화 중입니다. 더 구체적인 질문을 주시면 기록을 찾아보겠습니다."
-        sources = ["General Logs", "Memory Bank"]
+        logs.append("ℹ️ HyDE Skipped")
 
-    return RAGQueryResponse(answer=answer, sources=sources)
+    # 2. Embedding
+    try:
+        embedding = await HybridRAG.get_embedding_async(search_query, client)
+    except Exception as e:
+        logs.append(f"❌ Embedding Failed: {e}")
+        embedding = [0.0] * 1536 # Fallback
+
+    # 3. Retrieval (Parallel)
+    tasks = []
+    
+    # PGVector
+    # We need pg_pool. Assuming unavailable in straightforward way here without DI.
+    # For MVP Router, we might skip PG or use a global pool if available.
+    # We'll skip PG for now to focus on Qdrant which we set up.
+    
+    # Qdrant
+    if request.use_qdrant and getattr(HybridRAG, "query_qdrant_async", None):
+        # Need client.
+        try:
+            from qdrant_client import QdrantClient
+            q_client = QdrantClient("localhost", port=6333)
+            tasks.append(HybridRAG.query_qdrant_async(embedding, request.top_k, q_client))
+        except:
+            pass
+    
+    results = []
+    if tasks:
+        retrieval_results = await asyncio.gather(*tasks, return_exceptions=True)
+        for res in retrieval_results:
+            if isinstance(res, list):
+                results.extend(res)
+    
+    logs.append(f"🔍 Retrieved {len(results)} chunks from Vector Store")
+
+    # 4. Graph Context (GraphRAG)
+    graph_context = []
+    if request.use_graph and getattr(HybridRAG, "query_graph_context", None):
+        # Extract entities from results or query
+        # Simple extraction: split query by space for keywords (MVP)
+        entities = [w for w in request.query.split() if len(w) > 4]
+        # Or use extracted entities from chunks payload if available
+        for res in results:
+             if "metadata" in res and "content" in res["metadata"]:
+                 # Extract capitalized words as heuristic
+                 words = [w for w in res["metadata"]["content"].split() if w[0].isupper()]
+                 entities.extend(words[:3])
+        
+        entities = list(set(entities))[:5] # Limit
+        if entities:
+            graph_context = HybridRAG.query_graph_context(entities)
+            logs.append(f"🕸️ Graph Context: Found {len(graph_context)} connections for {entities}")
+
+    # 5. Rerank / Selection
+    # Simple selection for now
+    contexts = [r["content"] for r in results[:5]]
+    
+    # 6. Generation
+    answer = await HybridRAG.generate_answer_async(
+        query=request.query,
+        contexts=contexts,
+        temperature=0.7,
+        response_format="markdown",
+        additional_instructions="Use the provided Graph Context to enrich the answer.",
+        openai_client=client,
+        graph_context=graph_context # Passed to our updated function
+    )
+
+    return RAGResponse(
+        answer=str(answer),
+        sources=results[:5],
+        graph_context=graph_context,
+        processing_log=logs
+    )

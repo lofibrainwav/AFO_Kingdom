@@ -210,6 +210,23 @@ class HybridRAG:
             cls.query_pgvector_async = query_pgvector_async
             cls.query_redis_async = query_redis_async
             cls.select_context = select_context
+            
+            # Advanced RAG (A+B)
+            try:
+                from AFO.services.hybrid_rag import (
+                    query_qdrant_async,
+                    generate_hyde_query_async,
+                )
+                cls.query_qdrant_async = query_qdrant_async
+                cls.generate_hyde_query_async = generate_hyde_query_async
+                
+                # GraphRAG
+                from AFO.services.hybrid_rag import query_graph_context
+                cls.query_graph_context = query_graph_context
+                
+            except ImportError:
+                pass # Optional Advanced RAG
+                
         except ImportError:
             cls.available = False
 
@@ -496,15 +513,16 @@ def load_routers() -> None:
     # System Health (Crucial for Neudash)
     try:
         from AFO.api.routes.system_health import router as sys_health
-        
+
         global system_health_router
         system_health_router = sys_health
     except ImportError:
         try:
-             from api.routes.system_health import router as sys_health
-             system_health_router = sys_health
+            from api.routes.system_health import router as sys_health
+
+            system_health_router = sys_health
         except ImportError:
-             pass
+            pass
 
     # Phase-specific routers
     try:

@@ -26,7 +26,53 @@
   --shadow-neu-flat: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light);
   --shadow-neu-pressed: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light);
   --shadow-neu-icon: 8px 8px 16px var(--shadow-dark), -8px -8px 16px var(--shadow-light);
+
+  /* Shadcn Radius */
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
 }
+
+/* Shadcn UI Variables (Mapped to Royal Dark Mode) */
+:root {
+  /* Base - Slate 950 */
+  --background: 222.2 84% 4.9%;
+  --foreground: 210 40% 98%;
+
+  /* Card - Deep Glass / Slate 900 */
+  --card: 222.2 84% 4.9%;
+  --card-foreground: 210 40% 98%;
+  --popover: 222.2 84% 4.9%;
+  --popover-foreground: 210 40% 98%;
+
+  /* Primary (Royal Gold/Cyan/Emerald) */
+  --primary: 142.1 76.2% 36.3%; /* Emerald 500 */
+  --primary-foreground: 355.7 100% 97.3%;
+
+  /* Secondary (Slate 800) */
+  --secondary: 217.2 32.6% 17.5%;
+  --secondary-foreground: 210 40% 98%;
+
+  /* Muted */
+  --muted: 217.2 32.6% 17.5%;
+  --muted-foreground: 215 20.2% 65.1%;
+
+  /* Accent */
+  --accent: 217.2 32.6% 17.5%;
+  --accent-foreground: 210 40% 98%;
+
+  /* Destructive */
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 210 40% 98%;
+
+  /* Border/Input */
+  --border: 217.2 32.6% 17.5%;
+  --input: 217.2 32.6% 17.5%;
+  --ring: 142.4 71.8% 29.2%;
+
+  --radius: 0.75rem;
+}
+
 
 body {
   background-color: var(--bg-platinum);

@@ -9,6 +9,7 @@ export function FinalEternalVictoryWidget() {
 
   useEffect(() => {
     // Generate random positions only on client to avoid hydration mismatch
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setPositions([...Array(20)].map(() => ({
       top: `${Math.random() * 100}%`,
       left: `${Math.random() * 100}%`

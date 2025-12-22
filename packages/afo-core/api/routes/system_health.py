@@ -198,93 +198,84 @@ async def _log_stream(limit: int | None = None) -> AsyncGenerator[str, None]:
 @router.get("/kingdom-status")
 async def get_kingdom_status() -> dict[str, Any]:
     """
-    AFO Kingdom Grand Status (for Neudash 2025)
-    
+    AFO Kingdom Grand Status (Real-time Truth)
+
     Returns:
-        - heartbeat: 100% (or calculated)
-        - dependencies: List of 42 verified items
-        - scholars: Active status
-        - pillars: Trinity scores
+        - heartbeat: System pulse (Inverse CPU)
+        - dependencies: Verified critical modules
+        - scholars: Live module status
+        - pillars: Dynamic Trinity Scores calculated from system state
     """
     import importlib.util
-    
+
+    from AFO.domain.metrics.trinity import TrinityInputs, TrinityMetrics
+
     # 1. Dependency Verification (42 Core Items)
-    # Map: 'display_name': 'python_module_name'
-    # Internal aliases: 'ai-analysis', 'react', 'iframe', 'trinity-mcp' are virtual/frontend verified
     dependency_map = {
-        "openai": "openai", "anthropic": "anthropic", "langchain": "langchain", 
-        "langgraph": "langgraph", "ragas": "ragas", "sentence-tx": "sentence_transformers", 
-        "suno": "suno", "numpy": "numpy", "pandas": "pandas", "scipy": "scipy", 
-        "sympy": "sympy", "boto3": "boto3", "hcloud": "hcloud", "docker": "docker", 
-        "git": "git", "kafka": "kafka", "redis": "redis", "chromadb": "chromadb", 
-        "qdrant": "qdrant_client", "neo4j": "neo4j", "postgresql": "psycopg2", 
-        "fastapi": "fastapi", "uvicorn": "uvicorn", "requests": "requests", 
-        "sse-starlette": "sse_starlette", "web3": "web3", "eth-account": "eth_account", 
-        "psutil": "psutil", "prometheus": "prometheus_client", "watchdog": "watchdog", 
-        "playwright": "playwright", "mcp": "mcp", "black": "black", "ruff": "ruff", 
-        "pytest": "pytest", "mypy": "mypy", "markdown": "markdown", 
-        "frontmatter": "frontmatter"
+        "openai": "openai",
+        "anthropic": "anthropic",
+        "langchain": "langchain",
+        "langgraph": "langgraph",
+        "ragas": "ragas",
+        "sentence-tx": "sentence_transformers",
+        "suno": "suno",
+        "numpy": "numpy",
+        "pandas": "pandas",
+        "scipy": "scipy",
+        "sympy": "sympy",
+        "boto3": "boto3",
+        "hcloud": "hcloud",
+        "docker": "docker",
+        "git": "git",
+        "kafka": "kafka",
+        "redis": "redis",
+        "chromadb": "chromadb",
+        "qdrant": "qdrant_client",
+        "neo4j": "neo4j",
+        "postgresql": "psycopg2",
+        "fastapi": "fastapi",
+        "uvicorn": "uvicorn",
+        "requests": "requests",
+        "sse-starlette": "sse_starlette",
+        "web3": "web3",
+        "eth-account": "eth_account",
+        "psutil": "psutil",
+        "prometheus": "prometheus_client",
+        "watchdog": "watchdog",
+        "playwright": "playwright",
+        "mcp": "mcp",
+        "black": "black",
+        "ruff": "ruff",
+        "pytest": "pytest",
+        "mypy": "mypy",
+        "markdown": "markdown",
+        "frontmatter": "frontmatter",
     }
-    
+
     verified_list = []
-    
-    # Python checks
     for display, module_name in dependency_map.items():
         try:
             if importlib.util.find_spec(module_name) is not None:
                 verified_list.append(display)
         except Exception:
-            pass # Not found
-            
-    # Virtual/Frontend checks (Verified by existence in the ecosystem)
+            pass
+
     virtual_deps = ["ai-analysis", "react", "iframe", "trinity-mcp"]
     verified_list.extend(virtual_deps)
-    
-    # 2. Trinity Pillars (Mocked or Real)
-    # Ideally should fetch from Trinity Router, but for efficiency we calculate basic scores here 
-    # or return the SSOT values.
-    # In a full impl, we'd Query the `trinity_router` or shared state.
-    # For now, we return the "Aligned" constant state + slight jitter for realism
-    
-    pillars = [
-        {"name": "Truth 眞", "score": 98},
-        {"name": "Good 善", "score": 100},
-        {"name": "Beauty 美", "score": 95},
-        {"name": "Serenity 孝", "score": 100},
-        {"name": "Eternity 永", "score": 99},
-    ]
 
-    # 3. Scholars Status
-    scholars = [
-        {"name": "Jaryong", "role": "Logic", "status": "Active"},
-        {"name": "Bangtong", "role": "Implement", "status": "Active"},
-        {"name": "Yeongdeok", "role": "Security", "status": "Active"},
-        {"name": "Yukson", "role": "Strategy", "status": "Active"},
-    ]
-    
-    # 4. Organs (System Health Metaphor) - Real Data via psutil
-    import psutil
-    
-    # Heart (CPU)
+    # 2. Organs Data (Real-time System Metrics)
     cpu_percent = psutil.cpu_percent(interval=None)
-    heart_score = max(0, 100 - int(cpu_percent))
-    
-    # Brain (Memory)
     mem = psutil.virtual_memory()
-    brain_score = max(0, 100 - int(mem.percent))
-    
-    # Lungs (Swap/Load)
     swap = psutil.swap_memory()
-    lungs_score = max(0, 100 - int(swap.percent))
-    
-    # Stomach (Disk) - using root
-    disk = psutil.disk_usage('/')
-    stomach_score = max(0, 100 - int(disk.percent))
-    
-    # Eyes (Network) - strictly existence of connection
+    disk = psutil.disk_usage("/")
     net = psutil.net_if_stats()
+
+    heart_score = max(0, 100 - int(cpu_percent))
+    brain_score = max(0, 100 - int(mem.percent))
+    lungs_score = max(0, 100 - int(swap.percent))
+    stomach_score = max(0, 100 - int(disk.percent))
     eyes_score = 100 if net else 50
-    
+
     organs = [
         {"name": "Heart", "score": heart_score, "metric": f"CPU {cpu_percent}%"},
         {"name": "Brain", "score": brain_score, "metric": f"Mem {mem.percent}%"},
@@ -292,38 +283,147 @@ async def get_kingdom_status() -> dict[str, Any]:
         {"name": "Stomach", "score": stomach_score, "metric": f"Disk {disk.percent}%"},
         {"name": "Eyes", "score": eyes_score, "metric": f"Net {len(net)} if"},
     ]
-    
+
+    # 3. Dynamic Trinity Score Calculation
+    # Truth (眞): System Integrity (Memory & Dependencies)
+    truth_raw = (brain_score / 100.0) * 0.5 + (len(verified_list) / 46.0) * 0.5
+
+    # Goodness (善): Stability (Swap usage inverse - low swap means stable ram)
+    goodness_raw = lungs_score / 100.0
+
+    # Beauty (美): Responsiveness (Network health & CPU headroom)
+    beauty_raw = (eyes_score / 100.0) * 0.4 + (heart_score / 100.0) * 0.6
+
+    # Serenity (孝): Low Friction (CPU Load inverse)
+    serenity_raw = heart_score / 100.0
+
+    # Eternity (永): Persistance (Disk Space)
+    eternity_raw = stomach_score / 100.0
+
+    # Ensure 0.0-1.0 range via TrinityInputs.clamp() implicitly
+    inputs = TrinityInputs(
+        truth=truth_raw, goodness=goodness_raw, beauty=beauty_raw, filial_serenity=serenity_raw
+    )
+    # Eternity passed separately to metrics
+    metrics = TrinityMetrics.from_inputs(inputs, eternity=eternity_raw)
+
+    trinity_score = round(metrics.trinity_score * 100, 1)  # Scale to 100
+
+    pillars = [
+        {"name": "Truth 眞", "score": int(metrics.truth * 100)},
+        {"name": "Good 善", "score": int(metrics.goodness * 100)},
+        {"name": "Beauty 美", "score": int(metrics.beauty * 100)},
+        {"name": "Serenity 孝", "score": int(metrics.filial_serenity * 100)},
+        {"name": "Eternity 永", "score": int(metrics.eternity * 100)},
+    ]
+
+    # 4. Real Scholar Status Check
+    # Mapping Scholar to key Python Modules
+    scholar_map = {
+        "Jaryong": "AFO.scholars.jaryong",  # Logic
+        "Bangtong": "AFO.scholars.bangtong",  # Implementation
+        "Yeongdeok": "AFO.scholars.yeongdeok",  # Security
+        "Yukson": "AFO.scholars.yukson",  # Strategy
+    }
+
+    scholars_status = []
+    for name, module_path in scholar_map.items():
+        status = "Inactive"
+        if importlib.util.find_spec(module_path) is not None:
+            status = "Active"
+
+        scholars_status.append({"name": name, "role": "Check", "status": status})
+
     return {
-        "heartbeat": heart_score, # Synced with Heart organ
+        "heartbeat": heart_score,
         "dependency_count": len(verified_list),
         "total_dependencies": 42,
         "verified_dependencies": verified_list,
         "pillars": pillars,
-        "scholars": scholars,
+        "trinity_score": trinity_score,
+        "scholars": scholars_status,
         "organs": organs,
-        "entropy": int(cpu_percent), # Entropy roughly correlates to CPU chaos
-        "timestamp": datetime.now().isoformat()
+        "entropy": int(cpu_percent),
+        "timestamp": datetime.now().isoformat(),
     }
 
-from sse_starlette.sse import EventSourceResponse
-import asyncio
-import os
+
+@router.get("/antigravity/config")
+async def get_antigravity_config() -> dict[str, Any]:
+    """
+    [TRUTH WIRING]
+    Expose current AntiGravity settings for verification.
+    """
+    from AFO.config.antigravity import antigravity
+
+    return {
+        "environment": antigravity.ENVIRONMENT,
+        "auto_deploy": antigravity.AUTO_DEPLOY,
+        "dry_run_default": antigravity.DRY_RUN_DEFAULT,
+        "auto_sync": antigravity.AUTO_SYNC,
+        "log_level": antigravity.LOG_LEVEL,
+        "mode": "Self-Expanding" if antigravity.SELF_EXPANDING_MODE else "Static",
+    }
+
+
 from fastapi import Request
+from sse_starlette.sse import EventSourceResponse
+
 
 @router.get("/logs/stream")
-async def stream_logs(request: Request):
+async def stream_logs(request: Request, limit: int = 0) -> EventSourceResponse:
     """
-    Stream backend logs in real-time via SSE.
+    [Serenity: 孝] Real-time Log Stream via Redis Pub/Sub
+
+    Architecture:
+    1. Primary: Redis Pub/Sub ('kingdom:logs:stream') - Zero Friction
+    2. Fallback: File Tail ('backend.log') - Safety Net (Goodness)
     """
+
     async def log_generator():
+        # 1. Try Redis Pub/Sub First
+        try:
+            from AFO.utils.cache_utils import cache
+
+            if cache.enabled and cache.redis:
+                pubsub = cache.redis.pubsub()
+                pubsub.subscribe("kingdom:logs:stream")
+
+                # Yield initial connection message
+                yield {
+                    "data": json.dumps(
+                        {
+                            "timestamp": datetime.now().isoformat(),
+                            "message": "🔌 [Serenity] Connected to Neural Network (Redis Pub/Sub)",
+                        }
+                    )
+                }
+
+                while True:
+                    if await request.is_disconnected():
+                        break
+
+                    message = pubsub.get_message(ignore_subscribe_messages=True)
+                    if message:
+                        # Redis returns bytes, need to decode
+                        data = message["data"]
+                        if isinstance(data, bytes):
+                            data = data.decode("utf-8")
+
+                        # Already JSON formatted by publisher
+                        yield {"data": data}
+
+                    await asyncio.sleep(0.1)  # Prevent tight loop
+                return  # Exit if disconnected
+        except Exception as e:
+            logger.warning(f"Redis Pub/Sub failed: {e}. Falling back to file tail.")
+
+        # 2. Fallback to File Tail (Original Logic)
         log_file = "backend.log"
         if not os.path.exists(log_file):
-            yield {"data": "[System] Waiting for logs..."}
-            return
+            open(log_file, "a").close()
 
-        # Simple tail implementation
-        with open(log_file, "r") as f:
-            # Go to end
+        with open(log_file) as f:
             f.seek(0, 2)
             while True:
                 if await request.is_disconnected():
@@ -335,13 +435,3 @@ async def stream_logs(request: Request):
                     await asyncio.sleep(0.5)
 
     return EventSourceResponse(log_generator())
-
-@router.get("/logs/stream")
-async def stream_logs(limit: int = 0) -> Any:
-    """Logs streaming endpoint (SSE)"""
-    limit_val: int | None = limit if limit > 0 else None
-    # [莊子]用之則行舍之則藏 - 사용 가능하면 사용하고 아니면 숨김
-    if not SSE_AVAILABLE:
-        # Fallback: return JSON if SSE not available
-        return {"error": "SSE not available", "logs": []}
-    return EventSourceResponse(_log_stream(limit_val))

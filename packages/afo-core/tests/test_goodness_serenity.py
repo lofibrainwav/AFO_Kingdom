@@ -22,6 +22,7 @@ class TestErrorHandling:
 
     def test_safe_execute_success(self) -> None:
         """정상 실행 테스트 (Decorator Pattern)"""
+
         @safe_execute
         def multiply(x):
             return x * 2
@@ -39,14 +40,14 @@ class TestErrorHandling:
 
         # To test default behavior, we must manually wrap with default since decorator syntax doesn't support arg binding in this implementation easily without partial
         # Or just verify that the wrapper catches error and returns default=None (default default)
-        
+
         result = failing_func()
-        assert result is None 
+        assert result is None
 
         # precise test with specific default
         def failing_func_2():
             raise ValueError("Test error 2")
-            
+
         wrapped = safe_execute(failing_func_2, default="fallback", log_error=False)
         assert wrapped() == "fallback"
 

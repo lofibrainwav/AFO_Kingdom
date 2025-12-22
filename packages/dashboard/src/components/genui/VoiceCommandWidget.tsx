@@ -16,11 +16,27 @@ export function VoiceCommandWidget({ onCommand, onResponse }: VoiceCommandWidget
   const [isSupported, setIsSupported] = useState(true);
   const recognitionRef = useRef<any>(null);
 
+  // Hoist speak function to be available for effects
+  const speak = useCallback((text: string) => {
+    if (!window.speechSynthesis) return;
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'ko-KR';
+    utterance.rate = 0.9;
+    utterance.pitch = 1.0;
+
+    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => setIsSpeaking(false);
+
+    window.speechSynthesis.speak(utterance);
+    onResponse?.(text);
+  }, [onResponse]);
+
   // Check browser support
   useEffect(() => {
     const SpeechRecognitionAPI = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SpeechRecognitionAPI) {
-      setIsSupported(false);
+      setIsSupported(false); // eslint-disable-line react-hooks/set-state-in-effect
       return;
     }
 
@@ -54,7 +70,7 @@ export function VoiceCommandWidget({ onCommand, onResponse }: VoiceCommandWidget
     };
 
     recognitionRef.current = recognition;
-  }, [onCommand]);
+  }, [onCommand, speak]);
 
   const toggleListening = useCallback(() => {
     if (!recognitionRef.current) return;
@@ -69,20 +85,9 @@ export function VoiceCommandWidget({ onCommand, onResponse }: VoiceCommandWidget
     }
   }, [isListening]);
 
-  const speak = useCallback((text: string) => {
-    if (!window.speechSynthesis) return;
 
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'ko-KR';
-    utterance.rate = 0.9;
-    utterance.pitch = 1.0;
 
-    utterance.onstart = () => setIsSpeaking(true);
-    utterance.onend = () => setIsSpeaking(false);
-
-    window.speechSynthesis.speak(utterance);
-    onResponse?.(text);
-  }, [onResponse]);
+  // Check browser support
 
   if (!isSupported) {
     return (

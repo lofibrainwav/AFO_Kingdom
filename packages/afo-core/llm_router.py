@@ -26,6 +26,7 @@ from typing import Any
 try:
     from AFO.llms.claude_api import claude_api
     from AFO.llms.openai_api import openai_api
+    from AFO.llms.cli_wrapper import CLIWrapper
 
     API_WRAPPERS_AVAILABLE = True
 except ImportError as e:
@@ -165,7 +166,7 @@ class LLMRouter:
 
             # Anthropic (Claude)
             anthropic_key = get_secret("ANTHROPIC_API_KEY")
-            if anthropic_key:
+            if anthropic_key or CLIWrapper.is_available("claude"):
                 self.llm_configs[LLMProvider.ANTHROPIC] = LLMConfig(
                     provider=LLMProvider.ANTHROPIC,
                     model="claude-3-sonnet-20240229",
@@ -194,10 +195,10 @@ class LLMRouter:
 
             # OpenAI GPT
             openai_key = get_secret("OPENAI_API_KEY")
-            if openai_key:
+            if openai_key or CLIWrapper.is_available("codex"):
                 self.llm_configs[LLMProvider.OPENAI] = LLMConfig(
                     provider=LLMProvider.OPENAI,
-                    model="gpt-4o",
+                    model="gpt-4o-mini",
                     api_key_env="OPENAI_API_KEY",
                     temperature=0.7,
                     max_tokens=4096,
@@ -228,7 +229,7 @@ class LLMRouter:
 
                 self.llm_configs[LLMProvider.OLLAMA] = LLMConfig(
                     provider=LLMProvider.OLLAMA,
-                    model="qwen3-vl:8b",
+                    model="llama3.2",
                     base_url=ollama_url,
                     quality_tier=QualityTier.STANDARD,
                 )
@@ -292,8 +293,8 @@ class LLMRouter:
                     estimated_cost=0.0,
                     estimated_latency=500,
                     fallback_providers=[
-                        LLMProvider.ANTHROPIC,
                         LLMProvider.GEMINI,
+                        LLMProvider.ANTHROPIC,
                         LLMProvider.OPENAI,
                     ],
                 )
@@ -709,7 +710,15 @@ class LLMRouter:
             if provider == LLMProvider.OLLAMA:
                 config = self.llm_configs.get(LLMProvider.OLLAMA)
                 if config:
-                    return await self._call_ollama(query, config, context)
+                    # Try direct HTTP first (if configured), else CLI
+                    try:
+                        return await self._call_ollama(query, config, context)
+                    except Exception:
+                         if CLIWrapper.is_available("ollama"):
+                              res = await CLIWrapper.execute_ollama(query)
+                              if res["success"]:
+                                   return res["content"]
+                         raise
                 return "[Ollama Error] 설정이 없습니다."
 
             elif provider == LLMProvider.ANTHROPIC and API_WRAPPERS_AVAILABLE:
@@ -720,7 +729,13 @@ class LLMRouter:
                     else:
                         return f"[Claude Error] {result.get('error', 'Unknown error')}"
                 else:
-                    return "[Claude Unavailable] API 키가 설정되지 않았습니다."
+                    # Fallback to CLI Wrapper (Subscription Mode)
+                    if CLIWrapper.is_available("claude"):
+                         res = await CLIWrapper.execute_claude(query)
+                         if res["success"]:
+                              return res["content"]
+                         return f"[Claude CLI Error] {res['error']}"
+                    return "[Claude Unavailable] API 키가 설정되지 않았고 CLI 도구도 없습니다."
 
             elif provider == LLMProvider.GEMINI:
                 # Gemini 직접 호출 (Fallback 로직 포함)
@@ -738,7 +753,13 @@ class LLMRouter:
                     else:
                         return f"[OpenAI Error] {result.get('error', 'Unknown error')}"
                 else:
-                    return "[OpenAI Unavailable] API 키가 설정되지 않았습니다."
+                    # Fallback to Codex CLI (Subscription Mode)
+                    if CLIWrapper.is_available("codex"):
+                         res = await CLIWrapper.execute_codex(query)
+                         if res["success"]:
+                              return res["content"]
+                         return f"[Codex CLI Error] {res['error']}"
+                    return "[OpenAI Unavailable] API 키가 설정되지 않았고 CLI 도구도 없습니다."
 
             else:
                 # Fallback 모의 응답

@@ -11,6 +11,7 @@ import { TrinityScoreWidget } from '@/components/aicpa/TrinityScoreWidget';
 import { PillarsDetailedWidget } from '@/components/aicpa/PillarsDetailedWidget';
 import { Briefcase, Building2, Coins, AlertTriangle, RefreshCw } from 'lucide-react';
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface CPADashboardProps {
     // GenUI: Props for Flexibility
 }

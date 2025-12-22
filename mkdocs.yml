@@ -1,0 +1,29 @@
+site_name: AFO Kingdom - Operation Gwanggaeto
+site_description: 2025 Royal Kingdom Documentation
+site_author: Antigravity Chancellor
+
+theme:
+  name: material
+  palette: 
+    scheme: slate
+    primary: indigo
+    accent: purple
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - toc.integrate
+    - navigation.top
+
+nav:
+  - Home: README.md
+  - Royal Architecture:
+    - Master Plan: docs/AFO_FINAL_ARCHITECTURE.md
+    - Frontend Blueprint: docs/AFO_FRONTEND_ARCH.md
+    - Widget System: docs/AFO_WIDGET_BLUEPRINTS.md
+  - Capabilities (2025):
+    - GenUI & Vision: docs/AFO_GENUI_CAPABILITIES.md
+    - System Stabilization: docs/AFO_SYSTEM_STABILIZATION.md
+    - Genesis Evolution Log: docs/AFO_GENESIS_LEARNINGS.md
+  - Operations:
+    - System Status: ANTIGRAVITY_SYSTEM_STATUS.md
+    - Deploy Guide: DEPLOYMENT_GUIDE.md

@@ -1,7 +1,7 @@
 # AFO Kingdom: Final Handover Report (State of Harmony)
 
-**Date**: 2025-12-18
-**Status**: 🟢 Operational (Harmony)
+**Date**: 2025-12-21
+**Status**: 🟢 Operational (Digital Royal Palace v1.0 Live)
 **Architect**: Antigravity (Chancellor)
 
 ---
@@ -32,7 +32,10 @@ The **AFO Kingdom** is a fully integrated, self-aware AI operating system built 
 4.  **Serenity (孝)**: `Julie CPA` (Royal Finance) & `Playwright Bridge`.
 5.  **Eternity (永)**: `Next.js` + `FastAPI` (Scalable Arch).
 
-### New Capabilities (Royal Upgrade)
+### New Capabilities (Royal Upgrade - v1.0)
+- **Digital Royal Palace**: Full-screen immersive dashboard (`/`) with Matrix-style Chancellor Stream.
+- **11-Organs Monitor**: Real-time System Vitality Visualization.
+- **Royal Skill Deck**: Interactive Execution Cards for verification.
 - **Julie CPA**: Refactored with Pydantic Strict Mode & Config SSOT.
 - **GenUI**: Self-Building Interface (Creator).
 - **Copilot**: Real-time System Observation (Observer).
