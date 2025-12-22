@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 /**
  * AICPA Control Panel
@@ -12,7 +12,7 @@
  * 孝 (Serenity): Zero Friction - 버튼 하나로 완료
  */
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from "react";
 import {
   Users,
   Zap,
@@ -23,9 +23,9 @@ import {
   RefreshCw,
   CheckCircle,
   AlertTriangle,
-  Crown
-} from 'lucide-react';
-import { logError } from '@/lib/logger';
+  Crown,
+} from "lucide-react";
+import { logError } from "@/lib/logger";
 
 interface MissionResult {
   client: {
@@ -55,16 +55,17 @@ interface MissionResult {
   summary: string;
 }
 
-import { API_BASE_URL } from '@/lib/constants';
+import { API_BASE_URL } from "@/lib/constants";
 const API_BASE = API_BASE_URL;
 
 export const AICPAControlPanel: React.FC = () => {
-  const [clientName, setClientName] = useState('');
+  const [clientName, setClientName] = useState("");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<MissionResult | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const executeMission = async () => {
+  // Memoize execute mission function
+  const executeMission = useCallback(async () => {
     if (!clientName.trim()) return;
 
     setLoading(true);
@@ -73,30 +74,36 @@ export const AICPAControlPanel: React.FC = () => {
 
     try {
       const response = await fetch(`${API_BASE}/api/aicpa/execute`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ client_name: clientName }),
       });
 
-      if (!response.ok) throw new Error('Mission Failed');
+      if (!response.ok) throw new Error("Mission Failed");
 
       const data = await response.json();
       setResult(data);
     } catch (err) {
-      setError('에이전트 연결 실패 - 서버 상태를 확인하세요');
-      logError('[AICPA] Error', { error: err instanceof Error ? err.message : 'Unknown error' });
+      setError("에이전트 연결 실패 - 서버 상태를 확인하세요");
+      logError("[AICPA] Error", { error: err instanceof Error ? err.message : "Unknown error" });
     } finally {
       setLoading(false);
     }
-  };
+  }, [clientName]);
 
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
+  // Memoize currency formatter
+  const formatCurrency = useCallback((value: number) => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
       maximumFractionDigits: 0,
     }).format(value);
-  };
+  }, []);
+
+  // Memoize input handler
+  const handleClientNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setClientName(e.target.value);
+  }, []);
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -118,7 +125,8 @@ export const AICPAControlPanel: React.FC = () => {
           </div>
 
           <p className="text-slate-300 max-w-lg mb-6">
-            클라이언트 이름을 입력하고 "Run Agents"를 클릭하면 세금 분석부터 문서 생성까지 자동으로 처리됩니다.
+            클라이언트 이름을 입력하고 "Run Agents"를 클릭하면 세금 분석부터 문서 생성까지 자동으로
+            처리됩니다.
           </p>
 
           {/* Input Section */}
@@ -127,9 +135,10 @@ export const AICPAControlPanel: React.FC = () => {
               <input
                 type="text"
                 value={clientName}
-                onChange={(e) => setClientName(e.target.value)}
+                onChange={handleClientNameChange}
                 placeholder="Enter client name (e.g., Justin Mason)"
                 className="w-full bg-white/10 backdrop-blur border border-white/20 rounded-xl px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                aria-label="Client name input"
               />
             </div>
             <button
@@ -137,9 +146,11 @@ export const AICPAControlPanel: React.FC = () => {
               disabled={loading || !clientName.trim()}
               className={`px-8 py-3 rounded-xl font-bold flex items-center gap-2 transition-all ${
                 loading || !clientName.trim()
-                  ? 'bg-slate-600 cursor-not-allowed'
-                  : 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:shadow-lg hover:shadow-emerald-500/30 hover:scale-105'
+                  ? "bg-slate-600 cursor-not-allowed"
+                  : "bg-gradient-to-r from-emerald-600 to-teal-600 hover:shadow-lg hover:shadow-emerald-500/30 hover:scale-105"
               }`}
+              aria-label={loading ? "Processing mission" : "Run AICPA agents mission"}
+              aria-busy={loading}
             >
               {loading ? (
                 <>
@@ -159,15 +170,19 @@ export const AICPAControlPanel: React.FC = () => {
 
       {/* Error State */}
       {error && (
-        <div className="p-4 bg-rose-50 border border-rose-200 rounded-2xl text-rose-700 flex items-center gap-3">
-          <AlertTriangle className="w-5 h-5" />
+        <div
+          className="p-4 bg-rose-50 border border-rose-200 rounded-2xl text-rose-700 flex items-center gap-3"
+          role="alert"
+          aria-live="assertive"
+        >
+          <AlertTriangle className="w-5 h-5" aria-hidden="true" />
           {error}
         </div>
       )}
 
       {/* Results */}
       {result && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6" role="region" aria-label="Mission results">
           {/* Client Info */}
           <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm">
             <div className="flex items-center gap-3 mb-4">
@@ -192,7 +207,9 @@ export const AICPAControlPanel: React.FC = () => {
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-500">Traditional IRA</span>
-                <span className="font-bold">{formatCurrency(result.client.traditional_ira_balance)}</span>
+                <span className="font-bold">
+                  {formatCurrency(result.client.traditional_ira_balance)}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-500">Goal</span>
@@ -213,7 +230,9 @@ export const AICPAControlPanel: React.FC = () => {
             <div className="space-y-3">
               <div className="flex justify-between">
                 <span className="text-slate-500">Total Tax</span>
-                <span className="font-bold text-lg">{formatCurrency(result.tax_analysis.total_tax)}</span>
+                <span className="font-bold text-lg">
+                  {formatCurrency(result.tax_analysis.total_tax)}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-500">Effective Rate</span>
@@ -307,7 +326,7 @@ const FileCard = ({
   format,
   path: _path,
   hasPreview,
-  content
+  content,
 }: {
   icon: React.ReactNode;
   title: string;
@@ -323,7 +342,7 @@ const FileCard = ({
       <div
         onClick={() => hasPreview && content && setShowPreview(true)}
         className={`p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:bg-slate-100 transition-colors ${
-          hasPreview ? 'cursor-pointer' : ''
+          hasPreview ? "cursor-pointer" : ""
         }`}
       >
         <div className="flex items-center gap-3">

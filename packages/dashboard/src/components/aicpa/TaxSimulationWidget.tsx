@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 /**
  * AICPA Tax Simulation Widget
@@ -11,16 +11,16 @@
  * 孝 (Serenity): Zero Friction - 마찰 없는 경험
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import {
   Calculator,
   TrendingUp,
   AlertTriangle,
   CheckCircle,
   RefreshCw,
-  Sparkles
-} from 'lucide-react';
-import { logError } from '@/lib/logger';
+  Sparkles,
+} from "lucide-react";
+import { logError } from "@/lib/logger";
 
 interface TaxResult {
   filing_status: string;
@@ -38,12 +38,12 @@ interface TaxResult {
   advice: string;
 }
 
-import { API_BASE_URL } from '@/lib/constants';
+import { API_BASE_URL } from "@/lib/constants";
 const API_BASE = API_BASE_URL;
 
 export const TaxSimulationWidget: React.FC = () => {
   // Form State
-  const [filingStatus, setFilingStatus] = useState('mfj');
+  const [filingStatus, setFilingStatus] = useState("mfj");
   const [grossIncome, setGrossIncome] = useState(180000);
   const [iraBalance, setIraBalance] = useState(600000);
   const [rothConversion, setRothConversion] = useState(0);
@@ -60,24 +60,26 @@ export const TaxSimulationWidget: React.FC = () => {
 
     try {
       const response = await fetch(`${API_BASE}/api/aicpa/tax-simulate`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           filing_status: filingStatus,
           gross_income: grossIncome,
           ira_balance: iraBalance,
           roth_conversion: rothConversion,
-          state: 'CA',
+          state: "CA",
         }),
       });
 
-      if (!response.ok) throw new Error('API Error');
+      if (!response.ok) throw new Error("API Error");
 
       const data = await response.json();
       setResult(data.simulation);
     } catch (err) {
-      setError('연결 실패 - 서버 상태를 확인하세요');
-      logError('Tax simulation failed', { error: err instanceof Error ? err.message : 'Unknown error' });
+      setError("연결 실패 - 서버 상태를 확인하세요");
+      logError("Tax simulation failed", {
+        error: err instanceof Error ? err.message : "Unknown error",
+      });
     } finally {
       setLoading(false);
     }
@@ -86,23 +88,47 @@ export const TaxSimulationWidget: React.FC = () => {
   // Auto-simulate on mount
   useEffect(() => {
     simulateTax();
-    }, [simulateTax]); // Added simulateTax dependency
+  }, [simulateTax]); // Added simulateTax dependency
 
-  // Format currency
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
+  // Memoize currency formatter
+  const formatCurrency = useCallback((value: number) => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
       maximumFractionDigits: 0,
     }).format(value);
-  };
+  }, []);
 
-  // Calculate slider position for visual feedback
-  const getProgressColor = (rate: number) => {
-    if (rate <= 12) return 'bg-emerald-500';
-    if (rate <= 22) return 'bg-amber-500';
-    return 'bg-rose-500';
-  };
+  // Memoize progress color getter
+  const getProgressColor = useCallback((rate: number) => {
+    if (rate <= 12) return "bg-emerald-500";
+    if (rate <= 22) return "bg-amber-500";
+    return "bg-rose-500";
+  }, []);
+
+  // Memoize input handlers
+  const handleGrossIncomeChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setGrossIncome(parseInt(e.target.value));
+  }, []);
+
+  const handleIraBalanceChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setIraBalance(parseInt(e.target.value));
+  }, []);
+
+  const handleRothConversionChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setRothConversion(parseInt(e.target.value));
+  }, []);
+
+  // Memoize filing status options
+  const filingStatusOptions = useMemo(
+    () => [
+      { value: "single", label: "Single" },
+      { value: "mfj", label: "MFJ" },
+      { value: "mfs", label: "MFS" },
+      { value: "hoh", label: "HOH" },
+    ],
+    []
+  );
 
   return (
     <div className="bg-white rounded-3xl border border-slate-200 shadow-lg overflow-hidden">
@@ -123,7 +149,7 @@ export const TaxSimulationWidget: React.FC = () => {
             disabled={loading}
             className="p-2 bg-white/10 hover:bg-white/20 rounded-xl transition-colors"
           >
-            <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-5 h-5 ${loading ? "animate-spin" : ""}`} />
           </button>
         </div>
       </div>
@@ -131,21 +157,18 @@ export const TaxSimulationWidget: React.FC = () => {
       <div className="p-6 space-y-6">
         {/* Filing Status */}
         <div>
-          <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Filing Status</label>
-          <div className="grid grid-cols-4 gap-2">
-            {[
-              { value: 'single', label: 'Single' },
-              { value: 'mfj', label: 'MFJ' },
-              { value: 'mfs', label: 'MFS' },
-              { value: 'hoh', label: 'HOH' },
-            ].map((opt) => (
+          <label className="block text-xs font-bold text-slate-500 uppercase mb-2">
+            Filing Status
+          </label>
+          <div className="grid grid-cols-4 gap-2" role="radiogroup" aria-label="Filing status">
+            {filingStatusOptions.map((opt) => (
               <button
                 key={opt.value}
                 onClick={() => setFilingStatus(opt.value)}
                 className={`py-2 px-3 rounded-xl text-sm font-bold transition-all ${
                   filingStatus === opt.value
-                    ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-500/30'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    ? "bg-emerald-600 text-white shadow-lg shadow-emerald-500/30"
+                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                 }`}
               >
                 {opt.label}
@@ -166,8 +189,9 @@ export const TaxSimulationWidget: React.FC = () => {
             max={500000}
             step={5000}
             value={grossIncome}
-            onChange={(e) => setGrossIncome(parseInt(e.target.value))}
+            onChange={handleGrossIncomeChange}
             className="w-full h-2 bg-slate-200 rounded-full appearance-none cursor-pointer slider-thumb"
+            aria-label="Gross income slider"
           />
           <div className="flex justify-between text-xs text-slate-400 mt-1">
             <span>$50k</span>
@@ -187,8 +211,9 @@ export const TaxSimulationWidget: React.FC = () => {
             max={2000000}
             step={10000}
             value={iraBalance}
-            onChange={(e) => setIraBalance(parseInt(e.target.value))}
+            onChange={handleIraBalanceChange}
             className="w-full h-2 bg-slate-200 rounded-full appearance-none cursor-pointer"
+            aria-label="Traditional IRA balance slider"
           />
           <div className="flex justify-between text-xs text-slate-400 mt-1">
             <span>$0</span>
@@ -200,7 +225,9 @@ export const TaxSimulationWidget: React.FC = () => {
         <div>
           <div className="flex justify-between items-center mb-2">
             <label className="text-xs font-bold text-slate-500 uppercase">Roth Conversion</label>
-            <span className="text-lg font-bold text-emerald-600">{formatCurrency(rothConversion)}</span>
+            <span className="text-lg font-bold text-emerald-600">
+              {formatCurrency(rothConversion)}
+            </span>
           </div>
           <input
             type="range"
@@ -208,8 +235,9 @@ export const TaxSimulationWidget: React.FC = () => {
             max={Math.min(iraBalance, 200000)}
             step={5000}
             value={rothConversion}
-            onChange={(e) => setRothConversion(parseInt(e.target.value))}
+            onChange={handleRothConversionChange}
             className="w-full h-2 bg-emerald-100 rounded-full appearance-none cursor-pointer"
+            aria-label="Roth conversion amount slider"
           />
         </div>
 
@@ -242,12 +270,18 @@ export const TaxSimulationWidget: React.FC = () => {
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-slate-50 rounded-2xl p-4">
                 <div className="text-xs text-slate-500 uppercase mb-1">Federal Tax</div>
-                <div className="text-xl font-bold text-slate-800">{formatCurrency(result.federal_tax)}</div>
-                <div className="text-xs text-slate-400">{result.effective_federal_rate}% effective</div>
+                <div className="text-xl font-bold text-slate-800">
+                  {formatCurrency(result.federal_tax)}
+                </div>
+                <div className="text-xs text-slate-400">
+                  {result.effective_federal_rate}% effective
+                </div>
               </div>
               <div className="bg-slate-50 rounded-2xl p-4">
                 <div className="text-xs text-slate-500 uppercase mb-1">CA State Tax</div>
-                <div className="text-xl font-bold text-slate-800">{formatCurrency(result.state_tax)}</div>
+                <div className="text-xl font-bold text-slate-800">
+                  {formatCurrency(result.state_tax)}
+                </div>
               </div>
             </div>
 
@@ -259,7 +293,9 @@ export const TaxSimulationWidget: React.FC = () => {
               </div>
               <div className="flex justify-between items-center mt-2 pt-2 border-t border-white/10">
                 <span className="text-slate-400">After-Tax Income</span>
-                <span className="text-lg font-bold text-emerald-400">{formatCurrency(result.after_tax_income)}</span>
+                <span className="text-lg font-bold text-emerald-400">
+                  {formatCurrency(result.after_tax_income)}
+                </span>
               </div>
             </div>
 
@@ -267,13 +303,15 @@ export const TaxSimulationWidget: React.FC = () => {
             <div className="bg-slate-50 rounded-2xl p-4">
               <div className="flex justify-between items-center mb-2">
                 <span className="text-xs text-slate-500 uppercase">Marginal Bracket</span>
-                <span className={`text-sm font-bold px-2 py-1 rounded-lg ${
-                  result.marginal_bracket <= 0.12
-                    ? 'bg-emerald-100 text-emerald-700'
-                    : result.marginal_bracket <= 0.22
-                    ? 'bg-amber-100 text-amber-700'
-                    : 'bg-rose-100 text-rose-700'
-                }`}>
+                <span
+                  className={`text-sm font-bold px-2 py-1 rounded-lg ${
+                    result.marginal_bracket <= 0.12
+                      ? "bg-emerald-100 text-emerald-700"
+                      : result.marginal_bracket <= 0.22
+                        ? "bg-amber-100 text-amber-700"
+                        : "bg-rose-100 text-rose-700"
+                  }`}
+                >
                   {(result.marginal_bracket * 100).toFixed(0)}%
                 </span>
               </div>
@@ -298,7 +336,8 @@ export const TaxSimulationWidget: React.FC = () => {
                     {result.roth_conversion_recommendation > 0 && (
                       <div className="text-sm text-emerald-600 mt-2 flex items-center gap-1">
                         <TrendingUp className="w-4 h-4" />
-                        Recommended Roth Conversion: {formatCurrency(result.roth_conversion_recommendation)}
+                        Recommended Roth Conversion:{" "}
+                        {formatCurrency(result.roth_conversion_recommendation)}
                       </div>
                     )}
                   </div>

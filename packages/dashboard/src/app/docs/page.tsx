@@ -1,41 +1,41 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { BookOpen, GitBranch, FolderTree, Network, Sparkles } from 'lucide-react';
+import Link from "next/link";
+import { motion } from "framer-motion";
+import { BookOpen, GitBranch, FolderTree, Network, Sparkles } from "lucide-react";
 
 const docSections = [
   {
-    id: 'philosophy',
-    title: '眞善美孝永 - 왕국의 철학',
-    description: '5기둥 철학과 Trinity Score 계산',
+    id: "philosophy",
+    title: "眞善美孝永 - 왕국의 철학",
+    description: "5기둥 철학과 Trinity Score 계산",
     icon: Sparkles,
-    href: '/docs/philosophy',
-    gradient: 'from-purple-500/20 to-indigo-500/20',
+    href: "/docs/philosophy",
+    gradient: "from-purple-500/20 to-indigo-500/20",
   },
   {
-    id: 'git-tree',
-    title: 'Git 트리 분석',
-    description: 'Phase별 진화 과정과 커밋 히스토리',
+    id: "git-tree",
+    title: "Git 트리 분석",
+    description: "Phase별 진화 과정과 커밋 히스토리",
     icon: GitBranch,
-    href: '/docs/git-tree',
-    gradient: 'from-blue-500/20 to-cyan-500/20',
+    href: "/docs/git-tree",
+    gradient: "from-blue-500/20 to-cyan-500/20",
   },
   {
-    id: 'project-structure',
-    title: '프로젝트 구조',
-    description: '패키지별 상세 분석과 디렉토리 트리',
+    id: "project-structure",
+    title: "프로젝트 구조",
+    description: "패키지별 상세 분석과 디렉토리 트리",
     icon: FolderTree,
-    href: '/docs/project-structure',
-    gradient: 'from-green-500/20 to-emerald-500/20',
+    href: "/docs/project-structure",
+    gradient: "from-green-500/20 to-emerald-500/20",
   },
   {
-    id: 'architecture',
-    title: '시스템 아키텍처',
-    description: '4계층 아키텍처와 데이터 플로우',
+    id: "architecture",
+    title: "시스템 아키텍처",
+    description: "4계층 아키텍처와 데이터 플로우",
     icon: Network,
-    href: '/docs/architecture',
-    gradient: 'from-orange-500/20 to-red-500/20',
+    href: "/docs/architecture",
+    gradient: "from-orange-500/20 to-red-500/20",
   },
 ];
 
@@ -55,9 +55,7 @@ export default function DocsPage() {
               📐 AFO Kingdom - 설계도 & 문서
             </h1>
           </div>
-          <p className="text-slate-500 text-lg">
-            眞善美孝永 5기둥 철학 기반 통합 AI 운영 체제
-          </p>
+          <p className="text-slate-500 text-lg">眞善美孝永 5기둥 철학 기반 통합 AI 운영 체제</p>
         </motion.header>
 
         {/* Section Grid */}
@@ -80,9 +78,7 @@ export default function DocsPage() {
                         <Icon className="w-8 h-8 text-slate-700" />
                       </div>
                       <div className="flex-1">
-                        <h2 className="text-2xl font-bold text-slate-700 mb-2">
-                          {section.title}
-                        </h2>
+                        <h2 className="text-2xl font-bold text-slate-700 mb-2">{section.title}</h2>
                         <p className="text-slate-500 text-sm">{section.description}</p>
                       </div>
                     </div>
@@ -129,4 +125,3 @@ export default function DocsPage() {
     </div>
   );
 }
-

@@ -1,8 +1,8 @@
-import { NextResponse } from 'next/server';
-import { exec } from 'child_process';
-import { promisify } from 'util';
-import * as fs from 'fs';
-import * as path from 'path';
+import { NextResponse } from "next/server";
+import { exec } from "child_process";
+import { promisify } from "util";
+import * as fs from "fs";
+import * as path from "path";
 
 const execAsync = promisify(exec);
 
@@ -11,27 +11,34 @@ async function runCmd(cmd: string, cwd: string): Promise<string> {
     const { stdout } = await execAsync(cmd, { cwd });
     return stdout.trim();
   } catch {
-    return '';
+    return "";
   }
 }
 
 export async function GET() {
-  const repoRoot = path.resolve(process.cwd(), '../..');
+  const repoRoot = path.resolve(process.cwd(), "../..");
 
   // Git stats
-  const totalCommits = await runCmd('git rev-list --count HEAD', repoRoot);
+  const totalCommits = await runCmd("git rev-list --count HEAD", repoRoot);
   const todayCommits = await runCmd("git log --oneline --since='midnight' | wc -l", repoRoot);
-  const headSha = await runCmd('git rev-parse --short HEAD', repoRoot);
-  const branch = await runCmd('git branch --show-current', repoRoot);
-  const status = await runCmd('git status --porcelain', repoRoot);
+  const headSha = await runCmd("git rev-parse --short HEAD", repoRoot);
+  const branch = await runCmd("git branch --show-current", repoRoot);
+  const status = await runCmd("git status --porcelain", repoRoot);
   const synced = !status;
 
   // Trinity Score
-  let trinityScore = { total: 100, truth: 1.0, goodness: 1.0, beauty: 1.0, serenity: 1.0, eternity: 1.0 };
+  let trinityScore = {
+    total: 100,
+    truth: 1.0,
+    goodness: 1.0,
+    beauty: 1.0,
+    serenity: 1.0,
+    eternity: 1.0,
+  };
   try {
-    const trinityPath = path.join(repoRoot, 'trinity_score.json');
+    const trinityPath = path.join(repoRoot, "trinity_score.json");
     if (fs.existsSync(trinityPath)) {
-      const data = JSON.parse(fs.readFileSync(trinityPath, 'utf-8'));
+      const data = JSON.parse(fs.readFileSync(trinityPath, "utf-8"));
       const scores = data?.trinity?.scores || {};
       trinityScore = {
         total: Math.round((data?.trinity?.total || 1) * 100 * 10) / 10,
@@ -47,13 +54,13 @@ export async function GET() {
   }
 
   // Tracked files
-  const trackedFiles = await runCmd('git ls-tree -r HEAD --name-only | wc -l', repoRoot);
+  const trackedFiles = await runCmd("git ls-tree -r HEAD --name-only | wc -l", repoRoot);
 
   // Recent commits for timeline
-  const recentCommits = await runCmd('git log --oneline -10', repoRoot);
-  const timeline = recentCommits.split('\n').map((line, i) => {
-    const [hash, ...msgParts] = line.split(' ');
-    return { num: i + 1, hash, msg: msgParts.join(' ').substring(0, 50) };
+  const recentCommits = await runCmd("git log --oneline -10", repoRoot);
+  const timeline = recentCommits.split("\n").map((line, i) => {
+    const [hash, ...msgParts] = line.split(" ");
+    return { num: i + 1, hash, msg: msgParts.join(" ").substring(0, 50) };
   });
 
   return NextResponse.json({

@@ -3,19 +3,17 @@
  * AFO Kingdom Dashboard - Unified Error Component
  */
 
-import { AlertTriangle, RefreshCw } from 'lucide-react';
-import type { ErrorProps } from '@/types/common';
+import { AlertTriangle, RefreshCw } from "lucide-react";
+import type { ErrorProps } from "@/types/common";
 
 export function ErrorMessage({
   message,
   onRetry,
-  retryText = '다시 시도',
-  className = '',
+  retryText = "다시 시도",
+  className = "",
 }: ErrorProps) {
   return (
-    <div
-      className={`bg-red-900/20 border border-red-500/50 rounded-lg p-6 ${className}`}
-    >
+    <div className={`bg-red-900/20 border border-red-500/50 rounded-lg p-6 ${className}`}>
       <div className="flex items-start gap-4">
         <AlertTriangle className="w-6 h-6 text-red-400 flex-shrink-0 mt-0.5" />
         <div className="flex-1">
@@ -35,4 +33,3 @@ export function ErrorMessage({
     </div>
   );
 }
-

@@ -2,19 +2,19 @@
 
 :root {
   /* Neudash 2025 Palette - Platinum/Soft Clay */
-  --bg-platinum: #EFEEEE;
-  --text-main: #4A5568;
-  --text-light: #A0AEC0;
-  
+  --bg-platinum: #efeeee;
+  --text-main: #4a5568;
+  --text-light: #a0aec0;
+
   /* Shadows for Depth (Light Source: Top Left) */
-  --shadow-light: #FFFFFF;
-  --shadow-dark: #D1D9E6;
-  
+  --shadow-light: #ffffff;
+  --shadow-dark: #d1d9e6;
+
   /* Accents */
-  --accent-primary: #5A67D8; /* Royal Blue */
-  --accent-success: #10B981; /* Emerald */
-  --accent-warning: #F59E0B; /* Amber */
-  --accent-danger: #EF4444; /* Red */
+  --accent-primary: #5a67d8; /* Royal Blue */
+  --accent-success: #10b981; /* Emerald */
+  --accent-warning: #f59e0b; /* Amber */
+  --accent-danger: #ef4444; /* Red */
 }
 
 @theme {
@@ -22,9 +22,10 @@
   --color-neu-text: var(--text-main);
   --color-neu-light: var(--text-light);
   --color-neu-primary: var(--accent-primary);
-  
+
   --shadow-neu-flat: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light);
-  --shadow-neu-pressed: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light);
+  --shadow-neu-pressed:
+    inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light);
   --shadow-neu-icon: 8px 8px 16px var(--shadow-dark), -8px -8px 16px var(--shadow-light);
 
   /* Shadcn Radius */
@@ -73,7 +74,6 @@
   --radius: 0.75rem;
 }
 
-
 body {
   background-color: var(--bg-platinum);
   color: var(--text-main);
@@ -87,21 +87,26 @@ body {
   .neu-card {
     @apply bg-platinum rounded-3xl p-8;
     box-shadow: var(--shadow-neu-flat);
-    border: 1px solid rgba(255,255,255,0.4);
+    border: 1px solid rgba(255, 255, 255, 0.4);
   }
 
   .neu-btn {
     @apply flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200 cursor-pointer text-neu-text;
     background-color: var(--bg-platinum);
-    box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
+    box-shadow:
+      6px 6px 12px var(--shadow-dark),
+      -6px -6px 12px var(--shadow-light);
   }
 
   .neu-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 8px 8px 16px var(--shadow-dark), -8px -8px 16px var(--shadow-light);
+    box-shadow:
+      8px 8px 16px var(--shadow-dark),
+      -8px -8px 16px var(--shadow-light);
   }
 
-  .neu-btn:active, .neu-btn.active {
+  .neu-btn:active,
+  .neu-btn.active {
     transform: translateY(0);
     box-shadow: var(--shadow-neu-pressed);
   }
@@ -111,22 +116,26 @@ body {
     background-color: var(--bg-platinum);
     box-shadow: var(--shadow-neu-icon);
     color: var(--text-main);
-    border: 2px solid rgba(255,255,255,0.1);
+    border: 2px solid rgba(255, 255, 255, 0.1);
   }
-  
+
   .neu-convex {
     background: var(--bg-platinum);
-    box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
+    box-shadow:
+      6px 6px 12px var(--shadow-dark),
+      -6px -6px 12px var(--shadow-light);
   }
-  
+
   .neu-concave {
     background: var(--bg-platinum);
     box-shadow: var(--shadow-neu-pressed);
   }
-  
+
   .neu-pill {
     @apply px-4 py-2 rounded-full font-bold text-sm flex items-center gap-2;
     background: var(--bg-platinum);
-    box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+    box-shadow:
+      4px 4px 8px var(--shadow-dark),
+      -4px -4px 8px var(--shadow-light);
   }
 }

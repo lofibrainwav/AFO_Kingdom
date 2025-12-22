@@ -30,9 +30,11 @@
 ## 2) Setup Commands (이 폴더 전용)
 
 ### 설치
+
 - `pnpm install` (pnpm-lock.yaml 존재)
 
 ### 실행
+
 - Dev: `pnpm dev` (port 3000)
 - Build: `pnpm build`
 - Start: `pnpm start` (프로덕션 모드)
@@ -42,16 +44,20 @@
 ## 3) Quality Gates (이 폴더의 완료 기준)
 
 ### Lint
+
 - `pnpm lint` (ESLint 실행)
 
 ### Type-check
+
 - `pnpm type-check` (TypeScript 컴파일러 체크)
 - 또는 `tsc --noEmit` (직접 실행)
 
 ### Tests
+
 - `pnpm test` (존재 시)
 
 ### Build
+
 - `pnpm build` (변경이 빌드 결과에 영향 있으면 필수)
 
 ---
@@ -64,6 +70,7 @@
 - Tailwind를 이미 쓰고 있으면 Tailwind 우선, 임의의 CSS/새 라이브러리 도입은 ASK.
 
 ### 스타일 가이드
+
 - **Tailwind CSS**: 기본 스타일링
 - **Glassmorphism**: 카드/모달 등에 적용
 - **Trinity Glow**: Trinity Score 표시 시 사용
@@ -143,4 +150,3 @@
 ---
 
 # End of ./packages/dashboard/CLAUDE.md
-

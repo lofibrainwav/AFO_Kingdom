@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
-import BrowserAuthModal from '@/components/wallet/BrowserAuthModal';
-import { ArrowLeft, Trash2, Plus, Key, AlertCircle, Globe } from 'lucide-react';
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import BrowserAuthModal from "@/components/wallet/BrowserAuthModal";
+import { ArrowLeft, Trash2, Plus, Key, AlertCircle, Globe } from "lucide-react";
 
 interface APIKey {
   name: string;
@@ -17,13 +17,13 @@ export default function WalletPage() {
   const [keys, setKeys] = useState<APIKey[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [newKey, setNewKey] = useState({ name: '', key: '', service: 'openai' });
+  const [newKey, setNewKey] = useState({ name: "", key: "", service: "openai" });
   const [showAddForm, setShowAddForm] = useState(false);
   const [showBrowserAuth, setShowBrowserAuth] = useState(false);
 
   const fetchKeys = async () => {
     try {
-      const res = await fetch('/api/proxy/api/wallet/keys'); // Needs Proxy Check (Updated to 127.0.0.1:8010)
+      const res = await fetch("/api/proxy/api/wallet/keys"); // Needs Proxy Check (Updated to 127.0.0.1:8010)
       if (!res.ok) {
         const text = await res.text();
         throw new Error(`Fetch Failed: ${res.status} ${res.statusText} - ${text.substring(0, 50)}`);
@@ -31,7 +31,7 @@ export default function WalletPage() {
       const data = await res.json();
       setKeys(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
+      setError(err instanceof Error ? err.message : "Unknown error");
     } finally {
       setLoading(false);
     }
@@ -40,31 +40,31 @@ export default function WalletPage() {
   const handleAddKey = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await fetch('/api/proxy/api/wallet/keys', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/proxy/api/wallet/keys", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newKey),
       });
       if (!res.ok) {
         const errData = await res.json();
-        throw new Error(errData.detail || 'Failed to add key');
+        throw new Error(errData.detail || "Failed to add key");
       }
       setShowAddForm(false);
-      setNewKey({ name: '', key: '', service: 'openai' });
+      setNewKey({ name: "", key: "", service: "openai" });
       fetchKeys();
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Error adding key');
+      alert(err instanceof Error ? err.message : "Error adding key");
     }
   };
 
   const handleDeleteKey = async (name: string) => {
     if (!confirm(`Permanently delete key "${name}"?`)) return;
     try {
-      const res = await fetch(`/api/proxy/api/wallet/keys/${name}`, { method: 'DELETE' });
-      if (!res.ok) throw new Error('Failed to delete key');
+      const res = await fetch(`/api/proxy/api/wallet/keys/${name}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed to delete key");
       fetchKeys();
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Error deleting key');
+      alert(err instanceof Error ? err.message : "Error deleting key");
     }
   };
 
@@ -74,7 +74,10 @@ export default function WalletPage() {
 
   return (
     <div className="min-h-screen bg-black text-white p-8 font-mono">
-      <Link href="/" className="inline-flex items-center text-gray-400 hover:text-white mb-8 transition-colors">
+      <Link
+        href="/"
+        className="inline-flex items-center text-gray-400 hover:text-white mb-8 transition-colors"
+      >
         <ArrowLeft className="w-4 h-4 mr-2" /> Back to Dashboard
       </Link>
 
@@ -111,7 +114,9 @@ export default function WalletPage() {
             <form onSubmit={handleAddKey} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs uppercase text-gray-500 mb-1">Key Name (ID)</label>
+                  <label className="block text-xs uppercase text-gray-500 mb-1">
+                    Key Name (ID)
+                  </label>
                   <input
                     type="text"
                     required
@@ -122,7 +127,9 @@ export default function WalletPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs uppercase text-gray-500 mb-1">Service Provider</label>
+                  <label className="block text-xs uppercase text-gray-500 mb-1">
+                    Service Provider
+                  </label>
                   <select
                     className="w-full bg-black border border-gray-700 rounded p-2 text-white focus:border-emerald-500 focus:outline-none"
                     value={newKey.service}
@@ -168,7 +175,9 @@ export default function WalletPage() {
 
         {/* Key List */}
         {loading ? (
-          <div className="text-center py-12 text-gray-500 animate-pulse">Accessing Secure Vault...</div>
+          <div className="text-center py-12 text-gray-500 animate-pulse">
+            Accessing Secure Vault...
+          </div>
         ) : error ? (
           <div className="bg-red-900/20 border border-red-500/50 text-red-400 p-4 rounded-lg flex items-center">
             <AlertCircle className="w-5 h-5 mr-2" />
@@ -181,12 +190,21 @@ export default function WalletPage() {
         ) : (
           <div className="grid gap-4">
             {keys.map((key) => (
-              <div key={key.name} className="bg-gray-900/50 border border-gray-800 hover:border-emerald-500/50 transition-colors p-4 rounded-lg flex justify-between items-center group">
+              <div
+                key={key.name}
+                className="bg-gray-900/50 border border-gray-800 hover:border-emerald-500/50 transition-colors p-4 rounded-lg flex justify-between items-center group"
+              >
                 <div className="flex items-center">
-                  <div className={`w-2 h-2 rounded-full mr-4 ${key.access_count > 0 ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-gray-600'}`}></div>
+                  <div
+                    className={`w-2 h-2 rounded-full mr-4 ${key.access_count > 0 ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "bg-gray-600"}`}
+                  ></div>
                   <div>
-                    <h3 className="font-bold text-white group-hover:text-emerald-400 transition-colors">{key.name}</h3>
-                    <p className="text-xs text-gray-500 uppercase tracking-wider">{key.service} • {key.key_type}</p>
+                    <h3 className="font-bold text-white group-hover:text-emerald-400 transition-colors">
+                      {key.name}
+                    </h3>
+                    <p className="text-xs text-gray-500 uppercase tracking-wider">
+                      {key.service} • {key.key_type}
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-6">

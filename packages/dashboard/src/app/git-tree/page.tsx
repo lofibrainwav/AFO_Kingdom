@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useApi } from '@/hooks/useApi';
-import { LoadingSpinner, ErrorMessage } from '@/components/common';
-import type { GitTreeAnalysis, Phase } from '@/types/common';
-import { PHASE_COLORS, PHASE_ICONS, REFRESH_INTERVALS } from '@/lib/constants';
+import { useState } from "react";
+import { useApi } from "@/hooks/useApi";
+import { LoadingSpinner, ErrorMessage } from "@/components/common";
+import type { GitTreeAnalysis, Phase } from "@/types/common";
+import { PHASE_COLORS, PHASE_ICONS, REFRESH_INTERVALS } from "@/lib/constants";
 
 export default function GitTreePage() {
   const [expandedPhase, setExpandedPhase] = useState<Phase | null>(null);
@@ -14,7 +14,7 @@ export default function GitTreePage() {
     loading,
     error,
     refetch,
-  } = useApi<GitTreeAnalysis>('/api/git-tree', {
+  } = useApi<GitTreeAnalysis>("/api/git-tree", {
     refetchInterval: REFRESH_INTERVALS.SLOW, // 5분마다 자동 업데이트
   });
 
@@ -32,11 +32,7 @@ export default function GitTreePage() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 p-8">
         <div className="max-w-7xl mx-auto">
-          <ErrorMessage
-            message={error.message}
-            onRetry={refetch}
-            retryText="다시 시도"
-          />
+          <ErrorMessage message={error.message} onRetry={refetch} retryText="다시 시도" />
         </div>
       </div>
     );
@@ -47,14 +43,14 @@ export default function GitTreePage() {
   }
 
   const phaseOrder = [
-    'Phase 0: Genesis',
-    'Phase 1: Awakening',
-    'Phase 2: Harmony',
-    'Phase 3: Expansion',
-    'Phase 4: Eternal',
-    'Maintenance',
-    'Features',
-    'Other',
+    "Phase 0: Genesis",
+    "Phase 1: Awakening",
+    "Phase 2: Harmony",
+    "Phase 3: Expansion",
+    "Phase 4: Eternal",
+    "Maintenance",
+    "Features",
+    "Other",
   ];
 
   return (
@@ -62,12 +58,8 @@ export default function GitTreePage() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">
-            🌳 Git 트리 Phase 분석
-          </h1>
-          <p className="text-gray-300">
-            Phase 0부터 차근차근 분석한 Git 트리 히스토리
-          </p>
+          <h1 className="text-4xl font-bold text-white mb-2">🌳 Git 트리 Phase 분석</h1>
+          <p className="text-gray-300">Phase 0부터 차근차근 분석한 Git 트리 히스토리</p>
           <div className="mt-4 flex items-center gap-4 text-sm text-gray-400">
             <span>총 커밋: {analysis.total_commits}개</span>
             <span>•</span>
@@ -75,9 +67,7 @@ export default function GitTreePage() {
               기간: {analysis.first_commit?.date} ~ {analysis.latest_commit?.date}
             </span>
             <span>•</span>
-            <span>
-              분석 시간: {new Date(analysis.analyzed_at).toLocaleString('ko-KR')}
-            </span>
+            <span>분석 시간: {new Date(analysis.analyzed_at).toLocaleString("ko-KR")}</span>
             <button
               onClick={refetch}
               className="ml-auto px-3 py-1 bg-purple-600 hover:bg-purple-700 rounded text-white text-sm"
@@ -93,8 +83,8 @@ export default function GitTreePage() {
             const phase = analysis.phases[phaseName];
             if (!phase) return null;
 
-            const colorClass = PHASE_COLORS[phaseName] || 'from-gray-500 to-slate-500';
-            const icon = PHASE_ICONS[phaseName] || '📦';
+            const colorClass = PHASE_COLORS[phaseName] || "from-gray-500 to-slate-500";
+            const icon = PHASE_ICONS[phaseName] || "📦";
 
             return (
               <div
@@ -109,9 +99,7 @@ export default function GitTreePage() {
                     <span>{icon}</span>
                     <span className="text-lg">{phaseName}</span>
                   </h2>
-                  <span className="text-white/80 text-sm">
-                    {phase.count}개
-                  </span>
+                  <span className="text-white/80 text-sm">{phase.count}개</span>
                 </div>
                 <div className="space-y-2">
                   <div className="flex justify-between text-white/90 text-sm">
@@ -157,17 +145,11 @@ export default function GitTreePage() {
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="font-mono text-purple-400 text-sm">
-                          {commit.hash}
-                        </span>
-                        <span className="text-gray-400 text-xs">
-                          [{commit.date}]
-                        </span>
+                        <span className="font-mono text-purple-400 text-sm">{commit.hash}</span>
+                        <span className="text-gray-400 text-xs">[{commit.date}]</span>
                       </div>
                       <p className="text-white text-sm">{commit.message}</p>
-                      <p className="text-gray-500 text-xs mt-1">
-                        {commit.author}
-                      </p>
+                      <p className="text-gray-500 text-xs mt-1">{commit.author}</p>
                     </div>
                   </div>
                 </div>
@@ -187,9 +169,7 @@ export default function GitTreePage() {
             <h3 className="text-gray-400 text-sm mb-2">첫 커밋</h3>
             {analysis.first_commit && (
               <div>
-                <p className="text-white font-mono text-sm mb-1">
-                  {analysis.first_commit.hash}
-                </p>
+                <p className="text-white font-mono text-sm mb-1">{analysis.first_commit.hash}</p>
                 <p className="text-gray-300 text-sm">{analysis.first_commit.message}</p>
                 <p className="text-gray-500 text-xs mt-1">{analysis.first_commit.date}</p>
               </div>
@@ -199,9 +179,7 @@ export default function GitTreePage() {
             <h3 className="text-gray-400 text-sm mb-2">최근 커밋</h3>
             {analysis.latest_commit && (
               <div>
-                <p className="text-white font-mono text-sm mb-1">
-                  {analysis.latest_commit.hash}
-                </p>
+                <p className="text-white font-mono text-sm mb-1">{analysis.latest_commit.hash}</p>
                 <p className="text-gray-300 text-sm">{analysis.latest_commit.message}</p>
                 <p className="text-gray-500 text-xs mt-1">{analysis.latest_commit.date}</p>
               </div>
@@ -219,4 +197,3 @@ export default function GitTreePage() {
     </div>
   );
 }
-
