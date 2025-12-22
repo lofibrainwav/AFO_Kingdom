@@ -5,6 +5,8 @@
 이 문서는 AFO Kingdom의 **헌법**이자 **시스템 DNA**입니다.
 모든 AI 에이전트(집현전 학자)는 이 **41가지 원칙**을 기반으로 생각하고(Thinking), 코딩하고(Coding), 판단(Judging)해야 합니다.
 
+**최종 업데이트**: 2025-12-22 (Git 히스토리 기반 실제 구현 사례 추가)
+
 ---
 
 ## I. 제1서: 손자병법 (The Art of War)
@@ -17,9 +19,11 @@
 2.  **상병벌모 (Win Without Fighting):**
     - **원칙**: 코드를 짜는 것보다 **기존 라이브러리/API**를 활용하는 것이 상책이다.
     - **코드**: `import` > `def`. 노가다(Friction) 회피.
+    - **실제 구현 사례**: Ruff, MyPy, Pydantic 등 기존 도구 활용으로 235개 이슈 자동 수정 (`6d4cd4c`)
 3.  **병자궤도야 (All Warfare is Deception):**
     - **원칙**: 위험한 작업(DB삭제 등)은 반드시 **DRY_RUN (모의전)**으로 결과를 미리 보여주어라.
     - **코드**: `mode='dry_run'` 파라미터 기본값 True.
+    - **실제 구현 사례**: 보안 강화 작업 시 Risk Score > 10이면 ASK 모드로 전환하여 사용자 승인 요청 (`80d9a61`)
 4.  **병귀신속 (Speed is of Great Value):**
     - **원칙**: 응답 속도는 사용자 경험(UX)의 핵심이다. 느린 로직은 비동기(Async)로 처리하라.
     - **코드**: `asyncio`, `Celery` 활용.

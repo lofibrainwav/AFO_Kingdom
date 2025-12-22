@@ -8,8 +8,8 @@ x-common-security: &common-security
   read_only: true                  # 善: filesystem read-only
   security_opt:
     - no-new-privileges:true       # 善: 새 권한 획득 금지
-  cap_drop:
-    - ALL                          # 善: 모든 capability 제거
+  # cap_drop:
+  #   - ALL                          # 善: 모든 capability 제거 - DISABLED for init
   restart: unless-stopped          # 永: 자동 복구
 
 x-healthcheck-default: &healthcheck-default
@@ -25,7 +25,7 @@ services:
   postgres:
     image: postgres:15-alpine
     container_name: afo-postgres
-    user: "999:999"                  # 善: non-root (postgres UID)
+    # user: "999:999"                  # 善: non-root (postgres UID) - DISABLED for macOS permission fix
     environment:
       POSTGRES_DB: afo_memory
       POSTGRES_USER: afo
@@ -64,7 +64,7 @@ services:
   qdrant:
     image: qdrant/qdrant:v1.7.4
     container_name: afo-qdrant
-    user: "1000:1000"                # 善: non-root
+    # user: "1000:1000"                # 善: non-root (Temporarily disabled for macOS permissions)
     ports:
       - "6333:6333"
       - "6334:6334"
@@ -74,7 +74,21 @@ services:
       - /tmp:noexec,nosuid,size=100m
     networks:
       - backend
-    <<: *common-security
+    # <<: *common-security             # Disabled for stability
+
+  neo4j:
+    image: neo4j:5-community
+    container_name: afo-neo4j
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - neo4j_data:/data
+    environment:
+      - NEO4J_AUTH=neo4j/password
+    networks:
+      - backend
+    # <<: *common-security             # Disabled for stability
 
   # ═══════════════════════════════════════════════════════════════════════════════
   # Monitoring Stack (Profile-Based Activation)
@@ -254,5 +268,6 @@ volumes:
   postgres_data:
   redis_data:
   qdrant_data:
+  neo4j_data:
   grafana_data:
   ollama_data:

@@ -1,4 +1,5 @@
 import logging
+from pathlib import Path
 from typing import TYPE_CHECKING, Any, Literal
 
 if TYPE_CHECKING:
@@ -9,6 +10,38 @@ from pydantic_settings import BaseSettings
 
 logger = logging.getLogger(__name__)
 
+# ============================================================================
+# AGENTS.md 통합 상수 (SSOT)
+# ============================================================================
+
+# AGENTS.md 파일 경로 (루트 기준)
+# packages/afo-core/config/antigravity.py -> ... -> AFO_Kingdom/AGENTS.md
+# .parent(config) -> .parent(afo-core) -> .parent(packages) -> .parent(AFO_Kingdom)
+AGENTS_MD_PATH = Path(__file__).resolve().parent.parent.parent.parent / "AGENTS.md"
+
+# Trinity Score 가중치 (AGENTS.md Ⅲ. 5기둥 철학 및 SSOT 가중치)
+# Truth(35%), Goodness(35%), Beauty(20%), Serenity(8%), Eternity(2%)
+AGENTS_MD_TRINITY_WEIGHTS = {
+    "truth": 0.35,
+    "goodness": 0.35,
+    "beauty": 0.20,
+    "serenity": 0.08,
+    "eternity": 0.02,
+}
+
+# AUTO_RUN 조건 (AGENTS.md Rule #1)
+AGENTS_MD_AUTO_RUN_TRINITY_THRESHOLD = 90
+AGENTS_MD_AUTO_RUN_RISK_THRESHOLD = 10
+
+# Risk Score 가이드 (AGENTS.md Ⅵ. Risk Score 가이드)
+AGENTS_MD_RISK_SCORE_GUIDE = {
+    "auth_payment_secrets_prod": 60,
+    "db_data_irreversible": 40,
+    "dependency_large_refactor": 30,
+    "core_logic_no_test": 25,
+    "doc_small_bug_ui": 5,
+}
+
 
 class AntiGravitySettings(BaseSettings):
     """
@@ -17,6 +50,12 @@ class AntiGravitySettings(BaseSettings):
     Goodness (善): DRY_RUN 기본값으로 안전 우선
     Beauty (美): 간결한 설정 인터페이스
     Serenity (孝): 자동화로 운영 마찰 제거
+    
+    [AGENTS.md 통합]
+    - AGENTS.md 파일 경로: AGENTS_MD_PATH
+    - Trinity Score 가중치: AGENTS_MD_TRINITY_WEIGHTS
+    - AUTO_RUN 조건: AGENTS_MD_AUTO_RUN_TRINITY_THRESHOLD, AGENTS_MD_AUTO_RUN_RISK_THRESHOLD
+    - Risk Score 가이드: AGENTS_MD_RISK_SCORE_GUIDE
     """
 
     ENVIRONMENT: Literal["dev", "prod", "test"] = "dev"  # 환경 자동 감지
@@ -25,6 +64,37 @@ class AntiGravitySettings(BaseSettings):
     CENTRAL_CONFIG_SYNC: bool = True  # 중앙 설정 동기화 (永: 영속성)
     AUTO_SYNC: bool = True  # 자동 동기화 활성화 (孝: 설정 마찰 제거)
     SELF_EXPANDING_MODE: bool = True  # 자율 확장 모드 (永: 창조자 트랙 활성화)
+    
+    # [AGENTS.md 통합] AGENTS.md 파일 존재 확인
+    @property
+    def agents_md_exists(self) -> bool:
+        """AGENTS.md 파일 존재 여부 확인"""
+        return AGENTS_MD_PATH.exists()
+    
+    @property
+    def agents_md_path(self) -> Path:
+        """AGENTS.md 파일 경로 반환"""
+        return AGENTS_MD_PATH
+    
+    @property
+    def trinity_weights(self) -> dict[str, float]:
+        """Trinity Score 가중치 반환 (AGENTS.md SSOT)"""
+        return AGENTS_MD_TRINITY_WEIGHTS.copy()
+    
+    @property
+    def auto_run_trinity_threshold(self) -> int:
+        """AUTO_RUN Trinity Score 임계값 (AGENTS.md Rule #1)"""
+        return AGENTS_MD_AUTO_RUN_TRINITY_THRESHOLD
+    
+    @property
+    def auto_run_risk_threshold(self) -> int:
+        """AUTO_RUN Risk Score 임계값 (AGENTS.md Rule #1)"""
+        return AGENTS_MD_AUTO_RUN_RISK_THRESHOLD
+    
+    @property
+    def risk_score_guide(self) -> dict[str, int]:
+        """Risk Score 가이드 반환 (AGENTS.md Ⅵ)"""
+        return AGENTS_MD_RISK_SCORE_GUIDE.copy()
 
     # [NEW] Phase 0: Logging Level Enforcement (眞: 관찰 강화)
     @property
@@ -38,23 +108,37 @@ class AntiGravitySettings(BaseSettings):
 
     def auto_sync(self) -> str:
         """
-        자동 동기화 실행 (孝: Serenity)
-
-        PDF 페이지 1: AntiGravity 자동화
-        - 설정·데이터 실시간 반영
-        - Vault·DB 동기화 로직
-
-        Returns:
-            동기화 결과 메시지
+        자동 동기화 실행 (孝: Serenity) - Hot Reload Implementation
+        
+        Reads .env.antigravity and updates the singleton instance in-place.
         """
         if not self.AUTO_SYNC:
             return "[孝: 자동 동기화] 비활성화됨"
 
-        logger.info("[孝: 자동 동기화] 설정·데이터 실시간 반영 완료")
-        # TODO: 실제 Vault·DB 동기화 로직 구현
-        # 예: Vault에서 설정 로드, DB에 반영 등
+        try:
+            # 1. Create a fresh instance to read new env values
+            new_settings = AntiGravitySettings(_env_file=".env.antigravity")
+            
+            # 2. Update current instance attributes
+            # effectively becoming the new settings while keeping the same object reference
+            changes = []
+            for key, value in new_settings.model_dump().items():
+                old_value = getattr(self, key, None)
+                if old_value != value:
+                    setattr(self, key, value)
+                    changes.append(f"{key}: {old_value} -> {value}")
+            
+            if changes:
+                log_msg = f"[孝: 자동 동기화] 설정 업데이트 완료: {', '.join(changes)}"
+                logger.info(log_msg)
+                return log_msg
+            else:
+                return "[孝: 자동 동기화] 변경사항 없음"
 
-        return "[孝: 자동 동기화] 설정·데이터 실시간 반영 완료"
+        except Exception as e:
+            err_msg = f"[孝: 자동 동기화] 실패: {e}"
+            logger.error(err_msg)
+            return err_msg
 
     def _get_redis_conn(self) -> "redis.Redis":
         """Helper for test mocking"""
@@ -193,10 +277,41 @@ class AntiGravitySettings(BaseSettings):
         except Exception as e:
             logger.warning(f"⚠️ [Governance] Flag check failed for {key}: {e}. Using default.")
             return default
+    
+    def check_auto_run_eligibility(
+        self, trinity_score: float, risk_score: float
+    ) -> tuple[bool, str]:
+        """
+        [AGENTS.md Rule #1] AUTO_RUN 조건 검증
+        
+        조건: Trinity Score >= 90 AND Risk Score <= 10
+        
+        Args:
+            trinity_score: Trinity Score (0-100)
+            risk_score: Risk Score (0-100)
+        
+        Returns:
+            (is_eligible, reason): 자격 여부와 이유
+        """
+        if trinity_score >= self.auto_run_trinity_threshold:
+            if risk_score <= self.auto_run_risk_threshold:
+                return True, f"AUTO_RUN: Trinity Score ({trinity_score}) >= {self.auto_run_trinity_threshold} AND Risk Score ({risk_score}) <= {self.auto_run_risk_threshold}"
+            else:
+                return False, f"ASK_COMMANDER: Risk Score ({risk_score}) > {self.auto_run_risk_threshold}"
+        else:
+            return False, f"ASK_COMMANDER: Trinity Score ({trinity_score}) < {self.auto_run_trinity_threshold}"
 
 
 # 싱글톤 인스턴스 - 전체 앱에서 공유
 antigravity = AntiGravitySettings()
+
+# Startup 시 AGENTS.md 통합 확인
+if antigravity.agents_md_exists:
+    logger.info(f"✅ [AGENTS.md] 파일 확인: {antigravity.agents_md_path}")
+    logger.info(f"✅ [AGENTS.md] Trinity 가중치: {antigravity.trinity_weights}")
+    logger.info(f"✅ [AGENTS.md] AUTO_RUN 조건: Trinity >= {antigravity.auto_run_trinity_threshold}, Risk <= {antigravity.auto_run_risk_threshold}")
+else:
+    logger.warning(f"⚠️ [AGENTS.md] 파일 없음: {antigravity.agents_md_path}")
 
 # Startup 시 자동 동기화 실행
 antigravity.auto_sync()

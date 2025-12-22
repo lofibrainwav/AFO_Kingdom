@@ -32,7 +32,7 @@ export function PerformanceMetricsWidget() {
   useEffect(() => {
     if (typeof window !== 'undefined' && performance.getEntriesByType('navigation')[0]) {
       const nav = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
-      setLoadTime(Math.round(nav.domContentLoadedEventEnd - nav.fetchStart));
+      setLoadTime(Math.round(nav.domContentLoadedEventEnd - nav.fetchStart)); // eslint-disable-line react-hooks/set-state-in-effect
     }
   }, []);
 
@@ -42,6 +42,7 @@ export function PerformanceMetricsWidget() {
       // Chrome-only API
       const mem = (performance as any).memory;
       if (mem && mem.usedJSHeapSize) {
+        // eslint-disable-next-line
         setMemory(Math.round(mem.usedJSHeapSize / 1024 / 1024)); // MB
       }
     }

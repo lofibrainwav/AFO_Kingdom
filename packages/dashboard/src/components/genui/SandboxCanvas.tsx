@@ -56,8 +56,8 @@ export const SandboxCanvas: React.FC = () => {
         // Dynamic load from registry
         // Note: In dev, HMR might take a second.
         // We use a small timeout or just try to load.
+        // We use a small timeout or just try to load.
         setTimeout(() => {
-            // @ts-ignore - Index signature
             const Comp = (GenUIRegistry as any)[data.component_name];
             if (Comp) {
                 setRenderedComponent(() => Comp);
@@ -100,8 +100,10 @@ export const SandboxCanvas: React.FC = () => {
                 <label className="block text-xs font-medium text-gray-400 mb-1">Component Name (PascalCase)</label>
                 <input 
                     type="text" 
+                    id="componentName"
                     value={componentName}
                     onChange={(e) => setComponentName(e.target.value)}
+                    aria-label="Component Name"
                     className="w-full bg-gray-950 border border-gray-700 rounded p-2 text-sm focus:border-purple-500 outline-none transition-colors"
                 />
             </div>
@@ -112,6 +114,7 @@ export const SandboxCanvas: React.FC = () => {
                     value={prompt}
                     onChange={(e) => setPrompt(e.target.value)}
                     placeholder="Describe the UI element you want Samahwi to build..."
+                    aria-label="Commander's Intent"
                     className="w-full flex-1 bg-gray-950 border border-gray-700 rounded p-2 text-sm focus:border-purple-500 outline-none transition-colors resize-none"
                 />
             </div>

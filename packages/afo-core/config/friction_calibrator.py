@@ -6,7 +6,11 @@ from datetime import datetime
 from decimal import Decimal
 
 from AFO.security.vault_manager import vault
-from config.antigravity import antigravity
+
+try:
+    from AFO.config.antigravity import antigravity
+except ImportError:
+    from config.antigravity import antigravity
 
 
 @dataclass

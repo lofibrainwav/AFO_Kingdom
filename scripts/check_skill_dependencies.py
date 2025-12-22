@@ -72,26 +72,26 @@ def check_package(package_name: str) -> tuple[bool, str | None]:
         return False, f"Unexpected error: {e}"
 
 
-
 def check_custom_verification(dep_name: str) -> tuple[bool, str]:
     """비-Python 의존성 (프론트엔드 등) 커스텀 체크"""
     repo_root = Path(__file__).parent.parent
-    
+
     if dep_name in ["react", "iframe"]:
         # Dashboard 패키지 존재 확인
         dashboard_path = repo_root / "packages" / "dashboard" / "package.json"
         if dashboard_path.exists():
             return True, "Dashboard (Next.js) Verified"
         return False, "Dashboard Package Missing"
-        
+
     if dep_name == "ai-analysis":
         # AFO Core 존재 확인
         core_path = repo_root / "packages" / "afo-core" / "AFO"
         if core_path.exists():
             return True, "AFO Core Analysis Verified"
         return False, "AFO Core Missing"
-        
+
     return False, "Unknown Custom Dependency"
+
 
 def main():
     """메인 함수"""
@@ -114,8 +114,15 @@ def main():
 
     # Deep Research 발견 항목 추가 (시스템 코어)
     deep_research_deps = {
-        "anthropic", "playwright", "qdrant-client", "psutil", 
-        "prometheus-client", "sse-starlette", "fastapi", "uvicorn", "watchdog"
+        "anthropic",
+        "playwright",
+        "qdrant-client",
+        "psutil",
+        "prometheus-client",
+        "sse-starlette",
+        "fastapi",
+        "uvicorn",
+        "watchdog",
     }
     all_dependencies.update(deep_research_deps)
 

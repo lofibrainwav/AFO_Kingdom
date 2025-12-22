@@ -8,7 +8,13 @@ from fastapi import HTTPException
 from playwright.async_api import Browser, Playwright, Route, async_playwright
 from playwright.async_api import TimeoutError as PlaywrightTimeout
 
-from config.antigravity import antigravity
+try:
+    from AFO.config.antigravity import antigravity
+except ImportError:
+    try:
+        from config.antigravity import antigravity
+    except ImportError:
+        antigravity = None
 
 logger = logging.getLogger(__name__)
 

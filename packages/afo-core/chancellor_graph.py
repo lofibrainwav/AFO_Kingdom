@@ -368,17 +368,20 @@ graph.add_edge("tigers", "historian")
 graph.add_edge("historian", END)
 
 # === 4. Compile ===
-# Use MemorySaver for development, RedisSaver for production (Eternity 永)
+# Use AsyncRedisSaver for production persistence (Eternity 永)
+# Fallback to MemorySaver only if Redis is unavailable
 try:
-    from langgraph.checkpoint.memory import MemorySaver
+    from AFO.utils.cache_utils import cache
+    from AFO.utils.redis_saver import AsyncRedisSaver
 
-    # Development: Use MemorySaver for fast prototyping
-    # Production: Use build_chancellor_graph(checkpointer) with RedisSaver for persistence
-    checkpointer = MemorySaver()
-    # Info level log instead of warning - this is expected behavior for development
-    log_sse(
-        "ℹ️ [Memory] Using MemorySaver for development. For Redis persistence, use build_chancellor_graph(checkpointer) with RedisSaver."
-    )
+    if cache.enabled:
+        checkpointer = AsyncRedisSaver()
+        log_sse("✅ [Eternity] AsyncRedisSaver Active - Memories are Eternal.")
+    else:
+        from langgraph.checkpoint.memory import MemorySaver
+
+        checkpointer = MemorySaver()
+        log_sse("⚠️ [Eternity Checklist] Redis unavailable, falling back to MemorySaver.")
 except ImportError:
     from langgraph.checkpoint.memory import MemorySaver
 

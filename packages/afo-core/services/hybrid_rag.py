@@ -12,6 +12,20 @@ from typing import Any, cast
 from pydantic import BaseModel
 from redis.commands.search.query import Query as RedisQuery
 
+# 眞 (Truth): Neo4j Integration (GraphRAG)
+try:
+    from neo4j import GraphDatabase
+except ImportError:
+    GraphDatabase = None
+
+# Qdrant Integration
+try:
+    from qdrant_client import QdrantClient
+    from qdrant_client.http import models as qmodels
+except ImportError:
+    QdrantClient = None
+    qmodels = None
+
 # Optional imports handling
 try:
     from pgvector.psycopg2 import register_vector
@@ -222,6 +236,146 @@ def query_redis(embedding: list[float], top_k: int, redis_client: Any) -> list[d
     return rows
 
 
+def query_graph_context(entities: list[str], limit: int = 5) -> list[dict[str, Any]]:
+    """
+    美 (Beauty): GraphRAG Context Retrieval
+    Neo4j 지식 그래프에서 엔티티 간의 관계를 탐색.
+    """
+    if not GraphDatabase or not entities:
+        return []
+
+    uri = "bolt://localhost:7687"
+    auth = ("neo4j", "password") # MVP credential
+    
+    try:
+        results = []
+        with GraphDatabase.driver(uri, auth=auth) as driver:
+            with driver.session() as session:
+                # Find related nodes (1-hop)
+                query = """
+                MATCH (n)-[r]-(m)
+                WHERE n.name IN $entities OR n.id IN $entities
+                RETURN n.name AS source, type(r) AS rel, m.name AS target, m.description AS desc
+                LIMIT $limit
+                """
+                records = session.run(query, entities=entities, limit=limit)
+                for record in records:
+                    results.append({
+                        "source": record["source"],
+                        "relationship": record["rel"],
+                        "target": record["target"],
+                        "description": record["desc"] or ""
+                    })
+        return results
+    except Exception as e:
+        print(f"[GraphRAG] Neo4j query failed: {e}")
+        return []
+
+
+def query_qdrant(embedding: list[float], top_k: int, qdrant_client: Any) -> list[dict[str, Any]]:
+    """
+    眞 (Truth): Qdrant 벡터 검색 (Brain Organ)
+    
+    Args:
+        embedding: 검색할 벡터
+        top_k: 반환할 상위 항목 수
+        qdrant_client: Qdrant 클라이언트
+        
+    Returns:
+        list[dict]: 검색 결과 리스트
+    """
+    if qdrant_client is None or not embedding:
+        return []
+
+    try:
+        from AFO.config.settings import get_settings
+        settings = get_settings()
+        collection_name = "afokingdom_knowledge" # Default collection
+    except Exception:
+        collection_name = "afokingdom_knowledge"
+
+    try:
+        # 1. Search in Qdrant
+        search_result = qdrant_client.search(
+            collection_name=collection_name,
+            query_vector=embedding,
+            limit=top_k,
+            with_payload=True
+        )
+        
+        # 2. Format results
+        rows: list[dict[str, Any]] = []
+        for hit in search_result:
+            payload = hit.payload or {}
+            content = payload.get("content") or ""
+            if not content:
+                continue
+                
+            rows.append({
+                "id": str(hit.id),
+                "content": content,
+                "score": float(hit.score),
+                "source": payload.get("source") or "qdrant",
+                "metadata": payload
+            })
+            
+        return rows
+    except Exception as exc:
+        print(f"[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): {exc}")
+        return []
+
+
+def generate_hyde_query(query: str, openai_client: Any) -> str:
+    """
+    眞 (Truth) & 美 (Beauty): HyDE (Hypothetical Document Embeddings)
+    질문에 대한 '가상의 이상적인 답변'을 생성하여 검색 정확도를 높임.
+    
+    Args:
+        query: 사용자 질문
+        openai_client: OpenAI 클라이언트
+        
+    Returns:
+        str: HyDE로 강화된 쿼리 (또는 가상 답변)
+    """
+    if not openai_client:
+        return query
+
+    try:
+        completion = openai_client.chat.completions.create(
+            model="gpt-4o-mini", # Fast model for HyDE
+            messages=[
+                {"role": "system", "content": "You are a helpful expert. Write a theoretical, concise passage that answers the user's question perfectly. Do not explain, just write the answer content."},
+                {"role": "user", "content": f"Question: {query}"}
+            ],
+            temperature=0.7
+        )
+        hypothetical_answer = completion.choices[0].message.content
+        return f"{query}\n{hypothetical_answer}" # Combine for richer context
+    except Exception as e:
+        print(f"[Advanced RAG] HyDE generation failed: {e}")
+        return query
+
+
+def rerank_results(results: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """
+    善 (Goodness): Reranking & Deduplication
+    여러 소스(PG, Redis, Qdrant)의 결과를 재정렬 및 중복 제거.
+    (추후 Cross-Encoder 모델 도입 가능)
+    """
+    unique_map = {}
+    for r in results:
+        # Content hash or ID based deduplication
+        key = r.get("id")
+        if not key or key in unique_map:
+            continue
+        unique_map[key] = r
+    
+    # Simple score sort for now (Placeholder for Cohere/CrossEncoder)
+    deduplicated = list(unique_map.values())
+    deduplicated.sort(key=lambda x: x["score"], reverse=True)
+    return deduplicated
+
+
 def blend_results(
     pg_rows: list[dict[str, Any]], redis_rows: list[dict[str, Any]], top_k: int
 ) -> list[dict[str, Any]]:
@@ -251,6 +405,49 @@ def blend_results(
         boost(row, "redis")
 
     return sorted(merged.values(), key=lambda r: r["score"], reverse=True)[:top_k]
+
+
+def blend_results_advanced(
+    pg_rows: list[dict[str, Any]], 
+    redis_rows: list[dict[str, Any]], 
+    qdrant_rows: list[dict[str, Any]], 
+    top_k: int
+) -> list[dict[str, Any]]:
+    """
+    美 (Beauty): Advanced RRF (Reciprocal Rank Fusion)
+    PGVector(구조적), Redis(빈도/캐시), Qdrant(의미적) 결과 통합
+    """
+    merged: dict[str, dict[str, Any]] = {}
+    
+    # RRF constant
+    k = 60
+    
+    def apply_rrf(rows: list[dict[str, Any]], source_weight: float):
+        for rank, row in enumerate(rows):
+            row_id = str(row["id"])
+            if row_id not in merged:
+                merged[row_id] = {**row, "rrf_score": 0.0, "score": row["score"]} # Keep original score mostly
+            
+            # RRF formula: 1 / (k + rank)
+            # We multiply by source_weight to prioritize trusted sources
+            rrf_score = (1 / (k + rank)) * source_weight
+            merged[row_id]["rrf_score"] += rrf_score
+            
+            # Update source list
+            if "sources" not in merged[row_id]:
+                merged[row_id]["sources"] = []
+            merged[row_id]["sources"].append(row.get("source", "unknown"))
+
+    # Apply Fusion
+    apply_rrf(pg_rows, 1.0)      # PostgreSQL (Baseline)
+    apply_rrf(redis_rows, 0.8)   # Redis (Cache/Recent)
+    apply_rrf(qdrant_rows, 1.2)  # Qdrant (Semantic/Brain - High Trust)
+
+    # Sort by RRF score
+    final_results = list(merged.values())
+    final_results.sort(key=lambda r: r["rrf_score"], reverse=True)
+    
+    return final_results[:top_k]
 
 
 def select_context(rows: list[dict[str, Any]], limit: int) -> list[dict[str, Any]]:
@@ -287,9 +484,10 @@ def generate_answer(
     additional_instructions: str,
     llm_provider: str = "openai",
     openai_client: Any = None,
+    graph_context: list[dict[str, Any]] | None = None, # New: Graph Context
 ) -> str | dict[str, Any]:
     """
-    眞 (Truth): 컨텍스트 기반 LLM 답변 생성
+    眞 (Truth): 컨텍스트 기반 LLM 답변 생성 (GraphRAG Enhanced)
     善 (Goodness): API 호출 실패 시 에러 메시지 반환
 
     Args:
@@ -300,6 +498,7 @@ def generate_answer(
         additional_instructions: 추가 지침
         llm_provider: LLM 제공자
         openai_client: OpenAI 클라이언트
+        graph_context: 그래프 RAG에서 추출된 컨텍스트 (선택 사항)
 
     Returns:
         str | dict: 생성된 답변 또는 에러 정보
@@ -369,6 +568,21 @@ async def blend_results_async(
     return await loop.run_in_executor(_executor, blend_results, pg_rows, redis_rows, top_k)
 
 
+async def query_qdrant_async(
+    embedding: list[float], top_k: int, client: Any
+) -> list[dict[str, Any]]:
+    """비동기 Qdrant 검색 래퍼"""
+    loop = asyncio.get_event_loop()
+    return await loop.run_in_executor(_executor, query_qdrant, embedding, top_k, client)
+
+
+async def generate_hyde_query_async(query: str, client: Any) -> str:
+    """비동기 HyDE 쿼리 생성"""
+    if not client: return query
+    loop = asyncio.get_event_loop()
+    return await loop.run_in_executor(_executor, generate_hyde_query, query, client)
+
+
 async def generate_answer_async(
     query: str,
     contexts: list[str],
@@ -377,6 +591,7 @@ async def generate_answer_async(
     additional_instructions: str,
     llm_provider: str = "openai",
     openai_client: Any = None,
+    graph_context: list[dict[str, Any]] | None = None,
 ) -> str | dict[str, Any]:
     """비동기 답변 생성 래퍼"""
     loop = asyncio.get_event_loop()
@@ -390,4 +605,5 @@ async def generate_answer_async(
         additional_instructions,
         llm_provider,
         openai_client,
+        graph_context,
     )

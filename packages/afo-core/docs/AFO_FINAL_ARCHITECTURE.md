@@ -24,4 +24,23 @@
     - `playwright` (UI Automation)
 
 ---
-*"The brain and memory are fully synchronized."*
+
+## 🏛️ Operation Gwanggaeto Expansion (v2.5)
+
+### 1. 善 (Goodness): Julie Royal Tax Engine
+*   **Truth in Backend**: Tax logic moved from React to Python (`JulieService.py`).
+*   **Perplexity Intelligence**: 2025 Federal/CA tax rules integrated (Surtax, QBI).
+*   **Template Advice**: Standardized "If This, Then That" optimization (401k, HSA).
+*   **Frontend**: `JulieTaxWidget.tsx` serves as a "Dumb Terminal" for Royal Truth.
+
+### 2. 孝 (Serenity): The Vision Bridge
+*   **Tech**: Playwright-based Visual Verification (`test_vision_bridge.py`).
+*   **Role**: "The Commander's Eyes" - Automatically verifies UI manifestation.
+*   **Self-Healing**: Detects 404s/Errors before Commander does.
+
+### 3. 美 (Beauty): Sensory Immersion (Upcoming)
+*   **Jade Bell**: Audio feedback (`use-sound`) for tactile experience.
+*   **Glassmorphism**: Emerald-themed UI for financial peace of mind.
+
+---
+*"The brain, memory, and eyes are fully synchronized."*

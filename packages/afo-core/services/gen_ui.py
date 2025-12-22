@@ -45,7 +45,7 @@ class GenUIService:
         # Determine Project Root (Assuming we are in packages/afo-core/AFO/services)
         # Root is ../../../..
         current_file = Path(__file__).resolve()
-        self.project_root = current_file.parent.parent.parent.parent.parent
+        self.project_root = current_file.parent.parent.parent.parent
         self.sandbox_dir = (
             self.project_root / "packages" / "dashboard" / "src" / "components" / "genui"
         )
