@@ -83,6 +83,7 @@ class PlaywrightBridgeMCP:
         screenshot_path: str,
         mock_scenarios: list[MockScenario] | None = None,
         enable_tracing: bool = True,
+        viewport: dict[str, int] | None = None,
     ) -> dict[str, Any]:
         """UI 시각 검증 - SKIPPED → PASS 전환 (PDF 페이지 4)"""
         if antigravity.DRY_RUN_DEFAULT:
@@ -96,10 +97,13 @@ class PlaywrightBridgeMCP:
         if not self.browser:
             await self.setup()
 
+        # Ultimate 1080p Resolution (美: Beauty & Clarity)
+        vp = viewport or {"width": 1920, "height": 1080}
+
         # 새로운 컨텍스트 생성 (Tracing을 위해 필요)
         if not self.browser:
             raise RuntimeError("Browser not initialized")
-        context = await self.browser.new_context()
+        context = await self.browser.new_context(viewport=vp)
 
         # Tracing 시작 (美: 투명한 디버깅)
         if enable_tracing:

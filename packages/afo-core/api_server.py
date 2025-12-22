@@ -56,6 +56,10 @@ setup_middleware(app)
 # Setup all routers in organized manner
 setup_routers(app)
 
+import AFO.services.gen_ui
+print(f"DEBUG: AFO file: {AFO.__file__}")
+print(f"DEBUG: AFO.services.gen_ui file: {AFO.services.gen_ui.__file__}")
+
 # Main execution block
 if __name__ == "__main__":
     import uvicorn
