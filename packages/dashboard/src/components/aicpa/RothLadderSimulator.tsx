@@ -11,7 +11,7 @@
  * 永 (Eternity): 장기 부의 증식 전략
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   TrendingUp,
   DollarSign,
@@ -74,9 +74,9 @@ export const RothLadderSimulator: React.FC = () => {
 
       const data = await response.json();
       setResult(data.strategy);
-    } catch (e) {
+    } catch (err) {
       setError('시뮬레이션 실패 - 서버 상태를 확인하세요');
-      logError('[RothLadder] Error', { error: e instanceof Error ? e.message : 'Unknown error' });
+      logError('Roth ladder simulation failed', { error: err instanceof Error ? err.message : 'Unknown error' });
     } finally {
       setLoading(false);
     }
@@ -252,7 +252,7 @@ export const RothLadderSimulator: React.FC = () => {
                 Year-by-Year Conversion Plan
               </div>
               <div className="space-y-2">
-                {result.years.map((yr, idx) => (
+                {result.years.map((yr) => (
                   <div key={yr.year} className="flex items-center justify-between p-2 bg-white/5 rounded-lg">
                     <div className="flex items-center gap-3">
                       <span className="w-12 h-8 bg-purple-600/30 rounded flex items-center justify-center text-purple-300 text-sm font-bold">

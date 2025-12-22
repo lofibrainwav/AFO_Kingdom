@@ -1,5 +1,5 @@
 import React from 'react';
-import { Clock, Star, Zap } from 'lucide-react';
+import { Clock } from 'lucide-react';
 
 interface ActivityItem {
   id?: string;

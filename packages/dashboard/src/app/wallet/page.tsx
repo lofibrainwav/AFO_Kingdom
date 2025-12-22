@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import BrowserAuthModal from '@/components/wallet/BrowserAuthModal';
-import { ArrowLeft, Trash2, Plus, Key, CheckCircle, AlertCircle, Globe } from 'lucide-react';
+import { ArrowLeft, Trash2, Plus, Key, AlertCircle, Globe } from 'lucide-react';
 
 interface APIKey {
   name: string;

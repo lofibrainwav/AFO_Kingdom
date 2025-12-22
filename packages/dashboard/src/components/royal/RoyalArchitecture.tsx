@@ -1,8 +1,7 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'framer-motion';
-import { Server, Layout, Brain, Scale, Database, Cpu, ShieldCheck, Zap } from 'lucide-react';
+import { Layout, ShieldCheck } from 'lucide-react';
 import { ARCH_LAYERS, CHANCELLOR_FLOW } from '../../config/royal_constants';
 
 export const RoyalArchitecture: React.FC = () => {

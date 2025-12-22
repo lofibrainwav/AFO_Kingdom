@@ -33,7 +33,7 @@ const COLORS = ['#FF6B6B', '#4ECDC4', '#FFE66D', '#95E1D3', '#F38181', '#AA96DA'
 
 export function GrandFestivalWidget() {
   const [fireworks, setFireworks] = useState<Firework[]>([]);
-  const [showConfetti, setShowConfetti] = useState(false);
+  const [_showConfetti, _setShowConfetti] = useState(false);
 
   // Generate fireworks
   const launchFirework = useCallback(() => {
@@ -49,7 +49,6 @@ export function GrandFestivalWidget() {
 
   useEffect(() => {
     const interval = setInterval(launchFirework, 800);
-    setShowConfetti(true); // eslint-disable-line react-hooks/set-state-in-effect
     return () => clearInterval(interval);
   }, [launchFirework]);
 

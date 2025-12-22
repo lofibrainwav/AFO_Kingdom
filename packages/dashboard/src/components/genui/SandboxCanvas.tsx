@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Sparkles, Terminal, AlertTriangle, Play, Save } from 'lucide-react';
+import React, { useState } from 'react';
+import { Sparkles, Terminal, AlertTriangle, Play } from 'lucide-react';
 import * as GenUIRegistry from './index';
 import { logError } from '@/lib/logger';
 
@@ -64,8 +64,8 @@ export const SandboxCanvas: React.FC = () => {
             }
         }, 1000);
       }
-    } catch (e) {
-      logError('GenUI component generation failed', { error: e instanceof Error ? e.message : 'Unknown error' });
+    } catch (err) {
+      logError('GenUI component generation failed', { error: err instanceof Error ? err.message : 'Unknown error' });
       setResponse({
           component_id: 'error',
           component_name: componentName,
@@ -73,7 +73,7 @@ export const SandboxCanvas: React.FC = () => {
           description: 'Network Error',
           trinity_score: { total_score: 0, truth: 0, goodness: 0, beauty: 0 },
           status: 'rejected',
-          error: String(e)
+          error: 'Component generation failed'
       });
     } finally {
       setLoading(false);

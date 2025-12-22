@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Loader2, Brain, Database, CheckCircle } from 'lucide-react';
+import { X, Brain, Database, CheckCircle } from 'lucide-react';
 
 interface PillarModalProps {
   pillarId: string | null;

@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
 
 // Mock log generator if SSE is silent
-const MOCK_LOGS = [
+const _MOCK_LOGS = [
   "[System] Trinity Core initialized...",
   "[Chancellor] Monitoring 11-Organs...",
   "[Zhuge Liang] Architecture analysis: 100% (Truth)",
@@ -44,7 +44,7 @@ export default function ChancellorStream() {
     return () => {
       eventSource.close();
     };
-  }, []);
+  }, [API_BASE]);
 
   // Auto-scroll
   useEffect(() => {

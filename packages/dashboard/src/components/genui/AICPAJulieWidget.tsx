@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Shield, TrendingUp, AlertTriangle, CheckCircle, CreditCard, PieChart } from 'lucide-react';
+import { Shield, TrendingUp, AlertTriangle, CreditCard, PieChart } from 'lucide-react';
 import { logError } from '@/lib/logger';
 
 interface Transaction {
@@ -24,7 +24,6 @@ interface FinanceData {
 export function AICPAJulieWidget() {
   const [data, setData] = useState<FinanceData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [isDryRun, setIsDryRun] = useState(false);
 
   useEffect(() => {
     fetch('/api/finance/dashboard')
@@ -43,11 +42,6 @@ export function AICPAJulieWidget() {
     );
   }
 
-  const getHealthColor = (score: number) => {
-    if (score >= 80) return '#22c55e'; // Green
-    if (score >= 60) return '#eab308'; // Yellow
-    return '#ef4444'; // Red
-  };
 
   return (
     <div className="w-full bg-black/40 backdrop-blur-md border border-white/10 rounded-2xl p-6 shadow-2xl overflow-hidden relative">

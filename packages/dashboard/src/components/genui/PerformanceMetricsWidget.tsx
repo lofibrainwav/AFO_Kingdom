@@ -48,7 +48,7 @@ export function PerformanceMetricsWidget() {
     }
   }, []);
 
-  const getColor = (value: number, good: number, warn: number) => {
+  const _getColor = (_value: number, _good: number, _warn: number) => {
     // Logic: Higher FPS is better, Lower Load/Memory is better
     // Wait, getColor args logic in snippet was: value >= good ? Green ...
     // But for LoadTime: value >= 1000 (bad).

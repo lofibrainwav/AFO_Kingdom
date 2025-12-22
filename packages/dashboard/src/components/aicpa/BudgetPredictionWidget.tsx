@@ -10,16 +10,15 @@
  * 孝 (Serenity): 형님 안심을 위한 명확한 결과
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   TrendingUp,
-  Calendar,
-  DollarSign,
-  Shield,
-  RefreshCw,
   AlertTriangle,
   CheckCircle,
-  Sparkles
+  RefreshCw,
+  Sparkles,
+  Calendar,
+  Shield
 } from 'lucide-react';
 import { logError } from '@/lib/logger';
 
@@ -57,7 +56,7 @@ export const BudgetPredictionWidget: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   // Fetch forecast
-  const fetchForecast = async () => {
+  const fetchForecast = useCallback(async () => {
     setLoading(true);
     setError(null);
 
@@ -68,18 +67,18 @@ export const BudgetPredictionWidget: React.FC = () => {
 
       const data = await response.json();
       setResult(data);
-    } catch (e) {
+    } catch (err) {
       setError('예측 실패 - 서버 상태를 확인하세요');
-      logError('[BudgetPrediction] Error', { error: e instanceof Error ? e.message : 'Unknown error' });
+      logError('Budget prediction failed', { error: err instanceof Error ? err.message : 'Unknown error' });
     } finally {
       setLoading(false);
     }
-  };
+  }, [periods]);
 
   // Auto-fetch on mount
   useEffect(() => {
     fetchForecast();
-  }, []);
+    }, [fetchForecast]); // Added fetchForecast dependency
 
   // Format currency
   const formatCurrency = (value: number) => {

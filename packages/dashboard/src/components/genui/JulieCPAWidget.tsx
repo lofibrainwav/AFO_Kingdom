@@ -34,7 +34,6 @@ interface FinanceDashboard {
 
 import { useApi } from '@/hooks/useApi';
 import { LoadingSpinner, ErrorMessage } from '@/components/common';
-import { backendApi } from '@/lib/api-client';
 import { REFRESH_INTERVALS } from '@/lib/constants';
 
 export function JulieCPAWidget() {

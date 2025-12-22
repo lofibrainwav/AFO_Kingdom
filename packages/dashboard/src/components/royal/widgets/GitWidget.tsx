@@ -3,7 +3,7 @@
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { GitBranch, GitCommit, GitMerge } from "lucide-react";
+import { GitBranch, GitCommit } from "lucide-react";
 
 export const GitWidget = () => {
     return (

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Sparkles, Loader2, Send, CheckCircle2, AlertTriangle, Play, Code, Eye } from 'lucide-react';
 import { logError } from '@/lib/logger';
 
-interface CreationResult {
+interface _CreationResult {
   code: string;
   screenshot_path: string | null;
   trinity_score: number;

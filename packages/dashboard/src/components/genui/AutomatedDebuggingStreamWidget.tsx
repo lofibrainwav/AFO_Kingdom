@@ -86,9 +86,9 @@ export default function AutomatedDebuggingStreamWidget() {
 
         // Keep only the latest 50 events to avoid clutter (Beauty)
         setEvents(prev => [debuggingEvent, ...prev].slice(0, 50));
-      } catch (e) {
+      } catch (err) {
         logError("Debugging stream parse error", { 
-          error: e instanceof Error ? e.message : 'Unknown error' 
+          error: err instanceof Error ? err.message : 'Unknown error' 
         });
       }
     };

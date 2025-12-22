@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
 
       // Demo mode: Send sample thoughts
       const timers: NodeJS.Timeout[] = [];
-      thoughts.forEach((thought, i) => {
+      thoughts.forEach((thought, _i) => {
         const timer = setTimeout(() => {
           try {
             controller.enqueue(

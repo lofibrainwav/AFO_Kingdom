@@ -26,7 +26,7 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 export default function RoyalLayout() {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const API_BASE = process.env.NEXT_PUBLIC_API_BASE || ROYAL_CONSTANTS.LINKS.API_DEFAULT;
-  const { data, error, isLoading } = useSWR(
+  const { data, error: _error, isLoading: _isLoading } = useSWR(
     `${API_BASE}/api/system/kingdom-status`,
     fetcher,
     { refreshInterval: 2000 }

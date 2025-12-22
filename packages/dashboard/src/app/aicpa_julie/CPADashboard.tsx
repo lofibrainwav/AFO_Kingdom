@@ -4,12 +4,11 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { logError } from '@/lib/logger';
 import FinancialHealthDial from '@/components/julie/FinancialHealthDial';
 import TransactionLedger from '@/components/julie/TransactionLedger';
-import ApprovalQueue from '@/components/julie/ApprovalQueue';
 import { BudgetPredictionWidget } from '@/components/aicpa/BudgetPredictionWidget';
 import { GrokInsightWidget } from '@/components/aicpa/GrokInsightWidget';
 import { TrinityScoreWidget } from '@/components/aicpa/TrinityScoreWidget';
 import { PillarsDetailedWidget } from '@/components/aicpa/PillarsDetailedWidget';
-import { Briefcase, Building2, Coins, AlertTriangle, RefreshCw } from 'lucide-react';
+import { Building2, AlertTriangle, RefreshCw } from 'lucide-react';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface CPADashboardProps {

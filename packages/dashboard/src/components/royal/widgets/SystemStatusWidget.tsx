@@ -40,9 +40,7 @@ export const SystemStatusWidget = () => {
                     </div>
                     <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
                         <div 
-                            className="h-full bg-blue-500 rounded-full transition-all duration-1000 ease-out" 
-                            // eslint-disable-next-line
-                            style={{ width: `${metrics.cpu}%` }} 
+                            className="h-full bg-blue-500 rounded-full transition-all duration-1000 ease-out"                                    style={{ width: `${Math.min(metrics.cpu, 100)}%` }} 
                         />
                     </div>
 
@@ -54,8 +52,7 @@ export const SystemStatusWidget = () => {
                     <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
                         <div 
                             className="h-full bg-purple-500 rounded-full transition-all duration-1000 ease-out" 
-                            // eslint-disable-next-line
-                            style={{ width: `${metrics.mem}%` }} 
+                            style={{ width: `${Math.min(metrics.mem, 100)}%` }} 
                         />
                     </div>
 
@@ -67,8 +64,7 @@ export const SystemStatusWidget = () => {
                     <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
                         <div 
                             className="h-full bg-slate-400 rounded-full transition-all duration-1000 ease-out" 
-                            // eslint-disable-next-line
-                            style={{ width: `${metrics.disk}%` }} 
+                            style={{ width: `${Math.min(metrics.disk, 100)}%` }} 
                         />
                     </div>
                 </div>

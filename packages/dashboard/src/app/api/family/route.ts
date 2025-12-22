@@ -5,7 +5,7 @@ const API_BASE = process.env.SOUL_ENGINE_URL || process.env.API_BASE_URL || API_
 
 export async function GET() {
   try {
-    const res = await fetch(`${API_BASE}/family/`, {
+    const res = await fetch(`${API_BASE}/api/5pillars/family/hub`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

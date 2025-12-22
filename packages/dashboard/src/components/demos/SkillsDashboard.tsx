@@ -85,7 +85,7 @@ export default function SkillsDashboard() {
         
         // 4. Trigger revalidation to ensure truth
         mutate('/api/skills');
-    } catch (e) {
+    } catch {
         // 5. Rollback automatically handled by SWR if promise fails? 
         // Actually manual rollback is often clearer or just revalidate
         mutate('/api/skills');
