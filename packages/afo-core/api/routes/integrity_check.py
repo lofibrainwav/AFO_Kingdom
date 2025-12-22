@@ -31,7 +31,7 @@ class IntegrityCheckRequest(BaseModel):
 async def check_integrity(request: IntegrityCheckRequest) -> dict[str, Any]:
     """
     무결성 체크리스트 검증
-    
+
     각 기둥별로 실제 시스템 상태를 확인합니다.
     """
     try:
@@ -90,12 +90,8 @@ async def _check_truth_pillar() -> dict[str, Any]:
     # 1. CI/CD LOCK 원칙 확인
     try:
         # MyPy, Ruff, pytest, SBOM 확인
-        mypy_result = subprocess.run(
-            ["which", "mypy"], capture_output=True, text=True, timeout=5
-        )
-        ruff_result = subprocess.run(
-            ["which", "ruff"], capture_output=True, text=True, timeout=5
-        )
+        mypy_result = subprocess.run(["which", "mypy"], capture_output=True, text=True, timeout=5)
+        ruff_result = subprocess.run(["which", "ruff"], capture_output=True, text=True, timeout=5)
         pytest_result = subprocess.run(
             ["which", "pytest"], capture_output=True, text=True, timeout=5
         )
@@ -125,7 +121,9 @@ async def _check_truth_pillar() -> dict[str, Any]:
 
         registry = register_core_skills()
         skills = registry.list_all()
-        fact_skills = [s for s in skills if "fact" in s.skill_id.lower() or "verify" in s.skill_id.lower()]
+        fact_skills = [
+            s for s in skills if "fact" in s.skill_id.lower() or "verify" in s.skill_id.lower()
+        ]
         checks["fact_verification"] = len(fact_skills) > 0
     except Exception as e:
         logger.warning(f"Fact verification check failed: {e}")
@@ -204,9 +202,7 @@ async def _check_beauty_pillar() -> dict[str, Any]:
         infrastructure_path = WORKSPACE_ROOT / "packages" / "afo-core" / "AFO" / "infrastructure"
 
         checks["4_layer_arch"] = (
-            presentation_path.exists()
-            and application_path.exists()
-            and domain_path.exists()
+            presentation_path.exists() and application_path.exists() and domain_path.exists()
         )
     except Exception as e:
         logger.warning(f"4-layer arch check failed: {e}")
@@ -216,9 +212,7 @@ async def _check_beauty_pillar() -> dict[str, Any]:
         dashboard_path = WORKSPACE_ROOT / "packages" / "dashboard" / "src"
         if dashboard_path.exists():
             # CSS 파일에서 glassmorphism 관련 스타일 확인
-            css_files = list(dashboard_path.rglob("*.css")) + list(
-                dashboard_path.rglob("*.tsx")
-            )
+            css_files = list(dashboard_path.rglob("*.css")) + list(dashboard_path.rglob("*.tsx"))
             for css_file in css_files[:5]:  # 처음 5개만 확인
                 content = css_file.read_text()
                 if "backdrop-filter" in content or "glass" in content.lower():
@@ -308,7 +302,6 @@ async def _check_eternity_pillar() -> dict[str, Any]:
     # 1. 영원한 기억 (Persistence) 확인
     try:
         # Redis Checkpoint 확인
-        from AFO.chancellor_graph import chancellor_graph
 
         # Checkpoint 설정 확인
         checks["persistence"] = True  # 기본적으로 LangGraph는 MemorySaver 사용
@@ -340,4 +333,3 @@ async def _check_eternity_pillar() -> dict[str, Any]:
         "passed": passed_count,
         "total": len(checks),
     }
-

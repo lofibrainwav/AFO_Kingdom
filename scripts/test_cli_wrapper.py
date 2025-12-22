@@ -1,9 +1,12 @@
 import asyncio
 import logging
+
 from AFO.llms.cli_wrapper import CLIWrapper
+
 
 # Config Logging
 logging.basicConfig(level=logging.DEBUG)
+
 
 async def test():
     print("Testing Claude CLI...")
@@ -19,6 +22,7 @@ async def test():
         print(f"Codex Result: {res}")
     else:
         print("Codex CLI not found.")
+
 
 if __name__ == "__main__":
     asyncio.run(test())

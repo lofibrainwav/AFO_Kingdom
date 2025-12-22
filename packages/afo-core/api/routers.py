@@ -240,6 +240,7 @@ def _register_phase_routers(app: FastAPI) -> None:
     # Operation Gwanggaeto: Julie Royal Tax (Goodness)
     try:
         from AFO.api.routers.julie_royal import router as julie_royal_router
+
         app.include_router(julie_royal_router)
         print("✅ Julie Royal Router 등록 완료 (Operation Gwanggaeto: Tax Truth 2025)")
     except Exception as e:

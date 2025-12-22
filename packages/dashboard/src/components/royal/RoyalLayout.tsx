@@ -59,11 +59,19 @@ export default function RoyalLayout() {
               {ROYAL_CONSTANTS.SUBTITLE}
             </motion.p>
           </div>
-          <div className="text-right">
-             <div className="text-xs text-slate-400 font-mono">{ROYAL_CONSTANTS.TRINITY_SCORE_LABEL}</div>
-             <div className="text-3xl font-bold text-slate-600">
-               {data?.trinity_score || "..."}<span className="text-lg text-slate-400">/100</span>
-             </div>
+          <div className="flex items-end gap-6">
+            <a
+              href="/docs"
+              className="px-4 py-2 bg-slate-200/50 rounded-lg text-slate-700 hover:bg-slate-300/50 transition-colors text-sm font-medium"
+            >
+              📐 문서
+            </a>
+            <div className="text-right">
+               <div className="text-xs text-slate-400 font-mono">{ROYAL_CONSTANTS.TRINITY_SCORE_LABEL}</div>
+               <div className="text-3xl font-bold text-slate-600">
+                 {data?.trinity_score || "..."}<span className="text-lg text-slate-400">/100</span>
+               </div>
+            </div>
           </div>
         </header>
 
