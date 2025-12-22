@@ -1,0 +1,132 @@
+
+> trinity-dashboard@0.1.0 lint
+> eslint
+
+
+/Users/brnestrm/AFO_Kingdom/packages/dashboard/src/app/api/kingdom-status/route.ts
+  13:12  warning  'e' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/brnestrm/AFO_Kingdom/packages/dashboard/src/app/api/mcp/thoughts/sse/route.ts
+  43:34  warning  'i' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/brnestrm/AFO_Kingdom/packages/dashboard/src/app/api/ssot-status/route.ts
+  13:12  warning  'e' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/brnestrm/AFO_Kingdom/packages/dashboard/src/app/family/page.tsx
+  7:8  warning  'CopilotTerminal' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/brnestrm/AFO_Kingdom/packages/dashboard/src/app/wallet/page.tsx
+  6:40  warning  'CheckCircle' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/brnestrm/AFO_Kingdom/packages/dashboard/src/components/AFOPantheon.tsx
+   48:26  warning  '_playTrinityUp' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        @typescript-eslint/no-unused-vars
+   48:54  warning  '_playRiskUp' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           @typescript-eslint/no-unused-vars
+   48:78  warning  '_initAudio' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            @typescript-eslint/no-unused-vars
+  121:5   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/brnestrm/AFO_Kingdom/packages/dashboard/src/components/AFOPantheon.tsx:121:5
+  119 |
+  120 |   useEffect(() => {
+> 121 |     fetchState();
+      |     ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  122 |     const interval = setInterval(fetchState, 15000);
+  123 |     return () => clearInterval(interval);
+  124 |   }, [fetchState]);  react-hooks/set-state-in-effect
+
+/Users/brnestrm/AFO_Kingdom/packages/dashboard/src/components/ChancellorView.tsx
+  171:6  warning  React Hook useEffect has a missing dependency: 'health.trinity'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/Users/brnestrm/AFO_Kingdom/packages/dashboard/src/components/GraphRAGQuery.tsx
+  5:43  warning  'Database' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/brnestrm/AFO_Kingdom/packages/dashboard/src/components/VoiceReactivePanel.tsx
+  53:28  warning  Unused eslint-disable directive (no problems were reported from 'react-hooks/set-state-in-effect')
+
+/Users/brnestrm/AFO_Kingdom/packages/dashboard/src/components/aicpa/AICPAControlPanel.tsx
+  308:3  warning  'path' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/brnestrm/AFO_Kingdom/packages/dashboard/src/components/aicpa/BudgetPredictionWidget.tsx
+  17:3  warning  'DollarSign' is defined but never used                                                                                                                                                        @typescript-eslint/no-unused-vars
+  60:9  warning  The 'fetchForecast' function makes the dependencies of useEffect Hook (at line 82) change on every render. To fix this, wrap the definition of 'fetchForecast' in its own useCallback() Hook  react-hooks/exhaustive-deps
+
+/Users/brnestrm/AFO_Kingdom/packages/dashboard/src/components/aicpa/RothLadderSimulator.tsx
+   14:27  warning  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+  255:40  warning  'idx' is defined but never used        @typescript-eslint/no-unused-vars
+
+/Users/brnestrm/AFO_Kingdom/packages/dashboard/src/components/aicpa/TaxSimulationWidget.tsx
+  17:3  warning  'DollarSign' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/brnestrm/AFO_Kingdom/packages/dashboard/src/components/copilot/CopilotTerminal.tsx
+  43:18  warning  'e' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/brnestrm/AFO_Kingdom/packages/dashboard/src/components/demos/SkillsDashboard.tsx
+  88:14  warning  'e' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/brnestrm/AFO_Kingdom/packages/dashboard/src/components/family/FamilyMemberCard.tsx
+  2:16  warning  'Shield' is defined but never used  @typescript-eslint/no-unused-vars
+  2:31  warning  'Zap' is defined but never used     @typescript-eslint/no-unused-vars
+
+/Users/brnestrm/AFO_Kingdom/packages/dashboard/src/components/family/FamilyTimeline.tsx
+  2:17  warning  'Star' is defined but never used  @typescript-eslint/no-unused-vars
+  2:23  warning  'Zap' is defined but never used   @typescript-eslint/no-unused-vars
+
+/Users/brnestrm/AFO_Kingdom/packages/dashboard/src/components/genui/AICPAJulieWidget.tsx
+   4:45  warning  'CheckCircle' is defined but never used              @typescript-eslint/no-unused-vars
+  27:10  warning  'isDryRun' is assigned a value but never used        @typescript-eslint/no-unused-vars
+  27:20  warning  'setIsDryRun' is assigned a value but never used     @typescript-eslint/no-unused-vars
+  46:9   warning  'getHealthColor' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/brnestrm/AFO_Kingdom/packages/dashboard/src/components/genui/AgentLearningTimeline.tsx
+  4:31  warning  'useCallback' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/brnestrm/AFO_Kingdom/packages/dashboard/src/components/genui/GenesisWidget.tsx
+  7:11  warning  'CreationResult' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/brnestrm/AFO_Kingdom/packages/dashboard/src/components/genui/GrandFestivalWidget.tsx
+  36:10  warning  'showConfetti' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/brnestrm/AFO_Kingdom/packages/dashboard/src/components/genui/JulieCPAWidget.tsx
+  37:10  warning  'backendApi' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/brnestrm/AFO_Kingdom/packages/dashboard/src/components/genui/JulieTaxWidget.tsx
+  8:35  warning  'TrendingUp' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/brnestrm/AFO_Kingdom/packages/dashboard/src/components/genui/PerformanceMetricsWidget.tsx
+  51:9   warning  'getColor' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  51:21  warning  'value' is defined but never used              @typescript-eslint/no-unused-vars
+  51:36  warning  'good' is defined but never used               @typescript-eslint/no-unused-vars
+  51:50  warning  'warn' is defined but never used               @typescript-eslint/no-unused-vars
+
+/Users/brnestrm/AFO_Kingdom/packages/dashboard/src/components/genui/SandboxCanvas.tsx
+  1:27  warning  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+  2:51  warning  'Save' is defined but never used       @typescript-eslint/no-unused-vars
+
+/Users/brnestrm/AFO_Kingdom/packages/dashboard/src/components/genui/VoiceCommandWidget.tsx
+  4:32  warning  'Loader2' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/brnestrm/AFO_Kingdom/packages/dashboard/src/components/royal/ChancellorStream.tsx
+   7:7  warning  'MOCK_LOGS' is assigned a value but never used                                                               @typescript-eslint/no-unused-vars
+  47:6  warning  React Hook useEffect has a missing dependency: 'API_BASE'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/Users/brnestrm/AFO_Kingdom/packages/dashboard/src/components/royal/PillarModal.tsx
+  5:13  warning  'Loader2' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/brnestrm/AFO_Kingdom/packages/dashboard/src/components/royal/RoyalLayout.tsx
+  29:24  warning  '_error' is assigned a value but never used      @typescript-eslint/no-unused-vars
+  29:43  warning  '_isLoading' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/brnestrm/AFO_Kingdom/packages/dashboard/src/components/royal/TrinityGlow.tsx
+  12:61  warning  '_isActive' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/brnestrm/AFO_Kingdom/packages/dashboard/src/components/wallet/BrowserAuthModal.tsx
+  50:14  warning  '_err' is defined but never used  @typescript-eslint/no-unused-vars
+
+✖ 47 problems (1 error, 46 warnings)
+  0 errors and 1 warning potentially fixable with the `--fix` option.
+
