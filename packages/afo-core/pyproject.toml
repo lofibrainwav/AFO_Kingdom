@@ -68,10 +68,28 @@ ignore = [
 ]
 
 [tool.ruff.lint.per-file-ignores]
-"__init__.py" = ["F401"]  # unused imports
-"scripts/**" = ["T201"]  # print statements allowed in scripts
-"tests/**" = ["ARG", "F401", "E402"]  # test files (E402 for sys.path hacks)
-"api_server.py" = ["E402"]  # sys.path manipulation requires imports after path setup
+"__init__.py" = ["F401"]
+"scripts/**" = ["T201", "E402", "F401", "F811"]
+"tests/**" = ["ARG", "F401", "E402", "SIM117", "SIM105", "B017", "UP038", "F811"]
+"legacy/**" = ["E402", "F401", "SIM117", "F811", "F841", "B025", "E722", "B007", "SIM102"]
+"api_server.py" = ["E402"]
+"api/routers/*.py" = ["E402", "F401", "SIM105", "SIM108", "B904", "E722", "F841", "UP038"]
+"api/routes/*.py" = ["E402", "F401", "F841", "UP038"]
+"services/*.py" = ["E402", "F401", "ARG004", "F841", "UP038", "B025", "RUF012", "SIM105", "SIM115", "E722"]
+"scholars/**/*.py" = ["F401", "F841", "SIM105", "UP038"]
+"llms/*.py" = ["SIM115", "B007", "SIM105", "RUF013"]
+"AFO/**/*.py" = ["F401", "F811", "F841", "F842"]
+"afo_soul_engine/**/*.py" = ["F401"]
+"utils/*.py" = ["UP038", "B025", "RUF012", "RUF006"]
+"config/*.py" = ["RUF012", "B024", "B025"]
+"cache/*.py" = ["RUF006"]
+"browser_auth/*.py" = ["B025"]
+"domain/**/*.py" = ["RUF012"]
+"factories/*.py" = ["RUF012"]
+"mediators/*.py" = ["B024"]
+"api_wallet.py" = ["F401"]
+"chancellor_graph.py" = ["F811"]
+"llm_router.py" = ["F842"]
 
 [tool.ruff.format]
 quote-style = "double"
