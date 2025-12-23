@@ -6,7 +6,7 @@ These constants ensure consistency across all nodes and provide audit trails.
 """
 
 import hashlib
-from typing import Literal
+from typing import Final, Literal
 
 # 🏛️ SSOT Trinity Weights (眞善美孝永)
 WEIGHTS = {
@@ -39,11 +39,11 @@ WEIGHTS_HASH = hashlib.sha256(str(sorted(WEIGHTS.items())).encode()).hexdigest()
 validate_weights(WEIGHTS)
 
 # Rule IDs for Chancellor Graph decision making
-RULE_DRY_RUN_OVERRIDE = "R1_DRY_RUN_OVERRIDE"
-RULE_RESIDUAL_DOUBT = "R2_RESIDUAL_DOUBT"
-RULE_VETO_LOW_PILLARS = "R3_VETO_LOW_PILLARS"
-RULE_AUTORUN_THRESHOLD = "R4_AUTORUN_THRESHOLD"
-RULE_FALLBACK_ASK = "R5_FALLBACK_ASK"
+RULE_DRY_RUN_OVERRIDE: Final = "R1_DRY_RUN_OVERRIDE"
+RULE_RESIDUAL_DOUBT: Final = "R2_RESIDUAL_DOUBT"
+RULE_VETO_LOW_PILLARS: Final = "R3_VETO_LOW_PILLARS"
+RULE_AUTORUN_THRESHOLD: Final = "R4_AUTORUN_THRESHOLD"
+RULE_FALLBACK_ASK: Final = "R5_FALLBACK_ASK"
 
 # Type alias for valid rule IDs
 RuleId = Literal[
@@ -71,5 +71,8 @@ __all__ = [
     "RULE_FALLBACK_ASK",
     "RULE_RESIDUAL_DOUBT",
     "RULE_VETO_LOW_PILLARS",
+    "WEIGHTS",
+    "WEIGHTS_HASH",
     "RuleId",
+    "validate_weights",
 ]

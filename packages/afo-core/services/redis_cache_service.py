@@ -31,7 +31,7 @@ REDIS_CONFIG: dict[str, Any] = {
 }
 
 # 캐시 설정
-CACHE_CONFIG = {
+CACHE_CONFIG: dict[str, Any] = {
     "default_ttl": 3600,  # 1시간
     "max_memory_mb": 512.0,  # 512MB
     "compression_threshold": 1024,  # 1KB 이상 압축
@@ -162,7 +162,12 @@ class RedisCacheService:
                 final_value = f"compressed:{serialized_value}"
 
             # Phase 2.4: TTL 설정
-            default_ttl: int = int(CACHE_CONFIG["default_ttl"])
+            default_ttl_val = CACHE_CONFIG["default_ttl"]
+            default_ttl: int = (
+                int(default_ttl_val)
+                if isinstance(default_ttl_val, (int, str))
+                else 3600
+            )
             effective_ttl: int = ttl if ttl is not None else default_ttl
 
             # Phase 2.5: Redis 저장

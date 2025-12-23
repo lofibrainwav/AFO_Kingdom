@@ -59,7 +59,9 @@ class AntigravityEngine:
         dynamic_thresholds = await self._calculate_dynamic_thresholds(context)
 
         # 3. 컨텍스트 기반 조정
-        adjusted_thresholds = await self._adjust_for_context(dynamic_thresholds, context)
+        adjusted_thresholds = await self._adjust_for_context(
+            dynamic_thresholds, context
+        )
 
         # 4. 최종 의사결정
         decision = await self._make_intelligent_decision(
@@ -79,12 +81,17 @@ class AntigravityEngine:
             "recommendations": await self._generate_recommendations(decision, context),
         }
 
-    async def _predict_future_quality(self, current_score: float, context: dict[str, Any]) -> float:
+    async def _predict_future_quality(
+        self, current_score: float, context: dict[str, Any]
+    ) -> float:
         """
         ML 기반 미래 품질 예측
         간단한 회귀 모델로 향후 Trinity Score 예측
         """
-        if len(self.quality_history) < self.dynamic_thresholds["min_samples_for_prediction"]:
+        if (
+            len(self.quality_history)
+            < self.dynamic_thresholds["min_samples_for_prediction"]
+        ):
             # 충분한 데이터가 없으면 현재 점수 반환
             return current_score
 
@@ -103,11 +110,12 @@ class AntigravityEngine:
             # 간단한 추세 분석
             scores = [h["trinity_score"] for h in recent_history[-10:]]  # 최근 10개
             if len(scores) >= 2:
-                trend = np.polyfit(range(len(scores)), scores, 1)[0]  # 선형 추세
+                trend_result = np.polyfit(range(len(scores)), scores, 1)
+                trend = float(trend_result[0])  # 선형 추세, 명시적 float 변환
 
                 # 추세 기반 예측 (다음 3회 커밋 후 예상 점수)
                 prediction_steps = 3
-                predicted = scores[-1] + (trend * prediction_steps)
+                predicted = float(scores[-1]) + (trend * prediction_steps)
 
                 # 합리적인 범위로 클램핑 (0-100)
                 return max(0.0, min(100.0, predicted))
@@ -117,7 +125,9 @@ class AntigravityEngine:
 
         return current_score
 
-    async def _calculate_dynamic_thresholds(self, context: dict[str, Any]) -> dict[str, float]:
+    async def _calculate_dynamic_thresholds(
+        self, context: dict[str, Any]
+    ) -> dict[str, float]:
         """
         동적 임계값 계산
         프로젝트 맥락과 히스토리를 기반으로 임계값 조정
@@ -155,11 +165,14 @@ class AntigravityEngine:
         adjustment_factor = size_multiplier * experience_multiplier * time_multiplier
 
         return {
-            "auto_run_min_score": base_thresholds["auto_run_min_score"] * adjustment_factor,
-            "auto_run_max_risk": base_thresholds["auto_run_max_risk"] / adjustment_factor,
+            "auto_run_min_score": base_thresholds["auto_run_min_score"]
+            * adjustment_factor,
+            "auto_run_max_risk": base_thresholds["auto_run_max_risk"]
+            / adjustment_factor,
             "manual_review_min_score": base_thresholds["manual_review_min_score"]
             * adjustment_factor,
-            "block_threshold_score": base_thresholds["block_threshold_score"] * adjustment_factor,
+            "block_threshold_score": base_thresholds["block_threshold_score"]
+            * adjustment_factor,
         }
 
     async def _adjust_for_context(
@@ -227,7 +240,9 @@ class AntigravityEngine:
         # 기본값
         return "ASK_COMMANDER"
 
-    async def _calculate_confidence(self, decision: str, context: dict[str, Any]) -> float:
+    async def _calculate_confidence(
+        self, decision: str, context: dict[str, Any]
+    ) -> float:
         """
         의사결정 신뢰도 계산
         """
@@ -242,14 +257,20 @@ class AntigravityEngine:
 
         # 맥락 명확성에 따른 조정
         context_completeness = (
-            sum(1 for key in ["project_size", "team_experience", "change_scope"] if key in context)
+            sum(
+                1
+                for key in ["project_size", "team_experience", "change_scope"]
+                if key in context
+            )
             / 3.0
         )
         base_confidence += (context_completeness - 0.5) * 0.2
 
         return max(0.1, min(1.0, base_confidence))
 
-    async def _generate_recommendations(self, decision: str, context: dict[str, Any]) -> list[str]:
+    async def _generate_recommendations(
+        self, decision: str, context: dict[str, Any]
+    ) -> list[str]:
         """
         개선 권장사항 생성
         """
@@ -283,7 +304,9 @@ class AntigravityEngine:
 
         # 맥락 기반 추가 권장사항
         if context.get("test_coverage", 0) < 70:
-            recommendations.append("테스트 커버리지를 70% 이상으로 높이는 것을 권장합니다")
+            recommendations.append(
+                "테스트 커버리지를 70% 이상으로 높이는 것을 권장합니다"
+            )
 
         if not context.get("has_docs", False):
             recommendations.append("문서화 개선을 고려해보세요")
@@ -291,7 +314,11 @@ class AntigravityEngine:
         return recommendations
 
     async def _collect_learning_data(
-        self, trinity_score: float, risk_score: float, context: dict[str, Any], decision: str
+        self,
+        trinity_score: float,
+        risk_score: float,
+        context: dict[str, Any],
+        decision: str,
     ) -> None:
         """
         학습 데이터 수집
@@ -325,7 +352,9 @@ class AntigravityEngine:
             recent_decisions = self.quality_history[-50:]  # 최근 50개
 
             # AUTO_RUN 성공률 계산
-            auto_run_decisions = [d for d in recent_decisions if d["decision"] == "AUTO_RUN"]
+            auto_run_decisions = [
+                d for d in recent_decisions if d["decision"] == "AUTO_RUN"
+            ]
             successful_auto_runs = len(
                 [d for d in auto_run_decisions if d.get("outcome") == "success"]
             )

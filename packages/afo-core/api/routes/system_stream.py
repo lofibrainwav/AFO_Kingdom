@@ -16,12 +16,16 @@ def _redis() -> Redis:
 
     url = os.environ.get("REDIS_URL")
     if url:
-        return Redis.from_url(url, decode_responses=True)
+        redis_instance = Redis.from_url(url, decode_responses=True)
+        return redis_instance  # type: ignore[return-value]
     host = os.environ.get("REDIS_HOST", "127.0.0.1")
     port = int(os.environ.get("REDIS_PORT", "6379"))
     db = int(os.environ.get("REDIS_DB", "0"))
     password = os.environ.get("REDIS_PASSWORD")
-    return Redis(host=host, port=port, db=db, password=password, decode_responses=True)
+    redis_instance = Redis(
+        host=host, port=port, db=db, password=password, decode_responses=True
+    )
+    return redis_instance  # type: ignore[return-value]
 
 
 SSE_CHANNEL = "afo:verdicts"
@@ -63,7 +67,9 @@ async def logs_stream(request: Request) -> StreamingResponse:
                     yield ": ping\n\n"
                     next_ping = now + ping_interval
 
-                msg = await pubsub.get_message(ignore_subscribe_messages=True, timeout=1.0)
+                msg = await pubsub.get_message(
+                    ignore_subscribe_messages=True, timeout=1.0
+                )
                 if not msg:
                     continue
 
@@ -81,7 +87,11 @@ async def logs_stream(request: Request) -> StreamingResponse:
                 # event type 분기
                 event_type = payload.get("type", "verdict")
                 event_id = payload.get("id")  # optional
-                yield _sse(event_type, payload, _id=str(event_id) if event_id is not None else None)
+                yield _sse(
+                    event_type,
+                    payload,
+                    _id=str(event_id) if event_id is not None else None,
+                )
         finally:
             try:
                 await pubsub.unsubscribe(SSE_CHANNEL)

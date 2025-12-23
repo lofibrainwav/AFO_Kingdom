@@ -16,23 +16,23 @@ from redis.commands.search.query import Query as RedisQuery
 try:
     from neo4j import GraphDatabase
 except ImportError:
-    GraphDatabase = None
+    GraphDatabase: Any = None  # type: ignore[assignment]
 
 # Qdrant Integration
 try:
     from qdrant_client import QdrantClient
     from qdrant_client.http import models as qmodels
 except ImportError:
-    QdrantClient = None
-    qmodels = None
+    QdrantClient: Any = None  # type: ignore[assignment]
+    qmodels: Any = None  # type: ignore[assignment]
 
 # Optional imports handling
 try:
     from pgvector.psycopg2 import register_vector
     from psycopg2.extras import RealDictCursor
 except ImportError:
-    RealDictCursor = None
-    register_vector = None
+    RealDictCursor: Any = None  # type: ignore[assignment]
+    register_vector: Any = None  # type: ignore[assignment]
 
 # Suppress Pydantic warnings locally
 warnings.filterwarnings("ignore", category=UserWarning, module="pydantic")

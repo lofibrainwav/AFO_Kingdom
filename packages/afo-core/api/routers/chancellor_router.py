@@ -64,10 +64,10 @@ def _import_chancellor_graph() -> None:
         print(f"⚠️  Chancellor Graph import 실패: {e}")
         _chancellor_import_error = str(e)
 
-        class MockState(dict):
+        class MockState(dict[str, Any]):
             pass
 
-        ChancellorState = MockState
+        ChancellorState = MockState  # type: ignore[assignment]
 
 
 _import_chancellor_graph()
@@ -283,10 +283,9 @@ async def _execute_with_fallback(
             from llm_router import llm_router as _router
         except ImportError:
             try:
-                from AFO.llm_router import \
-                    llm_router as _afol_router  # type: ignore[assignment]
+                from AFO.llm_router import llm_router as _afol_router
 
-                _router = _afol_router
+                _router = _afol_router  # type: ignore[assignment]
             except ImportError as e:
                 logger.error("llm_router import 실패: %s", str(e))
                 raise RuntimeError(f"llm_router import failed: {e}") from e
@@ -451,7 +450,7 @@ async def _execute_full_mode(
 
     try:
         result = await asyncio.wait_for(
-            graph.ainvoke(initial_state, config),
+            graph.ainvoke(initial_state, config),  # type: ignore[arg-type]
             timeout=float(request.timeout_seconds),
         )
     except TimeoutError as e:

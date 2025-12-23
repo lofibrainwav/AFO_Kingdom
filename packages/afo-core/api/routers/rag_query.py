@@ -136,12 +136,15 @@ async def query_knowledge_base(request: RAGRequest):
         except:
             pass
 
-    results = []
+    results: list[dict[str, Any]] = []
     if tasks:
         retrieval_results = await asyncio.gather(*tasks, return_exceptions=True)
         for res in retrieval_results:
-            if isinstance(res, list):
+            if isinstance(res, list) and all(isinstance(item, dict) for item in res):
                 results.extend(res)
+            elif isinstance(res, Exception):
+                # Log exception but continue processing
+                pass
 
     logs.append(f"🔍 Retrieved {len(results)} chunks from Vector Store")
 

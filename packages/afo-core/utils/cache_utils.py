@@ -66,11 +66,7 @@ class CacheManager:
 
     def get(self, key: str) -> Any | None:
         """캐시에서 데이터 가져오기"""
-        if not self.enabled:
-            return None
-        if self.redis is None:
-            return None
-        if self.redis is None:
+        if not self.enabled or self.redis is None:
             return None
         try:
             data = self.redis.get(key)
@@ -89,11 +85,7 @@ class CacheManager:
 
     def set(self, key: str, value: Any, expire: int = 300) -> bool:
         """캐시에 데이터 저장"""
-        if not self.enabled:
-            return False
-        if self.redis is None:
-            return False
-        if self.redis is None:
+        if not self.enabled or self.redis is None:
             return False
         try:
             json_str = json.dumps(value)
@@ -111,11 +103,7 @@ class CacheManager:
 
     def delete(self, key: str) -> bool:
         """캐시에서 데이터 삭제"""
-        if not self.enabled:
-            return False
-        if self.redis is None:
-            return False
-        if self.redis is None:
+        if not self.enabled or self.redis is None:
             return False
         try:
             return bool(self.redis.delete(key))

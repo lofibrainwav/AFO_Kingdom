@@ -2,7 +2,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
-from AFO.observability.verdict_event import Decision, VerdictEvent, VerdictFlags
+from AFO.observability.verdict_event import (Decision, VerdictEvent,
+                                             VerdictFlags)
 
 if TYPE_CHECKING:
     from collections.abc import Mapping
@@ -23,7 +24,10 @@ def build_verdict_event(
     step: int = 41,
     extra: Mapping[str, Any] | None = None,
 ) -> VerdictEvent:
-    flags: VerdictFlags = {"dry_run": bool(dry_run_default), "residual_doubt": bool(residual_doubt)}
+    flags: VerdictFlags = {
+        "dry_run": bool(dry_run_default),
+        "residual_doubt": bool(residual_doubt),
+    }
     return VerdictEvent(
         trace_id=trace_id,
         graph_node_id=graph_node_id,

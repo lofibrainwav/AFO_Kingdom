@@ -145,7 +145,12 @@ async def record_spending(request: SpendRequest) -> dict[str, Any]:
     """
     for budget in MOCK_BUDGETS:
         if budget.category.lower() == request.category.lower():
-            new_spent = budget.spent + request.amount
+            # 타입 안전한 변환: int()에 object 타입을 직접 전달하지 않음
+            amount_value = request.amount
+            amount_int = (
+                int(amount_value) if isinstance(amount_value, (int, float, str)) else 0
+            )
+            new_spent = budget.spent + amount_int
             new_remaining = budget.allocated - new_spent
 
             # 리스크 체크
