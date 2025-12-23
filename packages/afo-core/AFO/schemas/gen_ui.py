@@ -8,8 +8,9 @@ Truth (眞): Strict checking of prompt and requirements.
 
 from typing import Any
 
-from AFO.api.models.persona import PersonaTrinityScore as TrinityScore
 from pydantic import BaseModel, Field
+
+from AFO.api.models.persona import PersonaTrinityScore as TrinityScore
 
 
 class GenUIRequest(BaseModel):
@@ -28,12 +29,8 @@ class GenUIRequest(BaseModel):
         "strict": True,
     }
 
-    prompt: str = Field(
-        ..., description="Natural language description of the component"
-    )
-    component_name: str = Field(
-        ..., description="Desired React component name (PascalCase)"
-    )
+    prompt: str = Field(..., description="Natural language description of the component")
+    component_name: str = Field(..., description="Desired React component name (PascalCase)")
     context: dict[str, Any] | None = Field(
         default_factory=dict, description="Additional context or props"
     )

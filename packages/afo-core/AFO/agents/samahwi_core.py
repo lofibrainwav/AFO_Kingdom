@@ -90,9 +90,7 @@ class SamahwiAgent:
         # Relative to project root, assuming this runs from root or package
         # We need absolute path safety
         project_root = os.getcwd()
-        sandbox_dir = os.path.join(
-            project_root, "packages/dashboard/src/components/genui"
-        )
+        sandbox_dir = os.path.join(project_root, "packages/dashboard/src/components/genui")
 
         if not os.path.exists(sandbox_dir):
             os.makedirs(sandbox_dir, exist_ok=True)

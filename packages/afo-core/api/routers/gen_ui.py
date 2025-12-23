@@ -8,10 +8,11 @@ Exposes the creative power of Samahwi to the frontend.
 
 from typing import Any
 
+from fastapi import APIRouter, BackgroundTasks, HTTPException
+
 from AFO.schemas.gen_ui import GenUIRequest, GenUIResponse
 from AFO.services.gen_ui import gen_ui_service
 from AFO.services.vision_verifier import vision_verifier
-from fastapi import APIRouter, BackgroundTasks, HTTPException
 
 router = APIRouter(prefix="/api/gen-ui", tags=["GenUI"])
 
@@ -49,14 +50,10 @@ async def preview_component(
                 response.description += f" [Deployed to Sandbox: {path}]"
 
                 # 3. Schedule Autonomous Verification (The Eyes)
-                background_tasks.add_task(
-                    vision_verifier.verify_component, request.component_name
-                )
+                background_tasks.add_task(vision_verifier.verify_component, request.component_name)
             except Exception as deploy_error:
                 # We don't fail the request, but mark the error
-                response.error = (
-                    f"Generation success, but deployment failed: {deploy_error}"
-                )
+                response.error = f"Generation success, but deployment failed: {deploy_error}"
 
         return response
     except Exception as e:

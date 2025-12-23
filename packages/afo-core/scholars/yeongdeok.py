@@ -22,6 +22,7 @@ import os
 from typing import TYPE_CHECKING, Any
 
 import httpx
+
 from AFO.afo_skills_registry import register_core_skills
 from AFO.scholars.libraries.obsidian_bridge import LocalObsidianBridge
 
@@ -95,19 +96,13 @@ class YeongdeokScholar:
 
             # Simple functional check
             _ = mx.array([1])
-            logger.info(
-                "✅ [Yeongdeok] MLX Acceleration Available (Apple Silicon Native)"
-            )
+            logger.info("✅ [Yeongdeok] MLX Acceleration Available (Apple Silicon Native)")
             return True
         except ImportError:
-            logger.info(
-                "ℹ️ [Yeongdeok] MLX Not Found (Running in Docker/Linux Standard Mode)"
-            )
+            logger.info("ℹ️ [Yeongdeok] MLX Not Found (Running in Docker/Linux Standard Mode)")
             return False
         except Exception as e:
-            logger.warning(
-                f"⚠️ [Yeongdeok] MLX Check Failed: {e}. Disabling MLX Optimization."
-            )
+            logger.warning(f"⚠️ [Yeongdeok] MLX Check Failed: {e}. Disabling MLX Optimization.")
             return False
 
     async def _call_ollama(
@@ -195,9 +190,7 @@ class YeongdeokScholar:
                     used_fallback = True
             else:
                 if custom_generator and not self._mlx_available:
-                    logger.debug(
-                        f"ℹ️ [{sage_type}] MLX not available. Using Standard Ollama Path."
-                    )
+                    logger.debug(f"ℹ️ [{sage_type}] MLX not available. Using Standard Ollama Path.")
 
                 # Standard Ollama Logic (Samahwi, Hwata)
                 response_content = await self._call_ollama(
@@ -205,17 +198,13 @@ class YeongdeokScholar:
                 )
 
             # 眞: Pydantic Validation (Output)
-            res = SageResponse(
-                sage=sage_type, content=response_content, is_fallback=used_fallback
-            )
+            res = SageResponse(sage=sage_type, content=response_content, is_fallback=used_fallback)
             return res.content
 
         except ImportError:
             # Fallback if Pydantic schemas missing
             logger.warning("Pydantic schemas not found. Using raw Fallback.")
-            return await self._call_ollama(
-                query, model=model_id, temperature=temperature
-            )
+            return await self._call_ollama(query, model=model_id, temperature=temperature)
         except Exception as e:
             logger.error(f"❌ [{sage_type}] System Error: {e}")
             return f"Error: {e}"
@@ -236,10 +225,7 @@ class YeongdeokScholar:
                 from AFO.llms.mlx_adapter import samahwi_sage
 
                 # Allow if path exists locally OR if it looks like a HF Hub ID (contains '/')
-                if (
-                    os.path.exists(samahwi_sage.model_path)
-                    or "/" in samahwi_sage.model_path
-                ):
+                if os.path.exists(samahwi_sage.model_path) or "/" in samahwi_sage.model_path:
                     # Logic is valid
                     async def _samahwi_mlx_logic(req: Any) -> str:
                         import asyncio
@@ -339,7 +325,9 @@ class YeongdeokScholar:
         """
         보안 스캔 (사마휘 담당)
         """
-        prompt = f"다음 내용에서 API 키, 비밀번호, 개인정보 등 민감 정보가 있는지 확인하시오:\n{content}"
+        prompt = (
+            f"다음 내용에서 API 키, 비밀번호, 개인정보 등 민감 정보가 있는지 확인하시오:\n{content}"
+        )
         return await self.consult_samahwi(prompt)
 
     async def use_tool(self, tool_name: str, **kwargs: Any) -> str:

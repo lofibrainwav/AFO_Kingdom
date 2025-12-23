@@ -47,9 +47,7 @@ class BangtongScholar:
         self.api = api_wrapper or codex_cli
         self.model = "codex-cli"  # CLI 모드 사용
 
-    async def implement(
-        self, request: str, context: dict[str, Any] | None = None
-    ) -> str:
+    async def implement(self, request: str, context: dict[str, Any] | None = None) -> str:
         """
         요구사항을 코드로 구현
         """

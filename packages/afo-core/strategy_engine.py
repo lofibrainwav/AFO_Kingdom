@@ -138,8 +138,7 @@ class Workflow:
                 "name": self.name,
                 "status": self.status,
                 "steps": [
-                    {"name": s.name, "action": s.action, "status": s.status}
-                    for s in self.steps
+                    {"name": s.name, "action": s.action, "status": s.status} for s in self.steps
                 ],
             }
         except Exception:

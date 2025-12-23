@@ -201,9 +201,7 @@ class CRAGLangGraph:
         for i, doc in enumerate(documents):
             # LLM으로 관련성 평가
             chain = grade_prompt | self.llm | StrOutputParser()
-            score = chain.invoke(
-                {"question": question, "document": doc.page_content[:500]}
-            )
+            score = chain.invoke({"question": question, "document": doc.page_content[:500]})
 
             is_relevant = "yes" in score.lower()
 
@@ -218,9 +216,7 @@ class CRAGLangGraph:
         relevance_ratio = relevant_count / len(documents) if documents else 0
         web_search = "Yes" if relevance_ratio < self.grade_threshold else "No"
 
-        print(
-            f"  📊 관련 문서 비율: {relevance_ratio:.2%} (임계값: {self.grade_threshold:.0%})"
-        )
+        print(f"  📊 관련 문서 비율: {relevance_ratio:.2%} (임계값: {self.grade_threshold:.0%})")
         print(f"  🔍 웹 검색 필요: {web_search}")
 
         return {
@@ -410,9 +406,7 @@ def test_crag_langgraph():
 
             print("\n결과:")
             print(f"  답변: {result['answer'][:100]}...")
-            print(
-                f"  웹 검색 사용: {'✅ Yes' if result['web_search_used'] else '❌ No'}"
-            )
+            print(f"  웹 검색 사용: {'✅ Yes' if result['web_search_used'] else '❌ No'}")
             print(f"  사용 문서 수: {result['num_documents']}")
 
         print("\n📊 전체 통계:")

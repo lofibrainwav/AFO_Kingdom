@@ -32,15 +32,13 @@ class TrinityVisionEvaluator:
     Truth (眞): Correct rendering, no errors, accessibility
     """
 
-    # Weights for final score (aligned with SSOT)
-    # Weights for final score (aligned with SSOT)
-    from AFO.domain.metrics.trinity_ssot import TrinityWeights
+    from AFO.config.trinity import Pillar, TrinityConfig
 
-    BEAUTY_WEIGHT = TrinityWeights.BEAUTY
-    TRUTH_WEIGHT = TrinityWeights.TRUTH
-    GOODNESS_WEIGHT = TrinityWeights.GOODNESS
-    SERENITY_WEIGHT = TrinityWeights.SERENITY
-    ETERNITY_WEIGHT = TrinityWeights.ETERNITY
+    BEAUTY_WEIGHT = TrinityConfig.get_weight(Pillar.BEAUTY)
+    TRUTH_WEIGHT = TrinityConfig.get_weight(Pillar.TRUTH)
+    GOODNESS_WEIGHT = TrinityConfig.get_weight(Pillar.GOODNESS)
+    SERENITY_WEIGHT = TrinityConfig.get_weight(Pillar.SERENITY)
+    ETERNITY_WEIGHT = TrinityConfig.get_weight(Pillar.ETERNITY)
 
     def __init__(self):
         self.llm_available = self._check_llm()

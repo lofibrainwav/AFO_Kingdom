@@ -2,6 +2,9 @@
 AFO 왕국 헌법 v1.0 - 성스러운 봉인
 Sealed: 2025-12-22
 
+from AFO.config.trinity import Pillar, TrinityConfig
+
+
 이 파일은 AFO 왕국의 근본 법칙을 정의하며,
 Chancellor Graph의 AUTO_RUN/ASK 라우팅의 영원한 기준선입니다.
 """
@@ -9,6 +12,8 @@ Chancellor Graph의 AUTO_RUN/ASK 라우팅의 영원한 기준선입니다.
 from __future__ import annotations
 
 from typing import Final, TypedDict
+
+from AFO.config.trinity import Pillar, TrinityConfig
 
 
 class TrinityWeights(TypedDict):
@@ -27,11 +32,11 @@ AFO_CONSTITUTION_V1_0: Final[dict] = {
     "sealed_date": "2025-12-22",
     "description": "AFO Kingdom Constitution v1.0 - Harmony Level Achieved",
     "trinity_weights": TrinityWeights(
-        truth=0.35,  # 眞
-        goodness=0.35,  # 善
-        beauty=0.20,  # 美
-        serenity=0.08,  # 孝
-        eternity=0.02,  # 永
+        truth=TrinityConfig.get_weight(Pillar.TRUTH),  # 眞
+        goodness=TrinityConfig.get_weight(Pillar.GOODNESS),  # 善
+        beauty=TrinityConfig.get_weight(Pillar.BEAUTY),  # 美
+        serenity=TrinityConfig.get_weight(Pillar.SERENITY),  # 孝
+        eternity=TrinityConfig.get_weight(Pillar.ETERNITY),  # 永
     ),
     "auto_run_threshold": 90.0,  # Trinity Score >= 90.0
     "risk_threshold": 10.0,  # Risk Score <= 10.0

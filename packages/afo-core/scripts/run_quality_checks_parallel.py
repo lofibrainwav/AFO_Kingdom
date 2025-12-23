@@ -17,9 +17,7 @@ BLUE = "\033[0;34m"
 NC = "\033[0m"  # No Color
 
 
-async def run_command(
-    name: str, command: list[str], description: str
-) -> tuple[str, bool, str]:
+async def run_command(name: str, command: list[str], description: str) -> tuple[str, bool, str]:
     """
     명령 실행 (비동기)
 
@@ -119,9 +117,7 @@ async def main():
     tests_dir = afo_root / "tests"
     has_tests = (
         tests_dir.exists()
-        and len(list(tests_dir.glob("test_*.py")))
-        + len(list(tests_dir.glob("*_test.py")))
-        > 0
+        and len(list(tests_dir.glob("test_*.py"))) + len(list(tests_dir.glob("*_test.py"))) > 0
     )
 
     # 3. 병렬 실행 태스크 생성

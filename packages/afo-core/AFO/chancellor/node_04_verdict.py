@@ -2,8 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
-from AFO.observability.verdict_event import (Decision, VerdictEvent,
-                                             VerdictFlags)
+from AFO.observability.verdict_event import Decision, VerdictEvent, VerdictFlags
 
 if TYPE_CHECKING:
     from collections.abc import Mapping
@@ -52,6 +51,8 @@ def emit_verdict(
     risk_score: float,
     dry_run_default: bool,
     residual_doubt: bool,
+    graph_node_id: str = "node_04_verdict",
+    step: int = 41,
     extra: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     ev = build_verdict_event(
@@ -62,6 +63,8 @@ def emit_verdict(
         risk_score=risk_score,
         dry_run_default=dry_run_default,
         residual_doubt=residual_doubt,
+        graph_node_id=graph_node_id,
+        step=step,
         extra=extra,
     )
     return logger.emit(ev)

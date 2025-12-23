@@ -1,0 +1,110 @@
+[
+  {
+    "url": "http://localhost:3000/",
+    "isRepresentativeRun": false,
+    "htmlPath": "/Users/brnestrm/AFO_Kingdom/packages/dashboard/lighthouse-reports/-2025_12_23_17_08_32-report.html",
+    "jsonPath": "/Users/brnestrm/AFO_Kingdom/packages/dashboard/lighthouse-reports/-2025_12_23_17_08_32-report.json",
+    "summary": {
+      "performance": 0.65,
+      "accessibility": 0.9,
+      "best-practices": 1,
+      "seo": 1
+    }
+  },
+  {
+    "url": "http://localhost:3000/",
+    "isRepresentativeRun": false,
+    "htmlPath": "/Users/brnestrm/AFO_Kingdom/packages/dashboard/lighthouse-reports/-2025_12_23_17_08_50-report.html",
+    "jsonPath": "/Users/brnestrm/AFO_Kingdom/packages/dashboard/lighthouse-reports/-2025_12_23_17_08_50-report.json",
+    "summary": {
+      "performance": 0.65,
+      "accessibility": 0.9,
+      "best-practices": 1,
+      "seo": 1
+    }
+  },
+  {
+    "url": "http://localhost:3000/docs/manual",
+    "isRepresentativeRun": false,
+    "htmlPath": "/Users/brnestrm/AFO_Kingdom/packages/dashboard/lighthouse-reports/docs_manual-2025_12_23_17_09_07-report.html",
+    "jsonPath": "/Users/brnestrm/AFO_Kingdom/packages/dashboard/lighthouse-reports/docs_manual-2025_12_23_17_09_07-report.json",
+    "summary": {
+      "performance": 0.96,
+      "accessibility": 0.95,
+      "best-practices": 1,
+      "seo": 1
+    }
+  },
+  {
+    "url": "http://localhost:3000/docs/manual",
+    "isRepresentativeRun": false,
+    "htmlPath": "/Users/brnestrm/AFO_Kingdom/packages/dashboard/lighthouse-reports/docs_manual-2025_12_23_17_09_28-report.html",
+    "jsonPath": "/Users/brnestrm/AFO_Kingdom/packages/dashboard/lighthouse-reports/docs_manual-2025_12_23_17_09_28-report.json",
+    "summary": {
+      "performance": 0.96,
+      "accessibility": 0.95,
+      "best-practices": 1,
+      "seo": 1
+    }
+  },
+  {
+    "url": "http://localhost:3000/sandbox/TrinityScoreWidget",
+    "isRepresentativeRun": false,
+    "htmlPath": "/Users/brnestrm/AFO_Kingdom/packages/dashboard/lighthouse-reports/sandbox_TrinityScoreWidget-2025_12_23_17_09_38-report.html",
+    "jsonPath": "/Users/brnestrm/AFO_Kingdom/packages/dashboard/lighthouse-reports/sandbox_TrinityScoreWidget-2025_12_23_17_09_38-report.json",
+    "summary": {
+      "performance": 0.95,
+      "accessibility": 0.94,
+      "best-practices": 1,
+      "seo": 1
+    }
+  },
+  {
+    "url": "http://localhost:3000/sandbox/TrinityScoreWidget",
+    "isRepresentativeRun": false,
+    "htmlPath": "/Users/brnestrm/AFO_Kingdom/packages/dashboard/lighthouse-reports/sandbox_TrinityScoreWidget-2025_12_23_17_09_48-report.html",
+    "jsonPath": "/Users/brnestrm/AFO_Kingdom/packages/dashboard/lighthouse-reports/sandbox_TrinityScoreWidget-2025_12_23_17_09_48-report.json",
+    "summary": {
+      "performance": 0.97,
+      "accessibility": 0.94,
+      "best-practices": 1,
+      "seo": 1
+    }
+  },
+  {
+    "url": "http://localhost:3000/",
+    "isRepresentativeRun": true,
+    "htmlPath": "/Users/brnestrm/AFO_Kingdom/packages/dashboard/lighthouse-reports/-2025_12_23_17_08_13-report.html",
+    "jsonPath": "/Users/brnestrm/AFO_Kingdom/packages/dashboard/lighthouse-reports/-2025_12_23_17_08_13-report.json",
+    "summary": {
+      "performance": 0.65,
+      "accessibility": 0.9,
+      "best-practices": 1,
+      "seo": 1
+    }
+  },
+  {
+    "url": "http://localhost:3000/docs/manual",
+    "isRepresentativeRun": true,
+    "htmlPath": "/Users/brnestrm/AFO_Kingdom/packages/dashboard/lighthouse-reports/docs_manual-2025_12_23_17_09_17-report.html",
+    "jsonPath": "/Users/brnestrm/AFO_Kingdom/packages/dashboard/lighthouse-reports/docs_manual-2025_12_23_17_09_17-report.json",
+    "summary": {
+      "performance": 0.96,
+      "accessibility": 0.95,
+      "best-practices": 1,
+      "seo": 1
+    }
+  },
+  {
+    "url": "http://localhost:3000/sandbox/TrinityScoreWidget",
+    "isRepresentativeRun": true,
+    "htmlPath": "/Users/brnestrm/AFO_Kingdom/packages/dashboard/lighthouse-reports/sandbox_TrinityScoreWidget-2025_12_23_17_09_58-report.html",
+    "jsonPath": "/Users/brnestrm/AFO_Kingdom/packages/dashboard/lighthouse-reports/sandbox_TrinityScoreWidget-2025_12_23_17_09_58-report.json",
+    "summary": {
+      "performance": 0.96,
+      "accessibility": 0.94,
+      "best-practices": 1,
+      "seo": 1
+    }
+  }
+]

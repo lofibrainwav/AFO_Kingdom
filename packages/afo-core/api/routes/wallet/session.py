@@ -35,20 +35,17 @@ async def get_wallet_session(session_id: str) -> dict[str, Any]:
         # 세션 조회 로직 - Redis 기반 구현
         try:
             import redis
+
             from AFO.config.settings import get_settings
 
             settings = get_settings()
-            redis_client = redis.from_url(
-                settings.get_redis_url(), decode_responses=True
-            )
+            redis_client = redis.from_url(settings.get_redis_url(), decode_responses=True)
 
             session_key = f"wallet:session:{session_id}"
             session_data = redis_client.hgetall(session_key)
 
             if not session_data:
-                raise HTTPException(
-                    status_code=404, detail=f"Session {session_id} not found"
-                )
+                raise HTTPException(status_code=404, detail=f"Session {session_id} not found")
 
             return {
                 "session_id": session_id,
@@ -78,13 +75,9 @@ async def get_wallet_session(session_id: str) -> dict[str, Any]:
             }
 
     except ImportError:
-        raise HTTPException(
-            status_code=503, detail="Wallet session not available"
-        ) from None
+        raise HTTPException(status_code=503, detail="Wallet session not available") from None
     except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Failed to get wallet session: {e}"
-        ) from e
+        raise HTTPException(status_code=500, detail=f"Failed to get wallet session: {e}") from e
 
 
 @session_router.post("/extract")
@@ -115,13 +108,12 @@ async def extract_wallet_session(request: WalletSessionRequest) -> dict[str, Any
         # 세션 추출 로직 - 브라우저 세션에서 API 키 추출
         try:
             import redis
+
             from AFO.api_wallet import APIWallet
             from AFO.config.settings import get_settings
 
             settings = get_settings()
-            redis_client = redis.from_url(
-                settings.get_redis_url(), decode_responses=True
-            )
+            redis_client = redis.from_url(settings.get_redis_url(), decode_responses=True)
 
             # 세션 키 생성
             session_key = f"wallet:session:{request.session_id}"
@@ -132,9 +124,7 @@ async def extract_wallet_session(request: WalletSessionRequest) -> dict[str, Any
                 "provider": request.provider or "unknown",
                 "status": "extracting",
                 "created_at": datetime.now().isoformat(),
-                "expires_at": (
-                    datetime.now().replace(hour=23, minute=59, second=59)
-                ).isoformat(),
+                "expires_at": (datetime.now().replace(hour=23, minute=59, second=59)).isoformat(),
                 "last_accessed": datetime.now().isoformat(),
             }
 
@@ -178,6 +168,4 @@ async def extract_wallet_session(request: WalletSessionRequest) -> dict[str, Any
     except HTTPException as e:
         raise e
     except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Failed to extract wallet session: {e}"
-        ) from e
+        raise HTTPException(status_code=500, detail=f"Failed to extract wallet session: {e}") from e

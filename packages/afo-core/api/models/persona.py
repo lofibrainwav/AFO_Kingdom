@@ -14,34 +14,20 @@ class PersonaTrinityScore(BaseModel):
     """페르소나별 Trinity Score (眞善美孝永)"""
 
     truth: float = Field(default=0.0, ge=0.0, le=100.0, description="眞 (Truth) 점수")
-    goodness: float = Field(
-        default=0.0, ge=0.0, le=100.0, description="善 (Goodness) 점수"
-    )
+    goodness: float = Field(default=0.0, ge=0.0, le=100.0, description="善 (Goodness) 점수")
     beauty: float = Field(default=0.0, ge=0.0, le=100.0, description="美 (Beauty) 점수")
-    serenity: float = Field(
-        default=0.0, ge=0.0, le=100.0, description="孝 (Serenity) 점수"
-    )
-    eternity: float = Field(
-        default=0.0, ge=0.0, le=100.0, description="永 (Eternity) 점수"
-    )
+    serenity: float = Field(default=0.0, ge=0.0, le=100.0, description="孝 (Serenity) 점수")
+    eternity: float = Field(default=0.0, ge=0.0, le=100.0, description="永 (Eternity) 점수")
     total_score: float = Field(default=0.0, ge=0.0, le=100.0, description="총점")
 
 
 class PersonaContext(BaseModel):
     """페르소나 맥락 정보"""
 
-    current_role: str = Field(
-        ..., description="현재 역할 (사령관, 가족 가장, 창작자 등)"
-    )
-    active_personas: list[str] = Field(
-        default_factory=list, description="활성 페르소나 목록"
-    )
-    preferences: dict[str, Any] = Field(
-        default_factory=dict, description="페르소나별 선호도"
-    )
-    behavior_patterns: dict[str, Any] = Field(
-        default_factory=dict, description="행동 패턴"
-    )
+    current_role: str = Field(..., description="현재 역할 (사령관, 가족 가장, 창작자 등)")
+    active_personas: list[str] = Field(default_factory=list, description="활성 페르소나 목록")
+    preferences: dict[str, Any] = Field(default_factory=dict, description="페르소나별 선호도")
+    behavior_patterns: dict[str, Any] = Field(default_factory=dict, description="행동 패턴")
 
 
 class Persona(BaseModel):
@@ -71,12 +57,8 @@ class Persona(BaseModel):
     )
 
     # 메타데이터
-    created_at: datetime = Field(
-        default_factory=datetime.utcnow, description="생성 일시"
-    )
-    updated_at: datetime = Field(
-        default_factory=datetime.utcnow, description="업데이트 일시"
-    )
+    created_at: datetime = Field(default_factory=datetime.utcnow, description="생성 일시")
+    updated_at: datetime = Field(default_factory=datetime.utcnow, description="업데이트 일시")
     is_active: bool = Field(default=True, description="활성 상태")
 
 
@@ -101,9 +83,7 @@ class PersonaLogEntry(BaseModel):
     persona_id: str = Field(..., description="페르소나 ID")
     action: str = Field(..., description="액션")
     context: dict[str, Any] = Field(default_factory=dict, description="맥락 정보")
-    timestamp: datetime = Field(
-        default_factory=datetime.utcnow, description="타임스탬프"
-    )
+    timestamp: datetime = Field(default_factory=datetime.utcnow, description="타임스탬프")
     trinity_score: PersonaTrinityScore | None = Field(
         default=None, description="Trinity Score (있는 경우)"
     )

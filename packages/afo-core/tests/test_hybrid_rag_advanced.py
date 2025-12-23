@@ -2,10 +2,17 @@ from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
-from AFO.services.hybrid_rag import (blend_results, generate_answer,
-                                     get_embedding, get_embedding_async,
-                                     query_pgvector, query_pgvector_async,
-                                     query_redis, select_context)
+
+from AFO.services.hybrid_rag import (
+    blend_results,
+    generate_answer,
+    get_embedding,
+    get_embedding_async,
+    query_pgvector,
+    query_pgvector_async,
+    query_redis,
+    select_context,
+)
 
 
 # 1. Embedding Tests
@@ -165,9 +172,7 @@ def test_generate_answer_openai() -> None:
 
 def test_generate_answer_no_client() -> None:
     """眞 (Truth): 클라이언트 없을 때 에러 메시지 검증"""
-    ans: str | dict[str, Any] = generate_answer(
-        "q", [], 0.7, "", "", openai_client=None
-    )
+    ans: str | dict[str, Any] = generate_answer("q", [], 0.7, "", "", openai_client=None)
     assert ans == "No LLM client available."
 
 
@@ -183,8 +188,6 @@ async def test_async_wrappers() -> None:
 
     # Test query_pgvector_async
     pool: Any = MagicMock()
-    pool.getconn.return_value.cursor.return_value.__enter__.return_value.fetchall.return_value = (
-        []
-    )
+    pool.getconn.return_value.cursor.return_value.__enter__.return_value.fetchall.return_value = []
     res: list[dict[str, Any]] = await query_pgvector_async([0.1], 5, pool)
     assert res == []

@@ -119,9 +119,7 @@ class PerformanceMiddleware(BaseHTTPMiddleware):
             endpoint = request.url.path
             self._response_time_histogram.labels(
                 method=request.method, endpoint=endpoint, status_code=status_code
-            ).observe(
-                elapsed_ms / 1000.0
-            )  # 초 단위로 변환
+            ).observe(elapsed_ms / 1000.0)  # 초 단위로 변환
 
         except (ImportError, Exception) as e:
             # Prometheus가 없으면 무시
@@ -169,7 +167,5 @@ class PerformanceMiddleware(BaseHTTPMiddleware):
             "p50_ms": round(sorted_times[p50_idx] if p50_idx < total else 0, 2),
             "p95_ms": round(sorted_times[p95_idx] if p95_idx < total else 0, 2),
             "p99_ms": round(sorted_times[p99_idx] if p99_idx < total else 0, 2),
-            "slow_endpoints": sorted(
-                slow_endpoints, key=lambda x: x["average_ms"], reverse=True
-            ),
+            "slow_endpoints": sorted(slow_endpoints, key=lambda x: x["average_ms"], reverse=True),
         }

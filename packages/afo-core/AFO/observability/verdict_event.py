@@ -1,11 +1,15 @@
 from __future__ import annotations
 
+import hashlib
 import json
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Any, Literal, TypedDict
 
-from AFO.observability.rule_constants import WEIGHTS_HASH
+from AFO.constitution.constitution_v1_0 import TRINITY_WEIGHTS
+
+# 🔐 SSOT 해시 스탬프: 변경 감지용 (SHA256 12자리)
+WEIGHTS_HASH = hashlib.sha256(str(sorted(TRINITY_WEIGHTS.items())).encode()).hexdigest()[:12]
 
 if TYPE_CHECKING:
     from collections.abc import Mapping
@@ -56,8 +60,4 @@ class VerdictEvent:
 
     @staticmethod
     def now_iso() -> str:
-        return (
-            datetime.now(timezone.utc)
-            .isoformat(timespec="seconds")
-            .replace("+00:00", "Z")
-        )
+        return datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")

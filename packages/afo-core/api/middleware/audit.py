@@ -35,9 +35,7 @@ async def audit_middleware(
             )
             return response
         except Exception as e:
-            logger.error(
-                f"🚨 [AUDIT] method={request.method} path={path} status=ERROR error={e!s}"
-            )
+            logger.error(f"🚨 [AUDIT] method={request.method} path={path} status=ERROR error={e!s}")
             raise e
     else:
         return await call_next(request)

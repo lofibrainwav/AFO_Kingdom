@@ -27,9 +27,7 @@ class CLIWrapper:
             )
 
             try:
-                stdout, stderr = await asyncio.wait_for(
-                    process.communicate(), timeout=timeout
-                )
+                stdout, stderr = await asyncio.wait_for(process.communicate(), timeout=timeout)
                 result = stdout.decode().strip()
                 error = stderr.decode().strip()
 

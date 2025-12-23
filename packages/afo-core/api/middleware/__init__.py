@@ -12,9 +12,7 @@ from .prometheus import PrometheusMiddleware, metrics_endpoint
 
 _parent_file = Path(__file__).parent.parent / "middleware.py"
 if _parent_file.exists():
-    spec = importlib.util.spec_from_file_location(
-        "AFO.api.middleware_module", _parent_file
-    )
+    spec = importlib.util.spec_from_file_location("AFO.api.middleware_module", _parent_file)
     if spec and spec.loader:
         middleware_module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(middleware_module)

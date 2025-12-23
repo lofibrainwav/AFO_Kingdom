@@ -6,9 +6,11 @@ Handles FastAPI app configuration, server settings, and lifespan management.
 
 import os
 from contextlib import asynccontextmanager
+from typing import Any
+
+from fastapi import FastAPI
 
 from AFO.api.compat import get_settings_safe
-from fastapi import FastAPI
 
 # ============================================================================
 # APP CONFIGURATION
@@ -46,7 +48,7 @@ def get_server_config() -> tuple[str, int]:
 
 
 @asynccontextmanager
-async def get_lifespan_manager(app=None):  # type: ignore
+async def get_lifespan_manager(app: FastAPI | None = None) -> Any:
     """
     Manage application lifecycle with proper initialization and cleanup.
 

@@ -42,9 +42,7 @@ class LocalObsidianBridge:
             self.vault_path = Path(vault_path)
 
         if not self.vault_path.exists():
-            logger.warning(
-                f"⚠️ [ObsidianBridge] Vault path not found: {self.vault_path}"
-            )
+            logger.warning(f"⚠️ [ObsidianBridge] Vault path not found: {self.vault_path}")
 
     def _validate_path(self, note_path: str) -> Path:
         """Secure path validation"""

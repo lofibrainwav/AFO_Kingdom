@@ -6,9 +6,10 @@ Phase 10: Real-time Thought Stream
 import logging
 from typing import Any
 
-from AFO.services.matrix_stream import matrix_stream
 from fastapi import APIRouter, Request
 from sse_starlette.sse import EventSourceResponse
+
+from AFO.services.matrix_stream import matrix_stream
 
 router = APIRouter()
 logger = logging.getLogger("afo.api.matrix")
