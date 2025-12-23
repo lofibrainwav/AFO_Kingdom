@@ -16,8 +16,7 @@ import os
 # Trinity Score Evaluator (동적 점수 계산)
 try:
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../../../afo-core"))
-    from AFO.services.mcp_tool_trinity_evaluator import \
-        mcp_tool_trinity_evaluator
+    from AFO.services.mcp_tool_trinity_evaluator import mcp_tool_trinity_evaluator
 except ImportError:
     mcp_tool_trinity_evaluator = None
 

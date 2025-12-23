@@ -64,8 +64,9 @@ def simulate_router_registration():
 
     # 1. Comprehensive Health
     try:
-        from AFO.api.routes.comprehensive_health import \
-            router as comprehensive_health_router
+        from AFO.api.routes.comprehensive_health import (
+            router as comprehensive_health_router,
+        )
 
         app.include_router(comprehensive_health_router)
         # #region agent log

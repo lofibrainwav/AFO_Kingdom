@@ -185,6 +185,20 @@ class TrinityCalculator:
             if context_boost:
                 scores = [min(100.0, s + context_boost) for s in scores]
 
+        # Record Trinity scores as Prometheus metrics
+        try:
+            from AFO.api.middleware.prometheus import record_trinity_score
+
+            record_trinity_score("truth", scores[0])
+            record_trinity_score("goodness", scores[1])
+            record_trinity_score("beauty", scores[2])
+            record_trinity_score("serenity", scores[3])
+            record_trinity_score("eternity", scores[4])
+        except ImportError:
+            logger.warning(
+                "Prometheus middleware not available for Trinity score recording"
+            )
+
         return {
             "truth": scores[0],
             "goodness": scores[1],

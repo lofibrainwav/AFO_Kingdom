@@ -53,8 +53,9 @@ def test_comprehensive_health_import():
     # #endregion agent log
 
     try:
-        from AFO.api.routes.comprehensive_health import \
-            router as comprehensive_health_router
+        from AFO.api.routes.comprehensive_health import (
+            router as comprehensive_health_router,
+        )
 
         # #region agent log
         log_debug(
@@ -84,8 +85,9 @@ def test_comprehensive_health_import():
         # #endregion agent log
         print(f"❌ Comprehensive Health 라우터 import 실패: {e}")
         try:
-            from api.routes.comprehensive_health import \
-                router as comprehensive_health_router
+            from api.routes.comprehensive_health import (
+                router as comprehensive_health_router,
+            )
 
             print("✅ Comprehensive Health 라우터 import 성공 (fallback)")
             return True, comprehensive_health_router

@@ -20,6 +20,12 @@ def setup_middleware(app: FastAPI) -> None:
         allow_headers=["*"],
     )
 
+    # Cache middleware (Phase 1.2: API 엔드포인트 캐싱)
+    _setup_cache_middleware(app)
+
+    # Performance monitoring middleware (Phase 3.1: 성능 모니터링)
+    _setup_performance_middleware(app)
+
     # Security middleware (audit logging)
     _setup_security_middleware(app)
 
@@ -42,6 +48,39 @@ def _setup_security_middleware(app: FastAPI) -> None:
 
     except Exception as e:
         print(f"⚠️ Security Hardening 설정 실패: {e}")
+
+
+def _setup_cache_middleware(app: FastAPI) -> None:
+    """Setup cache middleware for API responses."""
+    try:
+        from AFO.api.middleware.cache_middleware import CacheMiddleware
+
+        # Add cache middleware (before other middleware for optimal performance)
+        app.add_middleware(CacheMiddleware)
+        print("✅ API Cache Middleware 활성화")
+
+    except Exception as e:
+        print(f"⚠️ Cache Middleware 설정 실패: {e}")
+        import traceback
+
+        traceback.print_exc()
+
+
+def _setup_performance_middleware(app: FastAPI) -> None:
+    """Setup performance monitoring middleware."""
+    try:
+        from AFO.api.middleware.performance_middleware import \
+            PerformanceMiddleware
+
+        # Add performance middleware
+        app.add_middleware(PerformanceMiddleware)
+        print("✅ Performance Monitoring Middleware 활성화")
+
+    except Exception as e:
+        print(f"⚠️ Performance Middleware 설정 실패: {e}")
+        import traceback
+
+        traceback.print_exc()
 
 
 def _setup_monitoring_middleware(app: FastAPI) -> None:

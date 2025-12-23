@@ -3,8 +3,7 @@ import shutil
 from unittest.mock import AsyncMock, patch
 
 import pytest
-from AFO.domain.serenity.genui_orchestrator import (GenUISpec,
-                                                    genui_orchestrator)
+from AFO.domain.serenity.genui_orchestrator import GenUISpec, genui_orchestrator
 
 
 @pytest.mark.asyncio

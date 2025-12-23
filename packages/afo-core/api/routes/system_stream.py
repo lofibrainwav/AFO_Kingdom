@@ -1,4 +1,5 @@
 import asyncio
+import contextlib
 import json
 from collections.abc import AsyncGenerator
 from typing import Optional
@@ -93,14 +94,10 @@ async def logs_stream(request: Request) -> StreamingResponse:
                     _id=str(event_id) if event_id is not None else None,
                 )
         finally:
-            try:
+            with contextlib.suppress(Exception):
                 await pubsub.unsubscribe(SSE_CHANNEL)
-            except Exception:
-                pass
-            try:
+            with contextlib.suppress(Exception):
                 await r.close()
-            except Exception:
-                pass
 
     return StreamingResponse(
         gen(),

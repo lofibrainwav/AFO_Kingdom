@@ -222,8 +222,7 @@ class LLMRouter:
                     ollama_url = settings.OLLAMA_BASE_URL
                 except ImportError:
                     try:
-                        from config.settings import \
-                            get_settings  # type: ignore
+                        from config.settings import get_settings  # type: ignore
 
                         settings = get_settings()
                         ollama_url = settings.OLLAMA_BASE_URL
@@ -513,19 +512,64 @@ class LLMRouter:
     ) -> dict[str, Any]:
         """
         라우팅 결정 후 실제 실행
+        캐시 우선 확인 → 라우팅 결정 → 실행 → 캐시 저장
         """
         try:
             # Explicitly return dict[str, Any]
             result: dict[str, Any]
 
-            # 1. Check Cache
+            # 1. Check Redis Cache (Phase 1.1: LLM 응답 캐싱)
+            try:
+                from AFO.services.llm_cache_service import get_llm_cache_service
+
+                cache_service = await get_llm_cache_service()
+                if cache_service and cache_service._initialized:
+                    # 라우팅 결정 먼저 수행 (provider/model 정보 필요)
+                    routing_decision = self.route_request(query, context)
+                    provider = routing_decision.selected_provider.value
+                    model = routing_decision.selected_model
+
+                    # 캐시에서 조회
+                    request_data = {
+                        "messages": [{"role": "user", "content": query}],
+                        "temperature": (
+                            context.get("temperature", 0.7) if context else 0.7
+                        ),
+                        "max_tokens": (
+                            context.get("max_tokens", 2048) if context else 2048
+                        ),
+                    }
+                    cached_response = await cache_service.get_cached_response(
+                        request_data, provider, model
+                    )
+                    if cached_response:
+                        logger.info(
+                            f"⚡️ LLM Cache Hit! Provider: {provider}, Model: {model}"
+                        )
+                        return {
+                            "success": True,
+                            "response": cached_response,
+                            "routing": {
+                                "provider": provider,
+                                "model": model,
+                                "reasoning": "캐시에서 반환 (응답 시간 99% 감소)",
+                                "cached": True,
+                            },
+                            "cached": True,
+                        }
+            except (ImportError, Exception) as e:
+                logger.debug(
+                    f"LLM Cache Service 사용 불가, 메모리 캐시로 fallback: {e}"
+                )
+
+            # 2. Check Memory Cache (기존 로직)
             cache_key = f"{query}::{context}"
             if cache_key in self._response_cache:
                 entry = self._response_cache[cache_key]
                 if time.time() - entry["timestamp"] < self._cache_ttl:
                     # Move to end (LRU)
                     self._response_cache.move_to_end(cache_key)
-                    logger.info("⚡️ Cache Hit! Returning cached response.")
+                    logger.info("⚡️ Memory Cache Hit! Returning cached response.")
                     # Cast Any to expected dict type for MyPy
                     cached_data: dict[str, Any] = entry["data"]
                     return cached_data
@@ -564,7 +608,34 @@ class LLMRouter:
                     },
                 }
 
-                # Cache Success Response
+                # 3. Save to Redis Cache (Phase 1.1: LLM 응답 캐싱)
+                try:
+                    from AFO.services.llm_cache_service import get_llm_cache_service
+
+                    cache_service = await get_llm_cache_service()
+                    if cache_service and cache_service._initialized:
+                        provider = routing_decision.selected_provider.value
+                        model = routing_decision.selected_model
+                        request_data = {
+                            "messages": [{"role": "user", "content": query}],
+                            "temperature": (
+                                context.get("temperature", 0.7) if context else 0.7
+                            ),
+                            "max_tokens": (
+                                context.get("max_tokens", 2048) if context else 2048
+                            ),
+                        }
+                        await cache_service.cache_response(
+                            request_data,
+                            provider,
+                            model,
+                            response,
+                            metadata={"context": context},
+                        )
+                except (ImportError, Exception) as e:
+                    logger.debug(f"LLM Cache 저장 실패 (무시): {e}")
+
+                # Cache Success Response (Memory Cache - 기존 로직)
                 self._response_cache[cache_key] = {
                     "timestamp": time.time(),
                     "data": response_data,
@@ -604,12 +675,10 @@ class LLMRouter:
         try:
             # Phase 5: REST API 사용 (google.generativeai 대체)
             try:
-                from AFO.llms.gemini_api import \
-                    gemini_api  # type: ignore[assignment]
+                from AFO.llms.gemini_api import gemini_api  # type: ignore[assignment]
             except ImportError:
                 try:
-                    from llms.gemini_api import \
-                        gemini_api  # type: ignore[assignment]
+                    from llms.gemini_api import gemini_api  # type: ignore[assignment]
                 except ImportError as e:
                     raise ImportError("Gemini API Wrapper not available") from e
 
