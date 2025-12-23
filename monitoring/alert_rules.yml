@@ -89,3 +89,39 @@ groups:
         annotations:
           summary: "Redis is down"
           description: "Redis has been down for more than 1 minute"
+
+      # AI Agent Performance Prediction Alert
+      - alert: LLMLatencyIncreasing
+        expr: predict_linear(afo_ollama_request_duration_seconds{quantile="0.95"}[10m], 300) > 3.0
+        for: 5m
+        labels:
+          severity: warning
+          service: afo-kingdom-api
+          component: ai-agent
+        annotations:
+          summary: "LLM latency increasing trend detected"
+          description: "Predicted LLM 95th percentile latency in 5 minutes: {{ $value | printf \"%.2f\" }}s (threshold: 3.0s)"
+
+      # Trinity Score Degradation Prediction
+      - alert: TrinityScoreDegradationPredicted
+        expr: predict_linear(afo_trinity_score_total[10m], 300) < 0
+        for: 10m
+        labels:
+          severity: info
+          service: afo-kingdom-api
+          component: trinity
+        annotations:
+          summary: "Trinity score degradation predicted"
+          description: "Trinity score trend shows potential degradation in next 5 minutes"
+
+      # Circuit Breaker Activation Prediction
+      - alert: CircuitBreakerPredicted
+        expr: rate(afo_circuit_breaker_failures_total[5m]) > 10 AND predict_linear(afo_circuit_breaker_failures_total[10m], 60) > 20
+        for: 3m
+        labels:
+          severity: warning
+          service: afo-kingdom-api
+          component: circuit-breaker
+        annotations:
+          summary: "Circuit breaker activation predicted"
+          description: "Failure rate suggests circuit breaker may activate soon"

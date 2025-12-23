@@ -9,6 +9,7 @@ import json
 import sys
 from pathlib import Path
 
+
 # 프로젝트 루트를 Python 경로에 추가
 project_root = Path(__file__).resolve().parent.parent
 if str(project_root) not in sys.path:

@@ -3,6 +3,7 @@ import json
 
 import aiohttp
 
+
 STREAM_URL = "http://localhost:8010/api/stream/mcp/thoughts"
 
 

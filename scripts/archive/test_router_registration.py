@@ -6,6 +6,7 @@ Router Registration Test Script
 import sys
 from pathlib import Path
 
+
 # 프로젝트 루트를 sys.path에 추가
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root / "packages" / "afo-core"))
@@ -13,6 +14,7 @@ sys.path.insert(0, str(project_root / "packages" / "afo-core"))
 # #region agent log
 import json
 from datetime import datetime
+
 
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 
@@ -53,8 +55,9 @@ def test_comprehensive_health_import():
     # #endregion agent log
 
     try:
-        from AFO.api.routes.comprehensive_health import \
-            router as comprehensive_health_router
+        from AFO.api.routes.comprehensive_health import (
+            router as comprehensive_health_router,
+        )
 
         # #region agent log
         log_debug(
@@ -84,8 +87,9 @@ def test_comprehensive_health_import():
         # #endregion agent log
         print(f"❌ Comprehensive Health 라우터 import 실패: {e}")
         try:
-            from api.routes.comprehensive_health import \
-                router as comprehensive_health_router
+            from api.routes.comprehensive_health import (
+                router as comprehensive_health_router,
+            )
 
             print("✅ Comprehensive Health 라우터 import 성공 (fallback)")
             return True, comprehensive_health_router

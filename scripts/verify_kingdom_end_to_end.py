@@ -3,6 +3,7 @@ import os
 import pathlib
 import sys
 
+
 # Add package root to sys.path
 core_path = pathlib.Path(
     os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")
@@ -32,6 +33,7 @@ class MockYeongdeok:
 
 # Patching modules before importing chancellor_graph
 import chancellor_graph as graph_module
+
 
 # Inject Mocks
 graph_module.llm_router = MockLLMRouter()

@@ -28,8 +28,12 @@ from datasets import Dataset
 # Ragas imports
 try:
     from ragas import evaluate
-    from ragas.metrics import (answer_relevancy, context_precision,
-                               context_recall, faithfulness)
+    from ragas.metrics import (
+        answer_relevancy,
+        context_precision,
+        context_recall,
+        faithfulness,
+    )
 
     RAGAS_AVAILABLE = True
 except ImportError:

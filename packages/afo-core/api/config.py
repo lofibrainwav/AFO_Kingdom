@@ -7,8 +7,9 @@ Handles FastAPI app configuration, server settings, and lifespan management.
 import os
 from contextlib import asynccontextmanager
 
-from AFO.api.compat import get_settings_safe
 from fastapi import FastAPI
+
+from AFO.api.compat import get_settings_safe
 
 # ============================================================================
 # APP CONFIGURATION

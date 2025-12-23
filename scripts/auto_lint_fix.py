@@ -16,6 +16,7 @@ import logging
 from pathlib import Path
 from typing import Any
 
+
 # 로깅 설정
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"

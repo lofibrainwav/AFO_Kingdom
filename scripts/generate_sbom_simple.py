@@ -14,6 +14,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+
 # 로깅 설정
 logging.basicConfig(
     level=logging.INFO,

@@ -2,6 +2,7 @@ import os
 import pathlib
 import sys
 
+
 sys.path.append(os.path.join(pathlib.Path.cwd(), "packages/afo-core"))
 sys.path.append(os.path.join(pathlib.Path.cwd(), "packages/trinity-os"))
 

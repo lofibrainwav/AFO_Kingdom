@@ -5,11 +5,13 @@ Check Registered Routes in FastAPI Application
 
 import json
 import sys
+
 # #region agent log
 from datetime import datetime
 from pathlib import Path
 
 import requests
+
 
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 

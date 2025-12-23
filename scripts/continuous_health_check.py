@@ -14,6 +14,7 @@ from typing import Any
 
 import requests
 
+
 # #region agent log
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 SERVER_ENDPOINT = "http://127.0.0.1:7242/ingest/dc91dd33-03ef-4e50-91e7-6560c8e60280"

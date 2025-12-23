@@ -22,7 +22,9 @@ from typing import Any
 
 from trinity_os.adapters.afo_ultimate_mcp_deps_v1 import build_deps_v1
 from trinity_os.graphs.trinity_toolflow_graph_v1 import (
-    build_trinity_toolflow_graph, run_trinity_toolflow)
+    build_trinity_toolflow_graph,
+    run_trinity_toolflow,
+)
 
 
 def _print_three_lines(final_card: dict[str, Any]) -> None:
@@ -223,8 +225,9 @@ def _probe_wallet_session_decryptable(provider: str) -> bool:
             contextlib.redirect_stdout(runtime_stdout),
             contextlib.redirect_stderr(runtime_stderr),
         ):
-            from afo_soul_engine.browser_auth.wallet_integration import \
-                load_session_from_wallet
+            from afo_soul_engine.browser_auth.wallet_integration import (
+                load_session_from_wallet,
+            )
 
             session = load_session_from_wallet(provider)
         return bool(
@@ -377,15 +380,13 @@ def _auth_login(
     runtime_stderr = io.StringIO()
 
     async def _run() -> dict[str, Any]:
-        from afo_soul_engine.browser_auth.wallet_integration import \
-            WalletSessionManager
+        from afo_soul_engine.browser_auth.wallet_integration import WalletSessionManager
 
         manager = WalletSessionManager()
 
         session_data: dict[str, Any]
         if provider == "claude":
-            from afo_soul_engine.browser_auth.claude_session import \
-                ClaudeSession
+            from afo_soul_engine.browser_auth.claude_session import ClaudeSession
 
             s = ClaudeSession()
             session_data = await s.login_and_extract_session(headless=headless)
@@ -395,8 +396,7 @@ def _auth_login(
             s = CodexSession()
             session_data = await s.login_and_extract_session(headless=headless)
         elif provider == "gemini":
-            from afo_soul_engine.browser_auth.gemini_session import \
-                GeminiSession
+            from afo_soul_engine.browser_auth.gemini_session import GeminiSession
 
             s = GeminiSession()
             session_data = await s.login_and_extract_session(headless=headless)
@@ -534,8 +534,7 @@ def _auth_open(
 
     async def _run() -> dict[str, Any]:
         if provider == "claude":
-            from afo_soul_engine.browser_auth.claude_session import \
-                ClaudeSession
+            from afo_soul_engine.browser_auth.claude_session import ClaudeSession
 
             s = ClaudeSession()
             return await s.open_chat_for_manual_use(
@@ -549,8 +548,7 @@ def _auth_open(
                 headless=headless, keep_open=keep_open, timeout_seconds=180
             )
         if provider == "gemini":
-            from afo_soul_engine.browser_auth.gemini_session import \
-                GeminiSession
+            from afo_soul_engine.browser_auth.gemini_session import GeminiSession
 
             s = GeminiSession()
             return await s.open_chat_for_manual_use(
@@ -748,8 +746,7 @@ def _auth_ask(
 
     async def _run() -> str:
         if provider == "claude":
-            from afo_soul_engine.browser_auth.claude_session import \
-                ClaudeSession
+            from afo_soul_engine.browser_auth.claude_session import ClaudeSession
 
             s = ClaudeSession()
             return await s.ask_question(final_prompt, headless=headless)
@@ -1328,10 +1325,11 @@ def _toolflow_run(
     else:
         # Legacy V1 Flow
         try:
-            from trinity_os.adapters.afo_ultimate_mcp_deps_v1 import \
-                build_deps_v1
+            from trinity_os.adapters.afo_ultimate_mcp_deps_v1 import build_deps_v1
             from trinity_os.graphs.trinity_toolflow_graph_v1 import (
-                build_trinity_toolflow_graph, run_trinity_toolflow)
+                build_trinity_toolflow_graph,
+                run_trinity_toolflow,
+            )
 
             # Local import to avoid top-level crashes if V1 is broken
             graph_data = build_trinity_toolflow_graph(build_deps_v1())

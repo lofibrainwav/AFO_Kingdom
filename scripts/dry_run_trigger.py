@@ -14,6 +14,7 @@ DRY_RUN 자동 트리거 스크립트
 import subprocess
 import sys
 
+
 # 고위험 패턴 정의
 HIGH_RISK_PATTERNS = [
     # 외부 API

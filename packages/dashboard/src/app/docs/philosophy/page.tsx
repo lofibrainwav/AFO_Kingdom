@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { X } from "lucide-react";
+import { motion } from "framer-motion";
 import { RoyalPhilosophy } from "@/components/royal/RoyalPhilosophy";
+import { PillarModal } from "@/components/docs";
 
 export default function PhilosophyPage() {
   const [selectedPillar, setSelectedPillar] = useState<string | null>(null);
@@ -113,43 +113,11 @@ export default function PhilosophyPage() {
         <RoyalPhilosophy />
 
         {/* Pillar Modal */}
-        <AnimatePresence>
-          {selectedPillar && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md p-4"
-              onClick={() => setSelectedPillar(null)}
-            >
-              <motion.div
-                initial={{ scale: 0.9, y: 20 }}
-                animate={{ scale: 1, y: 0 }}
-                exit={{ scale: 0.9, y: 20 }}
-                onClick={(e) => e.stopPropagation()}
-                className="relative w-full max-w-2xl bg-white/90 backdrop-blur-sm rounded-3xl p-8 border border-white/40 shadow-2xl"
-              >
-                <button
-                  onClick={() => setSelectedPillar(null)}
-                  className="absolute top-4 right-4 w-10 h-10 bg-slate-200/50 rounded-full flex items-center justify-center text-slate-700 hover:bg-red-500/20 transition-colors"
-                >
-                  <X className="w-6 h-6" />
-                </button>
-                <div className="text-center">
-                  <div className="text-6xl font-bold text-slate-700 mb-4">
-                    {pillars.find((p) => p.id === selectedPillar)?.name}
-                  </div>
-                  <h3 className="text-2xl font-bold text-slate-700 mb-2">
-                    {pillars.find((p) => p.id === selectedPillar)?.role}
-                  </h3>
-                  <p className="text-slate-600">
-                    {pillars.find((p) => p.id === selectedPillar)?.description}
-                  </p>
-                </div>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <PillarModal
+          isOpen={!!selectedPillar}
+          onClose={() => setSelectedPillar(null)}
+          pillarName={selectedPillar || ""}
+        />
       </div>
     </div>
   );

@@ -2,8 +2,9 @@
 # PDF 페이지 2: FastAPI 엔드포인트, 페이지 3: 권한 검증
 from typing import Any
 
-from AFO.julie_cpa.services.julie_service import JulieService
 from fastapi import APIRouter
+
+from AFO.julie_cpa.services.julie_service import JulieService
 
 router = APIRouter(prefix="/api/julie", tags=["Julie CPA"])
 
