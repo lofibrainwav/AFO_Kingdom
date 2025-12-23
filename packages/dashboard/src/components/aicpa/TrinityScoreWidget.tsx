@@ -37,7 +37,7 @@ export function TrinityScoreWidget() {
     return data.trinity_score >= 95
       ? "✨ 왕국 완벽 – 초심 만점!"
       : "🔧 튜닝이 조금 필요해요";
-  }, [data?.trinity_score]);
+  }, [data]);
 
   if (loading || !data) return null;
 

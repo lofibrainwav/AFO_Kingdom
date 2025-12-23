@@ -68,7 +68,7 @@ export function GrokInsightWidget() {
         <Minus className="w-4 h-4" /> Neutral
       </span>
     );
-  }, [data?.grok_analysis?.sentiment]);
+  }, [data?.grok_analysis]);
 
   return (
     <div className="glass-card p-6 relative overflow-hidden group">
@@ -99,7 +99,7 @@ export function GrokInsightWidget() {
             disabled={loading}
             className={`p-2 rounded-full hover:bg-white/5 border border-white/5 transition-all ${loading ? "animate-spin" : ""}`}
             aria-label={loading ? "Loading Grok insight" : "Fetch Grok insight"}
-            aria-busy={loading}
+            aria-busy={loading ? "true" : "false"}
           >
             <RefreshCw className="w-5 h-5 text-indigo-300" />
           </button>
