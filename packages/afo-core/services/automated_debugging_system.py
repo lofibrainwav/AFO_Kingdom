@@ -1140,7 +1140,8 @@ class AutomatedDebuggingSystem:
             return
 
         try:
-            from AFO.api.routes.debugging_stream import broadcast_debugging_event
+            from AFO.api.routes.debugging_stream import \
+                broadcast_debugging_event
 
             event = {
                 "type": event_type,

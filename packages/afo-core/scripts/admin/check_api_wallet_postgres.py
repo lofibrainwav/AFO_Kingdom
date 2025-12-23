@@ -14,10 +14,9 @@ def main():
     print("1️⃣ PostgreSQL 연결 확인:")
     try:
         import psycopg2
-        from psycopg2.extras import RealDictCursor
-
         # 실제 PostgreSQL 설정 확인
         from AFO.config.settings import get_settings
+        from psycopg2.extras import RealDictCursor
 
         settings = get_settings()
         conn = psycopg2.connect(

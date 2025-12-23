@@ -1,0 +1,62 @@
+name: Weekly Metrics Collection
+
+on:
+  schedule:
+    # 매주 일요일 LA 23:00 (UTC 07:00 월요일)
+    - cron: "0 7 * * 1"
+  workflow_dispatch:
+
+concurrency:
+  group: weekly-metrics
+  cancel-in-progress: false
+
+jobs:
+  collect_metrics:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyyaml
+
+      - name: Collect Weekly Metrics
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/collect_weekly_metrics.py
+
+      - name: Commit Metrics
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # Git 설정
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+          # 변경사항 확인
+          if git diff --quiet docs/reports/_metrics/; then
+            echo "No changes to commit"
+            exit 0
+          fi
+
+          # 커밋
+          git add docs/reports/_metrics/
+          git commit -m "Weekly metrics collection - $(date +'%Y-W%U')" || echo "Nothing to commit"
+
+      - name: Push Metrics
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          git push origin main || echo "Push failed - may be due to concurrent updates"

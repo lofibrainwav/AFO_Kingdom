@@ -4,7 +4,6 @@ import json
 import os
 import subprocess
 from dataclasses import dataclass
-from typing import List, Tuple
 
 
 @dataclass(frozen=True)
@@ -38,17 +37,17 @@ HIGH_RISK_FILE_KEYWORDS = (
 TEST_KEYWORDS = ("test", "pytest", "mypy", "ruff", "lint")
 
 
-def _run(cmd: List[str]) -> str:
+def _run(cmd: list[str]) -> str:
     return subprocess.check_output(cmd, text=True).strip()
 
 
-def get_changed_files(diff_base: str) -> List[str]:
+def get_changed_files(diff_base: str) -> list[str]:
     out = _run(["git", "diff", "--name-only", f"{diff_base}...HEAD"])
     return [line for line in out.splitlines() if line.strip()]
 
 
-def score_changed_files(files: List[str]) -> Tuple[int, List[Signal]]:
-    signals: List[Signal] = []
+def score_changed_files(files: list[str]) -> tuple[int, list[Signal]]:
+    signals: list[Signal] = []
 
     n = len(files)
     if n >= 80:
@@ -78,15 +77,25 @@ def score_changed_files(files: List[str]) -> Tuple[int, List[Signal]]:
             signals.append(Signal("core_keyword_touched", 15, f"Keyword hit in {f}"))
 
         if any(k in lower for k in TEST_KEYWORDS):
-            signals.append(Signal("tests_or_quality_changed", 6, f"Test/quality tooling touched: {f}"))
+            signals.append(
+                Signal(
+                    "tests_or_quality_changed", 6, f"Test/quality tooling touched: {f}"
+                )
+            )
 
     if workflow_touched:
-        signals.append(Signal("workflow_changed", 18, "GitHub Actions workflows touched"))
+        signals.append(
+            Signal("workflow_changed", 18, "GitHub Actions workflows touched")
+        )
 
     if high_hits:
-        signals.append(Signal("high_risk_area", 22, f"High-risk area files={len(high_hits)}"))
+        signals.append(
+            Signal("high_risk_area", 22, f"High-risk area files={len(high_hits)}")
+        )
     if med_hits and not high_hits:
-        signals.append(Signal("medium_risk_area", 10, f"Medium-risk area files={len(med_hits)}"))
+        signals.append(
+            Signal("medium_risk_area", 10, f"Medium-risk area files={len(med_hits)}")
+        )
 
     keyword_signals = [s for s in signals if s.name == "core_keyword_touched"]
     if len(keyword_signals) > 3:
@@ -109,7 +118,9 @@ def main() -> int:
     payload = {
         "risk_score": score,
         "changed_files_count": len(files),
-        "top_signals": [{"name": s.name, "score": s.score, "reason": s.reason} for s in signals[:10]],
+        "top_signals": [
+            {"name": s.name, "score": s.score, "reason": s.reason} for s in signals[:10]
+        ],
     }
     print(json.dumps(payload, ensure_ascii=False))
     return 0

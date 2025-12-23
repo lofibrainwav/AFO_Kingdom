@@ -32,7 +32,6 @@ def main():
     print("2️⃣ PostgreSQL DB:")
     try:
         import psycopg2
-
         from AFO.config.settings import get_settings
 
         settings = get_settings()
