@@ -35,7 +35,8 @@ class CacheManager:
 
                 redis_url = get_redis_url()
                 self.redis = redis.from_url(redis_url)
-                self.redis.ping()  # 연결 테스트
+                if self.redis is not None:
+                    self.redis.ping()  # 연결 테스트
                 self.enabled = True
             except (redis.ConnectionError, redis.TimeoutError, OSError) as e:
                 logger.debug("Redis URL 연결 실패, 직접 연결 시도: %s", str(e))
@@ -43,7 +44,8 @@ class CacheManager:
                 try:
                     redis_url = os.getenv("REDIS_URL", "redis://localhost:6379")
                     self.redis = redis.from_url(redis_url)
-                    self.redis.ping()
+                    if self.redis is not None:
+                        self.redis.ping()
                     self.enabled = True
                 except (redis.ConnectionError, redis.TimeoutError, OSError) as e2:
                     logger.warning("Redis 직접 연결 실패: %s", str(e2))

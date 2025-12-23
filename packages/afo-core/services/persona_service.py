@@ -114,7 +114,8 @@ class PersonaService:
         # 성능 최적화: 로그 전송을 기다리지 않고 즉시 반환
         try:
             # 백그라운드 태스크 생성 (참조 저장하여 가비지 컬렉션 방지)
-            _ = asyncio.create_task(self._send_log_bridge(target, context))
+            task = asyncio.create_task(self._send_log_bridge(target, context))
+            task.add_done_callback(lambda _t: None)  # Prevent warning on done
         except RuntimeError:
             # 이벤트 루프가 없는 경우 조용히 처리
             logger.debug("[PersonaService] 이벤트 루프 없음, 로그 브릿지 건너뜀")

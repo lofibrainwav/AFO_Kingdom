@@ -24,7 +24,7 @@ class VisionVerifier:
         # Ultimate Resolution: 1080p (美: Beauty & clarity)
         self.viewport = {"width": 1920, "height": 1080}
         self.screenshot_dir = Path("packages/dashboard/public/artifacts/verification")
-        
+
         if not self.screenshot_dir.exists():
             try:
                 self.screenshot_dir.mkdir(parents=True, exist_ok=True)
@@ -36,21 +36,21 @@ class VisionVerifier:
         [Ultimate Vision] Performs exhaustive visual inspection.
         """
         logger.info(f"👁️ [Vision] Verifying {url}...")
-        
+
         try:
             # Using the bridge for implementation stability
             # We enforce the resolution via bridge if possible, or directly in bridge
             result = await bridge.verify_ui(
-                url=url, 
+                url=url,
                 screenshot_path=screenshot_path,
                 enable_tracing=True
             )
-            
+
             if result.get("status") == "PASS":
                 logger.info(f"✅ [Vision] Captured 1080p snapshot: {screenshot_path}")
                 return {
-                    "success": True, 
-                    "screenshot_path": screenshot_path, 
+                    "success": True,
+                    "screenshot_path": screenshot_path,
                     "details": result,
                     "resolution": "1920x1080"
                 }
@@ -71,10 +71,10 @@ class VisionVerifier:
         Visits the Sandbox Preview URL (convenience wrapper).
         """
         # Note: Sandbox routes are usually under /sandbox or /gen-ui/preview
-        target_url = f"http://localhost:3000/sandbox/{component_name}" 
+        target_url = f"http://localhost:3000/sandbox/{component_name}"
         filename = f"{component_name}_v2025.png"
         path = str(self.screenshot_dir / filename)
-        
+
         return await self.verify_ui(target_url, path)
 
 

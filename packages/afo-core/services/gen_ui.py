@@ -11,6 +11,7 @@ Phase 5: Trinity Type Validator 적용 - 런타임 Trinity Score 검증
 """
 
 import logging
+
 print("🔥 [DEBUG] AFO.services.gen_ui is being loaded!")
 import uuid
 from collections.abc import Callable
@@ -26,7 +27,6 @@ except ImportError:
     def validate_with_trinity(func: F) -> F:
         """Fallback decorator when trinity_type_validator is not available."""
         return func
-
 
 from AFO.api.models.persona import PersonaTrinityScore as TrinityScore
 from AFO.schemas.gen_ui import GenUIRequest, GenUIResponse
@@ -82,7 +82,7 @@ class GenUIService:
         # 2. Call Scholar (The Execution)
         # Using Yeongdeok's localized logic or direct LLM Router
         try:
-            from AFO.llm_router import LLMRouter, LLMProvider
+            from AFO.llm_router import LLMRouter
 
             router = LLMRouter()
 
@@ -92,9 +92,9 @@ class GenUIService:
             Task: Create a React component named '{request.component_name}'.
             Stack: Next.js 16, Tailwind v4, Shadcn, Lucide.
             Aesthetics: Indigo/purple gradient, glassmorphism, 100% Truth (types), 100% Beauty.
-            
+
             Prompt: {request.prompt}
-            
+
             Return ONLY the raw code. No markdown fences.
             """
 
@@ -112,6 +112,8 @@ class GenUIService:
             if not response_dict.get("success"):
                 raise RuntimeError(response_dict.get("error", "Unknown Router Error"))
 
+            # Extract response text from the router result
+            response_text = response_dict.get("response", "")
 
             # Clean up code (remove markdown fences if LLM disobeyed)
             code = self._clean_code(response_text)

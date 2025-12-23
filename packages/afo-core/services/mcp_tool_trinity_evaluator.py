@@ -112,7 +112,7 @@ class MCPToolTrinityEvaluator:
         }
 
     @staticmethod
-    def _evaluate_truth(result: str, is_error: bool, tool_name: str) -> float:
+    def _evaluate_truth(result: str, is_error: bool, _tool_name: str) -> float:
         """
         眞 (Truth) 평가: 실행 성공, 검증 가능한 결과
 
@@ -136,7 +136,7 @@ class MCPToolTrinityEvaluator:
         return score
 
     @staticmethod
-    def _evaluate_goodness(result: str, is_error: bool, tool_name: str) -> float:
+    def _evaluate_goodness(result: str, is_error: bool, _tool_name: str) -> float:
         """
         善 (Goodness) 평가: 안전성, 리스크 없음
 
@@ -169,7 +169,7 @@ class MCPToolTrinityEvaluator:
         return score
 
     @staticmethod
-    def _evaluate_beauty(result: str, tool_name: str) -> float:
+    def _evaluate_beauty(result: str, _tool_name: str) -> float:
         """
         美 (Beauty) 평가: 결과의 구조화, 명확성
 
@@ -200,7 +200,7 @@ class MCPToolTrinityEvaluator:
 
     @staticmethod
     def _evaluate_serenity(
-        result: str, execution_time_ms: float | None, is_error: bool, tool_name: str
+        result: str, execution_time_ms: float | None, is_error: bool, _tool_name: str
     ) -> float:
         """
         孝 (Serenity) 평가: 마찰 없음, 자동화 가능
@@ -230,7 +230,7 @@ class MCPToolTrinityEvaluator:
             return 0.6
 
     @staticmethod
-    def _evaluate_eternity(result: str, tool_name: str) -> float:
+    def _evaluate_eternity(_result: str, tool_name: str) -> float:
         """
         永 (Eternity) 평가: 영속성, 재사용 가능성
 
