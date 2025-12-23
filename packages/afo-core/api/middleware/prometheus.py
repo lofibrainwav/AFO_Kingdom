@@ -101,7 +101,7 @@ class PrometheusMiddleware(BaseHTTPMiddleware):
 
             return response
 
-        except Exception as e:
+        except Exception:
             # Record exception metrics
             latency = time.time() - start_time
 

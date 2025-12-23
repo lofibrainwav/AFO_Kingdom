@@ -365,9 +365,8 @@ async def get_antigravity_config() -> dict[str, Any]:
         "mode": "Self-Expanding" if antigravity.SELF_EXPANDING_MODE else "Static",
     }
 
-
+# Request import for SSE endpoint (kept near endpoint for locality)
 from fastapi import Request
-from sse_starlette.sse import EventSourceResponse
 
 
 @router.get("/logs/stream")

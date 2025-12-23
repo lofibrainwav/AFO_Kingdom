@@ -6,6 +6,7 @@ Handles system component initialization during FastAPI lifespan startup.
 
 import asyncio
 import logging
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -25,8 +26,6 @@ OPENAI_CLIENT = None
 CLAUDE_CLIENT = None
 
 # Neural event queue
-from typing import Any
-
 neural_event_queue: asyncio.Queue[Any] = asyncio.Queue()
 
 
