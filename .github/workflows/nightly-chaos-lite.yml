@@ -2,8 +2,15 @@ name: Nightly Chaos Lite (Non-blocking)
 
 on:
   schedule:
-    - cron: "30 9 * * *"
+    # LA 09:30 (PST, UTC-8)  => 17:30 UTC
+    - cron: "30 17 * * *"
+    # LA 09:30 (PDT, UTC-7)  => 16:30 UTC
+    - cron: "30 16 * * *"
   workflow_dispatch:
+
+concurrency:
+  group: nightly-chaos-lite
+  cancel-in-progress: false
 
 jobs:
   chaos_lite:
