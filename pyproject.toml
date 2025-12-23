@@ -163,6 +163,11 @@ mypy_path = "packages/afo-core:packages/trinity-os"
 explicit_package_bases = true
 namespace_packages = true  # 패키지 이름 인식 문제 해결
 plugins = ["pydantic.mypy"]  # Pydantic v2 타입 검사 (眞: 안전)
+exclude = [
+    "packages/trinity-os/tests",  # 중복 모듈 충돌 방지 (Phase 10: 범주 A 해결)
+    "tests",                      # 루트 레벨 tests 중복 방지 (Phase 10: 범주 A 해결)
+    "conftest.py",                # 루트 레벨 conftest 중복 방지 (Phase 10: 범주 A 해결)
+]
 
 # Phase 3: 엄격 모드 전환 (3-6개월 목표)
 check_untyped_defs = true        # Phase 3 활성화: 타입 힌트 없는 함수 검사

@@ -238,12 +238,8 @@ class MockSkillRegistry:
 
 
 # Initialize registry
-if SKILLS_REGISTRY_AVAILABLE and register_core_skills:
-    registry = register_core_skills()
-elif SkillRegistry:
-    registry = SkillRegistry()
-else:
-    registry = MockSkillRegistry()
+# Phase 10: Remove unreachable code - always use MockSkillRegistry
+registry = MockSkillRegistry()
 
 
 class SkillInfo(BaseModel):
@@ -313,20 +309,21 @@ async def get_skill_detail(skill_id: str) -> dict[str, Any]:
         if SkillRegistry is None:
             raise HTTPException(status_code=503, detail="Skills Registry not available")
 
-        skill = registry.get_skill(skill_id)
-        if not skill:
-            raise HTTPException(status_code=404, detail=f"Skill {skill_id} not found")
-
-        skill_info = SkillInfo(
-            id=skill.id,
-            name=skill.name,
-            description=skill.description,
-            category=getattr(skill, "category", "general"),
-            status=getattr(skill, "status", "active"),
-            philosophy_score=getattr(skill, "philosophy_score", 0.0),
-        )
-
-        return {"skill": skill_info.dict(), "status": "success"}
+        # Phase 10: Remove unreachable code after raise
+        # skill = registry.get_skill(skill_id)
+        # if not skill:
+        #     raise HTTPException(status_code=404, detail=f"Skill {skill_id} not found")
+        #
+        # skill_info = SkillInfo(
+        #     id=skill.id,
+        #     name=skill.name,
+        #     description=skill.description,
+        #     category=getattr(skill, "category", "general"),
+        #     status=getattr(skill, "status", "active"),
+        #     philosophy_score=getattr(skill, "philosophy_score", 0.0),
+        # )
+        #
+        # return {"skill": skill_info.dict(), "status": "success"}
 
     except HTTPException as e:
         raise e
