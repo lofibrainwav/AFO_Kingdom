@@ -124,13 +124,27 @@ export default function StatusIndicator({
           )}
         </div>
 
-        {/* 푸터 - 헌법 준수 표시 */}
+        {/* 푸터 - 헌법 준수 표시 + SSOT 스탬프 */}
         <div className="px-3 py-2 border-t border-gray-700 bg-gray-800/50">
-          <div className="flex items-center justify-center space-x-1">
+          <div className="flex items-center justify-center space-x-1 mb-1">
             <div className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></div>
             <span className="text-xs text-gray-400">
               헌법 v1.0 + Amendment 0001 준수
             </span>
+          </div>
+          {/* SSOT 스탬프 뱃지 */}
+          <div className="flex items-center justify-center">
+            <div
+              className="px-2 py-1 bg-blue-500/10 border border-blue-500/20 rounded text-xs text-blue-400 cursor-pointer hover:bg-blue-500/20 transition-colors"
+              title="클릭하여 SSOT 해시 복사"
+              onClick={() => {
+                if (latestVerdict?.weights_hash) {
+                  navigator.clipboard.writeText(latestVerdict.weights_hash);
+                }
+              }}
+            >
+              Weights: constitution/v1.0 • {latestVerdict?.weights_hash || 'unknown'}
+            </div>
           </div>
         </div>
       </div>

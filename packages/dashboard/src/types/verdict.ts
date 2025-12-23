@@ -30,6 +30,9 @@ export interface VerdictEvent {
   flags: VerdictFlags;
   timestamp: string;
   extra?: VerdictExtra;
+  // 🏛️ SSOT 스탬프: weights_version + weights_hash (관찰 고정 모드)
+  weights_version: string;
+  weights_hash: string;
 }
 
 // SSE Message wrapper for real-time streaming

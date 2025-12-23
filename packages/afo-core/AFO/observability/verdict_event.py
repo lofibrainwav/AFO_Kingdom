@@ -5,6 +5,8 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Any, Literal, TypedDict
 
+from AFO.observability.rule_constants import WEIGHTS_HASH
+
 if TYPE_CHECKING:
     from collections.abc import Mapping
 
@@ -41,6 +43,9 @@ class VerdictEvent:
             "risk_score": float(self.risk_score),
             "flags": dict(self.flags),
             "timestamp": self.timestamp,
+            # 🏛️ SSOT 스탬프: weights_version + weights_hash (관찰 고정 모드)
+            "weights_version": "constitution/v1.0",
+            "weights_hash": WEIGHTS_HASH,
         }
         if self.extra:
             payload["extra"] = dict(self.extra)
