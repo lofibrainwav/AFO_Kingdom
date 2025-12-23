@@ -10,7 +10,6 @@ import time
 from datetime import datetime
 from pathlib import Path
 
-
 # #region agent log
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 

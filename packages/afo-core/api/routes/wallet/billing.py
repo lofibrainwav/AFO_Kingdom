@@ -35,7 +35,6 @@ async def get_api_usage(api_id: str) -> dict[str, Any]:
         # 사용량 조회 로직 - Redis 기반 구현
         try:
             import redis
-
             from AFO.config.settings import get_settings
 
             settings = get_settings()
@@ -103,7 +102,6 @@ async def get_billing_summary() -> dict[str, Any]:
         # 청구 요약 로직 - Redis 기반 집계
         try:
             import redis
-
             from AFO.config.settings import get_settings
 
             settings = get_settings()

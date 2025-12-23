@@ -1,12 +1,10 @@
 import contextlib
 
-from pydantic import ValidationError
-
 from AFO.schemas.sage import SageRequest, SageType
+from pydantic import ValidationError
 
 
 def test_sage_schema_validation():
-
     # 1. Valid Request
     with contextlib.suppress(ValidationError):
         SageRequest(sage=SageType.SAMAHWI, prompt="Test Prompt", temperature=0.5)

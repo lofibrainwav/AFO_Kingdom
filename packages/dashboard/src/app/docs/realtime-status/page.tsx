@@ -2,10 +2,12 @@
 
 import { motion } from "framer-motion";
 import { SectionCard } from "@/components/docs";
-import { GitWidget } from "@/components/royal/widgets/GitWidget";
-import { SystemStatusWidget } from "@/components/royal/widgets/SystemStatusWidget";
-import { ProgressTrackerWidget } from "@/components/docs/ProgressTrackerWidget";
-import { OverloadMonitorWidget } from "@/components/docs/OverloadMonitorWidget";
+import {
+  GitWidgetLazy,
+  SystemStatusWidgetLazy,
+  ProgressTrackerWidgetLazy,
+  OverloadMonitorWidgetLazy,
+} from "@/components/docs/Widgets.lazy";
 
 export default function RealtimeStatusPage() {
   return (
@@ -33,7 +35,7 @@ export default function RealtimeStatusPage() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.1 }}
           >
-            <GitWidget />
+            <GitWidgetLazy />
           </motion.div>
 
           {/* 진행률 추적 위젯 */}
@@ -42,7 +44,7 @@ export default function RealtimeStatusPage() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.2 }}
           >
-            <ProgressTrackerWidget />
+            <ProgressTrackerWidgetLazy />
           </motion.div>
 
           {/* 시스템 부하 위젯 */}
@@ -51,7 +53,7 @@ export default function RealtimeStatusPage() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.3 }}
           >
-            <OverloadMonitorWidget />
+            <OverloadMonitorWidgetLazy />
           </motion.div>
         </div>
 
@@ -61,7 +63,7 @@ export default function RealtimeStatusPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
         >
-          <SystemStatusWidget />
+          <SystemStatusWidgetLazy />
         </motion.div>
       </div>
     </div>

@@ -12,7 +12,6 @@ Phase 4: SBOM (Software Bill of Materials) 생성 스크립트
 import sys
 from pathlib import Path
 
-
 try:
     from cyclonedx.output import OutputFormat, get_instance
     from cyclonedx_py.parser.environment import EnvironmentParser

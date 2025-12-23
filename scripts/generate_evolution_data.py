@@ -2,7 +2,6 @@ import csv
 import pathlib
 import random
 
-
 OUTPUT_FILE = "data/afo_thoughts_500.csv"
 
 # 5 Pillars Definitions for Synthetic Data

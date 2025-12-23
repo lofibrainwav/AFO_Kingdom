@@ -7,7 +7,6 @@ import json
 
 import requests
 
-
 BASE_URL = "http://localhost:8010"
 
 COLORS = {"GREEN": "\033[92m", "RED": "\033[91m", "RESET": "\033[0m", "BOLD": "\033[1m"}
@@ -17,7 +16,7 @@ def print_status(component, status_code, data):
     status_icon = "✅" if status_code == 200 else "❌"
     color = COLORS["GREEN"] if status_code == 200 else COLORS["RED"]
     print(
-        f"{status_icon} {COLORS['BOLD']}[{component}]{COLORS['RESET']} Status: {color}{status_code}{COLORS['RESET']}"
+        f"{status_icon} {COLORS["BOLD"]}[{component}]{COLORS["RESET"]} Status: {color}{status_code}{COLORS["RESET"]}"
     )
     if status_code != 200:
         print(f"   Error: {json.dumps(data, indent=2, ensure_ascii=False)}")
@@ -27,7 +26,7 @@ def print_status(component, status_code, data):
 
 def verify_kingdom_core():
     print(
-        f"\n{COLORS['BOLD']}🏰 AFO Kingdom Core Health Inspection 🏰{COLORS['RESET']}\n"
+        f"\n{COLORS["BOLD"]}🏰 AFO Kingdom Core Health Inspection 🏰{COLORS["RESET"]}\n"
     )
 
     endpoints = [
@@ -51,18 +50,18 @@ def verify_kingdom_core():
                 all_passed = False
         except Exception as e:
             print(
-                f"❌ {COLORS['BOLD']}[{name}]{COLORS['RESET']} Connection Failed: {e}"
+                f"❌ {COLORS["BOLD"]}[{name}]{COLORS["RESET"]} Connection Failed: {e}"
             )
             all_passed = False
 
     print("\n" + "=" * 40)
     if all_passed:
         print(
-            f"{COLORS['GREEN']}{COLORS['BOLD']}🎉 All Kingdom Core Systems Operational! 🎉{COLORS['RESET']}"
+            f"{COLORS["GREEN"]}{COLORS["BOLD"]}🎉 All Kingdom Core Systems Operational! 🎉{COLORS["RESET"]}"
         )
     else:
         print(
-            f"{COLORS['RED']}{COLORS['BOLD']}⚠️  Some Systems Require Attention! ⚠️{COLORS['RESET']}"
+            f"{COLORS["RED"]}{COLORS["BOLD"]}⚠️  Some Systems Require Attention! ⚠️{COLORS["RESET"]}"
         )
     print("=" * 40 + "\n")
 

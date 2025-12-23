@@ -3,7 +3,6 @@ import os
 import pathlib
 import sys
 
-
 # Add package root to sys.path
 core_path = pathlib.Path(
     os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")
@@ -33,7 +32,6 @@ class MockYeongdeok:
 
 # Patching modules before importing chancellor_graph
 import chancellor_graph as graph_module
-
 
 # Inject Mocks
 graph_module.llm_router = MockLLMRouter()
@@ -80,7 +78,7 @@ async def run_end_to_end_test():
     print("\n--- Step 1: Constitutional Node (善) ---")
     const_res = await graph_module.constitutional_node(state)
     state.update(const_res)
-    print(f"👉 Status: {state['status']}")
+    print(f"👉 Status: {state["status"]}")
 
     # Step 2: Memory & Context (永)
     print("\n--- Step 2: Memory & Rerank (永/眞) ---")
@@ -88,7 +86,7 @@ async def run_end_to_end_test():
     state.update(mem_res)
     rerank_res = await graph_module.rerank_node(state)
     state.update(rerank_res)
-    print(f"✅ Recall/Rerank Complete. Trinity Seed: {state.get('trinity_score', 0)}")
+    print(f"✅ Recall/Rerank Complete. Trinity Seed: {state.get("trinity_score", 0)}")
 
     # Step 3: Parallel Strategists (眞/善/美)
     print("\n--- Step 3: Parallel Strategists ---")
@@ -102,21 +100,21 @@ async def run_end_to_end_test():
     state["analysis_results"].update(sima_res.get("analysis_results", {}))
     state["analysis_results"].update(zhou_res.get("analysis_results", {}))
 
-    print(f"✅ Zhuge (眞): {state['analysis_results'].get('zhuge_liang', 0)}")
-    print(f"✅ Sima (善): {state['analysis_results'].get('sima_yi', 0)}")
-    print(f"✅ Zhou (美): {state['analysis_results'].get('zhou_yu', 0)}")
+    print(f"✅ Zhuge (眞): {state["analysis_results"].get("zhuge_liang", 0)}")
+    print(f"✅ Sima (善): {state["analysis_results"].get("sima_yi", 0)}")
+    print(f"✅ Zhou (美): {state["analysis_results"].get("zhou_yu", 0)}")
 
     # Step 4: Trinity Harmonization (⚖️)
     print("\n--- Step 4: Trinity Node ---")
     trinity_res = await graph_module.trinity_node(state)
     state.update(trinity_res)
-    print(f"⚖️ Final Trinity Score: {state['trinity_score'] * 100:.1f}%")
+    print(f"⚖️ Final Trinity Score: {state["trinity_score"] * 100:.1f}%")
 
     # Step 5: Historian (永)
     print("\n--- Step 5: Historian/Finalize ---")
     final_res = await graph_module.historian_node(state)
     state.update(final_res)
-    print(f"📜 Final Seal: {state['messages'][-1].content[:100]}...")
+    print(f"📜 Final Seal: {state["messages"][-1].content[:100]}...")
 
     print(
         "\n🎉 [Grand Verification] End-to-End Simulation Complete. Kingdom v100.0 is STABLE."

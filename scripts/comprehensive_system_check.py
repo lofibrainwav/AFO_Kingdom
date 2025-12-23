@@ -8,7 +8,6 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-
 # #region agent log
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 
@@ -219,7 +218,7 @@ def check_openapi_schema():
                 if target_path in paths:
                     found_paths.append(target_path)
                     methods = list(paths[target_path].keys())
-                    print(f"✅ {target_path} - 등록됨 (Methods: {', '.join(methods)})")
+                    print(f"✅ {target_path} - 등록됨 (Methods: {", ".join(methods)})")
                 else:
                     missing_paths.append(target_path)
                     print(f"⚠️  {target_path} - 누락")
@@ -394,9 +393,9 @@ def main():
     print("📊 최종 요약")
     print("=" * 60)
 
-    print(f"\n1. 서버 상태: {server_status.get('status', 'unknown')}")
+    print(f"\n1. 서버 상태: {server_status.get("status", "unknown")}")
     if server_status.get("processes", 0) > 0:
-        print(f"   - 실행 중인 프로세스: {server_status['processes']}개")
+        print(f"   - 실행 중인 프로세스: {server_status["processes"]}개")
 
     working = [
         name
@@ -422,7 +421,7 @@ def main():
         found_count = len(openapi_results.get("found", []))
         missing_count = len(openapi_results.get("missing", []))
         print("\n3. OpenAPI 스키마:")
-        print(f"   - 총 경로: {openapi_results['total']}개")
+        print(f"   - 총 경로: {openapi_results["total"]}개")
         print(f"   - 발견: {found_count}개")
         print(f"   - 누락: {missing_count}개")
 
@@ -430,7 +429,7 @@ def main():
         found_count = len(router_results.get("found", []))
         missing_count = len(router_results.get("missing", []))
         print("\n4. 라우터 등록:")
-        print(f"   - 총 라우트: {router_results.get('total', 0)}개")
+        print(f"   - 총 라우트: {router_results.get("total", 0)}개")
         print(f"   - 발견: {found_count}개")
         print(f"   - 누락: {missing_count}개")
 
@@ -454,9 +453,9 @@ def main():
         isinstance(openapi_results, dict)
         and len(openapi_results.get("missing", [])) > 0
     ):
-        issues.append(f"OpenAPI 스키마에 {len(openapi_results['missing'])}개 경로 누락")
+        issues.append(f"OpenAPI 스키마에 {len(openapi_results["missing"])}개 경로 누락")
     if isinstance(router_results, dict) and len(router_results.get("missing", [])) > 0:
-        issues.append(f"라우터 등록에 {len(router_results['missing'])}개 경로 누락")
+        issues.append(f"라우터 등록에 {len(router_results["missing"])}개 경로 누락")
     if import_success < len(import_results):
         issues.append(f"Import 실패: {len(import_results) - import_success}개")
 

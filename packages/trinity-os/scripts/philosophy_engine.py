@@ -7,7 +7,6 @@ TRINITY-OS 철학 엔진 코어 구현
 import hashlib
 import json
 import os
-
 # AFO 루트 디렉토리
 import sys
 import time

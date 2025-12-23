@@ -13,7 +13,6 @@ from typing import Any
 
 from dotenv import load_dotenv
 
-
 # 환경 변수 로드
 load_dotenv()
 
@@ -141,7 +140,7 @@ class TypeInferenceEngine:
 
                 result = json.loads(result_text)
                 print(
-                    f"✅ 타입 추론 성공: {func_name} (신뢰도: {result.get('confidence', 0):.2f})"
+                    f"✅ 타입 추론 성공: {func_name} (신뢰도: {result.get("confidence", 0):.2f})"
                 )
                 return result
             except Exception as parse_error:
@@ -149,7 +148,7 @@ class TypeInferenceEngine:
                 # Fallback: 기본 형태 유지
                 return {
                     "imports": ["from typing import Any"],
-                    "function_signature": f"def {func_name}{func_source.split('(')[1].split(')')[0] + ')'}:",
+                    "function_signature": f"def {func_name}{func_source.split("(")[1].split(")")[0] + ")"}:",
                     "confidence": 0.5,
                     "explanation": "파싱 실패로 기본 타입 힌트 적용",
                 }
@@ -158,7 +157,7 @@ class TypeInferenceEngine:
             print(f"❌ AI 추론 실패: {e}")
             return {
                 "imports": [],
-                "function_signature": f"def {func_name}{func_source.split('(')[1].split(')')[0] + ')'}:",
+                "function_signature": f"def {func_name}{func_source.split("(")[1].split(")")[0] + ")"}:",
                 "confidence": 0.0,
                 "explanation": f"AI 추론 실패: {e}",
             }
@@ -375,15 +374,15 @@ def main():
             result = engine.apply_type_hints(Path(file_path), dry_run=args.dry_run)
 
             print(
-                f"📊 결과: {result['total_functions']}개 함수 중 {result['suggested_changes']}개 제안"
+                f"📊 결과: {result["total_functions"]}개 함수 중 {result["suggested_changes"]}개 제안"
             )
-            print(f"✅ 적용: {result['applied_changes']}개 함수")
+            print(f"✅ 적용: {result["applied_changes"]}개 함수")
 
             if result["changes"]:
                 print("\n📝 상세 변경사항:")
                 for change in result["changes"][:5]:  # 처음 5개만 표시
                     print(
-                        f"  • {change['function']}: 신뢰도 {change['confidence']:.2f}"
+                        f"  • {change["function"]}: 신뢰도 {change["confidence"]:.2f}"
                     )
 
 

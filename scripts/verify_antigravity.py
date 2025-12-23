@@ -3,7 +3,6 @@ import time
 
 import requests
 
-
 API_URL = "http://localhost:8013/api/system/antigravity/config"
 ENV_FILE = "packages/afo-core/.env.antigravity"
 
@@ -18,7 +17,7 @@ def check_config(expected_dry_run):
             print(f"✅ Verified: dry_run_default is {expected_dry_run}")
         else:
             print(
-                f"❌ Failed: Expected {expected_dry_run}, got {data['dry_run_default']}"
+                f"❌ Failed: Expected {expected_dry_run}, got {data["dry_run_default"]}"
             )
         return is_correct
     except Exception as e:

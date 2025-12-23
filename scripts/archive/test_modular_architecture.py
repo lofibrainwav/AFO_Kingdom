@@ -2,7 +2,6 @@
 import pathlib
 import sys
 
-
 # Ensure packages/afo-core is in python path
 sys.path.append(pathlib.Path("packages/afo-core").resolve())
 

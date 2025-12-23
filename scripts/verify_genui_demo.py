@@ -2,7 +2,6 @@ import os
 import pathlib
 import sys
 
-
 sys.path.append(os.path.join(pathlib.Path.cwd(), "packages/afo-core"))
 sys.path.append(os.path.join(pathlib.Path.cwd(), "packages/trinity-os"))
 
@@ -26,8 +25,8 @@ def verify_genui():
     try:
         result = orchestrator.create_project(project_id, prompt)
 
-        print(f"✅ Project Created: {result['status']}")
-        print(f"   Code Path: {result['code_path']}")
+        print(f"✅ Project Created: {result["status"]}")
+        print(f"   Code Path: {result["code_path"]}")
 
         # Check if file exists
         if pathlib.Path(result["code_path"]).exists():
@@ -44,10 +43,10 @@ def verify_genui():
         # Vision Result
         vis = result.get("vision_result", {})
         if vis.get("success"):
-            print(f"✅ Vision Check: PASS (Screenshot taken at {vis.get('path')})")
+            print(f"✅ Vision Check: PASS (Screenshot taken at {vis.get("path")})")
         else:
             print(
-                f"⚠️ Vision Check: SKIPPED (Playwright not active or mocked: {vis.get('message')})"
+                f"⚠️ Vision Check: SKIPPED (Playwright not active or mocked: {vis.get("message")})"
             )
 
     except Exception as e:

@@ -1,8 +1,23 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { SectionCard, MermaidDiagram } from "@/components/docs";
-import ChancellorStream from "@/components/royal/ChancellorStream";
+import { SectionCard, MermaidDiagramLazy } from "@/components/docs";
+import dynamic from "next/dynamic";
+
+// ChancellorStream도 지연 로딩
+const ChancellorStreamLazy = dynamic(
+  () =>
+    import("@/components/royal/ChancellorStream").then((mod) => ({
+      default: mod.default,
+    })),
+  {
+    loading: () => (
+      <div className="p-8 bg-slate-100 rounded-lg text-center">
+        <p className="text-sm text-slate-500">스트림 로딩 중...</p>
+      </div>
+    ),
+  }
+);
 
 const strategistsMermaid = `graph LR
     Query[사용자 쿼리] --> Zhuge[제갈량<br/>眞 Truth]
@@ -57,7 +72,7 @@ export default function ChancellorPage() {
 
         {/* 3책사 병렬 조율 */}
         <SectionCard title="3책사 병렬 조율" badge="핵심">
-          <MermaidDiagram code={strategistsMermaid} title="3책사 의사결정 플로우" />
+          <MermaidDiagramLazy code={strategistsMermaid} title="3책사 의사결정 플로우" />
         </SectionCard>
 
         {/* 5호대장군 실행 구조 */}
@@ -94,13 +109,13 @@ export default function ChancellorPage() {
 
         {/* LangGraph 상태 머신 */}
         <SectionCard title="LangGraph 상태 머신" badge="고급">
-          <MermaidDiagram code={tigersMermaid} title="상태 머신 다이어그램" />
+          <MermaidDiagramLazy code={tigersMermaid} title="상태 머신 다이어그램" />
         </SectionCard>
 
         {/* Chancellor Stream */}
         <SectionCard title="실시간 승상 스트림" badge="실시간">
           <div className="min-h-[400px]">
-            <ChancellorStream />
+            <ChancellorStreamLazy />
           </div>
         </SectionCard>
       </div>

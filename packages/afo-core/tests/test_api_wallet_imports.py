@@ -6,7 +6,6 @@ Uses direct mocking instead of sys.modules manipulation.
 from unittest.mock import MagicMock, mock_open, patch
 
 import pytest
-
 from AFO.api_wallet import APIWallet
 
 # DELETED: test_generate_default_key_reads_env()

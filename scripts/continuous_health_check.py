@@ -14,7 +14,6 @@ from typing import Any
 
 import requests
 
-
 # #region agent log
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 SERVER_ENDPOINT = "http://127.0.0.1:7242/ingest/dc91dd33-03ef-4e50-91e7-6560c8e60280"
@@ -264,16 +263,16 @@ def print_status(component: str, is_healthy: bool, data: dict[str, Any]) -> None
     status_icon = "✅" if is_healthy else "❌"
     color = COLORS["GREEN"] if is_healthy else COLORS["RED"]
     print(
-        f"{status_icon} {COLORS['BOLD']}[{component}]{COLORS['RESET']} Status: {color}{'HEALTHY' if is_healthy else 'UNHEALTHY'}{COLORS['RESET']}"
+        f"{status_icon} {COLORS["BOLD"]}[{component}]{COLORS["RESET"]} Status: {color}{"HEALTHY" if is_healthy else "UNHEALTHY"}{COLORS["RESET"]}"
     )
     if not is_healthy and "error" in data:
-        print(f"   {COLORS['RED']}Error: {data['error']}{COLORS['RESET']}")
+        print(f"   {COLORS["RED"]}Error: {data["error"]}{COLORS["RESET"]}")
 
 
 def continuous_health_check() -> None:
     """지속적인 건강 상태 검증"""
     print(
-        f"\n{COLORS['BOLD']}{COLORS['BLUE']}🏰 AFO Kingdom Continuous Health Check 🏰{COLORS['RESET']}\n"
+        f"\n{COLORS["BOLD"]}{COLORS["BLUE"]}🏰 AFO Kingdom Continuous Health Check 🏰{COLORS["RESET"]}\n"
     )
 
     # #region agent log
@@ -288,23 +287,23 @@ def continuous_health_check() -> None:
     all_healthy = True
 
     # 1. API 서버 기본 확인
-    print(f"{COLORS['BOLD']}1. API Server Basic Check{COLORS['RESET']}")
+    print(f"{COLORS["BOLD"]}1. API Server Basic Check{COLORS["RESET"]}")
     api_healthy, api_data = check_api_server()
     print_status("API Server", api_healthy, api_data)
     if not api_healthy:
         all_healthy = False
         print(
-            f"   {COLORS['YELLOW']}⚠️  API 서버가 응답하지 않습니다. 서버가 실행 중인지 확인하세요.{COLORS['RESET']}"
+            f"   {COLORS["YELLOW"]}⚠️  API 서버가 응답하지 않습니다. 서버가 실행 중인지 확인하세요.{COLORS["RESET"]}"
         )
         print(
-            f"   {COLORS['YELLOW']}   실행 명령: cd AFO && python -m uvicorn api_server:app --reload --port 8010{COLORS['RESET']}\n"
+            f"   {COLORS["YELLOW"]}   실행 명령: cd AFO && python -m uvicorn api_server:app --reload --port 8010{COLORS["RESET"]}\n"
         )
         return
 
     print()
 
     # 2. 종합 건강 상태 확인
-    print(f"{COLORS['BOLD']}2. Comprehensive Health Check{COLORS['RESET']}")
+    print(f"{COLORS["BOLD"]}2. Comprehensive Health Check{COLORS["RESET"]}")
     comp_healthy, comp_data = check_comprehensive_health()
     if comp_healthy:
         status = comp_data.get("status", "unknown")
@@ -326,7 +325,7 @@ def continuous_health_check() -> None:
             print("   Services:")
             for service, healthy in services.items():
                 icon = "✅" if healthy else "❌"
-                print(f"     {icon} {service}: {'healthy' if healthy else 'unhealthy'}")
+                print(f"     {icon} {service}: {"healthy" if healthy else "unhealthy"}")
     else:
         print_status("Comprehensive Health", comp_healthy, comp_data)
         all_healthy = False
@@ -334,7 +333,7 @@ def continuous_health_check() -> None:
     print()
 
     # 3. 핵심 엔드포인트 확인
-    print(f"{COLORS['BOLD']}3. Core Endpoints Check{COLORS['RESET']}")
+    print(f"{COLORS["BOLD"]}3. Core Endpoints Check{COLORS["RESET"]}")
     core_results = check_core_endpoints()
     for name, (healthy, data) in core_results.items():
         print_status(name, healthy, data)
@@ -347,11 +346,11 @@ def continuous_health_check() -> None:
     print("=" * 60)
     if all_healthy:
         print(
-            f"{COLORS['GREEN']}{COLORS['BOLD']}🎉 All Systems Operational! 🎉{COLORS['RESET']}"
+            f"{COLORS["GREEN"]}{COLORS["BOLD"]}🎉 All Systems Operational! 🎉{COLORS["RESET"]}"
         )
     else:
         print(
-            f"{COLORS['YELLOW']}{COLORS['BOLD']}⚠️  Some Systems Require Attention! ⚠️{COLORS['RESET']}"
+            f"{COLORS["YELLOW"]}{COLORS["BOLD"]}⚠️  Some Systems Require Attention! ⚠️{COLORS["RESET"]}"
         )
     print("=" * 60)
 

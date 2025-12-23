@@ -7,7 +7,6 @@ from unittest.mock import patch
 
 import pytest
 
-
 # Ensure AFO package is importable
 sys.path.append(
     pathlib.Path(

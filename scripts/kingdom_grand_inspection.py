@@ -4,7 +4,6 @@ import os
 import pathlib
 import sys
 
-
 # Setup Logger
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger("AFO.GrandInspection")

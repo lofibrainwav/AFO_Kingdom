@@ -8,7 +8,6 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-
 # #region agent log
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 
@@ -140,7 +139,8 @@ def verify_all_imports():
 
     # 4. Chancellor Router
     try:
-        from AFO.api.routers.chancellor_router import router as chancellor_router
+        from AFO.api.routers.chancellor_router import \
+            router as chancellor_router
 
         prefix = getattr(chancellor_router, "prefix", "N/A")
         results["chancellor_router"] = {"status": "success", "prefix": prefix}

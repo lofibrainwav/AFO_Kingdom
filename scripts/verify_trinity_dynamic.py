@@ -2,7 +2,6 @@ import os
 import pathlib
 import sys
 
-
 sys.path.append(
     pathlib.Path(
         os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")

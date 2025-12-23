@@ -3,7 +3,6 @@ import os
 import pathlib
 import sys
 
-
 # Set path to allow imports
 sys.path.append(
     pathlib.Path(

@@ -3,7 +3,6 @@ import os
 import pathlib
 import sys
 
-
 # Setup path
 sys.path.append(
     pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages")).resolve()
@@ -24,7 +23,7 @@ async def verify_sejong_system():
     topic = "Python 3.13 NO_GIL"
     print(f"\n1. Researching: {topic}...")
     findings = sejong.research_topic(topic)
-    print(f"   -> Found: {findings['summary']}")
+    print(f"   -> Found: {findings["summary"]}")
 
     # 2. Validate (Sisi-Bibi)
     print("\n2. Validating (Sisi-Bibi)...")

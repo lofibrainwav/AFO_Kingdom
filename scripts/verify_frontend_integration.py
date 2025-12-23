@@ -9,7 +9,6 @@ import os
 import pathlib
 import sys
 
-
 # Ensure AFO package is importable
 sys.path.append(
     pathlib.Path(
@@ -69,7 +68,7 @@ async def verify_dashboard():
             all_passed = True
             for name, passed in checks:
                 status = "✅" if passed else "❌"
-                print(f"  {status} {name}: {'PASS' if passed else 'FAIL'}")
+                print(f"  {status} {name}: {"PASS" if passed else "FAIL"}")
                 if not passed:
                     all_passed = False
 

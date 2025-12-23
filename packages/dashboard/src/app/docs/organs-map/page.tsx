@@ -1,8 +1,24 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { SectionCard, MermaidDiagram, OrgansMapSVG } from "@/components/docs";
-import OrgansMonitor from "@/components/royal/OrgansMonitor";
+import { SectionCard, MermaidDiagramLazy } from "@/components/docs";
+import { OrgansMapSVGLazy } from "@/components/docs/OrgansMapSVG.lazy";
+import dynamic from "next/dynamic";
+
+// OrgansMonitor도 지연 로딩
+const OrgansMonitorLazy = dynamic(
+  () =>
+    import("@/components/royal/OrgansMonitor").then((mod) => ({
+      default: mod.default,
+    })),
+  {
+    loading: () => (
+      <div className="p-4 bg-slate-100 rounded-lg text-center">
+        <p className="text-sm text-slate-500">모니터 로딩 중...</p>
+      </div>
+    ),
+  }
+);
 
 const organsMermaid = `graph TB
     subgraph Organs["🫀 오장육부 시스템 (11-Organ System)"]
@@ -73,17 +89,17 @@ export default function OrgansMapPage() {
 
         {/* 실시간 건강 모니터 */}
         <SectionCard title="실시간 건강 모니터" badge="실시간">
-          <OrgansMonitor />
+          <OrgansMonitorLazy />
         </SectionCard>
 
         {/* 인터랙티브 오장육부 지도 */}
         <SectionCard title="인터랙티브 오장육부 지도" badge="클릭 가능">
-          <OrgansMapSVG />
+          <OrgansMapSVGLazy />
         </SectionCard>
 
         {/* 오장육부 시스템 다이어그램 */}
         <SectionCard title="오장육부 시스템 구조" badge="핵심">
-          <MermaidDiagram code={organsMermaid} title="오장육부 시스템 플로우" />
+          <MermaidDiagramLazy code={organsMermaid} title="오장육부 시스템 플로우" />
         </SectionCard>
 
         {/* 장기별 상세 설명 */}

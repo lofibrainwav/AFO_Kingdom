@@ -5,7 +5,6 @@ from unittest.mock import AsyncMock, Mock
 
 import pytest
 
-
 # Ensure packages/afo-core is in python path
 sys.path.append(
     pathlib.Path(

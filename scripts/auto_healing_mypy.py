@@ -19,7 +19,6 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Any
 
-
 # 로깅 설정
 logging.basicConfig(
     level=logging.INFO,
@@ -231,7 +230,7 @@ class MyPyPurifier:
                     file_path.write_text("\n".join(lines), encoding="utf-8")
                     results["fixed_files"].append(str(file_path))
                     results["total_fixed"] += len(fix["errors"])
-                    logger.info(f"[眞] 수정 완료: {file_path} ({len(fix['errors'])}개)")
+                    logger.info(f"[眞] 수정 완료: {file_path} ({len(fix["errors"])}개)")
 
             except Exception as e:
                 logger.error("[眞] 수정 실패: %s - %s", file_path, e)

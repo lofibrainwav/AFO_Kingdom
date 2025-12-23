@@ -11,7 +11,6 @@ import logging
 import sys
 from pathlib import Path
 
-
 # Add project root to path
 project_root = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(project_root))
@@ -91,7 +90,7 @@ def debug_router_setup(app):
         if skills_routes:
             print("   Skills routes:")
             for route in skills_routes:
-                print(f"     - {route['path']} {route['methods']}")
+                print(f"     - {route["path"]} {route["methods"]}")
         else:
             print("   ❌ No skills routes found!")
 

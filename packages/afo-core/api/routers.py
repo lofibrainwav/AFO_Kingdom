@@ -4,42 +4,16 @@ AFO Kingdom API Router Registration
 Centralized router registration system for organized API management.
 """
 
-from fastapi import FastAPI
-
 from AFO.api.compat import (  # Phase-specific routers; Core routers; Feature routers
-    aicpa_router,
-    auth_router,
-    budget_router,
-    chancellor_router,
-    chat_router,
-    council_router,
-    education_system_router,
-    finance_router,
-    got_router,
-    grok_stream_router,
-    health_router,
-    learning_log_router,
-    learning_pipeline,
-    matrix_router,
-    modal_data_router,
-    multi_agent_router,
-    n8n_router,
-    personas_router,
-    pillars_router,
-    rag_query_router,
-    root_router,
-    serenity_router,
-    skills_router,
-    ssot_router,
-    strangler_router,
-    streams_router,
-    system_health_router,
-    trinity_policy_router,
-    trinity_sbt_router,
-    users_router,
-    voice_router,
-    wallet_router,
-)
+    aicpa_router, auth_router, budget_router, chancellor_router, chat_router,
+    council_router, education_system_router, finance_router, got_router,
+    grok_stream_router, health_router, learning_log_router, learning_pipeline,
+    matrix_router, modal_data_router, multi_agent_router, n8n_router,
+    personas_router, pillars_router, rag_query_router, root_router,
+    serenity_router, skills_router, ssot_router, strangler_router,
+    streams_router, system_health_router, trinity_policy_router,
+    trinity_sbt_router, users_router, voice_router, wallet_router)
+from fastapi import FastAPI
 
 
 def setup_routers(app: FastAPI) -> None:
@@ -331,17 +305,15 @@ def _register_legacy_routers(app: FastAPI) -> None:
 
     # Comprehensive Health Check (integrated)
     try:
-        from AFO.api.routes.comprehensive_health import (
-            router as comprehensive_health_router,
-        )
+        from AFO.api.routes.comprehensive_health import \
+            router as comprehensive_health_router
 
         app.include_router(comprehensive_health_router)
         print("✅ Comprehensive Health Check 라우터 등록 완료 (조기 등록)")
     except ImportError:
         try:
-            from api.routes.comprehensive_health import (
-                router as comprehensive_health_router,
-            )
+            from api.routes.comprehensive_health import \
+                router as comprehensive_health_router
 
             app.include_router(comprehensive_health_router)
             print(
@@ -367,13 +339,15 @@ def _register_legacy_routers(app: FastAPI) -> None:
 
     # Integrity Check API
     try:
-        from AFO.api.routes.integrity_check import router as integrity_check_router
+        from AFO.api.routes.integrity_check import \
+            router as integrity_check_router
 
         app.include_router(integrity_check_router)
         print("✅ Integrity Check 라우터 등록 완료")
     except ImportError:
         try:
-            from api.routes.integrity_check import router as integrity_check_router
+            from api.routes.integrity_check import \
+                router as integrity_check_router
 
             app.include_router(integrity_check_router)
             print("✅ Integrity Check 라우터 등록 완료 (fallback)")
@@ -403,7 +377,8 @@ def _register_legacy_routers(app: FastAPI) -> None:
         print("✅ Intake API 라우터 등록 완료 (조기 등록)")
     except ImportError:
         try:
-            from AFO.afo_soul_engine.routers.intake import router as intake_router
+            from AFO.afo_soul_engine.routers.intake import \
+                router as intake_router
 
             app.include_router(intake_router)
             print("✅ Intake API 라우터 등록 완료 (fallback, 조기 등록)")

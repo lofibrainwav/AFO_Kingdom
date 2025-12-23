@@ -2,7 +2,6 @@ import json
 import pathlib
 import re
 
-
 # Configuration
 SOURCE_FILE = "docs/AFO_ROYAL_LIBRARY.md"
 DEST_FILE = "packages/dashboard/src/data/royal_rules.ts"
@@ -107,7 +106,7 @@ def main():
         books = parse_markdown(SOURCE_FILE)
         print(f"✅ Parsed {len(books)} books.")
         for b in books:
-            print(f"   - {b['title']}: {len(b['rules'])} rules")
+            print(f"   - {b["title"]}: {len(b["rules"])} rules")
 
         ts_content = generate_typescript(books)
 

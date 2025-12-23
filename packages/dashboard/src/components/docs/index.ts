@@ -5,6 +5,7 @@
  */
 
 export { MermaidDiagram } from "./MermaidDiagram";
+export { MermaidDiagramLazy } from "./MermaidDiagram.lazy";
 export { CodeBlock } from "./CodeBlock";
 export { SectionCard } from "./SectionCard";
 export { InteractiveSVG } from "./InteractiveSVG";

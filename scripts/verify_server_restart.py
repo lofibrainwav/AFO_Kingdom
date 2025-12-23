@@ -10,7 +10,6 @@ from pathlib import Path
 
 import requests
 
-
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 
 

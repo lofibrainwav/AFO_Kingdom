@@ -1,0 +1,58 @@
+name: SSOT Report Gate
+
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+jobs:
+  ssot_report_gate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run SSOT Report Gate on changed markdown
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python --version
+          test -f scripts/ssot_report_gate.py
+
+          # Determine base for diff
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            BASE_REF="${{ github.base_ref }}"
+            git fetch origin "${BASE_REF}" --depth=1
+            DIFF_BASE="origin/${BASE_REF}"
+          else
+            DIFF_BASE="HEAD~1"
+          fi
+
+          # Scan only changed *.md files in docs/reports/** (avoid false positives)
+          CHANGED_MD="$(git diff --name-only "${DIFF_BASE}"...HEAD | grep -E '^docs/reports/.*\.md$' || true)"
+          if [ -z "${CHANGED_MD}" ]; then
+            echo "No changed markdown files. PASS."
+            exit 0
+          fi
+
+          echo "Changed markdown files:"
+          echo "${CHANGED_MD}"
+
+          FAIL=0
+          while IFS= read -r f; do
+            [ -f "$f" ] || continue
+            echo "== Scanning: $f =="
+            TEXT="$(cat "$f")"
+            if ! python scripts/ssot_report_gate.py "$TEXT"; then
+              echo "SSOT gate failed for: $f"
+              FAIL=1
+            fi
+          done <<< "${CHANGED_MD}"
+
+          exit "${FAIL}"

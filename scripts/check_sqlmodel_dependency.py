@@ -8,7 +8,6 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-
 # #region agent log
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 
@@ -186,12 +185,12 @@ def main():
     print("📊 최종 요약")
     print("=" * 60)
 
-    print(f"\n✅ sqlmodel: {'사용 가능' if sqlmodel_available else '❌ 설치 필요'}")
+    print(f"\n✅ sqlmodel: {"사용 가능" if sqlmodel_available else "❌ 설치 필요"}")
     print(
-        f"✅ LearningLog 모델: {'사용 가능' if learning_log_available else '❌ import 실패'}"
+        f"✅ LearningLog 모델: {"사용 가능" if learning_log_available else "❌ import 실패"}"
     )
     print(
-        f"✅ Learning Log Router: {'사용 가능' if router_available else '❌ import 실패'}"
+        f"✅ Learning Log Router: {"사용 가능" if router_available else "❌ import 실패"}"
     )
 
     if not sqlmodel_available:

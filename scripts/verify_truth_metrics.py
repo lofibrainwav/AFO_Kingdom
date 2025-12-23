@@ -3,7 +3,6 @@ import os
 import pathlib
 import sys
 
-
 # Setup path
 sys.path.append(
     pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages")).resolve()
@@ -43,8 +42,8 @@ async def verify_truth_metrics():
         perfect_code, input_data, test_mode=True
     )
 
-    print(f"🔹 Total Score: {result['total_score']} / {result['max_score']}")
-    print(f"🔹 Trinity Conversion: {result['trinity_conversion']} / 100.0")
+    print(f"🔹 Total Score: {result["total_score"]} / {result["max_score"]}")
+    print(f"🔹 Trinity Conversion: {result["trinity_conversion"]} / 100.0")
     print("\n[Details]")
     for detail in result["details"]:
         print(f"  {detail}")
@@ -53,13 +52,13 @@ async def verify_truth_metrics():
     if result["total_score"] == 25:
         print("\n✅ Verification SUCCESS: Achieved Perfect Technical Score (25/25)")
     else:
-        print(f"\n❌ Verification FAIL: Score {result['total_score']} < 25")
+        print(f"\n❌ Verification FAIL: Score {result["total_score"]} < 25")
 
     # 4. Low Quality Candidate Check
     print("\n[Analyzing Low Quality Candidate]...")
     bad_code = "print('hello')"
     bad_result = truth_metrics.calculate_technical_score(bad_code, {}, test_mode=False)
-    print(f"🔹 Poor Code Score: {bad_result['total_score']} / 25")
+    print(f"🔹 Poor Code Score: {bad_result["total_score"]} / 25")
     if bad_result["total_score"] < 25:
         print("✅ Detection System Working: Low quality code identified.")
 
