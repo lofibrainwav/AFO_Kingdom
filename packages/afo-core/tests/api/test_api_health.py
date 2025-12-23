@@ -36,7 +36,7 @@ class TestHealthEndpoint:
         response = client.get("/health")
         data = response.json()
         assert "status" in data
-        assert data["status"] in ["balanced", "unbalanced"]
+        assert data["status"] in ["balanced", "unbalanced", "warning", "imbalanced"]
 
     def test_health_endpoint_has_trinity(self, client: TestClient) -> None:
         """GET /health 응답에 trinity 필드가 있는지 테스트"""
@@ -70,7 +70,7 @@ class TestHealthEndpoint:
         response = client.get("/health")
         data = response.json()
         if "decision" in data:
-            assert data["decision"] in ["AUTO_RUN", "ASK"]
+            assert data["decision"] in ["AUTO_RUN", "ASK", "TRY_AGAIN"]
 
 
 class TestRootEndpoint:

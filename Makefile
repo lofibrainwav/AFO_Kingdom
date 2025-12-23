@@ -1,33 +1,40 @@
 # AFO Kingdom - Makefile
 # 眞善美孝永 기반 개발 워크플로우
 
-.PHONY: help install lint test ci-local pre-push
+.PHONY: help install lint test test-integration check ci-local pre-push
 
 help:
 	@echo "AFO Kingdom 명령어:"
+	@echo "  make check        - 린트 + 테스트 (Serenity 0)"
+	@echo "  make lint         - Ruff 린트"
+	@echo "  make test         - pytest 실행 (단위 테스트)"
+	@echo "  make test-integration - 통합 테스트 실행 (PostgreSQL, Redis 필요)"
 	@echo "  make install      - 의존성 설치"
-	@echo "  make lint         - Ruff 린트 + 포맷"
-	@echo "  make test         - pytest 실행"
-	@echo "  make pre-push     - 푸시 전 전체 검증 (CI 100% 재현)"
-	@echo "  make ci-local     - 로컬 CI 전체 실행"
+	@echo "  make pre-push     - 푸시 전 전체 검증"
 
 install:
 	pip install -e ".[dev]"
 	pip install ruff mypy pytest pytest-cov
 
 lint:
-	@echo "🔍 Ruff 린트 검사..."
-	ruff check packages/ scripts/ --fix --ignore E402,E501,F841,F821,B007 || true
-	@echo "✨ Ruff 포맷 검사..."
-	ruff format packages/ scripts/
-
-type-check:
-	@echo "📝 MyPy 타입 검사..."
-	mypy packages/afo-core --ignore-missing-imports || echo "MyPy 경고 있음 (계속 진행)"
+	@echo "🔍 AFO-Core 린트 검사..."
+	cd packages/afo-core && ruff check .
 
 test:
-	@echo "🧪 pytest 실행..."
-	pytest packages/*/tests -v --tb=short || echo "테스트 없음 또는 일부 실패"
+	@echo "🧪 pytest 실행 (단위 테스트)..."
+	cd packages/afo-core && pytest -q -m "not integration and not external"
+
+test-integration:
+	@echo "🔗 통합 테스트 실행 (PostgreSQL, Redis 필요)..."
+	cd packages/afo-core && pytest -q -m integration
+
+test-external:
+	@echo "🌐 외부 API 테스트 실행..."
+	cd packages/afo-core && pytest -q -m external
+
+check: lint test
+	@echo ""
+	@echo "✅ Serenity 0: All checks passed!"
 
 security-scan:
 	@echo "🔒 보안 스캔..."

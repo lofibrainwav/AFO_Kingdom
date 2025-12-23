@@ -57,6 +57,7 @@ class TestSkillsServiceIntegration:
 class TestRedisCacheServiceIntegration:
     """善 (Goodness): Redis Cache Service 통합 테스트"""
 
+    @pytest.mark.integration
     @pytest.mark.asyncio
     async def test_redis_cache_set_get(self) -> None:
         """Redis 캐시 설정 및 조회 테스트"""
@@ -79,6 +80,7 @@ class TestRedisCacheServiceIntegration:
         except ImportError:
             pytest.skip("RedisCacheService not available")
 
+    @pytest.mark.integration
     @pytest.mark.asyncio
     async def test_redis_cache_health(self) -> None:
         """Redis 캐시 건강 상태 테스트"""

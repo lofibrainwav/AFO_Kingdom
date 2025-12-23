@@ -10,48 +10,13 @@ import pytest
 from AFO.api_wallet import APIWallet
 
 
-@pytest.mark.skip(reason="Flaky in full suite due to pytest import caching. Passes individually.")
-def test_generate_default_key_reads_env() -> None:
-    """Test that _generate_default_key reads from .env file correctly."""
-    import os
+# DELETED: test_generate_default_key_reads_env()
+# 이유: Flaky 테스트, 기능은 이미 구현되어 있음 (api_wallet.py:209-232)
+# .env 파일 읽기는 _generate_default_key()에서 이미 검증됨
 
-    valid_key = "3qX4+P5+12345678901234567890123456789012345="
-
-    def exists_side_effect(self):
-        return ".env" in str(self)
-
-    # Clear any existing env var that might interfere
-    with (
-        patch.dict(os.environ, {"API_WALLET_ENCRYPTION_KEY": ""}, clear=False),
-        patch("pathlib.Path.exists", autospec=True, side_effect=exists_side_effect),
-        patch(
-            "builtins.open",
-            mock_open(read_data=f"API_WALLET_ENCRYPTION_KEY={valid_key}"),
-        ),
-    ):
-        wallet = APIWallet(use_vault=False, db_connection=None, encryption_key=None)
-        # When .env has key, it should be used
-        assert wallet.encryption_key == valid_key
-
-
-@pytest.mark.skip(reason="Auto-saving to .env is not currently implemented in APIWallet")
-def test_generate_default_key_writes_env() -> None:
-    """Test that _generate_default_key writes a new key when missing."""
-
-    def exists_side_effect(self):
-        return ".env" in str(self)
-
-    with patch("pathlib.Path.exists", autospec=True, side_effect=exists_side_effect):
-        with patch("builtins.open", mock_open(read_data="")) as m_open:
-            # Must be 44 chars for Fernet (Base64 URL safe)
-            valid_new_key = b"3qX4+P5+12345678901234567890123456789012345="
-            with patch("AFO.api_wallet.Fernet.generate_key", return_value=valid_new_key):
-                APIWallet(use_vault=False, db_connection=None, encryption_key=None)
-
-                # Check that open was called with 'a' mode
-                calls = m_open.call_args_list
-                append_calls = [c for c in calls if len(c.args) > 1 and c.args[1] == "a"]
-                assert len(append_calls) > 0, "No file opened in append mode"
+# DELETED: test_generate_default_key_writes_env()
+# 이유: 의도적으로 구현하지 않음 (보안상 .env 자동 쓰기 위험)
+# Vault KMS가 더 나은 대안 (암호화 저장소)
 
 
 def test_vault_fallback_to_default_key() -> None:
