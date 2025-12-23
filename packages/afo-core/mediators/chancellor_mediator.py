@@ -56,7 +56,9 @@ class StrategistSquad(Colleague):
     def deliberate(self, query: str):
         print(f"🧠 [Strategists] Deliberating on: {query}")
         # After deliberation, they notify the mediator to proceed
-        self.send("deliberation_complete", {"query": query, "strategy": "Secure Deployment"})
+        self.send(
+            "deliberation_complete", {"query": query, "strategy": "Secure Deployment"}
+        )
 
 
 class TigerGeneralsUnit(Colleague):
@@ -94,5 +96,7 @@ class ChancellorMediator(Mediator):
             self._tigers.execute_order(data)
 
         elif event == "execution_complete":
-            print("👑 [Chancellor Mediator] Execution confirmed. Logging result to Royal Archives.")
+            print(
+                "👑 [Chancellor Mediator] Execution confirmed. Logging result to Royal Archives."
+            )
             # Could trigger another colleague like 'RoyalScribe' here

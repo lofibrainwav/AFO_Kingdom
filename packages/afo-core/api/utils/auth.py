@@ -29,7 +29,9 @@ except ImportError:
 # 환경 변수에서 시크릿 키 가져오기
 import os
 
-JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "afo-kingdom-secret-key-change-in-production")
+JWT_SECRET_KEY = os.getenv(
+    "JWT_SECRET_KEY", "afo-kingdom-secret-key-change-in-production"
+)
 JWT_ALGORITHM = "HS256"
 JWT_EXPIRATION_HOURS = 24
 
@@ -81,7 +83,9 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
             return False
 
 
-def create_access_token(data: dict[str, Any], expires_delta: timedelta | None = None) -> str:
+def create_access_token(
+    data: dict[str, Any], expires_delta: timedelta | None = None
+) -> str:
     """
     JWT 액세스 토큰 생성
 
@@ -127,7 +131,9 @@ def verify_token(token: str) -> dict[str, Any] | None:
     """
     if JWT_AVAILABLE:
         try:
-            payload: dict[str, Any] = jwt.decode(token, JWT_SECRET_KEY, algorithms=[JWT_ALGORITHM])
+            payload: dict[str, Any] = jwt.decode(
+                token, JWT_SECRET_KEY, algorithms=[JWT_ALGORITHM]
+            )
             return payload
         except jwt.ExpiredSignatureError:
             # 善: 명확한 만료 에러 처리

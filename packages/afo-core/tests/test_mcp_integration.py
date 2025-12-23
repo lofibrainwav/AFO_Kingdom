@@ -30,7 +30,9 @@ async def test_mcp_log_event_full_flow():
 
         print("\n1️⃣ 클라이언트 상태:")
         print(f"   사용 가능: {client.available}")
-        print(f"   서버 경로: {client._server_path if hasattr(client, '_server_path') else 'N/A'}")
+        print(
+            f"   서버 경로: {client._server_path if hasattr(client, '_server_path') else 'N/A'}"
+        )
 
         # 테스트 데이터
         test_data = {

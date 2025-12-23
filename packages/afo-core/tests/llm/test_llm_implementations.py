@@ -236,7 +236,9 @@ async def test_claude_generate_with_context_web() -> None:
         wrapper.api_key = "sk-ant-sid-test"
         wrapper.available = True
 
-        result = await wrapper.generate_with_context([{"role": "user", "content": "hi"}])
+        result = await wrapper.generate_with_context(
+            [{"role": "user", "content": "hi"}]
+        )
         assert result["success"] is True
         assert "Contextual Request Received" in result["content"]
 

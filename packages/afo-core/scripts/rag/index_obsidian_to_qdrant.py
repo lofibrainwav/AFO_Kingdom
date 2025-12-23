@@ -41,7 +41,9 @@ def create_collection_if_not_exists(
             print(f"📦 컬렉션 생성 중: {collection_name}")
             client.create_collection(
                 collection_name=collection_name,
-                vectors_config=VectorParams(size=embedding_dim, distance=Distance.COSINE),
+                vectors_config=VectorParams(
+                    size=embedding_dim, distance=Distance.COSINE
+                ),
             )
             print("✅ 컬렉션 생성 완료")
         else:

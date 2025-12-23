@@ -24,7 +24,9 @@ class TestScholarsBehavior(unittest.IsolatedAsyncioTestCase):
     async def test_bangtong_implement_success(self):
         """Bangtong implement success scenario"""
         mock_api = AsyncMock()
-        mock_api.generate_with_context.return_value = mock_api_response("def foo(): pass")
+        mock_api.generate_with_context.return_value = mock_api_response(
+            "def foo(): pass"
+        )
 
         scholar = BangtongScholar(api_wrapper=mock_api)
         result = await scholar.implement("Create a function")
@@ -48,7 +50,9 @@ class TestScholarsBehavior(unittest.IsolatedAsyncioTestCase):
     async def test_bangtong_review(self):
         """Bangtong review implementation"""
         mock_api = AsyncMock()
-        mock_api.generate_with_context.return_value = mock_api_response("Code looks good")
+        mock_api.generate_with_context.return_value = mock_api_response(
+            "Code looks good"
+        )
 
         scholar = BangtongScholar(api_wrapper=mock_api)
         result = await scholar.review_implementation("print('hi')")
@@ -61,7 +65,9 @@ class TestScholarsBehavior(unittest.IsolatedAsyncioTestCase):
     async def test_jaryong_verify_logic(self, mock_gov):
         """Jaryong verify logic success"""
         mock_api = AsyncMock()
-        mock_api.generate_with_context.return_value = mock_api_response("Logic Verified")
+        mock_api.generate_with_context.return_value = mock_api_response(
+            "Logic Verified"
+        )
 
         scholar = JaryongScholar(api_wrapper=mock_api)
         result = await scholar.verify_logic("print('hello')")
@@ -74,7 +80,9 @@ class TestScholarsBehavior(unittest.IsolatedAsyncioTestCase):
     async def test_jaryong_refactor(self, mock_gov):
         """Jaryong suggest refactoring"""
         mock_api = AsyncMock()
-        mock_api.generate_with_context.return_value = mock_api_response("Refactored Code")
+        mock_api.generate_with_context.return_value = mock_api_response(
+            "Refactored Code"
+        )
 
         scholar = JaryongScholar(api_wrapper=mock_api)
         result = await scholar.suggest_refactoring("messy code")
@@ -86,7 +94,9 @@ class TestScholarsBehavior(unittest.IsolatedAsyncioTestCase):
     async def test_yukson_strategy(self):
         """Yukson advise strategy"""
         mock_api = AsyncMock()
-        mock_api.generate_with_context.return_value = mock_api_response("Strategic Plan")
+        mock_api.generate_with_context.return_value = mock_api_response(
+            "Strategic Plan"
+        )
 
         scholar = YuksonScholar(api_wrapper=mock_api)
         result = await scholar.advise_strategy("Win Battle")

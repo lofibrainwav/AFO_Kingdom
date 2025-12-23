@@ -33,7 +33,9 @@ class Persona(BaseModel):
 
     id: str = Field(..., description="페르소나 ID")
     type: PersonaType = Field(..., description="페르소나 타입")
-    name: str = Field(..., description="페르소나 이름 (예: '불굴의 사령관', '따뜻한 가장')")
+    name: str = Field(
+        ..., description="페르소나 이름 (예: '불굴의 사령관', '따뜻한 가장')"
+    )
     trinity_scores: dict[str, float] = Field(
         default_factory=lambda: {
             "truth": 100.0,

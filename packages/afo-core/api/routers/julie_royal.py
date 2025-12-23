@@ -43,4 +43,6 @@ async def calculate_tax(request: TaxCalcRequest) -> dict[str, Any]:
     Performs real-time tax simulation (Federal + CA + QBI).
     Source: JuliePerplexity Report (2025 Rules).
     """
-    return await julie_service.calculate_tax_scenario(request.income, request.filing_status)
+    return await julie_service.calculate_tax_scenario(
+        request.income, request.filing_status
+    )

@@ -217,7 +217,9 @@ def _calculate_metrics(
     avg_final = total_final // len(predictions)
 
     avg_range = sum(p["upper"] - p["lower"] for p in predictions) / len(predictions)
-    base_confidence = max(50, min(95, 100 - (avg_range / avg_final * 50))) if avg_final > 0 else 50
+    base_confidence = (
+        max(50, min(95, 100 - (avg_range / avg_final * 50))) if avg_final > 0 else 50
+    )
 
     confidence = min(99, base_confidence + 4) if residual_corrected else base_confidence
     return {
@@ -244,7 +246,9 @@ def _generate_forecast_advice(
 
     advice_parts = []
     if growth_rate > 10:
-        advice_parts.append(f"⚠️ 지출 증가 추세 (+{growth_rate:.1f}%): 예산 조정 검토 필요")
+        advice_parts.append(
+            f"⚠️ 지출 증가 추세 (+{growth_rate:.1f}%): 예산 조정 검토 필요"
+        )
     elif growth_rate < -5:
         advice_parts.append(f"✅ 지출 감소 추세 ({growth_rate:.1f}%): 절약 효과 확인!")
     else:
@@ -270,7 +274,9 @@ def hybrid_predict(
 
     try:
         # Step 1: Prophet Forecast
-        prophet_forecast = _get_prophet_forecast(historical_data, periods, HYBRID_CONFIG["prophet"])
+        prophet_forecast = _get_prophet_forecast(
+            historical_data, periods, HYBRID_CONFIG["prophet"]
+        )
 
         # Step 2: Residual Correction
         residual_correction = None
@@ -281,7 +287,9 @@ def hybrid_predict(
             )
 
         # Step 3: Combine
-        predictions = _combine_forecasts(historical_data, prophet_forecast, residual_correction)
+        predictions = _combine_forecasts(
+            historical_data, prophet_forecast, residual_correction
+        )
 
         # Step 4: Metrics
         summary = _calculate_metrics(predictions, residual_correction is not None)

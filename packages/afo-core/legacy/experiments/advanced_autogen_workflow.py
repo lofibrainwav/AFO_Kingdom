@@ -56,7 +56,9 @@ def build_llm_config() -> dict[str, Any] | None:
 
     api_key = os.getenv("OPENAI_API_KEY")
     if not api_key:
-        print("⚠️ OPENAI_API_KEY missing; switch to CREW_MODE=offline or export a valid key.")
+        print(
+            "⚠️ OPENAI_API_KEY missing; switch to CREW_MODE=offline or export a valid key."
+        )
         return None
 
     model = os.getenv("AUTOGEN_MODEL", "gpt-4o-mini")
@@ -173,7 +175,9 @@ def run_autogen_workflow(
             function_map[name] = fn
 
     assistant_functions = [
-        tool for tool in [search_func_tool, router_tool, langgraph_tool] if tool is not None
+        tool
+        for tool in [search_func_tool, router_tool, langgraph_tool]
+        if tool is not None
     ]
 
     user_proxy = UserProxyAgent(

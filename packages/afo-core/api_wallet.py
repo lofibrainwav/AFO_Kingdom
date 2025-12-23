@@ -80,7 +80,9 @@ if not CRYPTO_AVAILABLE:
         @staticmethod
         def generate_key() -> bytes:
             # Generate a fake 44-character key
-            return base64.b64encode(b"mock_encryption_key_32_bytes_lo").decode().encode()
+            return (
+                base64.b64encode(b"mock_encryption_key_32_bytes_lo").decode().encode()
+            )
 
     Fernet = MockFernet  # type: ignore
 
@@ -124,7 +126,9 @@ class APIWallet:
             settings = get_settings()
             vault_enabled_default = settings.VAULT_ENABLED
         except ImportError:
-            vault_enabled_default = os.getenv("VAULT_ENABLED", "false").lower() == "true"
+            vault_enabled_default = (
+                os.getenv("VAULT_ENABLED", "false").lower() == "true"
+            )
 
         self.use_vault = use_vault if use_vault is not None else vault_enabled_default
         self.vault_kms = None
@@ -154,7 +158,9 @@ class APIWallet:
                 key_from_settings = self._get_encryption_key_from_settings()
                 self.encryption_key = (
                     key_from_settings
-                    or os.getenv("API_WALLET_ENCRYPTION_KEY", self._generate_default_key())
+                    or os.getenv(
+                        "API_WALLET_ENCRYPTION_KEY", self._generate_default_key()
+                    )
                     or ""
                 )
                 # Vault에 저장 시도
@@ -246,7 +252,9 @@ class APIWallet:
             if not self.storage_path.exists():
                 return {"keys": []}
             # Explicit type cast for MyPy
-            data: dict[str, list[dict[str, Any]]] = json.loads(self.storage_path.read_text())
+            data: dict[str, list[dict[str, Any]]] = json.loads(
+                self.storage_path.read_text()
+            )
             return data
         except Exception as e:
             print(f"⚠️  Failed to load failed storage: {e}")
@@ -347,7 +355,9 @@ class APIWallet:
                 self._save_storage(storage)
 
             # Audit log
-            self._audit_log("ADD", name, f"type={key_type}, service={service}, hash={key_hash}")
+            self._audit_log(
+                "ADD", name, f"type={key_type}, service={service}, hash={key_hash}"
+            )
 
             return key_id
 
@@ -588,7 +598,10 @@ class APIWallet:
         keys = self.list_keys(include_encrypted=False)
         return {
             "total_keys": len(keys),
-            "keys": [{"name": k["name"], "service": k.get("service", "unknown")} for k in keys],
+            "keys": [
+                {"name": k["name"], "service": k.get("service", "unknown")}
+                for k in keys
+            ],
         }
 
     def get_all(self) -> list[dict[str, Any]]:

@@ -90,8 +90,12 @@ async def _check_truth_pillar() -> dict[str, Any]:
     # 1. CI/CD LOCK 원칙 확인
     try:
         # MyPy, Ruff, pytest, SBOM 확인
-        mypy_result = subprocess.run(["which", "mypy"], capture_output=True, text=True, timeout=5)
-        ruff_result = subprocess.run(["which", "ruff"], capture_output=True, text=True, timeout=5)
+        mypy_result = subprocess.run(
+            ["which", "mypy"], capture_output=True, text=True, timeout=5
+        )
+        ruff_result = subprocess.run(
+            ["which", "ruff"], capture_output=True, text=True, timeout=5
+        )
         pytest_result = subprocess.run(
             ["which", "pytest"], capture_output=True, text=True, timeout=5
         )
@@ -110,7 +114,9 @@ async def _check_truth_pillar() -> dict[str, Any]:
         pyproject_path = WORKSPACE_ROOT / "pyproject.toml"
         if pyproject_path.exists():
             content = pyproject_path.read_text()
-            checks["type_safety"] = "mypy" in content.lower() or "strict" in content.lower()
+            checks["type_safety"] = (
+                "mypy" in content.lower() or "strict" in content.lower()
+            )
     except Exception as e:
         logger.warning(f"Type safety check failed: {e}")
 
@@ -122,7 +128,9 @@ async def _check_truth_pillar() -> dict[str, Any]:
         registry = register_core_skills()
         skills = registry.list_all()
         fact_skills = [
-            s for s in skills if "fact" in s.skill_id.lower() or "verify" in s.skill_id.lower()
+            s
+            for s in skills
+            if "fact" in s.skill_id.lower() or "verify" in s.skill_id.lower()
         ]
         checks["fact_verification"] = len(fact_skills) > 0
     except Exception as e:
@@ -199,10 +207,14 @@ async def _check_beauty_pillar() -> dict[str, Any]:
         presentation_path = WORKSPACE_ROOT / "packages" / "dashboard"
         application_path = WORKSPACE_ROOT / "packages" / "afo-core" / "api"
         domain_path = WORKSPACE_ROOT / "packages" / "afo-core" / "AFO"
-        infrastructure_path = WORKSPACE_ROOT / "packages" / "afo-core" / "AFO" / "infrastructure"
+        infrastructure_path = (
+            WORKSPACE_ROOT / "packages" / "afo-core" / "AFO" / "infrastructure"
+        )
 
         checks["4_layer_arch"] = (
-            presentation_path.exists() and application_path.exists() and domain_path.exists()
+            presentation_path.exists()
+            and application_path.exists()
+            and domain_path.exists()
         )
     except Exception as e:
         logger.warning(f"4-layer arch check failed: {e}")
@@ -212,7 +224,9 @@ async def _check_beauty_pillar() -> dict[str, Any]:
         dashboard_path = WORKSPACE_ROOT / "packages" / "dashboard" / "src"
         if dashboard_path.exists():
             # CSS 파일에서 glassmorphism 관련 스타일 확인
-            css_files = list(dashboard_path.rglob("*.css")) + list(dashboard_path.rglob("*.tsx"))
+            css_files = list(dashboard_path.rglob("*.css")) + list(
+                dashboard_path.rglob("*.tsx")
+            )
             for css_file in css_files[:5]:  # 처음 5개만 확인
                 content = css_file.read_text()
                 if "backdrop-filter" in content or "glass" in content.lower():
@@ -224,7 +238,9 @@ async def _check_beauty_pillar() -> dict[str, Any]:
     # 3. 네이밍 컨벤션 확인 (일관된 네이밍 패턴)
     try:
         # 주요 파일들의 네이밍 패턴 확인
-        api_files = list((WORKSPACE_ROOT / "packages" / "afo-core" / "api").rglob("*.py"))
+        api_files = list(
+            (WORKSPACE_ROOT / "packages" / "afo-core" / "api").rglob("*.py")
+        )
         if api_files:
             # snake_case 패턴 확인
             checks["naming_convention"] = all(

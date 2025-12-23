@@ -80,7 +80,9 @@ async def calculate_five_pillars_from_system() -> dict[str, float]:
 
         # 11-오장육부 평균 점수 계산
         organs = metrics.get("organs", [])
-        avg_score = sum(org.get("score", 0) for org in organs) / len(organs) if organs else 95.0
+        avg_score = (
+            sum(org.get("score", 0) for org in organs) / len(organs) if organs else 95.0
+        )
 
         # 5기둥 점수 계산 (시스템 건강도 기반)
         # 眞善美孝는 시스템 건강도에서 계산
@@ -110,7 +112,9 @@ async def calculate_five_pillars_from_system() -> dict[str, float]:
         }
 
 
-@router.get("/current", response_model=FivePillarsResponse, summary="현재 5기둥 점수 조회")
+@router.get(
+    "/current", response_model=FivePillarsResponse, summary="현재 5기둥 점수 조회"
+)
 async def get_current_pillars() -> FivePillarsResponse:
     """
     현재 5기둥 점수 조회
@@ -152,7 +156,9 @@ async def get_current_pillars() -> FivePillarsResponse:
             status="success",
         )
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"5기둥 점수 조회 실패: {e!s}") from e
+        raise HTTPException(
+            status_code=500, detail=f"5기둥 점수 조회 실패: {e!s}"
+        ) from e
 
 
 @router.post(
@@ -177,7 +183,9 @@ async def evaluate_five_pillars_live(
     """
     try:
         if not FIVE_PILLARS_AGENT_AVAILABLE:
-            raise HTTPException(status_code=503, detail="5기둥 에이전트를 사용할 수 없습니다")
+            raise HTTPException(
+                status_code=503, detail="5기둥 에이전트를 사용할 수 없습니다"
+            )
 
         # 5기둥 에이전트로 평가
         agent = get_five_pillars_agent()
@@ -203,7 +211,9 @@ async def evaluate_five_pillars_live(
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"실시간 5기둥 평가 실패: {e!s}") from e
+        raise HTTPException(
+            status_code=500, detail=f"실시간 5기둥 평가 실패: {e!s}"
+        ) from e
 
 
 # Phase 23-E: Family Hub OS 통합
@@ -212,7 +222,9 @@ try:
 
     import yaml
 
-    FAMILY_HUB_CONFIG = Path(__file__).resolve().parents[2] / "config" / "family_hub.yaml"
+    FAMILY_HUB_CONFIG = (
+        Path(__file__).resolve().parents[2] / "config" / "family_hub.yaml"
+    )
     with FAMILY_HUB_CONFIG.open(encoding="utf-8") as f:
         family_config = yaml.safe_load(f)
     FAMILY_HUB_AVAILABLE = True
@@ -273,7 +285,9 @@ async def get_family_hub() -> dict[str, Any]:
     """
     try:
         if not FAMILY_HUB_AVAILABLE:
-            raise HTTPException(status_code=503, detail="Family Hub 시스템을 사용할 수 없습니다")
+            raise HTTPException(
+                status_code=503, detail="Family Hub 시스템을 사용할 수 없습니다"
+            )
 
         # 가족 구성원 상태 조회 (현재는 모의 데이터)
         members_status = await get_family_members_status()
@@ -308,7 +322,9 @@ async def get_family_hub() -> dict[str, Any]:
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"가족 허브 조회 실패: {e!s}") from e
+        raise HTTPException(
+            status_code=500, detail=f"가족 허브 조회 실패: {e!s}"
+        ) from e
 
 
 async def get_family_members_status() -> dict[str, Any]:

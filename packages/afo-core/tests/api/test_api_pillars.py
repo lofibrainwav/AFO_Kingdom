@@ -17,7 +17,9 @@ class TestPillarsEndpoint:
 
         sys.path.insert(
             0,
-            os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+            os.path.dirname(
+                os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            ),
         )
         from api_server import app
 
@@ -81,7 +83,13 @@ class TestTrinityScoreCalculation:
         serenity = 1.0
         eternity = 1.0
 
-        score = 0.35 * truth + 0.35 * goodness + 0.20 * beauty + 0.08 * serenity + 0.02 * eternity
+        score = (
+            0.35 * truth
+            + 0.35 * goodness
+            + 0.20 * beauty
+            + 0.08 * serenity
+            + 0.02 * eternity
+        )
 
         assert score == pytest.approx(1.0)
 

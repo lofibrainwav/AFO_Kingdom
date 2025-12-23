@@ -59,10 +59,10 @@ def verify_language_policy():
 
         print("\n2. llm_router.py 언어 강제 로직:")
         print(
-            f"   {'✅' if has_language_policy else '❌'} 'Output language: Korean' 포함"
+            f"   {"✅" if has_language_policy else "❌"} 'Output language: Korean' 포함"
         )
-        print(f"   {'✅' if has_antigravity_import else '❌'} antigravity import")
-        print(f"   {'✅' if has_language_check else '❌'} REPORT_LANGUAGE 체크")
+        print(f"   {"✅" if has_antigravity_import else "❌"} antigravity import")
+        print(f"   {"✅" if has_language_check else "❌"} REPORT_LANGUAGE 체크")
 
         if not (has_language_policy and has_antigravity_import and has_language_check):
             print("   ⚠️  경고: 언어 강제 로직이 완전하지 않습니다!")
@@ -89,10 +89,10 @@ def verify_language_policy():
 
         print("\n3. Protocol Officer 통합:")
         print(
-            f"   {'✅' if has_commander_format else '❌'} Commander 형식 (형님! 승상입니다)"
+            f"   {"✅" if has_commander_format else "❌"} Commander 형식 (형님! 승상입니다)"
         )
         print(
-            f"   {'✅' if has_korean_suffix else '❌'} 한국어 suffix (영(永)을 이룹시다)"
+            f"   {"✅" if has_korean_suffix else "❌"} 한국어 suffix (영(永)을 이룹시다)"
         )
 
         if not (has_commander_format and has_korean_suffix):

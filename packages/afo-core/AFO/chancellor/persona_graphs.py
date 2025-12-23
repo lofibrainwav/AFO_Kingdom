@@ -105,7 +105,9 @@ class PersonaChancellorGraph(ChancellorGraph):
 
         # Add persona-specific enhancements
         decision["persona"] = self.persona_name
-        decision["persona_confidence"] = self._calculate_persona_confidence(decision, situation)
+        decision["persona_confidence"] = self._calculate_persona_confidence(
+            decision, situation
+        )
 
         # Cache the enhanced decision
         await cache_manager.set(cache_key, decision, ttl=1800)  # 30분 TTL
@@ -185,7 +187,10 @@ class PersonaChancellorGraph(ChancellorGraph):
             d["decision"]["persona_confidence"] for d in self.decision_history[-10:]
         ]
         older_confidence = (
-            [d["decision"]["persona_confidence"] for d in self.decision_history[-20:-10]]
+            [
+                d["decision"]["persona_confidence"]
+                for d in self.decision_history[-20:-10]
+            ]
             if len(self.decision_history) >= 20
             else []
         )
@@ -196,7 +201,9 @@ class PersonaChancellorGraph(ChancellorGraph):
             insights.append("Confidence increasing - learning effectively")
 
         # Analyze decision consistency
-        recent_decisions = [d["decision"]["decision_type"] for d in self.decision_history[-10:]]
+        recent_decisions = [
+            d["decision"]["decision_type"] for d in self.decision_history[-10:]
+        ]
         if len(set(recent_decisions)) <= 2:
             insights.append("Developing decision consistency")
 
@@ -241,13 +248,17 @@ class MultiPersonaChancellor:
         }
 
         for persona_name, config in default_personas.items():
-            self.persona_graphs[persona_name] = PersonaChancellorGraph(persona_name, config)
+            self.persona_graphs[persona_name] = PersonaChancellorGraph(
+                persona_name, config
+            )
 
     def add_persona(self, persona_name: str, persona_config: dict[str, Any]):
         """Add a new persona graph"""
         if persona_name in self.persona_graphs:
             logger.warning(f"Persona {persona_name} already exists, updating...")
-        self.persona_graphs[persona_name] = PersonaChancellorGraph(persona_name, persona_config)
+        self.persona_graphs[persona_name] = PersonaChancellorGraph(
+            persona_name, persona_config
+        )
         logger.info(f"✅ Added persona: {persona_name}")
 
     def remove_persona(self, persona_name: str):
@@ -273,7 +284,9 @@ class MultiPersonaChancellor:
         logger.info(f"🎭 Using persona: {persona_graph.persona_name}")
         return await persona_graph.make_decision(situation)
 
-    def _select_persona_for_situation(self, situation: dict[str, Any]) -> PersonaChancellorGraph:
+    def _select_persona_for_situation(
+        self, situation: dict[str, Any]
+    ) -> PersonaChancellorGraph:
         """
         Auto-select most appropriate persona for the situation
         """
@@ -281,7 +294,7 @@ class MultiPersonaChancellor:
         best_persona = None
         best_score = 0
 
-        for persona_name, persona_graph in self.persona_graphs.items():
+        for _persona_name, persona_graph in self.persona_graphs.items():
             expertise_areas = persona_graph.persona_config.get("expertise_areas", [])
             match_score = len(set(expertise_areas) & set(situation_tags))
 
@@ -314,14 +327,17 @@ class MultiPersonaChancellor:
         # Find decision with highest weighted score
         best_decision_type = max(
             decision_types.keys(),
-            key=lambda x: decision_types[x]["count"] * decision_types[x]["total_confidence"],
+            key=lambda x: decision_types[x]["count"]
+            * decision_types[x]["total_confidence"],
         )
 
         return {
             "consensus_decision": best_decision_type,
             "individual_decisions": decisions,
-            "agreement_level": decision_types[best_decision_type]["count"] / len(decisions),
-            "avg_confidence": sum(d.get("confidence", 0.5) for d in decisions) / len(decisions),
+            "agreement_level": decision_types[best_decision_type]["count"]
+            / len(decisions),
+            "avg_confidence": sum(d.get("confidence", 0.5) for d in decisions)
+            / len(decisions),
         }
 
     def get_system_insights(self) -> dict[str, Any]:

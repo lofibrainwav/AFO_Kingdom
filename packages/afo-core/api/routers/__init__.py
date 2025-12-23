@@ -21,7 +21,9 @@ try:
 
     routers_file = _parent_dir / "routers.py"
     if routers_file.exists():
-        spec = importlib.util.spec_from_file_location("AFO.api.routers_module", routers_file)
+        spec = importlib.util.spec_from_file_location(
+            "AFO.api.routers_module", routers_file
+        )
         routers_module = importlib.util.module_from_spec(spec)
         if spec and spec.loader:
             spec.loader.exec_module(routers_module)

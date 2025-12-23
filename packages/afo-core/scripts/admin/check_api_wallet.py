@@ -78,7 +78,8 @@ def main():
         openai_services = [
             k
             for k in keys
-            if "openai" in k.get("service", "").lower() or "gpt" in k.get("service", "").lower()
+            if "openai" in k.get("service", "").lower()
+            or "gpt" in k.get("service", "").lower()
         ]
 
         if openai_services:

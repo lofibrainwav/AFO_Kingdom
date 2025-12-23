@@ -45,7 +45,9 @@ async def create_ui(request: SerenityCreateRequest) -> SerenityCreateResponse:
             feedback=result.feedback,
         )
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Serenity creation failed: {e!s}") from e
+        raise HTTPException(
+            status_code=500, detail=f"Serenity creation failed: {e!s}"
+        ) from e
 
 
 @router.get("/status")

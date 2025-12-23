@@ -71,7 +71,9 @@ class ClaudeAPIWrapper:
             # Cursor API를 통한 호출 (추후 구현)
             # 현재는 Cursor 토큰으로 직접 Claude API 호출 불가
             # 대신 로그만 남기고 사용 불가 상태로 설정
-            logger.warning("⚠️ CURSOR_ACCESS_TOKEN 발견되었으나 직접 Claude API 호출 불가")
+            logger.warning(
+                "⚠️ CURSOR_ACCESS_TOKEN 발견되었으나 직접 Claude API 호출 불가"
+            )
             logger.info("💡 Cursor 세션에서 ANTHROPIC_API_KEY 추출을 권장합니다")
             logger.info(
                 "   또는 API Wallet에 'anthropic' 키를 등록하세요: python AFO/api_wallet.py add anthropic <YOUR_KEY>"
@@ -79,7 +81,9 @@ class ClaudeAPIWrapper:
             self.available = False
         else:
             # CLI 정기구독 사용 시 API 키 불필요 - 경고 대신 debug
-            logger.debug("ANTHROPIC_API_KEY 없음 - Claude API 비활성화 (CLI 사용 시 무시)")
+            logger.debug(
+                "ANTHROPIC_API_KEY 없음 - Claude API 비활성화 (CLI 사용 시 무시)"
+            )
 
     async def generate(self, prompt: str, **kwargs: Any) -> dict[str, Any]:
         """
@@ -111,7 +115,9 @@ class ClaudeAPIWrapper:
                 "messages": [{"role": "user", "content": prompt}],
             }
 
-            response = await self.client.post(f"{self.base_url}/v1/messages", json=request_data)
+            response = await self.client.post(
+                f"{self.base_url}/v1/messages", json=request_data
+            )
 
             if response.status_code == 200:
                 result = response.json()
@@ -124,7 +130,9 @@ class ClaudeAPIWrapper:
                     "stop_reason": result.get("stop_reason"),
                 }
             else:
-                error_msg = response.json().get("error", {}).get("message", "Unknown error")
+                error_msg = (
+                    response.json().get("error", {}).get("message", "Unknown error")
+                )
                 logger.error(f"Claude API error: {error_msg}")
                 return {
                     "error": f"Claude API error: {error_msg}",
@@ -150,7 +158,9 @@ class ClaudeAPIWrapper:
         try:
             async with httpx.AsyncClient() as client:
                 # 1. Get Organization
-                org_resp = await client.get("https://claude.ai/api/organizations", headers=headers)
+                org_resp = await client.get(
+                    "https://claude.ai/api/organizations", headers=headers
+                )
                 if org_resp.status_code != 200:
                     return {"error": f"Web Auth Failed (Org): {org_resp.status_code}"}
 
@@ -193,7 +203,9 @@ class ClaudeAPIWrapper:
         try:
             # Just verify connectivity for now
             async with httpx.AsyncClient() as client:
-                org_resp = await client.get("https://claude.ai/api/organizations", headers=headers)
+                org_resp = await client.get(
+                    "https://claude.ai/api/organizations", headers=headers
+                )
                 if org_resp.status_code != 200:
                     return {"error": f"Failed to get Org ID: {org_resp.status_code}"}
 

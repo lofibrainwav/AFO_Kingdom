@@ -139,7 +139,9 @@ class AsyncRedisSaver(BaseCheckpointSaver):
                         return dict(o)
                     return str(o)
 
-                cache.redis.setex(key, 86400, json.dumps(data, default=json_default_wrapper))
+                cache.redis.setex(
+                    key, 86400, json.dumps(data, default=json_default_wrapper)
+                )
             except Exception as e:
                 print(f"⚠️ Failed to save checkpoint to Redis: {e}")
 

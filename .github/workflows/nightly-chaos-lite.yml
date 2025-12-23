@@ -1,0 +1,92 @@
+name: Nightly Chaos Lite (Non-blocking)
+
+on:
+  schedule:
+    - cron: "30 9 * * *"
+  workflow_dispatch:
+
+jobs:
+  chaos_lite:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install kind + kubectl
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.24.0/kind-linux-amd64
+          chmod +x ./kind
+          sudo mv ./kind /usr/local/bin/kind
+
+          curl -Lo ./kubectl "https://dl.k8s.io/release/$(curl -Ls https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+          chmod +x ./kubectl
+          sudo mv ./kubectl /usr/local/bin/kubectl
+
+          kubectl version --client
+          kind version
+
+      - name: Create kind cluster
+        shell: bash
+        run: |
+          set -euo pipefail
+          kind create cluster --name chaos-lite --wait 90s
+          kubectl cluster-info
+
+      - name: Deploy a tiny workload
+        shell: bash
+        run: |
+          set -euo pipefail
+          kubectl create namespace chaos-lite || true
+
+          cat <<'EOF' | kubectl apply -f -
+          apiVersion: apps/v1
+          kind: Deployment
+          metadata:
+            name: hello
+            namespace: chaos-lite
+          spec:
+            replicas: 2
+            selector:
+              matchLabels:
+                app: hello
+            template:
+              metadata:
+                labels:
+                  app: hello
+              spec:
+                containers:
+                  - name: hello
+                    image: nginx:stable-alpine
+                    ports:
+                      - containerPort: 80
+          EOF
+
+          kubectl -n chaos-lite rollout status deploy/hello --timeout=120s
+
+      - name: Chaos #1 - kill one pod (expect self-heal)
+        shell: bash
+        run: |
+          set -euo pipefail
+          POD="$(kubectl -n chaos-lite get pods -l app=hello -o jsonpath='{.items[0].metadata.name}')"
+          kubectl -n chaos-lite delete pod "$POD" --wait=true
+
+          for i in $(seq 1 30); do
+            READY="$(kubectl -n chaos-lite get deploy/hello -o jsonpath='{.status.readyReplicas}')"
+            if [ "${READY:-0}" = "2" ]; then
+              exit 0
+            fi
+            sleep 4
+          done
+
+          kubectl -n chaos-lite get pods -o wide
+          exit 1
+
+      - name: Cleanup
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          kind delete cluster --name chaos-lite

@@ -12,7 +12,6 @@ import sys
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-
 if TYPE_CHECKING:
     from collections.abc import Iterable
 
@@ -59,7 +58,7 @@ def english_heavy_ratio(text: str) -> float:
 def main() -> int:
     if len(sys.argv) < MIN_ARGS_REQUIRED:
         print("Usage: python scripts/detect_english_ratio.py <file1> [file2 ...]")
-        return 2
+        return MIN_ARGS_REQUIRED
 
     flagged = []
     for arg in sys.argv[1:]:
@@ -71,7 +70,7 @@ def main() -> int:
         if ratio >= ENGLISH_THRESHOLD:
             flagged.append({"file": str(p), "english_ratio": round(ratio, 3)})
 
-    out = {"flagged": flagged, "threshold": 0.50, "count": len(flagged)}
+    out = {"flagged": flagged, "threshold": ENGLISH_THRESHOLD, "count": len(flagged)}
     print(json.dumps(out, ensure_ascii=False))
     return 0
 

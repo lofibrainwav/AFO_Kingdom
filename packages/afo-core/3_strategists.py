@@ -45,7 +45,9 @@ class QueryModel(BaseModel):
     context: dict[str, Any] = Field(
         default_factory=dict, description="컨텍스트 데이터 - 아키텍처 검증용"
     )
-    validation_level: int = Field(1, ge=1, le=10, description="검증 강도 - 1: 기본, 10: 엄격")
+    validation_level: int = Field(
+        1, ge=1, le=10, description="검증 강도 - 1: 기본, 10: 엄격"
+    )
 
 
 class ThreeStrategists:
@@ -55,7 +57,9 @@ class ThreeStrategists:
     def zhuge_liang_truth_evaluate(query_data: dict[str, Any]) -> float:
         """제갈량 (眞): 아키텍처 설계 및 기술 타당성 상세 검증 - Pydantic/MyPy (PDF 기술적 완성도 25/25)"""
         try:
-            model = QueryModel(**query_data)  # 런타임 검증 상세 (Field description 활용)
+            model = QueryModel(
+                **query_data
+            )  # 런타임 검증 상세 (Field description 활용)
             arch_fit = (
                 1.0 if "valid_structure" in model.context else 0.8
             )  # 아키텍처 타당성 상세 평가
@@ -96,8 +100,12 @@ class ThreeStrategists:
         if not narrative:
             return 0.5
 
-        ux_score = 1.0 if "glassmorphism" in narrative.lower() else 0.9  # UX 미학 상세 평가
-        modularity = 1.0 if len(narrative) < 500 else 0.85  # 모듈화·간결성 상세 평가 (500자 기준)
+        ux_score = (
+            1.0 if "glassmorphism" in narrative.lower() else 0.9
+        )  # UX 미학 상세 평가
+        modularity = (
+            1.0 if len(narrative) < 500 else 0.85
+        )  # 모듈화·간결성 상세 평가 (500자 기준)
         clarity = 1.0 if "coherent" in query_data else 0.95  # 서사 명확성 상세
         return (ux_score + modularity + clarity) / 3  # Dry_Run 성공: 0.933~1.0
 
@@ -108,11 +116,19 @@ class ThreeStrategists:
         start_time = datetime.now()
 
         # Using asyncio.to_thread for blocking/CPU bound tasks simulation
-        truth_task = asyncio.to_thread(ThreeStrategists.zhuge_liang_truth_evaluate, query_data)
-        goodness_task = asyncio.to_thread(ThreeStrategists.sima_yi_goodness_review, query_data)
-        beauty_task = asyncio.to_thread(ThreeStrategists.zhou_yu_beauty_optimize, query_data)
+        truth_task = asyncio.to_thread(
+            ThreeStrategists.zhuge_liang_truth_evaluate, query_data
+        )
+        goodness_task = asyncio.to_thread(
+            ThreeStrategists.sima_yi_goodness_review, query_data
+        )
+        beauty_task = asyncio.to_thread(
+            ThreeStrategists.zhou_yu_beauty_optimize, query_data
+        )
 
-        truth, goodness, beauty = await asyncio.gather(truth_task, goodness_task, beauty_task)
+        truth, goodness, beauty = await asyncio.gather(
+            truth_task, goodness_task, beauty_task
+        )
 
         # 孝·永 보조 상세 (오호대장군 연동 시뮬 + 로그)
         serenity = 1.0 if antigravity.AUTO_DEPLOY else 0.9

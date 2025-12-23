@@ -100,7 +100,9 @@ class AICPAService:
             return mock_clients[client_key]
 
         # 기본 데이터 반환
-        self.log_mission("Data Scouter", f"Client not found, using default: {client_name}")
+        self.log_mission(
+            "Data Scouter", f"Client not found, using default: {client_name}"
+        )
         return {
             "name": client_name,
             "filing_status": "single",
@@ -198,7 +200,9 @@ class AICPAService:
             years=years,
         )
 
-        self.log_mission("Strategy Advisor", f"Roth Ladder for ${ira_balance:,} over {years} years")
+        self.log_mission(
+            "Strategy Advisor", f"Roth Ladder for ${ira_balance:,} over {years} years"
+        )
 
         return result
 
@@ -237,14 +241,18 @@ class AICPAService:
         # 2. TurboTax CSV
         try:
             tt_path = str(Path(output_dir) / f"{safe_name}_TurboTax.csv")
-            files["turbotax_csv"] = generate_turbotax_csv(client_name, tax_result, tt_path)
+            files["turbotax_csv"] = generate_turbotax_csv(
+                client_name, tax_result, tt_path
+            )
         except Exception as e:
             files["turbotax_csv"] = f"Error: {e!s}"
 
         # 3. QuickBooks CSV
         try:
             qb_path = str(Path(output_dir) / f"{safe_name}_QuickBooks.csv")
-            files["quickbooks_csv"] = generate_quickbooks_csv(client_name, tax_result, qb_path)
+            files["quickbooks_csv"] = generate_quickbooks_csv(
+                client_name, tax_result, qb_path
+            )
         except Exception as e:
             files["quickbooks_csv"] = f"Error: {e!s}"
 
@@ -254,7 +262,9 @@ class AICPAService:
         except Exception as e:
             files["email_draft"] = f"Error: {e!s}"
 
-        self.log_mission("Form Filler", f"Generated {len(files)} documents for {client_name}")
+        self.log_mission(
+            "Form Filler", f"Generated {len(files)} documents for {client_name}"
+        )
 
         return files
 

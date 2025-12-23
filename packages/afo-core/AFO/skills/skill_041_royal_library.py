@@ -85,7 +85,9 @@ class RoyalLibrarySkill:
             principle_name="지피지기",
             classic=Classic.SUN_TZU,
             success=success,
-            message=("眞 100% 확보 완료" if success else "출처 2개 이상 필요 (Rule #0 위반)"),
+            message=(
+                "眞 100% 확보 완료" if success else "출처 2개 이상 필요 (Rule #0 위반)"
+            ),
             data={
                 "sources_count": len(sources),
                 "context_loaded": context_loaded,
@@ -112,7 +114,9 @@ class RoyalLibrarySkill:
                 success=True,
                 message="[DRY_RUN] 시뮬레이션 완료 - 실제 실행 전 검토 필요",
                 data={
-                    "action": (action.__name__ if hasattr(action, "__name__") else str(action)),
+                    "action": (
+                        action.__name__ if hasattr(action, "__name__") else str(action)
+                    ),
                     "args": str(args)[:100],
                     "kwargs": str(kwargs)[:100],
                     "mode": "dry_run",
@@ -167,7 +171,9 @@ class RoyalLibrarySkill:
             trinity_impact={"眞": 0.70, "孝": 0.30},
         )
 
-    async def principle_04_async_execute(self, tasks: list[Callable[..., Any]]) -> PrincipleResult:
+    async def principle_04_async_execute(
+        self, tasks: list[Callable[..., Any]]
+    ) -> PrincipleResult:
         """
         [04] 병귀신속 (Speed is of Great Value)
 
@@ -228,7 +234,9 @@ class RoyalLibrarySkill:
     ) -> PrincipleResult:
         """[07] 허실 - 시스템의 병목을 찾아 집중 보강하라."""
         metrics = metrics or {}
-        bottleneck = min(metrics.items(), key=lambda x: x[1])[0] if metrics else "unknown"
+        bottleneck = (
+            min(metrics.items(), key=lambda x: x[1])[0] if metrics else "unknown"
+        )
         return PrincipleResult(
             7,
             "허실",
@@ -251,7 +259,9 @@ class RoyalLibrarySkill:
             {"眞": 0.70, "孝": 0.30},
         )
 
-    async def principle_09_logging_spy(self, message: str, level: str = "info") -> PrincipleResult:
+    async def principle_09_logging_spy(
+        self, message: str, level: str = "info"
+    ) -> PrincipleResult:
         """[09] 용간 - 로그와 모니터링은 적(Bug)을 알 수 있는 유일한 수단이다."""
         getattr(logger, level, logger.info)(f"[용간] {message}")
         return PrincipleResult(
@@ -273,7 +283,8 @@ class RoyalLibrarySkill:
             "화공",
             Classic.SUN_TZU,
             confirmed,
-            f"위험 행동: {action_name}" + (" - 승인됨" if confirmed else " - 승인 필요"),
+            f"위험 행동: {action_name}"
+            + (" - 승인됨" if confirmed else " - 승인 필요"),
             {"confirmed": confirmed},
             {"眞": 0.70, "孝": 0.30},
         )
@@ -354,7 +365,9 @@ class RoyalLibrarySkill:
                 last_error = e
                 if attempt < max_attempts:
                     wait_time = backoff_factor ** (attempt - 1)
-                    logger.warning(f"[삼고초려] 시도 {attempt} 실패, {wait_time}초 후 재시도: {e}")
+                    logger.warning(
+                        f"[삼고초려] 시도 {attempt} 실패, {wait_time}초 후 재시도: {e}"
+                    )
                     await asyncio.sleep(wait_time)
 
         return PrincipleResult(
@@ -367,7 +380,9 @@ class RoyalLibrarySkill:
             trinity_impact={"永": 0.60, "善": 0.40},
         )
 
-    async def principle_15_graceful_degradation(self, fallback_value: Any) -> PrincipleResult:
+    async def principle_15_graceful_degradation(
+        self, fallback_value: Any
+    ) -> PrincipleResult:
         """[15] 공성계 - 시스템이 고장났어도, 사용자에게는 평온(Fallback UI)을 보여주어라."""
         return PrincipleResult(
             15,
@@ -427,7 +442,9 @@ class RoyalLibrarySkill:
             {"永": 0.60, "善": 0.40},
         )
 
-    async def principle_20_scheduled_task(self, cron: str = "0 * * * *") -> PrincipleResult:
+    async def principle_20_scheduled_task(
+        self, cron: str = "0 * * * *"
+    ) -> PrincipleResult:
         """[20] 동남풍 - 타이밍이 생명이다. 스케줄러를 활용하라."""
         return PrincipleResult(
             20,
@@ -451,7 +468,9 @@ class RoyalLibrarySkill:
             {"永": 0.60, "善": 0.40},
         )
 
-    async def principle_22_code_convention(self, linter: str = "ruff") -> PrincipleResult:
+    async def principle_22_code_convention(
+        self, linter: str = "ruff"
+    ) -> PrincipleResult:
         """[22] 한실부흥 - 코드의 정통성(Legacy)과 스타일 가이드를 준수하라."""
         return PrincipleResult(
             22,
@@ -475,7 +494,9 @@ class RoyalLibrarySkill:
             {"永": 0.60, "善": 0.40},
         )
 
-    async def principle_24_checkpoint_state(self, state: dict[str, Any]) -> PrincipleResult:
+    async def principle_24_checkpoint_state(
+        self, state: dict[str, Any]
+    ) -> PrincipleResult:
         """[24] 탁고 - 자신이 종료되더라도, 다음 프로세스를 위해 상태를 남겨라."""
         return PrincipleResult(
             24,
@@ -547,7 +568,9 @@ class RoyalLibrarySkill:
             {"善": 0.50, "眞": 0.50},
         )
 
-    async def principle_27_algorithm_select(self, options: list[str]) -> PrincipleResult:
+    async def principle_27_algorithm_select(
+        self, options: list[str]
+    ) -> PrincipleResult:
         """[27] 여우와 사자 - 때로는 교활하게, 때로는 강력하게 해결하라."""
         return PrincipleResult(
             27,
@@ -559,7 +582,9 @@ class RoyalLibrarySkill:
             {"善": 0.50, "眞": 0.50},
         )
 
-    async def principle_28_ux_friction_check(self, friction_score: float) -> PrincipleResult:
+    async def principle_28_ux_friction_check(
+        self, friction_score: float
+    ) -> PrincipleResult:
         """[28] 증오 피하기 - 사용자에게 불쾌감(Friction > 30)을 주면 반란(이탈)의 지름길이다."""
         safe = friction_score <= 30
         return PrincipleResult(
@@ -596,7 +621,9 @@ class RoyalLibrarySkill:
             {"善": 0.50, "眞": 0.50},
         )
 
-    async def principle_31_uptime_monitor(self, uptime_percent: float = 99.9) -> PrincipleResult:
+    async def principle_31_uptime_monitor(
+        self, uptime_percent: float = 99.9
+    ) -> PrincipleResult:
         """[31] 국가 유지 - 시스템의 Uptime 유지가 군주의 제1덕목이다."""
         return PrincipleResult(
             31,
@@ -620,7 +647,9 @@ class RoyalLibrarySkill:
             {"善": 0.50, "眞": 0.50},
         )
 
-    async def principle_33_creative_solution(self, trinity_score: float) -> PrincipleResult:
+    async def principle_33_creative_solution(
+        self, trinity_score: float
+    ) -> PrincipleResult:
         """[33] 결과가 수단을 정당화 - Trinity Score > 90이면 파격적 방법도 허용한다."""
         allowed = trinity_score >= 0.90
         return PrincipleResult(
@@ -628,7 +657,8 @@ class RoyalLibrarySkill:
             "결과정당화",
             Classic.THE_PRINCE,
             allowed,
-            f"Trinity: {trinity_score:.0%}" + (" - 파격 허용" if allowed else " - 정석 유지"),
+            f"Trinity: {trinity_score:.0%}"
+            + (" - 파격 허용" if allowed else " - 정석 유지"),
             {"trinity_score": trinity_score},
             {"善": 0.50, "眞": 0.50},
         )
@@ -660,7 +690,9 @@ class RoyalLibrarySkill:
         if required_fields:
             missing = []
             if isinstance(data, dict):
-                missing = [f for f in required_fields if f not in data or data[f] is None]
+                missing = [
+                    f for f in required_fields if f not in data or data[f] is None
+                ]
 
             if missing:
                 return PrincipleResult(
@@ -749,7 +781,9 @@ class RoyalLibrarySkill:
             {"眞": 0.60, "孝": 0.40},
         )
 
-    async def principle_37_resource_monitor(self, usage_percent: float) -> PrincipleResult:
+    async def principle_37_resource_monitor(
+        self, usage_percent: float
+    ) -> PrincipleResult:
         """[37] 공세 종말점 - 리소스가 고갈되기 직전에 멈추고 재정비하라."""
         safe = usage_percent < 80
         return PrincipleResult(
@@ -774,7 +808,9 @@ class RoyalLibrarySkill:
             {"眞": 0.60, "孝": 0.40},
         )
 
-    async def principle_39_token_optimize(self, tokens: int, limit: int = 4096) -> PrincipleResult:
+    async def principle_39_token_optimize(
+        self, tokens: int, limit: int = 4096
+    ) -> PrincipleResult:
         """[39] 병력 절약 - 중요하지 않은 곳에 토큰을 낭비하지 마라."""
         efficient = tokens <= limit
         return PrincipleResult(
@@ -797,12 +833,15 @@ class RoyalLibrarySkill:
             "대담함",
             Classic.ON_WAR,
             auto_run,
-            f"신뢰도: {confidence:.0%}" + (" → AUTO_RUN" if auto_run else " → 수동 확인"),
+            f"신뢰도: {confidence:.0%}"
+            + (" → AUTO_RUN" if auto_run else " → 수동 확인"),
             {"confidence": confidence, "threshold": threshold},
             {"眞": 0.60, "孝": 0.40},
         )
 
-    async def principle_41_business_alignment(self, business_value: str) -> PrincipleResult:
+    async def principle_41_business_alignment(
+        self, business_value: str
+    ) -> PrincipleResult:
         """[41] 전쟁은 정치의 연속 - 코드는 결국 비즈니스 요구사항을 실현하기 위한 도구이다."""
         return PrincipleResult(
             41,
@@ -864,7 +903,9 @@ if __name__ == "__main__":
         print(f"\n[01] 지피지기: {result.message}")
 
         # 03. 병자궤도야 테스트
-        result = await skill_041.principle_03_dry_run_simulation(lambda x: x * 2, 5, simulate=True)
+        result = await skill_041.principle_03_dry_run_simulation(
+            lambda x: x * 2, 5, simulate=True
+        )
         print(f"[03] 병자궤도야: {result.message}")
 
         # 25. 사랑보다두려움 테스트

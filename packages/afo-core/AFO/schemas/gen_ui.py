@@ -29,8 +29,12 @@ class GenUIRequest(BaseModel):
         "strict": True,
     }
 
-    prompt: str = Field(..., description="Natural language description of the component")
-    component_name: str = Field(..., description="Desired React component name (PascalCase)")
+    prompt: str = Field(
+        ..., description="Natural language description of the component"
+    )
+    component_name: str = Field(
+        ..., description="Desired React component name (PascalCase)"
+    )
     context: dict[str, Any] | None = Field(
         default_factory=dict, description="Additional context or props"
     )

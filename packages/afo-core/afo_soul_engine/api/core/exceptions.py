@@ -11,7 +11,9 @@ if TYPE_CHECKING:
 class AFOException(Exception):
     """Base domain exception for API error handling."""
 
-    def __init__(self, message: str, *, status_code: int = 400, detail: Any | None = None) -> None:
+    def __init__(
+        self, message: str, *, status_code: int = 400, detail: Any | None = None
+    ) -> None:
         super().__init__(message)
         self.status_code = status_code
         self.detail = detail
