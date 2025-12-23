@@ -1,6 +1,7 @@
 import pathlib
 import sys
 
+
 # Check AntiGravity Configuration
 try:
     sys.path.append("/Users/brnestrm/AFO_Kingdom/packages/afo-core")

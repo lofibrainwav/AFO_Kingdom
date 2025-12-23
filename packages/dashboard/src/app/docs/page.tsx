@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { BookOpen, GitBranch, FolderTree, Network, Sparkles } from "lucide-react";
+import { BookOpen, GitBranch, FolderTree, Network, Sparkles, Activity, Users, FileText, Wrench, Heart, BookMarked } from "lucide-react";
 
 const docSections = [
   {
@@ -12,6 +12,30 @@ const docSections = [
     icon: Sparkles,
     href: "/docs/philosophy",
     gradient: "from-purple-500/20 to-indigo-500/20",
+  },
+  {
+    id: "realtime-status",
+    title: "실시간 상태 대시보드",
+    description: "Git 상태, 구현 진행률, 시스템 부하 모니터링",
+    icon: Activity,
+    href: "/docs/realtime-status",
+    gradient: "from-blue-500/20 to-cyan-500/20",
+  },
+  {
+    id: "chancellor",
+    title: "승상 시스템",
+    description: "3책사 병렬 조율과 5호대장군 실행 구조",
+    icon: Users,
+    href: "/docs/chancellor",
+    gradient: "from-indigo-500/20 to-purple-500/20",
+  },
+  {
+    id: "ssot",
+    title: "SSOT",
+    description: "Single Source of Truth - 페르소나/명칭 정본",
+    icon: FileText,
+    href: "/docs/ssot",
+    gradient: "from-emerald-500/20 to-teal-500/20",
   },
   {
     id: "git-tree",
@@ -36,6 +60,78 @@ const docSections = [
     icon: Network,
     href: "/docs/architecture",
     gradient: "from-orange-500/20 to-red-500/20",
+  },
+  {
+    id: "organs-map",
+    title: "오장육부 지도",
+    description: "11-Organ System 기술 매핑",
+    icon: Heart,
+    href: "/docs/organs-map",
+    gradient: "from-pink-500/20 to-rose-500/20",
+  },
+  {
+    id: "mcp-tools",
+    title: "MCP 도구",
+    description: "Model Context Protocol 도구 관리",
+    icon: Wrench,
+    href: "/docs/mcp-tools",
+    gradient: "from-cyan-500/20 to-blue-500/20",
+  },
+  {
+    id: "tools",
+    title: "Skills & 도구",
+    description: "19개 스킬 레지스트리",
+    icon: Wrench,
+    href: "/docs/tools",
+    gradient: "from-violet-500/20 to-purple-500/20",
+  },
+  {
+    id: "manual",
+    title: "야전교범",
+    description: "AFO Field Manual - 절대 법전",
+    icon: BookMarked,
+    href: "/docs/manual",
+    gradient: "from-amber-500/20 to-orange-500/20",
+  },
+  {
+    id: "agents-md",
+    title: "AGENTS.md",
+    description: "모든 AI 코딩 에이전트 공용 지침서",
+    icon: FileText,
+    href: "/docs/agents-md",
+    gradient: "from-slate-500/20 to-gray-500/20",
+  },
+  {
+    id: "claude-md",
+    title: "CLAUDE.md",
+    description: "Claude 에이전트 전용 지침서",
+    icon: FileText,
+    href: "/docs/claude-md",
+    gradient: "from-amber-500/20 to-yellow-500/20",
+  },
+  {
+    id: "codex-md",
+    title: "CODEX.md",
+    description: "OpenAI Codex 에이전트 전용 지침서",
+    icon: FileText,
+    href: "/docs/codex-md",
+    gradient: "from-green-500/20 to-emerald-500/20",
+  },
+  {
+    id: "cursor-md",
+    title: "CURSOR.md",
+    description: "Cursor IDE 에이전트 전용 지침서",
+    icon: FileText,
+    href: "/docs/cursor-md",
+    gradient: "from-blue-500/20 to-cyan-500/20",
+  },
+  {
+    id: "grok-md",
+    title: "GROK.md",
+    description: "xAI Grok 에이전트 전용 지침서",
+    icon: FileText,
+    href: "/docs/grok-md",
+    gradient: "from-purple-500/20 to-pink-500/20",
   },
 ];
 

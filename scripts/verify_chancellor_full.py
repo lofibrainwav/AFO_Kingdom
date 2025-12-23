@@ -3,6 +3,7 @@ import os
 import pathlib
 import sys
 
+
 # 프로젝트 루트 경로 추가
 sys.path.append(
     pathlib.Path(
@@ -10,8 +11,9 @@ sys.path.append(
     ).resolve()
 )
 
-from AFO.chancellor_graph import calculate_complexity, chancellor_graph
 from langchain_core.messages import HumanMessage
+
+from AFO.chancellor_graph import calculate_complexity, chancellor_graph
 
 
 async def verify_chancellor_full():

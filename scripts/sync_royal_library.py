@@ -2,6 +2,7 @@ import json
 import pathlib
 import re
 
+
 # Configuration
 SOURCE_FILE = "docs/AFO_ROYAL_LIBRARY.md"
 DEST_FILE = "packages/dashboard/src/data/royal_rules.ts"

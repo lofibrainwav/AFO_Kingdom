@@ -17,8 +17,7 @@ from pydantic import BaseModel, Field
 
 # Phase 23-D: LangFlow 연동을 위한 에이전트 임포트
 try:
-    from afo_soul_engine.agents.five_pillars_agent import \
-        get_five_pillars_agent
+    from afo_soul_engine.agents.five_pillars_agent import get_five_pillars_agent
 
     FIVE_PILLARS_AGENT_AVAILABLE = True
 except ImportError:

@@ -9,6 +9,7 @@ import asyncio
 import os
 import sys
 
+
 # Add package root to path
 sys.path.append(
     os.path.abspath(os.path.join(os.path.dirname(__file__), "../packages/afo-core"))

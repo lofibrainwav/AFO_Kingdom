@@ -3,6 +3,7 @@ import os
 import pathlib
 import sys
 
+
 # 프로젝트 루트 경로 추가
 sys.path.append(
     pathlib.Path(
@@ -11,6 +12,7 @@ sys.path.append(
 )
 
 from utils.playwright_bridge import MockScenario, bridge
+
 
 # Force DRY_RUN off for this test if possible, or handle simulation
 # antigravity.DRY_RUN_DEFAULT = False # We will respect the default, but check for simulation

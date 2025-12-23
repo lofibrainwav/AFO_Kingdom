@@ -2,6 +2,7 @@
 import pathlib
 import sys
 
+
 # Add package root to path
 sys.path.append(pathlib.Path("packages/afo-core").resolve())
 sys.path.append(pathlib.Path("packages/trinity-os").resolve())

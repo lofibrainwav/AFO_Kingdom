@@ -3,6 +3,7 @@ import os
 import pathlib
 import sys
 
+
 # Setup path
 sys.path.append(
     pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages")).resolve()
@@ -17,6 +18,7 @@ import contextlib
 
 from config.friction_calibrator import friction_calibrator
 from services.trinity_calculator import trinity_calculator
+
 
 with contextlib.suppress(ImportError):
     pass

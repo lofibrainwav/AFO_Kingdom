@@ -25,6 +25,27 @@ backend:
       memory: 1Gi
   env:
     SERVICE_NAME: "soul-engine"
+  # 善의 보안 강화: Probes 추가
+  probes:
+    livenessProbe:
+      httpGet:
+        path: /health
+        port: 8010
+      initialDelaySeconds: 30
+      periodSeconds: 10
+    readinessProbe:
+      httpGet:
+        path: /health
+        port: 8010
+      initialDelaySeconds: 5
+      periodSeconds: 5
+  # 孝의 자동화: HPA 추가
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 70
+    targetMemoryUtilizationPercentage: 80
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Frontend (Trinity Dashboard)

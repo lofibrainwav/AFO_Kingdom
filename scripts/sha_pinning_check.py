@@ -9,6 +9,7 @@ import pathlib
 import re
 import sys
 
+
 WORKFLOW_DIR = ".github/workflows"
 SHA_PATTERN = re.compile(r"uses:\s+[^@]+@[a-f0-9]{40}")
 
