@@ -5,7 +5,38 @@ All decision rules used by the Chancellor Graph for AUTO_RUN/ASK routing.
 These constants ensure consistency across all nodes and provide audit trails.
 """
 
+import hashlib
 from typing import Literal
+
+# 🏛️ SSOT Trinity Weights (眞善美孝永)
+WEIGHTS = {
+    "truth": 0.35,  # 眞: 제갈량 (Technical Certainty)
+    "goodness": 0.35,  # 善: 사마의 (Ethical Safety)
+    "beauty": 0.20,  # 美: 주유 (UX/Aesthetics)
+    "serenity": 0.08,  # 孝: 승상 (Friction Reduction)
+    "eternity": 0.02,  # 永: 승상 (Persistence/Legacy)
+}
+
+
+# 🛡️ SSOT 런타임 가드: 가중치 검증 함수
+def validate_weights(weights: dict[str, float]) -> None:
+    """
+    SSOT 무결성 검증: 가중치 합계가 정확히 1.0인지 확인
+    SSOT 드리프트 방지를 위한 런타임 가드
+    """
+    total = sum(float(v) for v in weights.values())
+    if abs(total - 1.0) > 1e-6:  # 부동소수점 오차 고려
+        raise ValueError(
+            f"SSOT VIOLATION: WEIGHTS sum is {total:.6f}, must be 1.0. "
+            f"SSOT drift detected in {weights}"
+        )
+
+
+# 🔐 SSOT 해시 스탬프: 변경 감지용 (SHA256 12자리)
+WEIGHTS_HASH = hashlib.sha256(str(sorted(WEIGHTS.items())).encode()).hexdigest()[:12]
+
+# 런타임 SSOT 검증 실행 (무조건)
+validate_weights(WEIGHTS)
 
 # Rule IDs for Chancellor Graph decision making
 RULE_DRY_RUN_OVERRIDE = "R1_DRY_RUN_OVERRIDE"

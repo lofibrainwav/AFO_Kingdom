@@ -7,7 +7,16 @@ This file must be treated as a constant law.
 
 from typing import Final
 
-# 🏛️ 5 Pillar Weights (Total: 1.0)
+# 🏛️ SSOT Trinity Weights (眞善美孝永) - Single Source of Truth
+WEIGHTS = {
+    "truth": 0.35,  # 眞: 제갈량 (Technical Certainty)
+    "goodness": 0.35,  # 善: 사마의 (Ethical Safety)
+    "beauty": 0.20,  # 美: 주유 (UX/Aesthetics)
+    "serenity": 0.08,  # 孝: 승상 (Friction Reduction)
+    "eternity": 0.02,  # 永: 승상 (Persistence/Legacy)
+}
+
+# 🏛️ 5 Pillar Weights (Total: 1.0) - Legacy compatibility
 WEIGHT_TRUTH: Final[float] = 0.35  # 眞: 제갈량 (Technical Certainty)
 WEIGHT_GOODNESS: Final[float] = 0.35  # 善: 사마의 (Ethical Safety)
 WEIGHT_BEAUTY: Final[float] = 0.20  # 美: 주유 (UX/Aesthetics)

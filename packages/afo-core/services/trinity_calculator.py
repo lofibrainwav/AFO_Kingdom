@@ -24,8 +24,7 @@ except ImportError:
 
 
 try:
-    from config.friction_calibrator import \
-        friction_calibrator as _friction_calibrator
+    from config.friction_calibrator import friction_calibrator as _friction_calibrator
 
     friction_calibrator: Any = _friction_calibrator
 except ImportError:
@@ -39,9 +38,19 @@ except ImportError:
 
 logger = logging.getLogger(__name__)
 
-# SSOT 가중치 (agents.md Ⅱ. SSOT)
-# Truth(35%), Goodness(35%), Beauty(20%), Serenity(8%), Eternity(2%)
-SSOT_WEIGHTS = np.array([0.35, 0.35, 0.20, 0.08, 0.02])
+# 🏛️ SSOT Trinity Weights (眞善美孝永) - Single Source of Truth
+from AFO.observability.rule_constants import WEIGHTS
+
+# SSOT 가중치 변환 (dict -> numpy array for calculation)
+SSOT_WEIGHTS = np.array(
+    [
+        WEIGHTS["truth"],  # 眞: 제갈량 (Technical Certainty)
+        WEIGHTS["goodness"],  # 善: 사마의 (Ethical Safety)
+        WEIGHTS["beauty"],  # 美: 주유 (UX/Aesthetics)
+        WEIGHTS["serenity"],  # 孝: 승상 (Friction Reduction)
+        WEIGHTS["eternity"],  # 永: 승상 (Persistence/Legacy)
+    ]
+)
 
 
 class TrinityCalculator:
@@ -123,9 +132,7 @@ class TrinityCalculator:
         else:
             # Fallback to pure dynamic if no static provided (Legacy compatibility)
             final_score = dynamic_score
-            logger.info(
-                f"[TrinityCalculator] Raw: {raw_scores} -> Score: {final_score:.1f}"
-            )
+            logger.info(f"[TrinityCalculator] Raw: {raw_scores} -> Score: {final_score:.1f}")
 
         return float(round(final_score, 1))
 
