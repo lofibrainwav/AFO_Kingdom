@@ -121,6 +121,10 @@ function K8sStatusWidgetContent() {
 }
 
 export function K8sStatusWidget() {
+  // SSOT: 환경변수로 위젯 활성화 제어 (기본 OFF)
+  const enabled = process.env.NEXT_PUBLIC_ENABLE_K8S_WIDGET === "true";
+  if (!enabled) return null;
+
   return (
     <ErrorBoundary
       onError={(error, errorInfo) => {
