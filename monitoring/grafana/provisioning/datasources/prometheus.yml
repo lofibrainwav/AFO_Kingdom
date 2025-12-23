@@ -7,23 +7,3 @@ datasources:
     url: http://prometheus:9090
     isDefault: true
     editable: true
-    jsonData:
-      timeInterval: 15s
-
-  - name: AFO Kingdom API
-    type: prometheus
-    access: proxy
-    url: http://prometheus:9090
-    editable: true
-    jsonData:
-      timeInterval: 15s
-      queryTimeout: "60s"
-      httpMethod: "POST"
-
-  - name: System Metrics
-    type: prometheus
-    access: proxy
-    url: http://prometheus:9090
-    editable: true
-    jsonData:
-      timeInterval: 30s
