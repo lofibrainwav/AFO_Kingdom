@@ -782,8 +782,21 @@ class LLMRouter:
             if not config:
                 raise ValueError(f"설정되지 않은 provider: {fallback_provider}")
 
-            # 간단한 fallback 호출
-            response = f"[Fallback {fallback_provider.value}] {query}에 대한 응답입니다. Error: {error}"
+            logger.info(f"🔄 [Fallback] {fallback_provider.value}로 전환 시도 중...")
+
+            # Fallback 용 RoutingDecision 생성
+            decision = RoutingDecision(
+                selected_provider=fallback_provider,
+                selected_model=config.model,
+                reasoning="Primary LLM 실패로 인한 자동 Fallback 실행",
+                confidence=0.5,
+                estimated_cost=0.0,
+                estimated_latency=config.latency_ms,
+                fallback_providers=[],
+            )
+
+            # 실제 LLM 호출 시도
+            response = await self._call_llm(decision, query, context)
 
             return {
                 "success": True,
@@ -791,11 +804,12 @@ class LLMRouter:
                 "routing": {
                     "provider": fallback_provider.value,
                     "model": config.model,
-                    "reasoning": "Primary LLM 실패로 fallback 사용",
+                    "reasoning": "Primary LLM 실패로 fallback 사용 성공",
                     "is_fallback": True,
                 },
             }
         except Exception as e:
+            logger.error(f"❌ Fallback도 실패: {e}")
             return {"success": False, "error": f"Fallback도 실패: {e!s}"}
 
     def get_routing_stats(self) -> dict[str, Any]:

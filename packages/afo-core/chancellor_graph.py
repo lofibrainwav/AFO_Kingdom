@@ -238,7 +238,7 @@ async def trinity_node(state: ChancellorState) -> dict[str, Any]:
 
     # Normalize score types
     def normalize(val):
-        if isinstance(val, (int, float)):
+        if isinstance(val, int | float):
             return val
         return (
             1.0
@@ -312,10 +312,11 @@ async def historian_node(state: ChancellorState) -> dict[str, Any]:
     """
     [Historian] 영(永) 기록 보관
     """
-    Historian.record(
+    await Historian.record(
         state.get("query", "Unknown"),
         state.get("trinity_score", 0.0),
         state.get("status", "Unknown"),
+        metadata=state.get("context", {}),
     )
     return {}
 

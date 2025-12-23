@@ -29,13 +29,13 @@ class GenUIOrchestrator:
         system_prompt = """
         You are the Royal Architect (Serenity Pillar).
         Construct a 'Next.js 16 + Tailwind CSS v4 + Shadcn UI' component.
-        
+
         # Rules:
         1. [Truth] Use strict TypeScript interfaces.
         2. [Beauty] Use Glassmorphism (bg-white/50, backdrop-blur, border-white/20).
         3. [Goodness] Ensure accessibility and error boundaries.
         4. [Serenity] Self-contained, no external custom hooks unless standard.
-        
+
         # Output Format:
         Return ONLY the raw TSX code block.
         Start with 'use client';
@@ -103,7 +103,7 @@ export const GenComponent = () => (
                             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
                             <XAxis dataKey="day" stroke="rgba(255,255,255,0.5)" tick={{fill: 'white'}} />
                             <YAxis stroke="rgba(255,255,255,0.5)" tick={{fill: 'white'}} />
-                            <Tooltip 
+                            <Tooltip
                                 contentStyle={{ backgroundColor: 'rgba(0,0,0,0.8)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '8px' }}
                                 itemStyle={{ color: '#fff' }}
                             />
