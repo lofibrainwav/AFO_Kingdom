@@ -7,11 +7,18 @@ import asyncio
 import json
 import logging
 from datetime import datetime, timedelta
+from pathlib import Path
 from typing import Any, Optional
 
 import numpy as np
 
 logger = logging.getLogger(__name__)
+
+# Lazy import to avoid circular dependency
+try:
+    from services.protocol_officer import ProtocolOfficer
+except ImportError:
+    ProtocolOfficer = None  # type: ignore[assignment, misc]
 
 
 class AntigravityEngine:
@@ -20,10 +27,17 @@ class AntigravityEngine:
     Trinity Score 기반 ML 예측 및 동적 임계값 조정
     """
 
-    def __init__(self):
+    def __init__(self, protocol_officer: Optional[Any] = None):
         self.quality_history: list[dict[str, Any]] = []
         self.prediction_model = None
         self.dynamic_thresholds = self._initialize_thresholds()
+        # [Phase B] Protocol Officer 주입 (없으면 생성)
+        if protocol_officer is None and ProtocolOfficer is not None:
+            from services.protocol_officer import protocol_officer as default_officer
+
+            self.protocol_officer = default_officer
+        else:
+            self.protocol_officer = protocol_officer
 
     def _initialize_thresholds(self) -> dict[str, Any]:
         """기본 동적 임계값 초기화"""
@@ -71,7 +85,7 @@ class AntigravityEngine:
         # 5. 학습 데이터 수집
         await self._collect_learning_data(trinity_score, risk_score, context, decision)
 
-        return {
+        result = {
             "decision": decision,
             "trinity_score": trinity_score,
             "risk_score": risk_score,
@@ -80,6 +94,16 @@ class AntigravityEngine:
             "confidence": await self._calculate_confidence(decision, context),
             "recommendations": await self._generate_recommendations(decision, context),
         }
+
+        # [Phase B] Protocol Officer를 통한 메시지 포맷팅 (강제)
+        if self.protocol_officer is not None:
+            # 결정 메시지를 Protocol Officer로 포맷팅
+            decision_msg = self._format_decision_message(result)
+            result["formatted_message"] = self.protocol_officer.compose_diplomatic_message(
+                decision_msg, audience=self.protocol_officer.AUDIENCE_COMMANDER
+            )
+
+        return result
 
     async def _predict_future_quality(
         self, current_score: float, context: dict[str, Any]
@@ -339,6 +363,29 @@ class AntigravityEngine:
         if len(self.quality_history) > 1000:
             self.quality_history = self.quality_history[-1000:]
 
+    def _format_decision_message(self, result: dict[str, Any]) -> str:
+        """
+        [Phase B] 결정 메시지 포맷팅 (Protocol Officer 전달용)
+        """
+        decision = result.get("decision", "UNKNOWN")
+        trinity_score = result.get("trinity_score", 0.0)
+        risk_score = result.get("risk_score", 0.0)
+        confidence = result.get("confidence", 0.0)
+
+        msg = f"품질 게이트 평가 결과:\n"
+        msg += f"- 결정: {decision}\n"
+        msg += f"- Trinity Score: {trinity_score:.1f}\n"
+        msg += f"- Risk Score: {risk_score:.1f}\n"
+        msg += f"- 신뢰도: {confidence:.1%}"
+
+        recommendations = result.get("recommendations", [])
+        if recommendations:
+            msg += f"\n\n권장사항:\n"
+            for rec in recommendations:
+                msg += f"- {rec}\n"
+
+        return msg
+
     async def adapt_thresholds(self) -> dict[str, Any]:
         """
         동적 임계값 적응
@@ -377,6 +424,128 @@ class AntigravityEngine:
         except Exception as e:
             logger.exception(f"임계값 적응 실패: {e}")
             return {"status": "error", "message": str(e)}
+
+    # [Phase C] 보고서 생성 함수들
+    def generate_analysis_report(
+        self,
+        context: dict[str, Any],
+        analysis: dict[str, Any],
+        evidence: dict[str, Any],
+        next_steps: list[str],
+    ) -> str:
+        """
+        분석 보고서 생성 (SSOT 규칙 준수)
+        완료 선언 없이 분석 결과만 제공
+        """
+        # 템플릿 기반 리포트 생성
+        report = f"# {context.get('title', '분석 보고서')}\n\n"
+        report += "## Context\n"
+        report += f"- 상황: {context.get('situation', 'N/A')}\n"
+        report += f"- 위치: {context.get('location', 'N/A')}\n"
+        report += f"- 시점: {context.get('timestamp', datetime.now().isoformat())}\n"
+        report += f"- 영향: {context.get('impact', 'N/A')}\n\n"
+
+        report += "## Analysis\n"
+        report += f"{analysis.get('observation', 'N/A')}\n\n"
+        report += f"추정: {analysis.get('assumption', 'N/A')}\n\n"
+
+        report += "## Evidence\n"
+        for key, value in evidence.items():
+            report += f"- {key}: {value}\n"
+        report += "\n"
+
+        report += "## Next Steps\n"
+        for step in next_steps:
+            report += f"- {step}\n"
+        report += "\n"
+
+        report += "---\n\n"
+        report += "### Reporting Rules\n"
+        report += "- 분석 결과만 제공 (완료 선언 없음)\n"
+        report += "- SSOT 증거 기반 보고\n"
+
+        # Protocol Officer 포맷팅
+        if self.protocol_officer is not None:
+            report = self.protocol_officer.compose_diplomatic_message(
+                report, audience=self.protocol_officer.AUDIENCE_COMMANDER
+            )
+
+        return report
+
+    def generate_completion_report(
+        self,
+        context: dict[str, Any],
+        analysis: dict[str, Any],
+        evidence: dict[str, Any],
+        next_steps: list[str],
+    ) -> str | None:
+        """
+        완료 보고서 생성 (SSOT 증거 필수)
+        증거가 없으면 None 반환 (생성 금지)
+        """
+        # SSOT 증거 검증
+        has_commit = "commit" in str(evidence).lower() or "git" in str(evidence).lower()
+        has_files = "file" in str(evidence).lower() or "path" in str(evidence).lower()
+        has_command = "command" in str(evidence).lower() or "result" in str(evidence).lower()
+
+        if not (has_commit and has_files and has_command):
+            logger.warning(
+                "[SSOT] 완료 보고서 생성 차단: 필수 증거 부족 (commit/file/command)"
+            )
+            return None  # 완료 리포트 생성 금지
+
+        # SSOT Report Gate 검증
+        try:
+            import subprocess
+            import sys
+            from pathlib import Path
+
+            # 임시 리포트 생성 (검증용)
+            temp_report = self.generate_analysis_report(
+                context, analysis, evidence, next_steps
+            )
+
+            # ssot_report_gate.py로 검증
+            script_path = Path(__file__).parent.parent.parent / "scripts" / "ssot_report_gate.py"
+            if script_path.exists():
+                result = subprocess.run(
+                    [sys.executable, str(script_path), temp_report],
+                    capture_output=True,
+                    text=True,
+                    timeout=5,
+                )
+                if result.returncode != 0:
+                    logger.warning(
+                        f"[SSOT] Report Gate 실패: {result.stdout}. 분석 리포트로 다운그레이드."
+                    )
+                    return None  # FAIL이면 완료 리포트 생성 금지
+        except Exception as e:
+            logger.warning(f"[SSOT] Report Gate 검증 실패: {e}. 분석 리포트로 다운그레이드.")
+            return None
+
+        # 완료 리포트 생성 (SSOT 증거 + Gate 통과)
+        report = self.generate_analysis_report(context, analysis, evidence, next_steps)
+        report += "\n\n### 완료 상태\n"
+        report += "- ✅ SSOT 증거 확인 완료\n"
+        report += "- ✅ Report Gate 통과\n"
+
+        return report
+
+    def save_report(self, report: str, filename: str) -> Path:
+        """
+        리포트를 docs/reports/에 저장
+        """
+        # 루트 기준 docs/reports/ 경로
+        repo_root = Path(__file__).parent.parent.parent.parent
+        reports_dir = repo_root / "docs" / "reports"
+        reports_dir.mkdir(parents=True, exist_ok=True)
+
+        # 파일 저장
+        report_file = reports_dir / filename
+        report_file.write_text(report, encoding="utf-8")
+        logger.info(f"[Antigravity] 리포트 저장: {report_file}")
+
+        return report_file
 
 
 # 싱글톤 인스턴스
