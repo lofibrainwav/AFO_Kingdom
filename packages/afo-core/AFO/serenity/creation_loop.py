@@ -13,17 +13,16 @@ from __future__ import annotations
 
 import logging
 import os
-import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 
-from AFO.utils.logging import log_sse
+from AFO.config.settings import get_settings
+from AFO.guardians.critic_agent import CriticAgent
 
 # Core Systems
 from AFO.llm_router import LLMRouter
-from AFO.guardians.critic_agent import CriticAgent
 from AFO.services.vision_verifier import vision_verifier
-from AFO.config.settings import get_settings
+from AFO.utils.logging import log_sse
 
 logger = logging.getLogger(__name__)
 
@@ -59,10 +58,12 @@ class SerenityCreationLoop:
             Path(settings.BASE_DIR) / "packages" / "dashboard" / "src" / "components" / "genui"
         )
         os.makedirs(self.sandbox_dir, exist_ok=True)
-        
+
         self.router = LLMRouter()
         self.critic = CriticAgent()
         self.vision = vision_verifier
+        self.bridge = None  # Playwright bridge, initialized separately if needed
+        self.trinity_manager = None  # Trinity manager, injected if available
 
     async def create_ui(self, prompt: str) -> CreationResult:
         """Main entry point: Create UI from natural language prompt."""
@@ -128,8 +129,8 @@ class SerenityCreationLoop:
 
             if last_result.success:
                 log_sse("✅ [Serenity] AUTO_RUN: Quality threshold met! Deploying...")
-                if trinity_manager:
-                    trinity_manager.apply_trigger("AUTO_RUN_ACTION")
+                if self.trinity_manager:
+                    self.trinity_manager.apply_trigger("AUTO_RUN_ACTION")
                 return last_result
 
             log_sse(f"🔄 [Serenity] Refining: {feedback[:50]}...")
@@ -150,35 +151,35 @@ class SerenityCreationLoop:
         system_prompt = """
         You are Samahwi, the Royal Architect of AFO Kingdom (Serenity Pillar).
         Construct a 'Next.js 16 + Tailwind CSS v4 + Shadcn UI + Lucide Icons' component.
-        
+
         # Core Principles:
         1. [眞 Truth] Use absolute precision in TypeScript. No 'any'.
         2. [善 Goodness] Robust error handling and accessibility (aria-labels).
         3. [美 Beauty] Glassmorphism (bg-white/10, backdrop-blur-md, border-white/20).
         4. [孝 Serenity] Self-contained, elegant, and frictionless.
-        
+
         # Design Specs:
         - Use vibrant gradients (indigo -> purple -> pink).
         - Use Lucide icons for visual affordance.
         - Ensure the component is exported as 'default' or named correctly for the loop.
-        
+
         # Output:
         Return ONLY the raw TSX code. Start with 'use client'; if needed.
         """
-        
+
         user_query = f"User Intent: {prompt}"
         if feedback:
             user_query += f"\n\nRefinement Required: {feedback}"
-            
+
         full_query = f"{system_prompt}\n\n{user_query}"
-        
+
         log_sse("🧠 Samahwi is architecturalizing the vision...")
-        
+
         res = await self.router.execute_with_routing(
-            full_query, 
+            full_query,
             context={"quality_tier": "ultra", "provider": "auto"}
         )
-        
+
         if res.get("success"):
             code = res.get("response", "")
             # Basic cleanup of markdown fences
@@ -187,7 +188,7 @@ class SerenityCreationLoop:
             elif "```" in code:
                 code = code.split("```")[1].split("```")[0].strip()
             return code
-        
+
         return "// Code generation failed"
 
     async def _prepare_sandbox(self, code: str, iteration: int) -> str:
@@ -195,10 +196,10 @@ class SerenityCreationLoop:
         # Note: We name it 'KingdomMessageBoard.tsx' for this specific mission
         filename = "KingdomMessageBoard.tsx"
         file_path = os.path.join(self.sandbox_dir, filename)
-        
+
         with open(file_path, "w", encoding="utf-8") as f:
             f.write(code)
-            
+
         return file_path
 
     def _evaluate(self, code: str, verification: dict, prompt: str) -> tuple[float, float, str]:
@@ -206,12 +207,12 @@ class SerenityCreationLoop:
         # Simple evaluation logic for now, could use CriticAgent+LLM
         truth = 1.0 if "use client" in code and "export default" in code else 0.8
         beauty = 1.0 if "gradient" in code or "blur" in code else 0.8
-        
+
         # Simulation: if verification failed (Playwright error), high risk
         risk = 0.05 if verification.get("success") else 0.5
-        
+
         score = (truth * 0.4) + (beauty * 0.4) + 0.2 # Minimum baseline
-        
+
         return score, risk, "Alignment achieved."
 
 

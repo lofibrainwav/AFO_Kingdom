@@ -10,12 +10,11 @@ from collections.abc import Callable
 from typing import Any
 
 # Assume AFO redis client wrapper or standard redis
-redis_client: redis.Redis | None = None
 try:
     import redis
-
-    redis_client = redis.Redis(host="localhost", port=6379, decode_responses=True)
+    redis_client: redis.Redis | None = redis.Redis(host="localhost", port=6379, decode_responses=True)
 except ImportError:
+    redis_client = None
     print("⚠️ Redis not installed, SWR cache falling back to pass-through")
 
 logger = logging.getLogger(__name__)

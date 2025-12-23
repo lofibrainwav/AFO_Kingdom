@@ -88,7 +88,7 @@ class CLIWrapper:
         return await CLIWrapper.run_command(cmd)
 
     @staticmethod
-    async def execute_ollama(prompt: str, model: str = None) -> dict:
+    async def execute_ollama(prompt: str, model: str | None = None) -> dict:
         """Call Ollama CLI"""
         if not CLIWrapper.is_available("ollama"):
             return {"success": False, "error": "Ollama CLI not found"}
