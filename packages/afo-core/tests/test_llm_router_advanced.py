@@ -61,7 +61,9 @@ def test_route_upgrade_to_ultra() -> None:
 
     with patch.object(router, "_is_ollama_available", return_value=True):
         # Request ULTRA quality
-        decision = router.route_request("hard query", context={"quality_tier": QualityTier.ULTRA})
+        decision = router.route_request(
+            "hard query", context={"quality_tier": QualityTier.ULTRA}
+        )
         assert decision.selected_provider == LLMProvider.ANTHROPIC
         assert "ULTRA 품질 요구사항" in decision.reasoning
 
@@ -171,14 +173,20 @@ async def test_call_ollama() -> None:
 async def test_call_anthropic() -> None:
     """眞 (Truth): Anthropic 호출 연동 테스트"""
     router: Any = LLMRouter()
-    router.llm_configs[LLMProvider.ANTHROPIC] = LLMConfig(LLMProvider.ANTHROPIC, "claude")
+    router.llm_configs[LLMProvider.ANTHROPIC] = LLMConfig(
+        LLMProvider.ANTHROPIC, "claude"
+    )
 
-    decision = RoutingDecision(LLMProvider.ANTHROPIC, "claude-3", "reason", 1.0, 0.0, 100, [])
+    decision = RoutingDecision(
+        LLMProvider.ANTHROPIC, "claude-3", "reason", 1.0, 0.0, 100, []
+    )
 
     # Mock claude_api wrapper
     with patch("AFO.llm_router.claude_api") as mock_api:
         mock_api.is_available.return_value = True
-        mock_api.generate = AsyncMock(return_value={"success": True, "content": "Claude Response"})
+        mock_api.generate = AsyncMock(
+            return_value={"success": True, "content": "Claude Response"}
+        )
 
         # Mock API_WRAPPERS_AVAILABLE
         with patch("AFO.llm_router.API_WRAPPERS_AVAILABLE", True):

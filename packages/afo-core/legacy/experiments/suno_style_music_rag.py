@@ -285,7 +285,9 @@ class SunoStyleMusicRAG:
             print(f"RAG 검색 실패: {e}")
             return []
 
-    def _enhance_with_trends(self, prompt: MusicPrompt, similar_music: list[dict]) -> MusicPrompt:
+    def _enhance_with_trends(
+        self, prompt: MusicPrompt, similar_music: list[dict]
+    ) -> MusicPrompt:
         """2025 트렌드로 프롬프트 개선"""
         enhanced_instruments = prompt.instruments.copy()
 
@@ -420,7 +422,10 @@ class SunoStyleMusicRAG:
                 genre_stats[genre].append(result.quality_score)
 
             insights["top_genres"] = sorted(
-                [(genre, sum(scores) / len(scores)) for genre, scores in genre_stats.items()],
+                [
+                    (genre, sum(scores) / len(scores))
+                    for genre, scores in genre_stats.items()
+                ],
                 key=lambda x: x[1],
                 reverse=True,
             )[:3]
@@ -491,7 +496,9 @@ if __name__ == "__main__":
         print("=" * 40)
 
         # 테스트 프롬프트
-        test_prompt = "Create a chill lofi hip hop beat with smooth piano and gentle guitar"
+        test_prompt = (
+            "Create a chill lofi hip hop beat with smooth piano and gentle guitar"
+        )
 
         print(f"입력 프롬프트: {test_prompt}")
         print("생성 중...")

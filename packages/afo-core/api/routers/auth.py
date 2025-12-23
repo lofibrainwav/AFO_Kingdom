@@ -78,7 +78,9 @@ async def login(request: LoginRequest) -> dict[str, Any]:
     """
     # 입력 검증
     if not request.username or not request.password:
-        raise HTTPException(status_code=401, detail="사용자명 또는 비밀번호가 올바르지 않습니다.")
+        raise HTTPException(
+            status_code=401, detail="사용자명 또는 비밀번호가 올바르지 않습니다."
+        )
 
     # DB에서 사용자 조회 및 인증
     try:
@@ -104,10 +106,14 @@ async def login(request: LoginRequest) -> dict[str, Any]:
         if AUTH_UTILS_AVAILABLE:
             from AFO.api.utils.auth import verify_password
 
-            password_valid = verify_password(request.password, user_result["hashed_password"])
+            password_valid = verify_password(
+                request.password, user_result["hashed_password"]
+            )
         else:
             # Fallback 검증
-            password_valid = user_result["hashed_password"] == f"hashed_{hash(request.password)}"
+            password_valid = (
+                user_result["hashed_password"] == f"hashed_{hash(request.password)}"
+            )
 
         if not password_valid:
             await conn.close()

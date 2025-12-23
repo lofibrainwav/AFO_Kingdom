@@ -17,9 +17,13 @@ class FamilyMember(BaseModel):
     id: str = Field(..., description="구성원 고유 ID")
     name: str = Field(..., description="구성원 이름")
     role: str = Field(..., description="가족 내 역할 (예: Head, Supporter)")
-    status: str = Field(default="Active", description="현재 상태 (예: Sleeping, Working)")
+    status: str = Field(
+        default="Active", description="현재 상태 (예: Sleeping, Working)"
+    )
     current_location: str = Field(default="Home", description="현재 위치 (가상)")
-    last_active: datetime = Field(default_factory=datetime.now, description="마지막 활동 시간")
+    last_active: datetime = Field(
+        default_factory=datetime.now, description="마지막 활동 시간"
+    )
 
 
 class Activity(BaseModel):
@@ -47,4 +51,6 @@ class FamilyHubSystem(BaseModel):
     overall_happiness: float = Field(default=0.0, description="가족 전체 행복 지수")
     active_members_count: int = Field(default=0, description="현재 활동 중인 구성원 수")
     members: list[FamilyMember] = Field(default_factory=list, description="구성원 목록")
-    activities: list[Activity] = Field(default_factory=list, description="최근 활동 목록")
+    activities: list[Activity] = Field(
+        default_factory=list, description="최근 활동 목록"
+    )

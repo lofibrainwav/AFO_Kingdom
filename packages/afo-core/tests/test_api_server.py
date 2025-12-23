@@ -13,7 +13,9 @@ import pytest
 from fastapi.testclient import TestClient
 
 # Ensure AFO root is in path
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+)
 
 # Late import to ensure path is set
 # Late import to ensure path is set
@@ -101,5 +103,7 @@ class TestLegacyImports:
 
     def test_path_setup(self) -> None:
         """sys.path 설정 확인"""
-        current_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        current_dir = os.path.dirname(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        )
         assert current_dir in sys.path

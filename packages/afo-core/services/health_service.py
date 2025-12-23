@@ -100,7 +100,9 @@ async def get_comprehensive_health() -> dict[str, Any]:
 
     # 眞 (Truth 35%) - 핵심 데이터 계층
     core_data_organs = ["心_Redis", "肝_PostgreSQL"]
-    truth_healthy = sum(1 for o in organs if o["organ"] in core_data_organs and o["healthy"])
+    truth_healthy = sum(
+        1 for o in organs if o["organ"] in core_data_organs and o["healthy"]
+    )
     truth_score = truth_healthy / len(core_data_organs) if core_data_organs else 0.0
 
     # 善 (Goodness 35%) - 전체 서비스 기반 안정성
@@ -115,7 +117,9 @@ async def get_comprehensive_health() -> dict[str, Any]:
     filial_score = 1.0 if llm_healthy else 0.0
 
     # 永 (Eternity 2%) - 영속적 가동
-    eternity_score = 1.0 if healthy_count == total_organs else healthy_count / total_organs
+    eternity_score = (
+        1.0 if healthy_count == total_organs else healthy_count / total_organs
+    )
 
     trinity_metrics: TrinityMetrics = calculate_trinity(
         truth=truth_score,
@@ -129,7 +133,11 @@ async def get_comprehensive_health() -> dict[str, Any]:
     issues = []
     suggestions = []
     if trinity_metrics.truth < 1.0:
-        failed = [o["organ"] for o in organs if o["organ"] in core_data_organs and not o["healthy"]]
+        failed = [
+            o["organ"]
+            for o in organs
+            if o["organ"] in core_data_organs and not o["healthy"]
+        ]
         issues.append(f"眞(데이터 계층): {', '.join(failed)} 연결 실패")
         suggestions.append("docker-compose restart redis postgres")
 

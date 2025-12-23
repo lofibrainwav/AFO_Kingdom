@@ -172,7 +172,9 @@ def test_generate_answer_openai() -> None:
 
 def test_generate_answer_no_client() -> None:
     """眞 (Truth): 클라이언트 없을 때 에러 메시지 검증"""
-    ans: str | dict[str, Any] = generate_answer("q", [], 0.7, "", "", openai_client=None)
+    ans: str | dict[str, Any] = generate_answer(
+        "q", [], 0.7, "", "", openai_client=None
+    )
     assert ans == "No LLM client available."
 
 
@@ -188,6 +190,8 @@ async def test_async_wrappers() -> None:
 
     # Test query_pgvector_async
     pool: Any = MagicMock()
-    pool.getconn.return_value.cursor.return_value.__enter__.return_value.fetchall.return_value = []
+    pool.getconn.return_value.cursor.return_value.__enter__.return_value.fetchall.return_value = (
+        []
+    )
     res: list[dict[str, Any]] = await query_pgvector_async([0.1], 5, pool)
     assert res == []

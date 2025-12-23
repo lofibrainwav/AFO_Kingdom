@@ -191,7 +191,10 @@ def _cleanup_expired_cache() -> int:
         # Phase 1: 정리 주기 확인
         current_time = time.time()
         with _memory_lock:
-            if current_time - _memory_stats["last_cleanup"] < _memory_stats["cleanup_interval"]:
+            if (
+                current_time - _memory_stats["last_cleanup"]
+                < _memory_stats["cleanup_interval"]
+            ):
                 logger.debug("정리 주기 도달 전 - 생략")
                 return 0
 
@@ -215,7 +218,10 @@ def _cleanup_expired_cache() -> int:
                 elif ttl == -1:  # TTL 설정 안됨 (영구 키)
                     # Phase 3: 메모리 압력 기반 정리
                     with _memory_lock:
-                        if _memory_stats["total_memory_mb"] > _memory_stats["max_memory_mb"]:
+                        if (
+                            _memory_stats["total_memory_mb"]
+                            > _memory_stats["max_memory_mb"]
+                        ):
                             _redis_client.delete(key)
                             memory_pressure_cleaned += 1
                             # 메모리 통계는 실제 데이터 크기를 모르므로 추정치 사용
@@ -262,7 +268,9 @@ def _update_memory_stats(operation: str, data_size_mb: float = 0.0) -> None:
             )
 
 
-def set_cached_with_memory_check(key: str, value: dict[str, Any], ttl: int = 3600) -> bool:
+def set_cached_with_memory_check(
+    key: str, value: dict[str, Any], ttl: int = 3600
+) -> bool:
     """
     메모리 사용량 확인 후 캐시 설정 (Strangler Fig 메모리 안전성)
 
@@ -282,14 +290,20 @@ def set_cached_with_memory_check(key: str, value: dict[str, Any], ttl: int = 360
 
     with _memory_lock:
         # 메모리 제한 확인
-        if _memory_stats["total_memory_mb"] + data_size_mb > _memory_stats["max_memory_mb"]:
+        if (
+            _memory_stats["total_memory_mb"] + data_size_mb
+            > _memory_stats["max_memory_mb"]
+        ):
             # 자동 정리 시도
             cleaned = _cleanup_expired_cache()
             if cleaned > 0:
                 print(f"⚠️  메모리 부족으로 {cleaned}개 캐시 정리")
 
             # 여전히 메모리 부족하면 실패
-            if _memory_stats["total_memory_mb"] + data_size_mb > _memory_stats["max_memory_mb"]:
+            if (
+                _memory_stats["total_memory_mb"] + data_size_mb
+                > _memory_stats["max_memory_mb"]
+            ):
                 print(
                     f"❌ 메모리 제한 초과: {data_size_mb:.2f}MB 요청, 현재 {_memory_stats['total_memory_mb']:.2f}MB 사용"
                 )
@@ -299,7 +313,9 @@ def set_cached_with_memory_check(key: str, value: dict[str, Any], ttl: int = 360
     success = set_cached(key, value, ttl)
     if success:
         _update_memory_stats("add", data_size_mb)
-        print(f"✅ 캐시 저장: {data_size_mb:.2f}MB (총 {_memory_stats['total_memory_mb']:.2f}MB)")
+        print(
+            f"✅ 캐시 저장: {data_size_mb:.2f}MB (총 {_memory_stats['total_memory_mb']:.2f}MB)"
+        )
 
     return success
 
@@ -324,7 +340,9 @@ def cache_multimodal_result(
     return set_cached(key, results, ttl)
 
 
-def get_cached_multimodal_result(query: str, content_type: str) -> dict[str, Any] | None:
+def get_cached_multimodal_result(
+    query: str, content_type: str
+) -> dict[str, Any] | None:
     """Get a cached multimodal RAG result."""
     key = cache_key(f"mm_{content_type}", query)
     return get_cached(key)
@@ -338,7 +356,9 @@ class MultimodalRAGCache:
     def __init__(self, default_ttl: int = 3600):
         self.default_ttl = default_ttl
 
-    def cache(self, query: str, results: dict[str, Any], content_type: str = "text") -> bool:
+    def cache(
+        self, query: str, results: dict[str, Any], content_type: str = "text"
+    ) -> bool:
         """Cache RAG results."""
         return cache_multimodal_result(query, content_type, results, self.default_ttl)
 

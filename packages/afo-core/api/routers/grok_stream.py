@@ -44,12 +44,12 @@ async def grok_event_stream() -> AsyncGenerator[str, None]:
 
         # Alternating messages for demo effect
         if message_id % 3 == 0:
-            content = (
-                f"🔍 Grok Analysis #{message_id}: Trinity Alignment at 100%. Optimizing latency."
-            )
+            content = f"🔍 Grok Analysis #{message_id}: Trinity Alignment at 100%. Optimizing latency."
             source = "grok"
         elif message_id % 3 == 1:
-            content = f"☁️ Cloud Pulse #{message_id}: Kubernetes Node #1 health check passed."
+            content = (
+                f"☁️ Cloud Pulse #{message_id}: Kubernetes Node #1 health check passed."
+            )
             source = "system"
         else:
             content = f"💡 Strategy Insight #{message_id}: User intent detected in 'Phase 18'. Execution optimal."

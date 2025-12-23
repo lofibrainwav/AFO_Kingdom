@@ -79,7 +79,9 @@ async def comprehensive_health_check() -> dict[str, Any]:
         config = health_check_config
         return {
             "status": (
-                "healthy" if trinity_score >= config.TRINITY_SCORE_THRESHOLD else "degraded"
+                "healthy"
+                if trinity_score >= config.TRINITY_SCORE_THRESHOLD
+                else "degraded"
             ),
             "timestamp": datetime.now().isoformat(),
             "organs": health_data.get("organs", {}),
@@ -162,7 +164,9 @@ async def _check_skills_registry() -> dict[str, Any]:
                 for skill in skills[: config.MAX_SKILLS_DISPLAY]
             ],
             "categories": (
-                registry.get_category_stats() if hasattr(registry, "get_category_stats") else {}
+                registry.get_category_stats()
+                if hasattr(registry, "get_category_stats")
+                else {}
             ),
         }
     except Exception as e:

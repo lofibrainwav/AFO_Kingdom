@@ -74,7 +74,9 @@ async def add_key(request: AddKeyRequest) -> dict[str, Any]:
 
         # Check if exists
         if wallet.get(request.name):
-            raise HTTPException(status_code=400, detail=f"Key '{request.name}' already exists")
+            raise HTTPException(
+                status_code=400, detail=f"Key '{request.name}' already exists"
+            )
 
         key_id = wallet.add(
             name=request.name,

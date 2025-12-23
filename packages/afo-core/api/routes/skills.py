@@ -42,7 +42,9 @@ async def list_skills(
     category: str | None = Query(None, description="카테고리 필터"),
     status: str | None = Query(None, description="상태 필터"),
     search: str | None = Query(None, description="검색어 (이름/설명)"),
-    min_philosophy_avg: float | None = Query(None, ge=0, le=100, description="최소 철학 평균 점수"),
+    min_philosophy_avg: float | None = Query(
+        None, ge=0, le=100, description="최소 철학 평균 점수"
+    ),
     execution_mode: str | None = Query(None, description="실행 모드 필터"),
     offset: int = Query(0, ge=0, description="페이지 시작 위치"),
     limit: int = Query(50, ge=0, le=100, description="페이지 크기"),
@@ -77,7 +79,9 @@ async def list_skills(
         return result
 
     except Exception as e:  # pragma: no cover - 예외 상황
-        raise HTTPException(status_code=500, detail=f"스킬 목록 조회 실패: {e!s}") from e
+        raise HTTPException(
+            status_code=500, detail=f"스킬 목록 조회 실패: {e!s}"
+        ) from e
 
 
 @router.get("/{skill_id}", response_model=SkillResponse, summary="스킬 상세 조회")
@@ -95,7 +99,9 @@ async def get_skill(
     try:
         skill = await service.get_skill(skill_id)
         if not skill:
-            raise HTTPException(status_code=404, detail=f"스킬을 찾을 수 없습니다: {skill_id}")
+            raise HTTPException(
+                status_code=404, detail=f"스킬을 찾을 수 없습니다: {skill_id}"
+            )
 
         return skill
 
@@ -140,7 +146,9 @@ async def register_skill(
         raise HTTPException(status_code=500, detail=f"스킬 등록 실패: {e!s}") from e
 
 
-@router.post("/{skill_id}/execute", response_model=SkillExecutionResult, summary="스킬 실행")
+@router.post(
+    "/{skill_id}/execute", response_model=SkillExecutionResult, summary="스킬 실행"
+)
 async def execute_skill(
     skill_id: str,
     parameters: dict[str, Any] | None = None,
@@ -220,7 +228,9 @@ async def get_skill_stats(
         return stats
 
     except Exception as e:  # pragma: no cover - 예외 상황
-        raise HTTPException(status_code=500, detail=f"스킬 통계 조회 실패: {e!s}") from e
+        raise HTTPException(
+            status_code=500, detail=f"스킬 통계 조회 실패: {e!s}"
+        ) from e
 
 
 @router.get("/categories", summary="카테고리 목록 조회")
@@ -248,7 +258,9 @@ async def get_categories(
         return {"categories": categories, "total_categories": len(categories)}
 
     except Exception as e:  # pragma: no cover - 예외 상황
-        raise HTTPException(status_code=500, detail=f"카테고리 목록 조회 실패: {e!s}") from e
+        raise HTTPException(
+            status_code=500, detail=f"카테고리 목록 조회 실패: {e!s}"
+        ) from e
 
 
 def _get_category_description(category: str) -> str:

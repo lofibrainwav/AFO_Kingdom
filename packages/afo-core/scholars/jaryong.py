@@ -62,7 +62,9 @@ class JaryongScholar:
     def _check_governance(self, action: str, code_context: str = "") -> bool:
         """Central Governance Check"""
         if not self.antigravity:
-            logger.warning("⚠️ [Jaryong] Governance control missing! Proceeding with CAUTION.")
+            logger.warning(
+                "⚠️ [Jaryong] Governance control missing! Proceeding with CAUTION."
+            )
             return True  # Fail open if system core missing (or fail closed depending on policy? Safe=Closed)
             # Let's Fail Closed for safety in Pure Antigravity
             # return False

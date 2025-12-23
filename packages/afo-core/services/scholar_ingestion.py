@@ -22,7 +22,9 @@ except ImportError:
 class ScholarIngestionService:
     def __init__(self, dry_run: bool = True):
         self.dry_run = dry_run
-        self.qdrant_client = QdrantClient("localhost", port=6333) if QdrantClient else None
+        self.qdrant_client = (
+            QdrantClient("localhost", port=6333) if QdrantClient else None
+        )
         self.neo4j_driver = (
             GraphDatabase.driver("bolt://localhost:7687", auth=("neo4j", "password"))
             if GraphDatabase
@@ -40,7 +42,9 @@ class ScholarIngestionService:
         try:
             self.qdrant_client.recreate_collection(
                 collection_name=self.collection_name,
-                vectors_config=models.VectorParams(size=1536, distance=models.Distance.COSINE),
+                vectors_config=models.VectorParams(
+                    size=1536, distance=models.Distance.COSINE
+                ),
             )
             print(f"✅ Qdrant collection '{self.collection_name}' ready.")
         except Exception as e:
@@ -110,7 +114,9 @@ class ScholarIngestionService:
         found = [k for k in keywords if k in text]
         return list(set(found))
 
-    def _upsert_qdrant(self, filename: str, chunk_id: int, text: str, vector: list[float]):
+    def _upsert_qdrant(
+        self, filename: str, chunk_id: int, text: str, vector: list[float]
+    ):
         if not self.qdrant_client:
             return
         point_id = f"{filename}_{chunk_id}"
@@ -134,7 +140,9 @@ class ScholarIngestionService:
         except Exception as e:
             print(f"Error upserting Qdrant: {e}")
 
-    def _upsert_neo4j(self, filename: str, chunk_id: int, text: str, entities: list[str]):
+    def _upsert_neo4j(
+        self, filename: str, chunk_id: int, text: str, entities: list[str]
+    ):
         if not self.neo4j_driver:
             return
         try:

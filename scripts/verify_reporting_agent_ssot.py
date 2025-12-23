@@ -118,9 +118,9 @@ def verify_reporting_agent_ssot():
         has_forbidden = "완료 선언 금지" in content
         has_conditions = "완료 선언 조건" in content
 
-        print(f"   {'✅' if has_separation else '❌'} 경로 분리 선언")
-        print(f"   {'✅' if has_forbidden else '❌'} 완료 선언 금지 규칙")
-        print(f"   {'✅' if has_conditions else '❌'} 완료 선언 조건")
+        print(f"   {"✅" if has_separation else "❌"} 경로 분리 선언")
+        print(f"   {"✅" if has_forbidden else "❌"} 완료 선언 금지 규칙")
+        print(f"   {"✅" if has_conditions else "❌"} 완료 선언 조건")
 
         if not (has_separation and has_forbidden and has_conditions):
             print("   ⚠️  AGENTS.md에 SSOT 규칙이 완전하지 않습니다!")

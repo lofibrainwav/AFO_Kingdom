@@ -35,7 +35,6 @@ from typing import Any, Final
 
 import aiohttp
 
-
 # Constants
 TRINITY_WEIGHTS: Final = {
     "truth": 0.35,
@@ -76,7 +75,9 @@ def calculate_trinity_score(trend_data: dict) -> float:
 
     # Beauty: 구현 용이성
     beauty = min(
-        1.0, trend_data.get("implementation_complexity", DEFAULT_COMPLEXITY) / MAX_MARKET_IMPACT
+        1.0,
+        trend_data.get("implementation_complexity", DEFAULT_COMPLEXITY)
+        / MAX_MARKET_IMPACT,
     )
     beauty = 1.0 - beauty  # 낮은 복잡성 = 높은 beauty
 
@@ -166,11 +167,13 @@ def analyze_trends(search_results: dict) -> dict[str, Any]:
             if kw in title or kw in description:
                 keyword_counts[kw] += 1
 
-        sources.append({
-            "title": result.get("title"),
-            "url": result.get("url"),
-            "age": result.get("age"),
-        })
+        sources.append(
+            {
+                "title": result.get("title"),
+                "url": result.get("url"),
+                "age": result.get("age"),
+            }
+        )
 
     # 트렌드 점수 계산
     trend_score = sum(keyword_counts.values()) / len(results) if results else 0
@@ -239,7 +242,7 @@ def generate_report(analysis: dict) -> str:
 {json.dumps(analysis.get("keyword_analysis", {}), indent=2)}
 
 ### Top Sources
-{chr(10).join([f"- [{s['title']}]({s['url']})" for s in analysis.get("sources", [])[:5]])}
+{chr(10).join([f"- [{s["title"]}]({s["url"]})" for s in analysis.get("sources", [])[:5]])}
 
 ## Recommendations
 {action}
@@ -258,7 +261,9 @@ def save_report(report: str, query: str, reports_dir: Path) -> None:
         reports_dir (Path): 저장 경로.
     """
     timestamp_str = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
-    report_file = reports_dir / f"trend_report_{timestamp_str}_{query.replace(' ', '_')}.md"
+    report_file = (
+        reports_dir / f"trend_report_{timestamp_str}_{query.replace(" ", "_")}.md"
+    )
     report_file.write_text(report, encoding="utf-8")
     logger.info("Report saved: %s", report_file)
 
@@ -282,15 +287,19 @@ def generate_summary_report(all_results: dict, reports_dir: Path) -> None:
     avg_score = 0.0
     if all_results:
         avg_score = round(
-            sum(calculate_trinity_score(all_results[q]) for q in all_results) / len(all_results),
+            sum(calculate_trinity_score(all_results[q]) for q in all_results)
+            / len(all_results),
             2,
         )
 
     alignment_str = "excellent" if all_results else "unknown"
 
-    summary_list = "\n".join([
-        f"- **{q}**: {calculate_trinity_score(all_results[q])}/100" for q in all_results
-    ])
+    summary_list = "\n".join(
+        [
+            f"- **{q}**: {calculate_trinity_score(all_results[q])}/100"
+            for q in all_results
+        ]
+    )
 
     summary_report = f"""
 # AFO Kingdom External Trends Summary Report
@@ -318,7 +327,9 @@ Current AFO monitoring system shows {alignment_str} alignment with 2025 AI obser
 
 async def main() -> None:
     """메인 실행 함수."""
-    logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+    logging.basicConfig(
+        level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+    )
 
     # 환경 변수에서 API 키 가져오기
     brave_api_key = os.getenv("BRAVE_API_KEY")
@@ -335,7 +346,7 @@ async def main() -> None:
     ]
 
     reports_dir = Path("docs/reports/external_trends")
-    reports_dir.mkdir(parents=True, exist_ok=True)  # noqa: ASYNC240
+    reports_dir.mkdir(parents=True, exist_ok=True)
 
     all_results = {}
 

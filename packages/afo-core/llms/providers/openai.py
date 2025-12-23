@@ -46,7 +46,9 @@ class OpenAIProvider(BaseLLMProvider):
 
         try:
             # Using the existing wrapper
-            response = await openai_api.generate_response(prompt=query, model=model, **kwargs)
+            response = await openai_api.generate_response(
+                prompt=query, model=model, **kwargs
+            )
 
             # Wrapper returns str directly or raises
             return response
