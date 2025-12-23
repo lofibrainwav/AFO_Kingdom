@@ -2,7 +2,17 @@
   "agentCanUpdateSnapshot": true,
   "codeReview": {
     "enabled": false,
+    "autoReview": false,
+    "onSave": false,
+    "onCommit": false
+  },
+  "features": {
+    "codeReview": false,
     "autoReview": false
+  },
+  "useOurSystem": {
+    "qualityChecks": true,
+    "llmRouter": true,
+    "apiWallet": true
   }
 }
-

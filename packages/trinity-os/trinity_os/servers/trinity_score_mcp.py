@@ -78,7 +78,9 @@ class TrinityScoreEngineHybrid:
         # Simplified calculation for MVP
         scores = {
             "Truth": min(100, metrics.get("truth_base", 100)),
-            "Goodness": min(100, metrics.get("goodness_base", 100) - metrics.get("risk_score", 0)),
+            "Goodness": min(
+                100, metrics.get("goodness_base", 100) - metrics.get("risk_score", 0)
+            ),
             "Beauty": min(100, metrics.get("beauty_base", 100)),
             "Serenity": min(100, 100 - metrics.get("friction", 0)),
             "Eternity": min(100, metrics.get("eternity_base", 100)),

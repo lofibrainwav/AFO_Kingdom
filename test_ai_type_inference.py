@@ -23,9 +23,7 @@ def calculate_score(values: list[int | float]) -> float:
     return sum(values) / len(values)
 
 
-def validate_input(
-    value: float, min_val: float, max_val: float
-) -> bool:
+def validate_input(value: float, min_val: float, max_val: float) -> bool:
     """입력 검증 함수 - 타입 힌트 추가됨."""
     if not isinstance(value, (int, float)):
         return False

@@ -85,7 +85,9 @@ class UserUpdateRequest(BaseModel):
     """사용자 업데이트 요청 모델"""
 
     email: str | None = Field(default=None, description="이메일 주소")
-    password: str | None = Field(default=None, min_length=8, description="비밀번호 (최소 8자)")
+    password: str | None = Field(
+        default=None, min_length=8, description="비밀번호 (최소 8자)"
+    )
 
 
 @router.post("", status_code=201)
@@ -122,26 +124,35 @@ async def create_user(request: UserCreateRequest) -> dict[str, Any]:
                     "SELECT id FROM users WHERE username = $1", request.username
                 )
                 if existing:
-                    raise HTTPException(status_code=409, detail="이미 존재하는 사용자명입니다.")
+                    raise HTTPException(
+                        status_code=409, detail="이미 존재하는 사용자명입니다."
+                    )
 
-                # 사용자 생성
-                from datetime import datetime
+                # 이메일 중복 체크
+                existing_email = await conn.fetchrow(
+                    "SELECT id FROM users WHERE email = $1", request.email
+                )
+                if existing_email:
+                    raise HTTPException(
+                        status_code=409, detail="이미 사용중인 이메일 주소입니다."
+                    )
 
+                # 사용자 생성 (저장 프로시저 사용)
                 user_id = await conn.fetchval(
-                    """
-                    INSERT INTO users (username, email, hashed_password, created_at)
-                    VALUES ($1, $2, $3, $4)
-                    RETURNING id
-                    """,
+                    "SELECT create_user($1, $2, $3)",
                     request.username,
                     request.email,
                     hashed_password,
-                    datetime.utcnow(),
                 )
 
                 # 생성된 사용자 정보 조회
                 user = await conn.fetchrow(
-                    "SELECT id, username, email, created_at FROM users WHERE id = $1",
+                    """
+                    SELECT u.id, u.username, u.email, u.created_at, p.display_name, p.avatar_url
+                    FROM users u
+                    LEFT JOIN user_profiles p ON u.id = p.user_id
+                    WHERE u.id = $1
+                    """,
                     user_id,
                 )
 
@@ -151,17 +162,23 @@ async def create_user(request: UserCreateRequest) -> dict[str, Any]:
                     "id": str(user["id"]),
                     "username": user["username"],
                     "email": user["email"],
-                    "created_at": (user["created_at"].isoformat() if user["created_at"] else None),
+                    "display_name": user.get("display_name"),
+                    "avatar_url": user.get("avatar_url"),
+                    "created_at": (
+                        user["created_at"].isoformat() if user["created_at"] else None
+                    ),
                 }
-            except HTTPException:
+            except HTTPException as e:
                 await conn.close()
-                raise
-            except Exception:
+                raise e
+            except Exception as e:
                 await conn.close()
                 # 테이블이 없을 수 있으므로 fallback 사용
+                print(f"DB 사용자 생성 실패: {e}")
                 pass
-        except Exception:
+        except Exception as e:
             # DB 연결 실패 등: fallback 진행
+            print(f"DB 연결 실패: {e}")
             pass
 
     # Fallback: DB 없이 임시 사용자 ID 생성
@@ -204,21 +221,25 @@ async def get_user(user_id: str) -> dict[str, Any]:
                 await conn.close()
 
                 if not user:
-                    raise HTTPException(status_code=404, detail="사용자를 찾을 수 없습니다.")
+                    raise HTTPException(
+                        status_code=404, detail="사용자를 찾을 수 없습니다."
+                    )
 
                 return {
                     "id": str(user["id"]),
                     "username": user["username"],
                     "email": user["email"],
-                    "created_at": (user["created_at"].isoformat() if user["created_at"] else None),
+                    "created_at": (
+                        user["created_at"].isoformat() if user["created_at"] else None
+                    ),
                 }
             except ValueError:
                 await conn.close()
                 # user_id가 숫자가 아닌 경우 fallback
                 pass
-            except HTTPException:
+            except HTTPException as e:
                 await conn.close()
-                raise
+                raise e
             except Exception:
                 await conn.close()
                 # DB 오류 시 fallback

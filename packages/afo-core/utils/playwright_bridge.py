@@ -5,8 +5,9 @@ from dataclasses import dataclass
 from typing import Any
 
 from fastapi import HTTPException
-from playwright.async_api import Browser, Playwright, Route, async_playwright
+from playwright.async_api import Browser, Playwright, Route
 from playwright.async_api import TimeoutError as PlaywrightTimeout
+from playwright.async_api import async_playwright
 
 try:
     from AFO.config.antigravity import antigravity
@@ -65,12 +66,16 @@ class PlaywrightBridgeMCP:
         """네트워크 인터셉션 설정 (善: 외부 의존성 제거)"""
         for scenario in self.mock_manager.scenarios:
 
-            async def handle_route(route: Route, scenario: MockScenario = scenario) -> None:
+            async def handle_route(
+                route: Route, scenario: MockScenario = scenario
+            ) -> None:
                 """Handle route interception for mocking."""
                 await route.fulfill(
                     status=scenario.status,
                     content_type=scenario.content_type,
-                    body=str(scenario.response_body).replace("'", '"'),  # 단순 JSON 변환
+                    body=str(scenario.response_body).replace(
+                        "'", '"'
+                    ),  # 단순 JSON 변환
                 )
 
             # 람다 대신 함수 정의로 클로저 문제 방지 가능 (현재는 단순 루프라 주의)
@@ -135,7 +140,9 @@ class PlaywrightBridgeMCP:
             # 접근성 점수 (예시)
             if hasattr(page, "accessibility"):
                 accessibility = await page.accessibility.snapshot()
-                score = len(accessibility.get("children", [])) / 10 if accessibility else 0
+                score = (
+                    len(accessibility.get("children", [])) / 10 if accessibility else 0
+                )
             else:
                 score = 0
 
@@ -218,7 +225,9 @@ class PlaywrightBridgeMCP:
             test_func = exec_globals.get("test_scenario")
 
             if not test_func:
-                raise ValueError("생성된 코드에서 'test_scenario' 함수를 찾을 수 없습니다.")
+                raise ValueError(
+                    "생성된 코드에서 'test_scenario' 함수를 찾을 수 없습니다."
+                )
 
             # 3. Playwright로 UI 실행 및 검증
             if not self.browser:

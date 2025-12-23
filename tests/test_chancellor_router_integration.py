@@ -11,7 +11,6 @@ from typing import Any
 from unittest.mock import patch
 
 import pytest
-
 # AFO 왕국 모듈 임포트
 from AFO.api.compat import ChancellorInvokeRequest, ChancellorInvokeResponse
 
@@ -175,15 +174,11 @@ class TestChancellorRouterIntegration:
         """
 
         # Given
-        ChancellorInvokeRequest(
-            query="시스템 상태 알려줘", timeout_seconds=30
-        )
+        ChancellorInvokeRequest(query="시스템 상태 알려줘", timeout_seconds=30)
 
         # Mock system metrics
 
-        with patch(
-            "AFO.api.routers.chancellor_router._execute_with_fallback"
-        ):
+        with patch("AFO.api.routers.chancellor_router._execute_with_fallback"):
             # 내부 _get_system_metrics_safe 함수를 모킹하기 위해 복잡한 접근 필요
             # 대신 통합 테스트로 실제 함수 호출
             pass

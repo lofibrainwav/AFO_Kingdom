@@ -27,7 +27,9 @@ try:
     DOCX_AVAILABLE = True
 except ImportError:
     DOCX_AVAILABLE = False
-    logger.warning("[ReportGenerator] python-docx not installed. Word generation disabled.")
+    logger.warning(
+        "[ReportGenerator] python-docx not installed. Word generation disabled."
+    )
 
 
 def _add_report_header(doc: Any, client_name: str) -> None:
@@ -100,7 +102,9 @@ in the future when Required Minimum Distributions (RMDs) begin.
 """
         )
     else:
-        doc.add_paragraph("No additional Sweet Spot opportunity available at current income level.")
+        doc.add_paragraph(
+            "No additional Sweet Spot opportunity available at current income level."
+        )
 
 
 def _add_roth_simulation(doc: Any, roth_simulation: dict) -> None:
@@ -188,7 +192,9 @@ def generate_strategy_report(
         return f"Error: {e!s}"
 
 
-def generate_turbotax_csv(client_name: str, tax_data: dict, output_path: str | None = None) -> str:
+def generate_turbotax_csv(
+    client_name: str, tax_data: dict, output_path: str | None = None
+) -> str:
     """
     TurboTax 입력용 CSV 생성
 
@@ -258,7 +264,9 @@ def generate_quickbooks_csv(
     writer = csv.writer(output)
 
     # QuickBooks 표준 헤더
-    writer.writerow(["Date", "Description", "Debit Account", "Credit Account", "Amount", "Class"])
+    writer.writerow(
+        ["Date", "Description", "Debit Account", "Credit Account", "Amount", "Class"]
+    )
 
     # 세금 납부 트랜잭션
     date = datetime.now().strftime("%m/%d/%Y")

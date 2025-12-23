@@ -21,15 +21,20 @@ from pathlib import Path
 from typing import Any
 
 from trinity_os.adapters.afo_ultimate_mcp_deps_v1 import build_deps_v1
-from trinity_os.graphs.trinity_toolflow_graph_v1 import build_trinity_toolflow_graph, run_trinity_toolflow
+from trinity_os.graphs.trinity_toolflow_graph_v1 import (
+    build_trinity_toolflow_graph, run_trinity_toolflow)
 
 
 def _print_three_lines(final_card: dict[str, Any]) -> None:
     status = final_card.get("status") or "UNKNOWN"
     decision = final_card.get("decision") or status
     next_actions = final_card.get("next_actions") or []
-    next_one = next_actions[0] if isinstance(next_actions, list) and next_actions else ""
-    receipt_path = final_card.get("source_of_truth") or final_card.get("receipt_dir") or ""
+    next_one = (
+        next_actions[0] if isinstance(next_actions, list) and next_actions else ""
+    )
+    receipt_path = (
+        final_card.get("source_of_truth") or final_card.get("receipt_dir") or ""
+    )
 
     print(f"Status: {status} | Gate: {decision}")
     print(f"Next: {next_one}" if next_one else "Next: (none)")
@@ -61,7 +66,9 @@ def _create_receipt(repo_root: Path, *, out_name: str = "") -> Path:
     if out_name:
         cmd.extend(["--out", out_name])
     p = subprocess.run(cmd, text=True, capture_output=True)
-    out_dir = (p.stdout or "").strip().splitlines()[-1] if (p.stdout or "").strip() else ""
+    out_dir = (
+        (p.stdout or "").strip().splitlines()[-1] if (p.stdout or "").strip() else ""
+    )
     if p.returncode != 0 or not out_dir:
         raise RuntimeError(f"receipt_bundle failed: {p.stderr.strip()}")
     return Path(out_dir)
@@ -72,7 +79,9 @@ def _write_text(path: Path, text: str) -> None:
     path.write_text(text, encoding="utf-8")
 
 
-def _attach_toolflow_result(receipt_dir: Path, *, payload: dict[str, Any], meta: dict[str, Any]) -> None:
+def _attach_toolflow_result(
+    receipt_dir: Path, *, payload: dict[str, Any], meta: dict[str, Any]
+) -> None:
     raw_dir = receipt_dir / "raw"
     raw_dir.mkdir(parents=True, exist_ok=True)
     _write_text(
@@ -85,7 +94,9 @@ def _attach_toolflow_result(receipt_dir: Path, *, payload: dict[str, Any], meta:
     )
 
 
-def _attach_toolflow_runtime_logs(receipt_dir: Path, *, stdout_text: str, stderr_text: str) -> None:
+def _attach_toolflow_runtime_logs(
+    receipt_dir: Path, *, stdout_text: str, stderr_text: str
+) -> None:
     raw_dir = receipt_dir / "raw"
     raw_dir.mkdir(parents=True, exist_ok=True)
     if stdout_text.strip():
@@ -212,7 +223,8 @@ def _probe_wallet_session_decryptable(provider: str) -> bool:
             contextlib.redirect_stdout(runtime_stdout),
             contextlib.redirect_stderr(runtime_stderr),
         ):
-            from afo_soul_engine.browser_auth.wallet_integration import load_session_from_wallet
+            from afo_soul_engine.browser_auth.wallet_integration import \
+                load_session_from_wallet
 
             session = load_session_from_wallet(provider)
         return bool(
@@ -263,13 +275,21 @@ def _wallet_key_state(repo_root: Path) -> dict[str, Any]:
         "env_file_exists": bool(env_exists),
         "key_present": bool(key_present),
         "key_len": key_len,
-        "env_var_present": bool(os.getenv("API_WALLET_ENCRYPTION_KEY") or os.getenv("ENCRYPTION_KEY")),
+        "env_var_present": bool(
+            os.getenv("API_WALLET_ENCRYPTION_KEY") or os.getenv("ENCRYPTION_KEY")
+        ),
     }
 
 
 def _auth_status_card(*, repo_root: Path, receipt_dir: Path | None) -> dict[str, Any]:
     sessions = _load_wallet_browser_sessions(repo_root)
-    providers = sorted({str(s.get("service") or "") for s in sessions if isinstance(s, dict) and s.get("service")})
+    providers = sorted(
+        {
+            str(s.get("service") or "")
+            for s in sessions
+            if isinstance(s, dict) and s.get("service")
+        }
+    )
     providers = [p for p in providers if p]
 
     per_provider: list[dict[str, Any]] = []
@@ -284,7 +304,9 @@ def _auth_status_card(*, repo_root: Path, receipt_dir: Path | None) -> dict[str,
 
     status = "OK" if sessions else "BLOCK"
     decision = "ASK" if sessions else "BLOCK"
-    decryptable_any = any(bool(x.get("decryptable")) for x in per_provider if isinstance(x, dict))
+    decryptable_any = any(
+        bool(x.get("decryptable")) for x in per_provider if isinstance(x, dict)
+    )
     if sessions and not decryptable_any:
         status = "BLOCK"
         decision = "BLOCK"
@@ -355,13 +377,15 @@ def _auth_login(
     runtime_stderr = io.StringIO()
 
     async def _run() -> dict[str, Any]:
-        from afo_soul_engine.browser_auth.wallet_integration import WalletSessionManager
+        from afo_soul_engine.browser_auth.wallet_integration import \
+            WalletSessionManager
 
         manager = WalletSessionManager()
 
         session_data: dict[str, Any]
         if provider == "claude":
-            from afo_soul_engine.browser_auth.claude_session import ClaudeSession
+            from afo_soul_engine.browser_auth.claude_session import \
+                ClaudeSession
 
             s = ClaudeSession()
             session_data = await s.login_and_extract_session(headless=headless)
@@ -371,7 +395,8 @@ def _auth_login(
             s = CodexSession()
             session_data = await s.login_and_extract_session(headless=headless)
         elif provider == "gemini":
-            from afo_soul_engine.browser_auth.gemini_session import GeminiSession
+            from afo_soul_engine.browser_auth.gemini_session import \
+                GeminiSession
 
             s = GeminiSession()
             session_data = await s.login_and_extract_session(headless=headless)
@@ -509,25 +534,35 @@ def _auth_open(
 
     async def _run() -> dict[str, Any]:
         if provider == "claude":
-            from afo_soul_engine.browser_auth.claude_session import ClaudeSession
+            from afo_soul_engine.browser_auth.claude_session import \
+                ClaudeSession
 
             s = ClaudeSession()
-            return await s.open_chat_for_manual_use(headless=headless, keep_open=keep_open, timeout_seconds=180)
+            return await s.open_chat_for_manual_use(
+                headless=headless, keep_open=keep_open, timeout_seconds=180
+            )
         if provider == "codex":
             from afo_soul_engine.browser_auth.codex_session import CodexSession
 
             s = CodexSession()
-            return await s.open_chat_for_manual_use(headless=headless, keep_open=keep_open, timeout_seconds=180)
+            return await s.open_chat_for_manual_use(
+                headless=headless, keep_open=keep_open, timeout_seconds=180
+            )
         if provider == "gemini":
-            from afo_soul_engine.browser_auth.gemini_session import GeminiSession
+            from afo_soul_engine.browser_auth.gemini_session import \
+                GeminiSession
 
             s = GeminiSession()
-            return await s.open_chat_for_manual_use(headless=headless, keep_open=keep_open, timeout_seconds=180)
+            return await s.open_chat_for_manual_use(
+                headless=headless, keep_open=keep_open, timeout_seconds=180
+            )
 
         from afo_soul_engine.browser_auth.grok_session import GrokSession
 
         s = GrokSession()
-        return await s.open_chat_for_manual_use(headless=headless, keep_open=keep_open, timeout_seconds=180)
+        return await s.open_chat_for_manual_use(
+            headless=headless, keep_open=keep_open, timeout_seconds=180
+        )
 
     try:
         with (
@@ -564,7 +599,9 @@ def _auth_open(
     return card
 
 
-def _auth_doctor(*, repo_root: Path, receipt_dir: Path | None, provider: str | None = None) -> dict[str, Any]:
+def _auth_doctor(
+    *, repo_root: Path, receipt_dir: Path | None, provider: str | None = None
+) -> dict[str, Any]:
     """
     Read-only diagnostics for subscription/browser-session flows.
     Explains: wallet key state, present vs decryptable, and likely blockers (e.g., Cloudflare/headless).
@@ -586,7 +623,9 @@ def _auth_doctor(*, repo_root: Path, receipt_dir: Path | None, provider: str | N
         probs.append("system_chrome_missing")
 
     advice: list[str] = []
-    advice.append("Browser engine policy: `--browser system-chrome` only (reduces Chrome/Chromium confusion).")
+    advice.append(
+        "Browser engine policy: `--browser system-chrome` only (reduces Chrome/Chromium confusion)."
+    )
     advice.append(
         "If you see multiple browsers popping up: close the extras, then re-run with system-chrome and --keep-open for manual inspection."
     )
@@ -594,12 +633,22 @@ def _auth_doctor(*, repo_root: Path, receipt_dir: Path | None, provider: str | N
         "If sessions are present but decryptable=false: they were likely saved before the wallet key was persisted → recapture is the clean fix."
     )
     if provider:
-        advice.append(f"Run `sixxon auth capture --provider={provider}` (manual login → save session)")
-        advice.append(f"Then run `sixxon auth status` and ensure decryptable=true for {provider}")
-        advice.append(f"Then run `sixxon auth open --provider={provider}` (stable manual use)")
-        advice.append(f"Then (optional) try `sixxon auth ask --provider={provider} --yes` (best-effort; UI may change)")
+        advice.append(
+            f"Run `sixxon auth capture --provider={provider}` (manual login → save session)"
+        )
+        advice.append(
+            f"Then run `sixxon auth status` and ensure decryptable=true for {provider}"
+        )
+        advice.append(
+            f"Then run `sixxon auth open --provider={provider}` (stable manual use)"
+        )
+        advice.append(
+            f"Then (optional) try `sixxon auth ask --provider={provider} --yes` (best-effort; UI may change)"
+        )
     else:
-        advice.append("Run `sixxon auth status` and check decryptable=true for at least one provider")
+        advice.append(
+            "Run `sixxon auth status` and check decryptable=true for at least one provider"
+        )
         advice.append(
             "If decryptable=false, run `sixxon auth capture --provider=claude` (or codex) to re-save the session"
         )
@@ -699,7 +748,8 @@ def _auth_ask(
 
     async def _run() -> str:
         if provider == "claude":
-            from afo_soul_engine.browser_auth.claude_session import ClaudeSession
+            from afo_soul_engine.browser_auth.claude_session import \
+                ClaudeSession
 
             s = ClaudeSession()
             return await s.ask_question(final_prompt, headless=headless)
@@ -735,8 +785,12 @@ def _auth_ask(
             raw_dir = receipt_dir / "raw"
             raw_dir.mkdir(parents=True, exist_ok=True)
             _write_text(raw_dir / "sixxon_auth.ask.prompt.txt", final_prompt + "\n")
-            _write_text(raw_dir / "sixxon_auth.ask.stdout.txt", runtime_stdout.getvalue())
-            _write_text(raw_dir / "sixxon_auth.ask.stderr.txt", runtime_stderr.getvalue())
+            _write_text(
+                raw_dir / "sixxon_auth.ask.stdout.txt", runtime_stdout.getvalue()
+            )
+            _write_text(
+                raw_dir / "sixxon_auth.ask.stderr.txt", runtime_stderr.getvalue()
+            )
             _write_text(
                 raw_dir / "sixxon_auth.ask.error.json",
                 json.dumps(card, ensure_ascii=False, indent=2),
@@ -813,7 +867,9 @@ def _load_receipt(receipt_dir: Path) -> dict[str, Any]:
     p = receipt_dir / "receipt.json"
     data = json.loads(p.read_text(encoding="utf-8"))
     if not isinstance(data, dict) or data.get("schema") != "bridge_receipt_v1":
-        raise ValueError(f"invalid receipt schema: {data.get('schema') if isinstance(data, dict) else type(data)}")
+        raise ValueError(
+            f"invalid receipt schema: {data.get('schema') if isinstance(data, dict) else type(data)}"
+        )
     return data
 
 
@@ -844,7 +900,9 @@ def _calculate_trinity_score(receipt: dict[str, Any]) -> dict[str, Any]:
             truth_score += 25  # 각 체크당 25점
             infra_status.append(f"{name}: OK")
         else:
-            infra_status.append(f"{name}: {check.get('status', 'UNKNOWN') if isinstance(check, dict) else 'MISSING'}")
+            infra_status.append(
+                f"{name}: {check.get('status', 'UNKNOWN') if isinstance(check, dict) else 'MISSING'}"
+            )
 
     # 서비스 응답 시간 (善 - Goodness)
     goodness_score = 100
@@ -892,7 +950,9 @@ def _calculate_trinity_score(receipt: dict[str, Any]) -> dict[str, Any]:
 
     # 임시: 인프라 상태 기반 계산
     failed_services = sum(
-        1 for _, check in infra_checks if not (isinstance(check, dict) and check.get("status") == "OK")
+        1
+        for _, check in infra_checks
+        if not (isinstance(check, dict) and check.get("status") == "OK")
     )
     serenity_score -= failed_services * 25
     serenity_score = max(0, min(100, serenity_score))
@@ -980,7 +1040,9 @@ def _receipt_status_from_receipt(receipt: dict[str, Any]) -> dict[str, Any]:
     if not trinity_analysis["audit_gate_passed"]:
         reason_parts = []
         if trinity_analysis["average_score"] < 80:
-            reason_parts.append(f"평균 점수 부족: {trinity_analysis['average_score']:.1f}/80")
+            reason_parts.append(
+                f"평균 점수 부족: {trinity_analysis['average_score']:.1f}/80"
+            )
         if trinity_analysis["imbalance"] > 20:
             reason_parts.append(f"점수 불균형: {trinity_analysis['imbalance']}/20")
         if min(trinity_analysis["trinity_scores"].values()) < 60:
@@ -1042,7 +1104,9 @@ def _explain_from_receipt(receipt_dir: Path, receipt: dict[str, Any]) -> dict[st
 
     reason_line = ", ".join(reasons) if reasons else "(no evidence)"
     next_actions = status_card.get("next_actions") or []
-    next_one = next_actions[0] if isinstance(next_actions, list) and next_actions else ""
+    next_one = (
+        next_actions[0] if isinstance(next_actions, list) and next_actions else ""
+    )
 
     card = {
         "status": status,
@@ -1157,9 +1221,13 @@ def _verify_run(
 
         # MVP: 기본 텍스트 검증 (실제로는 receipt에서 최근 출력 추출)
         test_content = "SixXon Energy Flow Vision은 인간 꿈과 AI 구현을 연결하는 완벽한 시스템입니다."
-        test_context = "AFO 왕국의 眞善美孝永 철학을 기반으로 한 AI 통제 및 관리를 위한 도구"
+        test_context = (
+            "AFO 왕국의 眞善美孝永 철학을 기반으로 한 AI 통제 및 관리를 위한 도구"
+        )
 
-        result = verify_fact(content=test_content, context=test_context if deep else None, threshold=0.8)
+        result = verify_fact(
+            content=test_content, context=test_context if deep else None, threshold=0.8
+        )
 
         payload = {
             "status": "OK" if result["status"] == "PASSED" else "BLOCK",
@@ -1183,7 +1251,9 @@ def _verify_run(
         }
 
     if receipt_dir:
-        _attach_toolflow_result(receipt_dir, payload=payload, meta={"command": "verify", "deep": deep})
+        _attach_toolflow_result(
+            receipt_dir, payload=payload, meta={"command": "verify", "deep": deep}
+        )
 
     return payload
 
@@ -1258,8 +1328,10 @@ def _toolflow_run(
     else:
         # Legacy V1 Flow
         try:
-            from trinity_os.adapters.afo_ultimate_mcp_deps_v1 import build_deps_v1
-            from trinity_os.graphs.trinity_toolflow_graph_v1 import build_trinity_toolflow_graph, run_trinity_toolflow
+            from trinity_os.adapters.afo_ultimate_mcp_deps_v1 import \
+                build_deps_v1
+            from trinity_os.graphs.trinity_toolflow_graph_v1 import (
+                build_trinity_toolflow_graph, run_trinity_toolflow)
 
             # Local import to avoid top-level crashes if V1 is broken
             graph_data = build_trinity_toolflow_graph(build_deps_v1())
@@ -1325,7 +1397,9 @@ def _run_toolflow(
     ):
         deps = build_deps_v1()
         app = build_trinity_toolflow_graph(deps)
-        out = run_trinity_toolflow(app, prompt, query=query, top_k=top_k, risk_score=risk_score)
+        out = run_trinity_toolflow(
+            app, prompt, query=query, top_k=top_k, risk_score=risk_score
+        )
     final_card = out.get("final_card") or out
 
     if receipt_dir is not None:
@@ -1357,7 +1431,9 @@ def _run_toolflow(
     if verbose:
         print(json.dumps(final_card, ensure_ascii=False, indent=2))
     else:
-        _print_three_lines(final_card if isinstance(final_card, dict) else {"status": "UNKNOWN"})
+        _print_three_lines(
+            final_card if isinstance(final_card, dict) else {"status": "UNKNOWN"}
+        )
     return 0
 
 
@@ -1413,12 +1489,22 @@ def main(argv: list[str] | None = None) -> int:
     sub = ap.add_subparsers(dest="command", required=True)
 
     # toolflow
-    toolflow_p = sub.add_parser("toolflow", help="Run the Agent Toolflow (Legacy V1 or Dream Hub)")
+    toolflow_p = sub.add_parser(
+        "toolflow", help="Run the Agent Toolflow (Legacy V1 or Dream Hub)"
+    )
     toolflow_p.add_argument("prompt", nargs="?", help="Task prompt or instruction")
-    toolflow_p.add_argument("--graph", action="store_true", help="Use the new Dream Hub (LangGraph) engine")
-    toolflow_p.add_argument("--query", type=str, default="", help="Optional search query override")
-    toolflow_p.add_argument("--top-k", type=int, default=5, help="Number of candidates to fetch")
-    toolflow_p.add_argument("--risk-score", type=float, default=None, help="SSOT risk score evidence")
+    toolflow_p.add_argument(
+        "--graph", action="store_true", help="Use the new Dream Hub (LangGraph) engine"
+    )
+    toolflow_p.add_argument(
+        "--query", type=str, default="", help="Optional search query override"
+    )
+    toolflow_p.add_argument(
+        "--top-k", type=int, default=5, help="Number of candidates to fetch"
+    )
+    toolflow_p.add_argument(
+        "--risk-score", type=float, default=None, help="SSOT risk score evidence"
+    )
     toolflow_p.add_argument(
         "--profile",
         choices=["P", "K"],
@@ -1444,16 +1530,22 @@ def main(argv: list[str] | None = None) -> int:
     toolflow_p.add_argument("--verbose", action="store_true", help="Print full card")
     toolflow_p.add_argument("--json", action="store_true", help="Print raw JSON card")
 
-    receipt_p = sub.add_parser("receipt", help="Create a Bridge Receipt bundle under logs/receipts/")
+    receipt_p = sub.add_parser(
+        "receipt", help="Create a Bridge Receipt bundle under logs/receipts/"
+    )
     receipt_p.add_argument(
         "--out",
         type=str,
         default="",
         help="Receipt directory name under logs/receipts (default: timestamp)",
     )
-    receipt_p.add_argument("--json", action="store_true", help="Print receipt metadata as JSON")
+    receipt_p.add_argument(
+        "--json", action="store_true", help="Print receipt metadata as JSON"
+    )
 
-    status_p = sub.add_parser("status", help="Receipt-based kingdom status (requires an existing receipt)")
+    status_p = sub.add_parser(
+        "status", help="Receipt-based kingdom status (requires an existing receipt)"
+    )
     status_p.add_argument(
         "--receipt",
         type=str,
@@ -1483,7 +1575,9 @@ def main(argv: list[str] | None = None) -> int:
         help="[Stage 3] Audit Contract: Show full penalty breakdown",
     )
 
-    verify_p = sub.add_parser("verify", help="[Stage 3] Universe Teacher (Truth Oath) verification")
+    verify_p = sub.add_parser(
+        "verify", help="[Stage 3] Universe Teacher (Truth Oath) verification"
+    )
     verify_p.add_argument(
         "--deep",
         action="store_true",
@@ -1500,17 +1594,23 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Use the latest receipt when --receipt is omitted",
     )
-    verify_p.add_argument("--refresh", action="store_true", help="Create a new receipt before verifying")
+    verify_p.add_argument(
+        "--refresh", action="store_true", help="Create a new receipt before verifying"
+    )
     verify_p.add_argument("--json", action="store_true", help="Print raw JSON receipt")
 
-    dream_p = sub.add_parser("dream", help="[Stage 3] Dream Hub (Dream Protocol) operations")
+    dream_p = sub.add_parser(
+        "dream", help="[Stage 3] Dream Hub (Dream Protocol) operations"
+    )
     dream_p.add_argument(
         "--replay",
         type=str,
         metavar="THREAD_ID",
         help="Replay a past workflow session by Thread ID (persistence required)",
     )
-    dream_p.add_argument("--dry-run", action="store_true", help="Simulate replay without side effects")
+    dream_p.add_argument(
+        "--dry-run", action="store_true", help="Simulate replay without side effects"
+    )
 
     explain_p = sub.add_parser(
         "explain",
@@ -1527,8 +1627,12 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Use the latest receipt when --receipt is omitted",
     )
-    explain_p.add_argument("--refresh", action="store_true", help="Create a new receipt before explaining")
-    explain_p.add_argument("--verbose", action="store_true", help="Print full JSON card")
+    explain_p.add_argument(
+        "--refresh", action="store_true", help="Create a new receipt before explaining"
+    )
+    explain_p.add_argument(
+        "--verbose", action="store_true", help="Print full JSON card"
+    )
     explain_p.add_argument("--json", action="store_true", help="Print raw JSON card")
 
     edu_p = sub.add_parser(
@@ -1546,14 +1650,20 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Use the latest receipt when --receipt is omitted",
     )
-    edu_p.add_argument("--refresh", action="store_true", help="Create a new receipt before advising")
+    edu_p.add_argument(
+        "--refresh", action="store_true", help="Create a new receipt before advising"
+    )
     edu_p.add_argument("--verbose", action="store_true", help="Print full JSON card")
     edu_p.add_argument("--json", action="store_true", help="Print raw JSON card")
 
-    auth_p = sub.add_parser("auth", help="Subscription/browser-session helpers (wallet-backed; optional)")
+    auth_p = sub.add_parser(
+        "auth", help="Subscription/browser-session helpers (wallet-backed; optional)"
+    )
     auth_sub = auth_p.add_subparsers(dest="auth_command", required=True)
 
-    auth_status_p = auth_sub.add_parser("status", help="Show browser-session availability (metadata only)")
+    auth_status_p = auth_sub.add_parser(
+        "status", help="Show browser-session availability (metadata only)"
+    )
     auth_status_p.add_argument(
         "--receipt",
         type=str,
@@ -1570,11 +1680,19 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Create a new receipt before attaching evidence",
     )
-    auth_status_p.add_argument("--verbose", action="store_true", help="Print full JSON card")
-    auth_status_p.add_argument("--json", action="store_true", help="Print raw JSON card")
+    auth_status_p.add_argument(
+        "--verbose", action="store_true", help="Print full JSON card"
+    )
+    auth_status_p.add_argument(
+        "--json", action="store_true", help="Print raw JSON card"
+    )
 
-    auth_login_p = auth_sub.add_parser("login", help="Interactive login to save browser session into wallet")
-    auth_login_p.add_argument("--provider", type=str, required=True, help="claude|codex|gemini|grok")
+    auth_login_p = auth_sub.add_parser(
+        "login", help="Interactive login to save browser session into wallet"
+    )
+    auth_login_p.add_argument(
+        "--provider", type=str, required=True, help="claude|codex|gemini|grok"
+    )
     auth_login_p.add_argument(
         "--headless",
         action="store_true",
@@ -1608,17 +1726,25 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Create a new receipt before attaching evidence",
     )
-    auth_login_p.add_argument("--verbose", action="store_true", help="Print full JSON card")
+    auth_login_p.add_argument(
+        "--verbose", action="store_true", help="Print full JSON card"
+    )
     auth_login_p.add_argument("--json", action="store_true", help="Print raw JSON card")
 
-    auth_ask_p = auth_sub.add_parser("ask", help="Ask via stored browser session (subscription/web; unmetered usage)")
-    auth_ask_p.add_argument("--provider", type=str, required=True, help="claude|codex|gemini|grok")
+    auth_ask_p = auth_sub.add_parser(
+        "ask", help="Ask via stored browser session (subscription/web; unmetered usage)"
+    )
+    auth_ask_p.add_argument(
+        "--provider", type=str, required=True, help="claude|codex|gemini|grok"
+    )
     auth_ask_p.add_argument(
         "prompt",
         type=str,
         help="Prompt to send (stored under receipt raw/ when attached)",
     )
-    auth_ask_p.add_argument("--yes", action="store_true", help="Skip confirmation prompt")
+    auth_ask_p.add_argument(
+        "--yes", action="store_true", help="Skip confirmation prompt"
+    )
     auth_ask_p.add_argument(
         "--no-humble",
         action="store_true",
@@ -1657,14 +1783,18 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Create a new receipt before attaching evidence",
     )
-    auth_ask_p.add_argument("--verbose", action="store_true", help="Print full JSON card")
+    auth_ask_p.add_argument(
+        "--verbose", action="store_true", help="Print full JSON card"
+    )
     auth_ask_p.add_argument("--json", action="store_true", help="Print raw JSON card")
 
     auth_capture_p = auth_sub.add_parser(
         "capture",
         help="Capture browser session into wallet (manual login; no prompt send)",
     )
-    auth_capture_p.add_argument("--provider", type=str, required=True, help="claude|codex|gemini|grok")
+    auth_capture_p.add_argument(
+        "--provider", type=str, required=True, help="claude|codex|gemini|grok"
+    )
     auth_capture_p.add_argument(
         "--headless",
         action="store_true",
@@ -1698,14 +1828,20 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Create a new receipt before attaching evidence",
     )
-    auth_capture_p.add_argument("--verbose", action="store_true", help="Print full JSON card")
-    auth_capture_p.add_argument("--json", action="store_true", help="Print raw JSON card")
+    auth_capture_p.add_argument(
+        "--verbose", action="store_true", help="Print full JSON card"
+    )
+    auth_capture_p.add_argument(
+        "--json", action="store_true", help="Print raw JSON card"
+    )
 
     auth_open_p = auth_sub.add_parser(
         "open",
         help="Open chat page with saved wallet session (manual use; no prompt send)",
     )
-    auth_open_p.add_argument("--provider", type=str, required=True, help="claude|codex|gemini|grok")
+    auth_open_p.add_argument(
+        "--provider", type=str, required=True, help="claude|codex|gemini|grok"
+    )
     auth_open_p.add_argument(
         "--headless",
         action="store_true",
@@ -1739,10 +1875,14 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Create a new receipt before attaching evidence",
     )
-    auth_open_p.add_argument("--verbose", action="store_true", help="Print full JSON card")
+    auth_open_p.add_argument(
+        "--verbose", action="store_true", help="Print full JSON card"
+    )
     auth_open_p.add_argument("--json", action="store_true", help="Print raw JSON card")
 
-    auth_doctor_p = auth_sub.add_parser("doctor", help="Diagnose auth/session issues (read-only)")
+    auth_doctor_p = auth_sub.add_parser(
+        "doctor", help="Diagnose auth/session issues (read-only)"
+    )
     auth_doctor_p.add_argument(
         "--provider",
         type=str,
@@ -1765,13 +1905,25 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Create a new receipt before attaching evidence",
     )
-    auth_doctor_p.add_argument("--verbose", action="store_true", help="Print full JSON card")
-    auth_doctor_p.add_argument("--json", action="store_true", help="Print raw JSON card")
+    auth_doctor_p.add_argument(
+        "--verbose", action="store_true", help="Print full JSON card"
+    )
+    auth_doctor_p.add_argument(
+        "--json", action="store_true", help="Print raw JSON card"
+    )
 
-    handoff_p = sub.add_parser("handoff", help="Generate standardized Handoff Message (Serenity)")
-    handoff_p.add_argument("--to", type=str, default="", help="Target agent name (e.g. Codex, Grok)")
-    handoff_p.add_argument("--task", type=str, default="Continue task", help="Description of next task")
-    handoff_p.add_argument("--receipt", type=str, default="", help="Receipt dir name to link")
+    handoff_p = sub.add_parser(
+        "handoff", help="Generate standardized Handoff Message (Serenity)"
+    )
+    handoff_p.add_argument(
+        "--to", type=str, default="", help="Target agent name (e.g. Codex, Grok)"
+    )
+    handoff_p.add_argument(
+        "--task", type=str, default="Continue task", help="Description of next task"
+    )
+    handoff_p.add_argument(
+        "--receipt", type=str, default="", help="Receipt dir name to link"
+    )
     handoff_p.add_argument("--latest", action="store_true", help="Use latest receipt")
 
     args = ap.parse_args(argv)
@@ -1780,7 +1932,9 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "receipt":
             repo_root = _find_repo_root()
             if repo_root is None:
-                raise RuntimeError("Repo root not found (missing scripts/receipt_bundle.py)")
+                raise RuntimeError(
+                    "Repo root not found (missing scripts/receipt_bundle.py)"
+                )
             try:
                 receipt_dir = _create_receipt(repo_root, out_name=str(args.out or ""))
             except Exception as e:
@@ -1803,7 +1957,9 @@ def main(argv: list[str] | None = None) -> int:
             receipt_dir: Path | None = None
             if args.refresh or args.receipt or args.latest:
                 if repo_root is None:
-                    raise RuntimeError("Repo root not found (missing scripts/receipt_bundle.py)")
+                    raise RuntimeError(
+                        "Repo root not found (missing scripts/receipt_bundle.py)"
+                    )
 
                 if args.refresh:
                     out_name = ""
@@ -1813,7 +1969,9 @@ def main(argv: list[str] | None = None) -> int:
                 elif args.receipt:
                     receipt_dir = _resolve_receipt_dir(repo_root, args.receipt)
                 else:
-                    receipt_dir = _latest_receipt_dir(repo_root) if args.latest else None
+                    receipt_dir = (
+                        _latest_receipt_dir(repo_root) if args.latest else None
+                    )
 
             card = _toolflow_run(
                 repo_root=repo_root,
@@ -1829,7 +1987,9 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "status":
             repo_root = _find_repo_root()
             if repo_root is None:
-                raise RuntimeError("Repo root not found (missing scripts/receipt_bundle.py)")
+                raise RuntimeError(
+                    "Repo root not found (missing scripts/receipt_bundle.py)"
+                )
 
             receipt_dir: Path | None = None
             if args.refresh:
@@ -1879,7 +2039,9 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "verify":
             repo_root = _find_repo_root()
             if repo_root is None:
-                raise RuntimeError("Repo root not found (missing scripts/receipt_bundle.py)")
+                raise RuntimeError(
+                    "Repo root not found (missing scripts/receipt_bundle.py)"
+                )
 
             receipt_dir: Path | None = None
             if args.refresh or args.receipt or args.latest:
@@ -1891,7 +2053,9 @@ def main(argv: list[str] | None = None) -> int:
                 elif args.receipt:
                     receipt_dir = _resolve_receipt_dir(repo_root, args.receipt)
                 else:
-                    receipt_dir = _latest_receipt_dir(repo_root) if args.latest else None
+                    receipt_dir = (
+                        _latest_receipt_dir(repo_root) if args.latest else None
+                    )
 
             result = _verify_run(
                 repo_root=repo_root,
@@ -1910,7 +2074,9 @@ def main(argv: list[str] | None = None) -> int:
         if args.command in {"explain", "edu"}:
             repo_root = _find_repo_root()
             if repo_root is None:
-                raise RuntimeError("Repo root not found (missing scripts/receipt_bundle.py)")
+                raise RuntimeError(
+                    "Repo root not found (missing scripts/receipt_bundle.py)"
+                )
 
             receipt_dir: Path | None = None
             if args.refresh:
@@ -1967,7 +2133,9 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "auth":
             repo_root = _find_repo_root()
             if repo_root is None:
-                raise RuntimeError("Repo root not found (missing scripts/receipt_bundle.py)")
+                raise RuntimeError(
+                    "Repo root not found (missing scripts/receipt_bundle.py)"
+                )
 
             receipt_dir: Path | None = None
             # Receipt selection rules (SSOT discipline):
@@ -1978,7 +2146,10 @@ def main(argv: list[str] | None = None) -> int:
             #    so failures remain actionable (raw evidence exists). (No secrets are written into receipt.)
             if bool(getattr(args, "refresh", False)):
                 out_name = ""
-                if getattr(args, "receipt", "") and not Path(str(args.receipt)).is_absolute():
+                if (
+                    getattr(args, "receipt", "")
+                    and not Path(str(args.receipt)).is_absolute()
+                ):
                     out_name = str(args.receipt)
                 receipt_dir = _create_receipt(repo_root, out_name=out_name)
             elif getattr(args, "receipt", ""):
@@ -2015,7 +2186,9 @@ def main(argv: list[str] | None = None) -> int:
                 # Browser engine selection (explicit for Serenity / predictability)
                 old_engine = os.environ.get("AFO_BROWSER_ENGINE")
                 old_keep = os.environ.get("AFO_KEEP_BROWSER_OPEN")
-                os.environ["AFO_BROWSER_ENGINE"] = str(getattr(args, "browser", "system-chrome"))
+                os.environ["AFO_BROWSER_ENGINE"] = str(
+                    getattr(args, "browser", "system-chrome")
+                )
                 if bool(getattr(args, "keep_open", False)):
                     os.environ["AFO_KEEP_BROWSER_OPEN"] = "1"
                 else:
@@ -2049,7 +2222,9 @@ def main(argv: list[str] | None = None) -> int:
             if args.auth_command == "capture":
                 old_engine = os.environ.get("AFO_BROWSER_ENGINE")
                 old_keep = os.environ.get("AFO_KEEP_BROWSER_OPEN")
-                os.environ["AFO_BROWSER_ENGINE"] = str(getattr(args, "browser", "system-chrome"))
+                os.environ["AFO_BROWSER_ENGINE"] = str(
+                    getattr(args, "browser", "system-chrome")
+                )
                 if bool(getattr(args, "keep_open", False)):
                     os.environ["AFO_KEEP_BROWSER_OPEN"] = "1"
                 else:
@@ -2085,8 +2260,12 @@ def main(argv: list[str] | None = None) -> int:
             if args.auth_command == "open":
                 old_engine = os.environ.get("AFO_BROWSER_ENGINE")
                 old_keep = os.environ.get("AFO_KEEP_BROWSER_OPEN")
-                os.environ["AFO_BROWSER_ENGINE"] = str(getattr(args, "browser", "system-chrome"))
-                keep_open = bool(getattr(args, "keep_open", False)) or not bool(getattr(args, "headless", False))
+                os.environ["AFO_BROWSER_ENGINE"] = str(
+                    getattr(args, "browser", "system-chrome")
+                )
+                keep_open = bool(getattr(args, "keep_open", False)) or not bool(
+                    getattr(args, "headless", False)
+                )
                 if keep_open:
                     os.environ["AFO_KEEP_BROWSER_OPEN"] = "1"
                 else:
@@ -2125,7 +2304,9 @@ def main(argv: list[str] | None = None) -> int:
                     print(
                         "⚠️  This will open a browser and TRY to send a message via your subscription session (best-effort; UI may change)."
                     )
-                    print("   Tip: For a stable flow, use `sixxon auth open` and interact manually.")
+                    print(
+                        "   Tip: For a stable flow, use `sixxon auth open` and interact manually."
+                    )
                     resp = input("Continue? (y/N): ").strip().lower()
                     if resp not in {"y", "yes"}:
                         print(
@@ -2138,7 +2319,9 @@ def main(argv: list[str] | None = None) -> int:
 
                 old_engine = os.environ.get("AFO_BROWSER_ENGINE")
                 old_keep = os.environ.get("AFO_KEEP_BROWSER_OPEN")
-                os.environ["AFO_BROWSER_ENGINE"] = str(getattr(args, "browser", "system-chrome"))
+                os.environ["AFO_BROWSER_ENGINE"] = str(
+                    getattr(args, "browser", "system-chrome")
+                )
                 if bool(getattr(args, "keep_open", False)):
                     os.environ["AFO_KEEP_BROWSER_OPEN"] = "1"
                 else:

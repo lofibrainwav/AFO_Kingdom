@@ -3,10 +3,11 @@ import os
 import pathlib
 import sys
 
-
 # Set path
 sys.path.append(
-    pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")).resolve()
+    pathlib.Path(
+        os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")
+    ).resolve()
 )
 
 import pathlib
@@ -22,13 +23,11 @@ async def main():
 
     # Read existing
     if pathlib.Path(target_path).exists():
-        with pathlib.Path(target_path).open(encoding="utf-8") as f:
-            original = f.read()
+        original = pathlib.Path(target_path).read_text(encoding="utf-8")
 
     # Sabotage it (Remove Glassmorphism) to test Juyu
     rough_code = original.replace("glass-card", "bg-gray-500")
-    with pathlib.Path(target_path).open("w", encoding="utf-8") as f:
-        f.write(rough_code)
+    pathlib.Path(target_path).write_text(rough_code, encoding="utf-8")
     print("\n[Setup] Sabotaged Widget (Removed 'glass-card' token)")
 
     # 2. Run Juyu
@@ -37,11 +36,12 @@ async def main():
     print(f"Result: {result}")
 
     # 3. Verify
-    with pathlib.Path(target_path).open(encoding="utf-8") as f:
-        final_code = f.read()
+    final_code = pathlib.Path(target_path).read_text(encoding="utf-8")
 
     if "glass-card" in final_code:
-        print("\n✅ Phase 16-3 COMPLETE: Juyu successfully injected 'glass-card' token.")
+        print(
+            "\n✅ Phase 16-3 COMPLETE: Juyu successfully injected 'glass-card' token."
+        )
     else:
         print("\n❌ PHASE 16-3 FAILED: 'glass-card' token missing.")
 

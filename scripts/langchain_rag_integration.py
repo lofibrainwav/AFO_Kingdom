@@ -23,14 +23,10 @@ def run_simulation(query):
         answer = "Phase 11에서 학습된 Custom BERT 모델의 정확도는 98.25%입니다. 眞·善·美·孝·永 5기둥을 분류하도록 최적화되었습니다."
         source = "AFO_EVOLUTION_LOG.md"
     elif "phase 10" in query.lower():
-        answer = (
-            "Phase 10은 Matrix Stream Visualization으로, 실시간 사고 시각화(SSE)를 구현했습니다."
-        )
+        answer = "Phase 10은 Matrix Stream Visualization으로, 실시간 사고 시각화(SSE)를 구현했습니다."
         source = "walkthrough.md"
     else:
-        answer = (
-            "왕국의 기록에 따르면, 현재 시스템은 Trinity Score 85% 이상을 유지하며 순항 중입니다."
-        )
+        answer = "왕국의 기록에 따르면, 현재 시스템은 Trinity Score 85% 이상을 유지하며 순항 중입니다."
         source = "General Logs"
 
     print(f"\n✅ Answer: {answer}")

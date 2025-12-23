@@ -3,18 +3,20 @@ import os
 import pathlib
 import sys
 
-
 # Setup path
-sys.path.append(pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages")).resolve())
 sys.path.append(
-    pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")).resolve()
+    pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages")).resolve()
+)
+sys.path.append(
+    pathlib.Path(
+        os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")
+    ).resolve()
 )
 
 import contextlib
 
 from config.friction_calibrator import friction_calibrator
 from services.trinity_calculator import trinity_calculator
-
 
 with contextlib.suppress(ImportError):
     pass
@@ -34,7 +36,9 @@ async def verify_loop():
     print(f"🔹 Baseline Trinity Score: {trinity_baseline}")
 
     if friction_baseline.score < 90:
-        print("⚠️ Note: Baseline friction present. Check environment (e.g., prod using env mode).")
+        print(
+            "⚠️ Note: Baseline friction present. Check environment (e.g., prod using env mode)."
+        )
 
     # 2. Induce Financial Friction (Simulate Float usage hack)
     # We can't easily change the type of self.monthly_spending dynamically without being messy,

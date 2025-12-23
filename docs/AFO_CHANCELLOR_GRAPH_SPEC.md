@@ -33,11 +33,14 @@ Chancellor Graph는 쿼리 실행 전 **Trinity Score**와 **Risk Score**를 평
 ## Ⅲ. Trinity Score 산출 공식 (The Formula)
 
 ### 1. 점수 결합 비율 (7:3 Rule)
+
 각 MCP 도구/스킬 실행 시 점수는 다음 비율로 결합됩니다.
+
 - **정적 점수 (Static)**: **70%** (본질적 철학 점수)
 - **동적 점수 (Dynamic)**: **30%** (실행 성공여부, 속도, 안전성)
 
 ### 2. SSOT 가중치 (5 Pillar Weights)
+
 - **眞 (Truth)**: 35%
 - **善 (Goodness)**: 35%
 - **美 (Beauty)**: 20%
@@ -68,6 +71,7 @@ Chancellor Graph는 쿼리 실행 전 **Trinity Score**와 **Risk Score**를 평
 ## Ⅵ. 실제 라우팅 사례 (Git 히스토리 기반)
 
 ### 사례 1: 코드 품질 개선 (眞 - Truth)
+
 - **커밋**: `6d4cd4c` - "chore: unify Ruff config + auto-fix 235 issues"
 - **Trinity Score**: 眞 95, 善 90, 美 85, 孝 95, 永 90 = **91.25**
 - **Risk Score**: 5 (코드 품질 개선, 낮은 리스크)
@@ -75,6 +79,7 @@ Chancellor Graph는 쿼리 실행 전 **Trinity Score**와 **Risk Score**를 평
 - **결과**: 235개 이슈 자동 수정 성공
 
 ### 사례 2: 보안 강화 (善 - Goodness)
+
 - **커밋**: `80d9a61` - "🔒 Docker Security Hardening (CIS Benchmark Level 2)"
 - **Trinity Score**: 眞 90, 善 100, 美 80, 孝 90, 永 95 = **91.5**
 - **Risk Score**: 15 (보안 변경, 중간 리스크)
@@ -82,6 +87,7 @@ Chancellor Graph는 쿼리 실행 전 **Trinity Score**와 **Risk Score**를 평
 - **결과**: 사용자 승인 후 실행, CIS Benchmark Level 2 달성
 
 ### 사례 3: v100.0 달성 (永 - Eternity)
+
 - **커밋**: `b2e4589` - "feat: AFO Kingdom v100.0 - Eternal Digital Robot Ascended"
 - **Trinity Score**: 眞 95, 善 95, 美 95, 孝 100, 永 100 = **96.25**
 - **Risk Score**: 8 (주요 버전 업그레이드, 낮은 리스크)
@@ -89,6 +95,7 @@ Chancellor Graph는 쿼리 실행 전 **Trinity Score**와 **Risk Score**를 평
 - **결과**: v100.0 성공적으로 달성
 
 ### 사례 4: Digital Royal Palace 완성 (美 - Beauty)
+
 - **커밋**: `9a533eb` - "feat(genesis): complete digital royal palace & stabilize test suite"
 - **Trinity Score**: 眞 90, 善 85, 美 100, 孝 95, 永 90 = **91.0**
 - **Risk Score**: 7 (UI/UX 개선, 낮은 리스크)
@@ -96,6 +103,7 @@ Chancellor Graph는 쿼리 실행 전 **Trinity Score**와 **Risk Score**를 평
 - **결과**: 디지털 왕궁 완성, 테스트 안정화
 
 ### 사례 5: MCP Ecosystem 통합 (孝 - Serenity)
+
 - **커밋**: `d856bcb` - "feat: MCP Ecosystem 대통합 완료"
 - **Trinity Score**: 眞 95, 善 90, 美 85, 孝 100, 永 90 = **92.0**
 - **Risk Score**: 12 (대규모 통합, 중간 리스크)
@@ -129,6 +137,74 @@ Chancellor Graph는 쿼리 실행 전 **Trinity Score**와 **Risk Score**를 평
 
 ---
 
-**작성일**: 2025-12-18  
-**최종 업데이트**: 2025-12-22 (Git 히스토리 기반 실제 사례 추가)  
+## Observability & Traceability (Sealed)
+
+### Identity Model
+
+- trace_id: request-level unique id (API/middleware)
+- graph_node_id + step: internal reasoning/execution address (Chancellor Graph)
+
+Relationship:
+
+- trace_id
+  - graph_node_id + step
+  - verdict(rule_id, metrics)
+
+### Node Flow
+
+1) node_01_init (step 1)
+2) node_02_tot (step 2, conditional)
+   - condition: complexity_score >= TOT_THRESHOLD
+3) node_03_eval (step 3)
+4) node_04_gate (step 4)
+5) node_04_verdict (step 41)
+6) node_05_exec (step 5)
+
+### Checkpoint Key Schema (Redis)
+
+checkpoint:{trace_id}:{graph_node_id}:{step}
+
+Example:
+checkpoint:trc_9f31:node_04_gate:4
+
+### SSE Channel Schema (Redis PubSub)
+
+sse:chancellor_verdict:{trace_id}
+
+### Redis TTL Configuration (Operational Standard)
+
+**Default TTL**: 7 days (604,800 seconds)
+
+- **Purpose**: Balance between historical analysis and storage efficiency
+- **Rationale**: Most decision audit needs occur within 1 week of execution
+- **Override**: Configurable via `VerdictLogger` constructor parameter
+- **Monitoring**: TTL expiration does not delete SSE real-time functionality
+
+### Verdict Event Payload (SSOT)
+
+{
+  "trace_id": "trc_9f31",
+  "graph_node_id": "node_04_verdict",
+  "step": 41,
+  "decision": "AUTO_RUN",
+  "rule_id": "R4_AUTORUN_THRESHOLD",
+  "trinity_score": 91.65,
+  "risk_score": 5.0,
+  "flags": { "dry_run": false, "residual_doubt": false },
+  "timestamp": "2025-12-22T11:32:01Z",
+  "extra": {}
+}
+
+### rule_id Registry
+
+- R1_DRY_RUN_OVERRIDE
+- R2_RESIDUAL_DOUBT
+- R3_VETO_LOW_PILLARS
+- R4_AUTORUN_THRESHOLD
+- R5_FALLBACK_ASK
+
+---
+
+**작성일**: 2025-12-18
+**최종 업데이트**: 2025-12-22 (Git 히스토리 기반 실제 사례 추가 + Observability 구현)
 **승인**: Commander (형님)

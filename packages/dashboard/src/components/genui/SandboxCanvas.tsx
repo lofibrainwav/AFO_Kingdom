@@ -10,11 +10,11 @@
  */
 "use client";
 
-import React, { useState, useMemo, useCallback } from "react";
-import { Sparkles, Terminal, AlertTriangle, Play } from "lucide-react";
-import * as GenUIRegistry from "./index";
-import { logError } from "@/lib/logger";
 import ErrorBoundary from "@/components/common/ErrorBoundary";
+import { logError } from "@/lib/logger";
+import { AlertTriangle, Play, Sparkles, Terminal } from "lucide-react";
+import React, { useCallback, useMemo, useState } from "react";
+import * as GenUIRegistry from "./index";
 
 // Types for API
 interface GenUIRequest {
@@ -184,7 +184,7 @@ function SandboxCanvasContent() {
             disabled={isButtonDisabled}
             className={`w-full py-3 rounded-lg font-bold flex items-center justify-center gap-2 transition-all ${buttonStyles}`}
             aria-label={loading ? "Generating component" : "Generate component"}
-            aria-disabled={isButtonDisabled}
+            aria-disabled={isButtonDisabled ? "true" : "false"}
           >
             {loading ? (
               <>

@@ -119,7 +119,9 @@ class DreamProtocol:
         contract.status = "ANALYZED"
         return True
 
-    def execute_dream(self, dream_id: str, trinity_score: dict[str, float]) -> dict[str, Any]:
+    def execute_dream(
+        self, dream_id: str, trinity_score: dict[str, float]
+    ) -> dict[str, Any]:
         """Execute dream with Trinity Score validation"""
         if dream_id not in self.active_dreams:
             return {"status": "BLOCKED", "reason": "Dream not found"}

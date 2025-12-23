@@ -8,9 +8,10 @@ import os
 import pathlib
 import sys
 
-
 # 경로 추가
-sys.path.insert(0, os.path.join(pathlib.Path(__file__).parent, "..", "packages", "afo-core"))
+sys.path.insert(
+    0, os.path.join(pathlib.Path(__file__).parent, "..", "packages", "afo-core")
+)
 
 
 def test_trinity_validator():

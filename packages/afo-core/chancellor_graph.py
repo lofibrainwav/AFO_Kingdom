@@ -20,9 +20,11 @@ except ImportError:
 
 # Internal Modules
 try:
+    from AFO.chancellor.node_04_verdict import emit_verdict
     from AFO.config.antigravity import antigravity
     from AFO.config.settings import get_settings
     from AFO.constitution.constitutional_ai import AFOConstitution
+    from AFO.observability.verdict_logger import VerdictLogger
     from services.trinity_calculator import trinity_calculator
     from strategists import sima_yi, zhou_yu, zhuge_liang
     from tigers import guan_yu, huang_zhong, ma_chao, zhang_fei, zhao_yun
@@ -33,6 +35,8 @@ except ImportError as e:
     print(f"⚠️ Import Warning: {e} - Running in Safe Mode")
     # Define mocks or allow failure
     zhuge_liang: Any = None  # type: ignore[no-redef]
+    VerdictLogger: Any = None  # type: ignore[no-redef]
+    emit_verdict: Any = None  # type: ignore[no-redef]
 
 
 class ChancellorState(TypedDict):
@@ -223,7 +227,7 @@ async def zhou_node(state: ChancellorState) -> dict[str, Any]:
 # Trinity Calculation
 async def trinity_node(state: ChancellorState) -> dict[str, Any]:
     """
-    [Trinity] 5기둥 점수 종합 및 의사결정 (PDF 계산기)
+    [Trinity] 5기둥 점수 종합 및 의사결정 (헌법 v1.0 + Amendment 0001 준수)
     """
     results = state.get("analysis_results", {})
 
@@ -255,6 +259,40 @@ async def trinity_node(state: ChancellorState) -> dict[str, Any]:
         score = trinity_calculator.calculate_trinity_score(raw_scores)
     else:
         score = sum(raw_scores) * 20
+
+    # === 헌법 v1.0 + Amendment 0001: 개별 증거 거부권 적용 ===
+    try:
+        from AFO.constitution.constitution_v1_0 import VETO_PILLARS, VETO_THRESHOLD
+
+        # 개별 pillar 점수 확인 (0-1 scale로 변환)
+        pillar_scores = {
+            "truth": normalize(t),
+            "goodness": normalize(g),
+            "beauty": normalize(b),
+            "serenity": normalize(s),
+            "eternity": normalize(e),
+        }
+
+        # 거부권 행사 pillar들 확인 (眞·善·美 중 VETO_THRESHOLD 미만)
+        veto_triggered = False
+        low_pillars = []
+
+        for pillar in VETO_PILLARS:
+            pillar_score_0_100 = pillar_scores[pillar] * 100  # 0-100 scale로 변환
+            if pillar_score_0_100 < VETO_THRESHOLD:
+                veto_triggered = True
+                low_pillars.append(f"{pillar}:{pillar_score_0_100:.1f}")
+
+        # 거부권 행사 시 Trinity Score 무효화
+        if veto_triggered:
+            score = 0.0  # 강제 0점 처리
+            log_sse(
+                f"🚫 [VETO] Amendment 0001 Activated: Low pillars {low_pillars} (< {VETO_THRESHOLD})"
+            )
+            log_sse("⚖️ [Trinity] VETO: Score forced to 0.0 - Commander approval required")
+
+    except ImportError:
+        log_sse("⚠️ [Constitution] v1.0 not loaded - running legacy mode")
 
     log_sse(f"⚖️ [Trinity] Score: {score}/100, Risk: {risk_score}")
     return {
@@ -304,20 +342,122 @@ async def tigers_node(state: ChancellorState) -> dict[str, Any]:
         reason = "Low Score" if score < 90.0 else "High Risk"
         log_sse(f"✋ [Tigers] ASK_COMMANDER - {reason} ({score}/{risk})")
 
+    # [Observability] Emit Verdict Event
+    if VerdictLogger and emit_verdict:
+        try:
+            # Create logger instance with Redis (실제 SSE 전송을 위해)
+            from AFO.utils.redis_saver import get_redis_client
+
+            redis_client = get_redis_client()
+            logger = VerdictLogger(redis=redis_client)
+
+            # Determine rule_id based on decision logic
+            if score >= 90.0 and risk <= 10.0:
+                rule_id = "R4_AUTORUN_THRESHOLD"
+                decision = "AUTO_RUN"
+            else:
+                rule_id = "R5_FALLBACK_ASK" if score < 90.0 else "R3_VETO_LOW_PILLARS"
+                decision = "ASK"
+
+            # Generate trace_id from query or use fallback
+            trace_id = f"trc_{hash(state.get('query', 'unknown')) % 10000:04d}"
+
+            # Emit verdict event
+            verdict_result = emit_verdict(
+                logger=logger,
+                trace_id=trace_id,
+                decision=decision,
+                rule_id=rule_id,
+                trinity_score=score,
+                risk_score=risk,
+                dry_run_default=is_dry_run,
+                residual_doubt=bool(risk > 50.0),  # High risk indicates doubt
+                extra={
+                    "query": state.get("query", ""),
+                    "status": status,
+                    "reason": reason if "reason" in locals() else None,
+                },
+            )
+            log_sse(
+                f"📊 [Verdict] Emitted: {decision} via {rule_id} (Score: {score:.1f}, Risk: {risk:.1f})"
+            )
+        except Exception as e:
+            log_sse(f"⚠️ [Verdict] Logging failed: {e}")
+
     return {"status": status, "results": results}
 
 
-# Historian Recording
+# Historian Recording (with Verdict Logging)
 async def historian_node(state: ChancellorState) -> dict[str, Any]:
     """
-    [Historian] 영(永) 기록 보관
+    [Historian] 영(永) 기록 보관 + Execution Verdict 로깅
     """
+    # Legacy historian recording
     await Historian.record(
         state.get("query", "Unknown"),
         state.get("trinity_score", 0.0),
         state.get("status", "Unknown"),
         metadata=state.get("context", {}),
     )
+
+    # [Observability] Emit execution verdict event
+    if VerdictLogger and emit_verdict:
+        try:
+            # Create logger instance with Redis (실제 SSE 전송을 위해)
+            from AFO.utils.redis_saver import get_redis_client
+
+            redis_client = get_redis_client()
+            logger = VerdictLogger(redis=redis_client)
+
+            # Generate execution verdict based on results
+            results = state.get("results", {})
+            trinity_score = state.get("trinity_score", 0.0)
+
+            # Determine execution success/failure
+            if results and any("Success" in str(v) for v in results.values()):
+                decision = "AUTO_RUN"
+                rule_id = "R4_AUTORUN_THRESHOLD"
+                status = "EXECUTION_SUCCESS"
+            elif "DRY_RUN" in state.get("status", ""):
+                decision = "AUTO_RUN"
+                rule_id = "R1_DRY_RUN_OVERRIDE"
+                status = "DRY_RUN_SUCCESS"
+            else:
+                decision = "ASK"
+                rule_id = "R5_FALLBACK_ASK"
+                status = "EXECUTION_PENDING"
+
+            # Generate trace_id from query (consistent with node_04)
+            trace_id = f"trc_{hash(state.get('query', 'unknown')) % 10000:04d}"
+
+            # Calculate execution metrics (latency, success rate, etc.)
+            import time
+
+            execution_time = time.time()  # Placeholder - would be measured in real implementation
+
+            # Emit execution verdict event
+            verdict_result = emit_verdict(
+                logger=logger,
+                trace_id=trace_id,
+                decision=decision,
+                rule_id=rule_id,
+                trinity_score=trinity_score,
+                risk_score=0.0,  # Execution phase has no additional risk
+                dry_run_default=False,  # Execution already happened
+                residual_doubt=False,  # Execution completed
+                graph_node_id="node_05_exec",
+                step=5,
+                extra={
+                    "query": state.get("query", ""),
+                    "status": status,
+                    "execution_results": results,
+                    "execution_time": execution_time,
+                },
+            )
+            log_sse(f"📊 [Execution Verdict] Emitted: {decision} via {rule_id} (Status: {status})")
+        except Exception as e:
+            log_sse(f"⚠️ [Execution Verdict] Logging failed: {e}")
+
     return {}
 
 

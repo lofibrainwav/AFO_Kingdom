@@ -64,7 +64,9 @@ def auto_retry(
                     if attempt < config.max_retries - 1:
                         delay = config.base_delay
                         if config.exponential:
-                            delay = min(config.base_delay * (2**attempt), config.max_delay)
+                            delay = min(
+                                config.base_delay * (2**attempt), config.max_delay
+                            )
                         logger.warning(
                             f"[孝] 재시도 {attempt + 1}/{config.max_retries}: "
                             f"{func.__name__} ({e}) - {delay:.1f}s 대기"
@@ -112,7 +114,9 @@ def async_auto_retry(
                     if attempt < config.max_retries - 1:
                         delay = config.base_delay
                         if config.exponential:
-                            delay = min(config.base_delay * (2**attempt), config.max_delay)
+                            delay = min(
+                                config.base_delay * (2**attempt), config.max_delay
+                            )
                         logger.warning(
                             f"[孝] 비동기 재시도 {attempt + 1}/{config.max_retries}: "
                             f"{func.__name__} ({e}) - {delay:.1f}s 대기"

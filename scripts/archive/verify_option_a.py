@@ -9,9 +9,10 @@ import asyncio
 import os
 import sys
 
-
 # Add package root to path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../packages/afo-core")))
+sys.path.append(
+    os.path.abspath(os.path.join(os.path.dirname(__file__), "../packages/afo-core"))
+)
 
 from AFO.services.trinity_calculator import trinity_calculator
 from AFO.utils.cache_utils import cache
@@ -32,7 +33,9 @@ async def verify():
     assert score_dynamic == 100.0
 
     # Case 2: Hybrid (Static 50, Dynamic 100) -> 50*0.7 + 100*0.3 = 35 + 30 = 65
-    score_hybrid = trinity_calculator.calculate_trinity_score(raw_scores, static_score=50.0)
+    score_hybrid = trinity_calculator.calculate_trinity_score(
+        raw_scores, static_score=50.0
+    )
     print(f"   - Hybrid (Static 50, Dynamic 100): {score_hybrid} (Expected 65.0)")
     assert score_hybrid == 65.0
     print("   ✅ Trinity Logic Verified\n")

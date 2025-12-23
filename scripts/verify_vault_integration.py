@@ -2,14 +2,11 @@ import os
 import pathlib
 import sys
 
-
 # Add package root to path
 sys.path.append(os.path.join(pathlib.Path.cwd(), "packages/afo-core"))
 
-from config.settings import settings
-
 from AFO.security.vault_manager import vault
-
+from config.settings import settings
 
 print("🛡️ Vault Integration Verification 🛡️")
 print("-" * 40)
@@ -42,7 +39,9 @@ try:
     if retrieved_val == test_val:
         print(f"✅ Vault Priority Check PASSED: Retrieved '{retrieved_val}'")
     else:
-        print(f"❌ Vault Priority Check FAILED: Expected '{test_val}', got '{retrieved_val}'")
+        print(
+            f"❌ Vault Priority Check FAILED: Expected '{test_val}', got '{retrieved_val}'"
+        )
 
     # Cleanup
     if vault.wallet:

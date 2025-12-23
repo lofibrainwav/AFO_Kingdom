@@ -249,7 +249,12 @@ class Context7MCP:
             results.append(Context7MCP.KNOWLEDGE_BASE["AFO_ARCHITECTURE"])
 
         # Trinity Philosophy queries
-        if "TRINITY" in query_upper or "PHILOSOPHY" in query_upper or "SCORE" in query_upper or "SOUL" in query_upper:
+        if (
+            "TRINITY" in query_upper
+            or "PHILOSOPHY" in query_upper
+            or "SCORE" in query_upper
+            or "SOUL" in query_upper
+        ):
             results.append(Context7MCP.KNOWLEDGE_BASE["TRINITY_PHILOSOPHY"])
 
         # Sixxon Body queries
@@ -270,12 +275,16 @@ class Context7MCP:
 
         # Deployment queries
         deploy_keywords = ["DEPLOY", "DOCKER", "KUBERNETES", "배포", "컨테이너"]
-        if any(kw in query_upper for kw in deploy_keywords) or any(kw in query for kw in ["배포", "컨테이너"]):
+        if any(kw in query_upper for kw in deploy_keywords) or any(
+            kw in query for kw in ["배포", "컨테이너"]
+        ):
             results.append(Context7MCP.KNOWLEDGE_BASE["DEPLOYMENT"])
 
         # Configuration queries
         config_keywords = ["CONFIG", "SETTING", "ENV", "환경", "설정"]
-        if any(kw in query_upper for kw in config_keywords) or any(kw in query for kw in ["환경", "설정"]):
+        if any(kw in query_upper for kw in config_keywords) or any(
+            kw in query for kw in ["환경", "설정"]
+        ):
             results.append(Context7MCP.KNOWLEDGE_BASE["CONFIGURATION"])
 
         # Troubleshooting queries
@@ -294,7 +303,9 @@ class Context7MCP:
 
         # Documentation queries
         doc_keywords = ["DOC", "DOCUMENT", "문서", "문서화"]
-        if any(kw in query_upper for kw in doc_keywords) or any(kw in query for kw in ["문서", "문서화"]):
+        if any(kw in query_upper for kw in doc_keywords) or any(
+            kw in query for kw in ["문서", "문서화"]
+        ):
             results.append(Context7MCP.KNOWLEDGE_BASE["DOCUMENTATION"])
 
         # Obsidian Librarian queries
@@ -317,7 +328,8 @@ class Context7MCP:
             "전쟁론",
         ]
         if any(kw in query_upper for kw in royal_keywords) or any(
-            kw in query for kw in ["사서", "원칙", "헌법", "손자병법", "삼국지", "군주론", "전쟁론"]
+            kw in query
+            for kw in ["사서", "원칙", "헌법", "손자병법", "삼국지", "군주론", "전쟁론"]
         ):
             results.append(Context7MCP.KNOWLEDGE_BASE["ROYAL_LIBRARY"])
 

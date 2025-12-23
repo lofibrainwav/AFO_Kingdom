@@ -20,7 +20,6 @@ from __future__ import annotations
 import logging
 
 from AFO.api.compat import get_antigravity_control
-
 # [정기구독] CLI 기반 연동 (API 키 불필요)
 from AFO.llms.claude_cli import ClaudeCLIWrapper, claude_cli
 
@@ -62,7 +61,9 @@ class JaryongScholar:
     def _check_governance(self, action: str, code_context: str = "") -> bool:
         """Central Governance Check"""
         if not self.antigravity:
-            logger.warning("⚠️ [Jaryong] Governance control missing! Proceeding with CAUTION.")
+            logger.warning(
+                "⚠️ [Jaryong] Governance control missing! Proceeding with CAUTION."
+            )
             return True  # Fail open if system core missing (or fail closed depending on policy? Safe=Closed)
             # Let's Fail Closed for safety in Pure Antigravity
             # return False

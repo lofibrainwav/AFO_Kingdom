@@ -58,7 +58,9 @@ def get_ruff_stats() -> dict:
 def get_trinity_score() -> dict:
     """Get Trinity Score from trinity_score.json if exists."""
     try:
-        with Path(Path(__file__).parent / "trinity_score.json").open(encoding="utf-8") as f:
+        with Path(Path(__file__).parent / "trinity_score.json").open(
+            encoding="utf-8"
+        ) as f:
             data = json.load(f)
             scores = data.get("trinity", {}).get("scores", {})
             total = data.get("trinity", {}).get("total", 1.0)
@@ -101,7 +103,9 @@ def get_timeline() -> list:
         if i < len(lines) and lines[i]:
             parts = lines[i].split(" ", 1)
             if len(parts) == 2:
-                milestones.append({"num": i + 1, "hash": parts[0], "msg": parts[1][:50]})
+                milestones.append(
+                    {"num": i + 1, "hash": parts[0], "msg": parts[1][:50]}
+                )
 
     return milestones
 
@@ -118,12 +122,14 @@ def generate_html():
     # Calculate file count
     total_files = run_cmd("git ls-tree -r HEAD --name-only | wc -l").strip()
 
-    timeline_html = "\n".join([
-        f'<div class="timeline-item"><span class="timeline-num">#{m["num"]}</span>'
-        f'<span class="timeline-hash">{m["hash"]}</span>'
-        f'<span class="timeline-msg">{m["msg"]}</span></div>'
-        for m in timeline
-    ])
+    timeline_html = "\n".join(
+        [
+            f'<div class="timeline-item"><span class="timeline-num">#{m["num"]}</span>'
+            f'<span class="timeline-hash">{m["hash"]}</span>'
+            f'<span class="timeline-msg">{m["msg"]}</span></div>'
+            for m in timeline
+        ]
+    )
 
     html = f"""<!DOCTYPE html>
 <html lang="ko">
@@ -239,7 +245,9 @@ def generate_html():
     output_path = Path(__file__).parent / "kingdom_status.html"
     output_path.write_text(html)
     print(f"✅ Generated: {output_path}")
-    print(f"📊 Commits: {git['total']}, Trinity: {trinity['total']}, Ruff: {ruff['errors']}")
+    print(
+        f"📊 Commits: {git['total']}, Trinity: {trinity['total']}, Ruff: {ruff['errors']}"
+    )
 
 
 if __name__ == "__main__":

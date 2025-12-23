@@ -7,10 +7,11 @@ from unittest.mock import patch
 
 import pytest
 
-
 # Ensure AFO package is importable
 sys.path.append(
-    pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../../packages/afo-core")).resolve()
+    pathlib.Path(
+        os.path.join(pathlib.Path(__file__).parent, "../../packages/afo-core")
+    ).resolve()
 )
 
 from AFO.utils.cache_utils import cache, cached

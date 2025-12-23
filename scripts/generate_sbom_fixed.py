@@ -55,7 +55,9 @@ def run_cyclonedx_command(command: list[str], output_file: str | None = None) ->
                         with Path(output_file).open(encoding="utf-8") as f:
                             data = json.load(f)
                         components_count = len(data.get("components", []))
-                        print(f"✅ JSON 유효성 검증 통과: {components_count}개 컴포넌트")
+                        print(
+                            f"✅ JSON 유효성 검증 통과: {components_count}개 컴포넌트"
+                        )
                     except json.JSONDecodeError as e:
                         print(f"⚠️  JSON 유효성 검증 실패: {e}")
                         return False
@@ -116,7 +118,11 @@ def check_cyclonedx_availability() -> bool:
     """
     try:
         result = subprocess.run(
-            ["cyclonedx-py", "--help"], capture_output=True, text=True, timeout=10, check=False
+            ["cyclonedx-py", "--help"],
+            capture_output=True,
+            text=True,
+            timeout=10,
+            check=False,
         )
         return result.returncode == 0
     except (subprocess.TimeoutExpired, FileNotFoundError, subprocess.SubprocessError):

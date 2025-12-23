@@ -6,10 +6,9 @@ Centralized router registration system for organized API management.
 
 from fastapi import FastAPI
 
-from AFO.api.compat import (
+from AFO.api.compat import (  # Phase-specific routers; Core routers; Feature routers
     aicpa_router,
     auth_router,
-    # Phase-specific routers
     budget_router,
     chancellor_router,
     chat_router,
@@ -18,7 +17,6 @@ from AFO.api.compat import (
     finance_router,
     got_router,
     grok_stream_router,
-    # Core routers
     health_router,
     learning_log_router,
     learning_pipeline,
@@ -27,7 +25,6 @@ from AFO.api.compat import (
     multi_agent_router,
     n8n_router,
     personas_router,
-    # Feature routers
     pillars_router,
     rag_query_router,
     root_router,
@@ -236,6 +233,15 @@ def _register_phase_routers(app: FastAPI) -> None:
     if chancellor_router:
         app.include_router(chancellor_router)
         print("✅ 승상 API 라우터 등록 완료 (LangGraph Optimized: Chancellor + 3 Strategists)")
+
+    # System Stream Routes (SSE 실시간 스트리밍)
+    try:
+        from AFO.api.routes.system_stream import router as system_stream_router
+
+        app.include_router(system_stream_router)
+        print("✅ System Stream Router 등록 완료 (왕국의 신경계 SSE 스트리밍)")
+    except Exception as e:
+        print(f"⚠️ System Stream Router 등록 실패: {e}")
 
     # Operation Gwanggaeto: Julie Royal Tax (Goodness)
     try:

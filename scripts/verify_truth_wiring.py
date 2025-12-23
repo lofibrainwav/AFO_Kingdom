@@ -2,7 +2,6 @@ import sys
 
 import requests
 
-
 API_BASE = "http://localhost:8012"
 
 

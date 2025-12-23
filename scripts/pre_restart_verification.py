@@ -8,7 +8,6 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-
 # #region agent log
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 
@@ -93,11 +92,8 @@ def verify_code_changes():
 
     # 2. compat.py에서 라우터 로딩 확인
     try:
-        from AFO.api.compat import (
-            chancellor_router,
-            grok_stream_router,
-            learning_log_router,
-        )
+        from AFO.api.compat import (chancellor_router, grok_stream_router,
+                                    learning_log_router)
 
         results["compat_loading"] = {
             "learning_log": learning_log_router is not None,
@@ -142,7 +138,9 @@ def verify_code_changes():
         found = [p for p in target_paths if p in routes]
         results["app_routes"] = {"found": found, "total": len(routes)}
 
-        print(f"\n✅ 앱 라우트: {len(found)}/{len(target_paths)}개 발견 (총 {len(routes)}개)")
+        print(
+            f"\n✅ 앱 라우트: {len(found)}/{len(target_paths)}개 발견 (총 {len(routes)}개)"
+        )
         for path in found:
             print(f"   - {path}")
 
@@ -195,9 +193,7 @@ def verify_current_endpoints():
             status = (
                 "✅"
                 if response.status_code == 200
-                else "⚠️"
-                if response.status_code == 404
-                else "❌"
+                else "⚠️" if response.status_code == 404 else "❌"
             )
             print(f"{status} {name}: {endpoint} - {response.status_code}")
 
@@ -246,7 +242,11 @@ def main():
         found_count = len(code_results["app_routes"].get("found", []))
         print(f"   - 앱에 등록된 라우트: {found_count}/3개")
 
-    working = [name for name, data in endpoint_results.items() if data.get("status_code") == 200]
+    working = [
+        name
+        for name, data in endpoint_results.items()
+        if data.get("status_code") == 200
+    ]
     print(f"\n✅ 현재 작동하는 엔드포인트: {len(working)}개")
     if working:
         for name in working:

@@ -8,7 +8,6 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-
 # #region agent log
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 
@@ -84,7 +83,9 @@ def verify_all_endpoints():
                     "is_streaming": True,
                 }
                 status = "✅" if is_ok else "⚠️" if response.status_code == 404 else "❌"
-                print(f"{status} {name}: {endpoint} - {response.status_code} (스트리밍)")
+                print(
+                    f"{status} {name}: {endpoint} - {response.status_code} (스트리밍)"
+                )
             else:
                 response = requests.get(f"{BASE_URL}{endpoint}", timeout=5)
                 is_ok = response.status_code == 200
@@ -100,7 +101,11 @@ def verify_all_endpoints():
             log_debug(
                 f"final_complete_verification.py:verify_all_endpoints:{name}",
                 "Endpoint checked",
-                {"endpoint": endpoint, "status_code": response.status_code, "ok": is_ok},
+                {
+                    "endpoint": endpoint,
+                    "status_code": response.status_code,
+                    "ok": is_ok,
+                },
                 "EP1",
             )
             # #endregion agent log
@@ -187,7 +192,9 @@ def verify_openapi_schema():
                 if target_path in paths:
                     found_paths.append(target_path)
                     methods = list(paths[target_path].keys())
-                    print(f"✅ {target_path} - 스키마에 등록됨 (Methods: {', '.join(methods)})")
+                    print(
+                        f"✅ {target_path} - 스키마에 등록됨 (Methods: {', '.join(methods)})"
+                    )
                 else:
                     missing_paths.append(target_path)
                     print(f"⚠️  {target_path} - 스키마에 없음")
@@ -201,7 +208,11 @@ def verify_openapi_schema():
             )
             # #endregion agent log
 
-            return {"found": found_paths, "missing": missing_paths, "total_paths": len(paths)}
+            return {
+                "found": found_paths,
+                "missing": missing_paths,
+                "total_paths": len(paths),
+            }
         print(f"❌ OpenAPI 스키마 조회 실패: {response.status_code}")
         return {"error": f"HTTP {response.status_code}"}
     except Exception as e:

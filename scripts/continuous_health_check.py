@@ -14,7 +14,6 @@ from typing import Any
 
 import requests
 
-
 # #region agent log
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 SERVER_ENDPOINT = "http://127.0.0.1:7242/ingest/dc91dd33-03ef-4e50-91e7-6560c8e60280"
@@ -162,7 +161,9 @@ def check_comprehensive_health() -> tuple[bool, dict[str, Any]]:
                     "trinity_score": data.get("trinity_score"),
                     "skills_count": len(data.get("skills", {}).get("skills", [])),
                     "scholars_count": data.get("scholars", {}).get("total_scholars", 0),
-                    "mcp_tools_count": data.get("mcp_tools", {}).get("total_servers", 0),
+                    "mcp_tools_count": data.get("mcp_tools", {}).get(
+                        "total_servers", 0
+                    ),
                 },
                 "B",
             )
@@ -344,7 +345,9 @@ def continuous_health_check() -> None:
     # 최종 결과
     print("=" * 60)
     if all_healthy:
-        print(f"{COLORS['GREEN']}{COLORS['BOLD']}🎉 All Systems Operational! 🎉{COLORS['RESET']}")
+        print(
+            f"{COLORS['GREEN']}{COLORS['BOLD']}🎉 All Systems Operational! 🎉{COLORS['RESET']}"
+        )
     else:
         print(
             f"{COLORS['YELLOW']}{COLORS['BOLD']}⚠️  Some Systems Require Attention! ⚠️{COLORS['RESET']}"

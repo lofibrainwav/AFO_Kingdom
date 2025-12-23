@@ -5,10 +5,9 @@
 
 from typing import Any
 
+from AFO.serenity.creation_loop import serenity_loop
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-
-from AFO.serenity.creation_loop import serenity_loop
 
 router = APIRouter(prefix="/serenity", tags=["Serenity (GenUI)"])
 
@@ -45,7 +44,9 @@ async def create_ui(request: SerenityCreateRequest) -> SerenityCreateResponse:
             feedback=result.feedback,
         )
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Serenity creation failed: {e!s}") from e
+        raise HTTPException(
+            status_code=500, detail=f"Serenity creation failed: {e!s}"
+        ) from e
 
 
 @router.get("/status")

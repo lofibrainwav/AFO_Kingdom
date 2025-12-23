@@ -11,7 +11,6 @@ import logging
 import sys
 from pathlib import Path
 
-
 # Add project root to path
 project_root = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(project_root))
@@ -184,7 +183,9 @@ def test_server_startup():
                 print(f"   Health check: {response.status_code}")
 
                 # Test OpenAPI
-                openapi_response = requests.get("http://localhost:8010/openapi.json", timeout=2)
+                openapi_response = requests.get(
+                    "http://localhost:8010/openapi.json", timeout=2
+                )
                 if openapi_response.status_code == 200:
                     openapi_data = openapi_response.json()
                     paths = list(openapi_data.get("paths", {}).keys())
@@ -204,7 +205,9 @@ def test_server_startup():
 
             # Test direct skills endpoint
             try:
-                skills_response = requests.get("http://localhost:8010/api/skills/list", timeout=2)
+                skills_response = requests.get(
+                    "http://localhost:8010/api/skills/list", timeout=2
+                )
                 print(f"   Skills API direct test: {skills_response.status_code}")
                 if skills_response.status_code != 404:
                     print(f"   Response: {skills_response.text[:200]}...")

@@ -1,16 +1,12 @@
 import asyncio
 from typing import Any
 
+from AFO.services.hybrid_rag import (generate_answer_async,
+                                     generate_hyde_query_async,
+                                     get_embedding_async, query_graph_context,
+                                     query_qdrant_async)
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-
-from AFO.services.hybrid_rag import (
-    generate_answer_async,
-    generate_hyde_query_async,
-    get_embedding_async,
-    query_graph_context,
-    query_qdrant_async,
-)
 
 
 class HybridRAG:
@@ -134,7 +130,9 @@ async def query_knowledge_base(request: RAGRequest):
             from qdrant_client import QdrantClient
 
             q_client = QdrantClient("localhost", port=6333)
-            tasks.append(HybridRAG.query_qdrant_async(embedding, request.top_k, q_client))
+            tasks.append(
+                HybridRAG.query_qdrant_async(embedding, request.top_k, q_client)
+            )
         except:
             pass
 
@@ -157,13 +155,17 @@ async def query_knowledge_base(request: RAGRequest):
         for res in results:
             if "metadata" in res and "content" in res["metadata"]:
                 # Extract capitalized words as heuristic
-                words = [w for w in res["metadata"]["content"].split() if w[0].isupper()]
+                words = [
+                    w for w in res["metadata"]["content"].split() if w[0].isupper()
+                ]
                 entities.extend(words[:3])
 
         entities = list(set(entities))[:5]  # Limit
         if entities:
             graph_context = HybridRAG.query_graph_context(entities)
-            logs.append(f"🕸️ Graph Context: Found {len(graph_context)} connections for {entities}")
+            logs.append(
+                f"🕸️ Graph Context: Found {len(graph_context)} connections for {entities}"
+            )
 
     # 5. Rerank / Selection
     # Simple selection for now
@@ -181,5 +183,8 @@ async def query_knowledge_base(request: RAGRequest):
     )
 
     return RAGResponse(
-        answer=str(answer), sources=results[:5], graph_context=graph_context, processing_log=logs
+        answer=str(answer),
+        sources=results[:5],
+        graph_context=graph_context,
+        processing_log=logs,
     )

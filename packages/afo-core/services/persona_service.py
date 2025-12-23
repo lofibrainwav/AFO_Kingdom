@@ -23,17 +23,9 @@ except ImportError:
         return func
 
 
-from AFO.domain.persona import (
-    Persona,
-    commander,
-    creator,
-    current_persona,
-    family_head,
-    learner,
-    sima_yi,
-    zhou_yu,
-    zhuge_liang,
-)
+from AFO.domain.persona import (Persona, commander, creator, current_persona,
+                                family_head, learner, sima_yi, zhou_yu,
+                                zhuge_liang)
 
 logger = logging.getLogger(__name__)
 
@@ -130,7 +122,9 @@ class PersonaService:
             "current_persona": target.name,
             "status": "전환 완료",
             "trinity_scores": target.trinity_scores,
-            "last_switched": (target.last_switched.isoformat() if target.last_switched else None),
+            "last_switched": (
+                target.last_switched.isoformat() if target.last_switched else None
+            ),
         }
 
     async def get_current_persona(self) -> dict[str, Any]:
@@ -179,7 +173,9 @@ class PersonaService:
                         "trinity_scores": result["trinity_scores"],
                         "active": result["active"],
                         "last_switched": (
-                            result["last_switched"].isoformat() if result["last_switched"] else None
+                            result["last_switched"].isoformat()
+                            if result["last_switched"]
+                            else None
                         ),
                     }
                 return None
@@ -191,10 +187,14 @@ class PersonaService:
             logger.warning("[PersonaService] DB 모듈을 찾을 수 없습니다")
             return None
         except (ValueError, KeyError, AttributeError) as e:
-            logger.error("[PersonaService] DB 페르소나 조회 실패 (값/키/속성 에러): %s", str(e))
+            logger.error(
+                "[PersonaService] DB 페르소나 조회 실패 (값/키/속성 에러): %s", str(e)
+            )
             return None
         except Exception as e:  # - Intentional fallback for unexpected errors
-            logger.error("[PersonaService] DB 페르소나 조회 실패 (예상치 못한 에러): %s", str(e))
+            logger.error(
+                "[PersonaService] DB 페르소나 조회 실패 (예상치 못한 에러): %s", str(e)
+            )
             return None
 
     @validate_with_trinity
@@ -291,7 +291,9 @@ class PersonaService:
                 "error": str(e),
             }
 
-    async def _send_log_bridge(self, persona: Persona, context: dict[str, Any] | None) -> None:
+    async def _send_log_bridge(
+        self, persona: Persona, context: dict[str, Any] | None
+    ) -> None:
         """
         TRINITY-OS 로그 브릿지 전송 (PDF 페이지 3: 로그 브릿지)
 
@@ -330,20 +332,30 @@ class PersonaService:
             try:
                 await self._send_via_sse(log_entry)
             except (ImportError, AttributeError, RuntimeError) as sse_error:
-                logger.error("SSE 로그 브릿지 실패 (import/속성/런타임 에러): %s", str(sse_error))
+                logger.error(
+                    "SSE 로그 브릿지 실패 (import/속성/런타임 에러): %s", str(sse_error)
+                )
                 logger.info("[로그 브릿지] 로컬 로깅만 수행: %s", persona.name)
             except Exception as sse_error:  # - Intentional fallback
-                logger.error("SSE 로그 브릿지 실패 (예상치 못한 에러): %s", str(sse_error))
+                logger.error(
+                    "SSE 로그 브릿지 실패 (예상치 못한 에러): %s", str(sse_error)
+                )
                 logger.info("[로그 브릿지] 로컬 로깅만 수행: %s", persona.name)
         except Exception as mcp_error:  # - Intentional fallback for unexpected errors
-            logger.warning("MCP 로그 브릿지 예상치 못한 오류, SSE로 폴백: %s", str(mcp_error))
+            logger.warning(
+                "MCP 로그 브릿지 예상치 못한 오류, SSE로 폴백: %s", str(mcp_error)
+            )
             try:
                 await self._send_via_sse(log_entry)
             except (ImportError, AttributeError, RuntimeError) as sse_error:
-                logger.error("SSE 로그 브릿지 실패 (import/속성/런타임 에러): %s", str(sse_error))
+                logger.error(
+                    "SSE 로그 브릿지 실패 (import/속성/런타임 에러): %s", str(sse_error)
+                )
                 logger.info("[로그 브릿지] 로컬 로깅만 수행: %s", persona.name)
             except Exception as sse_error:  # - Intentional fallback
-                logger.error("SSE 로그 브릿지 실패 (예상치 못한 에러): %s", str(sse_error))
+                logger.error(
+                    "SSE 로그 브릿지 실패 (예상치 못한 에러): %s", str(sse_error)
+                )
                 logger.info("[로그 브릿지] 로컬 로깅만 수행: %s", persona.name)
 
         logger.debug("[로그 브릿지] 전송 데이터: %s", log_entry)
@@ -371,7 +383,9 @@ class PersonaService:
         except ImportError as exc:
             raise RuntimeError("TRINITY-OS MCP integration not available") from exc
         except (OSError, ConnectionError, TimeoutError) as e:
-            logger.warning("MCP 브릿지 전송 실패 (시스템/연결/타임아웃 에러): %s", str(e))
+            logger.warning(
+                "MCP 브릿지 전송 실패 (시스템/연결/타임아웃 에러): %s", str(e)
+            )
             raise
         except Exception as e:  # - Intentional fallback for unexpected errors
             logger.warning("MCP 브릿지 전송 실패 (예상치 못한 에러): %s", str(e))

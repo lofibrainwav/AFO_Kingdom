@@ -5,13 +5,11 @@ Check Registered Routes in FastAPI Application
 
 import json
 import sys
-
 # #region agent log
 from datetime import datetime
 from pathlib import Path
 
 import requests
-
 
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 
@@ -59,7 +57,10 @@ def check_openapi_schema():
         log_debug(
             "check_registered_routes.py:check_openapi_schema",
             "OpenAPI schema response received",
-            {"status_code": response.status_code, "response_size": len(response.content)},
+            {
+                "status_code": response.status_code,
+                "response_size": len(response.content),
+            },
             "A",
         )
         # #endregion agent log
@@ -105,7 +106,8 @@ def check_openapi_schema():
             similar_paths = []
             for path in sorted(paths.keys()):
                 if any(
-                    keyword in path for keyword in ["health", "intake", "family", "comprehensive"]
+                    keyword in path
+                    for keyword in ["health", "intake", "family", "comprehensive"]
                 ):
                     similar_paths.append(path)
                     print(f"   - {path}")

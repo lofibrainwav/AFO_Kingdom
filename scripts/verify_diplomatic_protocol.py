@@ -3,11 +3,14 @@ import os
 import pathlib
 import sys
 
-
 # Setup path
-sys.path.append(pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages")).resolve())
 sys.path.append(
-    pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")).resolve()
+    pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages")).resolve()
+)
+sys.path.append(
+    pathlib.Path(
+        os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")
+    ).resolve()
 )
 
 from services.protocol_officer import ProtocolOfficer, protocol_officer
@@ -16,7 +19,9 @@ from services.protocol_officer import ProtocolOfficer, protocol_officer
 async def verify_protocol():
     print("🎩 [Protocol Officer] Verification Start")
 
-    raw_message = "Deployment of the new K8s cluster was successful. All pods are green."
+    raw_message = (
+        "Deployment of the new K8s cluster was successful. All pods are green."
+    )
 
     # 1. Commander Protocol
     print("\n1. Testing Commander Protocol (Hyung-nim)")

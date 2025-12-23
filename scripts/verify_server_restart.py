@@ -10,7 +10,6 @@ from pathlib import Path
 
 import requests
 
-
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 
 
@@ -122,7 +121,9 @@ def main():
     if "/api/intake/health" in not_working:
         print("\n⚠️  Intake 엔드포인트가 작동하지 않습니다.")
         print("   서버를 재시작했는지 확인하세요.")
-        print("   서버 시작 로그에서 '✅ Intake API 라우터 등록 완료' 메시지를 확인하세요.")
+        print(
+            "   서버 시작 로그에서 '✅ Intake API 라우터 등록 완료' 메시지를 확인하세요."
+        )
 
     if "/api/family/health" in not_working and "/family/health" in working:
         print(

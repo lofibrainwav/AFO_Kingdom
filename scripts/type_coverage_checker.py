@@ -28,8 +28,7 @@ class TypeCoverageAnalyzer:
     def analyze_file(self, file_path: Path) -> tuple[int, int]:
         """Analyze a single Python file for type hints."""
         try:
-            with Path(file_path).open(encoding="utf-8") as f:
-                content = f.read()
+            content = Path(file_path).read_text(encoding="utf-8")
 
             tree = ast.parse(content)
 
@@ -110,7 +109,9 @@ class TypeCoverageAnalyzer:
         # Recommendations
         print("\n💡 Recommendations:")
         if self.stats["coverage_percent"] < 80:
-            remaining = int(self.stats["total_functions"] * 0.8 - self.stats["typed_functions"])
+            remaining = int(
+                self.stats["total_functions"] * 0.8 - self.stats["typed_functions"]
+            )
             print(f"   • Add type hints to ~{remaining} more functions to reach 80%")
         if self.stats["coverage_percent"] < 90:
             print("   • Focus on core modules (domain/, services/) first")

@@ -2,28 +2,25 @@ import os
 import pathlib
 import sys
 
-
 # Add package root to sys.path
-sys.path.append(pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages")).resolve())
+sys.path.append(
+    pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages")).resolve()
+)
 
 try:
-    from afo_core.commands.trinity_command import (
-        AnalyzeCommand,
-        ChancellorInvoker,
-        DeployCommand,
-        TigerGenerals,
-    )
+    from afo_core.commands.trinity_command import (AnalyzeCommand,
+                                                   ChancellorInvoker,
+                                                   DeployCommand,
+                                                   TigerGenerals)
 except ImportError:
     # Adjust path if running from root relative to packages
     sys.path.append(
-        pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")).resolve()
+        pathlib.Path(
+            os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")
+        ).resolve()
     )
-    from commands.trinity_command import (
-        AnalyzeCommand,
-        ChancellorInvoker,
-        DeployCommand,
-        TigerGenerals,
-    )
+    from commands.trinity_command import (AnalyzeCommand, ChancellorInvoker,
+                                          DeployCommand, TigerGenerals)
 
 
 def demonstrate_command_pattern():

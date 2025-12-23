@@ -10,10 +10,10 @@
  */
 "use client";
 
-import { useState, useEffect, useCallback, useRef, useMemo } from "react";
-import { Mic, MicOff, Volume2 } from "lucide-react";
-import { logError } from "@/lib/logger";
 import ErrorBoundary from "@/components/common/ErrorBoundary";
+import { logError } from "@/lib/logger";
+import { Mic, MicOff, Volume2 } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 interface VoiceCommandWidgetProps {
   onCommand?: (text: string) => void;
@@ -160,7 +160,7 @@ function VoiceCommandWidgetContent({
           onClick={toggleListening}
           className={`relative w-20 h-20 rounded-full flex items-center justify-center transition-all duration-300 ${buttonStyles}`}
           aria-label={isListening ? "Stop listening" : "Start listening"}
-          aria-pressed={isListening}
+          aria-pressed={isListening ? "true" : "false"}
         >
           {isListening ? (
             <MicOff className="w-10 h-10 text-white" aria-hidden="true" />

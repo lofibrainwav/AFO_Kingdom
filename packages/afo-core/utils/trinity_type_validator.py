@@ -130,7 +130,9 @@ class TrinityTypeValidator:
                 "pre_validation": pre_validation,
                 "error_validation": error_validation,
                 "confidence": 0.0,
-                "recommendations": self._generate_error_recommendations(e, trinity_score),
+                "recommendations": self._generate_error_recommendations(
+                    e, trinity_score
+                ),
             }
 
     def __call__(self, func: F) -> F:
@@ -186,7 +188,9 @@ class TrinityTypeValidator:
 
             return sync_wrapper  # type: ignore[return-value]
 
-    def _pre_validate(self, func: Callable, args: tuple, kwargs: dict) -> dict[str, Any]:
+    def _pre_validate(
+        self, func: Callable, args: tuple, kwargs: dict
+    ) -> dict[str, Any]:
         """
         사전 검증: 함수 시그니처와 입력 타입 일관성 검증
         """
@@ -273,14 +277,18 @@ class TrinityTypeValidator:
             return {
                 "return_type_valid": False,
                 "error": str(e),
-                "actual_return": (str(type(result)) if "result" in locals() else "unknown"),
+                "actual_return": (
+                    str(type(result)) if "result" in locals() else "unknown"
+                ),
             }
         except Exception as e:  # - Intentional fallback for unexpected errors
             logger.debug("사후 검증 중 예상치 못한 에러: %s", str(e))
             return {
                 "return_type_valid": False,
                 "error": str(e),
-                "actual_return": (str(type(result)) if "result" in locals() else "unknown"),
+                "actual_return": (
+                    str(type(result)) if "result" in locals() else "unknown"
+                ),
             }
 
     def _calculate_type_match(self, expected: Any, actual: Any) -> float:
@@ -301,7 +309,10 @@ class TrinityTypeValidator:
                 return 0.8
 
             # Union 타입 처리
-            if hasattr(expected, "__origin__") and expected.__origin__ in (Union, tuple):
+            if hasattr(expected, "__origin__") and expected.__origin__ in (
+                Union,
+                tuple,
+            ):
                 return 0.6  # Union 타입은 부분 일치로 간주
 
             # Generic 타입 처리
@@ -537,7 +548,9 @@ class TrinityTypeValidator:
 
         return recommendations
 
-    def _generate_error_recommendations(self, error: Exception, trinity_score: float) -> list[str]:
+    def _generate_error_recommendations(
+        self, error: Exception, trinity_score: float
+    ) -> list[str]:
         """에러 상황 개선 권장사항"""
         recommendations = []
 
@@ -553,7 +566,9 @@ class TrinityTypeValidator:
 
         return recommendations
 
-    def _handle_error_validation(self, func: Callable, error: Exception) -> dict[str, Any]:
+    def _handle_error_validation(
+        self, func: Callable, error: Exception
+    ) -> dict[str, Any]:
         """에러 상황에서의 검증 정보 생성"""
         return {
             "error_type": type(error).__name__,
@@ -605,7 +620,10 @@ class TrinityTypeValidator:
                     stats["call_count"] for stats in self.performance_stats.values()
                 ),
                 "avg_trinity_score": (
-                    sum(stats["avg_trinity_score"] for stats in self.performance_stats.values())
+                    sum(
+                        stats["avg_trinity_score"]
+                        for stats in self.performance_stats.values()
+                    )
                     / len(self.performance_stats)
                     if self.performance_stats
                     else 0
@@ -665,7 +683,9 @@ if __name__ == "__main__":
 
     # 에러 케이스
     try:
-        result2 = trinity_validator.validate_function(risky_function, [1, 2, 3])  # 잘못된 타입
+        result2 = trinity_validator.validate_function(
+            risky_function, [1, 2, 3]
+        )  # 잘못된 타입
     except Exception:
         result2 = trinity_validator.validate_function(risky_function, "valid_string")
         print(f"✅ 에러 복구 케이스: Trinity Score {result2['trinity_score']:.1f}")

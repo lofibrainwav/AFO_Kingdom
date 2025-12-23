@@ -1,22 +1,22 @@
 "use client";
 
-import useSWR from "swr";
-import { useState, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { MessageCircle, X } from "lucide-react";
-import TrinityGlow from "./TrinityGlow";
+import { useMemo, useState } from "react";
+import useSWR from "swr";
+import { KingdomMessageBoard } from "../genui";
+import { JulieTaxWidget } from "../genui/JulieTaxWidget";
+import { RoyalTreasuryCard } from "../genui/RoyalTreasuryCard";
+import { GraphRAGQuery } from "../GraphRAGQuery";
 import ChancellorStream from "./ChancellorStream";
 import OrgansMonitor from "./OrgansMonitor";
-import SkillDeck from "./SkillDeck";
-import { GraphRAGQuery } from "../GraphRAGQuery";
-import { RoyalPhilosophy } from "./RoyalPhilosophy";
 import { RoyalArchitecture } from "./RoyalArchitecture";
 import { RoyalLibrary } from "./RoyalLibrary";
-import { SystemStatusWidget } from "./widgets/SystemStatusWidget";
+import { RoyalPhilosophy } from "./RoyalPhilosophy";
+import SkillDeck from "./SkillDeck";
+import TrinityGlow from "./TrinityGlow";
 import { GitWidget } from "./widgets/GitWidget";
-import { RoyalTreasuryCard } from "../genui/RoyalTreasuryCard";
-import { JulieTaxWidget } from "../genui/JulieTaxWidget";
-import { KingdomMessageBoard } from "../genui";
+import { SystemStatusWidget } from "./widgets/SystemStatusWidget";
 
 import { ROYAL_CONSTANTS } from "../../config/royal_constants";
 // ... existing imports
@@ -65,10 +65,14 @@ export default function RoyalLayout() {
           </div>
           <div className="flex items-end gap-6">
             <a
-              href="/docs"
-              className="px-4 py-2 bg-slate-200/50 rounded-lg text-slate-700 hover:bg-slate-300/50 transition-colors text-sm font-medium"
+              href="http://localhost:8000/kingdom_dashboard.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="neu-btn px-4 py-2 text-sm font-bold text-slate-600 hover:text-indigo-600 flex items-center gap-2"
+              title="Port 8000: 설계도 (Design Time)"
             >
-              📐 문서
+              <span>🗺️ 왕국 설계도</span>
+              <span className="text-[10px] bg-slate-200 px-1.5 py-0.5 rounded text-slate-500">:8000</span>
             </a>
             <div className="text-right">
               <div className="text-xs text-slate-400 font-mono">
@@ -92,42 +96,53 @@ export default function RoyalLayout() {
         </section>
 
         {/* 3. Neural Stream & Skills (Split View) */}
-        <section className="grid grid-cols-1 lg:grid-cols-2 gap-8 h-[500px]">
-          {/* Genesis Widgets (Vibe Coding Verification) */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <section className="space-y-8">
+          {/* Genesis Widgets Row 1: Quick Status (neu-card style, equal sizes) */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <SystemStatusWidget />
             <GitWidget />
-            <RoyalTreasuryCard />
-            <JulieTaxWidget />
           </div>
 
-          {/* Left: Chancellor Stream */}
-          <div className="flex flex-col h-full">
-            <div className="flex items-center gap-4 mb-4">
-              <h2 className="text-xl font-bold text-slate-600">
-                {ROYAL_CONSTANTS.SECTIONS.CHANCELLOR}
-              </h2>
-              <div className="h-[1px] flex-1 bg-slate-300" />
+          {/* Genesis Widgets Row 2: Treasury & Tax (full-width, equal sizing) */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="neu-card overflow-hidden">
+              <RoyalTreasuryCard />
             </div>
-            <div className="flex-1">
-              <ChancellorStream />
+            <div className="neu-card overflow-hidden">
+              <JulieTaxWidget />
             </div>
           </div>
 
-          {/* Right: Skills Deck */}
-          <div className="flex flex-col h-full">
-            <div className="flex items-center gap-4 mb-4">
-              <h2 className="text-xl font-bold text-slate-600">
-                {ROYAL_CONSTANTS.SECTIONS.SKILLS}
-              </h2>
-              <div className="h-[1px] flex-1 bg-slate-300" />
+          {/* Chancellor Stream & Skills Deck - Split View */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Left: Chancellor Stream */}
+            <div className="flex flex-col min-h-[400px]">
+              <div className="flex items-center gap-4 mb-4">
+                <h2 className="text-xl font-bold text-slate-600">
+                  {ROYAL_CONSTANTS.SECTIONS.CHANCELLOR}
+                </h2>
+                <div className="h-[1px] flex-1 bg-slate-300" />
+              </div>
+              <div className="flex-1 max-h-[500px] overflow-hidden">
+                <ChancellorStream />
+              </div>
             </div>
-            <div className="flex-1 neu-card bg-slate-200/30 rounded-3xl border border-white/40 shadow-inner flex flex-col justify-center relative">
-              <div className="absolute inset-0 bg-white/20 backdrop-blur-sm rounded-3xl -z-10" />
-              <SkillDeck />
-              <p className="text-center text-xs text-slate-400 mt-4">
-                {ROYAL_CONSTANTS.MESSAGES.SKILL_HINT}
-              </p>
+
+            {/* Right: Skills Deck */}
+            <div className="flex flex-col min-h-[400px]">
+              <div className="flex items-center gap-4 mb-4">
+                <h2 className="text-xl font-bold text-slate-600">
+                  {ROYAL_CONSTANTS.SECTIONS.SKILLS}
+                </h2>
+                <div className="h-[1px] flex-1 bg-slate-300" />
+              </div>
+              <div className="flex-1 neu-card bg-slate-200/30 rounded-3xl border border-white/40 shadow-inner flex flex-col justify-center relative max-h-[500px] overflow-hidden">
+                <div className="absolute inset-0 bg-white/20 backdrop-blur-sm rounded-3xl -z-10" />
+                <SkillDeck />
+                <p className="text-center text-xs text-slate-400 mt-4">
+                  {ROYAL_CONSTANTS.MESSAGES.SKILL_HINT}
+                </p>
+              </div>
             </div>
           </div>
         </section>

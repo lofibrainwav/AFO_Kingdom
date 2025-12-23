@@ -302,7 +302,10 @@ async def get_kingdom_status() -> dict[str, Any]:
 
     # Ensure 0.0-1.0 range via TrinityInputs.clamp() implicitly
     inputs = TrinityInputs(
-        truth=truth_raw, goodness=goodness_raw, beauty=beauty_raw, filial_serenity=serenity_raw
+        truth=truth_raw,
+        goodness=goodness_raw,
+        beauty=beauty_raw,
+        filial_serenity=serenity_raw,
     )
     # Eternity passed separately to metrics
     metrics = TrinityMetrics.from_inputs(inputs, eternity=eternity_raw)
@@ -364,6 +367,7 @@ async def get_antigravity_config() -> dict[str, Any]:
         "log_level": antigravity.LOG_LEVEL,
         "mode": "Self-Expanding" if antigravity.SELF_EXPANDING_MODE else "Static",
     }
+
 
 # Request import for SSE endpoint (kept near endpoint for locality)
 from fastapi import Request

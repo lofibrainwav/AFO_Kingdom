@@ -4,10 +4,12 @@ import pathlib
 import sys
 from unittest.mock import AsyncMock
 
-
 # Add AFO to path
 sys.path.append(
-    os.path.join(pathlib.Path(pathlib.Path(pathlib.Path(__file__).resolve()).parent).parent, "AFO")
+    os.path.join(
+        pathlib.Path(pathlib.Path(pathlib.Path(__file__).resolve()).parent).parent,
+        "AFO",
+    )
 )
 
 from browser_auth.stealth_login import Stealther

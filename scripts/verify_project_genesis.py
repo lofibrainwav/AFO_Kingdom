@@ -3,15 +3,13 @@ import os
 import sys
 from datetime import datetime
 
-
 # Setup Path
 sys.path.append("/Users/brnestrm/AFO_Kingdom/packages/afo-core")
 
 import pathlib
 
-from langchain_core.messages import HumanMessage
-
 from AFO.chancellor_graph import chancellor_graph
+from langchain_core.messages import HumanMessage
 
 
 async def verify_genesis():

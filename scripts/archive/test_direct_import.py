@@ -6,7 +6,6 @@ Test Direct Import and Registration
 import sys
 from pathlib import Path
 
-
 # 프로젝트 루트를 sys.path에 추가
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root / "packages" / "afo-core"))
@@ -14,7 +13,6 @@ sys.path.insert(0, str(project_root / "packages" / "afo-core"))
 # #region agent log
 import json
 from datetime import datetime
-
 
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 
@@ -50,7 +48,8 @@ print("=" * 60)
 log_debug("test_direct_import.py", "Testing Comprehensive Health import", {}, "A")
 # #endregion agent log
 try:
-    from AFO.api.routes.comprehensive_health import router as comprehensive_health_router
+    from AFO.api.routes.comprehensive_health import \
+        router as comprehensive_health_router
 
     # #region agent log
     log_debug(
@@ -60,7 +59,9 @@ try:
         "A",
     )
     # #endregion agent log
-    print(f"✅ Comprehensive Health: import 성공 (prefix: {comprehensive_health_router.prefix})")
+    print(
+        f"✅ Comprehensive Health: import 성공 (prefix: {comprehensive_health_router.prefix})"
+    )
 
     # FastAPI app에 등록 테스트
     from fastapi import FastAPI

@@ -3,15 +3,15 @@ import os
 import pathlib
 import sys
 
-
 # 프로젝트 루트 경로 추가
 sys.path.append(
-    pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")).resolve()
+    pathlib.Path(
+        os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")
+    ).resolve()
 )
 
-from langchain_core.messages import HumanMessage
-
 from AFO.chancellor_graph import calculate_complexity, chancellor_graph
+from langchain_core.messages import HumanMessage
 
 
 async def verify_chancellor_full():
@@ -60,7 +60,9 @@ async def verify_chancellor_full():
 
         # Validation
         if complexity == "High" and "jegalryang" in history and "samaui" in history:
-            print("✅ ToT Logic Verified (High Complexity triggered multiple strategists)")
+            print(
+                "✅ ToT Logic Verified (High Complexity triggered multiple strategists)"
+            )
         else:
             print("⚠️  ToT Logic Partial or Failed (Check trace)")
 

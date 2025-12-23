@@ -7,7 +7,6 @@ import json
 import pathlib
 import subprocess
 
-
 SERVER_PATH = "packages/trinity-os/trinity_os/servers/afo_ultimate_mcp_server.py"
 
 

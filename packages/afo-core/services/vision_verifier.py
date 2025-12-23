@@ -41,9 +41,7 @@ class VisionVerifier:
             # Using the bridge for implementation stability
             # We enforce the resolution via bridge if possible, or directly in bridge
             result = await bridge.verify_ui(
-                url=url,
-                screenshot_path=screenshot_path,
-                enable_tracing=True
+                url=url, screenshot_path=screenshot_path, enable_tracing=True
             )
 
             if result.get("status") == "PASS":
@@ -52,14 +50,14 @@ class VisionVerifier:
                     "success": True,
                     "screenshot_path": screenshot_path,
                     "details": result,
-                    "resolution": "1920x1080"
+                    "resolution": "1920x1080",
                 }
             else:
                 logger.warning(f"⚠️ [Vision] Verification failed: {result}")
                 return {
                     "success": False,
                     "error": "Visual anomalies detected",
-                    "details": result
+                    "details": result,
                 }
 
         except Exception as e:

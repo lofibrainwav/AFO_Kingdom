@@ -2,9 +2,10 @@ import os
 import pathlib
 import sys
 
-
 sys.path.append(
-    pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")).resolve()
+    pathlib.Path(
+        os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")
+    ).resolve()
 )
 
 from AFO.domain.metrics.trinity_manager import trinity_manager
@@ -53,7 +54,9 @@ def verify_trinity_dynamic():
     trinity_manager.apply_trigger("VERIFICATION_FAIL")
 
     after_fail = trinity_manager.get_current_metrics()
-    print(f"[After Fail] Truth: {after_fail.truth:.4f}, Goodness: {after_fail.goodness:.4f}")
+    print(
+        f"[After Fail] Truth: {after_fail.truth:.4f}, Goodness: {after_fail.goodness:.4f}"
+    )
 
     # Truth: 1.0 - 0.05 = 0.95. Goodness: 1.0 - 0.03 = 0.97
     if round(after_fail.truth, 2) == 0.95 and round(after_fail.goodness, 2) == 0.97:

@@ -1,19 +1,19 @@
 "use client";
 
-import { useEffect, useState, useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { TrinityGlowCard } from "./TrinityGlowCard";
 import { VoiceReactivePanel } from "./VoiceReactivePanel";
 
-import { SSOTMonitor } from "./genui/SSOTMonitor";
-import { JulieCPAWidget } from "./genui/JulieCPAWidget";
-import { JulieTaxWidget } from "./genui/JulieTaxWidget";
-import { GenesisWidget } from "./genui/GenesisWidget";
-import { FinalEternalVictoryWidget } from "./genui/FinalEternalVictoryWidget";
+import { logWarn } from "@/lib/logger";
+import { useSpatialAudio } from "../hooks/useSpatialAudio";
 import { KingdomMessageBoard } from "./genui";
 import AutomatedDebuggingStreamWidget from "./genui/AutomatedDebuggingStreamWidget";
+import { FinalEternalVictoryWidget } from "./genui/FinalEternalVictoryWidget";
+import { GenesisWidget } from "./genui/GenesisWidget";
+import { JulieCPAWidget } from "./genui/JulieCPAWidget";
+import { JulieTaxWidget } from "./genui/JulieTaxWidget";
 import RoyalAnalyticsWidget from "./genui/RoyalAnalyticsWidget";
-import { useSpatialAudio } from "../hooks/useSpatialAudio";
-import { logWarn } from "@/lib/logger";
+import { SSOTMonitor } from "./genui/SSOTMonitor";
 
 interface PantheonState {
   trinityScore: number | null;
@@ -265,7 +265,6 @@ export function AFOPantheon() {
                     <div
                       key={i}
                       className="py-1 border-b border-green-500/10 leading-relaxed hover:bg-green-500/5 px-2"
-                      role="listitem"
                       aria-label={`Thought ${i + 1}: ${t}`}
                     >
                       {t}

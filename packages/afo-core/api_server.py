@@ -38,6 +38,7 @@ if _routers_file.exists():
 
         def setup_routers(app):  # type: ignore
             pass
+
 else:
 
     def setup_routers(app):  # type: ignore

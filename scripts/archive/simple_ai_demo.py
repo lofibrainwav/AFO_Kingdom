@@ -89,7 +89,9 @@ def infer_types_simple(func_node: ast.FunctionDef) -> dict:
                     if isinstance(node.args[1], ast.Tuple):
                         # tuple 타입 (int, float) 등
                         type_checks.extend(
-                            elt.id for elt in node.args[1].elts if isinstance(elt, ast.Name)
+                            elt.id
+                            for elt in node.args[1].elts
+                            if isinstance(elt, ast.Name)
                         )
                     elif isinstance(node.args[1], ast.Name):
                         type_checks.append(node.args[1].id)
@@ -108,7 +110,9 @@ def infer_types_simple(func_node: ast.FunctionDef) -> dict:
     return types
 
 
-def calculate_simple_trinity_score(func_node: ast.FunctionDef, inferred_types: dict) -> float:
+def calculate_simple_trinity_score(
+    func_node: ast.FunctionDef, inferred_types: dict
+) -> float:
     """
     단순한 Trinity Score 계산
     """

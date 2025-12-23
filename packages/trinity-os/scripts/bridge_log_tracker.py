@@ -115,9 +115,15 @@ def _print_markdown(logs: list[dict[str, Any]]) -> None:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="List and summarize TRINITY-OS Bridge Logs.")
-    parser.add_argument("--limit", type=int, default=10, help="Number of logs to show (default: 10).")
-    parser.add_argument("--all", action="store_true", help="Show all logs (ignores --limit).")
+    parser = argparse.ArgumentParser(
+        description="List and summarize TRINITY-OS Bridge Logs."
+    )
+    parser.add_argument(
+        "--limit", type=int, default=10, help="Number of logs to show (default: 10)."
+    )
+    parser.add_argument(
+        "--all", action="store_true", help="Show all logs (ignores --limit)."
+    )
     parser.add_argument(
         "--format",
         choices=["json", "md"],

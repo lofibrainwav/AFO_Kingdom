@@ -13,7 +13,6 @@ from typing import Any
 
 from dotenv import load_dotenv
 
-
 # 환경 변수 로드
 load_dotenv()
 
@@ -42,7 +41,9 @@ class TypeInferenceEngine:
         self.confidence_threshold = confidence_threshold
         self.cache: dict[str, dict[str, Any]] = {}
 
-    def analyze_function(self, func_node: ast.FunctionDef, source_code: str) -> dict[str, Any]:
+    def analyze_function(
+        self, func_node: ast.FunctionDef, source_code: str
+    ) -> dict[str, Any]:
         """
         함수 AST 노드를 분석하여 타입 힌트를 추론
 
@@ -138,7 +139,9 @@ class TypeInferenceEngine:
                 import json
 
                 result = json.loads(result_text)
-                print(f"✅ 타입 추론 성공: {func_name} (신뢰도: {result.get('confidence', 0):.2f})")
+                print(
+                    f"✅ 타입 추론 성공: {func_name} (신뢰도: {result.get('confidence', 0):.2f})"
+                )
                 return result
             except Exception as parse_error:
                 print(f"❌ JSON 파싱 실패: {parse_error}")
@@ -170,8 +173,7 @@ class TypeInferenceEngine:
         Returns:
             적용 결과 보고
         """
-        with Path(file_path).open(encoding="utf-8") as f:
-            source_code = f.read()
+        source_code = Path(file_path).read_text(encoding="utf-8")
 
         tree = ast.parse(source_code)
         changes = []
@@ -181,19 +183,23 @@ class TypeInferenceEngine:
                 result = self.analyze_function(node, source_code)
 
                 if result["confidence"] >= self.confidence_threshold:
-                    changes.append({
-                        "function": node.name,
-                        "confidence": result["confidence"],
-                        "new_signature": result["function_signature"],
-                        "imports": result["imports"],
-                    })
+                    changes.append(
+                        {
+                            "function": node.name,
+                            "confidence": result["confidence"],
+                            "new_signature": result["function_signature"],
+                            "imports": result["imports"],
+                        }
+                    )
 
         if not dry_run and changes:
             self._apply_changes(file_path, changes)
 
         return {
             "file": str(file_path),
-            "total_functions": len([n for n in ast.walk(tree) if isinstance(n, ast.FunctionDef)]),
+            "total_functions": len(
+                [n for n in ast.walk(tree) if isinstance(n, ast.FunctionDef)]
+            ),
             "suggested_changes": len(changes),
             "applied_changes": len(changes) if not dry_run else 0,
             "changes": changes,
@@ -203,8 +209,7 @@ class TypeInferenceEngine:
         """
         실제 파일에 변경사항 적용
         """
-        with Path(file_path).open(encoding="utf-8") as f:
-            content = f.read()
+        content = Path(file_path).read_text(encoding="utf-8")
 
         # Import 추가
         all_imports = set()
@@ -228,8 +233,7 @@ class TypeInferenceEngine:
         # 함수 시그니처 변경 (실제 구현은 복잡함)
         # 여기서는 간단한 예시만 구현
 
-        with Path(file_path).open("w", encoding="utf-8") as f:
-            f.write(content)
+        Path(file_path).write_text(content, encoding="utf-8")
 
 
 class TrinityTypeValidator:
@@ -257,7 +261,9 @@ class TrinityTypeValidator:
             execution_time = __import__("time").time() - start_time
 
             # Post-validation
-            post_score = self._calculate_trinity_score(func, args, kwargs, "post", result)
+            post_score = self._calculate_trinity_score(
+                func, args, kwargs, "post", result
+            )
 
             return {
                 "status": "success",
@@ -275,7 +281,9 @@ class TrinityTypeValidator:
                 "confidence": 0.0,
             }
 
-    def _calculate_trinity_score(self, func, args, kwargs, phase: str, result=None) -> float:
+    def _calculate_trinity_score(
+        self, func, args, kwargs, phase: str, result=None
+    ) -> float:
         """
         Trinity Score 계산 (眞善美孝永)
         """
@@ -338,8 +346,12 @@ def main():
 
     parser = argparse.ArgumentParser(description="AI 기반 타입 힌트 자동 생성 도구")
     parser.add_argument("files", nargs="+", help="대상 Python 파일들")
-    parser.add_argument("--dry-run", action="store_true", help="실제 적용하지 않고 보고만 생성")
-    parser.add_argument("--confidence", type=float, default=0.8, help="신뢰도 임계값 (0-1)")
+    parser.add_argument(
+        "--dry-run", action="store_true", help="실제 적용하지 않고 보고만 생성"
+    )
+    parser.add_argument(
+        "--confidence", type=float, default=0.8, help="신뢰도 임계값 (0-1)"
+    )
     parser.add_argument("--validate", action="store_true", help="Trinity 검증 모드")
 
     args = parser.parse_args()
@@ -369,7 +381,9 @@ def main():
             if result["changes"]:
                 print("\n📝 상세 변경사항:")
                 for change in result["changes"][:5]:  # 처음 5개만 표시
-                    print(f"  • {change['function']}: 신뢰도 {change['confidence']:.2f}")
+                    print(
+                        f"  • {change['function']}: 신뢰도 {change['confidence']:.2f}"
+                    )
 
 
 if __name__ == "__main__":

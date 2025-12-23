@@ -6,7 +6,6 @@ Test Router Registration at Runtime
 import sys
 from pathlib import Path
 
-
 # 프로젝트 루트를 sys.path에 추가
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root / "packages" / "afo-core"))
@@ -14,7 +13,6 @@ sys.path.insert(0, str(project_root / "packages" / "afo-core"))
 # #region agent log
 import json
 from datetime import datetime
-
 
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 
@@ -66,7 +64,8 @@ def simulate_router_registration():
 
     # 1. Comprehensive Health
     try:
-        from AFO.api.routes.comprehensive_health import router as comprehensive_health_router
+        from AFO.api.routes.comprehensive_health import \
+            router as comprehensive_health_router
 
         app.include_router(comprehensive_health_router)
         # #region agent log
@@ -77,7 +76,9 @@ def simulate_router_registration():
             "A",
         )
         # #endregion agent log
-        print(f"✅ Comprehensive Health: 등록 성공 (prefix: {comprehensive_health_router.prefix})")
+        print(
+            f"✅ Comprehensive Health: 등록 성공 (prefix: {comprehensive_health_router.prefix})"
+        )
         results["comprehensive_health"] = True
     except Exception as e:
         # #region agent log

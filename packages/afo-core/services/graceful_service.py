@@ -69,7 +69,8 @@ class GracefulService:
 
         # 3. Determine Status
         degraded = (
-            any(r is None for r in optional_results if r is not None) or not self.core_functional
+            any(r is None for r in optional_results if r is not None)
+            or not self.core_functional
         )
         status = "Degraded Mode" if degraded else "Full Mode"
 

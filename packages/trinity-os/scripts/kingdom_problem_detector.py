@@ -291,7 +291,9 @@ class ProblemDetector:
                     gitignore_path = AFO_ROOT / ".gitignore"
                     gitignore_content = ""
                     if gitignore_path.exists():
-                        gitignore_content = gitignore_path.read_text(encoding="utf-8", errors="ignore")
+                        gitignore_content = gitignore_path.read_text(
+                            encoding="utf-8", errors="ignore"
+                        )
 
                     if pattern.replace("*", ".*") not in gitignore_content:
                         issues.append(
@@ -445,16 +447,30 @@ class ProblemDetector:
                 trinity_map[trinity_type].append(1.0 if is_healthy else 0.0)
 
         # 각 Trinity별 평균 계산
-        truth_score = sum(trinity_map["眞"]) / len(trinity_map["眞"]) if trinity_map["眞"] else 0.0
-        goodness_score = sum(trinity_map["善"]) / len(trinity_map["善"]) if trinity_map["善"] else 0.0
-        beauty_score = sum(trinity_map["美"]) / len(trinity_map["美"]) if trinity_map["美"] else 0.0
+        truth_score = (
+            sum(trinity_map["眞"]) / len(trinity_map["眞"])
+            if trinity_map["眞"]
+            else 0.0
+        )
+        goodness_score = (
+            sum(trinity_map["善"]) / len(trinity_map["善"])
+            if trinity_map["善"]
+            else 0.0
+        )
+        beauty_score = (
+            sum(trinity_map["美"]) / len(trinity_map["美"])
+            if trinity_map["美"]
+            else 0.0
+        )
 
         # 전체 건강도 = Filial Serenity (孝)
         health_percentage = self.health_report.get("health_percentage", 0.0)
         filial_serenity = health_percentage / 100.0
 
         # Trinity Score = (眞 + 善 + 美 + 孝) / 4
-        trinity_score = (truth_score + goodness_score + beauty_score + filial_serenity) / 4.0
+        trinity_score = (
+            truth_score + goodness_score + beauty_score + filial_serenity
+        ) / 4.0
 
         # Balance Delta = Max - Min
         values = [truth_score, goodness_score, beauty_score, filial_serenity]
@@ -604,7 +620,9 @@ class ProblemDetector:
             "recommendation": self._get_recommendation(summary, all_issues),
         }
 
-    def _get_recommendation(self, summary: dict[str, Any], problems: list[dict[str, Any]]) -> str:
+    def _get_recommendation(
+        self, summary: dict[str, Any], problems: list[dict[str, Any]]
+    ) -> str:
         """권장사항 생성"""
         if summary["critical"] > 0:
             return f"🚨 긴급: Critical 문제 {summary['critical']}개 즉시 해결 필요"

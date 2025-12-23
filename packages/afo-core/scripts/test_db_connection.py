@@ -1,6 +1,7 @@
 """
 PostgreSQL 연결 테스트 스크립트
 Phase 1: PostgreSQL 연결 문제 해결 검증
+Copyright (c) 2025 AFO Kingdom. All rights reserved.
 """
 
 import asyncio

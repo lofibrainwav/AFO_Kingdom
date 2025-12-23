@@ -269,7 +269,11 @@ def build_trinity_toolflow_graph(deps: Deps):
     graph.add_edge("TOOL_SEARCH", "SELECT")
 
     def route_after_select(state: FlowState) -> str:
-        return "FINAL_NO_CANDIDATES" if not (state.get("selected_skill_id") or "") else "GET_CARD"
+        return (
+            "FINAL_NO_CANDIDATES"
+            if not (state.get("selected_skill_id") or "")
+            else "GET_CARD"
+        )
 
     graph.add_conditional_edges(
         "SELECT",

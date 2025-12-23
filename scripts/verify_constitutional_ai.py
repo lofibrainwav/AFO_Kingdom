@@ -3,11 +3,14 @@ import os
 import pathlib
 import sys
 
-
 # Setup path
-sys.path.append(pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages")).resolve())
 sys.path.append(
-    pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")).resolve()
+    pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages")).resolve()
+)
+sys.path.append(
+    pathlib.Path(
+        os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")
+    ).resolve()
 )
 
 from AFO.constitution.constitutional_ai import AFOConstitution
@@ -51,7 +54,9 @@ async def verify_constitution():
         print("   ❌ Failed to block friction!")
 
     if is_safe and not is_safe_bad and not is_safe_friction:
-        print("\n[Verification Complete] Constitutional AI is preserving the Kingdom's values.")
+        print(
+            "\n[Verification Complete] Constitutional AI is preserving the Kingdom's values."
+        )
     else:
         print("\n[Verification Failed] Consistency checks failed.")
 
