@@ -228,3 +228,29 @@ def generate_analysis_report(self, findings: dict[str, Any]) -> str:
 
 **검증 상태**: 기본 시스템 정상 작동. Protocol Officer 통합 및 SSOT 보고 규칙 강제 추가 필요.
 
+---
+
+## 업데이트 (2025-01-21)
+
+### ✅ Phase A: REPORT_LANGUAGE 설정 추가 완료
+- `config/antigravity.py`에 `REPORT_LANGUAGE` 설정 추가
+- 기본값: `"ko"` (환경변수 `REPORT_LANGUAGE`로 override 가능)
+- `USE_PROTOCOL_OFFICER: bool = True` 설정 추가
+
+### ✅ Phase B: Protocol Officer 엔진 연결 완료
+- `AntigravityEngine.__init__()`에 `protocol_officer` 주입 지원
+- `evaluate_quality_gate()` 결과를 Protocol Officer로 포맷팅
+- 모든 결정 메시지가 Protocol Officer를 거치도록 강제
+
+### ✅ Phase C: 보고서 생성 함수 추가 완료
+- `generate_analysis_report()`: 분석 보고서 생성 (완료 선언 없음)
+- `generate_completion_report()`: 완료 보고서 생성 (SSOT 증거 필수)
+- SSOT Report Gate 자동 검증 통합
+- `save_report()`: `docs/reports/`에 저장
+
+**보고 생성 경로 (SSOT)**:
+1. 리포트 원문 생성 (템플릿 기반)
+2. Protocol Officer 포맷팅
+3. SSOT Report Gate 검증 (완료 리포트만)
+4. `docs/reports/`에 저장
+

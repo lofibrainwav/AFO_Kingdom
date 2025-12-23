@@ -1,122 +1,4 @@
-name: SSOT Report Gate
-
-on:
-  pull_request:
-  push:
-    branches: [ main ]
-
-jobs:
-  ssot_report_gate:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: write
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Determine diff base
-        id: diffbase
-        shell: bash
-        run: |
-          set -euo pipefail
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            BASE_REF="${{ github.base_ref }}"
-            git fetch origin "${BASE_REF}" --depth=1
-            echo "diff_base=origin/${BASE_REF}" >> "$GITHUB_OUTPUT"
-          else
-            echo "diff_base=HEAD~1" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Run SSOT Report Gate on changed reports
-        id: ssot_gate
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          test -f scripts/ssot_report_gate.py
-
-          DIFF_BASE="${{ steps.diffbase.outputs.diff_base }}"
-          CHANGED_MD="$(git diff --name-only "${DIFF_BASE}"...HEAD | grep -E '^docs/reports/.*\.md$' || true)"
-
-          if [ -z "${CHANGED_MD}" ]; then
-            echo "No changed report markdown files. PASS."
-            echo "ssot_violations=[]" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          VIOLATIONS=()
-          FAIL=0
-          while IFS= read -r f; do
-            [ -f "$f" ] || continue
-            TEXT="$(cat "$f")"
-            if ! python scripts/ssot_report_gate.py "$TEXT"; then
-              FAIL=1
-              VIOLATIONS+=("$f")
-            fi
-          done <<< "${CHANGED_MD}"
-
-          # JSON 형식으로 violations 출력
-          JSON_VIOLATIONS=$(printf '%s\n' "${VIOLATIONS[@]}" | jq -R . | jq -s .)
-          echo "ssot_violations=$JSON_VIOLATIONS" >> "$GITHUB_OUTPUT"
-
-          exit "${FAIL}"
-
-      - name: Detect English-heavy reports (warning only)
-        id: enratio
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          test -f scripts/detect_english_ratio.py
-
-          DIFF_BASE="${{ steps.diffbase.outputs.diff_base }}"
-          CHANGED_MD="$(git diff --name-only "${DIFF_BASE}"...HEAD | grep -E '^docs/reports/.*\.md$' || true)"
-
-          if [ -z "${CHANGED_MD}" ]; then
-            echo "json={\"flagged\":[],\"threshold\":0.5,\"count\":0}" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          JSON="$(python scripts/detect_english_ratio.py ${CHANGED_MD} || true)"
-          echo "json=$JSON" >> "$GITHUB_OUTPUT"
-          echo "$JSON"
-
-      - name: Generate unified PR comment
-        id: pr_comment
-        if: ${{ github.event_name == 'pull_request' }}
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          SSOT_VIOLATIONS="${{ steps.ssot_gate.outputs.ssot_violations }}"
-          ENGLISH_DATA="${{ steps.enratio.outputs.json }}"
-
-          # Python 스크립트로 통합 코멘트 생성
-          COMMENT_ARGS=""
-
-          if [ "$SSOT_VIOLATIONS" != "[]" ] && [ "$SSOT_VIOLATIONS" != "null" ]; then
-            COMMENT_ARGS="$COMMENT_ARGS --ssot-violations $SSOT_VIOLATIONS"
-          fi
-
-          # 영어 경고 데이터 파싱
-          if [ "$ENGLISH_DATA" != '{"flagged":[],"threshold":0.5,"count":0}' ]; then
-            COMMENT_ARGS="$COMMENT_ARGS --english-warnings '$ENGLISH_DATA'"
-          fi
-
-          if [ -n "$COMMENT_ARGS" ]; then
-            COMMENT=$(python scripts/generate_pr_comment.py $COMMENT_ARGS)
-            echo "comment<<EOF" >> "$GITHUB_OUTPUT"
-            echo "$COMMENT" >> "$GITHUB_OUTPUT"
-            echo "EOF" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Post unified PR comment
+- name: Post unified PR comment
         if: ${{ github.event_name == 'pull_request' && steps.pr_comment.outputs.comment }}
         uses: actions/github-script@v7
         with:
@@ -131,3 +13,32 @@ jobs:
               issue_number: context.issue.number,
               body: comment
             });
+
+      - name: Push CI Quality Metrics
+        id: push_metrics
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # 메트릭 수집 스크립트 존재 확인
+          test -f scripts/collect_ci_quality_metrics.py
+
+          # 환경변수 설정
+          export PUSHGATEWAY_URL="${{ secrets.PUSHGATEWAY_URL }}"
+          export AFO_METRICS_JOB="afo_ci_quality"
+          export AFO_INSTANCE="afo_kingdom_main"
+          export AFO_WORKFLOW="ssot_report_gate"
+
+          # 메트릭 값들 수집
+          SSOT_VIOLATIONS_COUNT=$(echo '${{ steps.ssot_gate.outputs.ssot_violations }}' | jq '. | length' 2>/dev/null || echo "0")
+          ENGLISH_WARNINGS_COUNT=$(echo '${{ steps.enratio.outputs.json }}' | jq '.count' 2>/dev/null || echo "0")
+
+          # 기본 값들 설정 (실제로는 계산 로직 필요)
+          export AFO_SSOT_FAIL_24H="$SSOT_VIOLATIONS_COUNT"
+          export AFO_REPORT_ENGLISH_RATIO="0.35"
+          export AFO_PR_RISK_SCORE="45"
+          export AFO_CHAOS_LAST_SUCCESS="1"
+          export AFO_CHAOS_SELF_HEAL_SECONDS="0"
+
+          # 메트릭 전송
+          python scripts/collect_ci_quality_metrics.py

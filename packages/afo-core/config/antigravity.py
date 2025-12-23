@@ -1,4 +1,5 @@
 import logging
+import os
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Literal
 
@@ -64,6 +65,12 @@ class AntiGravitySettings(BaseSettings):
     CENTRAL_CONFIG_SYNC: bool = True  # 중앙 설정 동기화 (永: 영속성)
     AUTO_SYNC: bool = True  # 자동 동기화 활성화 (孝: 설정 마찰 제거)
     SELF_EXPANDING_MODE: bool = True  # 자율 확장 모드 (永: 창조자 트랙 활성화)
+
+    # [Phase A] 언어 정책 설정 (SSOT)
+    REPORT_LANGUAGE: Literal["ko", "en"] = (
+        os.getenv("REPORT_LANGUAGE", "ko")  # 기본값: ko (왕국 SSOT 협업 기준)
+    )
+    USE_PROTOCOL_OFFICER: bool = True  # Protocol Officer 사용 여부
 
     # [AGENTS.md 통합] AGENTS.md 파일 존재 확인
     @property
