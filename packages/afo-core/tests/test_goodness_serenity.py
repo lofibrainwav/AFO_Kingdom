@@ -6,14 +6,9 @@ from typing import Any
 
 import pytest
 from utils.automation import RetryConfig, auto_retry, cache_result
-from utils.error_handling import (
-    AFOError,
-    ValidationError,
-    log_and_return_error,
-    require_not_none,
-    safe_execute,
-    validate_input,
-)
+from utils.error_handling import (AFOError, ValidationError,
+                                  log_and_return_error, require_not_none,
+                                  safe_execute, validate_input)
 
 
 class TestErrorHandling:

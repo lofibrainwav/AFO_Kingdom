@@ -4,13 +4,8 @@ from typing import Any
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
-from AFO.llm_router import (
-    LLMConfig,
-    LLMProvider,
-    LLMRouter,
-    QualityTier,
-    RoutingDecision,
-)
+from AFO.llm_router import (LLMConfig, LLMProvider, LLMRouter, QualityTier,
+                            RoutingDecision)
 
 # DELETED: test_router_initialization_env_vars()
 # 이유: Flaky 테스트 (모듈 캐싱), 기능은 이미 구현되어 있음 (llm_router.py:101-129)

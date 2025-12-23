@@ -100,8 +100,8 @@ def sequential_thinking_step_2():
     ]
 
     for h in hypotheses:
-        print(f"{h['id']}: {h['description']}")
-        print(f"   필요한 증거: {h['evidence_needed']}\n")
+        print(f"{h["id"]}: {h["description"]}")
+        print(f"   필요한 증거: {h["evidence_needed"]}\n")
 
     # #region agent log
     log_debug(
@@ -134,7 +134,8 @@ def sequential_thinking_step_3():
     # 증거 1: Chancellor 라우터 파일 확인
     print("증거 1: Chancellor 라우터 파일 확인")
     try:
-        from AFO.api.routers.chancellor_router import router as chancellor_router
+        from AFO.api.routers.chancellor_router import \
+            router as chancellor_router
 
         prefix = getattr(chancellor_router, "prefix", "N/A")
         # #region agent log
@@ -290,8 +291,8 @@ def sequential_thinking_step_4():
             if eval_result["status"] == "CONFIRMED"
             else "❌" if eval_result["status"] == "REJECTED" else "⚠️"
         )
-        print(f"{status_icon} {eval_result['hypothesis']}: {eval_result['status']}")
-        print(f"   이유: {eval_result['reason']}\n")
+        print(f"{status_icon} {eval_result["hypothesis"]}: {eval_result["status"]}")
+        print(f"   이유: {eval_result["reason"]}\n")
 
     # #region agent log
     log_debug(
@@ -322,7 +323,7 @@ def main():
     if confirmed:
         print("\n✅ 확인된 가설:")
         for c in confirmed:
-            print(f"   - {c['hypothesis']}: {c['reason']}")
+            print(f"   - {c["hypothesis"]}: {c["reason"]}")
 
     # #region agent log
     log_debug(
