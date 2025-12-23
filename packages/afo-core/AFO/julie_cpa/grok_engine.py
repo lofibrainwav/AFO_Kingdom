@@ -68,7 +68,9 @@ def _get_redis_client():
     if not REDIS_AVAILABLE:
         return None
     try:
-        return redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=0, decode_responses=True)
+        return redis.Redis(
+            host=REDIS_HOST, port=REDIS_PORT, db=0, decode_responses=True
+        )
     except Exception as e:
         logger.warning(f"[GrokEngine] Redis connection failed: {e}")
         return None
@@ -175,7 +177,9 @@ async def _consult_grok_web(budget_summary: dict[str, Any]) -> dict[str, Any]:
                 # Playwright expects list of cookie objects
                 cookies_list = []
                 for k, v in cookies_dict.items():
-                    cookies_list.append({"name": k, "value": v, "domain": ".x.com", "path": "/"})
+                    cookies_list.append(
+                        {"name": k, "value": v, "domain": ".x.com", "path": "/"}
+                    )
                 await context.add_cookies(cookies_list)
 
             page = await context.new_page()
@@ -186,15 +190,21 @@ async def _consult_grok_web(budget_summary: dict[str, Any]) -> dict[str, Any]:
             try:
                 # Check for input box or drawer to verify login
                 # Timeout 30s
-                await page.wait_for_selector('[data-testid="GrokDrawer"]', timeout=30000)
+                await page.wait_for_selector(
+                    '[data-testid="GrokDrawer"]', timeout=30000
+                )
                 logger.info("[GrokEngine] Web Login Verified!")
 
                 # Mocking the actual chat for MVP stability
-                return _mock_grok_analysis(budget_summary, error_msg=None, mood="WEB_AUTHENTICATED")
+                return _mock_grok_analysis(
+                    budget_summary, error_msg=None, mood="WEB_AUTHENTICATED"
+                )
 
             except Exception as e:
                 logger.error(f"[GrokEngine] Web Login Verification Failed: {e}")
-                return _mock_grok_analysis(budget_summary, error_msg=f"Web Auth Failed: {e}")
+                return _mock_grok_analysis(
+                    budget_summary, error_msg=f"Web Auth Failed: {e}"
+                )
             finally:
                 await browser.close()
 
@@ -205,9 +215,7 @@ async def _consult_grok_web(budget_summary: dict[str, Any]) -> dict[str, Any]:
 
 async def _consult_grok_api(budget_summary: dict[str, Any]) -> dict[str, Any]:
     # (Original API Logic with Smart Model Selection would go here)
-    system_prompt = (
-        "You are 'The Sage from the Stars', a cynical but brilliant economic strategist..."
-    )
+    system_prompt = "You are 'The Sage from the Stars', a cynical but brilliant economic strategist..."
     user_prompt = f"Analyze budget: {json.dumps(budget_summary)}"
 
     # Use grok-beta (or fast if available in future SDK)

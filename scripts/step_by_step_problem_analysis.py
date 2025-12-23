@@ -8,7 +8,6 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-
 # #region agent log
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 
@@ -176,7 +175,9 @@ def step3_check_critical_endpoints():
         try:
             timeout = 2 if "stream" in endpoint else 3
             response = requests.get(
-                f"http://localhost:8010{endpoint}", timeout=timeout, stream="stream" in endpoint
+                f"http://localhost:8010{endpoint}",
+                timeout=timeout,
+                stream="stream" in endpoint,
             )
             is_ok = response.status_code == 200
             results[name] = {
@@ -191,7 +192,11 @@ def step3_check_critical_endpoints():
             log_debug(
                 f"step_by_step_problem_analysis.py:step3_check_critical_endpoints:{name}",
                 "Endpoint checked",
-                {"endpoint": endpoint, "status_code": response.status_code, "ok": is_ok},
+                {
+                    "endpoint": endpoint,
+                    "status_code": response.status_code,
+                    "ok": is_ok,
+                },
                 "STEP3",
             )
             # #endregion agent log
@@ -315,7 +320,9 @@ def step5_check_imports():
                 results[name] = {"status": "not_found"}
                 print(f"❌ {name}: 모듈에 없음")
             else:
-                prefix = getattr(obj, "prefix", None) if hasattr(obj, "prefix") else None
+                prefix = (
+                    getattr(obj, "prefix", None) if hasattr(obj, "prefix") else None
+                )
                 results[name] = {"status": "success", "prefix": prefix}
                 prefix_str = f" (prefix={prefix})" if prefix else ""
                 print(f"✅ {name}{prefix_str}")
@@ -439,75 +446,94 @@ def main():
 
     # 서버 상태 문제
     if server_status.get("status") != "running":
-        issues.append({
-            "level": "CRITICAL",
-            "category": "서버 실행",
-            "description": "서버가 실행 중이지 않음",
-            "step": 1,
-        })
+        issues.append(
+            {
+                "level": "CRITICAL",
+                "category": "서버 실행",
+                "description": "서버가 실행 중이지 않음",
+                "step": 1,
+            }
+        )
 
     # Health 엔드포인트 문제
     if health_status.get("status") != "ok":
-        issues.append({
-            "level": "CRITICAL",
-            "category": "기본 엔드포인트",
-            "description": f"기본 Health 엔드포인트 접근 실패: {health_status.get('status')}",
-            "step": 2,
-        })
+        issues.append(
+            {
+                "level": "CRITICAL",
+                "category": "기본 엔드포인트",
+                "description": f"기본 Health 엔드포인트 접근 실패: {health_status.get('status')}",
+                "step": 2,
+            }
+        )
 
     # 핵심 엔드포인트 문제
     endpoint_errors = [
         name
         for name, data in endpoint_results.items()
         if "error" in data
-        or (data.get("status_code") != 200 and "timeout" not in str(data.get("status_code", "")))
+        or (
+            data.get("status_code") != 200
+            and "timeout" not in str(data.get("status_code", ""))
+        )
     ]
     if endpoint_errors:
-        issues.append({
-            "level": "HIGH",
-            "category": "핵심 엔드포인트",
-            "description": f"{len(endpoint_errors)}개 엔드포인트 문제: {', '.join(endpoint_errors)}",
-            "step": 3,
-        })
+        issues.append(
+            {
+                "level": "HIGH",
+                "category": "핵심 엔드포인트",
+                "description": f"{len(endpoint_errors)}개 엔드포인트 문제: {', '.join(endpoint_errors)}",
+                "step": 3,
+            }
+        )
 
     # 라우터 등록 문제
     if isinstance(router_results, dict) and router_results.get("missing"):
-        issues.append({
-            "level": "HIGH",
-            "category": "라우터 등록",
-            "description": f"{len(router_results['missing'])}개 경로가 라우터에 등록되지 않음: {router_results['missing']}",
-            "step": 4,
-        })
+        issues.append(
+            {
+                "level": "HIGH",
+                "category": "라우터 등록",
+                "description": f"{len(router_results['missing'])}개 경로가 라우터에 등록되지 않음: {router_results['missing']}",
+                "step": 4,
+            }
+        )
 
     # Import 문제
     import_errors = [
         name for name, data in import_results.items() if data.get("status") != "success"
     ]
     if import_errors:
-        issues.append({
-            "level": "MEDIUM",
-            "category": "Import",
-            "description": f"{len(import_errors)}개 Import 실패: {', '.join(import_errors)}",
-            "step": 5,
-        })
+        issues.append(
+            {
+                "level": "MEDIUM",
+                "category": "Import",
+                "description": f"{len(import_errors)}개 Import 실패: {', '.join(import_errors)}",
+                "step": 5,
+            }
+        )
 
     # OpenAPI 스키마 문제
     if isinstance(openapi_results, dict) and openapi_results.get("missing"):
-        issues.append({
-            "level": "MEDIUM",
-            "category": "OpenAPI 스키마",
-            "description": f"{len(openapi_results['missing'])}개 경로가 스키마에 없음: {openapi_results['missing']}",
-            "step": 6,
-        })
+        issues.append(
+            {
+                "level": "MEDIUM",
+                "category": "OpenAPI 스키마",
+                "description": f"{len(openapi_results['missing'])}개 경로가 스키마에 없음: {openapi_results['missing']}",
+                "step": 6,
+            }
+        )
 
     # 문제점 출력
     if issues:
         print("\n⚠️  발견된 문제점:\n")
         for i, issue in enumerate(issues, 1):
             level_icon = (
-                "🔴" if issue["level"] == "CRITICAL" else "🟠" if issue["level"] == "HIGH" else "🟡"
+                "🔴"
+                if issue["level"] == "CRITICAL"
+                else "🟠" if issue["level"] == "HIGH" else "🟡"
             )
-            print(f"{level_icon} [{issue['level']}] {issue['category']} (Step {issue['step']})")
+            print(
+                f"{level_icon} [{issue['level']}] {issue['category']} (Step {issue['step']})"
+            )
             print(f"   {issue['description']}\n")
     else:
         print("\n✅ 문제점 없음 - 모든 시스템 정상 작동")

@@ -8,7 +8,6 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-
 # #region agent log
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 
@@ -167,7 +166,11 @@ def check_system_health():
             log_debug(
                 f"context7_sequential_analysis.py:check_system_health:{name}",
                 "Health check result",
-                {"endpoint": endpoint, "status_code": response.status_code, "ok": is_ok},
+                {
+                    "endpoint": endpoint,
+                    "status_code": response.status_code,
+                    "ok": is_ok,
+                },
                 "HEALTH1",
             )
             # #endregion agent log
@@ -204,7 +207,9 @@ def identify_potential_issues():
 
     # 1. 라우터 prefix 일관성 확인
     print("\n1. 라우터 Prefix 일관성 확인")
-    router_files = list((project_root / "packages" / "afo-core" / "api" / "routers").glob("*.py"))
+    router_files = list(
+        (project_root / "packages" / "afo-core" / "api" / "routers").glob("*.py")
+    )
     prefix_issues = []
     for router_file in router_files:
         try:
@@ -244,7 +249,9 @@ def identify_potential_issues():
     try:
         from AFO.api.routers.chancellor_router import router as cr
 
-        print(f"   ✅ Chancellor 라우터 import 성공 (prefix: {getattr(cr, 'prefix', 'N/A')})")
+        print(
+            f"   ✅ Chancellor 라우터 import 성공 (prefix: {getattr(cr, 'prefix', 'N/A')})"
+        )
     except Exception as e:
         print(f"   ❌ Chancellor 라우터 import 실패: {e}")
         issues.append({"type": "import_error", "router": "chancellor", "error": str(e)})

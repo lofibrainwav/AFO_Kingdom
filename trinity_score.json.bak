@@ -1,0 +1,21 @@
+{
+  "trinity": {
+    "timestamp": "2025-12-21T12:41:32.835519+00:00",
+    "scores": {
+      "truth": 1.0,
+      "goodness": 1.0,
+      "beauty": 1.0,
+      "serenity": 1.0,
+      "eternity": 0.8
+    },
+    "total": 1.0,
+    "weights": {
+      "truth": 0.35,
+      "goodness": 0.35,
+      "beauty": 0.2,
+      "serenity": 0.08,
+      "eternity": 0.02
+    }
+  },
+  "mode": "AUTO"
+}

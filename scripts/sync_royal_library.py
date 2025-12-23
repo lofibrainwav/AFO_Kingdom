@@ -2,7 +2,6 @@ import json
 import pathlib
 import re
 
-
 # Configuration
 SOURCE_FILE = "docs/AFO_ROYAL_LIBRARY.md"
 DEST_FILE = "packages/dashboard/src/data/royal_rules.ts"
@@ -23,8 +22,7 @@ def parse_markdown(file_path):
         ]
     }
     """
-    with pathlib.Path(file_path).open(encoding="utf-8") as f:
-        content = f.read()
+    content = pathlib.Path(file_path).read_text(encoding="utf-8")
 
     books = []
     current_book = None
@@ -57,14 +55,18 @@ def parse_markdown(file_path):
             principle = m[2].strip()
             code_action = m[3].strip()
 
-            rules.append({
-                "id": rule_id,
-                "name": rule_name,
-                "principle": principle,
-                "code": code_action,
-            })
+            rules.append(
+                {
+                    "id": rule_id,
+                    "name": rule_name,
+                    "principle": principle,
+                    "code": code_action,
+                }
+            )
 
-        books.append({"id": book_num, "title": f"{book_num}. {book_title}", "rules": rules})
+        books.append(
+            {"id": book_num, "title": f"{book_num}. {book_title}", "rules": rules}
+        )
 
     return books
 
@@ -108,8 +110,7 @@ def main():
 
         ts_content = generate_typescript(books)
 
-        with pathlib.Path(DEST_FILE).open("w", encoding="utf-8") as f:
-            f.write(ts_content)
+        pathlib.Path(DEST_FILE).write_text(ts_content, encoding="utf-8")
 
         print(f"💾 Written to {DEST_FILE}")
         print("🔄 Sync Complete.")

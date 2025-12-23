@@ -5,10 +5,11 @@ from unittest.mock import AsyncMock, Mock
 
 import pytest
 
-
 # Ensure packages/afo-core is in python path
 sys.path.append(
-    pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")).resolve()
+    pathlib.Path(
+        os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")
+    ).resolve()
 )
 
 

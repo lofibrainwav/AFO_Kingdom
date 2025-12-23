@@ -9,7 +9,6 @@ import os
 import sys
 from pathlib import Path
 
-
 # Trinity Score 가중치
 TRINITY_WEIGHTS = {
     "truth": 0.35,  # 기술적 정확성
@@ -77,7 +76,9 @@ class TrinityScoreChecker:
             dirs[:] = [d for d in dirs if d not in exclude_dirs]
 
             python_files.extend(
-                Path(root) / filename for filename in filenames if filename.endswith(".py")
+                Path(root) / filename
+                for filename in filenames
+                if filename.endswith(".py")
             )
 
         return python_files
@@ -93,22 +94,29 @@ class TrinityScoreChecker:
 
         for file_path in files[:50]:  # 샘플링으로 성능 최적화
             try:
-                with Path(file_path).open(encoding="utf-8") as f:
-                    content = f.read()
+                content = Path(file_path).read_text(encoding="utf-8")
 
                 tree = ast.parse(content)
 
                 # 함수 수집
-                functions = [node for node in ast.walk(tree) if isinstance(node, ast.FunctionDef)]
+                functions = [
+                    node for node in ast.walk(tree) if isinstance(node, ast.FunctionDef)
+                ]
                 total_functions += len(functions)
-                typed_functions += len([fn for fn in functions if fn.returns is not None])
+                typed_functions += len(
+                    [fn for fn in functions if fn.returns is not None]
+                )
 
             except Exception:
-                self.results["truth"]["details"].append(f"파일 분석 실패: {file_path.name}")
+                self.results["truth"]["details"].append(
+                    f"파일 분석 실패: {file_path.name}"
+                )
                 continue
 
         # 타입 커버리지 계산
-        type_coverage = (typed_functions / total_functions * 100) if total_functions > 0 else 0
+        type_coverage = (
+            (typed_functions / total_functions * 100) if total_functions > 0 else 0
+        )
 
         # MyPy 오류 확인 (간단한 검증)
         try:
@@ -127,9 +135,13 @@ class TrinityScoreChecker:
                 timeout=10,
                 check=False,
             )
-            mypy_errors = len([
-                line for line in result.stdout.split("\n") if line.strip() and "error:" in line
-            ])
+            mypy_errors = len(
+                [
+                    line
+                    for line in result.stdout.split("\n")
+                    if line.strip() and "error:" in line
+                ]
+            )
         except Exception:
             mypy_errors = 0  # MyPy가 없으면 0으로 처리
 
@@ -160,8 +172,7 @@ class TrinityScoreChecker:
 
         for file_path in files[:30]:  # 샘플링
             try:
-                with Path(file_path).open(encoding="utf-8") as f:
-                    content = f.read()
+                content = Path(file_path).read_text(encoding="utf-8")
 
                 if "try:" in content and "except" in content:
                     files_with_error_handling += 1
@@ -182,7 +193,9 @@ class TrinityScoreChecker:
                 if filename.startswith("test_") and filename.endswith(".py")
             )
 
-        test_ratio = len(test_files) / max(1, total_files // 10)  # 파일당 0.1개 테스트 파일 기준
+        test_ratio = len(test_files) / max(
+            1, total_files // 10
+        )  # 파일당 0.1개 테스트 파일 기준
         test_coverage_score = min(100, test_ratio * 100)
 
         # 종합 점수
@@ -209,8 +222,7 @@ class TrinityScoreChecker:
 
         for file_path in files[:20]:  # 샘플링
             try:
-                with Path(file_path).open(encoding="utf-8") as f:
-                    content = f.read()
+                content = Path(file_path).read_text(encoding="utf-8")
 
                 lines = content.split("\n")
                 # 간단한 복잡도 측정: 파일 길이 기반
@@ -222,7 +234,9 @@ class TrinityScoreChecker:
                 continue
 
         if total_analyzed > 0:
-            complexity_score = max(0, 100 - (high_complexity_files / total_analyzed) * 50)
+            complexity_score = max(
+                0, 100 - (high_complexity_files / total_analyzed) * 50
+            )
 
         # 모듈화 분석
         packages_dir = self.project_root / "packages"
@@ -300,8 +314,7 @@ class TrinityScoreChecker:
         interfaces_found = 0
         for file_path in files[:30]:
             try:
-                with Path(file_path).open(encoding="utf-8") as f:
-                    content = f.read()
+                content = Path(file_path).read_text(encoding="utf-8")
                 if "class" in content and "def" in content:
                     interfaces_found += 1
             except Exception:
@@ -322,13 +335,16 @@ class TrinityScoreChecker:
     def _calculate_overall_score(self) -> None:
         """종합 Trinity Score 계산"""
         self.overall_score = sum(
-            self.results[pillar]["score"] * weight for pillar, weight in TRINITY_WEIGHTS.items()
+            self.results[pillar]["score"] * weight
+            for pillar, weight in TRINITY_WEIGHTS.items()
         )
 
     def _get_results(self) -> dict:
         """결과 반환"""
         return {
-            "timestamp": Path(__file__).stat().st_mtime if Path(__file__).exists() else 0,
+            "timestamp": (
+                Path(__file__).stat().st_mtime if Path(__file__).exists() else 0
+            ),
             "pillars": self.results,
             "overall_score": round(self.overall_score, 1),
             "grade": self._get_grade(),

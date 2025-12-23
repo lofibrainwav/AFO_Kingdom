@@ -46,7 +46,9 @@ def get_project_root(start_path: Path | None = None) -> Path:
         # pyproject.toml 또는 .git이 있으면 프로젝트 루트 후보
         if (current / "pyproject.toml").exists() or (current / ".git").exists():
             # packages 디렉토리가 있으면 그 상위가 프로젝트 루트
-            if (current / "packages").exists() and (current / "packages" / "trinity-os").exists():
+            if (current / "packages").exists() and (
+                current / "packages" / "trinity-os"
+            ).exists():
                 return current
             # packages가 없으면 현재가 프로젝트 루트
             if not (current / "packages").exists():
@@ -63,7 +65,9 @@ def get_project_root(start_path: Path | None = None) -> Path:
     fallback = Path(start_path).resolve()
     for _ in range(5):
         fallback = fallback.parent
-        if (fallback / "packages").exists() and (fallback / "packages" / "trinity-os").exists():
+        if (fallback / "packages").exists() and (
+            fallback / "packages" / "trinity-os"
+        ).exists():
             return fallback
 
     # 최후의 수단: 현재 작업 디렉토리 반환

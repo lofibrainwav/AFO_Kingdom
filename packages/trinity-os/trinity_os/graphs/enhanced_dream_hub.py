@@ -103,7 +103,11 @@ def dream_executor(state: EnhancedAgentState) -> dict[str, Any]:
 
     return {
         "current_phase": next_phase,
-        "messages": [AIMessage(content=f"Dream execution completed: {len(execution_results)} steps")],
+        "messages": [
+            AIMessage(
+                content=f"Dream execution completed: {len(execution_results)} steps"
+            )
+        ],
         "audit_history": execution_results,
     }
 
@@ -208,7 +212,9 @@ def build_enhanced_dream_hub():
 enhanced_dream_hub = build_enhanced_dream_hub()
 
 
-def run_enhanced_dream_hub(human_dream: str, thread_id: str = "default") -> dict[str, Any]:
+def run_enhanced_dream_hub(
+    human_dream: str, thread_id: str = "default"
+) -> dict[str, Any]:
     """
     Execute human dream through Enhanced Dream Hub
 
@@ -240,7 +246,9 @@ def run_enhanced_dream_hub(human_dream: str, thread_id: str = "default") -> dict
         result = {
             "status": "COMPLETED",
             "dream_id": final_state.get("dream_id", ""),
-            "final_message": (final_state["messages"][-1].content if final_state["messages"] else ""),
+            "final_message": (
+                final_state["messages"][-1].content if final_state["messages"] else ""
+            ),
             "trinity_score": final_state.get("trinity_score", {}),
             "risk_score": final_state.get("risk_score", 0.0),
             "audit_history": final_state.get("audit_history", []),

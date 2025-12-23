@@ -14,7 +14,6 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-
 # 로깅 설정
 logging.basicConfig(
     level=logging.INFO,
@@ -67,11 +66,13 @@ def parse_requirements(requirements_path: Path) -> list[dict[str, Any]]:
                 name = line
                 version = None
 
-            components.append({
-                "type": "library",
-                "name": name,
-                "version": version or "unknown",
-            })
+            components.append(
+                {
+                    "type": "library",
+                    "name": name,
+                    "version": version or "unknown",
+                }
+            )
             logger.debug(f"[眞] 패키지 추가: {name} {version or 'unknown'}")
 
     logger.info(f"[眞] 파싱 완료: {len(components)}개 패키지 발견")
@@ -121,11 +122,13 @@ def get_installed_packages() -> list[dict[str, Any]]:
     components = []
     logger.info("[眞] working_set 순회 시작")
     for dist in pkg_resources.working_set:
-        components.append({
-            "type": "library",
-            "name": dist.project_name,
-            "version": dist.version,
-        })
+        components.append(
+            {
+                "type": "library",
+                "name": dist.project_name,
+                "version": dist.version,
+            }
+        )
 
     logger.info(f"[眞] 설치된 패키지 수집 완료: {len(components)}개")
     return components

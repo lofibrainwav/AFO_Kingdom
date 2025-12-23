@@ -9,16 +9,17 @@ import logging
 from datetime import datetime
 from typing import Any
 
+from AFO.julie_cpa.models.budget import MOCK_BUDGETS, BudgetSummary
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-
-from AFO.julie_cpa.models.budget import MOCK_BUDGETS, BudgetSummary
 
 router = APIRouter(prefix="/api/julie/budget", tags=["Julie CPA - Budget"])
 logger = logging.getLogger(__name__)
 
 
-def calculate_risk_score(total_remaining: int, total_allocated: int) -> tuple[float, str]:
+def calculate_risk_score(
+    total_remaining: int, total_allocated: int
+) -> tuple[float, str]:
     """
     SSOT 연동 리스크 점수 계산
 
@@ -66,7 +67,9 @@ async def get_budget_summary() -> BudgetSummary:
     total_spent = sum(b.spent for b in MOCK_BUDGETS)
     total_remaining = sum(b.remaining for b in MOCK_BUDGETS)
 
-    utilization_rate = (total_spent / total_allocated * 100) if total_allocated > 0 else 0.0
+    utilization_rate = (
+        (total_spent / total_allocated * 100) if total_allocated > 0 else 0.0
+    )
     risk_score, risk_level = calculate_risk_score(total_remaining, total_allocated)
 
     return BudgetSummary(
@@ -103,7 +106,9 @@ async def get_category_budget(category_name: str) -> BudgetSummary:
             total_spent = budget.spent
             total_remaining = budget.remaining
             utilization_rate = budget.utilization_rate()
-            risk_score, risk_level = calculate_risk_score(total_remaining, total_allocated)
+            risk_score, risk_level = calculate_risk_score(
+                total_remaining, total_allocated
+            )
             return BudgetSummary(
                 budgets=[budget],
                 total_allocated=total_allocated,
@@ -168,7 +173,9 @@ async def record_spending(request: SpendRequest) -> dict[str, Any]:
                 # 실제 반영
                 budget.spent = new_spent
                 budget.calculate_remaining()
-                logger.info(f"[Julie] 지출 기록: {request.category} +₩{request.amount:,}")
+                logger.info(
+                    f"[Julie] 지출 기록: {request.category} +₩{request.amount:,}"
+                )
                 return {
                     "success": True,
                     "mode": "EXECUTED",
@@ -192,7 +199,9 @@ async def get_risk_alerts() -> dict[str, Any]:
     alerts = []
 
     for budget in MOCK_BUDGETS:
-        utilization = (budget.spent / budget.allocated * 100) if budget.allocated > 0 else 0
+        utilization = (
+            (budget.spent / budget.allocated * 100) if budget.allocated > 0 else 0
+        )
 
         if utilization >= 80:
             level = "critical" if utilization >= 90 else "warning"
@@ -408,7 +417,9 @@ async def get_budget_prediction() -> dict[str, Any]:
     current_spending = int(MOCK_HISTORY[-1]["spent"])
     predicted_val = prediction.get("predicted_spending", 0)
     predicted: int = (
-        int(predicted_val) if isinstance(predicted_val, (int, float)) else current_spending
+        int(predicted_val)
+        if isinstance(predicted_val, (int, float))
+        else current_spending
     )
 
     # 예측 vs 현재 비교
@@ -484,7 +495,9 @@ async def get_budget_forecast(periods: int = 3) -> dict[str, Any]:
 
         result = get_kingdom_forecast(periods=periods)
 
-        logger.info(f"[Julie] Prophet 예측 완료: {periods}개월, 총 ${result['summary']['total']:,}")
+        logger.info(
+            f"[Julie] Prophet 예측 완료: {periods}개월, 총 ${result['summary']['total']:,}"
+        )
 
         return result
 

@@ -8,7 +8,6 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-
 # #region agent log
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 
@@ -62,7 +61,9 @@ def check_server_status():
             ["ps", "aux"], capture_output=True, text=True, timeout=5, check=False
         )
         processes = [
-            line for line in result.stdout.split("\n") if "uvicorn" in line or "api_server" in line
+            line
+            for line in result.stdout.split("\n")
+            if "uvicorn" in line or "api_server" in line
         ]
         processes = [p for p in processes if "grep" not in p]
 
@@ -126,7 +127,9 @@ def check_endpoint_accessibility():
     for name, endpoint, is_streaming in endpoints:
         try:
             timeout = 2 if is_streaming else 5
-            response = requests.get(f"{BASE_URL}{endpoint}", timeout=timeout, stream=is_streaming)
+            response = requests.get(
+                f"{BASE_URL}{endpoint}", timeout=timeout, stream=is_streaming
+            )
             is_ok = response.status_code == 200
             results[name] = {
                 "status_code": response.status_code,
@@ -140,7 +143,11 @@ def check_endpoint_accessibility():
             log_debug(
                 f"comprehensive_system_check.py:check_endpoint_accessibility:{name}",
                 "Endpoint checked",
-                {"endpoint": endpoint, "status_code": response.status_code, "ok": is_ok},
+                {
+                    "endpoint": endpoint,
+                    "status_code": response.status_code,
+                    "ok": is_ok,
+                },
                 "ENDPOINT1",
             )
             # #endregion agent log
@@ -220,7 +227,11 @@ def check_openapi_schema():
             log_debug(
                 "comprehensive_system_check.py:check_openapi_schema",
                 "OpenAPI schema checked",
-                {"found_paths": found_paths, "missing_paths": missing_paths, "total": len(paths)},
+                {
+                    "found_paths": found_paths,
+                    "missing_paths": missing_paths,
+                    "total": len(paths),
+                },
                 "OPENAPI1",
             )
             # #endregion agent log
@@ -397,7 +408,9 @@ def main():
         for name, data in endpoint_results.items()
         if data.get("status_code") != 200 and "error" not in data
     ]
-    connection_errors = [name for name, data in endpoint_results.items() if "error" in data]
+    connection_errors = [
+        name for name, data in endpoint_results.items() if "error" in data
+    ]
 
     print("\n2. 엔드포인트 상태:")
     print(f"   - 작동: {len(working)}개")
@@ -420,7 +433,9 @@ def main():
         print(f"   - 발견: {found_count}개")
         print(f"   - 누락: {missing_count}개")
 
-    import_success = sum(1 for r in import_results.values() if r.get("status") == "success")
+    import_success = sum(
+        1 for r in import_results.values() if r.get("status") == "success"
+    )
     print("\n5. Import 상태:")
     print(f"   - 성공: {import_success}/{len(import_results)}개")
 
@@ -434,7 +449,10 @@ def main():
         issues.append("서버가 실행 중이지 않음")
     if len(connection_errors) > 0:
         issues.append(f"{len(connection_errors)}개 엔드포인트 연결 실패")
-    if isinstance(openapi_results, dict) and len(openapi_results.get("missing", [])) > 0:
+    if (
+        isinstance(openapi_results, dict)
+        and len(openapi_results.get("missing", [])) > 0
+    ):
         issues.append(f"OpenAPI 스키마에 {len(openapi_results['missing'])}개 경로 누락")
     if isinstance(router_results, dict) and len(router_results.get("missing", [])) > 0:
         issues.append(f"라우터 등록에 {len(router_results['missing'])}개 경로 누락")

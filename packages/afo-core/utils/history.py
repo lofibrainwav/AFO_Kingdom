@@ -52,10 +52,12 @@ class Historian:
             risk_score = metadata.get("risk_score", (100.0 - trinity_score) / 100.0)
 
             await audit.log(
-                trinity_score=trinity_score / 100.0 if trinity_score > 1.0 else trinity_score,
+                trinity_score=(
+                    trinity_score / 100.0 if trinity_score > 1.0 else trinity_score
+                ),
                 risk_score=risk_score,
                 action=status,
-                context={**metadata, "query": query}
+                context={**metadata, "query": query},
             )
         except Exception as e:
             logger.error(f"⚠️ [Historian] AuditTrail persistence failed: {e}")

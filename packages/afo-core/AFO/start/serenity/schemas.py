@@ -16,7 +16,9 @@ class ComponentSchema(BaseModel):
 
     name: str = Field(..., description="PascalCase name of the component")
     description: str = Field(..., description="Purpose of the component")
-    imports: list[str] = Field(default_factory=list, description="List of import statements")
+    imports: list[str] = Field(
+        default_factory=list, description="List of import statements"
+    )
     props: list[ComponentProp] = Field(
         default_factory=list, description="Props interface definition"
     )

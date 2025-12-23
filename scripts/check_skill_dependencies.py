@@ -7,13 +7,11 @@ Sequential Thinking Phase 2: 스킬별 필요한 패키지 확인
 import sys
 from pathlib import Path
 
-
 # packages/afo-core를 경로에 추가
 core_path = Path(__file__).parent.parent / "packages" / "afo-core"
 sys.path.insert(0, str(core_path))
 
 from AFO.afo_skills_registry import register_core_skills
-
 
 # Python 패키지 매핑 (스킬 의존성 → 실제 패키지명)
 PACKAGE_MAPPING = {

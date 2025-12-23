@@ -21,7 +21,9 @@ class WalletAPIKeyRequest(BaseModel):
 
     provider: str = Field(..., description="API 제공자")
     api_key: str = Field(..., description="API 키")
-    environment: str = Field(default="production", description="환경 (production, development)")
+    environment: str = Field(
+        default="production", description="환경 (production, development)"
+    )
 
 
 class WalletSessionRequest(BaseModel):

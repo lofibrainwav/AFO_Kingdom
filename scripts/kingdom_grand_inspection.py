@@ -4,15 +4,18 @@ import os
 import pathlib
 import sys
 
-
 # Setup Logger
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger("AFO.GrandInspection")
 
 # Setup path
-sys.path.append(pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages")).resolve())
 sys.path.append(
-    pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")).resolve()
+    pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages")).resolve()
+)
+sys.path.append(
+    pathlib.Path(
+        os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")
+    ).resolve()
 )
 
 # Import Verification Modules
@@ -23,7 +26,9 @@ try:
     from scripts.verify_full_pillars_metrics import verify_full_pillars
     from scripts.verify_sejong_research import verify_sejong_system
 except ImportError as e:
-    logger.exception("❌ Metacognition Fail: Could not import verification modules. %s", e)
+    logger.exception(
+        "❌ Metacognition Fail: Could not import verification modules. %s", e
+    )
     sys.exit(1)
 
 
@@ -102,7 +107,9 @@ async def grand_inspection():
             all_pass = False
 
     if all_pass:
-        print("\n✨ CONCLUSION: The Kingdom is in Perfect Harmony (Metacognition Confirmed).")
+        print(
+            "\n✨ CONCLUSION: The Kingdom is in Perfect Harmony (Metacognition Confirmed)."
+        )
     else:
         print("\n⚠️ CONCLUSION: Maintenance Required in some sectors.")
 

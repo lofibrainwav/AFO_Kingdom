@@ -11,9 +11,9 @@ from unittest.mock import MagicMock, patch
 
 import numpy as np
 import pytest
-
 # AFO 왕국 모듈 임포트
-from AFO.services.trinity_calculator import SSOT_WEIGHTS, TrinityCalculator, trinity_calculator
+from AFO.services.trinity_calculator import (SSOT_WEIGHTS, TrinityCalculator,
+                                             trinity_calculator)
 
 
 class TestTrinityCalculatorIntegration:
@@ -505,9 +505,7 @@ if __name__ == "__main__":
         calculator.calculate_trinity_score(raw_scores)
 
         # Persona Scores 테스트
-        await calculator.calculate_persona_scores(
-            {"type": "commander"}
-        )
+        await calculator.calculate_persona_scores({"type": "commander"})
 
         return True
 

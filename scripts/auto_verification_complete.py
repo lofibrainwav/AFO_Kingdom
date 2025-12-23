@@ -8,7 +8,6 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-
 # #region agent log
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 
@@ -140,7 +139,8 @@ def verify_all_imports():
 
     # 4. Chancellor Router
     try:
-        from AFO.api.routers.chancellor_router import router as chancellor_router
+        from AFO.api.routers.chancellor_router import \
+            router as chancellor_router
 
         prefix = getattr(chancellor_router, "prefix", "N/A")
         results["chancellor_router"] = {"status": "success", "prefix": prefix}
@@ -241,7 +241,11 @@ def verify_all_endpoints():
             log_debug(
                 f"auto_verification_complete.py:verify_all_endpoints:{name}",
                 "Endpoint checked",
-                {"endpoint": endpoint, "status_code": response.status_code, "ok": is_ok},
+                {
+                    "endpoint": endpoint,
+                    "status_code": response.status_code,
+                    "ok": is_ok,
+                },
                 "ENDPOINT",
             )
             # #endregion agent log
@@ -358,7 +362,9 @@ def main():
 
     # 엔드포인트 검증 결과
     working_endpoints = [
-        name for name, data in endpoint_results.items() if data.get("status_code") == 200
+        name
+        for name, data in endpoint_results.items()
+        if data.get("status_code") == 200
     ]
     not_working_endpoints = [
         name

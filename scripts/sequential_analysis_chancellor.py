@@ -8,7 +8,6 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-
 # #region agent log
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 
@@ -135,7 +134,8 @@ def sequential_thinking_step_3():
     # 증거 1: Chancellor 라우터 파일 확인
     print("증거 1: Chancellor 라우터 파일 확인")
     try:
-        from AFO.api.routers.chancellor_router import router as chancellor_router
+        from AFO.api.routers.chancellor_router import \
+            router as chancellor_router
 
         prefix = getattr(chancellor_router, "prefix", "N/A")
         # #region agent log
@@ -238,46 +238,58 @@ def sequential_thinking_step_4():
 
     # H1 평가
     if evidence.get("registration_code_exists"):
-        evaluations.append({"hypothesis": "H1", "status": "REJECTED", "reason": "등록 코드 존재"})
+        evaluations.append(
+            {"hypothesis": "H1", "status": "REJECTED", "reason": "등록 코드 존재"}
+        )
     else:
-        evaluations.append({"hypothesis": "H1", "status": "CONFIRMED", "reason": "등록 코드 없음"})
+        evaluations.append(
+            {"hypothesis": "H1", "status": "CONFIRMED", "reason": "등록 코드 없음"}
+        )
 
     # H2 평가
     prefix = evidence.get("router_prefix", "")
     if prefix and prefix != "/chancellor":
-        evaluations.append({
-            "hypothesis": "H2",
-            "status": "CONFIRMED",
-            "reason": f"Prefix가 {prefix}임",
-        })
+        evaluations.append(
+            {
+                "hypothesis": "H2",
+                "status": "CONFIRMED",
+                "reason": f"Prefix가 {prefix}임",
+            }
+        )
     else:
-        evaluations.append({"hypothesis": "H2", "status": "REJECTED", "reason": "Prefix 정상"})
+        evaluations.append(
+            {"hypothesis": "H2", "status": "REJECTED", "reason": "Prefix 정상"}
+        )
 
     # H3 평가 (서버 로그 확인 불가하므로 INCONCLUSIVE)
-    evaluations.append({
-        "hypothesis": "H3",
-        "status": "INCONCLUSIVE",
-        "reason": "서버 시작 로그 확인 필요",
-    })
+    evaluations.append(
+        {
+            "hypothesis": "H3",
+            "status": "INCONCLUSIVE",
+            "reason": "서버 시작 로그 확인 필요",
+        }
+    )
 
     # H4 평가
     paths = evidence.get("chancellor_paths", [])
     if paths:
-        evaluations.append({
-            "hypothesis": "H4",
-            "status": "CONFIRMED",
-            "reason": f"다른 경로로 등록됨: {paths}",
-        })
+        evaluations.append(
+            {
+                "hypothesis": "H4",
+                "status": "CONFIRMED",
+                "reason": f"다른 경로로 등록됨: {paths}",
+            }
+        )
     else:
-        evaluations.append({"hypothesis": "H4", "status": "REJECTED", "reason": "경로 없음"})
+        evaluations.append(
+            {"hypothesis": "H4", "status": "REJECTED", "reason": "경로 없음"}
+        )
 
     for eval_result in evaluations:
         status_icon = (
             "✅"
             if eval_result["status"] == "CONFIRMED"
-            else "❌"
-            if eval_result["status"] == "REJECTED"
-            else "⚠️"
+            else "❌" if eval_result["status"] == "REJECTED" else "⚠️"
         )
         print(f"{status_icon} {eval_result['hypothesis']}: {eval_result['status']}")
         print(f"   이유: {eval_result['reason']}\n")

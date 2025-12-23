@@ -151,7 +151,9 @@ class OptimizedRedisCache:
             print(f"Redis 배치 GET 실패: {e}")
             return {}
 
-    async def batch_set(self, key_values: dict[str, Any], ttl_seconds: int = 300) -> None:
+    async def batch_set(
+        self, key_values: dict[str, Any], ttl_seconds: int = 300
+    ) -> None:
         """
         배치 SET 작업
 
@@ -252,7 +254,9 @@ if __name__ == "__main__":
         # GET-OR-COMPUTE 테스트
         print("📊 GET-OR-COMPUTE 테스트...")
         result1 = await cached_get_or_compute("test:1", test_compute, 60, 5)
-        result2 = await cached_get_or_compute("test:1", test_compute, 60, 5)  # 캐시 히트
+        result2 = await cached_get_or_compute(
+            "test:1", test_compute, 60, 5
+        )  # 캐시 히트
 
         print(f"✅ 결과 1: {result1}")
         print(f"✅ 결과 2 (캐시): {result2}")

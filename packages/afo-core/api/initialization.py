@@ -61,7 +61,9 @@ async def initialize_system() -> None:
         # Initialize LLM Clients
         await _initialize_llm_clients()
 
-        print("[지휘소 v6】 '진정한 두뇌' (Chancellor Graph) 가동 준비 완료. (True Intelligence)")
+        print(
+            "[지휘소 v6】 '진정한 두뇌' (Chancellor Graph) 가동 준비 완료. (True Intelligence)"
+        )
 
     except Exception as e:
         logger.error(f"System initialization failed: {e}")
@@ -95,7 +97,9 @@ async def _initialize_antigravity() -> None:
             )
 
         if antigravity and antigravity.DRY_RUN_DEFAULT:
-            print("🛡️ [AntiGravity] DRY_RUN 모드 활성화 - 모든 위험 동작 시뮬레이션 (善)")
+            print(
+                "🛡️ [AntiGravity] DRY_RUN 모드 활성화 - 모든 위험 동작 시뮬레이션 (善)"
+            )
     except Exception as e:
         print(f"⚠️ AntiGravity 초기화 실패: {e}")
 
@@ -156,7 +160,9 @@ async def _initialize_skills_registry() -> None:
 
         skill_registry = _rcs()
         skill_count = (
-            skill_registry.count() if skill_registry and hasattr(skill_registry, "count") else 0
+            skill_registry.count()
+            if skill_registry and hasattr(skill_registry, "count")
+            else 0
         )
         print(f"ℹ️ [INFO] {skill_count} Skills loaded in simulation mode")
     except ImportError:
@@ -169,7 +175,8 @@ async def _initialize_yeongdeok() -> None:
 
     try:
         from AFO.api.compat import get_settings_safe
-        from AFO.memory_system.yeongdeok_complete import YeongdeokComplete as _YC
+        from AFO.memory_system.yeongdeok_complete import \
+            YeongdeokComplete as _YC
 
         settings = get_settings_safe()
         n8n_url = getattr(settings, "N8N_URL", "") if settings else ""
@@ -184,7 +191,8 @@ async def _initialize_yeongdeok() -> None:
         print("[영덕] 영덕 완전체 준비 완료 - 뇌/눈/귀/팔 모두 연결됨")
     except ImportError:
         try:
-            from memory_system.yeongdeok_complete import YeongdeokComplete as _YC
+            from memory_system.yeongdeok_complete import \
+                YeongdeokComplete as _YC
 
             yeongdeok = _YC(
                 n8n_url="",
@@ -209,7 +217,9 @@ async def _initialize_strategy_engine() -> None:
         from chancellor_graph import chancellor_graph
 
         strategy_app_runnable = chancellor_graph
-        print("[지휘소 v6】 '진정한 두뇌' (Chancellor Graph) 가동 준비 완료. (True Intelligence)")
+        print(
+            "[지휘소 v6】 '진정한 두뇌' (Chancellor Graph) 가동 준비 완료. (True Intelligence)"
+        )
     except ImportError:
         # Fallback to Workflow Mock Compilation
         try:
@@ -221,7 +231,9 @@ async def _initialize_strategy_engine() -> None:
                 print("[지휘소 v6】 '두뇌' (Mock) 가동 준비 완료.")
             else:
                 strategy_app_runnable = None
-                print("⚠️ Strategy workflow 또는 memory_context 없음 - LangGraph 컴파일 건너뜀")
+                print(
+                    "⚠️ Strategy workflow 또는 memory_context 없음 - LangGraph 컴파일 건너뜀"
+                )
         except (ImportError, AttributeError):
             strategy_app_runnable = None
             print("⚠️ LangGraph compilation failed - running in degraded mode")
@@ -249,7 +261,13 @@ async def _initialize_databases() -> None:
         pg_password = getattr(settings, "POSTGRES_PASSWORD", "")
 
         PG_POOL = SimpleConnectionPool(
-            1, 5, host=pg_host, port=pg_port, database=pg_db, user=pg_user, password=pg_password
+            1,
+            5,
+            host=pg_host,
+            port=pg_port,
+            database=pg_db,
+            user=pg_user,
+            password=pg_password,
         )
         print(f"✅ PostgreSQL 연결 성공 ({pg_host}:{pg_port}/{pg_db})")
     except Exception as e:
@@ -282,7 +300,8 @@ async def _initialize_llm_clients() -> None:
     """Initialize LLM client connections."""
     global OPENAI_CLIENT, CLAUDE_CLIENT
 
-    from AFO.api.compat import ANTHROPIC_AVAILABLE, OPENAI_AVAILABLE, get_settings_safe
+    from AFO.api.compat import (ANTHROPIC_AVAILABLE, OPENAI_AVAILABLE,
+                                get_settings_safe)
 
     settings = get_settings_safe()
 

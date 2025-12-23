@@ -22,8 +22,11 @@ def is_postgres_available():
     except (TimeoutError, ConnectionRefusedError, OSError):
         return False
 
+
 @pytest.mark.integration
-@pytest.mark.skipif(not is_postgres_available(), reason="PostgreSQL not running on port 15432")
+@pytest.mark.skipif(
+    not is_postgres_available(), reason="PostgreSQL not running on port 15432"
+)
 @pytest.mark.asyncio
 async def test_historian_persistence():
     """Verify that Historian.record persists to AuditTrail."""
@@ -53,6 +56,7 @@ async def test_historian_persistence():
 
     assert found, "Record not found in AuditTrail PostgreSQL persistence"
     print("\n✅ Historian Persistence Verified!")
+
 
 if __name__ == "__main__":
     asyncio.run(test_historian_persistence())

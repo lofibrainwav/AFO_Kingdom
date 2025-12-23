@@ -3,10 +3,11 @@ import os
 import pathlib
 import sys
 
-
 # 프로젝트 루트 경로 추가
 sys.path.append(
-    pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core/AFO")).resolve()
+    pathlib.Path(
+        os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core/AFO")
+    ).resolve()
 )
 
 from utils.playwright_bridge import bridge

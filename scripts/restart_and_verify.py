@@ -10,7 +10,6 @@ import time
 from datetime import datetime
 from pathlib import Path
 
-
 # #region agent log
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 
@@ -131,7 +130,11 @@ def verify_endpoints():
             log_debug(
                 f"restart_and_verify.py:verify_endpoints:{name}",
                 "Endpoint checked",
-                {"endpoint": endpoint, "status_code": response.status_code, "ok": is_ok},
+                {
+                    "endpoint": endpoint,
+                    "status_code": response.status_code,
+                    "ok": is_ok,
+                },
                 "VERIFY1",
             )
             # #endregion agent log
@@ -267,7 +270,9 @@ def main():
         print("=" * 60)
 
         working = [
-            name for name, data in endpoint_results.items() if data.get("status_code") == 200
+            name
+            for name, data in endpoint_results.items()
+            if data.get("status_code") == 200
         ]
         not_working = [
             name
@@ -288,7 +293,9 @@ def main():
         if isinstance(openapi_results, dict) and "found" in openapi_results:
             found_count = len(openapi_results["found"])
             missing_count = len(openapi_results["missing"])
-            print(f"\n📋 OpenAPI 스키마: {found_count}개 경로 발견, {missing_count}개 누락")
+            print(
+                f"\n📋 OpenAPI 스키마: {found_count}개 경로 발견, {missing_count}개 누락"
+            )
 
         # #region agent log
         log_debug(

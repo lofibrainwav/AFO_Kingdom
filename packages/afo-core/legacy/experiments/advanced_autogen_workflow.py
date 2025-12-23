@@ -16,7 +16,8 @@ import sys
 from typing import Any
 
 try:
-    from autogen import AssistantAgent, GroupChat, GroupChatManager, UserProxyAgent
+    from autogen import (AssistantAgent, GroupChat, GroupChatManager,
+                         UserProxyAgent)
     from autogen.code_utils import create_function_tool
 
     AUTOGEN_AVAILABLE = True
@@ -24,11 +25,8 @@ except ImportError:  # pragma: no cover - optional dependency
     AUTOGEN_AVAILABLE = False
 
 from afo_soul_engine.langgraph.twin_dragon_graph import (
-    LANGGRAPH_AVAILABLE,
-    run_langgraph_state,
-    run_twin_dragon_router,
-    seed_trinity,
-)
+    LANGGRAPH_AVAILABLE, run_langgraph_state, run_twin_dragon_router,
+    seed_trinity)
 
 # CREW_MODE integration (offline by default)
 CREW_MODE = os.getenv("CREW_MODE", "offline").lower()
@@ -56,7 +54,9 @@ def build_llm_config() -> dict[str, Any] | None:
 
     api_key = os.getenv("OPENAI_API_KEY")
     if not api_key:
-        print("⚠️ OPENAI_API_KEY missing; switch to CREW_MODE=offline or export a valid key.")
+        print(
+            "⚠️ OPENAI_API_KEY missing; switch to CREW_MODE=offline or export a valid key."
+        )
         return None
 
     model = os.getenv("AUTOGEN_MODEL", "gpt-4o-mini")
@@ -173,7 +173,9 @@ def run_autogen_workflow(
             function_map[name] = fn
 
     assistant_functions = [
-        tool for tool in [search_func_tool, router_tool, langgraph_tool] if tool is not None
+        tool
+        for tool in [search_func_tool, router_tool, langgraph_tool]
+        if tool is not None
     ]
 
     user_proxy = UserProxyAgent(

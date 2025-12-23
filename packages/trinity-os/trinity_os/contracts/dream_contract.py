@@ -9,7 +9,9 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 from typing import Any, Literal
 
-ContractStatus = Literal["DRAFT", "NEGOTIATED", "ACTIVE", "EXECUTING", "COMPLETED", "TERMINATED"]
+ContractStatus = Literal[
+    "DRAFT", "NEGOTIATED", "ACTIVE", "EXECUTING", "COMPLETED", "TERMINATED"
+]
 
 
 @dataclass
@@ -107,7 +109,9 @@ class DreamContractManager:
 
         # Check risk threshold
         if risk_score > contract.guarantees.max_risk_threshold:
-            violations.append(f"risk: {risk_score}/{contract.guarantees.max_risk_threshold}")
+            violations.append(
+                f"risk: {risk_score}/{contract.guarantees.max_risk_threshold}"
+            )
 
         if violations:
             contract.status = "TERMINATED"

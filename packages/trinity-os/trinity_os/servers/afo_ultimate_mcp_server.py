@@ -24,10 +24,12 @@ except ImportError as e:
 # Trinity Score Evaluator (동적 점수 계산)
 try:
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../../../afo-core"))
-    from AFO.services.mcp_tool_trinity_evaluator import mcp_tool_trinity_evaluator
+    from AFO.services.mcp_tool_trinity_evaluator import \
+        mcp_tool_trinity_evaluator
 except ImportError:
     try:
-        from AFO.services.mcp_tool_trinity_evaluator import mcp_tool_trinity_evaluator
+        from AFO.services.mcp_tool_trinity_evaluator import \
+            mcp_tool_trinity_evaluator
     except ImportError:
         mcp_tool_trinity_evaluator = None
 
@@ -104,7 +106,9 @@ class AfoUltimateMCPServer:
         script_path = os.path.join(WORKSPACE_ROOT, "scripts", "verify_kingdom_core.py")
         if not os.path.exists(script_path):
             # Fallback to status script if core script missing
-            script_path = os.path.join(WORKSPACE_ROOT, "scripts", "verify_kingdom_status.py")
+            script_path = os.path.join(
+                WORKSPACE_ROOT, "scripts", "verify_kingdom_status.py"
+            )
             if not os.path.exists(script_path):
                 return "Error: Health Script Missing"
 
@@ -343,7 +347,9 @@ class AfoUltimateMCPServer:
                         elif tool_name == "read_file":
                             content = cls.read_file(args.get("path"))
                         elif tool_name == "write_file":
-                            content = cls.write_file(args.get("path"), args.get("content"))
+                            content = cls.write_file(
+                                args.get("path"), args.get("content")
+                            )
                         elif tool_name == "kingdom_health":
                             content = cls.kingdom_health()
 
@@ -366,11 +372,13 @@ class AfoUltimateMCPServer:
                         "kingdom_health",
                     ]:
                         try:
-                            trinity_eval = mcp_tool_trinity_evaluator.evaluate_execution_result(
-                                tool_name=tool_name,
-                                execution_result=content,
-                                execution_time_ms=execution_time_ms,
-                                is_error=is_error,
+                            trinity_eval = (
+                                mcp_tool_trinity_evaluator.evaluate_execution_result(
+                                    tool_name=tool_name,
+                                    execution_result=content,
+                                    execution_time_ms=execution_time_ms,
+                                    is_error=is_error,
+                                )
                             )
                             trinity_metadata = trinity_eval["trinity_metrics"]
                         except Exception:
@@ -390,13 +398,21 @@ class AfoUltimateMCPServer:
                             trinity_metadata = res  # Use result as metadata itself
 
                         elif tool_name == "verify_fact":
-                            res = AfoSkillsMCP.verify_fact(args.get("claim"), args.get("context", ""))
+                            res = AfoSkillsMCP.verify_fact(
+                                args.get("claim"), args.get("context", "")
+                            )
                             content = json.dumps(res, indent=2, ensure_ascii=False)
                             # Implied Trinity Score for fact verification
-                            trinity_metadata = {"truth_impact": (10 if res["verdict"] == "PLAUSIBLE" else -10)}
+                            trinity_metadata = {
+                                "truth_impact": (
+                                    10 if res["verdict"] == "PLAUSIBLE" else -10
+                                )
+                            }
 
                         elif tool_name == "cupy_weighted_sum":
-                            res = AfoSkillsMCP.cupy_weighted_sum(args.get("data", []), args.get("weights", []))
+                            res = AfoSkillsMCP.cupy_weighted_sum(
+                                args.get("data", []), args.get("weights", [])
+                            )
                             content = str(res)
 
                         elif tool_name == "sequential_thinking":
@@ -410,22 +426,36 @@ class AfoUltimateMCPServer:
                             # Extract Trinity Metadata
                             if "metadata" in res:
                                 trinity_metadata = {
-                                    "truth_impact": res["metadata"].get("truth_impact", 0),
-                                    "serenity_impact": res["metadata"].get("serenity_impact", 0),
+                                    "truth_impact": res["metadata"].get(
+                                        "truth_impact", 0
+                                    ),
+                                    "serenity_impact": res["metadata"].get(
+                                        "serenity_impact", 0
+                                    ),
                                 }
 
                         elif tool_name == "retrieve_context":
-                            res = Context7MCP.retrieve_context(args.get("query", ""), args.get("domain", "general"))
+                            res = Context7MCP.retrieve_context(
+                                args.get("query", ""), args.get("domain", "general")
+                            )
                             content = json.dumps(res, indent=2, ensure_ascii=False)
                             if "metadata" in res:
-                                trinity_metadata = {"truth_impact": res["metadata"].get("truth_impact", 0)}
+                                trinity_metadata = {
+                                    "truth_impact": res["metadata"].get(
+                                        "truth_impact", 0
+                                    )
+                                }
 
                         # Browser Bridge Tools
                         elif tool_name == "browser_navigate":
-                            content = json.dumps(PlaywrightBridgeMCP.navigate(args.get("url")), indent=2)
+                            content = json.dumps(
+                                PlaywrightBridgeMCP.navigate(args.get("url")), indent=2
+                            )
                         elif tool_name == "browser_screenshot":
                             content = json.dumps(
-                                PlaywrightBridgeMCP.screenshot(args.get("path", "screenshot.png")),
+                                PlaywrightBridgeMCP.screenshot(
+                                    args.get("path", "screenshot.png")
+                                ),
                                 indent=2,
                             )
                         elif tool_name == "browser_click":
@@ -435,7 +465,9 @@ class AfoUltimateMCPServer:
                             )
                         elif tool_name == "browser_type":
                             content = json.dumps(
-                                PlaywrightBridgeMCP.type_text(args.get("selector"), args.get("text")),
+                                PlaywrightBridgeMCP.type_text(
+                                    args.get("selector"), args.get("text")
+                                ),
                                 indent=2,
                             )
                         elif tool_name == "browser_scrape":
@@ -452,7 +484,9 @@ class AfoUltimateMCPServer:
                         "write_file",
                         "kingdom_health",
                     ]:
-                        content = f"Tool not available (Modules failed to load): {tool_name}"
+                        content = (
+                            f"Tool not available (Modules failed to load): {tool_name}"
+                        )
 
                     # Construct Response
                     result_body = [{"type": "text", "text": str(content)}]
@@ -484,7 +518,9 @@ class AfoUltimateMCPServer:
                     pass
 
                 if msg_id is not None:
-                    print(json.dumps({"jsonrpc": "2.0", "result": result, "id": msg_id}))
+                    print(
+                        json.dumps({"jsonrpc": "2.0", "result": result, "id": msg_id})
+                    )
                     sys.stdout.flush()
 
             except Exception as e:

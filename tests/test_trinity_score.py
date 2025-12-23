@@ -5,10 +5,11 @@ import sys
 import numpy as np
 import pytest
 
-
 # Ensure packages/afo-core is in python path
 sys.path.append(
-    pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")).resolve()
+    pathlib.Path(
+        os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")
+    ).resolve()
 )
 
 from services.trinity_calculator import SSOT_WEIGHTS, trinity_calculator

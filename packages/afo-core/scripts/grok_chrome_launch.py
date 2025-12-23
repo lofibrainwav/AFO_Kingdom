@@ -28,7 +28,9 @@ def steal_identity():
                 user_data_dir=USER_DATA_DIR,
                 channel="chrome",
                 headless=False,
-                args=["--disable-blink-features=AutomationControlled"],  # Try to hide automation
+                args=[
+                    "--disable-blink-features=AutomationControlled"
+                ],  # Try to hide automation
             )
 
             page = context.pages[0] if context.pages else context.new_page()

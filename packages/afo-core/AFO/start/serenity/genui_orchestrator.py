@@ -161,7 +161,11 @@ export const GenComponent = () => (
         if not review.passed:
             logger.warning(f"⚠️ Guardian Rejected: {review.feedback}")
             # In a real loop, we would re-prompt the LLM with feedback
-            return {"success": False, "reason": "Guardian Rejected", "feedback": review.feedback}
+            return {
+                "success": False,
+                "reason": "Guardian Rejected",
+                "feedback": review.feedback,
+            }
 
         # 4. Save to Filesystem (Eternity)
         file_path = self._save_component(schema)

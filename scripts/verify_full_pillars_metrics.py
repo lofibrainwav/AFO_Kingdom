@@ -3,15 +3,19 @@ import os
 import pathlib
 import sys
 
-
 # Setup path
-sys.path.append(pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages")).resolve())
 sys.path.append(
-    pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")).resolve()
+    pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages")).resolve()
+)
+sys.path.append(
+    pathlib.Path(
+        os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")
+    ).resolve()
 )
 
 from services.detailed_pillars_calculator import pillars_metrics
-from services.truth_metrics_calculator import truth_metrics  # Re-using Truth from Phase 15
+from services.truth_metrics_calculator import \
+    truth_metrics  # Re-using Truth from Phase 15
 
 
 async def verify_full_pillars():
@@ -51,7 +55,9 @@ async def verify_full_pillars():
     }
 
     # 1. Calculate Truth (Previously verified)
-    truth_raw = truth_metrics.calculate_technical_score(perfect_code, context, test_mode=True)
+    truth_raw = truth_metrics.calculate_technical_score(
+        perfect_code, context, test_mode=True
+    )
     truth_normalized = truth_raw["total_score"] / 25.0  # 0.0 ~ 1.0
     print(
         f"🔹 Truth (眞): {truth_normalized * 100:.1f}% (Technical Score: {truth_raw['total_score']}/25)"

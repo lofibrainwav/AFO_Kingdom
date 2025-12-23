@@ -3,7 +3,6 @@ import asyncio
 import pathlib
 import sys
 
-
 # Ensure packages/afo-core is in python path
 sys.path.append(pathlib.Path("packages/afo-core").resolve())
 
@@ -23,7 +22,9 @@ try:
     spec.loader.exec_module(module)
 
     ThreeStrategists = module.ThreeStrategists
-    print("✅ Successfully imported ThreeStrategists from packages/afo-core/3_strategists.py")
+    print(
+        "✅ Successfully imported ThreeStrategists from packages/afo-core/3_strategists.py"
+    )
 
 except Exception as e:
     print(f"❌ FAIL: Could not import ThreeStrategists: {e}")

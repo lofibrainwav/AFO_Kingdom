@@ -43,7 +43,8 @@ def analyze_risk(directory: str) -> float:
         ]
 
         if any(
-            ex in root for ex in ["node_modules", ".git", "__pycache__", "venv", ".venv", ".next"]
+            ex in root
+            for ex in ["node_modules", ".git", "__pycache__", "venv", ".venv", ".next"]
         ):
             continue
 
@@ -105,7 +106,11 @@ def main():
     eternity = 100.0
 
     trinity_score = (
-        (truth * 0.35) + (goodness * 0.35) + (beauty * 0.20) + (serenity * 0.08) + (eternity * 0.02)
+        (truth * 0.35)
+        + (goodness * 0.35)
+        + (beauty * 0.20)
+        + (serenity * 0.08)
+        + (eternity * 0.02)
     )
 
     print("\n📊 [Scorecard]")

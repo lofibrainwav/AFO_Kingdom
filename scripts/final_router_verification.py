@@ -8,7 +8,6 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-
 # #region agent log
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 
@@ -89,7 +88,8 @@ def verify_app_routes():
                     if any(
                         part in route
                         for part in missing.split("/")
-                        if part and part not in ["api", "chancellor", "learning", "grok"]
+                        if part
+                        and part not in ["api", "chancellor", "learning", "grok"]
                     ):
                         print(f"   {route}")
                         break
@@ -165,7 +165,11 @@ def verify_endpoints():
             log_debug(
                 f"final_router_verification.py:verify_endpoints:{name}",
                 "Endpoint checked",
-                {"endpoint": endpoint, "status_code": response.status_code, "ok": is_ok},
+                {
+                    "endpoint": endpoint,
+                    "status_code": response.status_code,
+                    "ok": is_ok,
+                },
                 "EP1",
             )
             # #endregion agent log
@@ -223,7 +227,9 @@ def main():
                 print(f"     - {path}")
 
     working_endpoints = [
-        name for name, data in endpoint_results.items() if data.get("status_code") == 200
+        name
+        for name, data in endpoint_results.items()
+        if data.get("status_code") == 200
     ]
     print(f"\n✅ 작동하는 엔드포인트: {len(working_endpoints)}개")
     for name in working_endpoints:

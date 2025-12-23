@@ -122,7 +122,9 @@ class TrinityOS:
     def _run_shell_script(self, script_path: Path) -> str:
         """Shell 스크립트 실행"""
         try:
-            result = subprocess.run([str(script_path)], capture_output=True, text=True, cwd=self.base_path)
+            result = subprocess.run(
+                [str(script_path)], capture_output=True, text=True, cwd=self.base_path
+            )
             return result.stdout.strip()
         except Exception as e:
             return f"Error: {e}"
@@ -140,7 +142,8 @@ class TrinityOS:
                             {
                                 "name": agent["name"],
                                 "title": agent["master_title"],
-                                "trinity_score": sum(agent["trinity_score"].values()) / 5,
+                                "trinity_score": sum(agent["trinity_score"].values())
+                                / 5,
                                 "registration_date": agent["last_interaction"],
                             }
                         )
@@ -191,7 +194,9 @@ def main():
         # 철학 엔진 명령어 처리
         if choice == "p":
             print("🧠 철학 엔진 모드")
-            philosophy_command = input("철학 엔진 명령어 (r:등록, s:상태, m:명장): ").strip().lower()
+            philosophy_command = (
+                input("철학 엔진 명령어 (r:등록, s:상태, m:명장): ").strip().lower()
+            )
 
             if philosophy_command == "r":
                 agent_id = input("에이전트 ID: ").strip()
@@ -206,7 +211,9 @@ def main():
 
             elif philosophy_command == "m":
                 agent_id = input("에이전트 ID: ").strip()
-                title = input("명장 타이틀 (trinity_apprentice/kingdom_strategist/philosophy_master): ").strip()
+                title = input(
+                    "명장 타이틀 (trinity_apprentice/kingdom_strategist/philosophy_master): "
+                ).strip()
                 result = trinity.philosophy_engine.certify_master(agent_id, title)
                 print(json.dumps(result, indent=2, ensure_ascii=False))
 

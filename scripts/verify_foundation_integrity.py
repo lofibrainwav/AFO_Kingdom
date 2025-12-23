@@ -116,13 +116,15 @@ def check_eternity():
 
 if __name__ == "__main__":
     print("🏛️  Foundation Integrity Re-Inspection Started")
-    if all([
-        check_truth(),
-        check_goodness(),
-        check_beauty(),
-        check_serenity(),
-        check_eternity(),
-    ]):
+    if all(
+        [
+            check_truth(),
+            check_goodness(),
+            check_beauty(),
+            check_serenity(),
+            check_eternity(),
+        ]
+    ):
         print("\n✨ ALL PILLARS SECURE. READY FOR PHASE 14.")
         sys.exit(0)
     else:

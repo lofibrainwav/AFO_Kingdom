@@ -26,7 +26,7 @@ RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
-COPY packages/afo-core/ /app/packages/afo-core/
+COPY packages/afo-core/ /app/
 
 # 美 (Beauty): Clean up and organize
 RUN mkdir -p /app/logs /app/data && \
@@ -40,7 +40,7 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8010/health || exit 1
 
 # 孝 (Serenity): Environment variables
-ENV PYTHONPATH=/app/packages/afo-core
+ENV PYTHONPATH=/app
 ENV API_SERVER_HOST=0.0.0.0
 ENV API_SERVER_PORT=8010
 ENV ENV=production
@@ -48,5 +48,8 @@ ENV ENV=production
 # Expose port
 EXPOSE 8010
 
-# Start the application
+# Start the application (올바른 entrypoint)
+# 방법 1: 직접 실행 (api_server.py가 /app에 있음)
 CMD ["python", "api_server.py"]
+# 방법 2: uvicorn 모듈 실행 (대안)
+# CMD ["python", "-m", "uvicorn", "AFO.api_server:app", "--host", "0.0.0.0", "--port", "8010"]

@@ -7,10 +7,11 @@ import sys
 import pytest
 from httpx import ASGITransport, AsyncClient
 
-
 # Ensure AFO package is importable
 sys.path.append(
-    pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../../packages/afo-core")).resolve()
+    pathlib.Path(
+        os.path.join(pathlib.Path(__file__).parent, "../../packages/afo-core")
+    ).resolve()
 )
 
 from AFO.api_server import app

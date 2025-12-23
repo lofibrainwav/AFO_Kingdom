@@ -5,7 +5,6 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-
 # Add package root to path
 sys.path.append(os.path.join(Path.cwd(), "packages/afo-core"))
 

@@ -4,19 +4,23 @@ import pathlib
 import sys
 from decimal import Decimal
 
-
 # Setup path
-sys.path.append(pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages")).resolve())
+sys.path.append(
+    pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages")).resolve()
+)
 # Also add packages/afo-core directly for internal imports if needed
 sys.path.append(
-    pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")).resolve()
+    pathlib.Path(
+        os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")
+    ).resolve()
 )
 
 try:
     from julie_cpa.core.julie_engine import AdjustBudgetCommand, julie
 except ImportError:
     # Fallback import strategy
-    from packages.afo_core.julie_cpa.core.julie_engine import AdjustBudgetCommand, julie
+    from packages.afo_core.julie_cpa.core.julie_engine import (
+        AdjustBudgetCommand, julie)
 
 
 async def verify_financial_precision():
@@ -52,7 +56,9 @@ async def verify_financial_precision():
     else:
         print(f"❌ Undo failed. Current: {julie.budget_limit}")
 
-    print("\n[Verification Complete] Financial Precision & Command Pattern Operational.")
+    print(
+        "\n[Verification Complete] Financial Precision & Command Pattern Operational."
+    )
 
 
 if __name__ == "__main__":

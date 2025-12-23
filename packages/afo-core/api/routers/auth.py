@@ -11,7 +11,8 @@ from pydantic import BaseModel, Field
 
 # Auth utilities import
 try:
-    from AFO.api.utils.auth import create_access_token, hash_password, verify_password, verify_token
+    from AFO.api.utils.auth import (create_access_token, hash_password,
+                                    verify_password, verify_token)
 
     AUTH_UTILS_AVAILABLE = True
 except ImportError:
@@ -76,33 +77,113 @@ async def login(request: LoginRequest) -> dict[str, Any]:
     Raises:
         HTTPException: 인증 실패 시
     """
-    # TODO: 실제 DB 조회 구현 (현재는 기본 검증)
-    # 실제로는 DB에서 사용자 조회 및 비밀번호 해시 검증 필요
-
+    # 입력 검증
     if not request.username or not request.password:
-        raise HTTPException(status_code=401, detail="사용자명 또는 비밀번호가 올바르지 않습니다.")
+        raise HTTPException(
+            status_code=401, detail="사용자명 또는 비밀번호가 올바르지 않습니다."
+        )
 
-    # TODO: DB에서 사용자 조회
-    # user = await get_user_by_username(request.username)
-    # if not user or not verify_password(request.password, user.hashed_password):
-    #     raise HTTPException(status_code=401, detail="인증 실패")
+    # DB에서 사용자 조회 및 인증
+    try:
+        from AFO.services.database import get_db_connection
 
-    # 임시: 기본 검증 (실제로는 DB 조회 필요)
-    # 여기서는 모든 사용자를 허용 (프로덕션에서는 제거)
+        conn = await get_db_connection()
 
-    # JWT 토큰 생성
-    if AUTH_UTILS_AVAILABLE:
-        token_data = {"sub": request.username, "username": request.username}
-        access_token = create_access_token(data=token_data)
-    else:
-        # Fallback: 임시 토큰
-        access_token = f"temp_token_{request.username}_{hash(request.password)}"
+        # 사용자 조회 (저장 프로시저 사용)
+        user_result = await conn.fetchrow(
+            "SELECT * FROM get_user_by_username($1)", request.username
+        )
 
-    return {
-        "access_token": access_token,
-        "token_type": "bearer",
-        "expires_in": 3600 * 24,  # 24시간
-    }
+        if not user_result:
+            await conn.close()
+            raise HTTPException(status_code=401, detail="사용자를 찾을 수 없습니다.")
+
+        # 계정 활성화 상태 확인
+        if not user_result["is_active"]:
+            await conn.close()
+            raise HTTPException(status_code=401, detail="계정이 비활성화되었습니다.")
+
+        # 비밀번호 검증
+        if AUTH_UTILS_AVAILABLE:
+            from AFO.api.utils.auth import verify_password
+
+            password_valid = verify_password(
+                request.password, user_result["hashed_password"]
+            )
+        else:
+            # Fallback 검증
+            password_valid = (
+                user_result["hashed_password"] == f"hashed_{hash(request.password)}"
+            )
+
+        if not password_valid:
+            await conn.close()
+            raise HTTPException(status_code=401, detail="비밀번호가 올바르지 않습니다.")
+
+        # 세션 생성
+        if AUTH_UTILS_AVAILABLE:
+            from AFO.api.utils.auth import create_access_token
+
+            # JWT 토큰 생성
+            token_data = {
+                "sub": user_result["username"],
+                "user_id": user_result["id"],
+                "role": user_result["role"],
+            }
+            access_token = create_access_token(data=token_data)
+            session_token = access_token  # JWT를 세션 토큰으로 사용
+        else:
+            # Fallback 토큰
+            session_token = f"temp_token_{request.username}_{hash(request.password)}"
+            access_token = session_token
+
+        # DB 세션 생성 (저장 프로시저 사용)
+        try:
+            await conn.fetchval(
+                "SELECT create_user_session($1, $2, $3)",
+                user_result["id"],
+                session_token,
+                "local",
+            )
+        except Exception as e:
+            # 세션 생성 실패해도 로그인 성공으로 처리 (선택적)
+            print(f"세션 생성 실패 (무시): {e}")
+
+        await conn.close()
+
+        return {
+            "access_token": access_token,
+            "token_type": "bearer",
+            "expires_in": 3600 * 24,  # 24시간
+            "user": {
+                "id": user_result["id"],
+                "username": user_result["username"],
+                "email": user_result["email"],
+                "role": user_result["role"],
+                "display_name": user_result.get("display_name"),
+            },
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        # DB 연결 실패 등: fallback 모드
+        print(f"DB 인증 실패, fallback 모드: {e}")
+
+        # Fallback: 간단한 인증 (개발용)
+        if AUTH_UTILS_AVAILABLE:
+            token_data = {"sub": request.username, "username": request.username}
+            access_token = create_access_token(data=token_data)
+        else:
+            access_token = f"temp_token_{request.username}_{hash(request.password)}"
+
+        return {
+            "access_token": access_token,
+            "token_type": "bearer",
+            "expires_in": 3600 * 24,
+            "note": "DB unavailable - fallback authentication",
+            "user": {"username": request.username, "role": "user"},
+        }
 
 
 @router.post("/verify")

@@ -28,7 +28,9 @@ async def get_db_connection() -> Any:
         asyncpg.Connection: PostgreSQL 연결 객체
     """
     if not ASYNCPG_AVAILABLE or asyncpg is None:
-        raise HTTPException(status_code=503, detail="PostgreSQL async support not available")
+        raise HTTPException(
+            status_code=503, detail="PostgreSQL async support not available"
+        )
 
     try:
         settings = get_settings()

@@ -117,7 +117,9 @@ class ObsidianTemplateValidator:
 
             # YAML Frontmatter 검증
             if template_name.endswith(".md"):
-                frontmatter_errors, frontmatter_warnings = self.validate_frontmatter(content)
+                frontmatter_errors, frontmatter_warnings = self.validate_frontmatter(
+                    content
+                )
                 errors.extend(frontmatter_errors)
                 warnings.extend(frontmatter_warnings)
 
@@ -127,7 +129,9 @@ class ObsidianTemplateValidator:
 
             # Dataview 쿼리 검증
             if template_name == "dataview_queries.md":
-                dataview_errors, dataview_warnings = self.validate_dataview_queries(content)
+                dataview_errors, dataview_warnings = self.validate_dataview_queries(
+                    content
+                )
                 errors.extend(dataview_errors)
                 warnings.extend(dataview_warnings)
 
@@ -250,7 +254,9 @@ class ObsidianTemplateValidator:
             # 기본 SELECT 절 검증 (TABLE, LIST, TASK)
             has_select = re.search(r"\b(TABLE|LIST|TASK)\b", block, re.IGNORECASE)
             if not has_select:
-                warnings.append(f"Dataview 쿼리 {i + 1}: SELECT 절이 명시되지 않았습니다")
+                warnings.append(
+                    f"Dataview 쿼리 {i + 1}: SELECT 절이 명시되지 않았습니다"
+                )
 
         return errors, warnings
 
@@ -393,9 +399,13 @@ class ObsidianTemplateValidator:
         """종합 결과 생성"""
         summary = {
             "total_templates": len(results.get("templates", [])),
-            "valid_templates": sum(1 for t in results.get("templates", []) if t.is_valid),
+            "valid_templates": sum(
+                1 for t in results.get("templates", []) if t.is_valid
+            ),
             "total_errors": sum(len(t.errors) for t in results.get("templates", [])),
-            "total_warnings": sum(len(t.warnings) for t in results.get("templates", [])),
+            "total_warnings": sum(
+                len(t.warnings) for t in results.get("templates", [])
+            ),
             "system_status": "unknown",
         }
 

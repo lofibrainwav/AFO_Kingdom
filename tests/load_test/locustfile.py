@@ -5,10 +5,10 @@ This script performs comprehensive load testing on AFO Kingdom API endpoints.
 Tests various scenarios including basic health checks, skills API, and concurrent user loads.
 """
 
-import time
 import random
-from locust import HttpUser, task, between, events
-from locust.runners import STATE_STOPPING, STATE_STOPPED
+import time
+
+from locust import HttpUser, between, events, task
 
 
 class AFOKingdomUser(HttpUser):
@@ -56,7 +56,9 @@ class AFOKingdomUser(HttpUser):
         """Test skills detail endpoint"""
         if self.skills_list:
             skill_id = random.choice(self.skills_list)
-            with self.client.get(f"/api/skills/detail/{skill_id}", catch_response=True) as response:
+            with self.client.get(
+                f"/api/skills/detail/{skill_id}", catch_response=True
+            ) as response:
                 if response.status_code == 200:
                     response.success()
                 elif response.status_code == 404:
@@ -87,11 +89,11 @@ class AFOKingdomUser(HttpUser):
             payload = {
                 "skill_id": skill_id,
                 "parameters": {"test": True},
-                "timeout_seconds": 5
+                "timeout_seconds": 5,
             }
-            with self.client.post("/api/skills/execute",
-                                json=payload,
-                                catch_response=True) as response:
+            with self.client.post(
+                "/api/skills/execute", json=payload, catch_response=True
+            ) as response:
                 if response.status_code in [200, 400, 404]:  # Accept various responses
                     response.success()
                 else:
@@ -107,12 +109,28 @@ class LoadTestShape:
     """
 
     stages = [
-        {"duration": 60, "users": 10, "spawn_rate": 2},    # Warm up: 10 users over 1 min
-        {"duration": 120, "users": 50, "spawn_rate": 5},   # Ramp up: 50 users over 2 min
-        {"duration": 180, "users": 100, "spawn_rate": 10}, # Peak load: 100 users over 3 min
-        {"duration": 120, "users": 100, "spawn_rate": 10}, # Sustained load: 100 users for 2 min
-        {"duration": 60, "users": 50, "spawn_rate": 5},    # Cool down: 50 users over 1 min
-        {"duration": 30, "users": 10, "spawn_rate": 2},    # Final cool down: 10 users over 30s
+        {"duration": 60, "users": 10, "spawn_rate": 2},  # Warm up: 10 users over 1 min
+        {"duration": 120, "users": 50, "spawn_rate": 5},  # Ramp up: 50 users over 2 min
+        {
+            "duration": 180,
+            "users": 100,
+            "spawn_rate": 10,
+        },  # Peak load: 100 users over 3 min
+        {
+            "duration": 120,
+            "users": 100,
+            "spawn_rate": 10,
+        },  # Sustained load: 100 users for 2 min
+        {
+            "duration": 60,
+            "users": 50,
+            "spawn_rate": 5,
+        },  # Cool down: 50 users over 1 min
+        {
+            "duration": 30,
+            "users": 10,
+            "spawn_rate": 2,
+        },  # Final cool down: 10 users over 30s
     ]
 
     def tick(self):
@@ -146,7 +164,7 @@ def on_locust_init(environment, **kwargs):
     print(f"Users: {environment.runner.user_count if environment.runner else 'N/A'}")
 
     # Set up test shape if configured
-    if hasattr(environment, 'shape_class'):
+    if hasattr(environment, "shape_class"):
         environment.shape_class.set_start_time(time.time())
 
 

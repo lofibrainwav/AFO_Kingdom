@@ -29,7 +29,9 @@ class TrinitySimulator:
         "feasibility": 25,
     }
 
-    def simulate_real_time(self, changes: dict[str, int] | None = None) -> dict[str, Any]:
+    def simulate_real_time(
+        self, changes: dict[str, int] | None = None
+    ) -> dict[str, Any]:
         """
         실시간 변화에 따라 점수 동적 재계산
 
@@ -64,7 +66,9 @@ class TrinitySimulator:
 
         # 예: 설정 변경 → 실현 가능성 +5
         if "config_update" in changes:
-            scores["feasibility"] = min(25, scores["feasibility"] + changes["config_update"])
+            scores["feasibility"] = min(
+                25, scores["feasibility"] + changes["config_update"]
+            )
             logger.debug(
                 f"[TrinitySimulator] 설정 업데이트: 실현 가능성 +{changes['config_update']}점"
             )

@@ -5,10 +5,11 @@ import sys
 
 import pytest
 
-
 # Ensure AFO package is importable
 sys.path.append(
-    pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")).resolve()
+    pathlib.Path(
+        os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")
+    ).resolve()
 )
 
 from AFO.domain.metrics.trinity_manager import trinity_manager

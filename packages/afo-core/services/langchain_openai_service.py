@@ -11,7 +11,8 @@ from typing import Any
 # LangChain 1.2.0+ API 변경사항 반영
 # 타입 별칭 문제를 피하기 위해 런타임에서만 import
 try:
-    from langchain_core.messages import BaseMessage, HumanMessage, SystemMessage
+    from langchain_core.messages import (BaseMessage, HumanMessage,
+                                         SystemMessage)
     from langchain_core.prompts import PromptTemplate
     from langchain_openai import ChatOpenAI
 
@@ -19,7 +20,8 @@ try:
 except ImportError:
     # Fallback for older versions
     try:
-        from langchain.llms import OpenAI as ChatOpenAI  # type: ignore[no-redef]
+        from langchain.llms import \
+            OpenAI as ChatOpenAI  # type: ignore[no-redef]
         from langchain.prompts import PromptTemplate  # type: ignore[no-redef]
         from langchain.schema import BaseMessage, HumanMessage, SystemMessage
 
@@ -302,7 +304,9 @@ class LangChainOpenAIService:
             logger.error(f"AI 요청 처리 실패: {e}")
             raise
 
-    async def analyze_code(self, code: str, language: str, task: str = "일반 분석") -> AIResponse:
+    async def analyze_code(
+        self, code: str, language: str, task: str = "일반 분석"
+    ) -> AIResponse:
         """
         코드 분석 (Sequential Thinking Phase 4)
         """
@@ -315,7 +319,9 @@ class LangChainOpenAIService:
 
         return await self.process_request(request)
 
-    async def summarize_document(self, document: str, max_length: int = 500) -> AIResponse:
+    async def summarize_document(
+        self, document: str, max_length: int = 500
+    ) -> AIResponse:
         """
         문서 요약 (Sequential Thinking Phase 5)
         """
@@ -392,7 +398,9 @@ class LangChainOpenAIService:
                 # Phase 9.3: 캐시 연결 테스트
                 if OPENAI_CONFIG["cache_enabled"]:
                     cache_test = await cache_set("health_test", {"test": True}, ttl=10)
-                    details["cache_connection"] = "healthy" if cache_test else "unhealthy"
+                    details["cache_connection"] = (
+                        "healthy" if cache_test else "unhealthy"
+                    )
                 else:
                     details["cache_connection"] = "disabled"
 
@@ -499,7 +507,9 @@ async def initialize_ai_service(api_key: str) -> bool:
 
 
 # 편의 함수들
-async def analyze_code_ai(code: str, language: str, task: str = "일반 분석") -> AIResponse:
+async def analyze_code_ai(
+    code: str, language: str, task: str = "일반 분석"
+) -> AIResponse:
     """코드 분석 편의 함수"""
     return await langchain_openai_service.analyze_code(code, language, task)
 

@@ -18,7 +18,6 @@ import sys
 from datetime import UTC, datetime
 from pathlib import Path
 
-
 # Trinity 가중치 (SSOT)
 WEIGHTS = {
     "truth": 0.35,

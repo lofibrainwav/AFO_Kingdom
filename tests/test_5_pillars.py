@@ -1,6 +1,5 @@
 import pytest
 
-
 # Simulating the service if specific file is not found, or importing if it exists.
 # Based on memory, logic might be in domain/metrics/trinity.py or similar.
 # For the purpose of "Assertions" request, we will define the assertions against a hypothetical or mocked Calculator.

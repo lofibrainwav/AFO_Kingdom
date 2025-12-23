@@ -3,7 +3,6 @@ import logging
 
 from AFO.llms.cli_wrapper import CLIWrapper
 
-
 # Config Logging
 logging.basicConfig(level=logging.DEBUG)
 

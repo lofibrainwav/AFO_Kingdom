@@ -8,7 +8,6 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-
 # #region agent log
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 
@@ -86,7 +85,11 @@ def verify_router_prefixes():
             log_debug(
                 f"final_sequential_verification.py:verify_router_prefixes:{router_name}",
                 "Router prefix checked",
-                {"expected": expected_prefix, "actual": actual_prefix, "correct": is_correct},
+                {
+                    "expected": expected_prefix,
+                    "actual": actual_prefix,
+                    "correct": is_correct,
+                },
                 "VERIFY1",
             )
             # #endregion agent log
@@ -132,7 +135,10 @@ def verify_endpoints():
     for name, endpoint in endpoints:
         try:
             response = requests.get(f"{BASE_URL}{endpoint}", timeout=5)
-            is_ok = response.status_code in [200, 404]  # 404도 확인 (서버 재시작 필요 시)
+            is_ok = response.status_code in [
+                200,
+                404,
+            ]  # 404도 확인 (서버 재시작 필요 시)
             results[name] = {
                 "status_code": response.status_code,
                 "ok": is_ok,
@@ -140,9 +146,7 @@ def verify_endpoints():
             status = (
                 "✅"
                 if response.status_code == 200
-                else "⚠️"
-                if response.status_code == 404
-                else "❌"
+                else "⚠️" if response.status_code == 404 else "❌"
             )
             print(f"{status} {name}: {endpoint} - {response.status_code}")
 
@@ -150,7 +154,11 @@ def verify_endpoints():
             log_debug(
                 f"final_sequential_verification.py:verify_endpoints:{name}",
                 "Endpoint checked",
-                {"endpoint": endpoint, "status_code": response.status_code, "ok": is_ok},
+                {
+                    "endpoint": endpoint,
+                    "status_code": response.status_code,
+                    "ok": is_ok,
+                },
                 "VERIFY2",
             )
             # #endregion agent log
@@ -183,13 +191,17 @@ def main():
     print("📊 최종 요약")
     print("=" * 60)
 
-    correct_prefixes = [name for name, data in prefix_results.items() if data.get("correct", False)]
+    correct_prefixes = [
+        name for name, data in prefix_results.items() if data.get("correct", False)
+    ]
     print(f"\n✅ Prefix가 올바른 라우터: {len(correct_prefixes)}개")
     for name in correct_prefixes:
         print(f"   - {name}")
 
     working_endpoints = [
-        name for name, data in endpoint_results.items() if data.get("status_code") == 200
+        name
+        for name, data in endpoint_results.items()
+        if data.get("status_code") == 200
     ]
     print(f"\n✅ 작동하는 엔드포인트: {len(working_endpoints)}개")
     for name in working_endpoints:

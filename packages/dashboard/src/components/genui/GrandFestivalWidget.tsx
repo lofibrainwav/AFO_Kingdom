@@ -10,9 +10,9 @@
  */
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react";
-import { Crown, Trophy, Sparkles, Flame, Star, PartyPopper } from "lucide-react";
 import ErrorBoundary from "@/components/common/ErrorBoundary";
+import { Crown, Flame, PartyPopper, Sparkles, Star, Trophy } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 interface Firework {
   id: number;
@@ -180,7 +180,7 @@ function GrandFestivalWidgetContent() {
       </section>
 
       {/* Stats */}
-      <section className="relative z-10 grid grid-cols-3 gap-4 mb-6" aria-label="Statistics">
+      <section className="relative z-10 grid grid-cols-3 gap-4 mb-6" aria-label="Statistics" role="list">
         <div
           className="text-center p-4 bg-emerald-900/30 rounded-xl border border-emerald-500/30"
           role="listitem"

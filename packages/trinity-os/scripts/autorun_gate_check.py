@@ -29,7 +29,9 @@ def find_afo_root(trinity_root: Path) -> tuple[Path, str]:
     AFO 루트 하위에 통합되어 실행되는 경우를 모두 지원한다.
     """
     # Standalone TRINITY-OS 내부에 AFO 코어가 같이 있는 경우
-    if (trinity_root / "afo_soul_engine").exists() and (trinity_root / ".claude").exists():
+    if (trinity_root / "afo_soul_engine").exists() and (
+        trinity_root / ".claude"
+    ).exists():
         return trinity_root, "standalone"
 
     # 통합 리포(AFO 루트/ TRINITY-OS 하위)인 경우

@@ -10,10 +10,9 @@ import logging
 from pathlib import Path
 from typing import Any
 
+from AFO.config.health_check_config import health_check_config
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
-
-from AFO.config.health_check_config import health_check_config
 
 router = APIRouter(prefix="/api/mcp", tags=["MCP Tools"])
 
@@ -119,7 +118,9 @@ async def add_mcp_tool(request: MCPToolRequest) -> dict[str, Any]:
         }
     except Exception as e:
         logger.error(f"Failed to add MCP tool: {e}")
-        raise HTTPException(status_code=500, detail=f"Failed to add MCP tool: {e}") from e
+        raise HTTPException(
+            status_code=500, detail=f"Failed to add MCP tool: {e}"
+        ) from e
 
 
 @router.post("/test")
@@ -131,7 +132,9 @@ async def test_mcp_connection(request: MCPTestRequest) -> dict[str, Any]:
     """
     try:
         config = health_check_config
-        server = next((s for s in config.MCP_SERVERS if s.name == request.server_name), None)
+        server = next(
+            (s for s in config.MCP_SERVERS if s.name == request.server_name), None
+        )
 
         if not server:
             # MCP 설정 파일에서 확인
@@ -140,11 +143,13 @@ async def test_mcp_connection(request: MCPTestRequest) -> dict[str, Any]:
                     mcp_config = json.load(f)
                     if request.server_name not in mcp_config.get("mcpServers", {}):
                         raise HTTPException(
-                            status_code=404, detail=f"MCP server '{request.server_name}' not found"
+                            status_code=404,
+                            detail=f"MCP server '{request.server_name}' not found",
                         )
             else:
                 raise HTTPException(
-                    status_code=404, detail=f"MCP server '{request.server_name}' not found"
+                    status_code=404,
+                    detail=f"MCP server '{request.server_name}' not found",
                 )
 
         # 연결 테스트 (명령어 실행 가능 여부 확인)

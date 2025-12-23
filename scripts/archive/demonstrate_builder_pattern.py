@@ -2,9 +2,10 @@ import os
 import pathlib
 import sys
 
-
 # Add package root to sys.path for direct imports if needed
-sys.path.append(pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages")).resolve())
+sys.path.append(
+    pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages")).resolve()
+)
 
 try:
     from afo_core.builders.trinity_query_builder import TrinityQueryBuilder
@@ -12,7 +13,9 @@ try:
 except ImportError:
     # Adjust path if running from root relative to packages
     sys.path.append(
-        pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")).resolve()
+        pathlib.Path(
+            os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")
+        ).resolve()
     )
     from builders.trinity_query_builder import TrinityQueryBuilder
     from factories.skill_factory import AFO_SkillFactory
@@ -35,7 +38,9 @@ def demonstrate_builder():
         )
         print(f"✅ Built Complex Object:\n{complex_query}")
         print(f"   Structure Type: {type(complex_query)}")
-        print(f"   Verification: Risk={complex_query.risk_level}, DryRun={complex_query.dry_run}")
+        print(
+            f"   Verification: Risk={complex_query.risk_level}, DryRun={complex_query.dry_run}"
+        )
 
     except Exception as e:
         print(f"❌ Builder Failed: {e}")
@@ -43,13 +48,17 @@ def demonstrate_builder():
     # scenario: Compare with Factory Method
     print("\n--- 2. Comparing with Factory Method (Creation Expansion) ---")
     print("   [Factory] Focus: Creating different *types* of objects (Polymorphism)")
-    print("   [Builder] Focus: Creating *one* complex object with many *configurations*")
+    print(
+        "   [Builder] Focus: Creating *one* complex object with many *configurations*"
+    )
 
     factory = AFO_SkillFactory()
     skill = factory.create_skill("youtube")
     print(f"✅ Factory Created: {skill.execute()}")
 
-    print("\n✅ Comparison Verified: Builder handles Configuration, Factory handles Polymorphism.")
+    print(
+        "\n✅ Comparison Verified: Builder handles Configuration, Factory handles Polymorphism."
+    )
 
 
 if __name__ == "__main__":

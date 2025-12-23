@@ -26,7 +26,9 @@ class ChancellorInvokeRequest(BaseModel):
         ),
         description="자동 실행 여부 (孝: Serenity) - Antigravity.AUTO_DEPLOY 기본값 사용",
     )
-    timeout_seconds: int = Field(default=30, ge=1, le=300, description="최대 실행 시간(초)")
+    timeout_seconds: int = Field(
+        default=30, ge=1, le=300, description="최대 실행 시간(초)"
+    )
     mode: Literal["auto", "offline", "fast", "lite", "full"] = Field(
         default="auto",
         description="실행 모드(auto=자동, offline=LLM 없이 상태 보고, fast=1회 LLM, lite=짧은 1회 LLM, full=LangGraph 3책사)",
@@ -57,7 +59,9 @@ class ChancellorInvokeRequest(BaseModel):
     ollama_num_thread: int | None = Field(
         default=None, ge=1, le=64, description="Ollama num_thread override"
     )
-    max_tokens: int | None = Field(default=None, ge=32, le=4096, description="최대 출력 토큰")
+    max_tokens: int | None = Field(
+        default=None, ge=32, le=4096, description="최대 출력 토큰"
+    )
     temperature: float | None = Field(default=None, ge=0.0, le=2.0, description="온도")
     fallback_on_timeout: bool = Field(
         default=True, description="시간 초과 시 504 대신 상태 기반 답변으로 폴백"
@@ -71,12 +75,18 @@ class ChancellorInvokeResponse(BaseModel):
     speaker: str = Field(default="Chancellor", description="응답자")
     thread_id: str = Field(..., description="대화 스레드 ID")
     trinity_score: float = Field(default=0.0, description="Trinity Score")
-    strategists_consulted: list[str] = Field(default_factory=list, description="상담한 책사 목록")
-    analysis_results: dict[str, Any] = Field(default_factory=dict, description="분석 결과")
+    strategists_consulted: list[str] = Field(
+        default_factory=list, description="상담한 책사 목록"
+    )
+    analysis_results: dict[str, Any] = Field(
+        default_factory=dict, description="분석 결과"
+    )
     mode_used: str = Field(..., description="사용된 실행 모드")
     fallback_used: bool = Field(default=False, description="폴백 사용 여부")
     timed_out: bool = Field(default=False, description="타임아웃 발생 여부")
-    system_metrics: dict[str, Any] = Field(default_factory=dict, description="시스템 메트릭")
+    system_metrics: dict[str, Any] = Field(
+        default_factory=dict, description="시스템 메트릭"
+    )
     routing: dict[str, Any] = Field(default_factory=dict, description="라우팅 정보")
 
 
@@ -152,13 +162,10 @@ class LazyModules:
     def load(cls) -> type[LazyModules]:
         try:
             # [주역] 무극이태극 - 무에서 유가 나옴
-            from afo_soul_engine.utils.lazy_imports import (
-                anthropic,
-                chromadb,
-                crewai,
-                langchain,
-                qdrant_client,
-            )
+            from afo_soul_engine.utils.lazy_imports import (anthropic,
+                                                            chromadb, crewai,
+                                                            langchain,
+                                                            qdrant_client)
 
             cls.anthropic = anthropic
             cls.chromadb = chromadb
@@ -202,13 +209,11 @@ class HybridRAG:
     @classmethod
     def load(cls) -> type[HybridRAG]:
         try:
-            from AFO.services.hybrid_rag import (
-                generate_answer_async,
-                get_embedding_async,
-                query_pgvector_async,
-                query_redis_async,
-                select_context,
-            )
+            from AFO.services.hybrid_rag import (generate_answer_async,
+                                                 get_embedding_async,
+                                                 query_pgvector_async,
+                                                 query_redis_async,
+                                                 select_context)
 
             cls.available = True
             cls.generate_answer_async = generate_answer_async
@@ -219,10 +224,8 @@ class HybridRAG:
 
             # Advanced RAG (A+B)
             try:
-                from AFO.services.hybrid_rag import (
-                    generate_hyde_query_async,
-                    query_qdrant_async,
-                )
+                from AFO.services.hybrid_rag import (generate_hyde_query_async,
+                                                     query_qdrant_async)
 
                 cls.query_qdrant_async = query_qdrant_async
                 cls.generate_hyde_query_async = generate_hyde_query_async
@@ -323,7 +326,8 @@ except ImportError:
 def calculate_trinity(*args: Any, **kwargs: Any) -> Any:
     try:
         # Try to use real function if available
-        from AFO.domain.metrics.trinity import calculate_trinity as real_calculate
+        from AFO.domain.metrics.trinity import \
+            calculate_trinity as real_calculate
 
         return real_calculate(*args, **kwargs)
     except ImportError as e:
@@ -370,22 +374,7 @@ def calculate_trinity(*args: Any, **kwargs: Any) -> Any:
 # Try to load known routers
 # [논어] 학이시습지 - 반복적으로 시도하여 지식을 쌓음
 def load_routers() -> None:
-    global \
-        auth_router, \
-        family_router, \
-        health_router, \
-        personas_router, \
-        root_router, \
-        streams_router, \
-        users_router, \
-        chancellor_router, \
-        julie_router, \
-        skills_router, \
-        trinity_router, \
-        thoughts_router, \
-        pillars_router, \
-        chat_router, \
-        wallet_router
+    global auth_router, family_router, health_router, personas_router, root_router, streams_router, users_router, chancellor_router, julie_router, skills_router, trinity_router, thoughts_router, pillars_router, chat_router, wallet_router
 
     try:
         from AFO.api.routers.auth import router as auth
@@ -649,7 +638,10 @@ class TrinityOSMCPClient:
 
             trinity_os_path = Path(__file__).parent.parent.parent.parent / "trinity-os"
             mcp_server_path = (
-                trinity_os_path / "trinity_os" / "servers" / "afo_ultimate_mcp_server.py"
+                trinity_os_path
+                / "trinity_os"
+                / "servers"
+                / "afo_ultimate_mcp_server.py"
             )
 
             if mcp_server_path.exists():
@@ -798,5 +790,7 @@ class TrinityOSMCPClient:
 
         # 모든 재시도 실패
         if last_exception:
-            logger.error("MCP 요청 최종 실패 (%d회 시도): %s", max_retries, str(last_exception))
+            logger.error(
+                "MCP 요청 최종 실패 (%d회 시도): %s", max_retries, str(last_exception)
+            )
         return None

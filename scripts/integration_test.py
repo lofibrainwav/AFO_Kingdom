@@ -14,7 +14,6 @@ import asyncio
 import sys
 from pathlib import Path
 
-
 # Add project root to path
 project_root = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(project_root))
@@ -164,7 +163,10 @@ def test_database_connectivity():
         # Check if connections are established
         from AFO.api.initialization import PG_POOL, REDIS_CLIENT
 
-        db_status = {"postgresql": PG_POOL is not None, "redis": REDIS_CLIENT is not None}
+        db_status = {
+            "postgresql": PG_POOL is not None,
+            "redis": REDIS_CLIENT is not None,
+        }
 
         for db, connected in db_status.items():
             if connected:

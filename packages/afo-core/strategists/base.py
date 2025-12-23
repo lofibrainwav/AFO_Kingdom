@@ -26,7 +26,9 @@ def log_error(action: str, error: Exception) -> None:
     log_sse(f"[{action}] Error Detail: {error!s} at {timestamp} - Executing Fallback")
 
 
-def robust_execute(func: Callable[..., T], data: Any, fallback_value: T | None = None) -> T:
+def robust_execute(
+    func: Callable[..., T], data: Any, fallback_value: T | None = None
+) -> T:
     """
     Common Error Handling: Graceful degradation & Fallback.
     (PDF Tech Completeness 25/25: Robust Error Handling)

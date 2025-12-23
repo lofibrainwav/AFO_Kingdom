@@ -59,6 +59,7 @@ class AuditTrail:
         else:
             # Try to get from AFO settings, fallback to .env then hardcoded default
             from AFO.api.compat import get_settings_safe
+
             settings = get_settings_safe()
 
             if settings:
@@ -70,7 +71,8 @@ class AuditTrail:
                 self.database_url = f"postgresql://{user}:{pw}@{host}:{port}/{db}"
             else:
                 self.database_url = os.getenv(
-                    "DATABASE_URL", "postgresql://afo:afo_secret_change_me@localhost:15432/afo_memory"
+                    "DATABASE_URL",
+                    "postgresql://afo:afo_secret_change_me@localhost:15432/afo_memory",
                 )
         self._connection = None
         self._records: list[AuditRecord] = []  # In-memory fallback
@@ -157,7 +159,9 @@ class AuditTrail:
                     record.timestamp,
                     json.dumps(record.context),
                 )
-                print(f"📝 [Audit] Logged: {record.action} (Trinity: {trinity_score:.2f})")
+                print(
+                    f"📝 [Audit] Logged: {record.action} (Trinity: {trinity_score:.2f})"
+                )
             except Exception as e:
                 print(f"⚠️ [Audit] DB write failed: {e}")
                 self._records.append(record)  # Fallback to memory

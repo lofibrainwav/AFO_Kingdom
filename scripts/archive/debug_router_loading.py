@@ -8,7 +8,6 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-
 # #region agent log
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 
@@ -64,11 +63,8 @@ def test_router_loading():
     results = {}
     for router_name, expected_prefix in routers_to_test:
         try:
-            from AFO.api.compat import (
-                chancellor_router,
-                grok_stream_router,
-                learning_log_router,
-            )
+            from AFO.api.compat import (chancellor_router, grok_stream_router,
+                                        learning_log_router)
 
             if router_name == "learning_log_router":
                 router = learning_log_router
@@ -97,12 +93,18 @@ def test_router_loading():
                     "expected": expected_prefix,
                 }
                 status = "✅" if is_correct else "⚠️"
-                print(f"{status} {router_name}: prefix={prefix} (예상: {expected_prefix})")
+                print(
+                    f"{status} {router_name}: prefix={prefix} (예상: {expected_prefix})"
+                )
                 # #region agent log
                 log_debug(
                     f"debug_router_loading.py:test_router_loading:{router_name}",
                     "Router loaded",
-                    {"prefix": str(prefix), "expected": expected_prefix, "correct": is_correct},
+                    {
+                        "prefix": str(prefix),
+                        "expected": expected_prefix,
+                        "correct": is_correct,
+                    },
                     "LOAD1",
                 )
                 # #endregion agent log
@@ -172,7 +174,9 @@ def test_router_registration():
         missing_paths = []
         for target_path in target_paths:
             # 경로가 정확히 일치하거나 포함되는지 확인
-            found = any(target_path in route or route == target_path for route in routes)
+            found = any(
+                target_path in route or route == target_path for route in routes
+            )
             if found:
                 found_paths.append(target_path)
                 print(f"✅ {target_path}")
@@ -202,7 +206,11 @@ def test_router_registration():
         )
         # #endregion agent log
 
-        return {"found": found_paths, "missing": missing_paths, "total_routes": len(routes)}
+        return {
+            "found": found_paths,
+            "missing": missing_paths,
+            "total_routes": len(routes),
+        }
     except Exception as e:
         print(f"❌ 라우터 등록 테스트 실패: {e}")
         import traceback
@@ -245,7 +253,10 @@ def main():
     log_debug(
         "debug_router_loading.py:main",
         "Debugging completed",
-        {"loading_results": loading_results, "registration_results": registration_results},
+        {
+            "loading_results": loading_results,
+            "registration_results": registration_results,
+        },
         "MAIN",
     )
     # #endregion agent log
