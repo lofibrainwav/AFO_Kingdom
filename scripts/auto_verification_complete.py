@@ -139,7 +139,8 @@ def verify_all_imports():
 
     # 4. Chancellor Router
     try:
-        from AFO.api.routers.chancellor_router import router as chancellor_router
+        from AFO.api.routers.chancellor_router import \
+            router as chancellor_router
 
         prefix = getattr(chancellor_router, "prefix", "N/A")
         results["chancellor_router"] = {"status": "success", "prefix": prefix}
@@ -352,7 +353,7 @@ def main():
 
     # Import 검증 결과
     all_imports_ok = all(r.get("status") == "success" for r in import_results.values())
-    print(f"\n✅ Import 검증: {'모두 성공' if all_imports_ok else '일부 실패'}")
+    print(f"\n✅ Import 검증: {"모두 성공" if all_imports_ok else "일부 실패"}")
     if all_imports_ok:
         for name, data in import_results.items():
             if data.get("status") == "success":

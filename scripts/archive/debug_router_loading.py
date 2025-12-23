@@ -63,11 +63,8 @@ def test_router_loading():
     results = {}
     for router_name, expected_prefix in routers_to_test:
         try:
-            from AFO.api.compat import (
-                chancellor_router,
-                grok_stream_router,
-                learning_log_router,
-            )
+            from AFO.api.compat import (chancellor_router, grok_stream_router,
+                                        learning_log_router)
 
             if router_name == "learning_log_router":
                 router = learning_log_router
@@ -245,7 +242,7 @@ def main():
     print("=" * 60)
 
     all_loaded = all(r.get("status") == "success" for r in loading_results.values())
-    print(f"\n✅ 라우터 로딩: {'모두 성공' if all_loaded else '일부 실패'}")
+    print(f"\n✅ 라우터 로딩: {"모두 성공" if all_loaded else "일부 실패"}")
 
     if isinstance(registration_results, dict) and "found" in registration_results:
         found_count = len(registration_results["found"])

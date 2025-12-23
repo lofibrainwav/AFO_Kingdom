@@ -14,7 +14,8 @@ import pytest
 
 # AFO 왕국 모듈 임포트
 try:
-    from AFO.api.compat import ChancellorInvokeRequest, ChancellorInvokeResponse
+    from AFO.api.compat import (ChancellorInvokeRequest,
+                                ChancellorInvokeResponse)
 except ImportError:
     ChancellorInvokeRequest = Any
     ChancellorInvokeResponse = Any
@@ -53,7 +54,8 @@ class TestGuardrailsExamplesIntegration:
         - 유효하지 않은 타겟에 대한 적절한 에러 메시지
         - 올바른 반환 값 구조
         """
-        from examples.guardrails_advanced_examples import _validate_example_target
+        from examples.guardrails_advanced_examples import \
+            _validate_example_target
 
         is_valid, error_msg, runner = _validate_example_target(target)
 
@@ -80,7 +82,8 @@ class TestGuardrailsExamplesIntegration:
         - 예제 함수 호출
         - 출력 캡처 검증
         """
-        from examples.guardrails_advanced_examples import _execute_single_example
+        from examples.guardrails_advanced_examples import \
+            _execute_single_example
 
         # 간단한 목 함수 생성
         executed = []
@@ -103,7 +106,8 @@ class TestGuardrailsExamplesIntegration:
         - 예외 발생 시 적절한 에러 메시지 출력
         - 프로그램 크래시 방지
         """
-        from examples.guardrails_advanced_examples import _execute_single_example
+        from examples.guardrails_advanced_examples import \
+            _execute_single_example
 
         def failing_example():
             msg = "Test error"
@@ -144,7 +148,8 @@ class TestGuardrailsExamplesIntegration:
         - 에러 메시지 출력
         - sys.exit 호출
         """
-        from examples.guardrails_advanced_examples import _handle_execution_error
+        from examples.guardrails_advanced_examples import \
+            _handle_execution_error
 
         error_msg = "Test error message"
 
@@ -251,7 +256,8 @@ class TestGuardrailsExamplesIntegration:
         - run_all_examples 함수 유지
         - EXAMPLES 딕셔너리 구조 유지
         """
-        from examples.guardrails_advanced_examples import EXAMPLES, run_all_examples
+        from examples.guardrails_advanced_examples import (EXAMPLES,
+                                                           run_all_examples)
 
         # 외부 인터페이스 검증
         assert callable(run_all_examples)
@@ -273,7 +279,8 @@ class TestGuardrailsExamplesIntegration:
         - 타겟 검증 로직
         - 실행 분기 로직
         """
-        from examples.guardrails_advanced_examples import _validate_example_target
+        from examples.guardrails_advanced_examples import \
+            _validate_example_target
 
         # "all" 타겟 검증
         is_valid, error_msg, runner = _validate_example_target("all")

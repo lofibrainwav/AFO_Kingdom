@@ -3,12 +3,12 @@ import shutil
 from unittest.mock import AsyncMock, patch
 
 import pytest
-from AFO.domain.serenity.genui_orchestrator import GenUISpec, genui_orchestrator
+from AFO.domain.serenity.genui_orchestrator import (GenUISpec,
+                                                    genui_orchestrator)
 
 
 @pytest.mark.asyncio
 async def test_create_sub_app_flow():
-
     # Mock Jwaja response to avoid real model call
     mock_code = """
     ```tsx

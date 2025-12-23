@@ -66,9 +66,9 @@ def verify_code_changes():
         results["learning_log_prefix"] = getattr(llr, "prefix", "")
         results["grok_stream_prefix"] = getattr(gsr, "prefix", "")
 
-        print(f"✅ Chancellor Router prefix: {results['chancellor_prefix']}")
-        print(f"✅ Learning Log Router prefix: {results['learning_log_prefix']}")
-        print(f"✅ Grok Stream Router prefix: {results['grok_stream_prefix']}")
+        print(f"✅ Chancellor Router prefix: {results["chancellor_prefix"]}")
+        print(f"✅ Learning Log Router prefix: {results["learning_log_prefix"]}")
+        print(f"✅ Grok Stream Router prefix: {results["grok_stream_prefix"]}")
 
         # #region agent log
         log_debug(
@@ -92,11 +92,8 @@ def verify_code_changes():
 
     # 2. compat.py에서 라우터 로딩 확인
     try:
-        from AFO.api.compat import (
-            chancellor_router,
-            grok_stream_router,
-            learning_log_router,
-        )
+        from AFO.api.compat import (chancellor_router, grok_stream_router,
+                                    learning_log_router)
 
         results["compat_loading"] = {
             "learning_log": learning_log_router is not None,
@@ -106,13 +103,13 @@ def verify_code_changes():
 
         print("\n✅ compat.py 라우터 로딩:")
         print(
-            f"   - learning_log_router: {'✅' if results['compat_loading']['learning_log'] else '❌'}"
+            f"   - learning_log_router: {"✅" if results["compat_loading"]["learning_log"] else "❌"}"
         )
         print(
-            f"   - grok_stream_router: {'✅' if results['compat_loading']['grok_stream'] else '❌'}"
+            f"   - grok_stream_router: {"✅" if results["compat_loading"]["grok_stream"] else "❌"}"
         )
         print(
-            f"   - chancellor_router: {'✅' if results['compat_loading']['chancellor'] else '❌'}"
+            f"   - chancellor_router: {"✅" if results["compat_loading"]["chancellor"] else "❌"}"
         )
 
         # #region agent log
