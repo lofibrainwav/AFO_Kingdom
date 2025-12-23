@@ -427,18 +427,14 @@ async def _execute_full_mode(
     }
 
     # Cast to ChancellorState (TypedDict) for MyPy compliance
-    from typing import cast
-
-    # We need to ensure ChancellorState is available in this scope or imported globally
-    if "ChancellorState" in globals():
-        initial_state = cast("ChancellorState", initial_state_dict)  # type: ignore
-    else:
-        initial_state = initial_state_dict  # type: ignore
+    # Note: ChancellorState is defined in chancellor_graph.py, imported at runtime
+    # We use dict[str, Any] type annotation here for simplicity
+    initial_state: dict[str, Any] = initial_state_dict
 
     from langchain_core.messages import HumanMessage
 
     # We can modify the dict because TypedDict is a dict at runtime
-    cast("list", initial_state["messages"]).append(HumanMessage(content=request.query))
+    initial_state["messages"].append(HumanMessage(content=request.query))
 
     config = {"configurable": {"thread_id": request.thread_id}}
 

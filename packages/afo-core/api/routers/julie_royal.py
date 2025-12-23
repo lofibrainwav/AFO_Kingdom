@@ -1,6 +1,7 @@
 from typing import Any
 
 from fastapi import APIRouter
+from pydantic import BaseModel
 
 from AFO.julie_cpa.services.julie_service import JulieService
 
@@ -28,9 +29,6 @@ async def get_dashboard() -> dict[str, Any]:
     Full Financial Dashboard Data (Health, Alerts, Tx).
     """
     return await julie_service.get_financial_dashboard()
-
-
-from pydantic import BaseModel
 
 
 class TaxCalcRequest(BaseModel):
