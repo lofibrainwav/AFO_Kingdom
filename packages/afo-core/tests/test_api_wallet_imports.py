@@ -9,7 +9,6 @@ import pytest
 
 from AFO.api_wallet import APIWallet
 
-
 # DELETED: test_generate_default_key_reads_env()
 # 이유: Flaky 테스트, 기능은 이미 구현되어 있음 (api_wallet.py:209-232)
 # .env 파일 읽기는 _generate_default_key()에서 이미 검증됨
