@@ -2,7 +2,6 @@ import sys
 
 import requests
 
-
 API_BASE = "http://localhost:8012"
 
 
@@ -14,18 +13,18 @@ def test_kingdom_status():
         data = res.json()
 
         print("\n[Kingdom Status Result]")
-        print(f"Heartbeat: {data.get('heartbeat')}")
-        print(f"Dependency Count: {data.get('dependency_count')}")
+        print(f"Heartbeat: {data.get("heartbeat")}")
+        print(f"Dependency Count: {data.get("dependency_count")}")
 
         pillars = data.get("pillars", [])
         print("Pillars:")
         for p in pillars:
-            print(f"  - {p['name']}: {p['score']}")
+            print(f"  - {p["name"]}: {p["score"]}")
 
         scholars = data.get("scholars", [])
         print("Scholars:")
         for s in scholars:
-            print(f"  - {s['name']}: {s['status']}")
+            print(f"  - {s["name"]}: {s["status"]}")
 
         trinity_score = data.get("trinity_score")
         print(f"Trinity Score: {trinity_score}")
@@ -54,9 +53,9 @@ def test_dry_run():
         data = res.json()
 
         print("\n[Dry Run Result]")
-        print(f"Status: {data.get('status')}")
-        print(f"Projected Impact: {data.get('predicted_impact')}")
-        print(f"Projected Score: {data.get('projected_score')}")
+        print(f"Status: {data.get("status")}")
+        print(f"Projected Impact: {data.get("predicted_impact")}")
+        print(f"Projected Score: {data.get("projected_score")}")
 
         if data.get("dry_run") is not True:
             print("❌ Failed: dry_run flag missing")

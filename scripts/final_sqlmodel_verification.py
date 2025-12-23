@@ -8,7 +8,6 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-
 # #region agent log
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 
@@ -217,7 +216,7 @@ def main():
     print("=" * 60)
 
     all_imports_ok = all(r.get("status") == "success" for r in import_results.values())
-    print(f"\n✅ Import 검증: {'모두 성공' if all_imports_ok else '일부 실패'}")
+    print(f"\n✅ Import 검증: {"모두 성공" if all_imports_ok else "일부 실패"}")
 
     working_endpoints = [
         name

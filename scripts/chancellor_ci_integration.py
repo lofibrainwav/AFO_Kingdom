@@ -18,7 +18,6 @@ import sys
 from datetime import UTC, datetime
 from pathlib import Path
 
-
 # Trinity 가중치 (SSOT)
 WEIGHTS = {
     "truth": 0.35,
@@ -106,12 +105,12 @@ def main():
     print("=" * 50)
     print("📊 Trinity Score 업데이트")
     print("=" * 50)
-    print(f"\n眞 (Truth):    {trinity['scores']['truth']}")
-    print(f"善 (Goodness): {trinity['scores']['goodness']}")
-    print(f"美 (Beauty):   {trinity['scores']['beauty']}")
-    print(f"孝 (Serenity): {trinity['scores']['serenity']}")
-    print(f"永 (Eternity): {trinity['scores']['eternity']}")
-    print(f"\n총점: {trinity['total']}")
+    print(f"\n眞 (Truth):    {trinity["scores"]["truth"]}")
+    print(f"善 (Goodness): {trinity["scores"]["goodness"]}")
+    print(f"美 (Beauty):   {trinity["scores"]["beauty"]}")
+    print(f"孝 (Serenity): {trinity["scores"]["serenity"]}")
+    print(f"永 (Eternity): {trinity["scores"]["eternity"]}")
+    print(f"\n총점: {trinity["total"]}")
     print(f"\n권장 모드: {mode}")
 
     if mode == "ASK":

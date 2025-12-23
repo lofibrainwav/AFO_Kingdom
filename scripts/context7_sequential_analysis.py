@@ -8,7 +8,6 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-
 # #region agent log
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 
@@ -79,8 +78,8 @@ def sequential_thinking_analysis():
     ]
 
     for step in steps:
-        print(f"\nStep {step['step']}: {step['title']}")
-        print(f"   작업: {step['action']}")
+        print(f"\nStep {step["step"]}: {step["title"]}")
+        print(f"   작업: {step["action"]}")
 
     return steps
 
@@ -251,7 +250,7 @@ def identify_potential_issues():
         from AFO.api.routers.chancellor_router import router as cr
 
         print(
-            f"   ✅ Chancellor 라우터 import 성공 (prefix: {getattr(cr, 'prefix', 'N/A')})"
+            f"   ✅ Chancellor 라우터 import 성공 (prefix: {getattr(cr, "prefix", "N/A")})"
         )
     except Exception as e:
         print(f"   ❌ Chancellor 라우터 import 실패: {e}")
@@ -304,7 +303,7 @@ def main():
     if issues:
         print(f"\n⚠️  발견된 문제점: {len(issues)}개")
         for issue in issues:
-            print(f"   - {issue['type']}: {issue}")
+            print(f"   - {issue["type"]}: {issue}")
 
     # #region agent log
     log_debug(

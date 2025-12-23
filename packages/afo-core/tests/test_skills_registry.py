@@ -2,13 +2,8 @@ from typing import Any
 from unittest.mock import patch
 
 import pytest
-
-from AFO.afo_skills_registry import (
-    AFOSkillCard,
-    PhilosophyScore,
-    SkillCategory,
-    SkillRegistry,
-)
+from AFO.afo_skills_registry import (AFOSkillCard, PhilosophyScore,
+                                     SkillCategory, SkillRegistry)
 
 
 class TestSkillRegistry:

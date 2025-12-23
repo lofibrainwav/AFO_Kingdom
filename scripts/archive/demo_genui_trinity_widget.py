@@ -3,7 +3,6 @@ import os
 import sys
 from pathlib import Path
 
-
 # Add project root to path
 sys.path.append(
     Path(os.path.join(Path(__file__).parent, "../packages/afo-core")).resolve()
@@ -13,7 +12,6 @@ from AFO.config.settings import settings
 from AFO.schemas.gen_ui import GenUIRequest
 from AFO.services.gen_ui import gen_ui_service
 from AFO.services.vision_verifier import vision_verifier
-
 
 # Ensure we are in Mock Mode if LLM is down, but ideally we'd try real LLM if available.
 # User mentioned "Dry_Run PASS" implying we can go for real, but if Ollama is 404, we stick to Mock.
@@ -68,7 +66,7 @@ async def demo_trinity_widget():
         # Vision
         print("\n👁️ Triggering Vision Verifier...")
         vis_res = await vision_verifier.verify_component("TrinityMonitorWidget")
-        print(f"Vision Result: {vis_res['success']}")
+        print(f"Vision Result: {vis_res["success"]}")
 
     else:
         print(f"\n❌ Generation Rejected: {resp.error}")

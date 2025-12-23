@@ -16,13 +16,10 @@ from dataclasses import asdict
 from datetime import datetime
 from pathlib import Path
 
-from .report_generator import (
-    generate_email_draft,
-    generate_quickbooks_csv,
-    generate_strategy_report,
-    generate_turbotax_csv,
-)
-from .tax_engine import FilingStatus, TaxInput, calculate_tax, simulate_roth_ladder
+from .report_generator import (generate_email_draft, generate_quickbooks_csv,
+                               generate_strategy_report, generate_turbotax_csv)
+from .tax_engine import (FilingStatus, TaxInput, calculate_tax,
+                         simulate_roth_ladder)
 
 logger = logging.getLogger(__name__)
 

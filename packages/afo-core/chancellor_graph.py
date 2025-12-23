@@ -277,7 +277,8 @@ async def trinity_node(state: ChancellorState) -> dict[str, Any]:
 
     # === 헌법 v1.0 + Amendment 0001: 개별 증거 거부권 적용 ===
     try:
-        from AFO.constitution.constitution_v1_0 import VETO_PILLARS, VETO_THRESHOLD
+        from AFO.constitution.constitution_v1_0 import (VETO_PILLARS,
+                                                        VETO_THRESHOLD)
 
         # 개별 pillar 점수 확인 (0-1 scale로 변환)
         pillar_scores = {
@@ -533,10 +534,9 @@ graph.add_edge("historian", END)
 # Use AsyncRedisSaver for production persistence (Eternity 永)
 # Fallback to MemorySaver only if Redis is unavailable
 try:
-    from langgraph.checkpoint.base import BaseCheckpointSaver
-
     from AFO.utils.cache_utils import cache
     from AFO.utils.redis_saver import AsyncRedisSaver
+    from langgraph.checkpoint.base import BaseCheckpointSaver
 
     if cache.enabled:
         checkpointer: BaseCheckpointSaver = AsyncRedisSaver()

@@ -33,7 +33,6 @@ from typing import Any
 
 import aiohttp
 
-
 # Constants (PLR2004)
 TRINITY_WEIGHTS = {
     "truth": 0.35,
@@ -49,15 +48,20 @@ TARGET_TRINITY_HIGH = 80
 TARGET_TRINITY_MED = 60
 OPPORTUNITY_HIGH = 75
 OPPORTUNITY_MED = 50
+HTTP_OK = 200
 BRAVE_SEARCH_URL = "https://api.search.brave.com/res/v1/web/search"
 
 # Logger (LOG015)
 logger = logging.getLogger("afo.trends")
 
 
-# Trinity Score 계산
 def calculate_trinity_score(trend_data: dict) -> float:
-    """외부 트렌드의 Trinity Score 계산"""
+    """
+    외부 트렌드의 Trinity Score 계산.
+
+    Returns:
+        float: 0.0 ~ 100.0 사이의 Trinity Score 총점.
+    """
     # Truth: 데이터 신뢰성
     truth = min(1.0, len(trend_data.get("sources", [])) / MAX_SOURCE_SCORE)
 
@@ -91,7 +95,12 @@ def calculate_trinity_score(trend_data: dict) -> float:
 
 
 async def search_brave_ai_trends(query: str, api_key: str) -> dict[str, Any]:
-    """Brave Search API로 AI 트렌드 검색"""
+    """
+    Brave Search API로 AI 트렌드 검색.
+
+    Returns:
+        dict[str, Any]: 검색 결과 데이터 또는 에러 메시지를 포함한 딕셔너리.
+    """
     headers = {
         "Accept": "application/json",
         "Accept-Encoding": "gzip",
@@ -103,7 +112,7 @@ async def search_brave_ai_trends(query: str, api_key: str) -> dict[str, Any]:
         aiohttp.ClientSession() as session,
         session.get(BRAVE_SEARCH_URL, headers=headers, params=params) as response,
     ):
-        if response.status == 200:
+        if response.status == HTTP_OK:
             data = await response.json()
             return {
                 "query": query,
@@ -111,12 +120,17 @@ async def search_brave_ai_trends(query: str, api_key: str) -> dict[str, Any]:
                 "results": data.get("web", {}).get("results", []),
                 "total_results": len(data.get("web", {}).get("results", [])),
             }
-        logger.error("Brave API error: %s", response.status)  # G004 fix
+        logger.error("Brave API error: %s", response.status)
         return {"error": f"API call failed with status {response.status}"}
 
 
 def analyze_trends(search_results: dict) -> dict[str, Any]:
-    """검색 결과를 분석하여 트렌드 데이터 추출"""
+    """
+    검색 결과를 분석하여 트렌드 데이터 추출.
+
+    Returns:
+        dict[str, Any]: 분석된 트렌드 데이터 (스코어, 키워드, 소스 등).
+    """
     results = search_results.get("results", [])
 
     # 키워드 빈도 분석
@@ -158,7 +172,7 @@ def analyze_trends(search_results: dict) -> dict[str, Any]:
         "keyword_analysis": keyword_counts,
         "trend_score": round(trend_score, 2),
         "sources": sources,
-        "market_impact": min(100, trend_score * 10),  # 임의 계산
+        "market_impact": min(MAX_MARKET_IMPACT, trend_score * 10),
         "implementation_complexity": 30,  # AFO는 이미 구현됨
         "automation_potential": 85,  # 자동화 가능성 높음
         "long_term_value": 90,  # 장기적 가치 높음
@@ -166,7 +180,12 @@ def analyze_trends(search_results: dict) -> dict[str, Any]:
 
 
 def generate_report(analysis: dict) -> str:
-    """분석 결과를 보고서로 생성"""
+    """
+    분석 결과를 보고서로 생성.
+
+    Returns:
+        str: 마크다운 형식의 보고서 문자열.
+    """
     timestamp = datetime.now(UTC).strftime("%Y-%m-%d %H:%M:%S UTC")
     trinity_score = calculate_trinity_score(analysis)
 
@@ -217,8 +236,18 @@ def generate_report(analysis: dict) -> str:
 """
 
 
-async def main():
-    """메인 실행 함수"""
+def save_report(report: str, query: str, reports_dir: Path) -> None:
+    """보고서를 파일로 저장 (ASYNC240 래퍼)."""
+    timestamp_str = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
+    report_file = (
+        reports_dir / f"trend_report_{timestamp_str}_{query.replace(" ", "_")}.md"
+    )
+    report_file.write_text(report, encoding="utf-8")
+    logger.info("Report saved: %s", report_file)
+
+
+async def main() -> None:
+    """메인 실행 함수."""
     logging.basicConfig(
         level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
     )
@@ -238,49 +267,40 @@ async def main():
     ]
 
     reports_dir = Path("docs/reports/external_trends")
-    # ASYNC240: Async func shouldn't use blocking Path methods.
-    # In a simple script, this is acceptable, but to satisfy linter we could wrap or suppress.
-    # Given strict rules, we will suppress for this script or use os.makedirs which is also blocking.
-    # We will simply ignore ASYNC240 for this lines as it's an initialization step.
     reports_dir.mkdir(parents=True, exist_ok=True)
 
     all_results = {}
 
     for query in queries:
-        logger.info("Searching: %s", query)  # G004 fixed
+        logger.info("Searching: %s", query)
         search_results = await search_brave_ai_trends(query, brave_api_key)
 
         if "error" not in search_results:
             analysis = analyze_trends(search_results)
             report = generate_report(analysis)
             all_results[query] = analysis
-
-            # 개별 보고서 저장
-            timestamp_str = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
-            report_file = (
-                reports_dir
-                / f"trend_report_{timestamp_str}_{query.replace(" ", "_")}.md"
-            )
-
-            Path(report_file).write_text(report, encoding="utf-8")
-            logger.info("Report saved: %s", report_file)
+            save_report(report, query, reports_dir)
         else:
             logger.error("Search failed for %s: %s", query, search_results["error"])
 
         # API rate limit 고려
         await asyncio.sleep(1)
 
-    # 종합 보고서 생성 (DTZ005 fixed)
+    # 종합 보고서 생성
+    generate_summary_report(all_results, reports_dir)
+
+
+def generate_summary_report(all_results: dict, reports_dir: Path) -> None:
+    """종합 보고서 생성 및 저장."""
     now_str = datetime.now(UTC).strftime("%Y-%m-%d %H:%M:%S UTC")
 
-    # Calculate finding outside f-string
     highest_impact = "None"
     if all_results:
         highest_impact = max(
             all_results.keys(), key=lambda x: calculate_trinity_score(all_results[x])
         )
 
-    avg_score = 0
+    avg_score = 0.0
     if all_results:
         avg_score = round(
             sum(calculate_trinity_score(all_results[q]) for q in all_results)
@@ -302,7 +322,7 @@ async def main():
 **Generated:** {now_str}
 
 ## Overview
-Searched {len(queries)} trend queries and analyzed {len(all_results)} successful results.
+Searched trend queries and analyzed {len(all_results)} successful results.
 
 ## Trinity Score Summary
 {summary_list}
@@ -317,7 +337,7 @@ Current AFO monitoring system shows {alignment_str} alignment with 2025 AI obser
 
     timestamp_file = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
     summary_file = reports_dir / f"summary_report_{timestamp_file}.md"
-    Path(summary_file).write_text(summary_report, encoding="utf-8")
+    summary_file.write_text(summary_report, encoding="utf-8")
     logger.info("Summary report saved: %s", summary_file)
 
 

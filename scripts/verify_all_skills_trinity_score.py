@@ -8,7 +8,6 @@ Skills Registry의 모든 스킬이 Trinity Score를 가지고 있는지 검증
 import sys
 from pathlib import Path
 
-
 # 프로젝트 루트를 경로에 추가
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root / "packages" / "afo-core"))
@@ -70,7 +69,7 @@ def main():
         # 출력
         print(f"{status_icon} {skill.skill_id}")
         print(f"   이름: {skill.name}")
-        print(f"   카테고리: {skill_info['category']}")
+        print(f"   카테고리: {skill_info["category"]}")
 
         if skill.philosophy_scores:
             print(f"   철학 점수: {skill.philosophy_scores.summary}")
@@ -83,15 +82,15 @@ def main():
     print("=" * 70)
     print("📊 검증 결과 요약")
     print("=" * 70)
-    print(f"전체 스킬: {results['total']}개")
-    print(f"철학 점수 있음: {results['with_philosophy']}개 ✅")
-    print(f"철학 점수 없음: {results['without_philosophy']}개")
+    print(f"전체 스킬: {results["total"]}개")
+    print(f"철학 점수 있음: {results["with_philosophy"]}개 ✅")
+    print(f"철학 점수 없음: {results["without_philosophy"]}개")
 
     if results["without_philosophy"] > 0:
         print("\n⚠️  철학 점수가 없는 스킬:")
         for skill_info in results["skills"]:
             if not skill_info["has_philosophy"]:
-                print(f"  - {skill_info['skill_id']}: {skill_info['name']}")
+                print(f"  - {skill_info["skill_id"]}: {skill_info["name"]}")
 
     # 통과율
     pass_rate = (
@@ -104,7 +103,7 @@ def main():
     if results["without_philosophy"] == 0:
         print("\n✅ 모든 스킬이 철학 점수를 가지고 있습니다!")
         return 0
-    print(f"\n⚠️  {results['without_philosophy']}개 스킬에 철학 점수가 없습니다.")
+    print(f"\n⚠️  {results["without_philosophy"]}개 스킬에 철학 점수가 없습니다.")
     return 1
 
 

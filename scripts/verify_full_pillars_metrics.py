@@ -3,7 +3,6 @@ import os
 import pathlib
 import sys
 
-
 # Setup path
 sys.path.append(
     pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages")).resolve()
@@ -15,9 +14,8 @@ sys.path.append(
 )
 
 from services.detailed_pillars_calculator import pillars_metrics
-from services.truth_metrics_calculator import (
-    truth_metrics,
-)  # Re-using Truth from Phase 15
+from services.truth_metrics_calculator import \
+    truth_metrics  # Re-using Truth from Phase 15
 
 
 async def verify_full_pillars():

@@ -7,7 +7,6 @@ import json
 import pathlib
 import subprocess
 
-
 SERVER_PATH = "packages/trinity-os/trinity_os/servers/afo_ultimate_mcp_server.py"
 
 
@@ -331,7 +330,7 @@ def verify_mcp():
                 assert "Example Domain" in content["content"]
                 print("✅ Browser Scrape Success")
             else:
-                print(f"⚠️ Browser Navigation Failed: {content.get('error')}")
+                print(f"⚠️ Browser Navigation Failed: {content.get("error")}")
                 print("Skipping Scrape Test due to Navigation Failure")
 
         except Exception as e:

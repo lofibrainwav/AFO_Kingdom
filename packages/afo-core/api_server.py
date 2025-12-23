@@ -61,7 +61,6 @@ setup_routers(app)
 # Main execution block
 if __name__ == "__main__":
     import uvicorn
-
     # Get server configuration
     from AFO.api.config import get_server_config
 

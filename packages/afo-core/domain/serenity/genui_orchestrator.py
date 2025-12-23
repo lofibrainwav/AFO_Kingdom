@@ -2,12 +2,10 @@ import logging
 import os
 from typing import Any
 
-from pydantic import BaseModel, Field
-
 from AFO.config.settings import get_settings
-
 # AFO Components
 from AFO.scholars.yeongdeok import yeongdeok
+from pydantic import BaseModel, Field
 
 logger = logging.getLogger("afo.genui")
 

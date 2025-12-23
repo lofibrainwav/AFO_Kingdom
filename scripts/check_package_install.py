@@ -8,7 +8,6 @@ import importlib
 import sys
 from pathlib import Path
 
-
 # packages/afo-core를 경로에 추가
 core_path = Path(__file__).parent.parent / "packages" / "afo-core"
 sys.path.insert(0, str(core_path))

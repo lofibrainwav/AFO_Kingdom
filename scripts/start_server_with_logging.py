@@ -8,7 +8,6 @@ import json
 from datetime import datetime
 from pathlib import Path
 
-
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 
 
@@ -55,10 +54,10 @@ server_cmd = [
 ]
 
 print(f"📂 서버 디렉토리: {server_dir}")
-print(f"🚀 서버 시작 명령: {' '.join(server_cmd)}")
+print(f"🚀 서버 시작 명령: {" ".join(server_cmd)}")
 print("\n💡 서버를 시작하려면 다음 명령을 실행하세요:")
 print(f"   cd {server_dir}")
-print(f"   {' '.join(server_cmd)}")
+print(f"   {" ".join(server_cmd)}")
 print("\n📋 서버 시작 로그에서 다음 메시지를 확인하세요:")
 print("   - '✅ Comprehensive Health Check 라우터 등록 완료 (조기 등록)'")
 print("   - '✅ Intake API 라우터 등록 완료 (조기 등록)'")

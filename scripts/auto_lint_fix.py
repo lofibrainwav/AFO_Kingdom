@@ -16,7 +16,6 @@ import logging
 from pathlib import Path
 from typing import Any
 
-
 # 로깅 설정
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
@@ -239,7 +238,7 @@ class AutoLintFixSystem:
             # Phase 1.3.1: Ruff 자동 수정
             if fixable_issues.get("fixable_count", 0) > 0:
                 logger.info(
-                    f"Ruff 자동 수정 실행 중... ({fixable_issues['fixable_count']}개 이슈)"
+                    f"Ruff 자동 수정 실행 중... ({fixable_issues["fixable_count"]}개 이슈)"
                 )
                 cmd = ["python", "-m", "ruff", "check", "--fix", str(self.project_root)]
                 await self._run_command(cmd)
@@ -587,33 +586,33 @@ async def main():
     print("=" * 70)
 
     if "error" in results:
-        print(f"❌ 시스템 실행 실패: {results['error']}")
+        print(f"❌ 시스템 실행 실패: {results["error"]}")
         return
 
     summary = results.get("summary", {})
     print("\n📊 요약:")
-    print(f"  • 수정 전 이슈: {summary.get('issues_before', 0)}개")
-    print(f"  • 수정 후 이슈: {summary.get('issues_after', 0)}개")
-    print(f"  • 자동 수정된 이슈: {summary.get('issues_fixed', 0)}개")
-    print(f"  • 개선율: {summary.get('improvement_rate', 0)}%")
+    print(f"  • 수정 전 이슈: {summary.get("issues_before", 0)}개")
+    print(f"  • 수정 후 이슈: {summary.get("issues_after", 0)}개")
+    print(f"  • 자동 수정된 이슈: {summary.get("issues_fixed", 0)}개")
+    print(f"  • 개선율: {summary.get("improvement_rate", 0)}%")
     print(
-        f"  • Syntax 상태: {'✅ 정상' if summary.get('syntax_ok', False) else '❌ 오류 있음'}"
+        f"  • Syntax 상태: {"✅ 정상" if summary.get("syntax_ok", False) else "❌ 오류 있음"}"
     )
 
     details = results.get("details", {})
     print("\n🔧 세부 수정 내역:")
-    print(f"  • Ruff 자동 수정: {details.get('ruff_fixes', 0)}개")
-    print(f"  • Black 포맷팅: {details.get('black_fixes', 0)}개")
-    print(f"  • isort 정렬: {details.get('isort_fixes', 0)}개")
+    print(f"  • Ruff 자동 수정: {details.get("ruff_fixes", 0)}개")
+    print(f"  • Black 포맷팅: {details.get("black_fixes", 0)}개")
+    print(f"  • isort 정렬: {details.get("isort_fixes", 0)}개")
 
     verification = results.get("verification", {})
     trinity = verification.get("trinity_score", {})
     if trinity:
         print("\n🏆 Trinity Score:")
-        print(f"  • Overall: {trinity.get('overall_score', 0)}/100")
-        print(f"  • Truth: {trinity.get('truth_score', 0)}/100")
-        print(f"  • Goodness: {trinity.get('goodness_score', 0)}/100")
-        print(f"  • Beauty: {trinity.get('beauty_score', 0)}/100")
+        print(f"  • Overall: {trinity.get("overall_score", 0)}/100")
+        print(f"  • Truth: {trinity.get("truth_score", 0)}/100")
+        print(f"  • Goodness: {trinity.get("goodness_score", 0)}/100")
+        print(f"  • Beauty: {trinity.get("beauty_score", 0)}/100")
 
     recommendations = results.get("recommendations", [])
     if recommendations:

@@ -3,7 +3,6 @@
 import sys
 from pathlib import Path
 
-
 # Add package root to path to verify imports
 current_dir = Path(__file__).resolve().parent
 package_root = current_dir.parent / "packages" / "afo-core"

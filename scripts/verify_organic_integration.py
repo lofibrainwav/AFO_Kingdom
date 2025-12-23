@@ -3,7 +3,6 @@ import importlib
 import sys
 from pathlib import Path
 
-
 # Add package root to path
 sys.path.append(str(Path(__file__).parent.parent / "packages" / "afo-core"))
 

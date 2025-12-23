@@ -422,6 +422,19 @@ Composer Mode로 다음 파일들을 동시에 리팩터링:
 * 롤백 경로 명확
 * evidence(파일/경로/로그) + 실행 커맨드 + 실행 결과(성공/실패 로그 요약) 기록 완료
 
+### ⚠️ 보고 에이전트 완료 선언 금지 (SSOT 재봉인)
+
+보고 에이전트(`antigravity / cline / cursor / reports`)는 **절대 완료 선언 금지**.
+
+**완료 선언 조건**: 아래 4가지 모두 만족해야만 가능
+1. git commit hash 존재
+2. 변경 파일 목록 (`git diff --name-only`)
+3. diff 또는 함수 시그니처
+4. 실행 커맨드 + 결과
+
+**허용 표현**: "분석 결과", "검토 필요", "확인 필요", "제안"  
+**금지 표현**: "완료됨", "구현됨", "해결됨", "resolved", "completed", "implemented"
+
 ---
 
 ## ⅩⅣ. 에이전트별 프롬프트 템플릿 (Prompt Templates)
@@ -603,3 +616,18 @@ Agent Mode로 자동 실행:
 ---
 
 # End of AGENTS.md
+
+### ⚠️ SSOT 재봉인: 보고 에이전트 완료 선언 금지
+
+보고 에이전트(antigravity / cline / cursor / reports)는 **완료 선언 금지**.
+
+완료 선언 조건(아래 4개 모두 필요):
+1) git commit hash
+2) 변경 파일 목록
+3) 실행 커맨드 + 결과
+4) 테스트 통과 증거
+
+허용 표현: "분석 결과", "제안", "requires verification"
+금지 표현: "완료", "implemented", "resolved", "completed"
+
+SSOT Report Gate: scripts/ssot_report_gate.py 를 통과하지 못하면 완료 선언은 무효.

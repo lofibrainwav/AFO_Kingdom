@@ -8,7 +8,6 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-
 # #region agent log
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 
@@ -64,11 +63,8 @@ def test_router_loading():
     results = {}
     for router_name, expected_prefix in routers_to_test:
         try:
-            from AFO.api.compat import (
-                chancellor_router,
-                grok_stream_router,
-                learning_log_router,
-            )
+            from AFO.api.compat import (chancellor_router, grok_stream_router,
+                                        learning_log_router)
 
             if router_name == "learning_log_router":
                 router = learning_log_router

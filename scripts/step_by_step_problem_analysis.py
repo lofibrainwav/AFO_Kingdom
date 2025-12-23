@@ -8,7 +8,6 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-
 # #region agent log
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 
@@ -383,7 +382,7 @@ def step6_check_openapi_schema():
                 if target_path in paths:
                     found.append(target_path)
                     methods = list(paths[target_path].keys())
-                    print(f"✅ {target_path} - 등록됨 (Methods: {', '.join(methods)})")
+                    print(f"✅ {target_path} - 등록됨 (Methods: {", ".join(methods)})")
                 else:
                     missing.append(target_path)
                     print(f"⚠️  {target_path} - 누락")
@@ -462,7 +461,7 @@ def main():
             {
                 "level": "CRITICAL",
                 "category": "기본 엔드포인트",
-                "description": f"기본 Health 엔드포인트 접근 실패: {health_status.get('status')}",
+                "description": f"기본 Health 엔드포인트 접근 실패: {health_status.get("status")}",
                 "step": 2,
             }
         )
@@ -482,7 +481,7 @@ def main():
             {
                 "level": "HIGH",
                 "category": "핵심 엔드포인트",
-                "description": f"{len(endpoint_errors)}개 엔드포인트 문제: {', '.join(endpoint_errors)}",
+                "description": f"{len(endpoint_errors)}개 엔드포인트 문제: {", ".join(endpoint_errors)}",
                 "step": 3,
             }
         )
@@ -493,7 +492,7 @@ def main():
             {
                 "level": "HIGH",
                 "category": "라우터 등록",
-                "description": f"{len(router_results['missing'])}개 경로가 라우터에 등록되지 않음: {router_results['missing']}",
+                "description": f"{len(router_results["missing"])}개 경로가 라우터에 등록되지 않음: {router_results["missing"]}",
                 "step": 4,
             }
         )
@@ -507,7 +506,7 @@ def main():
             {
                 "level": "MEDIUM",
                 "category": "Import",
-                "description": f"{len(import_errors)}개 Import 실패: {', '.join(import_errors)}",
+                "description": f"{len(import_errors)}개 Import 실패: {", ".join(import_errors)}",
                 "step": 5,
             }
         )
@@ -518,7 +517,7 @@ def main():
             {
                 "level": "MEDIUM",
                 "category": "OpenAPI 스키마",
-                "description": f"{len(openapi_results['missing'])}개 경로가 스키마에 없음: {openapi_results['missing']}",
+                "description": f"{len(openapi_results["missing"])}개 경로가 스키마에 없음: {openapi_results["missing"]}",
                 "step": 6,
             }
         )
@@ -533,9 +532,9 @@ def main():
                 else "🟠" if issue["level"] == "HIGH" else "🟡"
             )
             print(
-                f"{level_icon} [{issue['level']}] {issue['category']} (Step {issue['step']})"
+                f"{level_icon} [{issue["level"]}] {issue["category"]} (Step {issue["step"]})"
             )
-            print(f"   {issue['description']}\n")
+            print(f"   {issue["description"]}\n")
     else:
         print("\n✅ 문제점 없음 - 모든 시스템 정상 작동")
 

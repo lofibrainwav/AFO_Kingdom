@@ -3,7 +3,6 @@ import os
 import pathlib
 import sys
 
-
 # 프로젝트 루트 경로 추가
 sys.path.append(
     pathlib.Path(
@@ -34,11 +33,11 @@ async def verify_real_ai_features():
         print("✅ AI Integration Success (Code Generated & Executed)")
     elif ai_result["status"] == "FAIL":
         print(
-            f"⚠️ AI Integration Failed (Expected if no LLM/Keys available): {ai_result.get('error')}"
+            f"⚠️ AI Integration Failed (Expected if no LLM/Keys available): {ai_result.get("error")}"
         )
         print("✅ Graceful Failure Verified")
     else:
-        print(f"❓ Unexpected Status: {ai_result['status']}")
+        print(f"❓ Unexpected Status: {ai_result["status"]}")
 
     await bridge.teardown()
     print("\n=== Verification Complete ===")

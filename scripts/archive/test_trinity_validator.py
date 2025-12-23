@@ -8,7 +8,6 @@ import os
 import pathlib
 import sys
 
-
 # 경로 추가
 sys.path.insert(
     0, os.path.join(pathlib.Path(__file__).parent, "..", "packages", "afo-core")
@@ -70,7 +69,7 @@ def test_trinity_validator():
         from AFO.utils.trinity_type_validator import trinity_validator
 
         report = trinity_validator.get_performance_report()
-        print(f"   모니터링된 함수: {report['summary']['total_functions']}개")
+        print(f"   모니터링된 함수: {report["summary"]["total_functions"]}개")
         print(".1f")
         print("\n✅ Trinity Validator 테스트 완료!")
 

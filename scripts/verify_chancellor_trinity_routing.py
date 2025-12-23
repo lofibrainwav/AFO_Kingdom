@@ -9,7 +9,6 @@ import os
 import pathlib
 import sys
 
-
 # Ensure AFO package is importable
 sys.path.append(
     pathlib.Path(

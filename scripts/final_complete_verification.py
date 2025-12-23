@@ -8,7 +8,6 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-
 # #region agent log
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 
@@ -194,7 +193,7 @@ def verify_openapi_schema():
                     found_paths.append(target_path)
                     methods = list(paths[target_path].keys())
                     print(
-                        f"✅ {target_path} - 스키마에 등록됨 (Methods: {', '.join(methods)})"
+                        f"✅ {target_path} - 스키마에 등록됨 (Methods: {", ".join(methods)})"
                     )
                 else:
                     missing_paths.append(target_path)

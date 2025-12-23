@@ -52,7 +52,8 @@ def _import_chancellor_graph() -> None:
         if str(_CORE_ROOT) not in sys.path:
             sys.path.insert(0, str(_CORE_ROOT))
 
-        from chancellor_graph import ChancellorState as _CS  # Import State Definition
+        from chancellor_graph import \
+            ChancellorState as _CS  # Import State Definition
         from chancellor_graph import build_chancellor_graph as _bcg
         from chancellor_graph import chancellor_graph as _cg
 

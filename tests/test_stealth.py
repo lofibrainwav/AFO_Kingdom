@@ -5,7 +5,6 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-
 # Add AFO to path
 sys.path.append(
     os.path.join(

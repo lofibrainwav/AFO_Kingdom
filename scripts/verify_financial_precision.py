@@ -4,7 +4,6 @@ import pathlib
 import sys
 from decimal import Decimal
 
-
 # Setup path
 sys.path.append(
     pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages")).resolve()
@@ -20,7 +19,8 @@ try:
     from julie_cpa.core.julie_engine import AdjustBudgetCommand, julie
 except ImportError:
     # Fallback import strategy
-    from packages.afo_core.julie_cpa.core.julie_engine import AdjustBudgetCommand, julie
+    from packages.afo_core.julie_cpa.core.julie_engine import (
+        AdjustBudgetCommand, julie)
 
 
 async def verify_financial_precision():

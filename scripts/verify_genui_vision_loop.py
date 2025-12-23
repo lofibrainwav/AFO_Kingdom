@@ -2,7 +2,6 @@
 import pathlib
 import sys
 
-
 # Add package root to path
 sys.path.append(pathlib.Path("packages/afo-core").resolve())
 sys.path.append(pathlib.Path("packages/trinity-os").resolve())
@@ -34,16 +33,16 @@ def main():
         result = orchestrator.create_project(project_id, prompt)
 
         print("\n>> 2. Result Analysis")
-        print(f"   - Status: {result.get('status')}")
-        print(f"   - Code Path: {result.get('code_path')}")
+        print(f"   - Status: {result.get("status")}")
+        print(f"   - Code Path: {result.get("code_path")}")
 
         vision = result.get("vision_result", {})
         if vision.get("success"):
-            print(f"   ✅ Vision Success: {vision.get('message')}")
-            print(f"   📸 Screenshot stored at: {vision.get('path')}")
+            print(f"   ✅ Vision Success: {vision.get("message")}")
+            print(f"   📸 Screenshot stored at: {vision.get("path")}")
         else:
             print(
-                f"   ⚠️ Vision Warning: {vision.get('error') or vision.get('message')}"
+                f"   ⚠️ Vision Warning: {vision.get("error") or vision.get("message")}"
             )
             print(
                 "   (Note: Vision might fail if Dashboard port 3000 is not reachable or path is 404)"
@@ -51,7 +50,7 @@ def main():
 
         # Verify file existence
         if pathlib.Path(result["code_path"]).exists():
-            print(f"   ✅ Verified: Source code file exists at {result['code_path']}")
+            print(f"   ✅ Verified: Source code file exists at {result["code_path"]}")
         else:
             print("   ❌ Error: Source code file missing!")
 

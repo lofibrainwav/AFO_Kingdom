@@ -9,7 +9,6 @@ import os
 import sys
 from pathlib import Path
 
-
 # Trinity Score 가중치
 TRINITY_WEIGHTS = {
     "truth": 0.35,  # 기술적 정확성
@@ -292,7 +291,7 @@ class TrinityScoreChecker:
         self.results["serenity"]["details"] = [
             f"자동화 도구 점수: {automation_score:.1f}",
             f"유지보수성 점수: {maintenance_score:.1f}",
-            f"문서화 상태: {'양호' if docs_score >= 50 else '개선 필요'}",
+            f"문서화 상태: {"양호" if docs_score >= 50 else "개선 필요"}",
         ]
 
     def _analyze_eternity(self, files: list[Path]) -> None:
@@ -384,8 +383,8 @@ def main():
         results = checker.analyze_codebase()
 
         print("\n📊 Trinity Score 결과:")
-        print(f"종합 점수: {results['overall_score']:.1f}/100")
-        print(f"등급: {results['grade']}")
+        print(f"종합 점수: {results["overall_score"]:.1f}/100")
+        print(f"등급: {results["grade"]}")
 
         print("\n🔍 세부 점수:")
         for pillar, data in results["pillars"].items():
@@ -396,18 +395,18 @@ def main():
                 "serenity": "孝 (Serenity)",
                 "eternity": "永 (Eternity)",
             }
-            print(f"  {pillar_names[pillar]}: {data['score']:.1f}")
+            print(f"  {pillar_names[pillar]}: {data["score"]:.1f}")
             for detail in data["details"][:2]:  # 주요 정보만 표시
                 print(f"    • {detail}")
 
         # 요구사항 검증
         if results["requirements_met"]:
             print(
-                f"\n✅ 최소 요구사항 충족 (Trinity Score {MIN_REQUIREMENTS['trinity_score']}점 이상)"
+                f"\n✅ 최소 요구사항 충족 (Trinity Score {MIN_REQUIREMENTS["trinity_score"]}점 이상)"
             )
             return 0
         print(
-            f"\n❌ 최소 요구사항 미충족 (Trinity Score {MIN_REQUIREMENTS['trinity_score']}점 필요)"
+            f"\n❌ 최소 요구사항 미충족 (Trinity Score {MIN_REQUIREMENTS["trinity_score"]}점 필요)"
         )
         print("코드 품질 개선이 필요합니다.")
         return 1

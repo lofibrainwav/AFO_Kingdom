@@ -1,6 +1,5 @@
 import sys
 
-
 # Add project root to path
 sys.path.insert(0, "/Users/brnestrm/AFO_Kingdom/packages/afo-core")
 

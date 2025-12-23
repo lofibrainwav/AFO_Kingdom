@@ -12,7 +12,6 @@ import time
 from pathlib import Path
 from typing import Any
 
-
 # 테스트할 MCP 서버 목록
 MCP_SERVERS = [
     {
@@ -39,9 +38,9 @@ SKILLS_TO_TEST = [
 
 def test_mcp_server(server_config: dict[str, Any]) -> dict[str, Any]:
     """MCP 서버의 모든 도구를 테스트하고 Trinity Score 반환 여부 확인"""
-    print(f"\n{'=' * 70}")
-    print(f"🔍 Testing: {server_config['name']}")
-    print(f"{'=' * 70}")
+    print(f"\n{"=" * 70}")
+    print(f"🔍 Testing: {server_config["name"]}")
+    print(f"{"=" * 70}")
 
     server_path = Path(server_config["path"])
     if not server_path.exists():
@@ -180,10 +179,10 @@ def test_mcp_server(server_config: dict[str, Any]) -> dict[str, Any]:
 
                 if has_trinity_score:
                     print(
-                        f"    ✅ Trinity Score: {trinity_score.get('trinity_score', 0):.2%}"
+                        f"    ✅ Trinity Score: {trinity_score.get("trinity_score", 0):.2%}"
                     )
                     print(
-                        f"       Balance: {trinity_score.get('balance_status', 'unknown')}"
+                        f"       Balance: {trinity_score.get("balance_status", "unknown")}"
                     )
                     results["tools_passed"] += 1
                     results["tool_results"].append(
@@ -229,9 +228,9 @@ def test_mcp_server(server_config: dict[str, Any]) -> dict[str, Any]:
 
 def test_skills_registry() -> dict[str, Any]:
     """Skills Registry의 스킬들이 Trinity Score를 반환하는지 테스트"""
-    print(f"\n{'=' * 70}")
+    print(f"\n{"=" * 70}")
     print("🔍 Testing: Skills Registry")
-    print(f"{'=' * 70}")
+    print(f"{"=" * 70}")
 
     try:
         import sys
@@ -315,9 +314,9 @@ def main():
     all_results.append(skills_result)
 
     # 3. 결과 요약
-    print(f"\n{'=' * 70}")
+    print(f"\n{"=" * 70}")
     print("📊 테스트 결과 요약")
-    print(f"{'=' * 70}")
+    print(f"{"=" * 70}")
 
     total_tested = 0
     total_passed = 0
@@ -340,13 +339,13 @@ def main():
         print(f"   테스트: {tested}개, 통과: {passed}개")
 
         if status == "error":
-            print(f"   에러: {result.get('message', 'Unknown error')}")
+            print(f"   에러: {result.get("message", "Unknown error")}")
 
-    print(f"\n{'=' * 70}")
+    print(f"\n{"=" * 70}")
     print(
         f"전체: {total_tested}개 도구 중 {total_passed}개 통과 ({total_passed / total_tested * 100:.1f}%)"
     )
-    print(f"{'=' * 70}")
+    print(f"{"=" * 70}")
 
     # 결과를 JSON 파일로 저장
     output_file = Path("test_results_trinity_score.json")

@@ -5,7 +5,6 @@ import os
 import pathlib
 import sys
 
-
 # 경로 추가
 sys.path.insert(0, os.path.join(pathlib.Path(__file__).parent, "packages", "afo-core"))
 
@@ -40,7 +39,6 @@ def test_trinity_calculator_with_validator():
         ]
 
         for test_case in test_cases:
-
             try:
                 # Raw scores 계산 (Trinity 검증 적용됨)
                 raw_scores = trinity_calculator.calculate_raw_scores(test_case["data"])
