@@ -115,14 +115,12 @@ async def test_call_gemini_retry() -> None:
     router: Any = LLMRouter()
     config = LLMConfig(LLMProvider.GEMINI, "gemini-pro", api_key_env="GEMINI_API_KEY")
 
-    # Mock google.generativeai module
-    mock_genai_module = MagicMock()
-    model_mock = MagicMock()
-    mock_genai_module.GenerativeModel.return_value = model_mock
+    # Mock gemini_api module
+    mock_gemini_api = MagicMock()
 
-    # Setup failure then success
-    model_mock.generate_content_async = AsyncMock(
-        side_effect=[Exception("Error1"), MagicMock(text="Success")]
+    # Setup failure then success for generate method
+    mock_gemini_api.generate = AsyncMock(
+        side_effect=[{"success": False, "error": "Error1"}, {"success": True, "content": "Success"}]
     )
 
     # Mock settings
@@ -131,9 +129,9 @@ async def test_call_gemini_retry() -> None:
     mock_config_module = MagicMock()
     mock_config_module.get_settings.return_value = mock_settings
 
-    # Patch _get_google_module to return our mock
+    # Patch the import in _query_google method
     # Also patch settings to avoid import errors
-    with patch.object(router, "_get_google_module", return_value=mock_genai_module):
+    with patch("AFO.llms.gemini_api.gemini_api", mock_gemini_api):
         with patch.object(router, "_is_ollama_available", return_value=False):
             with patch.dict(
                 sys.modules,
@@ -145,11 +143,8 @@ async def test_call_gemini_retry() -> None:
                 response = await router._query_google("query", config, None)
 
                 assert response == "Success"
-                # Verify it retried
-                assert model_mock.generate_content_async.call_count == 2
-                # Verify models tried: first fails, second succeeds
-                mock_genai_module.GenerativeModel.assert_any_call("gemini-2.0-flash-exp")
-                mock_genai_module.GenerativeModel.assert_any_call("gemini-flash-latest")
+                # Verify it retried (called twice: first failure, second success)
+                assert mock_gemini_api.generate.call_count == 2
 
 
 # Test Provider Execution: Ollama
