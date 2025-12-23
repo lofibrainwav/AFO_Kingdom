@@ -69,17 +69,47 @@ d1ad21a feat(dashboard): K8sStatusWidget 기본 OFF 설정 (SSOT 환경변수 �
 
 ## 사용 방법
 
-### 위젯 비활성화 (기본값)
+### 로컬 개발 환경
+**위젯 비활성화 (기본값)**:
 ```bash
 # .env.local에 이미 설정됨
 NEXT_PUBLIC_ENABLE_K8S_WIDGET=false
 ```
 
-### 위젯 활성화 (실제 K8s 클러스터 연결 시)
+**위젯 활성화 (실제 K8s 클러스터 연결 시)**:
 ```bash
 # .env.local 수정
 NEXT_PUBLIC_ENABLE_K8S_WIDGET=true
 ```
+
+### 배포 환경 변수 설정
+
+**Kubernetes 배포**:
+```yaml
+# packages/afo-core/k8s/dashboard-deployment.yaml
+env:
+  - name: NEXT_PUBLIC_ENABLE_K8S_WIDGET
+    value: "false"  # 또는 "true"로 활성화
+```
+
+**Docker 배포**:
+```bash
+# docker-compose.yml 또는 Dockerfile
+ENV NEXT_PUBLIC_ENABLE_K8S_WIDGET=false
+```
+
+또는:
+```bash
+docker run -e NEXT_PUBLIC_ENABLE_K8S_WIDGET=false ...
+```
+
+**Vercel 배포**:
+1. Vercel Dashboard → Project Settings → Environment Variables
+2. `NEXT_PUBLIC_ENABLE_K8S_WIDGET` 추가
+3. Value: `false` (또는 `true`로 활성화)
+4. Environment: Production, Preview, Development 선택
+
+**참고**: Next.js는 `NEXT_PUBLIC_*` 환경 변수를 빌드 시점에 정적으로 포함하므로, 배포 후 변경하려면 재빌드가 필요합니다.
 
 ---
 
