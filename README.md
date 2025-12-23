@@ -21,6 +21,16 @@ pip install -e .
 pip install -e ".[dev]"
 
 # 테스트
+# 단위 테스트 (기본)
+make test
+
+# 통합 테스트 (PostgreSQL, Redis 필요)
+make test-integration
+
+# 외부 API 테스트
+make test-external
+
+# 또는 직접 실행
 pytest --cov=packages
 
 # 린팅

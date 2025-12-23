@@ -88,6 +88,21 @@ mypy AFO --strict
 ### 4. Pytest 테스트
 
 ```bash
+# 단위 테스트만 실행 (기본, integration/external 제외)
+make test
+# 또는
+pytest -q -m "not integration and not external"
+
+# 통합 테스트 실행 (PostgreSQL, Redis 필요)
+make test-integration
+# 또는
+pytest -q -m integration
+
+# 외부 API 테스트 실행
+make test-external
+# 또는
+pytest -q -m external
+
 # 모든 테스트 실행
 pytest
 
@@ -100,6 +115,12 @@ pytest -v
 # 커버리지 포함
 pytest --cov=AFO
 ```
+
+#### 테스트 마커 설명
+
+- **단위 테스트** (기본): 빠른 실행, 외부 의존성 없음
+- **통합 테스트** (`@pytest.mark.integration`): PostgreSQL, Redis 등 인프라 필요
+- **외부 테스트** (`@pytest.mark.external`): 외부 API 호출 필요
 
 ---
 
