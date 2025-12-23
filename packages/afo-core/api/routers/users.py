@@ -4,12 +4,17 @@ Phase 3: 사용자 관리 라우터 (肝 시스템 - 사용자 관리)
 DB 연동 및 비밀번호 해시 지원
 """
 
-from typing import Any
+from datetime import datetime
+from typing import Any, Optional
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
-# Database and auth utilities import
+# Type-safe database and auth utilities import
+DB_AVAILABLE: bool = False
+AUTH_UTILS_AVAILABLE: bool = False
+
+# Attempt to import with proper typing
 try:
     from AFO.api.utils.auth import hash_password, verify_password
     from AFO.services.database import get_db_connection
@@ -18,25 +23,22 @@ try:
     AUTH_UTILS_AVAILABLE = True
 except ImportError:
     try:
-        import sys
-        from pathlib import Path
-
-        _CORE_ROOT = Path(__file__).resolve().parent.parent.parent
-        if str(_CORE_ROOT) not in sys.path:
-            sys.path.insert(0, str(_CORE_ROOT))
-        from api.utils.auth import hash_password as hp
-        from api.utils.auth import verify_password as vp
-        from services.database import get_db_connection as gdc
-
-        hash_password = hp
-        verify_password = vp
-        get_db_connection = gdc
+        from api.utils.auth import hash_password, verify_password
+        from services.database import get_db_connection
 
         DB_AVAILABLE = True
         AUTH_UTILS_AVAILABLE = True
     except ImportError:
-        DB_AVAILABLE = False
-        AUTH_UTILS_AVAILABLE = False
+        # Fallback: provide dummy implementations with matching signatures
+        def hash_password(password: str) -> str:
+            return f"hashed_{hash(password)}"
+
+        def verify_password(plain_password: str, hashed_password: str) -> bool:
+            return f"hashed_{hash(plain_password)}" == hashed_password
+
+        async def get_db_connection() -> Any:
+            raise RuntimeError("Database not available")
+
         print("⚠️  Database or auth utilities not available - using fallback")
 
 router = APIRouter(prefix="/api/users", tags=["Users"])
@@ -85,9 +87,7 @@ class UserUpdateRequest(BaseModel):
     """사용자 업데이트 요청 모델"""
 
     email: str | None = Field(default=None, description="이메일 주소")
-    password: str | None = Field(
-        default=None, min_length=8, description="비밀번호 (최소 8자)"
-    )
+    password: str | None = Field(default=None, min_length=8, description="비밀번호 (최소 8자)")
 
 
 @router.post("", status_code=201)
@@ -124,18 +124,14 @@ async def create_user(request: UserCreateRequest) -> dict[str, Any]:
                     "SELECT id FROM users WHERE username = $1", request.username
                 )
                 if existing:
-                    raise HTTPException(
-                        status_code=409, detail="이미 존재하는 사용자명입니다."
-                    )
+                    raise HTTPException(status_code=409, detail="이미 존재하는 사용자명입니다.")
 
                 # 이메일 중복 체크
                 existing_email = await conn.fetchrow(
                     "SELECT id FROM users WHERE email = $1", request.email
                 )
                 if existing_email:
-                    raise HTTPException(
-                        status_code=409, detail="이미 사용중인 이메일 주소입니다."
-                    )
+                    raise HTTPException(status_code=409, detail="이미 사용중인 이메일 주소입니다.")
 
                 # 사용자 생성 (저장 프로시저 사용)
                 user_id = await conn.fetchval(
@@ -164,9 +160,7 @@ async def create_user(request: UserCreateRequest) -> dict[str, Any]:
                     "email": user["email"],
                     "display_name": user.get("display_name"),
                     "avatar_url": user.get("avatar_url"),
-                    "created_at": (
-                        user["created_at"].isoformat() if user["created_at"] else None
-                    ),
+                    "created_at": (user["created_at"].isoformat() if user["created_at"] else None),
                 }
             except HTTPException as e:
                 await conn.close()
@@ -183,8 +177,6 @@ async def create_user(request: UserCreateRequest) -> dict[str, Any]:
 
     # Fallback: DB 없이 임시 사용자 ID 생성
     user_id = f"user_{hash(request.username)}"
-
-    from datetime import datetime
 
     return {
         "id": user_id,
@@ -221,17 +213,13 @@ async def get_user(user_id: str) -> dict[str, Any]:
                 await conn.close()
 
                 if not user:
-                    raise HTTPException(
-                        status_code=404, detail="사용자를 찾을 수 없습니다."
-                    )
+                    raise HTTPException(status_code=404, detail="사용자를 찾을 수 없습니다.")
 
                 return {
                     "id": str(user["id"]),
                     "username": user["username"],
                     "email": user["email"],
-                    "created_at": (
-                        user["created_at"].isoformat() if user["created_at"] else None
-                    ),
+                    "created_at": (user["created_at"].isoformat() if user["created_at"] else None),
                 }
             except ValueError:
                 await conn.close()
