@@ -108,6 +108,23 @@ Trinity Score = 0.35×眞 + 0.35×善 + 0.20×美 + 0.08×孝 + 0.02×永
 - 목업/하드코딩으로 "그럴듯한 성공" 만들기
 - 3책사 중 하나만 편향적으로 따르기 (균형 필수)
 
+## Cline/Cursor 도구 사용 규칙
+
+### 파일 수정 시 필수 파라미터
+- `replace_in_file` 사용 시 반드시 `diff` 파라미터 제공
+- `diff` 형식: `old_string`과 `new_string`을 명확히 구분
+- 예시:
+  ```python
+  replace_in_file(
+    file_path="path/to/file.py",
+    diff={
+      "old_string": "기존 코드",
+      "new_string": "수정된 코드"
+    }
+  )
+  ```
+- 파일 수정 전 항상 전체 파일 내용을 읽고 변경 사항을 명확히 식별
+
 ---
 
 ## MCP Tools 활용

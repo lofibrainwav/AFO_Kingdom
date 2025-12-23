@@ -34,6 +34,7 @@ jobs:
           fi
 
       - name: Run SSOT Report Gate on changed reports
+        id: ssot_gate
         shell: bash
         run: |
           set -euo pipefail
@@ -45,17 +46,24 @@ jobs:
 
           if [ -z "${CHANGED_MD}" ]; then
             echo "No changed report markdown files. PASS."
+            echo "ssot_violations=[]" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
+          VIOLATIONS=()
           FAIL=0
           while IFS= read -r f; do
             [ -f "$f" ] || continue
             TEXT="$(cat "$f")"
             if ! python scripts/ssot_report_gate.py "$TEXT"; then
               FAIL=1
+              VIOLATIONS+=("$f")
             fi
           done <<< "${CHANGED_MD}"
+
+          # JSON 형식으로 violations 출력
+          JSON_VIOLATIONS=$(printf '%s\n' "${VIOLATIONS[@]}" | jq -R . | jq -s .)
+          echo "ssot_violations=$JSON_VIOLATIONS" >> "$GITHUB_OUTPUT"
 
           exit "${FAIL}"
 
@@ -79,26 +87,47 @@ jobs:
           echo "json=$JSON" >> "$GITHUB_OUTPUT"
           echo "$JSON"
 
-      - name: Comment on PR if English-heavy reports detected
+      - name: Generate unified PR comment
+        id: pr_comment
         if: ${{ github.event_name == 'pull_request' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          SSOT_VIOLATIONS="${{ steps.ssot_gate.outputs.ssot_violations }}"
+          ENGLISH_DATA="${{ steps.enratio.outputs.json }}"
+
+          # Python 스크립트로 통합 코멘트 생성
+          COMMENT_ARGS=""
+
+          if [ "$SSOT_VIOLATIONS" != "[]" ] && [ "$SSOT_VIOLATIONS" != "null" ]; then
+            COMMENT_ARGS="$COMMENT_ARGS --ssot-violations $SSOT_VIOLATIONS"
+          fi
+
+          # 영어 경고 데이터 파싱
+          if [ "$ENGLISH_DATA" != '{"flagged":[],"threshold":0.5,"count":0}' ]; then
+            COMMENT_ARGS="$COMMENT_ARGS --english-warnings '$ENGLISH_DATA'"
+          fi
+
+          if [ -n "$COMMENT_ARGS" ]; then
+            COMMENT=$(python scripts/generate_pr_comment.py $COMMENT_ARGS)
+            echo "comment<<EOF" >> "$GITHUB_OUTPUT"
+            echo "$COMMENT" >> "$GITHUB_OUTPUT"
+            echo "EOF" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Post unified PR comment
+        if: ${{ github.event_name == 'pull_request' && steps.pr_comment.outputs.comment }}
         uses: actions/github-script@v7
         with:
           script: |
-            const raw = `${{ steps.enratio.outputs.json }}`.trim();
-            let data = null;
-            try { data = JSON.parse(raw); } catch (e) { data = { flagged: [], threshold: 0.5, count: 0 }; }
+            const comment = `${{ steps.pr_comment.outputs.comment }}`;
 
-            if (!data || !data.flagged || data.flagged.length === 0) return;
-
-            const lines = data.flagged.map(x => `- ${x.file} (english_ratio=${x.english_ratio})`).join('\n');
-            const body =
-              `⚠️ English-heavy report detected (threshold ≥ ${data.threshold}).\n\n` +
-              `협업을 위해 한국어 비중을 조금 더 높여주세요. (영어 사용은 가능하지만, 영어-only 비율이 높으면 경고가 뜹니다.)\n\n` +
-              `${lines}`;
+            if (!comment || comment.trim() === '') return;
 
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body
+              body: comment
             });

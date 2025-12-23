@@ -2,9 +2,8 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
-
 from AFO.julie_cpa.config import julie_config
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class FinancialTransaction(BaseModel):

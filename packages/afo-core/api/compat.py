@@ -162,13 +162,10 @@ class LazyModules:
     def load(cls) -> type[LazyModules]:
         try:
             # [주역] 무극이태극 - 무에서 유가 나옴
-            from afo_soul_engine.utils.lazy_imports import (
-                anthropic,
-                chromadb,
-                crewai,
-                langchain,
-                qdrant_client,
-            )
+            from afo_soul_engine.utils.lazy_imports import (anthropic,
+                                                            chromadb, crewai,
+                                                            langchain,
+                                                            qdrant_client)
 
             cls.anthropic = anthropic
             cls.chromadb = chromadb
@@ -212,13 +209,11 @@ class HybridRAG:
     @classmethod
     def load(cls) -> type[HybridRAG]:
         try:
-            from AFO.services.hybrid_rag import (
-                generate_answer_async,
-                get_embedding_async,
-                query_pgvector_async,
-                query_redis_async,
-                select_context,
-            )
+            from AFO.services.hybrid_rag import (generate_answer_async,
+                                                 get_embedding_async,
+                                                 query_pgvector_async,
+                                                 query_redis_async,
+                                                 select_context)
 
             cls.available = True
             cls.generate_answer_async = generate_answer_async
@@ -229,7 +224,8 @@ class HybridRAG:
 
             # Advanced RAG (A+B)
             try:
-                from AFO.services.hybrid_rag import generate_hyde_query_async, query_qdrant_async
+                from AFO.services.hybrid_rag import (generate_hyde_query_async,
+                                                     query_qdrant_async)
 
                 cls.query_qdrant_async = query_qdrant_async
                 cls.generate_hyde_query_async = generate_hyde_query_async
@@ -330,7 +326,8 @@ except ImportError:
 def calculate_trinity(*args: Any, **kwargs: Any) -> Any:
     try:
         # Try to use real function if available
-        from AFO.domain.metrics.trinity import calculate_trinity as real_calculate
+        from AFO.domain.metrics.trinity import \
+            calculate_trinity as real_calculate
 
         return real_calculate(*args, **kwargs)
     except ImportError as e:

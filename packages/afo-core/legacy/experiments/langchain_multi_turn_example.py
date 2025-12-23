@@ -12,7 +12,8 @@ from __future__ import annotations
 
 import os
 
-from langchain.memory import ConversationBufferMemory, ConversationSummaryMemory
+from langchain.memory import (ConversationBufferMemory,
+                              ConversationSummaryMemory)
 from langchain.prompts import PromptTemplate
 from langchain_classic.chains import ConversationChain
 from langchain_openai import ChatOpenAI
