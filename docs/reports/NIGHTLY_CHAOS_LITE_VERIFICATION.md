@@ -99,5 +99,23 @@
 
 ---
 
-**검증 상태**: 워크플로우 파일 검증 완료. 브라우저 수동 실행 결과 대기 중.
+**검증 상태**: ✅ 워크플로우 파일 검증 완료. ✅ 실제 실행 성공 확인.
+
+## 실제 실행 결과
+
+**실행 ID**: 20473739461  
+**실행 시간**: 2025-12-23 23:15:37 UTC  
+**실행 방법**: GitHub CLI (`gh workflow run`)  
+**결과**: ✅ **Success**
+
+**실행 단계**:
+- ✅ Set up job
+- ✅ Checkout
+- ✅ Install kind + kubectl
+- ✅ Create kind cluster
+- ✅ Deploy a tiny workload
+- ✅ Chaos #1 - kill one pod (자가 치유 확인)
+- ✅ Cleanup
+
+**결론**: Nightly Chaos Lite 워크플로우가 정상적으로 실행되었으며, 모든 단계가 성공적으로 완료되었습니다.
 
