@@ -60,7 +60,7 @@ class AuditTrail:
             # Try to get from AFO settings, fallback to .env then hardcoded default
             from AFO.api.compat import get_settings_safe
             settings = get_settings_safe()
-            
+
             if settings:
                 host = getattr(settings, "POSTGRES_HOST", "localhost")
                 port = getattr(settings, "POSTGRES_PORT", 5432)

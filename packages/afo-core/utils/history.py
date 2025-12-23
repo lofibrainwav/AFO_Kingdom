@@ -7,6 +7,8 @@ import logging
 from datetime import datetime
 from typing import Any
 
+from AFO.domain.audit.trail import AuditTrail
+
 logger = logging.getLogger(__name__)
 
 
@@ -17,7 +19,7 @@ class Historian:
     """
 
     @staticmethod
-    def record(
+    async def record(
         query: str,
         trinity_score: float,
         status: str,
@@ -43,8 +45,20 @@ class Historian:
             f"📜 [Historian] Chronicle Entry: {json.dumps(record_entry, ensure_ascii=False)}"
         )
 
-        # 2. (Future) Append to Obsidian / Database
-        # This implementation serves as the foundational interface.
+        # 2. Persist to PostgreSQL via AuditTrail (Liver/Eternity)
+        try:
+            audit = AuditTrail()
+            # Risk score is inverted goodness, if not in metadata, we estimate from trinity
+            risk_score = metadata.get("risk_score", (100.0 - trinity_score) / 100.0)
+
+            await audit.log(
+                trinity_score=trinity_score / 100.0 if trinity_score > 1.0 else trinity_score,
+                risk_score=risk_score,
+                action=status,
+                context={**metadata, "query": query}
+            )
+        except Exception as e:
+            logger.error(f"⚠️ [Historian] AuditTrail persistence failed: {e}")
 
         return record_entry
 

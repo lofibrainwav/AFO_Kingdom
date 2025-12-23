@@ -25,7 +25,7 @@ except ImportError:
     # Mock constitution class
     class AFOConstitution:  # type: ignore[no-redef]
         @staticmethod
-        def evaluate_compliance(action: str, content: str) -> tuple[bool, str]:
+        def evaluate_compliance(_action: str, _content: str) -> tuple[bool, str]:
             return True, "Mock compliance check"
 
 
