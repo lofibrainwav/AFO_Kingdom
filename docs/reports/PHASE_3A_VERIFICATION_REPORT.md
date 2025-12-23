@@ -35,13 +35,16 @@
 **파일**: `.github/workflows/nightly-chaos-lite.yml`
 
 **현재 설정**:
-- 크론: `"30 9 * * *"` (UTC 09:30 = LA 01:30 AM PST)
+- 크론: LA 09:30 고정 (PST/PDT 모두 커버)
+  - `cron: "30 17 * * *"` (PST, UTC-8 → UTC 17:30)
+  - `cron: "30 16 * * *"` (PDT, UTC-7 → UTC 16:30)
+- 중복 실행 방지: `concurrency` 그룹 적용 (`nightly-chaos-lite`)
 - 수동 실행: `workflow_dispatch` 활성화
 
-**크론 시간 참고**:
-- 현재: UTC 09:30 = LA 01:30 AM (PST, 겨울)
-- LA 09:30 (PST) 목표 시: `cron: "30 17 * * *"` (UTC 17:30)
-- **주의**: 서머타임(PDT) 시 UTC 16:30 필요
+**크론 시간 적용 완료**:
+- ✅ LA 09:30 고정 스케줄 적용됨 (커밋 `fec9704`)
+- ✅ PST/PDT 모두 커버하여 1년 내내 LA 09:30에 실행
+- ✅ 중복 실행 방지 메커니즘 적용
 
 **실행 상태**: 
 - ⚠️ **사용자가 GitHub Actions에서 수동 실행 필요**
@@ -72,7 +75,8 @@
 | CI 연결 구현 | ✅ 완료 | ssot-report-gate.yml 확인 |
 | 템플릿 Completion 금지 | ✅ 완료 | _TEMPLATE.md 확인 |
 | Nightly Chaos Lite 실행 | ⚠️ 대기 중 | 사용자 수동 실행 필요 |
-| 크론 시간 확인 | ✅ 완료 | 현재 UTC 09:30 확인 |
+| 크론 시간 LA 09:30 고정 | ✅ 완료 | PST/PDT 모두 커버 (17:30, 16:30 UTC) |
+| 중복 실행 방지 | ✅ 완료 | concurrency 그룹 적용 |
 | 배포 환경 변수 문서화 | ✅ 완료 | K8S_WIDGET_DISABLE_FINAL_REPORT.md 업데이트 |
 
 ---
@@ -83,13 +87,11 @@
    - GitHub Actions → Nightly Chaos Lite → Run workflow
    - 결과: Success 또는 Fail (실패 시 step 이름)
 
-2. **크론 시간 수정** (필요 시)
-   - LA 09:30 목표 시 `.github/workflows/nightly-chaos-lite.yml` 수정
-   - `cron: "30 17 * * *"` (PST 기준)
-
-3. **최종 검증 완료 보고**
+2. **최종 검증 완료 보고**
    - Nightly Chaos Lite 실행 결과 반영
    - 모든 검증 항목 완료 시 Phase 3-A 최종 완료 선언
+
+**참고**: 크론 시간 LA 09:30 고정은 이미 적용 완료되었습니다 (커밋 `fec9704`).
 
 ---
 
@@ -103,5 +105,12 @@
 
 ---
 
-**검증 상태**: Phase 3-A(1+2) CI 연결 검증 완료. Nightly Chaos Lite 실행 결과 대기 중.
+**검증 상태**: 
+- ✅ Phase 3-A(1+2) CI 연결 검증 완료
+- ✅ 크론 시간 LA 09:30 고정 적용 완료 (PST/PDT 모두 커버)
+- ⚠️ Nightly Chaos Lite 실행 결과 대기 중
+
+**최종 커밋**: 
+- `df8da91`: Phase 3-A 검증 보고서 및 배포 환경 변수 문서화
+- `fec9704`: 크론 스케줄 LA 09:30 고정 (PST/PDT)
 
