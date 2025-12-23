@@ -7,7 +7,6 @@ import pytest
 
 from AFO.llm_router import LLMConfig, LLMProvider, LLMRouter, QualityTier, RoutingDecision
 
-
 # DELETED: test_router_initialization_env_vars()
 # 이유: Flaky 테스트 (모듈 캐싱), 기능은 이미 구현되어 있음 (llm_router.py:101-129)
 # LLM Router 초기화는 다른 테스트에서 충분히 검증됨
