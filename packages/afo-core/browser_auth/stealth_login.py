@@ -100,9 +100,7 @@ async def run_stealth_login(service="openai"):
 
     # Try to find Real Chrome (Bypasses Cloudflare better than Chromium)
     executable_path = None
-    potential_chrome_path = (
-        "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
-    )
+    potential_chrome_path = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
     if os.path.exists(potential_chrome_path):
         executable_path = potential_chrome_path
         print(f"🕵️ Using System Chrome Key: {executable_path}")

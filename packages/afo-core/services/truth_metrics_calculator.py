@@ -7,8 +7,9 @@ PDF 평가 기준: 기술적 완성도 25/25
 import logging
 from typing import Any
 
-from AFO.utils.trinity_type_validator import validate_with_trinity
 from pydantic import BaseModel, ValidationError
+
+from AFO.utils.trinity_type_validator import validate_with_trinity
 
 logger = logging.getLogger("AFO.TruthMetrics")
 
@@ -107,8 +108,7 @@ class TruthMetricsCalculator:
             "total_score": score,
             "max_score": 25,
             "details": details,
-            "trinity_conversion": score
-            * 4.0,  # Convert 25 scale to 100 scale for comparison
+            "trinity_conversion": score * 4.0,  # Convert 25 scale to 100 scale for comparison
         }
 
 

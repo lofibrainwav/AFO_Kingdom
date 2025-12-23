@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import dynamic from "next/dynamic";
+import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { TrinityGlowCard } from "./TrinityGlowCard";
 import { VoiceReactivePanel } from "./VoiceReactivePanel";
 
@@ -8,12 +9,33 @@ import { logWarn } from "@/lib/logger";
 import { useSpatialAudio } from "../hooks/useSpatialAudio";
 import { KingdomMessageBoard } from "./genui";
 import AutomatedDebuggingStreamWidget from "./genui/AutomatedDebuggingStreamWidget";
-import { FinalEternalVictoryWidget } from "./genui/FinalEternalVictoryWidget";
-import { GenesisWidget } from "./genui/GenesisWidget";
-import { JulieCPAWidget } from "./genui/JulieCPAWidget";
-import { JulieTaxWidget } from "./genui/JulieTaxWidget";
-import RoyalAnalyticsWidget from "./genui/RoyalAnalyticsWidget";
 import { SSOTMonitor } from "./genui/SSOTMonitor";
+
+// Lazy load heavy widgets
+const FinalEternalVictoryWidget = dynamic(
+  () => import("./genui/FinalEternalVictoryWidget").then((mod) => mod.FinalEternalVictoryWidget),
+  {
+    loading: () => (
+      <div className="h-96 w-full max-w-7xl mx-auto bg-slate-800/20 rounded-3xl animate-pulse flex items-center justify-center border border-white/5">
+        <span className="text-white/30 text-lg">Summoning Eternal Victory...</span>
+      </div>
+    ),
+    ssr: false,
+  }
+);
+
+const RoyalAnalyticsWidget = dynamic(
+  () => import("./genui/RoyalAnalyticsWidget").then((mod) => mod.default),
+  {
+    loading: () => (
+      <div className="h-[400px] w-full bg-slate-800/20 rounded-3xl animate-pulse border border-white/5" />
+    ),
+  }
+);
+
+const GenesisWidget = dynamic(() => import("./genui/GenesisWidget").then((mod) => mod.GenesisWidget));
+const JulieCPAWidget = dynamic(() => import("./genui/JulieCPAWidget").then((mod) => mod.JulieCPAWidget));
+const JulieTaxWidget = dynamic(() => import("./genui/JulieTaxWidget").then((mod) => mod.JulieTaxWidget));
 
 interface PantheonState {
   trinityScore: number | null;
@@ -295,11 +317,15 @@ export function AFOPantheon() {
           </h2>
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 items-start">
             <div className="w-full">
-              <JulieCPAWidget />
+              <Suspense fallback={<div className="text-white/50 text-center py-8">Loading Finance...</div>}>
+                <JulieCPAWidget />
+              </Suspense>
             </div>
 
             <div className="w-full">
-              <JulieTaxWidget />
+              <Suspense fallback={<div className="text-white/50 text-center py-8">Loading Tax...</div>}>
+                <JulieTaxWidget />
+              </Suspense>
             </div>
           </div>
         </section>

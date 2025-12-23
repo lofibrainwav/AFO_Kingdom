@@ -14,10 +14,8 @@ logger = logging.getLogger(__name__)
 
 # Persona service import
 try:
-    from AFO.services.persona_service import (get_current_persona,
-                                              persona_service)
-    from AFO.services.persona_service import \
-        switch_persona as switch_persona_service
+    from AFO.services.persona_service import get_current_persona, persona_service
+    from AFO.services.persona_service import switch_persona as switch_persona_service
 
     PERSONA_SERVICE_AVAILABLE = True
 except ImportError as e:
@@ -26,9 +24,13 @@ except ImportError as e:
 
 # Persona models import
 try:
-    from AFO.api.models.persona import (Persona, PersonaContext,
-                                        PersonaResponse, PersonaSwitchRequest,
-                                        PersonaTrinityScore)
+    from AFO.api.models.persona import (
+        Persona,
+        PersonaContext,
+        PersonaResponse,
+        PersonaSwitchRequest,
+        PersonaTrinityScore,
+    )
 
     PERSONA_MODELS_AVAILABLE = True
 except ImportError as e:
@@ -180,9 +182,7 @@ async def list_personas() -> dict[str, Any]:
                             "trinity_os_persona_id"
                         ),
                         context=PersonaContext(
-                            current_role=DEFAULT_PERSONAS[persona_id].get(
-                                "role", "Unknown"
-                            )
+                            current_role=DEFAULT_PERSONAS[persona_id].get("role", "Unknown")
                         ),
                     )
                     personas.append(persona)
@@ -230,9 +230,7 @@ async def get_persona(persona_id: str) -> dict[str, Any]:
         HTTPException: 페르소나를 찾을 수 없을 때
     """
     if persona_id not in DEFAULT_PERSONAS:
-        raise HTTPException(
-            status_code=404, detail=f"페르소나를 찾을 수 없습니다: {persona_id}"
-        )
+        raise HTTPException(status_code=404, detail=f"페르소나를 찾을 수 없습니다: {persona_id}")
 
     persona_data = DEFAULT_PERSONAS[persona_id]
 
@@ -284,8 +282,11 @@ async def switch_persona(request: PersonaSwitchRequest) -> dict[str, Any]:
         # to avoid async complexity in this snippet if not strictly needed.
         # Actually, let's use the BackgroundTasks pattern properly if passed,
         # but since we are inside a function, we'll do a direct lightweight update.
-        from AFO.api.routers.family import (calculate_happiness_impact,
-                                            load_family_data, save_family_data)
+        from AFO.api.routers.family import (
+            calculate_happiness_impact,
+            load_family_data,
+            save_family_data,
+        )
 
         family_data = load_family_data()
         activities = family_data.get("activities", [])
@@ -316,9 +317,7 @@ async def switch_persona(request: PersonaSwitchRequest) -> dict[str, Any]:
     except ImportError as e:
         logger.warning("Family Hub integration not available: %s", str(e))
     except (ValueError, KeyError, OSError) as e:
-        logger.warning(
-            "Failed to log persona switch (값/키/파일 시스템 에러): %s", str(e)
-        )
+        logger.warning("Failed to log persona switch (값/키/파일 시스템 에러): %s", str(e))
     except Exception as e:  # - Intentional fallback for unexpected errors
         logger.debug("Failed to log persona switch (예상치 못한 에러): %s", str(e))
 
@@ -375,9 +374,7 @@ async def get_persona_trinity_score(persona_id: str) -> dict[str, Any]:
         HTTPException: 페르소나를 찾을 수 없을 때
     """
     if persona_id not in DEFAULT_PERSONAS:
-        raise HTTPException(
-            status_code=404, detail=f"페르소나를 찾을 수 없습니다: {persona_id}"
-        )
+        raise HTTPException(status_code=404, detail=f"페르소나를 찾을 수 없습니다: {persona_id}")
 
     persona_data = DEFAULT_PERSONAS[persona_id]
 
@@ -411,13 +408,9 @@ async def get_persona_trinity_score(persona_id: str) -> dict[str, Any]:
                 "calculated_at": score_result.get("calculated_at"),
             }
         except (ValueError, TypeError, AttributeError) as e:
-            logger.warning(
-                "Trinity Score 계산 실패 (값/타입/속성 에러), 기본값 사용: %s", str(e)
-            )
+            logger.warning("Trinity Score 계산 실패 (값/타입/속성 에러), 기본값 사용: %s", str(e))
         except Exception as e:  # - Intentional fallback for unexpected errors
-            logger.warning(
-                "Trinity Score 계산 실패 (예상치 못한 에러), 기본값 사용: %s", str(e)
-            )
+            logger.warning("Trinity Score 계산 실패 (예상치 못한 에러), 기본값 사용: %s", str(e))
 
     # Fallback: 기본값 반환
     if PERSONA_MODELS_AVAILABLE:

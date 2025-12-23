@@ -198,23 +198,16 @@ class MultimodalRAGEngine:
                 )
 
                 # 3. 메모리 제한 확인 및 정리
-                if (
-                    self._current_memory_mb + doc_memory_mb
-                    > _memory_config["max_memory_mb"]
-                ):
+                if self._current_memory_mb + doc_memory_mb > _memory_config["max_memory_mb"]:
                     # 임계값 도달 시 자동 정리
                     threshold_memory = (
-                        _memory_config["max_memory_mb"]
-                        * _memory_config["cleanup_threshold"]
+                        _memory_config["max_memory_mb"] * _memory_config["cleanup_threshold"]
                     )
                     if self._current_memory_mb >= threshold_memory:
                         self._cleanup_old_documents(doc_memory_mb)
 
                     # 여전히 메모리 부족하면 실패
-                    if (
-                        self._current_memory_mb + doc_memory_mb
-                        > _memory_config["max_memory_mb"]
-                    ):
+                    if self._current_memory_mb + doc_memory_mb > _memory_config["max_memory_mb"]:
                         logger.warning(
                             "메모리 제한 초과: %.2fMB 요청, 현재 %.2fMB 사용",
                             doc_memory_mb,
@@ -271,9 +264,7 @@ class MultimodalRAGEngine:
             query_lower = query.lower()
             scored = []
             for doc in candidates:
-                score = sum(
-                    1 for word in query_lower.split() if word in doc.content.lower()
-                )
+                score = sum(1 for word in query_lower.split() if word in doc.content.lower())
                 if score > 0:
                     scored.append((score, doc))
 
@@ -340,8 +331,7 @@ class MultimodalRAGEngine:
             return {
                 "total_documents": len(self.documents),
                 "max_documents": _memory_config["max_documents"],
-                "documents_utilization": len(self.documents)
-                / _memory_config["max_documents"],
+                "documents_utilization": len(self.documents) / _memory_config["max_documents"],
                 "by_type": type_counts,
                 "embedding_model": self.embedding_model,
                 "memory_stats": {

@@ -32,9 +32,7 @@ class MlxSage:
         try:
             from mlx_lm import load
 
-            logger.info(
-                f"🍎 [MLX] Loading native model for {self.sage_name}: {self.model_path}..."
-            )
+            logger.info(f"🍎 [MLX] Loading native model for {self.sage_name}: {self.model_path}...")
             # Trust remote code is sometimes needed for new architectures, but keeping safe default
             # Validated: load() returns model, tokenizer (and config sometimes?) - Handle extra values
             loaded = load(self.model_path)
@@ -46,9 +44,7 @@ class MlxSage:
             self._is_loaded = True
             logger.info(f"✅ [MLX] {self.sage_name} Model loaded successfully.")
         except ImportError:
-            logger.error(
-                "❌ [MLX] mlx-lm package not found. Please install: pip install mlx-lm"
-            )
+            logger.error("❌ [MLX] mlx-lm package not found. Please install: pip install mlx-lm")
             raise
         except Exception as e:
             logger.error(f"❌ [MLX] Failed to load model for {self.sage_name}: {e}")
@@ -91,9 +87,7 @@ class MlxSage:
             messages.append({"role": "user", "content": prompt})
 
             # Check if tokenizer has chat template
-            if self.tokenizer is not None and hasattr(
-                self.tokenizer, "apply_chat_template"
-            ):
+            if self.tokenizer is not None and hasattr(self.tokenizer, "apply_chat_template"):
                 input_prompt = self.tokenizer.apply_chat_template(
                     messages, tokenize=False, add_generation_prompt=True
                 )

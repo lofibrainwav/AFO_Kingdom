@@ -15,11 +15,12 @@ import pytest
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 try:
-    from AFO.utils.container_detector import (ContainerDetector,
-                                              get_redis_container)
-    from AFO.utils.exponential_backoff import (BackoffStrategies,
-                                               ExponentialBackoff,
-                                               retry_with_exponential_backoff)
+    from AFO.utils.container_detector import ContainerDetector, get_redis_container
+    from AFO.utils.exponential_backoff import (
+        BackoffStrategies,
+        ExponentialBackoff,
+        retry_with_exponential_backoff,
+    )
     from AFO.utils.friction_calibrator import FrictionCalibrator
     from AFO.utils.lazy_imports import LazyModule
 
@@ -110,9 +111,7 @@ class TestContainerDetectorReal:
     def test_detect_api_wallet_path_env(self) -> None:
         """환경변수 기반 경로 감지 (Fallback Logic Check)"""
         # Force ImportError for settings modules to test fallback to os.getenv
-        with patch.dict(
-            sys.modules, {"config.settings": None, "AFO.config.settings": None}
-        ):
+        with patch.dict(sys.modules, {"config.settings": None, "AFO.config.settings": None}):
             with (
                 patch.dict(os.environ, {"AFO_HOME": "/tmp/test"}),
                 patch("pathlib.Path.exists", return_value=True),
@@ -240,9 +239,7 @@ class TestRedisConnectionReal:
 
     @patch("AFO.utils.redis_connection.get_settings")
     @patch("redis.from_url")
-    def test_get_redis_client_success(
-        self, mock_from_url: Any, mock_get_settings: Any
-    ) -> None:
+    def test_get_redis_client_success(self, mock_from_url: Any, mock_get_settings: Any) -> None:
         """동기 Redis 클라이언트 생성 성공"""
         from AFO.utils.redis_connection import get_redis_client
 
@@ -259,9 +256,7 @@ class TestRedisConnectionReal:
 
     @patch("AFO.utils.redis_connection.get_settings")
     @patch("redis.from_url")
-    def test_get_redis_client_failure(
-        self, mock_from_url: Any, mock_get_settings: Any
-    ) -> None:
+    def test_get_redis_client_failure(self, mock_from_url: Any, mock_get_settings: Any) -> None:
         """동기 Redis 클라이언트 생성 실패"""
         from AFO.utils.redis_connection import get_redis_client
 
@@ -276,9 +271,7 @@ class TestRedisConnectionReal:
 
     @patch("AFO.utils.redis_connection.get_settings")
     @patch("redis.asyncio.Redis.from_url")
-    async def test_get_async_redis_client(
-        self, mock_from_url: Any, mock_get_settings: Any
-    ) -> None:
+    async def test_get_async_redis_client(self, mock_from_url: Any, mock_get_settings: Any) -> None:
         """비동기 Redis 클라이언트 생성"""
         from AFO.utils.redis_connection import get_async_redis_client
 
@@ -296,9 +289,11 @@ class TestRedisConnectionReal:
     async def test_shared_clients_and_close(self) -> None:
         """싱글톤 클라이언트 및 종료 테스트"""
         import AFO.utils.redis_connection as rc_module
-        from AFO.utils.redis_connection import (close_redis_connections,
-                                                get_shared_async_redis_client,
-                                                get_shared_redis_client)
+        from AFO.utils.redis_connection import (
+            close_redis_connections,
+            get_shared_async_redis_client,
+            get_shared_redis_client,
+        )
 
         # Reset globals for test
         rc_module._redis_client = None

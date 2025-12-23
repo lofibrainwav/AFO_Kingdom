@@ -5,10 +5,11 @@ Displays the exact alignment of the 5 Pillars (眞·善·美·孝·永).
 
 from datetime import datetime
 
-from AFO.domain.metrics.trinity_manager import trinity_manager
-from AFO.domain.metrics.trinity_ssot import TrinityWeights
 from fastapi import APIRouter
 from pydantic import BaseModel
+
+from AFO.domain.metrics.trinity_manager import trinity_manager
+from AFO.domain.metrics.trinity_ssot import TrinityWeights
 
 router = APIRouter(prefix="/api/ssot-status", tags=["SSOT"])
 

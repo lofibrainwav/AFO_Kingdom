@@ -4,17 +4,8 @@
 from dataclasses import dataclass
 from datetime import datetime
 
+from AFO.config import antigravity
 from AFO.security.vault_manager import vault
-
-try:
-    from AFO.config.antigravity import antigravity
-except ImportError:
-    # Local fallback
-    try:
-        from config.antigravity import antigravity  # type: ignore
-    except ImportError:
-        # Retry with full path
-        from AFO.config.antigravity import antigravity
 
 
 @dataclass
@@ -87,7 +78,7 @@ class FrictionCalibrator:
                 # Julie module not available, skip financial checks
                 score -= 2
                 friction_reasons.append("Financial Module Not Available")
-                julie_service = None  # type: ignore
+                julie_service = None
 
             if julie_service:
                 # Mocking checks for the new service structure
@@ -95,11 +86,6 @@ class FrictionCalibrator:
                 # but we assume its internal friction manager does.
                 # For now, we pass this check if the service instantiates.
                 pass
-
-        except Exception as e:
-            # If Julie module is missing or error, slight friction
-            score -= 2
-            friction_reasons.append(f"Financial Module Check Fail: {e!s}")
 
         except Exception as e:
             # If Julie module is missing or error, slight friction

@@ -35,9 +35,7 @@ class YeongdeokComplete:
     - Memory consolidation and archival
     """
 
-    def __init__(
-        self, max_short_term: int = 100, max_long_term: int = 1000, **kwargs: Any
-    ):
+    def __init__(self, max_short_term: int = 100, max_long_term: int = 1000, **kwargs: Any):
         self.short_term: dict[str, MemoryEntry] = {}
         self.long_term: dict[str, MemoryEntry] = {}
         self.max_short_term = max_short_term
@@ -52,19 +50,13 @@ class YeongdeokComplete:
         except Exception:
             return str(hash(content))[:16]
 
-    def remember(
-        self, content: Any, tags: list[str] | None = None, importance: float = 1.0
-    ) -> str:
+    def remember(self, content: Any, tags: list[str] | None = None, importance: float = 1.0) -> str:
         """Store a memory in short-term storage."""
         try:
-            content_str = (
-                json.dumps(content) if not isinstance(content, str) else content
-            )
+            content_str = json.dumps(content) if not isinstance(content, str) else content
             key = self._generate_key(content_str)
 
-            entry = MemoryEntry(
-                key=key, content=content, tags=tags or [], importance=importance
-            )
+            entry = MemoryEntry(key=key, content=content, tags=tags or [], importance=importance)
 
             self.short_term[key] = entry
 
@@ -158,9 +150,7 @@ class YeongdeokComplete:
 
             # Keep buffer manageable
             if len(self.conversation_buffer) > self.max_short_term:
-                self.conversation_buffer = self.conversation_buffer[
-                    -self.max_short_term :
-                ]
+                self.conversation_buffer = self.conversation_buffer[-self.max_short_term :]
         except Exception:
             pass
 
@@ -190,9 +180,7 @@ class YeongdeokComplete:
                     self.long_term.items(),
                     key=lambda x: x[1].importance * x[1].access_count,
                 )
-                for key, _ in sorted_entries[
-                    : len(self.long_term) - self.max_long_term
-                ]:
+                for key, _ in sorted_entries[: len(self.long_term) - self.max_long_term]:
                     del self.long_term[key]
         except Exception:
             pass

@@ -16,8 +16,7 @@ from pathlib import Path
 try:
     from cryptography.hazmat.backends import default_backend
     from cryptography.hazmat.primitives import hashes
-    from cryptography.hazmat.primitives.ciphers import (Cipher, algorithms,
-                                                        modes)
+    from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
     from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
     CRYPTO_AVAILABLE = True
@@ -115,9 +114,7 @@ def main():
         # Default Real Chrome
         base_path = Path.home() / "Library/Application Support/Google/Chrome"
         all_profiles = [p.name for p in base_path.glob("*") if p.is_dir()]
-        print(
-            f"📂 Found {len(all_profiles)} directories in Chrome root: {all_profiles}"
-        )
+        print(f"📂 Found {len(all_profiles)} directories in Chrome root: {all_profiles}")
 
         for p in base_path.glob("*"):
             if (p / "Cookies").exists():

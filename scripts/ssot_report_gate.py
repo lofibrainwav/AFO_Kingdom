@@ -5,7 +5,6 @@ import sys
 from collections.abc import Iterable
 from dataclasses import dataclass
 
-
 FORBIDDEN_PHRASES = [
     "Repairs Complete",
     "완료",
@@ -80,7 +79,7 @@ def validate_report(text: str) -> Result:
     completion_claim = _is_completion_claim(text)
 
     if forbidden:
-        reasons.append(f"Forbidden completion phrase(s): {', '.join(forbidden)}")
+        reasons.append(f"Forbidden completion phrase(s): {", ".join(forbidden)}")
 
     if completion_claim and not _has_evidence(text):
         reasons.append("Completion claim detected but evidence markers are missing.")

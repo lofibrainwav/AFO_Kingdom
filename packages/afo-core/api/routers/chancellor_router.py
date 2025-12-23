@@ -44,30 +44,40 @@ _chancellor_import_error: str | None = None
 def _import_chancellor_graph() -> None:
     global build_chancellor_graph, chancellor_graph, _chancellor_import_error
     try:
-        import sys
-        from pathlib import Path
-
-        # Add parent directory to path for chancellor_graph import
-        _CORE_ROOT = Path(__file__).resolve().parent.parent.parent
-        if str(_CORE_ROOT) not in sys.path:
-            sys.path.insert(0, str(_CORE_ROOT))
-
-        from chancellor_graph import \
-            ChancellorState as _CS  # Import State Definition
-        from chancellor_graph import build_chancellor_graph as _bcg
-        from chancellor_graph import chancellor_graph as _cg
+        from AFO.chancellor_graph import ChancellorState as _CS  # Import State Definition
+        from AFO.chancellor_graph import build_chancellor_graph as _bcg
+        from AFO.chancellor_graph import chancellor_graph as _cg
 
         build_chancellor_graph = _bcg
         chancellor_graph = _cg
         ChancellorState = _CS
     except ImportError as e:
-        print(f"⚠️  Chancellor Graph import 실패: {e}")
-        _chancellor_import_error = str(e)
+        # Fallback to legacy path if AFO module issue
+        try:
+            import sys
+            from pathlib import Path
 
-        class MockState(dict[str, Any]):
-            pass
+            _CORE_ROOT = Path(__file__).resolve().parent.parent.parent
+            if str(_CORE_ROOT) not in sys.path:
+                sys.path.insert(0, str(_CORE_ROOT))
 
-        ChancellorState = MockState  # type: ignore[assignment]
+            from chancellor_graph import ChancellorState as _CS_Legacy
+            from chancellor_graph import build_chancellor_graph as _bcg_Legacy
+            from chancellor_graph import chancellor_graph as _cg_Legacy
+
+            build_chancellor_graph = _bcg_Legacy
+            chancellor_graph = _cg_Legacy
+            ChancellorState = _CS_Legacy
+
+            logging.warning("⚠️ Using legacy chancellor_graph path")
+        except ImportError as e2:
+            print(f"⚠️  Chancellor Graph import 실패: {e2}")
+            _chancellor_import_error = str(e2)
+
+            class MockState(dict[str, Any]):
+                pass
+
+            ChancellorState = MockState  # type: ignore[assignment]
 
 
 _import_chancellor_graph()
@@ -211,10 +221,7 @@ def _build_fallback_text(query: str, metrics: dict[str, Any]) -> str:
         )
     else:
         q_lower = query.lower()
-        if any(
-            k in q_lower
-            for k in ["자기소개", "who are you", "너는 누구", "당신은 누구"]
-        ):
+        if any(k in q_lower for k in ["자기소개", "who are you", "너는 누구", "당신은 누구"]):
             lines.append(
                 "- 오프라인 응답: 저는 AFO Kingdom의 승상(Chancellor)이며, 시스템 상태/전략/실행을 정리해 사령관의 결정을 돕습니다."
             )
@@ -267,14 +274,10 @@ async def _execute_with_fallback(
             return dict(await get_system_metrics())
         except (AttributeError, TypeError, ValueError) as e:
             logger.warning("시스템 메트릭 수집 실패 (속성/타입/값 에러): %s", str(e))
-            return {
-                "error": f"failed to collect system metrics: {type(e).__name__}: {e}"
-            }
+            return {"error": f"failed to collect system metrics: {type(e).__name__}: {e}"}
         except Exception as e:  # - Intentional fallback for unexpected errors
             logger.warning("시스템 메트릭 수집 실패 (예상치 못한 에러): %s", str(e))
-            return {
-                "error": f"failed to collect system metrics: {type(e).__name__}: {e}"
-            }
+            return {"error": f"failed to collect system metrics: {type(e).__name__}: {e}"}
 
     async def _single_shot_answer(
         query: str, budget_seconds: float, context: dict[str, Any]
@@ -406,9 +409,7 @@ async def _execute_full_mode(
     from AFO.api.compat import get_antigravity_control
 
     antigravity = get_antigravity_control()
-    effective_auto_run = request.auto_run and not (
-        antigravity and antigravity.DRY_RUN_DEFAULT
-    )
+    effective_auto_run = request.auto_run and not (antigravity and antigravity.DRY_RUN_DEFAULT)
 
     initial_state_dict = {
         "query": request.query,
@@ -419,9 +420,7 @@ async def _execute_full_mode(
             "max_strategists": request.max_strategists,
             "antigravity": {
                 "AUTO_DEPLOY": antigravity.AUTO_DEPLOY if antigravity else True,
-                "DRY_RUN_DEFAULT": (
-                    antigravity.DRY_RUN_DEFAULT if antigravity else False
-                ),
+                "DRY_RUN_DEFAULT": (antigravity.DRY_RUN_DEFAULT if antigravity else False),
                 "ENVIRONMENT": antigravity.ENVIRONMENT if antigravity else "dev",
             },
             "auto_run_eligible": effective_auto_run,
@@ -472,17 +471,11 @@ async def _execute_full_mode(
             try:
                 return dict(await get_system_metrics())
             except (AttributeError, TypeError, ValueError) as e:
-                logger.warning(
-                    "시스템 메트릭 수집 실패 (속성/타입/값 에러): %s", str(e)
-                )
-                return {
-                    "error": f"failed to collect system metrics: {type(e).__name__}: {e}"
-                }
+                logger.warning("시스템 메트릭 수집 실패 (속성/타입/값 에러): %s", str(e))
+                return {"error": f"failed to collect system metrics: {type(e).__name__}: {e}"}
             except Exception as e:  # - Intentional fallback for unexpected errors
                 logger.warning("시스템 메트릭 수집 실패 (예상치 못한 에러): %s", str(e))
-                return {
-                    "error": f"failed to collect system metrics: {type(e).__name__}: {e}"
-                }
+                return {"error": f"failed to collect system metrics: {type(e).__name__}: {e}"}
 
         metrics = await _get_system_metrics_safe()
         return {
@@ -583,9 +576,7 @@ async def chancellor_health() -> dict[str, Any]:
             "strategists": ["Zhuge Liang", "Sima Yi", "Zhou Yu"],
         }
     except (ImportError, AttributeError, RuntimeError) as e:
-        logger.error(
-            "Chancellor Graph 초기화 실패 (import/속성/런타임 에러): %s", str(e)
-        )
+        logger.error("Chancellor Graph 초기화 실패 (import/속성/런타임 에러): %s", str(e))
         return {
             "status": "error",
             "message": f"Chancellor Graph 초기화 실패: {e!s}",

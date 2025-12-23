@@ -27,9 +27,7 @@ try:
     logger.info("[ProphetEngine] Prophet 라이브러리 로드 완료")
 except ImportError:
     PROPHET_AVAILABLE = False
-    logger.warning(
-        "[ProphetEngine] Prophet not installed. Using fallback LinearRegression."
-    )
+    logger.warning("[ProphetEngine] Prophet not installed. Using fallback LinearRegression.")
 
 
 # =============================================================================
@@ -197,14 +195,10 @@ def predict_with_prophet(
             else 0
         )
         confidence = (
-            max(50, min(95, 100 - (avg_range / avg_predicted * 50)))
-            if avg_predicted > 0
-            else 50
+            max(50, min(95, 100 - (avg_range / avg_predicted * 50))) if avg_predicted > 0 else 50
         )
 
-        logger.info(
-            f"[ProphetEngine] 예측 완료: {len(predictions)}개월, 총 ${total_predicted:,}"
-        )
+        logger.info(f"[ProphetEngine] 예측 완료: {len(predictions)}개월, 총 ${total_predicted:,}")
 
         return {
             "engine": "Prophet",
@@ -299,9 +293,7 @@ def _generate_advice(predictions: list, historical: pd.DataFrame) -> str:
     advice_parts = []
 
     if growth_rate > 10:
-        advice_parts.append(
-            f"⚠️ 지출 증가 추세 (+{growth_rate:.1f}%): 예산 조정 검토 필요"
-        )
+        advice_parts.append(f"⚠️ 지출 증가 추세 (+{growth_rate:.1f}%): 예산 조정 검토 필요")
     elif growth_rate < -5:
         advice_parts.append(f"✅ 지출 감소 추세 ({growth_rate:.1f}%): 절약 효과 확인!")
     else:
@@ -335,9 +327,7 @@ def get_kingdom_forecast(periods: int = 3) -> dict:
     result = predict_with_prophet(df, periods=periods)
 
     # 추가 메타데이터
-    result["kingdom_status"] = (
-        "healthy" if result["summary"]["confidence"] > 70 else "monitoring"
-    )
+    result["kingdom_status"] = "healthy" if result["summary"]["confidence"] > 70 else "monitoring"
     result["last_updated"] = datetime.now().isoformat()
     result["data_points"] = len(df)
 

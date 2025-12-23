@@ -286,9 +286,7 @@ class JulieService:
 
         # Strategy C: QBI (if applicable)
         if qbi_deduction > 0:
-            qbi_tax_value = (
-                qbi_deduction * fed_marginal_rate
-            )  # QBI is Fed only deduction
+            qbi_tax_value = qbi_deduction * fed_marginal_rate  # QBI is Fed only deduction
             advice_cards.append(
                 {
                     "title": "QBI Deduction (20%)",

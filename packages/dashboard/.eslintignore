@@ -1,0 +1,15 @@
+# Build outputs
+.next/
+out/
+dist/
+build/
+
+# Dependencies
+node_modules/
+
+# Scripts (JS files)
+scripts/
+
+# Test files (until Jest is configured)
+__tests__/
+

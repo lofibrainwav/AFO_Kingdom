@@ -10,9 +10,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 # Ensure AFO root is in path
-sys.path.insert(
-    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-)
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 try:
     from api_server import app

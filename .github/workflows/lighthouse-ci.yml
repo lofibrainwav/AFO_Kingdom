@@ -1,0 +1,56 @@
+name: Lighthouse CI
+
+on:
+  pull_request:
+    branches: [ main, develop ]
+  push:
+    branches: [ main ]
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: packages/dashboard/package-lock.json
+
+      - name: Install dependencies
+        run: |
+          cd packages/dashboard
+          npm ci
+
+      - name: Build application
+        run: |
+          cd packages/dashboard
+          npm run build
+
+      - name: Run Lighthouse CI
+        run: |
+          cd packages/dashboard
+          npx lhci autorun --config=lighthouserc.js
+        continue-on-error: true
+
+      - name: Upload Lighthouse reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-reports
+          path: packages/dashboard/lighthouse-reports/
+          retention-days: 30
+
+      - name: Upload Lighthouse results to summary
+        if: success()
+        run: |
+          echo "## Lighthouse Performance Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ -d "packages/dashboard/lighthouse-reports" ]; then
+            echo "### Reports Generated:" >> $GITHUB_STEP_SUMMARY
+            ls -la packages/dashboard/lighthouse-reports/ >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ No Lighthouse reports found" >> $GITHUB_STEP_SUMMARY
+          fi

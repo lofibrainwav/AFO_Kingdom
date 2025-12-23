@@ -87,9 +87,7 @@ class UserUpdateRequest(BaseModel):
     """사용자 업데이트 요청 모델"""
 
     email: str | None = Field(default=None, description="이메일 주소")
-    password: str | None = Field(
-        default=None, min_length=8, description="비밀번호 (최소 8자)"
-    )
+    password: str | None = Field(default=None, min_length=8, description="비밀번호 (최소 8자)")
 
 
 @router.post("", status_code=201)
@@ -126,18 +124,14 @@ async def create_user(request: UserCreateRequest) -> dict[str, Any]:
                     "SELECT id FROM users WHERE username = $1", request.username
                 )
                 if existing:
-                    raise HTTPException(
-                        status_code=409, detail="이미 존재하는 사용자명입니다."
-                    )
+                    raise HTTPException(status_code=409, detail="이미 존재하는 사용자명입니다.")
 
                 # 이메일 중복 체크
                 existing_email = await conn.fetchrow(
                     "SELECT id FROM users WHERE email = $1", request.email
                 )
                 if existing_email:
-                    raise HTTPException(
-                        status_code=409, detail="이미 사용중인 이메일 주소입니다."
-                    )
+                    raise HTTPException(status_code=409, detail="이미 사용중인 이메일 주소입니다.")
 
                 # 사용자 생성 (저장 프로시저 사용)
                 user_id = await conn.fetchval(
@@ -166,9 +160,7 @@ async def create_user(request: UserCreateRequest) -> dict[str, Any]:
                     "email": user["email"],
                     "display_name": user.get("display_name"),
                     "avatar_url": user.get("avatar_url"),
-                    "created_at": (
-                        user["created_at"].isoformat() if user["created_at"] else None
-                    ),
+                    "created_at": (user["created_at"].isoformat() if user["created_at"] else None),
                 }
             except HTTPException as e:
                 await conn.close()
@@ -221,17 +213,13 @@ async def get_user(user_id: str) -> dict[str, Any]:
                 await conn.close()
 
                 if not user:
-                    raise HTTPException(
-                        status_code=404, detail="사용자를 찾을 수 없습니다."
-                    )
+                    raise HTTPException(status_code=404, detail="사용자를 찾을 수 없습니다.")
 
                 return {
                     "id": str(user["id"]),
                     "username": user["username"],
                     "email": user["email"],
-                    "created_at": (
-                        user["created_at"].isoformat() if user["created_at"] else None
-                    ),
+                    "created_at": (user["created_at"].isoformat() if user["created_at"] else None),
                 }
             except ValueError:
                 await conn.close()

@@ -26,9 +26,7 @@ class HybridGraphRAG:
                 results.append(f"[{key.upper()}] {value}")
 
         if not results:
-            results.append(
-                "[GENERAL] Apply standard software engineering best practices."
-            )
+            results.append("[GENERAL] Apply standard software engineering best practices.")
 
         return results
 

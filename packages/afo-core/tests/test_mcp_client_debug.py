@@ -70,14 +70,10 @@ async def test_mcp_server_direct():
         print("\n4️⃣ 응답 수신 대기:")
         try:
             if process.stdout:
-                response_line = await asyncio.wait_for(
-                    process.stdout.readline(), timeout=5.0
-                )
+                response_line = await asyncio.wait_for(process.stdout.readline(), timeout=5.0)
                 if response_line:
                     response = json.loads(response_line.decode())
-                    print(
-                        f"   ✅ 응답 수신: {json.dumps(response, indent=2, ensure_ascii=False)}"
-                    )
+                    print(f"   ✅ 응답 수신: {json.dumps(response, indent=2, ensure_ascii=False)}")
                 else:
                     print("   ❌ 응답 없음")
         except asyncio.TimeoutError:

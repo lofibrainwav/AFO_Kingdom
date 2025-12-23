@@ -9,8 +9,7 @@ sys.path.insert(0, str(root_dir))
 
 from AFO.utils.cache_utils import CacheManager, cached
 from AFO.utils.dry_run import DryRunMode, dry_run
-from AFO.utils.framework_selector import (FrameworkName, MissionProfile,
-                                          select_framework)
+from AFO.utils.framework_selector import FrameworkName, MissionProfile, select_framework
 
 
 class TestCacheUtils(unittest.IsolatedAsyncioTestCase):
@@ -137,9 +136,7 @@ class TestFrameworkSelector(unittest.TestCase):
 
     def test_select_crewai_cost(self):
         """Cost Sensitive -> CrewAI"""
-        p = MissionProfile(
-            mission_type="coding", complexity=3, reliability=3, cost_sensitivity=5
-        )
+        p = MissionProfile(mission_type="coding", complexity=3, reliability=3, cost_sensitivity=5)
         self.assertEqual(select_framework(p), FrameworkName.CREWAI)
 
     def test_select_crewai_simple(self):
@@ -149,9 +146,7 @@ class TestFrameworkSelector(unittest.TestCase):
 
     def test_default_autogen(self):
         """Balanced fallback"""
-        p = MissionProfile(
-            mission_type="coding", complexity=3, reliability=3, cost_sensitivity=3
-        )
+        p = MissionProfile(mission_type="coding", complexity=3, reliability=3, cost_sensitivity=3)
         self.assertEqual(select_framework(p), FrameworkName.AUTOGEN)
 
 

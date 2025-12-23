@@ -36,8 +36,7 @@ except ModuleNotFoundError:
 
 # Strangler Fig Phase 1: 타입 모델 추가 (眞: Truth 타입 안전성)
 try:
-    from AFO.api.compat import (ChancellorInvokeRequest,
-                                ChancellorInvokeResponse)
+    from AFO.api.compat import ChancellorInvokeRequest, ChancellorInvokeResponse
 except ImportError:
     # Fallback for backward compatibility
     ChancellorInvokeRequest = Any  # type: ignore[assignment]
@@ -130,9 +129,7 @@ def example_streaming_guard() -> None:
         return
 
     client = StreamingGuardrailsOpenAI(
-        config={
-            "output": [{"name": "StreamingModeration", "config": {"threshold": "low"}}]
-        },
+        config={"output": [{"name": "StreamingModeration", "config": {"threshold": "low"}}]},
         api_key=os.getenv("OPENAI_API_KEY"),
         model=os.getenv("GUARDRAILS_MODEL", "gpt-4o-mini"),
     )

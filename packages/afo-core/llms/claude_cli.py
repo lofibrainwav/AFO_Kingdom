@@ -79,9 +79,7 @@ class ClaudeCLIWrapper:
                     result = json.loads(stdout.decode())
                     return {
                         "success": True,
-                        "content": result.get(
-                            "result", result.get("text", stdout.decode())
-                        ),
+                        "content": result.get("result", result.get("text", stdout.decode())),
                         "model": "claude-code-cli",
                         "finish_reason": "complete",
                     }

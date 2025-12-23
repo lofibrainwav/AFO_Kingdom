@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
+# Copyright (c) 2025 AFO Kingdom. All rights reserved.
 """
-AFO Kingdom External Trends Monitor
-외부 트렌드 자동 모니터링 스크립트
+AFO Kingdom External Trends Monitor.
+
+외부 트렌드 자동 모니터링 스크립트.
 
 Sequential Thinking:
 1. 트렌드 데이터 수집 (Brave Search API 활용)
@@ -29,35 +31,39 @@ import logging
 import os
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, Final
 
 import aiohttp
 
-# Constants (PLR2004)
-TRINITY_WEIGHTS = {
+
+# Constants
+TRINITY_WEIGHTS: Final = {
     "truth": 0.35,
     "goodness": 0.35,
     "beauty": 0.20,
     "serenity": 0.08,
     "eternity": 0.02,
 }
-MAX_SOURCE_SCORE = 10
-MAX_MARKET_IMPACT = 100
-DEFAULT_COMPLEXITY = 50
-TARGET_TRINITY_HIGH = 80
-TARGET_TRINITY_MED = 60
-OPPORTUNITY_HIGH = 75
-OPPORTUNITY_MED = 50
-HTTP_OK = 200
-BRAVE_SEARCH_URL = "https://api.search.brave.com/res/v1/web/search"
+MAX_SOURCE_SCORE: Final = 10
+MAX_MARKET_IMPACT: Final = 100
+DEFAULT_COMPLEXITY: Final = 50
+TARGET_TRINITY_HIGH: Final = 80
+TARGET_TRINITY_MED: Final = 60
+OPPORTUNITY_HIGH: Final = 75
+OPPORTUNITY_MED: Final = 50
+HTTP_OK: Final = 200
+BRAVE_SEARCH_URL: Final = "https://api.search.brave.com/res/v1/web/search"
 
-# Logger (LOG015)
+# Logger
 logger = logging.getLogger("afo.trends")
 
 
 def calculate_trinity_score(trend_data: dict) -> float:
     """
     외부 트렌드의 Trinity Score 계산.
+
+    Args:
+        trend_data (dict): 트렌드 분석 데이터.
 
     Returns:
         float: 0.0 ~ 100.0 사이의 Trinity Score 총점.
@@ -70,9 +76,7 @@ def calculate_trinity_score(trend_data: dict) -> float:
 
     # Beauty: 구현 용이성
     beauty = min(
-        1.0,
-        trend_data.get("implementation_complexity", DEFAULT_COMPLEXITY)
-        / MAX_MARKET_IMPACT,
+        1.0, trend_data.get("implementation_complexity", DEFAULT_COMPLEXITY) / MAX_MARKET_IMPACT
     )
     beauty = 1.0 - beauty  # 낮은 복잡성 = 높은 beauty
 
@@ -97,6 +101,10 @@ def calculate_trinity_score(trend_data: dict) -> float:
 async def search_brave_ai_trends(query: str, api_key: str) -> dict[str, Any]:
     """
     Brave Search API로 AI 트렌드 검색.
+
+    Args:
+        query (str): 검색어.
+        api_key (str): Brave Search API 키.
 
     Returns:
         dict[str, Any]: 검색 결과 데이터 또는 에러 메시지를 포함한 딕셔너리.
@@ -128,6 +136,9 @@ def analyze_trends(search_results: dict) -> dict[str, Any]:
     """
     검색 결과를 분석하여 트렌드 데이터 추출.
 
+    Args:
+        search_results (dict): 검색 결과 원본 데이터.
+
     Returns:
         dict[str, Any]: 분석된 트렌드 데이터 (스코어, 키워드, 소스 등).
     """
@@ -155,13 +166,11 @@ def analyze_trends(search_results: dict) -> dict[str, Any]:
             if kw in title or kw in description:
                 keyword_counts[kw] += 1
 
-        sources.append(
-            {
-                "title": result.get("title"),
-                "url": result.get("url"),
-                "age": result.get("age"),
-            }
-        )
+        sources.append({
+            "title": result.get("title"),
+            "url": result.get("url"),
+            "age": result.get("age"),
+        })
 
     # 트렌드 점수 계산
     trend_score = sum(keyword_counts.values()) / len(results) if results else 0
@@ -182,6 +191,9 @@ def analyze_trends(search_results: dict) -> dict[str, Any]:
 def generate_report(analysis: dict) -> str:
     """
     분석 결과를 보고서로 생성.
+
+    Args:
+        analysis (dict): 분석된 트렌드 데이터.
 
     Returns:
         str: 마크다운 형식의 보고서 문자열.
@@ -227,7 +239,7 @@ def generate_report(analysis: dict) -> str:
 {json.dumps(analysis.get("keyword_analysis", {}), indent=2)}
 
 ### Top Sources
-{chr(10).join([f"- [{s["title"]}]({s["url"]})" for s in analysis.get("sources", [])[:5]])}
+{chr(10).join([f"- [{s['title']}]({s['url']})" for s in analysis.get("sources", [])[:5]])}
 
 ## Recommendations
 {action}
@@ -237,61 +249,28 @@ def generate_report(analysis: dict) -> str:
 
 
 def save_report(report: str, query: str, reports_dir: Path) -> None:
-    """보고서를 파일로 저장 (ASYNC240 래퍼)."""
+    """
+    보고서를 파일로 저장.
+
+    Args:
+        report (str): 보고서 내용.
+        query (str): 검색 쿼리.
+        reports_dir (Path): 저장 경로.
+    """
     timestamp_str = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
-    report_file = (
-        reports_dir / f"trend_report_{timestamp_str}_{query.replace(" ", "_")}.md"
-    )
+    report_file = reports_dir / f"trend_report_{timestamp_str}_{query.replace(' ', '_')}.md"
     report_file.write_text(report, encoding="utf-8")
     logger.info("Report saved: %s", report_file)
 
 
-async def main() -> None:
-    """메인 실행 함수."""
-    logging.basicConfig(
-        level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-    )
-
-    # 환경 변수에서 API 키 가져오기
-    brave_api_key = os.getenv("BRAVE_API_KEY")
-    if not brave_api_key:
-        logger.error("BRAVE_API_KEY environment variable not set")
-        return
-
-    # 검색 쿼리들
-    queries = [
-        "AI observability trends 2025",
-        "predictive monitoring AI systems",
-        "unified AI platform monitoring",
-        "Kubernetes AI workload monitoring",
-    ]
-
-    reports_dir = Path("docs/reports/external_trends")
-    reports_dir.mkdir(parents=True, exist_ok=True)
-
-    all_results = {}
-
-    for query in queries:
-        logger.info("Searching: %s", query)
-        search_results = await search_brave_ai_trends(query, brave_api_key)
-
-        if "error" not in search_results:
-            analysis = analyze_trends(search_results)
-            report = generate_report(analysis)
-            all_results[query] = analysis
-            save_report(report, query, reports_dir)
-        else:
-            logger.error("Search failed for %s: %s", query, search_results["error"])
-
-        # API rate limit 고려
-        await asyncio.sleep(1)
-
-    # 종합 보고서 생성
-    generate_summary_report(all_results, reports_dir)
-
-
 def generate_summary_report(all_results: dict, reports_dir: Path) -> None:
-    """종합 보고서 생성 및 저장."""
+    """
+    종합 보고서 생성 및 저장.
+
+    Args:
+        all_results (dict): 모든 분석 결과.
+        reports_dir (Path): 저장 경로.
+    """
     now_str = datetime.now(UTC).strftime("%Y-%m-%d %H:%M:%S UTC")
 
     highest_impact = "None"
@@ -303,19 +282,15 @@ def generate_summary_report(all_results: dict, reports_dir: Path) -> None:
     avg_score = 0.0
     if all_results:
         avg_score = round(
-            sum(calculate_trinity_score(all_results[q]) for q in all_results)
-            / len(all_results),
+            sum(calculate_trinity_score(all_results[q]) for q in all_results) / len(all_results),
             2,
         )
 
     alignment_str = "excellent" if all_results else "unknown"
 
-    summary_list = "\n".join(
-        [
-            f"- **{q}**: {calculate_trinity_score(all_results[q])}/100"
-            for q in all_results
-        ]
-    )
+    summary_list = "\n".join([
+        f"- **{q}**: {calculate_trinity_score(all_results[q])}/100" for q in all_results
+    ])
 
     summary_report = f"""
 # AFO Kingdom External Trends Summary Report
@@ -339,6 +314,48 @@ Current AFO monitoring system shows {alignment_str} alignment with 2025 AI obser
     summary_file = reports_dir / f"summary_report_{timestamp_file}.md"
     summary_file.write_text(summary_report, encoding="utf-8")
     logger.info("Summary report saved: %s", summary_file)
+
+
+async def main() -> None:
+    """메인 실행 함수."""
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+
+    # 환경 변수에서 API 키 가져오기
+    brave_api_key = os.getenv("BRAVE_API_KEY")
+    if not brave_api_key:
+        logger.error("BRAVE_API_KEY environment variable not set")
+        return
+
+    # 검색 쿼리들
+    queries = [
+        "AI observability trends 2025",
+        "predictive monitoring AI systems",
+        "unified AI platform monitoring",
+        "Kubernetes AI workload monitoring",
+    ]
+
+    reports_dir = Path("docs/reports/external_trends")
+    reports_dir.mkdir(parents=True, exist_ok=True)  # noqa: ASYNC240
+
+    all_results = {}
+
+    for query in queries:
+        logger.info("Searching: %s", query)
+        search_results = await search_brave_ai_trends(query, brave_api_key)
+
+        if "error" not in search_results:
+            analysis = analyze_trends(search_results)
+            report = generate_report(analysis)
+            all_results[query] = analysis
+            save_report(report, query, reports_dir)
+        else:
+            logger.error("Search failed for %s: %s", query, search_results["error"])
+
+        # API rate limit 고려
+        await asyncio.sleep(1)
+
+    # 종합 보고서 생성
+    generate_summary_report(all_results, reports_dir)
 
 
 if __name__ == "__main__":

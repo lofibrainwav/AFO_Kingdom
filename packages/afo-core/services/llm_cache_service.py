@@ -33,9 +33,7 @@ class LLMCacheEntry(BaseModel):
     """LLM 캐시 엔트리 모델"""
 
     request_hash: str = Field(..., description="요청 해시")
-    provider: str = Field(
-        ..., description="LLM 제공자 (ollama, claude, gemini, openai)"
-    )
+    provider: str = Field(..., description="LLM 제공자 (ollama, claude, gemini, openai)")
     model: str = Field(..., description="모델 이름")
     response: str = Field(..., description="LLM 응답")
     metadata: dict[str, Any] = Field(default_factory=dict, description="메타데이터")
@@ -75,9 +73,7 @@ class LLMCacheService:
             self._initialized = False
             return False
 
-    def _generate_cache_key(
-        self, request_data: dict[str, Any], provider: str, model: str
-    ) -> str:
+    def _generate_cache_key(self, request_data: dict[str, Any], provider: str, model: str) -> str:
         """
         캐시 키 생성 (Sequential Thinking Phase 2)
         요청 데이터를 해시하여 고유 키 생성

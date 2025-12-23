@@ -33,9 +33,7 @@ router = APIRouter()
 class ChatMessageRequest(BaseModel):
     """채팅 메시지 요청"""
 
-    message: str = Field(
-        ..., min_length=1, max_length=10000, description="사용자 메시지"
-    )
+    message: str = Field(..., min_length=1, max_length=10000, description="사용자 메시지")
     provider: str = Field(
         default="auto",
         description="LLM 제공자 (auto, ollama, gemini, anthropic, openai)",
@@ -45,9 +43,7 @@ class ChatMessageRequest(BaseModel):
     )
     max_tokens: int = Field(default=1024, ge=1, le=8192, description="최대 토큰 수")
     temperature: float = Field(default=0.7, ge=0.0, le=2.0, description="온도 설정")
-    system_prompt: str | None = Field(
-        default=None, description="시스템 프롬프트 (선택)"
-    )
+    system_prompt: str | None = Field(default=None, description="시스템 프롬프트 (선택)")
 
 
 class ChatMessageResponse(BaseModel):

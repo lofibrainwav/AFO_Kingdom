@@ -135,11 +135,7 @@ class ErrorDetector:
 
             # Phase 1.1.6: 모든 에러 통합
             all_errors = (
-                syntax_errors
-                + type_errors
-                + linting_errors
-                + import_errors
-                + runtime_errors
+                syntax_errors + type_errors + linting_errors + import_errors + runtime_errors
             )
 
             self.detected_errors = all_errors
@@ -257,9 +253,7 @@ class ErrorDetector:
                                 column_number=issue.get("column_number"),
                             ),
                             auto_fixable=issue.get("fix", {}).get("applicable", False),
-                            fix_confidence=(
-                                0.9 if issue.get("fix", {}).get("applicable") else 0.2
-                            ),
+                            fix_confidence=(0.9 if issue.get("fix", {}).get("applicable") else 0.2),
                         )
                         errors.append(error)
                 except json.JSONDecodeError:
@@ -290,8 +284,7 @@ class ErrorDetector:
                 )
 
                 if result["returncode"] != 0 and (
-                    "ImportError" in result["stderr"]
-                    or "ModuleNotFoundError" in result["stderr"]
+                    "ImportError" in result["stderr"] or "ModuleNotFoundError" in result["stderr"]
                 ):
                     error = DetectedError(
                         error_id=f"import_{py_file.name}",
@@ -320,11 +313,7 @@ class ErrorDetector:
             try:
                 with open(log_file, encoding="utf-8") as f:
                     for line_num, line in enumerate(f, 1):
-                        if (
-                            "ERROR" in line
-                            or "Exception" in line
-                            or "Traceback" in line
-                        ):
+                        if "ERROR" in line or "Exception" in line or "Traceback" in line:
                             error = DetectedError(
                                 error_id=f"runtime_{log_file.name}_{line_num}",
                                 error_type="RuntimeError",
@@ -355,9 +344,7 @@ class ErrorDetector:
         else:
             return ErrorSeverity.LOW
 
-    def _get_code_snippet(
-        self, file_path: Path, line_number: int, context: int = 3
-    ) -> str:
+    def _get_code_snippet(self, file_path: Path, line_number: int, context: int = 3) -> str:
         """코드 스니펫 추출"""
         try:
             with open(file_path, encoding="utf-8") as f:
@@ -399,9 +386,7 @@ class ErrorClassifier:
     def __init__(self):
         self.classification_rules: dict[str, Any] = {}
 
-    def classify_errors(
-        self, errors: list[DetectedError]
-    ) -> dict[str, list[DetectedError]]:
+    def classify_errors(self, errors: list[DetectedError]) -> dict[str, list[DetectedError]]:
         """
         에러 분류 (Sequential Thinking Phase 2.1)
         """
@@ -511,14 +496,10 @@ class AutoDiagnostic:
             from trinity_os.servers.context7_mcp import Context7MCP
 
             # Context7 지식 베이스에서 관련 정보 검색
-            search_query = (
-                f"{error.error_type} {error.category.value} {error.error_message[:50]}"
-            )
+            search_query = f"{error.error_type} {error.category.value} {error.error_message[:50]}"
 
             # 실제 Context7 API 호출
-            context_result = Context7MCP.retrieve_context(
-                query=search_query, domain="technical"
-            )
+            context_result = Context7MCP.retrieve_context(query=search_query, domain="technical")
 
             # 결과 파싱
             # retrieve_context는 dict를 반환하므로 dict로 처리
@@ -532,9 +513,7 @@ class AutoDiagnostic:
                         term.lower() in str(value).lower()
                         for term in [error.error_type, error.category.value]
                     ):
-                        relevant_knowledge.append(
-                            {"key": key, "content": str(value)[:200]}
-                        )
+                        relevant_knowledge.append({"key": key, "content": str(value)[:200]})
                 return {
                     "status": "success",
                     "search_query": search_query,
@@ -696,9 +675,7 @@ class AutoDiagnostic:
             logger.warning(f"Scholars 진단 실패: {e}")
             return {"status": "error", "error": str(e)}
 
-    def _identify_root_cause(
-        self, error: DetectedError, diagnosis: dict[str, Any]
-    ) -> str:
+    def _identify_root_cause(self, error: DetectedError, diagnosis: dict[str, Any]) -> str:
         """근본 원인 식별"""
         # 간단한 규칙 기반 근본 원인 식별
         if error.category == ErrorCategory.SYNTAX:
@@ -764,10 +741,7 @@ class SolutionSuggester:
 
             # Phase 4.1.5: 해결책 통합 및 우선순위 지정
             all_solutions = (
-                rule_based_solutions
-                + context7_solutions
-                + scholars_solutions
-                + ml_solutions
+                rule_based_solutions + context7_solutions + scholars_solutions + ml_solutions
             )
             solutions = self._prioritize_solutions(all_solutions)
 
@@ -835,9 +809,7 @@ class SolutionSuggester:
 
             # Context7에서 해결책 검색
             solutions = []
-            context7_knowledge = diagnosis.get("context7", {}).get(
-                "relevant_knowledge", []
-            )
+            context7_knowledge = diagnosis.get("context7", {}).get("relevant_knowledge", [])
 
             for knowledge in context7_knowledge:
                 # 지식 베이스에서 해결책 패턴 추출
@@ -901,9 +873,7 @@ class SolutionSuggester:
             logger.warning(f"Scholars 해결책 생성 실패: {e}")
             return []
 
-    def _prioritize_solutions(
-        self, solutions: list[dict[str, Any]]
-    ) -> list[dict[str, Any]]:
+    def _prioritize_solutions(self, solutions: list[dict[str, Any]]) -> list[dict[str, Any]]:
         """해결책 우선순위 지정"""
         # 신뢰도와 위험도 기반 정렬
         return sorted(
@@ -979,17 +949,13 @@ class AutoFixer:
     async def _create_backup(self, file_path: str) -> dict[str, Any]:
         """파일 백업 생성"""
         try:
-            backup_path = (
-                f"{file_path}.backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-            )
+            backup_path = f"{file_path}.backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
             # 백업 로직 구현
             return {"success": True, "backup_path": backup_path}
         except Exception as e:
             return {"success": False, "error": str(e)}
 
-    async def _execute_fix(
-        self, error: DetectedError, solution: dict[str, Any]
-    ) -> dict[str, Any]:
+    async def _execute_fix(self, error: DetectedError, solution: dict[str, Any]) -> dict[str, Any]:
         """수정 실행"""
         try:
             command = solution.get("command", "")
@@ -1140,8 +1106,7 @@ class AutomatedDebuggingSystem:
             return
 
         try:
-            from AFO.api.routes.debugging_stream import \
-                broadcast_debugging_event
+            from AFO.api.routes.debugging_stream import broadcast_debugging_event
 
             event = {
                 "type": event_type,
@@ -1243,9 +1208,7 @@ class AutomatedDebuggingSystem:
                         "progress": {"current": idx, "total": min(10, len(errors))},
                     },
                 )
-                diagnoses[error.error_id] = await self.auto_diagnostic.diagnose_error(
-                    error
-                )
+                diagnoses[error.error_id] = await self.auto_diagnostic.diagnose_error(error)
             await self._emit_event(
                 "phase_complete",
                 {
@@ -1270,8 +1233,8 @@ class AutomatedDebuggingSystem:
             solutions = {}
             for error in errors[:10]:
                 diagnosis = diagnoses.get(error.error_id, {})
-                solutions[error.error_id] = (
-                    await self.solution_suggester.suggest_solutions(error, diagnosis)
+                solutions[error.error_id] = await self.solution_suggester.suggest_solutions(
+                    error, diagnosis
                 )
                 error.suggested_fixes = solutions[error.error_id]
             await self._emit_event(
@@ -1296,9 +1259,7 @@ class AutomatedDebuggingSystem:
                 },
             )
             auto_fixed_count = 0
-            for idx, error in enumerate(
-                classified["auto_fixable"][:5], 1
-            ):  # 처음 5개만 자동 수정
+            for idx, error in enumerate(classified["auto_fixable"][:5], 1):  # 처음 5개만 자동 수정
                 if error.suggested_fixes:
                     solution = error.suggested_fixes[0]
                     await self._emit_event(
@@ -1351,9 +1312,7 @@ class AutomatedDebuggingSystem:
                     "description": "眞善美孝永 5기둥 점수 계산",
                 },
             )
-            trinity_score = await self._calculate_trinity_score(
-                errors, auto_fixed_count
-            )
+            trinity_score = await self._calculate_trinity_score(errors, auto_fixed_count)
             await self._emit_event(
                 "phase_complete",
                 {
@@ -1391,12 +1350,10 @@ class AutomatedDebuggingSystem:
                 report_id=session_id,
                 total_errors=len(errors),
                 errors_by_severity={
-                    severity: len(errors_list)
-                    for severity, errors_list in by_severity_dict.items()
+                    severity: len(errors_list) for severity, errors_list in by_severity_dict.items()
                 },
                 errors_by_category={
-                    category: len(errors_list)
-                    for category, errors_list in by_category_dict.items()
+                    category: len(errors_list) for category, errors_list in by_category_dict.items()
                 },
                 auto_fixed=auto_fixed_count,
                 manual_required=len(classified["manual_required"]),
@@ -1514,14 +1471,10 @@ class AutomatedDebuggingSystem:
             recommendations.append(f"총 {len(errors)}개 에러 발견 - 수동 검토 권장")
 
         if len(classified["auto_fixable"]) > 0:
-            recommendations.append(
-                f"{len(classified['auto_fixable'])}개 에러는 자동 수정 가능"
-            )
+            recommendations.append(f"{len(classified['auto_fixable'])}개 에러는 자동 수정 가능")
 
         if len(classified["manual_required"]) > 0:
-            recommendations.append(
-                f"{len(classified['manual_required'])}개 에러는 수동 수정 필요"
-            )
+            recommendations.append(f"{len(classified['manual_required'])}개 에러는 수동 수정 필요")
 
         # 타입 명시: by_severity는 dict[str, list[DetectedError]]
         by_severity_check: dict[str, list[DetectedError]] = (
@@ -1531,9 +1484,7 @@ class AutomatedDebuggingSystem:
         )
         critical_errors = by_severity_check.get("critical", [])
         if len(critical_errors) > 0:
-            recommendations.append(
-                f"⚠️ {len(critical_errors)}개 Critical 에러 즉시 수정 필요"
-            )
+            recommendations.append(f"⚠️ {len(critical_errors)}개 Critical 에러 즉시 수정 필요")
 
         return recommendations
 

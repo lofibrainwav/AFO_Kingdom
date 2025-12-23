@@ -7,8 +7,6 @@ import logging
 from datetime import datetime
 from typing import Any
 
-from AFO.domain.audit.trail import AuditTrail
-
 logger = logging.getLogger(__name__)
 
 
@@ -47,14 +45,14 @@ class Historian:
 
         # 2. Persist to PostgreSQL via AuditTrail (Liver/Eternity)
         try:
+            from AFO.domain.audit.trail import AuditTrail
+
             audit = AuditTrail()
             # Risk score is inverted goodness, if not in metadata, we estimate from trinity
             risk_score = metadata.get("risk_score", (100.0 - trinity_score) / 100.0)
 
             await audit.log(
-                trinity_score=(
-                    trinity_score / 100.0 if trinity_score > 1.0 else trinity_score
-                ),
+                trinity_score=(trinity_score / 100.0 if trinity_score > 1.0 else trinity_score),
                 risk_score=risk_score,
                 action=status,
                 context={**metadata, "query": query},

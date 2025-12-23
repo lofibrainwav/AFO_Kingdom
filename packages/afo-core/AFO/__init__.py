@@ -36,9 +36,9 @@ def __getattr__(name):
 
         return api_server
     elif name == "chancellor_graph":
-        import chancellor_graph
+        import importlib
 
-        return chancellor_graph
+        return importlib.import_module("AFO.chancellor_graph")
     elif name == "kms":
         import kms
 

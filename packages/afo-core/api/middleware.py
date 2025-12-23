@@ -69,8 +69,7 @@ def _setup_cache_middleware(app: FastAPI) -> None:
 def _setup_performance_middleware(app: FastAPI) -> None:
     """Setup performance monitoring middleware."""
     try:
-        from AFO.api.middleware.performance_middleware import \
-            PerformanceMiddleware
+        from AFO.api.middleware.performance_middleware import PerformanceMiddleware
 
         # Add performance middleware
         app.add_middleware(PerformanceMiddleware)
@@ -93,8 +92,9 @@ def _setup_monitoring_middleware(app: FastAPI) -> None:
         print("✅ Prometheus Metrics Middleware 활성화")
 
         # Add metrics endpoint
-        from AFO.api.middleware.prometheus import metrics_endpoint
         from fastapi.routing import APIRouter
+
+        from AFO.api.middleware.prometheus import metrics_endpoint
 
         metrics_router = APIRouter()
         metrics_router.get("/metrics")(metrics_endpoint)

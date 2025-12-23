@@ -7,6 +7,7 @@ Markdown 파일 로드 및 메타데이터 파싱
 from __future__ import annotations
 
 import re
+
 # 사용자 site-packages 경로 추가
 import site
 import sys
@@ -45,9 +46,7 @@ class ObsidianLoader:
         if not self.vault_path.exists():
             raise ValueError(f"Vault path does not exist: {vault_path}")
 
-    def load_documents(
-        self, exclude_patterns: list[str] | None = None
-    ) -> list[Document]:
+    def load_documents(self, exclude_patterns: list[str] | None = None) -> list[Document]:
         """
         vault의 모든 Markdown 파일 로드
 
@@ -65,8 +64,7 @@ class ObsidianLoader:
         for md_file in self.vault_path.rglob("*.md"):
             # 제외 패턴 확인
             if any(
-                pattern in str(md_file.relative_to(self.vault_path))
-                for pattern in exclude_patterns
+                pattern in str(md_file.relative_to(self.vault_path)) for pattern in exclude_patterns
             ):
                 continue
 
@@ -125,9 +123,7 @@ class ObsidianLoader:
             metadata["tags"] = tags
 
             # 카테고리 추출 (디렉토리 구조 기반)
-            metadata["category"] = (
-                str(rel_path.parent) if rel_path.parent != Path() else "root"
-            )
+            metadata["category"] = str(rel_path.parent) if rel_path.parent != Path() else "root"
 
             # 문서 타입 추출
             if "type" in metadata:

@@ -108,9 +108,7 @@ def get_embedding(text: str, openai_client: Any) -> list[float]:
         return random_embedding()
 
 
-def query_pgvector(
-    embedding: list[float], top_k: int, pg_pool: Any
-) -> list[dict[str, Any]]:
+def query_pgvector(embedding: list[float], top_k: int, pg_pool: Any) -> list[dict[str, Any]]:
     """
     眞 (Truth): PostgreSQL pgvector를 이용한 벡터 검색
     善 (Goodness): 연결 풀 관리 및 예외 처리
@@ -178,9 +176,7 @@ def query_pgvector(
     return scored[:top_k]
 
 
-def query_redis(
-    embedding: list[float], top_k: int, redis_client: Any
-) -> list[dict[str, Any]]:
+def query_redis(embedding: list[float], top_k: int, redis_client: Any) -> list[dict[str, Any]]:
     """
     眞 (Truth): Redis RediSearch를 이용한 KNN 벡터 검색
     善 (Goodness): 인덱스 확인 및 예외 차단
@@ -280,9 +276,7 @@ def query_graph_context(entities: list[str], limit: int = 5) -> list[dict[str, A
         return []
 
 
-def query_qdrant(
-    embedding: list[float], top_k: int, qdrant_client: Any
-) -> list[dict[str, Any]]:
+def query_qdrant(embedding: list[float], top_k: int, qdrant_client: Any) -> list[dict[str, Any]]:
     """
     眞 (Truth): Qdrant 벡터 검색 (Brain Organ)
 
@@ -523,9 +517,7 @@ def generate_answer(
     Returns:
         str | dict: 생성된 답변 또는 에러 정보
     """
-    context_block = "\n\n".join(
-        [f"Chunk {idx + 1}:\n{ctx}" for idx, ctx in enumerate(contexts)]
-    )
+    context_block = "\n\n".join([f"Chunk {idx + 1}:\n{ctx}" for idx, ctx in enumerate(contexts)])
 
     system_prompt = " ".join(
         part
@@ -587,9 +579,7 @@ async def blend_results_async(
 ) -> list[dict[str, Any]]:
     """비동기 결과 혼합 래퍼"""
     loop = asyncio.get_event_loop()
-    return await loop.run_in_executor(
-        _executor, blend_results, pg_rows, redis_rows, top_k
-    )
+    return await loop.run_in_executor(_executor, blend_results, pg_rows, redis_rows, top_k)
 
 
 async def query_qdrant_async(

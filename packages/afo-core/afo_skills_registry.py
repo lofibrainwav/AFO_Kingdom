@@ -73,15 +73,9 @@ class PhilosophyScore(BaseModel):
 
     model_config = ConfigDict(frozen=True)
 
-    truth: Annotated[
-        int, Field(ge=0, le=100, description="眞 (Truth) - Technical certainty")
-    ]
-    goodness: Annotated[
-        int, Field(ge=0, le=100, description="善 (Goodness) - Ethical priority")
-    ]
-    beauty: Annotated[
-        int, Field(ge=0, le=100, description="美 (Beauty) - Clear storytelling")
-    ]
+    truth: Annotated[int, Field(ge=0, le=100, description="眞 (Truth) - Technical certainty")]
+    goodness: Annotated[int, Field(ge=0, le=100, description="善 (Goodness) - Ethical priority")]
+    beauty: Annotated[int, Field(ge=0, le=100, description="美 (Beauty) - Clear storytelling")]
     serenity: Annotated[
         int, Field(ge=0, le=100, description="孝 (Serenity) - Frictionless operation")
     ]
@@ -127,14 +121,10 @@ class SkillParameter(BaseModel):
     """Single skill parameter definition"""
 
     name: str = Field(..., description="Parameter name")
-    type: str = Field(
-        ..., description="Parameter type (e.g., 'string', 'int', 'list[str]')"
-    )
+    type: str = Field(..., description="Parameter type (e.g., 'string', 'int', 'list[str]')")
     description: str = Field(..., description="Parameter description")
     required: bool = Field(default=True, description="Whether parameter is required")
-    default: Any | None = Field(
-        default=None, description="Default value if not required"
-    )
+    default: Any | None = Field(default=None, description="Default value if not required")
     validation_rules: dict[str, Any] | None = Field(
         default=None, description="Validation rules (e.g., {'min': 0, 'max': 100})"
     )
@@ -143,12 +133,8 @@ class SkillParameter(BaseModel):
 class SkillIOSchema(BaseModel):
     """Input/Output schema for skill"""
 
-    parameters: list[SkillParameter] = Field(
-        default_factory=list, description="List of parameters"
-    )
-    example: dict[str, Any] | None = Field(
-        default=None, description="Example input/output"
-    )
+    parameters: list[SkillParameter] = Field(default_factory=list, description="List of parameters")
+    example: dict[str, Any] | None = Field(default=None, description="Example input/output")
 
 
 # ============================================================================
@@ -195,26 +181,20 @@ class AFOSkillCard(BaseModel):
         description="Unique skill identifier (e.g., 'skill_001_youtube_spec_gen')",
         pattern=r"^skill_\d{3}_[a-z0-9_]+$",
     )
-    name: str = Field(
-        ..., description="Human-readable skill name", min_length=3, max_length=100
-    )
+    name: str = Field(..., description="Human-readable skill name", min_length=3, max_length=100)
     description: str = Field(
         ..., description="Detailed skill description", min_length=10, max_length=1000
     )
 
     # Classification
     category: SkillCategory = Field(..., description="Skill category")
-    tags: list[str] = Field(
-        default_factory=list, description="Searchable tags", max_length=20
-    )
+    tags: list[str] = Field(default_factory=list, description="Searchable tags", max_length=20)
 
     # Versioning & Status
     version: str = Field(
         ..., description="Semantic version (e.g., '1.0.0')", pattern=r"^\d+\.\d+\.\d+$"
     )
-    status: SkillStatus = Field(
-        default=SkillStatus.ACTIVE, description="Skill lifecycle status"
-    )
+    status: SkillStatus = Field(default=SkillStatus.ACTIVE, description="Skill lifecycle status")
 
     # Capabilities & Dependencies
     capabilities: list[str] = Field(
@@ -244,9 +224,7 @@ class AFOSkillCard(BaseModel):
     input_schema: SkillIOSchema = Field(
         default_factory=SkillIOSchema, description="Input parameters schema"
     )
-    output_schema: SkillIOSchema = Field(
-        default_factory=SkillIOSchema, description="Output schema"
-    )
+    output_schema: SkillIOSchema = Field(default_factory=SkillIOSchema, description="Output schema")
 
     # Philosophy Alignment
     philosophy_scores: PhilosophyScore = Field(
@@ -292,15 +270,9 @@ class SkillExecutionRequest(BaseModel):
     """Request to execute a skill"""
 
     skill_id: str = Field(..., description="Skill to execute")
-    parameters: dict[str, Any] = Field(
-        default_factory=dict, description="Execution parameters"
-    )
-    context: dict[str, Any] | None = Field(
-        default=None, description="Additional execution context"
-    )
-    async_execution: bool = Field(
-        default=False, description="Whether to execute asynchronously"
-    )
+    parameters: dict[str, Any] = Field(default_factory=dict, description="Execution parameters")
+    context: dict[str, Any] | None = Field(default=None, description="Additional execution context")
+    async_execution: bool = Field(default=False, description="Whether to execute asynchronously")
 
 
 class SkillExecutionResult(BaseModel):
@@ -329,13 +301,9 @@ class SkillFilterParams(BaseModel):
     Uses FastAPI 0.115+ Pydantic Query Parameter Models
     """
 
-    category: SkillCategory | None = Field(
-        default=None, description="Filter by category"
-    )
+    category: SkillCategory | None = Field(default=None, description="Filter by category")
     status: SkillStatus | None = Field(default=None, description="Filter by status")
-    tags: list[str] | None = Field(
-        default=None, description="Filter by tags (OR logic)"
-    )
+    tags: list[str] | None = Field(default=None, description="Filter by tags (OR logic)")
     search: str | None = Field(
         default=None,
         min_length=2,
@@ -423,23 +391,18 @@ class SkillRegistry:
                 results = [
                     s
                     for s in results
-                    if search_lower in s.name.lower()
-                    or search_lower in s.description.lower()
+                    if search_lower in s.name.lower() or search_lower in s.description.lower()
                 ]
 
             # Philosophy score filter
             if params.min_philosophy_avg:
                 results = [
-                    s
-                    for s in results
-                    if s.philosophy_scores.average >= params.min_philosophy_avg
+                    s for s in results if s.philosophy_scores.average >= params.min_philosophy_avg
                 ]
 
             # Execution mode filter
             if params.execution_mode:
-                results = [
-                    s for s in results if s.execution_mode == params.execution_mode
-                ]
+                results = [s for s in results if s.execution_mode == params.execution_mode]
 
             # Pagination
             start = params.offset
@@ -857,9 +820,7 @@ def register_core_skills() -> SkillRegistry:
             beauty=96,  # Universal interface
             serenity=94,  # Seamless integration
         ),
-        mcp_config=MCPConfig(
-            mcp_version="2024.11.1", capabilities=["tools", "resources"]
-        ),
+        mcp_config=MCPConfig(mcp_version="2024.11.1", capabilities=["tools", "resources"]),
     )
 
     # Skill 13: AFO Obsidian Librarian (The Kingdom's Library)
