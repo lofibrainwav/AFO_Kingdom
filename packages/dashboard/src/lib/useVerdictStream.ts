@@ -2,22 +2,8 @@
 
 import { useEffect, useState } from "react";
 
-export interface VerdictEvent {
-  trace_id: string;
-  graph_node_id: string;
-  step: number;
-  risk_score: number;
-  trinity_score: number;
-  veto_triggered: boolean;
-  timestamp: string;
-  rule_id?: string;
-  decision?: string;
-}
+import { VerdictEvent } from "../types/verdict";
 
-/**
- * 왕국의 신경계: Chancellor Graph verdict를 실시간 스트리밍하는 훅
- * 헌법 v1.0 준수하여 SSE를 통한 실시간 관찰 가능성 확보
- */
 export function useVerdictStream(apiBase: string) {
   const [connected, setConnected] = useState(false);
   const [events, setEvents] = useState<VerdictEvent[]>([]);
@@ -50,12 +36,18 @@ export function useVerdictStream(apiBase: string) {
           trace_id: data.trace_id || "unknown",
           graph_node_id: data.graph_node_id || "unknown",
           step: data.step || 0,
-          risk_score: data.risk || 0,
+          decision: data.decision || "ASK",
+          rule_id: data.rule_id || "unknown",
           trinity_score: data.trinity || 0,
-          veto_triggered: data.veto?.triggered || false,
+          risk_score: data.risk || 0,
+          flags: {
+              dry_run: data.flags?.dry_run || false,
+              residual_doubt: data.flags?.residual_doubt || false
+          },
           timestamp: data.timestamp || new Date().toISOString(),
-          rule_id: data.rule_id,
-          decision: data.decision,
+          extra: data.extra,
+          weights_version: data.weights_version || "unknown",
+          weights_hash: data.weights_hash || "unknown",
         };
 
         // 이벤트 히스토리 관리 (최근 100개 유지)

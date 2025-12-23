@@ -27,6 +27,7 @@ export interface VerdictEvent {
   rule_id: string;
   trinity_score: number;
   risk_score: number;
+  veto_triggered?: boolean;
   flags: VerdictFlags;
   timestamp: string;
   extra?: VerdictExtra;

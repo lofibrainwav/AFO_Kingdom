@@ -313,12 +313,6 @@ async def get_skill_detail(skill_id: str) -> dict[str, Any]:
         if SkillRegistry is None:
             raise HTTPException(status_code=503, detail="Skills Registry not available")
 
-        # Skills Registry 초기화
-        if register_core_skills:
-            registry = register_core_skills()
-        else:
-            registry = SkillRegistry()
-
         skill = registry.get_skill(skill_id)
         if not skill:
             raise HTTPException(status_code=404, detail=f"Skill {skill_id} not found")
@@ -424,12 +418,13 @@ async def skills_health() -> dict[str, Any]:
             health_status["status"] = "healthy"
 
             # 각 skill 상태 확인
-            skill_statuses = {}
+            skill_statuses: dict[str, dict[str, Any]] = {}
             for skill in skills:
-                skill_statuses[skill.id] = {
-                    "name": skill.name,
-                    "status": getattr(skill, "status", "active"),
-                    "philosophy_score": getattr(skill, "philosophy_score", 0.0),
+                skill_id = str(skill.id)  # 타입 안전한 변환
+                skill_statuses[skill_id] = {
+                    "name": str(skill.name),
+                    "status": str(getattr(skill, "status", "active")),
+                    "philosophy_score": float(getattr(skill, "philosophy_score", 0.0)),
                 }
 
             health_status["details"]["skills"] = skill_statuses

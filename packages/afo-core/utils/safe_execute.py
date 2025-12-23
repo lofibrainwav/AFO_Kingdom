@@ -4,6 +4,7 @@ Safe Execute Utility
 PDF 페이지 3: DRY_RUN, 권한 검증, 폴백
 """
 
+import asyncio
 import logging
 from collections.abc import Callable
 from functools import wraps
@@ -16,7 +17,7 @@ logger = logging.getLogger(__name__)
 T = TypeVar("T")
 
 
-def safe_execute(func: Callable[..., T]) -> Callable[..., dict[str, Any]]:
+def safe_execute(func: Callable[..., Any]) -> Callable[..., dict[str, Any]]:
     """
     안전한 실행 데코레이터 (善: Goodness)
 
@@ -68,8 +69,8 @@ def safe_execute(func: Callable[..., T]) -> Callable[..., dict[str, Any]]:
             return {"status": "fallback", "error": str(e), "function": func.__name__}
 
     # 비동기 함수인지 확인
-    import asyncio
+    from typing import cast
 
     if asyncio.iscoroutinefunction(func):
-        return async_wrapper
-    return sync_wrapper
+        return cast("Callable[..., dict[str, Any]]", async_wrapper)
+    return cast("Callable[..., dict[str, Any]]", sync_wrapper)

@@ -1,7 +1,7 @@
 "use client";
 
 import { AlertTriangle, Clock, Crown, Heart, Infinity, Palette, Shield, X } from 'lucide-react';
-import { VerdictEvent } from '../../lib/useVerdictStream';
+import { VerdictEvent } from '../../types/verdict';
 
 interface VerdictLogModalProps {
   isOpen: boolean;

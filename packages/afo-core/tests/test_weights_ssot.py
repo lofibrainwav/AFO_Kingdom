@@ -6,8 +6,8 @@ SSOT 가중치 합계가 1.0인지 검증하여 재발을 원천 차단합니다
 """
 
 import pytest
-
-from AFO.observability.rule_constants import WEIGHTS, WEIGHTS_HASH, validate_weights
+from AFO.observability.rule_constants import (WEIGHTS, WEIGHTS_HASH,
+                                              validate_weights)
 
 
 class TestSSOTWeights:
@@ -21,9 +21,9 @@ class TestSSOTWeights:
     def test_weights_structure(self):
         """SSOT 가중치 구조 검증: 필수 키들이 존재해야 함"""
         required_keys = {"truth", "goodness", "beauty", "serenity", "eternity"}
-        assert set(WEIGHTS.keys()) == required_keys, (
-            f"Missing keys in WEIGHTS: {required_keys - set(WEIGHTS.keys())}"
-        )
+        assert (
+            set(WEIGHTS.keys()) == required_keys
+        ), f"Missing keys in WEIGHTS: {required_keys - set(WEIGHTS.keys())}"
 
     def test_weights_values_range(self):
         """SSOT 가중치 값 범위 검증: 0.0 <= value <= 1.0"""
@@ -33,7 +33,9 @@ class TestSSOTWeights:
     def test_weights_hash_exists(self):
         """SSOT 해시 스탬프 존재 검증"""
         assert WEIGHTS_HASH is not None, "WEIGHTS_HASH must be defined"
-        assert len(WEIGHTS_HASH) == 12, f"WEIGHTS_HASH must be 12 chars, got {len(WEIGHTS_HASH)}"
+        assert (
+            len(WEIGHTS_HASH) == 12
+        ), f"WEIGHTS_HASH must be 12 chars, got {len(WEIGHTS_HASH)}"
 
     def test_validate_weights_function(self):
         """validate_weights 함수 정상 작동 검증"""
@@ -56,5 +58,9 @@ class TestSSOTWeights:
         # 이 테스트는 WEIGHTS가 변경되면 해시도 변경되는지 확인
         import hashlib
 
-        current_hash = hashlib.sha256(str(sorted(WEIGHTS.items())).encode()).hexdigest()[:12]
-        assert current_hash == original_hash, "WEIGHTS has been modified - SSOT violation detected"
+        current_hash = hashlib.sha256(
+            str(sorted(WEIGHTS.items())).encode()
+        ).hexdigest()[:12]
+        assert (
+            current_hash == original_hash
+        ), "WEIGHTS has been modified - SSOT violation detected"

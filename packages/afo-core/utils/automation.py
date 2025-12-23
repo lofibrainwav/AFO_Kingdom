@@ -215,7 +215,9 @@ def cache_result(
 
             result = func(*args, **kwargs)
             cache[key] = (result, now)
-            return result
+            from typing import cast
+
+            return cast("T", result)
 
         return wrapper
 

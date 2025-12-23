@@ -222,7 +222,8 @@ class LLMRouter:
                     ollama_url = settings.OLLAMA_BASE_URL
                 except ImportError:
                     try:
-                        from config.settings import get_settings  # type: ignore
+                        from config.settings import \
+                            get_settings  # type: ignore
 
                         settings = get_settings()
                         ollama_url = settings.OLLAMA_BASE_URL
@@ -603,12 +604,12 @@ class LLMRouter:
         try:
             # Phase 5: REST API 사용 (google.generativeai 대체)
             try:
-                from AFO.llms.gemini_api import gemini_api
+                from AFO.llms.gemini_api import \
+                    gemini_api  # type: ignore[assignment]
             except ImportError:
                 try:
-                    from llms.gemini_api import (
-                        gemini_api,  # type: ignore[assignment]  # type: ignore[assignment]
-                    )
+                    from llms.gemini_api import \
+                        gemini_api  # type: ignore[assignment]
                 except ImportError as e:
                     raise ImportError("Gemini API Wrapper not available") from e
 
@@ -636,11 +637,12 @@ class LLMRouter:
                     )
 
                     if result.get("success"):
-                        return str(result["content"])
+                        content = result.get("content", "")
+                        return str(content) if content is not None else ""
                     else:
                         error_msg = result.get("error", "Unknown error")
                         logger.warning(f"⚠️ Gemini 모델({model_name}) 실패: {error_msg}")
-                        last_error = Exception(error_msg)
+                        last_error = Exception(str(error_msg))
                         continue
 
                 except Exception as e:
@@ -750,7 +752,7 @@ class LLMRouter:
                 if claude_api.is_available():
                     result = await claude_api.generate(query, max_tokens=1024)
                     if result.get("success"):
-                        return str(result["content"])
+                        return str(result.get("content", ""))
                     else:
                         return f"[Claude Error] {result.get('error', 'Unknown error')}"
                 else:
@@ -774,7 +776,7 @@ class LLMRouter:
                 if openai_api.is_available():
                     result = await openai_api.generate(query, max_tokens=1024)
                     if result.get("success"):
-                        return str(result["content"])
+                        return str(result.get("content", ""))
                     else:
                         return f"[OpenAI Error] {result.get('error', 'Unknown error')}"
                 else:

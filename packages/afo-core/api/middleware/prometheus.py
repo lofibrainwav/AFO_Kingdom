@@ -188,4 +188,8 @@ async def metrics_endpoint():
 # Middleware factory function
 def create_prometheus_middleware(service_name: str = "afo-kingdom-api"):
     """Factory function to create Prometheus middleware"""
-    return PrometheusMiddleware(service_name=service_name)
+
+    def middleware_factory(app):
+        return PrometheusMiddleware(app, service_name=service_name)
+
+    return middleware_factory

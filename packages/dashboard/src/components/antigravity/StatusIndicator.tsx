@@ -1,7 +1,7 @@
 "use client";
 
 import { Activity, Bell, BellOff, Wifi, WifiOff } from 'lucide-react';
-import { VerdictEvent } from '../../lib/useVerdictStream';
+import { VerdictEvent } from '../../types/verdict';
 
 interface StatusIndicatorProps {
   connected: boolean;

@@ -4,42 +4,16 @@ AFO Kingdom API Router Registration
 Centralized router registration system for organized API management.
 """
 
-from fastapi import FastAPI
-
 from AFO.api.compat import (  # Phase-specific routers; Core routers; Feature routers
-    aicpa_router,
-    auth_router,
-    budget_router,
-    chancellor_router,
-    chat_router,
-    council_router,
-    education_system_router,
-    finance_router,
-    got_router,
-    grok_stream_router,
-    health_router,
-    learning_log_router,
-    learning_pipeline,
-    matrix_router,
-    modal_data_router,
-    multi_agent_router,
-    n8n_router,
-    personas_router,
-    pillars_router,
-    rag_query_router,
-    root_router,
-    serenity_router,
-    skills_router,
-    ssot_router,
-    strangler_router,
-    streams_router,
-    system_health_router,
-    trinity_policy_router,
-    trinity_sbt_router,
-    users_router,
-    voice_router,
-    wallet_router,
-)
+    aicpa_router, auth_router, budget_router, chancellor_router, chat_router,
+    council_router, education_system_router, finance_router, got_router,
+    grok_stream_router, health_router, learning_log_router, learning_pipeline,
+    matrix_router, modal_data_router, multi_agent_router, n8n_router,
+    personas_router, pillars_router, rag_query_router, root_router,
+    serenity_router, skills_router, ssot_router, strangler_router,
+    streams_router, system_health_router, trinity_policy_router,
+    trinity_sbt_router, users_router, voice_router, wallet_router)
+from fastapi import FastAPI
 
 
 def setup_routers(app: FastAPI) -> None:
@@ -74,7 +48,9 @@ def _register_core_routers(app: FastAPI) -> None:
         app.include_router(streams_router, prefix="/api/stream", tags=["Matrix Stream"])
 
     if matrix_router:
-        app.include_router(matrix_router, prefix="/api", tags=["Matrix Stream (Phase 10)"])
+        app.include_router(
+            matrix_router, prefix="/api", tags=["Matrix Stream (Phase 10)"]
+        )
 
 
 def _register_feature_routers(app: FastAPI) -> None:
@@ -94,7 +70,9 @@ def _register_feature_routers(app: FastAPI) -> None:
 
     # Strangler fig pattern
     if strangler_router:
-        app.include_router(strangler_router, prefix="/api/strangler", tags=["Strangler Fig"])
+        app.include_router(
+            strangler_router, prefix="/api/strangler", tags=["Strangler Fig"]
+        )
 
     # Graph of Thought
     if got_router:
@@ -206,7 +184,9 @@ def _register_phase_routers(app: FastAPI) -> None:
     # Phase 26: AI Self-Improvement
     try:
         if learning_pipeline:
-            app.include_router(learning_pipeline, prefix="/api", tags=["AI Self-Improvement"])
+            app.include_router(
+                learning_pipeline, prefix="/api", tags=["AI Self-Improvement"]
+            )
             print("🧠 Learning Pipeline Router 등록 완료 (Phase 26: 사마휘 자율 학습)")
     except Exception as e:
         print(f"⚠️ Learning Pipeline Router 등록 실패: {e}")
@@ -214,7 +194,9 @@ def _register_phase_routers(app: FastAPI) -> None:
     # Phase 27: Project Serenity
     try:
         if serenity_router:
-            app.include_router(serenity_router, prefix="/api", tags=["Serenity (GenUI)"])
+            app.include_router(
+                serenity_router, prefix="/api", tags=["Serenity (GenUI)"]
+            )
             print("🎨 Serenity Router 등록 완료 (Phase 27: 프로젝트 제네시스)")
     except Exception as e:
         print(f"⚠️ Serenity Router 등록 실패: {e}")
@@ -232,7 +214,9 @@ def _register_phase_routers(app: FastAPI) -> None:
     # Chancellor (Strategy Engine)
     if chancellor_router:
         app.include_router(chancellor_router)
-        print("✅ 승상 API 라우터 등록 완료 (LangGraph Optimized: Chancellor + 3 Strategists)")
+        print(
+            "✅ 승상 API 라우터 등록 완료 (LangGraph Optimized: Chancellor + 3 Strategists)"
+        )
 
     # System Stream Routes (SSE 실시간 스트리밍)
     try:
@@ -285,7 +269,9 @@ def _register_legacy_routers(app: FastAPI) -> None:
                     all_routes_after.append(route_info)
 
             existing_routes_after = len(all_routes_after)
-            skills_routes = [r for r in all_routes_after if "skills" in r["path"].lower()]
+            skills_routes = [
+                r for r in all_routes_after if "skills" in r["path"].lower()
+            ]
             print(f"🔍 Total routes after Skills registration: {existing_routes_after}")
             print(f"🔍 Skills routes found: {len(skills_routes)}")
 
@@ -301,7 +287,9 @@ def _register_legacy_routers(app: FastAPI) -> None:
             else:
                 print("❌ No skills routes found after registration!")
                 # Check if any routes contain 'skill' (typo check)
-                skill_like_routes = [r for r in all_routes_after if "skill" in r["path"].lower()]
+                skill_like_routes = [
+                    r for r in all_routes_after if "skill" in r["path"].lower()
+                ]
                 if skill_like_routes:
                     print("🔍 Routes containing 'skill':")
                     for route in skill_like_routes:
@@ -317,16 +305,20 @@ def _register_legacy_routers(app: FastAPI) -> None:
 
     # Comprehensive Health Check (integrated)
     try:
-        from AFO.api.routes.comprehensive_health import router as comprehensive_health_router
+        from AFO.api.routes.comprehensive_health import \
+            router as comprehensive_health_router
 
         app.include_router(comprehensive_health_router)
         print("✅ Comprehensive Health Check 라우터 등록 완료 (조기 등록)")
     except ImportError:
         try:
-            from api.routes.comprehensive_health import router as comprehensive_health_router
+            from api.routes.comprehensive_health import \
+                router as comprehensive_health_router
 
             app.include_router(comprehensive_health_router)
-            print("✅ Comprehensive Health Check 라우터 등록 완료 (fallback, 조기 등록)")
+            print(
+                "✅ Comprehensive Health Check 라우터 등록 완료 (fallback, 조기 등록)"
+            )
         except Exception as e:
             print(f"⚠️ Comprehensive Health Check 라우터 등록 실패 (조기 등록): {e}")
 
@@ -347,13 +339,15 @@ def _register_legacy_routers(app: FastAPI) -> None:
 
     # Integrity Check API
     try:
-        from AFO.api.routes.integrity_check import router as integrity_check_router
+        from AFO.api.routes.integrity_check import \
+            router as integrity_check_router
 
         app.include_router(integrity_check_router)
         print("✅ Integrity Check 라우터 등록 완료")
     except ImportError:
         try:
-            from api.routes.integrity_check import router as integrity_check_router
+            from api.routes.integrity_check import \
+                router as integrity_check_router
 
             app.include_router(integrity_check_router)
             print("✅ Integrity Check 라우터 등록 완료 (fallback)")
@@ -383,7 +377,8 @@ def _register_legacy_routers(app: FastAPI) -> None:
         print("✅ Intake API 라우터 등록 완료 (조기 등록)")
     except ImportError:
         try:
-            from AFO.afo_soul_engine.routers.intake import router as intake_router
+            from AFO.afo_soul_engine.routers.intake import \
+                router as intake_router
 
             app.include_router(intake_router)
             print("✅ Intake API 라우터 등록 완료 (fallback, 조기 등록)")
