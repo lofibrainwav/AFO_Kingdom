@@ -10,6 +10,15 @@
 
 revalidate API 호출 후 fragment HTML이 실제로 변경되었는지 SHA 해시로 자동 검증하는 step 추가.
 
+**중요:** revalidate는 "캐시 무효화"이므로, fragment 파일 내용이 실제로 바뀌지 않았으면 SHA는 그대로가 정상입니다.
+
+**검증 결과 해석:**
+- **200 OK + 응답 성공** = revalidate 성공
+- **SHA 변경** = "내용까지 바뀐 게 확인됨(강한 증거)"
+- **SHA 동일** = "내용이 안 바뀌었거나 CDN/캐시가 동일하게 반환(정보성)"
+
+> ⚠️ **SHA 동일을 '실패'로 판단하면 안 됩니다.** revalidate는 캐시 무효화이지 내용 변경이 아닙니다.
+
 ---
 
 ## 🔧 구현 방법
@@ -17,6 +26,8 @@ revalidate API 호출 후 fragment HTML이 실제로 변경되었는지 SHA 해�
 ### Option A: 간단한 검증 (추천)
 
 **위치:** `.github/workflows/revalidate.yml`의 `Call revalidate API` step 이후
+
+**더 안전한 버전 (cache-control 헤더 추가, SHA 동일도 OK 처리):**
 
 ```yaml
       - name: Verify fragment revalidation (optional)
@@ -33,20 +44,32 @@ revalidate API 호출 후 fragment HTML이 실제로 변경되었는지 SHA 해�
             exit 0
           fi
           
+          # Fragment URL 구성 (trailing slash 제거)
+          FRAGMENT_BASE="${REVALIDATE_URL%/api/revalidate}"
+          FRAGMENT_BASE="${FRAGMENT_BASE%/}"
+          FRAGMENT_URL="${FRAGMENT_BASE}/fragments/${FIRST_KEY}.html"
+          
+          # revalidate 호출 전 SHA 확인 (CDN 영향 줄이기 위해 cache-control 헤더 추가)
+          BEFORE_SHA=$(curl -fsS -H "cache-control: no-cache" "$FRAGMENT_URL" | shasum -a 256 | awk '{print $1}' || echo "")
+          echo "before_sha=$BEFORE_SHA"
+          
           # revalidate 호출 후 잠시 대기 (캐시 갱신 시간)
           sleep 2
           
-          # Fragment SHA 확인
-          FRAGMENT_URL="${REVALIDATE_URL%/api/revalidate}/fragments/${FIRST_KEY}.html"
-          SHA_BEFORE=$(curl -fsS "$FRAGMENT_URL" | shasum -a 256 | awk '{print $1}' || echo "")
+          # revalidate 호출 후 SHA 확인
+          AFTER_SHA=$(curl -fsS -H "cache-control: no-cache" "$FRAGMENT_URL" | shasum -a 256 | awk '{print $1}' || echo "")
+          echo "after_sha=$AFTER_SHA"
           
-          if [[ -z "$SHA_BEFORE" ]]; then
-            echo "⚠️  Warning: Could not fetch fragment for verification"
-            exit 0  # 실패해도 workflow는 계속 진행
+          # 검증 결과 출력
+          if [[ -z "$BEFORE_SHA" || -z "$AFTER_SHA" ]]; then
+            echo "⚠️  SHA check: INCONCLUSIVE (fetch failed or empty)"
+          elif [[ "$BEFORE_SHA" == "$AFTER_SHA" ]]; then
+            echo "✅ SHA check: UNCHANGED (OK if fragment content didn't change)"
+          else
+            echo "✅ SHA check: CHANGED (content updated)"
           fi
           
-          echo "Fragment SHA: $SHA_BEFORE"
-          echo "✅ Fragment verification complete (SHA: $SHA_BEFORE)"
+          exit 0  # 실패해도 workflow는 계속 진행
 ```
 
 ---
