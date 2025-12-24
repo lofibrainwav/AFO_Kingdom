@@ -760,7 +760,8 @@ statsd.gauge("skills.count", 19, tags=["kingdom:afo", "version:2025"])
 - **Sentry**: Ticket 59 – production sampling 0.2 적용
 - **Datadog**: Ticket 61 – Datadog APM tracing (span 자동 캡처, 제안)
 - **Custom Metrics**: Ticket 64 – Custom metrics 대시보드 (MCP 호출 수, 제안)
-- **선택**: Sentry vs Datadog 비교 (왕국 모니터링 선택, 제안)
+- **Prometheus**: Ticket 65 – Prometheus 메트릭스 통합 (MCP 호출 수, 제안)
+- **선택**: Sentry vs Datadog vs Prometheus 비교 (왕국 모니터링 선택, 제안)
 
 ---
 
@@ -774,6 +775,10 @@ statsd.gauge("skills.count", 19, tags=["kingdom:afo", "version:2025"])
 - **Datadog Next.js 통합**: https://docs.datadoghq.com/tracing/setup_overview/setup/nodejs/
 - **Datadog Custom Metrics**: https://docs.datadoghq.com/metrics/custom_metrics/
 - **Datadog StatsD**: https://docs.datadoghq.com/developers/dogstatsd/
+- **Prometheus 공식 문서**: https://prometheus.io/docs/
+- **Prometheus Python Client**: https://github.com/prometheus/client_python
+- **FastAPI Prometheus 통합**: https://github.com/trallnag/prometheus-fastapi-instrumentator
+- **Grafana 공식 문서**: https://grafana.com/docs/
 - **FastAPI 공식 문서**: https://fastapi.tiangolo.com/
 - **pytest 공식 문서**: https://docs.pytest.org/
 - **현재 구현**: `packages/afo-core/utils/logging_config.py`
