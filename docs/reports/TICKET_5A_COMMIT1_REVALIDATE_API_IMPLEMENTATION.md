@@ -25,12 +25,17 @@ feat(dashboard): add fragment revalidate API route (edge, header-auth)
 
 **파일 경로**: `packages/dashboard/src/app/api/revalidate/route.ts`
 
-**구현 내용:**
-- Edge Runtime
+**구현 내용 (팩트):**
+- Edge Runtime (`export const runtime = "edge"`)
 - `x-revalidate-secret` 헤더 인증
 - `fragmentKey` 파라미터 받기
+- `fragmentKey` 검증 (정규식: `/^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$/` - 공백 없음)
 - `revalidatePath("/fragments/{fragmentKey}.html")` 호출
+- Query Parameter 금지 (보안)
+- GET 메서드 차단 (405 Method Not Allowed)
 - 성공/실패 응답
+
+> **주의**: 위 내용은 **핵심 로직만 발췌**한 요약입니다. 실제 구현은 `packages/dashboard/src/app/api/revalidate/route.ts` 파일을 참조하세요.
 
 ---
 
@@ -207,6 +212,14 @@ Commit 1 (Edge Revalidate API)는 **Fragment만 revalidate**하는 최소 구현
 
 ---
 
-**Status:** 🟡 **Ready for Implementation**  
-**Next Action:** 구현 시작 (커밋 메시지 및 테스트 curl 준비 완료)
+**Status:** 🟢 **Implementation Complete**  
+**Next Action:** Commit 2 (선택) 또는 Commit 3 (CI 통합)
+
+---
+
+## 📝 참고
+
+- **실제 구현**: `packages/dashboard/src/app/api/revalidate/route.ts` (구현 완료 ✅)
+- **Commit 2 예시**: `docs/reports/TICKET_5A_COMMIT2_PAGE_REVALIDATE_EXAMPLE.md` (예시/준비 🟡)
+- **Commit 3 예시**: `docs/reports/TICKET_5A_COMMIT3_CI_INTEGRATION_EXAMPLE.md` (예시/설계 🟡)
 
