@@ -6,6 +6,23 @@
 
 ---
 
+## ⚠️ 중요: 배포 전/후 구분
+
+**현재 상황**:
+- 도메인: `brnestrm.com`
+- Vercel이 있지만 **프론트엔드가 아직 배포되지 않음**
+- fragments는 아직 서빙되는 환경이 없음
+
+**REVALIDATE_URL 설정 시점**:
+- ✅ **지금 (로컬 개발)**: `http://localhost:3000/api/revalidate` (테스트용)
+- ✅ **나중 (Vercel 배포 후)**: `https://brnestrm.com/api/revalidate` 또는 Vercel 도메인
+
+**가이드 사용법**:
+- 로컬 개발 중이라면 → "로컬 개발 환경" 섹션 참고
+- Vercel 배포 후라면 → "프로덕션 환경" 섹션 참고
+
+---
+
 ## FACTS (검증됨)
 
 * **Next.js App Router에서 `revalidatePath()`는 Route Handlers (`app/api` 디렉토리)에서 호출 가능하며, Edge Runtime과 Node.js Runtime 모두 지원한다.** ([Next.js 공식 문서][1])
@@ -124,31 +141,75 @@ Actions → **Revalidate fragments (dynamic)** → **Run workflow**
 
 ---
 
-## 도메인 팩트체크 (3줄)
+## 로컬 개발 환경 (지금)
 
-**X = 형님이 실제로 사용하는 도메인** (예: `afo.example.com`, `dashboard.vercel.app`, `localhost:3000` 등)
+**현재 상황**: 프론트엔드가 아직 배포되지 않았으므로, 로컬 개발 환경에서 테스트합니다.
 
-형님이 **지금 쓰는 실제 도메인**만 알려주시면, 아래 3줄로 바로 판정해드립니다:
-
-**예시**: 형님의 도메인이 `https://afo.example.com`이라면:
+### 로컬 REVALIDATE_URL 설정
 
 ```bash
-# 1. fragments 접근 가능 여부 확인
-curl -I "https://afo.example.com/fragments/home-hero.html" | head -1
+# 로컬 개발 서버 실행
+cd packages/dashboard
+pnpm dev
+# → http://localhost:3000 에서 서빙됨
+```
 
-# 2. REVALIDATE_URL 형식 검증
-echo "REVALIDATE_URL=https://afo.example.com/api/revalidate" | grep -E '^REVALIDATE_URL=https://[^/]+/api/revalidate$'
+**로컬 테스트용 REVALIDATE_URL**:
+- `http://localhost:3000/api/revalidate`
 
-# 3. 경로 일관성 확인 (fragments와 revalidate가 같은 도메인인지)
-echo "✅ fragments: https://afo.example.com/fragments/*.html" && echo "✅ revalidate: https://afo.example.com/api/revalidate"
+**로컬 테스트 (복붙용)**:
+
+```bash
+# 1. 로컬 fragments 접근 확인
+curl -I "http://localhost:3000/fragments/home-hero.html" | head -1
+
+# 2. 로컬 REVALIDATE_URL POST 테스트
+export REVALIDATE_SECRET="(로컬 .env.local에 설정한 값)"
+curl -i -X POST "http://localhost:3000/api/revalidate" \
+  -H "x-revalidate-secret: $REVALIDATE_SECRET" \
+  -H "content-type: application/json" \
+  -d '{"fragmentKey":"home-hero"}'
 ```
 
 **기대 결과**:
-* 1번: `HTTP/2 200` 또는 `HTTP/1.1 200 OK`
-* 2번: `REVALIDATE_URL=https://afo.example.com/api/revalidate` (매칭됨)
+* 1번: `HTTP/1.1 200 OK` (로컬 서버가 실행 중이어야 함)
+* 2번: `200` + `{ ok: true ... }` (로컬 .env.local에 REVALIDATE_SECRET 설정 필요)
+
+---
+
+## 프로덕션 환경 (Vercel 배포 후)
+
+**Vercel 배포 후**: `brnestrm.com` 또는 Vercel 도메인에서 fragments가 서빙됩니다.
+
+### 프로덕션 REVALIDATE_URL 설정
+
+**도메인**: `brnestrm.com` (또는 Vercel이 제공하는 도메인)
+
+**프로덕션 REVALIDATE_URL**:
+- `https://brnestrm.com/api/revalidate` (커스텀 도메인 사용 시)
+- 또는 `https://[프로젝트명].vercel.app/api/revalidate` (Vercel 기본 도메인 사용 시)
+
+### 프로덕션 팩트체크 (3줄)
+
+**형님의 도메인이 `brnestrm.com`이라면**:
+
+```bash
+# 1. fragments 접근 가능 여부 확인
+curl -I "https://brnestrm.com/fragments/home-hero.html" | head -1
+
+# 2. REVALIDATE_URL 형식 검증
+echo "REVALIDATE_URL=https://brnestrm.com/api/revalidate" | grep -E '^REVALIDATE_URL=https://[^/]+/api/revalidate$'
+
+# 3. 경로 일관성 확인 (fragments와 revalidate가 같은 도메인인지)
+echo "✅ fragments: https://brnestrm.com/fragments/*.html" && echo "✅ revalidate: https://brnestrm.com/api/revalidate"
+```
+
+**기대 결과**:
+* 1번: `HTTP/2 200` 또는 `HTTP/1.1 200 OK` (배포 후)
+* 2번: `REVALIDATE_URL=https://brnestrm.com/api/revalidate` (매칭됨)
 * 3번: 두 경로 모두 같은 도메인 사용
 
-**형님이 실제 도메인을 알려주시면, 위 예시의 `afo.example.com` 부분을 형님 도메인으로 바꿔서 바로 실행해드리겠습니다.**
+**⚠️ 주의**: Vercel 배포가 완료된 후에만 위 테스트가 성공합니다.
 
 ---
 
