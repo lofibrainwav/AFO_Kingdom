@@ -21,11 +21,13 @@
 **REVALIDATE_URL = "fragments를 서빙하는 같은 도메인" + `/api/revalidate`**
 
 * 만약 fragment가 여기서 열린다:
-  * `https://X/fragments/home-hero.html`
+  * `https://[형님의 실제 도메인]/fragments/home-hero.html`
+  * 예: `https://afo.example.com/fragments/home-hero.html`
 * 그럼 revalidate는 무조건 여기여야 함:
-  * `https://X/api/revalidate`
+  * `https://[형님의 실제 도메인]/api/revalidate`
+  * 예: `https://afo.example.com/api/revalidate`
 
-✅ 즉, **prod/staging 구분은 "지금 실제로 fragments가 뜨는 X가 어디냐"**로 자동 결정됨.
+✅ 즉, **prod/staging 구분은 "지금 실제로 fragments가 뜨는 도메인이 어디냐"**로 자동 결정됨.
 
 ---
 
@@ -43,12 +45,13 @@ GitHub Repo → **Settings → Secrets and variables → Actions**
 
 ### 2) Variable: `REVALIDATE_URL`
 
-* 값: `https://X/api/revalidate`
+* 값: `https://[형님의 실제 도메인]/api/revalidate`
+  * 예: `https://afo.example.com/api/revalidate`
 * 체크:
   * [ ] `https://`로 시작
   * [ ] 경로가 **반드시** `/api/revalidate`
   * [ ] 마지막 `/` 없음 (지금 워크플로가 제거도 하지만, 저장도 깔끔하게)
-  * [ ] X는 **fragments가 실제로 뜨는 도메인**
+  * [ ] 도메인은 **fragments가 실제로 뜨는 도메인**
 
 ---
 
@@ -64,12 +67,15 @@ GitHub Repo → **Settings → Secrets and variables → Actions**
 
 ## 1분 컷 검증 루틴 (복붙용, 로컬에서)
 
-아래에서 `X`만 바꿔서 그대로 실행.
+아래에서 `[형님의 실제 도메인]`만 바꿔서 그대로 실행.
 
-### A) fragments 도메인 X가 맞는지 확인
+**예시**: 형님의 도메인이 `afo.example.com`이라면 `DOMAIN="https://afo.example.com"`로 설정
+
+### A) fragments 도메인이 맞는지 확인
 
 ```bash
-export DOMAIN="https://X"
+export DOMAIN="https://[형님의 실제 도메인]"
+# 예: export DOMAIN="https://afo.example.com"
 
 curl -I "$DOMAIN/fragments/home-hero.html"
 ```
@@ -80,7 +86,8 @@ curl -I "$DOMAIN/fragments/home-hero.html"
 ### B) REVALIDATE_URL POST 동작 확인
 
 ```bash
-export REVALIDATE_URL="https://X/api/revalidate"
+export REVALIDATE_URL="https://[형님의 실제 도메인]/api/revalidate"
+# 예: export REVALIDATE_URL="https://afo.example.com/api/revalidate"
 export REVALIDATE_SECRET="(배포 환경과 동일한 값)"
 
 curl -i -X POST "$REVALIDATE_URL" \
@@ -110,30 +117,38 @@ Actions → **Revalidate fragments (dynamic)** → **Run workflow**
 
 ## "prod vs staging"을 스스로 확정하는 초간단 판별
 
-* **형님이 브라우저에서 늘 보는 정식 도메인**(예: `https://afo.example.com`)에서 fragments가 뜨면 → 그게 prod
+* **형님이 브라우저에서 늘 보는 정식 도메인**(예: `https://afo.example.com`, `https://dashboard.example.com`)에서 fragments가 뜨면 → 그게 prod
 * 프리뷰/스테이징 도메인(예: `https://afo-staging.example.com` 또는 `https://<hash>.vercel.app`)에서만 뜨면 → 그게 staging/preview
+
+**형님이 실제로 사용하는 도메인을 알려주시면, prod/staging 구분과 REVALIDATE_URL을 바로 설정해드리겠습니다.**
 
 ---
 
 ## 도메인 팩트체크 (3줄)
 
-형님이 **지금 쓰는 X(도메인 문자열 1줄)**만 그대로 붙여주시면, 아래 3줄로 바로 판정해드립니다:
+**X = 형님이 실제로 사용하는 도메인** (예: `afo.example.com`, `dashboard.vercel.app`, `localhost:3000` 등)
+
+형님이 **지금 쓰는 실제 도메인**만 알려주시면, 아래 3줄로 바로 판정해드립니다:
+
+**예시**: 형님의 도메인이 `https://afo.example.com`이라면:
 
 ```bash
 # 1. fragments 접근 가능 여부 확인
-curl -I "https://X/fragments/home-hero.html" | head -1
+curl -I "https://afo.example.com/fragments/home-hero.html" | head -1
 
 # 2. REVALIDATE_URL 형식 검증
-echo "REVALIDATE_URL=https://X/api/revalidate" | grep -E '^REVALIDATE_URL=https://[^/]+/api/revalidate$'
+echo "REVALIDATE_URL=https://afo.example.com/api/revalidate" | grep -E '^REVALIDATE_URL=https://[^/]+/api/revalidate$'
 
 # 3. 경로 일관성 확인 (fragments와 revalidate가 같은 도메인인지)
-echo "✅ fragments: https://X/fragments/*.html" && echo "✅ revalidate: https://X/api/revalidate"
+echo "✅ fragments: https://afo.example.com/fragments/*.html" && echo "✅ revalidate: https://afo.example.com/api/revalidate"
 ```
 
 **기대 결과**:
 * 1번: `HTTP/2 200` 또는 `HTTP/1.1 200 OK`
-* 2번: `REVALIDATE_URL=https://X/api/revalidate` (매칭됨)
-* 3번: 두 경로 모두 같은 도메인 X 사용
+* 2번: `REVALIDATE_URL=https://afo.example.com/api/revalidate` (매칭됨)
+* 3번: 두 경로 모두 같은 도메인 사용
+
+**형님이 실제 도메인을 알려주시면, 위 예시의 `afo.example.com` 부분을 형님 도메인으로 바꿔서 바로 실행해드리겠습니다.**
 
 ---
 
