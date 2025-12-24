@@ -692,6 +692,63 @@ DD_ENV=production
 
 ---
 
+### Custom Metrics (제안)
+
+**Datadog Custom Metrics**: 사용자 정의 메트릭스 전송 (count/gauge/distribution/histogram)
+
+**참고 자료**:
+- Datadog Custom Metrics: https://docs.datadoghq.com/metrics/custom_metrics/
+- Datadog StatsD: https://docs.datadoghq.com/developers/dogstatsd/
+
+#### Custom Metrics 종류 및 적용 테이블
+
+| **메트릭스 타입**        | **설명**                                      | **이점**                          | **왕국 적용 예시** (FastAPI/Next.js)                  | **코드 예시** |
+|---------------------------|-----------------------------------------------|-----------------------------------|-------------------------------------------------------|---------------|
+| **Count**                | 이벤트 카운트 (increment/decrement)           | 발생 횟수 추적                    | MCP 호출 횟수 (revalidate 요청 수)                   | `statsd.increment("mcp.calls", tags=["endpoint:revalidate"])` |
+| **Gauge**                | 현재 값 (업/다운 가능)                        | 상태 값 모니터링                  | 활성 사용자 수, Skills 처리 큐 길이                    | `statsd.gauge("active.users", value)` |
+| **Distribution**         | 분포 통계 (평균/백분위/최대)                  | 지연 시간 분석 (p95 등)           | 엔드포인트 응답 시간                                  | `statsd.distribution("response.time", ms, tags=["endpoint:/revalidate"])` |
+| **Histogram**            | 분포 (백분위 자동)                            | 성능 분포 분석                    | DB 쿼리 시간 분포                                    | `statsd.histogram("db.query.time", ms)` |
+| **Set**                  | 고유 값 카운트                                | 고유 사용자/ID 추적               | 고유 fragmentKey 수                                   | `statsd.set("unique.fragments", key)` |
+
+#### 적용 코드 예시 (제안)
+
+**FastAPI Custom Metrics**:
+```python
+from ddtrace import statsd
+import time
+
+@app.post("/revalidate")
+async def revalidate(request: RevalidateRequest):
+    statsd.increment("revalidate.calls", tags=["fragmentKey:" + request.fragmentKey])
+    
+    start = time.time()
+    # 재검증 로직
+    duration = time.time() - start
+    
+    statsd.distribution("revalidate.duration", duration * 1000, tags=["success:true"])
+    return {"revalidated": True}
+```
+
+**Next.js Custom Metrics** (제안):
+```typescript
+import { statsd } from 'dd-trace';
+
+async function fetchMCP() {
+  statsd.increment('mcp.fetch');
+  const start = performance.now();
+  // MCP 호출
+  const duration = performance.now() - start;
+  statsd.distribution('mcp.fetch.duration', duration);
+}
+```
+
+**태그 추가 (컨텍스트)**:
+```python
+statsd.gauge("skills.count", 19, tags=["kingdom:afo", "version:2025"])
+```
+
+---
+
 ## 다음 단계 (왕국 확장)
 
 - **즉시**: structlog 설치 → logging_config.py 수정 테스트 (제안)
@@ -702,6 +759,7 @@ DD_ENV=production
 - **벤치마크**: Ticket 56 – AsyncRenderer 적용 여부 결정 (high-throughput 테스트)
 - **Sentry**: Ticket 59 – production sampling 0.2 적용
 - **Datadog**: Ticket 61 – Datadog APM tracing (span 자동 캡처, 제안)
+- **Custom Metrics**: Ticket 64 – Custom metrics 대시보드 (MCP 호출 수, 제안)
 - **선택**: Sentry vs Datadog 비교 (왕국 모니터링 선택, 제안)
 
 ---
@@ -714,6 +772,8 @@ DD_ENV=production
 - **Datadog APM**: https://docs.datadoghq.com/tracing/
 - **Datadog Python SDK**: https://docs.datadoghq.com/tracing/setup_overview/setup/python/
 - **Datadog Next.js 통합**: https://docs.datadoghq.com/tracing/setup_overview/setup/nodejs/
+- **Datadog Custom Metrics**: https://docs.datadoghq.com/metrics/custom_metrics/
+- **Datadog StatsD**: https://docs.datadoghq.com/developers/dogstatsd/
 - **FastAPI 공식 문서**: https://fastapi.tiangolo.com/
 - **pytest 공식 문서**: https://docs.pytest.org/
 - **현재 구현**: `packages/afo-core/utils/logging_config.py`
