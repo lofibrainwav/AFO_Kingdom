@@ -1002,9 +1002,117 @@ Alert when: Above upper band (급증)
 ```
 
 **왕국 적용 효과 (예상)**:
-- 예상 밖 통기율 저하 자동 알림 (100% 유지)
+- 예상 밖 통기율 저하 자동 알림 (목표 유지)
 - MCP/Skills 호출 이상 패턴 탐지 (시즌성 고려)
 - Datadog 대시보드 + Alert (실시간 대응)
+
+---
+
+### 9.5 Outlier Detection Comparison (제안)
+
+**Outlier Detection**: 메트릭스 이상치 자동 탐지
+
+**참고 자료**:
+- Datadog Anomaly Monitors: https://docs.datadoghq.com/monitors/types/anomaly/
+- Sentry Outlier Detection: https://docs.sentry.io/product/alerts/outlier-detection/
+- Grafana Anomaly Detection: https://grafana.com/docs/grafana/latest/panels-visualizations/visualizations/anomaly-detection/
+- Prometheus Alertmanager: https://prometheus.io/docs/alerting/latest/alertmanager/
+
+**왕국 현재 상태**: Datadog Anomaly 제안 (Sentry/Grafana 연계)
+
+**Outlier Detection 도구 비교 테이블** (제안):
+
+| **도구**                  | **알고리즘**                                      | **이점**                          | **단점**                          | **왕국 적용 예시** (메트릭스)                  | **통합 난이도** |
+|---------------------------|---------------------------------------------------|-----------------------------------|-----------------------------------|-----------------------------------------------|----------------|
+| **Datadog Anomaly**      | Seasonal/Algorithmic (rolling median + deviation) | UI 직관적, Slack 알림 쉬움        | 비용 (pro 플랜)                   | 통기율 저하 자동 알림 (MCP 호출)             | 쉬움 (UI 설정) |
+| **Sentry Outlier**       | Beta (machine learning 기반)                      | Sentry 에러 연계                  | Beta (안정성 주의)                | 에러 급증 연계 이상치                         | 중간 (SDK)    |
+| **Prometheus + Grafana** | Grafana Anomaly plugin (machine learning)         | 오픈소스, Prometheus 호환         | 설정 복잡                         | 지연 p95 이상치 (Grafana 패널)                | 어려움 (plugin) |
+| **Elastic ML**           | x-pack ML jobs (anomaly detection)                | 고급 ML (forecasting)             | Elastic Stack 필요                | 장기 트렌드 이상치 (Skills 처리)              | 어려움 (ELK)  |
+| **Splunk ML**            | Machine Learning Toolkit                          | Splunk 통합 강함                  | Splunk 라이선스                   | 로그/메트릭스 이상치                          | 어려움 (Splunk) |
+
+**왕국 추천** (제안):
+- **1순위**: Datadog Anomaly (UI 직관, Slack 연계, 통기율 알림 쉬움)
+- **2순위**: Grafana Anomaly plugin (오픈소스, Prometheus 호환)
+- **주의**: Sentry Outlier beta – production 주의
+
+---
+
+### 9.6 Cost-Benefit Analysis (제안)
+
+**Cost-Benefit Analysis**: 모니터링 도구 도입 시 비용 vs 이점 비교
+
+**참고 자료**:
+- Datadog Pricing: https://www.datadoghq.com/pricing/
+- Sentry Pricing: https://sentry.io/pricing/
+- Prometheus: https://prometheus.io/ (오픈소스)
+- Grafana Cloud Pricing: https://grafana.com/pricing/
+
+**왕국 현재 상태**: 모니터링 제안 상태 (Sentry/Datadog/Prometheus/Grafana)
+
+**Cost-Benefit 테이블** (2025 가격 기준, 제안):
+
+| **도구**                  | **비용 (월 기준, 소규모 팀)**                          | **이점**                          | **단점**                          | **왕국 추천** (비용/이점 균형)                  |
+|---------------------------|-------------------------------------------------------|-----------------------------------|-----------------------------------|------------------------------------------------|
+| **Sentry**               | $26 (Pro, 100k events) → $80 (Business)               | 에러 그룹핑, tracing 우수         | Custom Metrics 제한               | 초기 도입 추천 (에러 중심)                    |
+| **Datadog**              | $40/host (APM) + $15 (Logs)                           | APM/tracing/Custom Metrics 강함   | 비용 높음 (host 기반)             | 고급 tracing 필요 시                          |
+| **Prometheus + Grafana** | 무료 (오픈소스) + S3 $0.023/GB (Thanos)               | 완전 커스텀, 장기 저장            | 설정 복잡                         | 비용 최소화 추천 (왕국 오픈소스)               |
+| **Thanos**               | S3 저장 비용 (~$10/month, 100GB 추정)                 | 장기 저장/downsampling            | Compactor 관리 필요               | Prometheus 확장 추천                          |
+| **Grafana Cloud**        | 무료 tier (10k series) → $49 (Pro)                    | 호스팅 대시보드                   | 무료 tier 제한                    | 빠른 시작 추천 (Grafana 연계)                 |
+
+**왕국 적용 추천** (제안):
+- **저비용 우선**: Prometheus + Thanos + Grafana (무료 + S3 비용 최소)
+- **에러 중심**: Sentry (쉬운 통합)
+- **고급 APM**: Datadog (tracing/Custom Metrics)
+- **ROI 예상**: Sentry/Datadog 도입 시 디버깅 시간 절감 가능 (외부 사례 참조)
+
+---
+
+### 9.7 Detailed ROI Calculations (제안)
+
+**ROI Calculations**: 초기 비용 vs 이점 (디버깅 시간 절감, 다운타임 감소)
+
+**참고 자료**:
+- Datadog Pricing: https://www.datadoghq.com/pricing/
+- Sentry Pricing: https://sentry.io/pricing/
+- AWS S3 Pricing: https://aws.amazon.com/s3/pricing/
+- Grafana Cloud Pricing: https://grafana.com/pricing/
+
+**왕국 현재 상태**: 모니터링 제안 상태
+
+**ROI 계산 가정** (제안):
+- **비용**: 2025 공식 가격 (Datadog, Sentry), S3 $0.023/GB (Thanos), Grafana Cloud $49/month (Pro)
+- **이점**: 산업 평균 MTTR 감소 가능 (외부 사례 참조), 다운타임 비용 절감, 개발자 시간 절약 ($50/시간 가정)
+- **기간**: 1년 (12개월)
+- **왕국 규모 가정**: 10 노드, 5 개발자, 연간 다운타임 비용 $10,000 (1시간 $500 가정), MTTR 2시간 → 1시간 감소 가능 (개선 가정)
+
+**ROI 계산 테이블** (2025 기준, 제안):
+
+| **도구**                  | **초기 비용 (월)** | **연간 비용** | **이점 (연간, 가정)**                          | **ROI (%)** | **분석** |
+|---------------------------|-------------------|--------------|------------------------------------------|-------------|----------|
+| **Sentry (Pro)**         | $26               | $312         | $12,000 (MTTR 1h 절감 가정, 24h 다운타임 예방 가정) | 3,750%      | 초기 도입 추천 (에러 중심) |
+| **Datadog (10 hosts)**   | $400              | $4,800       | $18,000 (MTTR 1h, 36h 다운타임, tracing 가정) | 275%        | 고급 APM 필요 시 |
+| **Prometheus + Thanos**  | $0 + $10 (S3 100GB) | $120         | $12,000 (MTTR 1h, 24h 다운타임 가정)         | 9,900%      | 비용 최소화 추천 |
+| **Grafana Cloud (Pro)**  | $49               | $588         | $12,000 (MTTR 1h, 24h 다운타임 가정)         | 1,941%      | 빠른 시작 추천 |
+| **혼용 (Sentry + Prom)** | $26 + $10         | $432         | $18,000 (MTTR 1h, 36h 다운타임 가정)         | 4,069%      | 균형 추천 |
+
+**계산 세부** (제안):
+- **비용**:
+  - Sentry: $26/month × 12 = $312
+  - Datadog: $40/host × 10 + $15/logs × 10 = $550/month × 12 = $6,600 (APM 추가 $400/month × 12 = $4,800)
+  - Prometheus + Thanos: 무료 + S3 $0.023/GB × 100GB × 12 = $27.60 (추정 100GB)
+  - Grafana Cloud: $49/month × 12 = $588
+  - 혼용: Sentry $312 + Thanos $120 = $432
+- **이점** (가정):
+  - MTTR 감소: 2h → 1h, 연간 24h 다운타임 예방 가정 ($500/h × 24h = $12,000)
+  - Datadog: tracing 추가로 12h 더 절감 가정 ($500/h × 12h = $6,000)
+  - 혼용: 에러 + 메트릭스 결합으로 36h 절감 가정 ($18,000)
+- **ROI 계산**: (이점 - 비용) / 비용 × 100
+
+**왕국 적용 추천** (제안):
+- **최적 비용**: Prometheus + Thanos (ROI 9,900%, 초기 $120)
+- **빠른 도입**: Grafana Cloud (ROI 1,941%, 호스팅 편리)
+- **고급 기능**: Datadog (ROI 275%, tracing 필요 시)
+- **균형**: Sentry + Prometheus (ROI 4,069%, 에러+메트릭스)
 
 ---
 
