@@ -662,15 +662,161 @@ tracer.trace('skills.fetch', async () => {
 DD_AGENT_HOST=localhost
 DD_TRACE_AGENT_PORT=8126
 DD_ENV=production
+DD_SERVICE_NAME=afo-kingdom-api
+DD_VERSION=1.0.0
+```
+
+---
+
+### 9.1 Datadog Tracing Code Examples (제안)
+
+**Datadog Tracing Code**: ddtrace 라이브러리로 자동/커스텀 span 생성
+
+**참고 자료**:
+- Datadog Tracing: https://docs.datadoghq.com/tracing/
+- Datadog Python SDK: https://docs.datadoghq.com/tracing/setup_overview/setup/python/
+- Datadog Next.js 통합: https://docs.datadoghq.com/tracing/setup_overview/setup/nodejs/
+
+**Code Examples 테이블** (제안):
+
+| **카테고리**              | **설명**                                      | **왕국 적용 예시** (FastAPI/Next.js)                  | **코드 예시** |
+|---------------------------|-----------------------------------------------|-------------------------------------------------------|---------------|
+| **기본 초기화**          | ddtrace.patch_all() 또는 tracer 초기화        | FastAPI 전체 자동 트레이싱                           | `from ddtrace import patch_all; patch_all()` |
+| **자동 Tracing**         | FastAPI/Starlette 통합                        | 엔드포인트 자동 transaction                          | `from ddtrace import config; config.fastapi["service_name"] = "afo-api"` |
+| **커스텀 Span**          | tracer.trace() 또는 start_span                | MCP 호출 상세 추적                                   | `with tracer.trace("mcp.call", service="afo-mcp"): ...` |
+| **태그/컨텍스트**        | span.set_tag(key, value)                      | fragmentKey/request_id 태그                          | `span.set_tag("fragmentKey", "home-hero")` |
+| **에러 처리**            | record_exception(e)                           | 예외 자동 캡처                                       | `span.record_exception(e)` |
+| **Next.js 통합**         | dd-trace 라이브러리                            | 페이지/라우트 트레이싱                               | `import { tracer } from 'dd-trace'; tracer.trace('page.load', () => {...})` |
+| **분산 트레이싱**        | propagation context 자동                      | FastAPI → Next.js 호출 연결                          | 자동 (header 전파)        |
+
+**FastAPI 커스텀 Span + 에러 처리 예시** (제안):
+```python
+from ddtrace import tracer
+from fastapi import HTTPException
+
+@app.post("/revalidate")
+async def revalidate(request: RevalidateRequest):
+    with tracer.trace("revalidate.process", service="afo-api") as span:
+        span.set_tag("fragmentKey", request.fragmentKey)
+        try:
+            # 재검증 로직
+            revalidatePath(f"/fragments/{request.fragmentKey}.html")
+        except Exception as e:
+            span.record_exception(e)
+            span.set_tag("error", True)
+            raise HTTPException(status_code=500, detail=str(e))
+        return {"revalidated": True}
+```
+
+**Next.js 커스텀 Span 예시** (제안):
+```typescript
+import { tracer } from 'dd-trace';
+
+async function fetchSkills() {
+  return tracer.trace('skills.fetch', async (span) => {
+    span?.setTag('type', 'mcp');
+    // Skills 호출
+    const res = await fetch('/api/skills');
+    return res.json();
+  });
+}
+```
+
+---
+
+### 9.2 Datadog APM Integration Details (제안)
+
+**Datadog APM**: 분산 트레이싱 + 메트릭스 모니터링
+
+**참고 자료**:
+- Datadog APM: https://docs.datadoghq.com/tracing/
+- Datadog Python SDK: https://docs.datadoghq.com/tracing/setup_overview/setup/python/
+- Datadog Next.js 통합: https://docs.datadoghq.com/tracing/setup_overview/setup/nodejs/
+
+**통합 단계별 가이드** (제안):
+
+#### 1. 설치
+
+**FastAPI/Python**:
+```bash
+cd packages/afo-core
+poetry add ddtrace
+```
+
+**Next.js**:
+```bash
+cd packages/dashboard
+pnpm add dd-trace
+```
+
+#### 2. 기본 초기화 (FastAPI main.py 제안)
+
+```python
+from ddtrace import patch_all, config
+
+patch_all()  # 자동 통합 (FastAPI, SQLAlchemy, Redis 등)
+
+config.fastapi["service_name"] = "afo-kingdom-api"
+config.fastapi["distributed_tracing"] = True  # 분산 트레이싱 활성화
+config.traces_sample_rate = 1.0  # dev: 1.0, prod: 0.2 권장
+```
+
+#### 3. Next.js 초기화 (next.config.js 제안)
+
+```javascript
+const { withDatadog } = require('next-datadog');
+
+module.exports = withDatadog({
+  // 기존 Next.js 설정
+  // datadog: {
+  //   apiKey: process.env.DATADOG_API_KEY,
+  //   site: process.env.DATADOG_SITE,
+  //   service: process.env.DATADOG_SERVICE_NAME || 'afo-kingdom-dashboard',
+  //   env: process.env.NODE_ENV,
+  //   version: process.env.APP_VERSION,
+  // },
+});
+```
+
+#### 4. 커스텀 Span 추가 (제안)
+
+**FastAPI**:
+```python
+from ddtrace import tracer
+
+with tracer.trace("mcp.call", service="afo-mcp"):
+    # MCP 호출 로직
+    fetch_mcp_data()
+```
+
+**Next.js**:
+```typescript
+import { tracer } from 'dd-trace';
+
+tracer.trace('skills.fetch', async (span) => {
+  span?.setTag('type', 'mcp');
+  // Skills 로직
+});
+```
+
+#### 5. 환경 변수 (Datadog Agent 필요)
+
+```bash
+DD_AGENT_HOST=localhost
+DD_TRACE_AGENT_PORT=8126
+DD_ENV=production
+DD_SERVICE_NAME=afo-kingdom-api
+DD_VERSION=1.0.0
 ```
 
 ---
 
 ### 왕국 적용 효과 (예상)
 
-- MCP/Skills 호출 지연 추적
-- 대시보드 성능 모니터링 (INP/LCP 연계)
-- Datadog 대시보드 (Sentry 대체/보완)
+- MCP 9/Skills 19 호출 지연 추적 (통기율 영향 분석)
+- 분산 트레이싱 (FastAPI → Next.js)
+- Datadog 대시보드 실시간 (Grafana 연계 가능)
+- 커스텀 span으로 상세 추적 (MCP/DB 쿼리)
 
 ---
 
