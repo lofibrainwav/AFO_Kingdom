@@ -1,18 +1,11 @@
-name: Revalidate changed fragments
+name: Revalidate fragments (dynamic)
 
 on:
   push:
     branches: [main]
     paths:
-      - "**/fragments/**"
-      - "**/fragments/*.html"
-      - "docs/**"
-  workflow_dispatch:
-    inputs:
-      fragmentKeys:
-        description: "Space-separated fragment keys (e.g. home-hero pricing-card)"
-        required: false
-        default: ""
+      - "fragments/**"
+  workflow_dispatch: {}
 
 permissions:
   contents: read
@@ -24,7 +17,10 @@ concurrency:
 jobs:
   revalidate:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+
+    env:
+      REVALIDATE_URL: ${{ vars.REVALIDATE_URL }}
+      MAX_KEYS: "25"
 
     steps:
       - name: Checkout
@@ -32,68 +28,77 @@ jobs:
         with:
           fetch-depth: 2
 
-      - name: Detect fragment keys
-        id: detect
+      - name: Guard - required secret/url
         shell: bash
         run: |
-          set -euo pipefail
-
-          # 1) workflow_dispatch로 키가 들어오면 그걸 우선 사용
-          INPUT_KEYS="${{ github.event.inputs.fragmentKeys }}"
-          if [[ -n "${INPUT_KEYS// /}" ]]; then
-            KEYS="$(echo "$INPUT_KEYS" | tr ' ' '\n' | awk 'NF' | sort -u | head -n 20 | tr '\n' ' ')"
-            echo "fragment_keys=$KEYS" >> "$GITHUB_OUTPUT"
-            echo "Detected keys (manual): $KEYS"
-            exit 0
+          if [[ -z "${{ secrets.REVALIDATE_SECRET }}" ]]; then
+            echo "Missing secrets.REVALIDATE_SECRET" >&2
+            exit 1
           fi
-
-          # 2) push인 경우: 변경 파일에서 fragments/*.html 키 추출
-          BEFORE="${{ github.event.before }}"
-          AFTER="${{ github.sha }}"
-
-          CHANGED="$(git diff --name-only "$BEFORE" "$AFTER" 2>/dev/null || git diff --name-only HEAD~1 HEAD || true)"
-          echo "Changed files:"
-          echo "$CHANGED"
-
-          KEYS=""
-          while IFS= read -r f; do
-            # 어디에 있든 ".../fragments/<key>.html" 형태만 잡음
-            [[ "$f" =~ /fragments/.*\.html$ ]] || [[ "$f" =~ ^fragments/.*\.html$ ]] || continue
-            key="$(basename "$f" .html)"
-
-            # API와 동일한 정규식으로 1차 검증
-            if [[ "$key" =~ ^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$ ]]; then
-              KEYS="$KEYS $key"
-            fi
-          done <<< "$CHANGED"
-
-          KEYS="$(echo "$KEYS" | tr ' ' '\n' | awk 'NF' | sort -u | head -n 20 | tr '\n' ' ')"
-          echo "fragment_keys=$KEYS" >> "$GITHUB_OUTPUT"
-          echo "Detected keys (auto): $KEYS"
-
-      - name: Trigger revalidate API
-        if: steps.detect.outputs.fragment_keys != ''
-        env:
-          REVALIDATE_URL: ${{ vars.REVALIDATE_URL }}
-          REVALIDATE_SECRET: ${{ secrets.REVALIDATE_SECRET }}
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          if [[ -z "${REVALIDATE_URL:-}" ]]; then
-            echo "Missing vars.REVALIDATE_URL"
+          if [[ -z "${REVALIDATE_URL}" ]]; then
+            echo "Missing vars.REVALIDATE_URL (e.g., https://<domain>/api/revalidate)" >&2
             exit 1
           fi
 
-          for key in ${{ steps.detect.outputs.fragment_keys }}; do
-            echo "Revalidating: $key"
-            curl -fS --retry 2 --retry-delay 1 -X POST "$REVALIDATE_URL" \
-              -H "content-type: application/json" \
-              -H "x-revalidate-secret: $REVALIDATE_SECRET" \
-              -d "{\"fragmentKey\":\"$key\"}"
+      - name: Detect changed fragment keys
+        id: detect
+        shell: bash
+        run: |
+          BEFORE="${{ github.event.before }}"
+          AFTER="${{ github.sha }}"
+
+          # 첫 푸시/예외 케이스 대비
+          if [[ -z "$BEFORE" || "$BEFORE" == "0000000000000000000000000000000000000000" ]]; then
+            BEFORE="HEAD~1"
+            AFTER="HEAD"
+          fi
+
+          CHANGED="$(git diff --name-only "$BEFORE" "$AFTER" || true)"
+          KEYS=""
+
+          while IFS= read -r f; do
+            [[ -z "$f" ]] && continue
+            [[ "$f" != fragments/* ]] && continue
+            [[ "$f" != *.html ]] && continue
+
+            key="$(basename "$f" .html)"
+
+            # fragmentKey와 동일한 정규식 (Commit 1과 일치)
+            if [[ ! "$key" =~ ^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$ ]]; then
+              echo "Skip invalid key derived from file: $f" >&2
+              continue
+            fi
+
+            KEYS="$KEYS $key"
+          done <<< "$CHANGED"
+
+          # 상한 적용
+          COUNT=0
+          OUT=""
+          for k in $KEYS; do
+            COUNT=$((COUNT+1))
+            if [[ "$COUNT" -le "${MAX_KEYS}" ]]; then
+              OUT="$OUT $k"
+            fi
           done
 
-      - name: No fragments changed
-        if: steps.detect.outputs.fragment_keys == ''
-        run: echo "No fragment .html changes detected. Skipping."
+          echo "keys=$OUT" >> "$GITHUB_OUTPUT"
+
+      - name: Call revalidate API
+        if: steps.detect.outputs.keys != ''
+        shell: bash
+        run: |
+          echo "Revalidating keys:${{ steps.detect.outputs.keys }}"
+          for key in ${{ steps.detect.outputs.keys }}; do
+            payload='{"fragmentKey":"'"$key"'"}'
+            curl --fail-with-body -sS -X POST "${REVALIDATE_URL}" \
+              -H "x-revalidate-secret: ${{ secrets.REVALIDATE_SECRET }}" \
+              -H "content-type: application/json" \
+              -d "${payload}"
+            echo ""
+          done
+
+      - name: No-op (no fragment changes)
+        if: steps.detect.outputs.keys == ''
+        run: echo "No fragment changes detected; skipping."
 
