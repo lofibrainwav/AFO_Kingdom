@@ -749,6 +749,166 @@ statsd.gauge("skills.count", 19, tags=["kingdom:afo", "version:2025"])
 
 ---
 
+## 10. Prometheus 메트릭스 통합 (제안)
+
+### Prometheus 개요 (팩트 기반)
+
+**Prometheus**: 오픈소스 모니터링 시스템 (pull 기반 메트릭스 수집)
+
+**참고 자료**:
+- Prometheus 공식 문서: https://prometheus.io/docs/
+- Prometheus Python Client: https://github.com/prometheus/client_python
+- FastAPI Prometheus 통합: https://github.com/trallnag/prometheus-fastapi-instrumentator
+
+**왕국 현재 상태**: 
+- Prometheus 부분 통합됨
+  - `packages/afo-core/api/middleware/prometheus.py` (PrometheusMiddleware)
+  - `packages/afo-core/utils/metrics.py` (메트릭스 정의)
+  - `packages/afo-core/domain/metrics/prometheus.py` (Trinity 메트릭스)
+  - `prometheus-client>=0.19.0` 설치됨
+- Sentry/Datadog 제안 상태
+
+**Sentry/Datadog vs Prometheus 비교** (제안):
+
+| **항목**                  | **Sentry/Datadog**                                      | **Prometheus**                          | **왕국 적용 추천**                  |
+|---------------------------|------------------------------------------------|---------------------------------------|-----------------------------------|
+| **아키텍처**              | Push 기반 (에이전트 → 클라우드)                | Pull 기반 (Prometheus → 서비스)      | Prometheus (오픈소스, 자체 호스팅) |
+| **비용**                 | Sentry 무료 티어 / Datadog 유료                | 무료 (오픈소스)                       | Prometheus (비용 고려)             |
+| **통합**                 | structlog-sentry / ddtrace                      | prometheus-client (간단)              | Prometheus (간단 통합)             |
+| **대시보드**              | Sentry/Datadog 대시보드                         | Grafana (강력한 시각화)               | Prometheus + Grafana (유연성)      |
+
+---
+
+### 통합 단계별 가이드 (제안)
+
+#### 1. 설치 (이미 설치됨)
+
+**현재 상태**: `prometheus-client>=0.19.0` 이미 설치됨 (`packages/afo-core/requirements.txt`)
+
+**추가 설치 필요 시**:
+```bash
+cd packages/afo-core
+poetry add prometheus-client
+```
+
+#### 2. 기본 설정 (현재 구현 참고)
+
+**현재 구현**: `packages/afo-core/api/middleware/prometheus.py`에 `PrometheusMiddleware` 존재
+
+**현재 구현된 메트릭스** (참고):
+```python
+# packages/afo-core/api/middleware/prometheus.py
+REQUEST_COUNT = Counter(
+    "http_requests_total",
+    "Total number of HTTP requests",
+    ["method", "endpoint", "status_code", "service"],
+)
+
+REQUEST_LATENCY = Histogram(
+    "http_request_duration_seconds",
+    "HTTP request latency in seconds",
+    ["method", "endpoint", "status_code", "service"],
+    buckets=[0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1.0, 2.0, 5.0],
+)
+
+TRINITY_SCORE = Gauge(
+    "trinity_score",
+    "Current Trinity score (Truth/Goodness/Beauty)",
+    ["pillar", "service"],
+)
+
+SKILLS_EXECUTIONS = Counter(
+    "skills_executions_total",
+    "Total number of skill executions",
+    ["skill_id", "category", "status"],
+)
+```
+
+**기본 설정 예시** (제안, 현재 구현 확장):
+
+```python
+from prometheus_client import Counter, Gauge, Histogram, make_asgi_app
+from fastapi import FastAPI, Request
+from starlette.middleware.base import BaseHTTPMiddleware
+
+# 메트릭스 정의 (현재 구현 참고)
+REQUEST_COUNT = Counter('request_count', 'App Request Count', ['method', 'endpoint', 'status_code'])
+REQUEST_LATENCY = Histogram('request_latency_seconds', 'Request Latency', ['endpoint'])
+MCP_CALLS = Counter('mcp_calls_total', 'MCP Calls Total', ['type'])
+
+app = FastAPI()
+
+@app.middleware("http")
+async def prometheus_middleware(request: Request, call_next):
+    method = request.method
+    endpoint = request.url.path
+    with REQUEST_LATENCY.labels(endpoint=endpoint).time():
+        response = await call_next(request)
+    REQUEST_COUNT.labels(method=method, endpoint=endpoint, http_status=response.status_code).inc()
+    return response
+
+# Mount metrics endpoint
+metrics_app = make_asgi_app()
+app.mount("/metrics", metrics_app)
+```
+
+#### 3. 커스텀 메트릭스 추가 (현재 구현 참고)
+
+**현재 구현**: `packages/afo-core/utils/metrics.py`에 메트릭스 정의됨
+
+**엔드포인트 예시** (제안, 현재 구현 확장):
+
+```python
+@app.post("/revalidate")
+async def revalidate(request: RevalidateRequest):
+    MCP_CALLS.labels(type="revalidate").inc()
+    ACTIVE_USERS.inc()  # 활성 사용자 증가
+    # 로직
+    ACTIVE_USERS.dec()  # 완료 시 감소
+    return {"revalidated": True}
+```
+
+#### 4. 노출 엔드포인트 (/metrics)
+
+**현재 구현**: `make_asgi_app()` 또는 `start_http_server()` 사용
+
+- `http://localhost:8000/metrics` 방문 → Prometheus 형식 출력
+- 또는 FastAPI에 마운트: `app.mount("/metrics", metrics_app)`
+
+#### 5. Prometheus 설정 (prometheus.yml 제안)
+
+```yaml
+scrape_configs:
+  - job_name: 'afo-kingdom'
+    static_configs:
+      - targets: ['host:8000']
+```
+
+---
+
+### Grafana 연계 (참고용)
+
+**Grafana**: Prometheus 데이터 시각화 대시보드
+
+**참고 자료**:
+- Grafana 공식 문서: https://grafana.com/docs/
+- Grafana Prometheus 데이터 소스: https://grafana.com/docs/grafana/latest/datasources/prometheus/
+
+**설정 예시** (제안):
+1. Grafana 설치/설정
+2. Prometheus 데이터 소스 추가
+3. 대시보드 생성 (메트릭스 시각화)
+
+---
+
+### 왕국 적용 효과 (예상)
+
+- 요청 수/지연 실시간 모니터링 (Grafana 대시보드)
+- MCP/Skills 커스텀 메트릭스 (통기율 연계)
+- 알림 설정 (메트릭스 기준 초과)
+
+---
+
 ## 다음 단계 (왕국 확장)
 
 - **즉시**: structlog 설치 → logging_config.py 수정 테스트 (제안)
