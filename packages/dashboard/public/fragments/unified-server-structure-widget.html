@@ -1,0 +1,214 @@
+
+            <h2 class="section-title">🔗 Unified Server 모듈 구조</h2>
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">afo_ultimate_mcp_server.py - 모듈 통합/분리 시각화</h3>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button id="toggle-unified-view" onclick="toggleUnifiedView()" style="padding: 0.5rem 1rem; background: var(--pillar-truth); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                            🔗 통합 모드
+                        </button>
+                        <button id="toggle-separated-view" onclick="toggleSeparatedView()" style="padding: 0.5rem 1rem; background: var(--pillar-beauty); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                            📦 분리 모드
+                        </button>
+                    </div>
+                </div>
+                <div style="padding: 1.5rem;">
+                    <p style="margin-bottom: 1.5rem; color: var(--text-secondary);">
+                        <strong>형님!</strong> Unified Server는 <strong>"붙으면 하나가 되고, 나뉘면 분리되는"</strong> 모듈 구조를 가지고 있습니다.<br>
+                        통합 모드에서는 모든 모듈이 하나의 서버로 작동하고, 분리 모드에서는 각 모듈의 독립성을 확인할 수 있습니다.
+                    </p>
+                    
+                    <!-- 통합 모드 뷰 -->
+                    <div id="unified-view" style="display: block;">
+                        <div style="text-align: center; margin-bottom: 2rem;">
+                            <div style="display: inline-block; padding: 2rem 3rem; background: linear-gradient(135deg, var(--pillar-truth) 0%, var(--pillar-goodness) 100%); border-radius: 16px; box-shadow: var(--shadow-lg); color: white;">
+                                <div style="font-size: 2rem; margin-bottom: 0.5rem;">🏰</div>
+                                <div style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">afo_ultimate_mcp_server.py</div>
+                                <div style="font-size: 0.9rem; opacity: 0.9;">Unified Server (단일 진입점)</div>
+                            </div>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
+                            <!-- Core Tools 모듈 -->
+                            <div class="module-card unified" data-module="core">
+                                <div class="module-header" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);">
+                                    <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">⚔️</div>
+                                    <div style="font-weight: 700; font-size: 1.1rem;">Core Tools</div>
+                                    <div style="font-size: 0.85rem; opacity: 0.9; margin-top: 0.25rem;">4개 도구</div>
+                                </div>
+                                <div class="module-body">
+                                    <div class="tool-item">🔧 shell_execute</div>
+                                    <div class="tool-item">📄 read_file</div>
+                                    <div class="tool-item">✍️ write_file</div>
+                                    <div class="tool-item">🏥 kingdom_health</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Trinity Score 모듈 -->
+                            <div class="module-card unified" data-module="trinity">
+                                <div class="module-header" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                                    <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">⚖️</div>
+                                    <div style="font-weight: 700; font-size: 1.1rem;">Trinity Score Engine</div>
+                                    <div style="font-size: 0.85rem; opacity: 0.9; margin-top: 0.25rem;">TrinityScoreEngineHybrid</div>
+                                </div>
+                                <div class="module-body">
+                                    <div class="tool-item">📊 calculate_trinity_score</div>
+                                    <div style="margin-top: 0.5rem; padding: 0.5rem; background: rgba(16, 185, 129, 0.1); border-radius: 6px; font-size: 0.85rem;">
+                                        <div>眞 35% | 善 35% | 美 20%</div>
+                                        <div>孝 8% | 永 2%</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Skills 모듈 -->
+                            <div class="module-card unified" data-module="skills">
+                                <div class="module-header" style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);">
+                                    <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">🛡️</div>
+                                    <div style="font-weight: 700; font-size: 1.1rem;">Afo Skills MCP</div>
+                                    <div style="font-size: 0.85rem; opacity: 0.9; margin-top: 0.25rem;">2개 도구</div>
+                                </div>
+                                <div class="module-body">
+                                    <div class="tool-item">✅ verify_fact</div>
+                                    <div class="tool-item">🚀 cupy_weighted_sum</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Context7 모듈 -->
+                            <div class="module-card unified" data-module="context7">
+                                <div class="module-header" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                                    <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">📚</div>
+                                    <div style="font-weight: 700; font-size: 1.1rem;">Context7 MCP</div>
+                                    <div style="font-size: 0.85rem; opacity: 0.9; margin-top: 0.25rem;">지식 베이스</div>
+                                </div>
+                                <div class="module-body">
+                                    <div class="tool-item">🔍 resolve-library-id</div>
+                                    <div class="tool-item">📖 get-library-docs</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Playwright 모듈 -->
+                            <div class="module-card unified" data-module="playwright">
+                                <div class="module-header" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">
+                                    <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">🌐</div>
+                                    <div style="font-weight: 700; font-size: 1.1rem;">Playwright Bridge</div>
+                                    <div style="font-size: 0.85rem; opacity: 0.9; margin-top: 0.25rem;">브라우저 자동화</div>
+                                </div>
+                                <div class="module-body">
+                                    <div class="tool-item">🖱️ browser_navigate</div>
+                                    <div class="tool-item">📸 browser_snapshot</div>
+                                    <div class="tool-item">⌨️ browser_type</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Sequential Thinking 모듈 -->
+                            <div class="module-card unified" data-module="sequential">
+                                <div class="module-header" style="background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);">
+                                    <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">🧠</div>
+                                    <div style="font-weight: 700; font-size: 1.1rem;">Sequential Thinking</div>
+                                    <div style="font-size: 0.85rem; opacity: 0.9; margin-top: 0.25rem;">단계별 추론</div>
+                                </div>
+                                <div class="module-body">
+                                    <div class="tool-item">💭 sequentialthinking</div>
+                                    <div style="margin-top: 0.5rem; padding: 0.5rem; background: rgba(6, 182, 212, 0.1); border-radius: 6px; font-size: 0.85rem;">
+                                        Tree-of-Thoughts 지원
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 2rem; padding: 1.5rem; background: rgba(59, 130, 246, 0.1); border-radius: 12px; border-left: 4px solid var(--pillar-truth);">
+                            <div style="font-weight: 700; margin-bottom: 0.5rem; color: var(--pillar-truth);">✅ 통합 모드의 4대 핵심 효과</div>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-top: 1rem;">
+                                <div style="padding: 1rem; background: white; border-radius: 8px;">
+                                    <div style="font-weight: 600; margin-bottom: 0.25rem;">🕊️ 운영 마찰 제거 (孝 100%)</div>
+                                    <div style="font-size: 0.9rem; color: var(--text-secondary);">단일 진입점으로 복잡성 제거</div>
+                                </div>
+                                <div style="padding: 1rem; background: white; border-radius: 8px;">
+                                    <div style="font-weight: 600; margin-bottom: 0.25rem;">🌉 구조적 우아함 (美 100%)</div>
+                                    <div style="font-size: 0.9rem; color: var(--text-secondary);">코드 중복 제거, 모듈 재사용</div>
+                                </div>
+                                <div style="padding: 1rem; background: white; border-radius: 8px;">
+                                    <div style="font-weight: 600; margin-bottom: 0.25rem;">⚔️ 기술적 확실성 (眞 100%)</div>
+                                    <div style="font-size: 0.9rem; color: var(--text-secondary);">표준 평가 기준, 일관된 Trinity Score</div>
+                                </div>
+                                <div style="padding: 1rem; background: white; border-radius: 8px;">
+                                    <div style="font-weight: 600; margin-bottom: 0.25rem;">🛡️ 자율 거버넌스 (善 100%)</div>
+                                    <div style="font-size: 0.9rem; color: var(--text-secondary);">Antigravity 자동 연동, 실시간 투명성</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 분리 모드 뷰 -->
+                    <div id="separated-view" style="display: none;">
+                        <div style="text-align: center; margin-bottom: 2rem;">
+                            <div style="display: inline-block; padding: 1.5rem 2rem; background: var(--bg-secondary); border-radius: 12px; border: 2px dashed var(--border-color);">
+                                <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">📦</div>
+                                <div style="font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem;">분산 구조 (Before)</div>
+                                <div style="font-size: 0.9rem; color: var(--text-secondary);">각 모듈이 독립 서버로 작동</div>
+                            </div>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                            <div class="module-card separated" data-module="core">
+                                <div style="text-align: center; padding: 1rem; background: var(--bg-secondary); border-radius: 8px; border: 2px solid var(--border-color);">
+                                    <div style="font-size: 1.2rem; margin-bottom: 0.5rem;">⚔️</div>
+                                    <div style="font-weight: 600;">Core Tools</div>
+                                    <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem;">독립 서버</div>
+                                </div>
+                            </div>
+                            
+                            <div class="module-card separated" data-module="trinity">
+                                <div style="text-align: center; padding: 1rem; background: var(--bg-secondary); border-radius: 8px; border: 2px solid var(--border-color);">
+                                    <div style="font-size: 1.2rem; margin-bottom: 0.5rem;">⚖️</div>
+                                    <div style="font-weight: 600;">Trinity Score</div>
+                                    <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem;">독립 서버</div>
+                                </div>
+                            </div>
+                            
+                            <div class="module-card separated" data-module="skills">
+                                <div style="text-align: center; padding: 1rem; background: var(--bg-secondary); border-radius: 8px; border: 2px solid var(--border-color);">
+                                    <div style="font-size: 1.2rem; margin-bottom: 0.5rem;">🛡️</div>
+                                    <div style="font-weight: 600;">Afo Skills</div>
+                                    <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem;">독립 서버</div>
+                                </div>
+                            </div>
+                            
+                            <div class="module-card separated" data-module="context7">
+                                <div style="text-align: center; padding: 1rem; background: var(--bg-secondary); border-radius: 8px; border: 2px solid var(--border-color);">
+                                    <div style="font-size: 1.2rem; margin-bottom: 0.5rem;">📚</div>
+                                    <div style="font-weight: 600;">Context7</div>
+                                    <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem;">독립 서버</div>
+                                </div>
+                            </div>
+                            
+                            <div class="module-card separated" data-module="playwright">
+                                <div style="text-align: center; padding: 1rem; background: var(--bg-secondary); border-radius: 8px; border: 2px solid var(--border-color);">
+                                    <div style="font-size: 1.2rem; margin-bottom: 0.5rem;">🌐</div>
+                                    <div style="font-weight: 600;">Playwright</div>
+                                    <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem;">독립 서버</div>
+                                </div>
+                            </div>
+                            
+                            <div class="module-card separated" data-module="sequential">
+                                <div style="text-align: center; padding: 1rem; background: var(--bg-secondary); border-radius: 8px; border: 2px solid var(--border-color);">
+                                    <div style="font-size: 1.2rem; margin-bottom: 0.5rem;">🧠</div>
+                                    <div style="font-weight: 600;">Sequential</div>
+                                    <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem;">독립 서버</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 2rem; padding: 1.5rem; background: rgba(239, 68, 68, 0.1); border-radius: 12px; border-left: 4px solid #ef4444;">
+                            <div style="font-weight: 700; margin-bottom: 0.5rem; color: #ef4444;">⚠️ 분리 모드의 문제점</div>
+                            <ul style="margin: 0; padding-left: 1.5rem; color: var(--text-secondary);">
+                                <li>여러 서버 등록 필요 (운영 마찰 증가)</li>
+                                <li>코드 중복 발생 (read_file 등)</li>
+                                <li>평가 기준 불일치 (Trinity Score 분산)</li>
+                                <li>관리 복잡도 증가</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        

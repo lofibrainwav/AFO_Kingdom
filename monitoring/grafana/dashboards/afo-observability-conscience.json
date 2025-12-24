@@ -62,7 +62,7 @@
         "type": "stat",
         "targets": [
           {
-            "expr": "afo_report_ssot_gate_fail_total{job=\"afo_ci_quality\"}",
+            "expr": "afo_report_ssot_gate_fail_24h{job=\"afo_ci_quality\"}",
             "refId": "A"
           }
         ],
@@ -228,8 +228,8 @@
         "type": "graph",
         "targets": [
           {
-            "expr": "increase(afo_report_ssot_gate_fail_total{job=\"afo_ci_quality\"}[1d])",
-            "legendFormat": "SSOT 실패",
+            "expr": "afo_report_ssot_gate_fail_24h{job=\"afo_ci_quality\"}",
+            "legendFormat": "SSOT 실패 (24h)",
             "refId": "A"
           },
           {
@@ -284,7 +284,7 @@
             {
               "matcher": {
                 "id": "byName",
-                "options": "SSOT 실패"
+                "options": "SSOT 실패 (24h)"
               },
               "properties": [
                 {
@@ -403,8 +403,8 @@
             "refId": "A"
           },
           {
-            "expr": "increase(afo_report_ssot_gate_fail_total{job=\"afo_ci_quality\"}[7d])",
-            "legendFormat": "SSOT 위반 (7일)",
+            "expr": "afo_report_ssot_gate_fail_24h{job=\"afo_ci_quality\"}",
+            "legendFormat": "SSOT 위반 (24h)",
             "refId": "B"
           },
           {

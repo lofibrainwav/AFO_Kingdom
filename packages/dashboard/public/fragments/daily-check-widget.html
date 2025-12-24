@@ -1,0 +1,258 @@
+
+            <h2 class="section-title">✅ 지속 체크리스트 - 늘 확인해야 할 항목들</h2>
+            
+            <div class="card" style="background: linear-gradient(135deg, var(--pillar-truth) 0%, var(--pillar-goodness) 100%); color: white; border: none; margin-bottom: 2rem;">
+                <div class="card-header">
+                    <h3 class="card-title" style="color: white;">🔄 실시간 모니터링 대시보드</h3>
+                    <button onclick="refreshAllChecks()" style="padding: 0.5rem 1rem; background: rgba(255,255,255,0.2); color: white; border: 2px solid white; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.85rem;">
+                        🔄 전체 새로고침
+                    </button>
+                </div>
+                <div style="padding: 1.5rem;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                        <div style="padding: 1rem; background: rgba(255,255,255,0.15); border-radius: 8px; text-align: center;">
+                            <div style="font-size: 2rem; font-weight: 700;" id="check-trinity-score">-</div>
+                            <div style="font-size: 0.9rem; opacity: 0.9; margin-top: 0.5rem;">Trinity Score</div>
+                            <div style="font-size: 0.75rem; opacity: 0.8; margin-top: 0.25rem;" id="check-trinity-status">확인 중...</div>
+                        </div>
+                        <div style="padding: 1rem; background: rgba(255,255,255,0.15); border-radius: 8px; text-align: center;">
+                            <div style="font-size: 2rem; font-weight: 700;" id="check-organs-health">-</div>
+                            <div style="font-size: 0.9rem; opacity: 0.9; margin-top: 0.5rem;">오장육부 건강도</div>
+                            <div style="font-size: 0.75rem; opacity: 0.8; margin-top: 0.25rem;" id="check-organs-status">확인 중...</div>
+                        </div>
+                        <div style="padding: 1rem; background: rgba(255,255,255,0.15); border-radius: 8px; text-align: center;">
+                            <div style="font-size: 2rem; font-weight: 700;" id="check-mcp-tools">-</div>
+                            <div style="font-size: 0.9rem; opacity: 0.9; margin-top: 0.5rem;">MCP 도구</div>
+                            <div style="font-size: 0.75rem; opacity: 0.8; margin-top: 0.25rem;" id="check-mcp-status">확인 중...</div>
+                        </div>
+                        <div style="padding: 1rem; background: rgba(255,255,255,0.15); border-radius: 8px; text-align: center;">
+                            <div style="font-size: 2rem; font-weight: 700;" id="check-integrity">-</div>
+                            <div style="font-size: 0.9rem; opacity: 0.9; margin-top: 0.5rem;">무결성 점수</div>
+                            <div style="font-size: 0.75rem; opacity: 0.8; margin-top: 0.25rem;" id="check-integrity-status">확인 중...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">📋 골든 룰 체크리스트 (Rule #-1 ~ Rule #3)</h3>
+                    <span class="badge badge-info">매일 확인</span>
+                </div>
+                <div id="golden-rules-checklist">
+                    <div class="principle-item" data-rule="rule-minus-1">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <span class="principle-number">Rule #-1</span>
+                                <strong>무기 점검:</strong> MCP Tools 가용 상태 점검
+                                <br><small style="color: var(--text-secondary);">모든 작업 시작 전 MCP 도구의 상태를 확인합니다</small>
+                            </div>
+                            <div>
+                                <span class="check-status" data-status="pending" id="rule-minus-1-status">⏳</span>
+                                <button onclick="checkRule('rule-minus-1')" style="margin-left: 0.5rem; padding: 0.4rem 0.8rem; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; font-size: 0.75rem;">
+                                    확인
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="principle-item" data-rule="rule-0">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <span class="principle-number">Rule #0</span>
+                                <strong>지피지기:</strong> Context7 지식 베이스 정찰
+                                <br><small style="color: var(--text-secondary);">왕국의 정체성과 아키텍처를 먼저 파악합니다</small>
+                            </div>
+                            <div>
+                                <span class="check-status" data-status="pending" id="rule-0-status">⏳</span>
+                                <button onclick="checkRule('rule-0')" style="margin-left: 0.5rem; padding: 0.4rem 0.8rem; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; font-size: 0.75rem;">
+                                    확인
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="principle-item" data-rule="rule-1">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <span class="principle-number">Rule #1</span>
+                                <strong>Trinity Routing:</strong> Trinity Score ≥ 90 AND Risk Score ≤ 10
+                                <br><small style="color: var(--text-secondary);">조건 충족 시 AUTO_RUN, 미충족 시 ASK</small>
+                            </div>
+                            <div>
+                                <span class="check-status" data-status="pending" id="rule-1-status">⏳</span>
+                                <button onclick="checkRule('rule-1')" style="margin-left: 0.5rem; padding: 0.4rem 0.8rem; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; font-size: 0.75rem;">
+                                    확인
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="principle-item" data-rule="rule-2">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <span class="principle-number">Rule #2</span>
+                                <strong>DRY_RUN:</strong> 위험 작업 시뮬레이션 선행
+                                <br><small style="color: var(--text-secondary);">dry_run=True 시뮬레이션 후 SSE 로그 스트리밍</small>
+                            </div>
+                            <div>
+                                <span class="check-status" data-status="pending" id="rule-2-status">⏳</span>
+                                <button onclick="checkRule('rule-2')" style="margin-left: 0.5rem; padding: 0.4rem 0.8rem; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; font-size: 0.75rem;">
+                                    확인
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="principle-item" data-rule="rule-3">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <span class="principle-number">Rule #3</span>
+                                <strong>Historian:</strong> 의사결정 결과 영구 기록
+                                <br><small style="color: var(--text-secondary);">모든 의사결정을 Historian 모듈에 기록</small>
+                            </div>
+                            <div>
+                                <span class="check-status" data-status="pending" id="rule-3-status">⏳</span>
+                                <button onclick="checkRule('rule-3')" style="margin-left: 0.5rem; padding: 0.4rem 0.8rem; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; font-size: 0.75rem;">
+                                    확인
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">🔍 시스템 건강도 체크리스트</h3>
+                    <span class="badge badge-success">자동 업데이트</span>
+                </div>
+                <div id="system-health-checklist">
+                    <div class="principle-item" data-check="api-server">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <span class="principle-number">1.</span>
+                                <strong>API 서버 (8010 포트):</strong> FastAPI 서버 실행 상태
+                            </div>
+                            <span class="check-status" data-status="pending" id="check-api-server">⏳</span>
+                        </div>
+                    </div>
+
+                    <div class="principle-item" data-check="redis">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <span class="principle-number">2.</span>
+                                <strong>Redis (Heart):</strong> 캐시 및 세션 관리
+                            </div>
+                            <span class="check-status" data-status="pending" id="check-redis">⏳</span>
+                        </div>
+                    </div>
+
+                    <div class="principle-item" data-check="postgres">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <span class="principle-number">3.</span>
+                                <strong>PostgreSQL (Brain):</strong> 데이터베이스 연결 상태
+                            </div>
+                            <span class="check-status" data-status="pending" id="check-postgres">⏳</span>
+                        </div>
+                    </div>
+
+                    <div class="principle-item" data-check="ollama">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <span class="principle-number">4.</span>
+                                <strong>Ollama (Digestive):</strong> 로컬 LLM 서비스
+                            </div>
+                            <span class="check-status" data-status="pending" id="check-ollama">⏳</span>
+                        </div>
+                    </div>
+
+                    <div class="principle-item" data-check="qdrant">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <span class="principle-number">5.</span>
+                                <strong>Qdrant (Lungs):</strong> 벡터 데이터베이스
+                            </div>
+                            <span class="check-status" data-status="pending" id="check-qdrant">⏳</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">📊 기술적 부채 진행 상황</h3>
+                    <span class="badge badge-warning">주기적 확인</span>
+                </div>
+                <div id="debt-progress-checklist">
+                    <div class="principle-item">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <span class="principle-number">1.</span>
+                                <strong>4계층 아키텍처 타입 오류:</strong> 451개 중 246개 잔존 (68% 감소)
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <div style="width: 150px; height: 8px; background: var(--bg-secondary); border-radius: 4px; overflow: hidden;">
+                                    <div style="height: 100%; background: linear-gradient(90deg, #f97316 0%, #16a34a 100%); width: 68%; transition: width 0.5s;"></div>
+                                </div>
+                                <span style="font-size: 0.85rem; color: var(--text-secondary);">68% 완료</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="principle-item">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <span class="principle-number">2.</span>
+                                <strong>기술적 부채 항목:</strong> 8개 중 3개 완료, 5개 진행 중
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <div style="width: 150px; height: 8px; background: var(--bg-secondary); border-radius: 4px; overflow: hidden;">
+                                    <div style="height: 100%; background: linear-gradient(90deg, #16a34a 0%, #f97316 100%); width: 37.5%; transition: width 0.5s;"></div>
+                                </div>
+                                <span style="font-size: 0.85rem; color: var(--text-secondary);">3/8 완료</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">⏰ 자동 체크 스케줄</h3>
+                </div>
+                <div style="padding: 1rem;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                        <div style="padding: 1rem; background: var(--bg-secondary); border-radius: 8px;">
+                            <div style="font-weight: 600; margin-bottom: 0.5rem;">🔄 실시간 (30초)</div>
+                            <div style="font-size: 0.85rem; color: var(--text-secondary);">
+                                • 오장육부 건강도<br>
+                                • 시스템 메트릭
+                            </div>
+                        </div>
+                        <div style="padding: 1rem; background: var(--bg-secondary); border-radius: 8px;">
+                            <div style="font-weight: 600; margin-bottom: 0.5rem;">⏱️ 1분마다</div>
+                            <div style="font-size: 0.85rem; color: var(--text-secondary);">
+                                • Trinity Score<br>
+                                • MCP 도구 상태
+                            </div>
+                        </div>
+                        <div style="padding: 1rem; background: var(--bg-secondary); border-radius: 8px;">
+                            <div style="font-weight: 600; margin-bottom: 0.5rem;">📅 매일</div>
+                            <div style="font-size: 0.85rem; color: var(--text-secondary);">
+                                • 무결성 체크리스트<br>
+                                • 기술적 부채 진행 상황
+                            </div>
+                        </div>
+                        <div style="padding: 1rem; background: var(--bg-secondary); border-radius: 8px;">
+                            <div style="font-weight: 600; margin-bottom: 0.5rem;">📆 주간</div>
+                            <div style="font-size: 0.85rem; color: var(--text-secondary);">
+                                • 종합 건강 진단<br>
+                                • 성능 최적화 검토
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        

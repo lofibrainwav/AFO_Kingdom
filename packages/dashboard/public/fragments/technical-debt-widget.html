@@ -1,0 +1,41 @@
+
+            <h2 class="section-title">📊 왕국의 기술적 부채 (Technical Debt)</h2>
+            
+            <div class="card" style="background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); color: white; border: none; margin-bottom: 2rem;">
+                <div class="card-header">
+                    <h3 class="card-title" style="color: white;">⚠️ 기술적 부채 현황</h3>
+                </div>
+                <div style="padding: 1.5rem; text-align: center;">
+                    <p style="font-size: 1.1rem; margin-bottom: 1rem; opacity: 0.95;">
+                        기술적 부채는 시스템의 건강도를 나타내는 중요한 지표입니다.<br>
+                        각 부채 항목은 眞·善·美·孝·永 5기둥 철학에 따라 평가되고 관리됩니다.
+                    </p>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-top: 1.5rem;">
+                        <div style="padding: 1rem; background: rgba(255,255,255,0.15); border-radius: 8px;">
+                            <div style="font-size: 2rem; font-weight: 700;" id="debt-total-count">8</div>
+                            <div style="font-size: 0.9rem; opacity: 0.9;">총 부채 항목</div>
+                        </div>
+                        <div style="padding: 1rem; background: rgba(255,255,255,0.15); border-radius: 8px;">
+                            <div style="font-size: 2rem; font-weight: 700;" id="debt-in-progress">5</div>
+                            <div style="font-size: 0.9rem; opacity: 0.9;">진행 중</div>
+                        </div>
+                        <div style="padding: 1rem; background: rgba(255,255,255,0.15); border-radius: 8px;">
+                            <div style="font-size: 2rem; font-weight: 700;" id="debt-completed">3</div>
+                            <div style="font-size: 0.9rem; opacity: 0.9;">완료</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="technical-debt-filters" style="margin-bottom: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+                <button onclick="filterDebtByCategory('all')" class="debt-filter-btn active" data-category="all">전체</button>
+                <button onclick="filterDebtByCategory('시스템 아키텍처')" class="debt-filter-btn" data-category="시스템 아키텍처">시스템 아키텍처</button>
+                <button onclick="filterDebtByCategory('MCP 서버')" class="debt-filter-btn" data-category="MCP 서버">MCP 서버</button>
+                <button onclick="filterDebtByCategory('스킬')" class="debt-filter-btn" data-category="스킬">스킬</button>
+                <button onclick="filterDebtByCategory('지식 베이스')" class="debt-filter-btn" data-category="지식 베이스">지식 베이스</button>
+            </div>
+
+            <div id="technical-debt-list">
+                <!-- 기술적 부채 항목들이 동적으로 생성됩니다 -->
+            </div>
+        

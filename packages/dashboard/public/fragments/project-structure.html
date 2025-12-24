@@ -1,0 +1,95 @@
+
+            <h2 class="section-title">📦 프로젝트 구조</h2>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">📊 전체 통계</h3>
+                </div>
+                <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin: 20px 0;">
+                    <div class="stat-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 10px; text-align: center;">
+                        <div style="font-size: 2.5em; font-weight: bold; margin-bottom: 5px;">1,506</div>
+                        <div style="font-size: 0.9em; opacity: 0.9;">Python 파일</div>
+                    </div>
+                    <div class="stat-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 10px; text-align: center;">
+                        <div style="font-size: 2.5em; font-weight: bold; margin-bottom: 5px;">5,439</div>
+                        <div style="font-size: 0.9em; opacity: 0.9;">TypeScript/TSX</div>
+                    </div>
+                    <div class="stat-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 10px; text-align: center;">
+                        <div style="font-size: 2.5em; font-weight: bold; margin-bottom: 5px;">1,005</div>
+                        <div style="font-size: 0.9em; opacity: 0.9;">Markdown 문서</div>
+                    </div>
+                    <div class="stat-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 10px; text-align: center;">
+                        <div style="font-size: 2.5em; font-weight: bold; margin-bottom: 5px;">4</div>
+                        <div style="font-size: 0.9em; opacity: 0.9;">주요 패키지</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">🏗️ 패키지 구조</h3>
+                </div>
+                <div class="mermaid">
+graph TB
+    subgraph Core["packages/afo-core/ - FastAPI 백엔드"]
+        API[API Server<br>포트 8010]
+        Routers[24개 라우터]
+        Services[24개 서비스]
+        Domain[Domain Layer]
+    end
+    
+    subgraph Frontend["packages/dashboard/ - Next.js"]
+        NextJS[Next.js App<br>포트 3000]
+        Components[110개 컴포넌트]
+    end
+    
+    subgraph Trinity["packages/trinity-os/"]
+        TrinityCore[Trinity OS Core]
+        Docs[67개 문서]
+    end
+    
+    subgraph AICPA["packages/aicpa-core/"]
+        AICPAModule[AICPA Module<br>포트 3005]
+    end
+    
+    NextJS --&gt; API
+    Components --&gt; API
+    AICPAModule --&gt; API
+    API --&gt; Services
+    Services --&gt; Domain
+    Domain --&gt; TrinityCore
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">📁 주요 디렉토리</h3>
+                </div>
+                <ul class="principle-list">
+                    <li class="principle-item">
+                        <span class="principle-number">1.</span>
+                        <strong>packages/afo-core/</strong> - FastAPI 백엔드
+                        <br><span style="color: var(--text-secondary); font-size: 0.9em;">API 서버, 라우터, 서비스, 도메인 로직</span>
+                    </li>
+                    <li class="principle-item">
+                        <span class="principle-number">2.</span>
+                        <strong>packages/dashboard/</strong> - Next.js 프론트엔드
+                        <br><span style="color: var(--text-secondary); font-size: 0.9em;">React 컴포넌트, 인터랙티브 UI</span>
+                    </li>
+                    <li class="principle-item">
+                        <span class="principle-number">3.</span>
+                        <strong>packages/trinity-os/</strong> - Trinity OS
+                        <br><span style="color: var(--text-secondary); font-size: 0.9em;">철학 엔진, 문서화</span>
+                    </li>
+                    <li class="principle-item">
+                        <span class="principle-number">4.</span>
+                        <strong>docs/</strong> - 문서화
+                        <br><span style="color: var(--text-secondary); font-size: 0.9em;">SSOT, 아키텍처, 가이드</span>
+                    </li>
+                </ul>
+                <p style="margin-top: 20px;">
+                    <a href="docs/PROJECT_STRUCTURE_COMPLETE.md" target="_blank" class="doc-link">📄 프로젝트 구조 완전 문서</a> |
+                    <a href="docs/ARCHITECTURE_MAP.md" target="_blank" class="doc-link">🗺️ 아키텍처 지도</a>
+                </p>
+            </div>
+        

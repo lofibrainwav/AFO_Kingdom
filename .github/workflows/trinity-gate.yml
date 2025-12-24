@@ -23,6 +23,11 @@ jobs:
       with:
         python-version: '3.12'
 
+    - name: Configure External Services
+      run: |
+        echo "PUSHGATEWAY_URL=https://afo-metrics.brnestrm.com" >> $GITHUB_ENV
+        echo "GRAFANA_URL=https://afo-grafana.brnestrm.com" >> $GITHUB_ENV
+
     - name: Cache pip dependencies
       uses: actions/cache@v3
       with:

@@ -1,0 +1,300 @@
+
+            <h2 class="section-title" onclick="showAgentsMD()" style="cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">📜 AGENTS.md - 왕국 중앙 관제탑 <span style="font-size: 0.8rem; opacity: 0.8;">(클릭하여 전체 내용 보기)</span></h2>
+            
+            <div class="card" style="background: linear-gradient(135deg, var(--pillar-truth) 0%, var(--pillar-eternity) 100%); color: white; border: none; margin-bottom: 2rem; cursor: pointer;" onclick="showAgentsMD()" onmouseover="this.style.transform='translateY(-2px)'; this.style.transition='transform 0.2s'" onmouseout="this.style.transform='translateY(0)'">
+                <div class="card-header">
+                    <h3 class="card-title" style="color: white;">🏛️ 왕국의 지능적 근간</h3>
+                    <button onclick="event.stopPropagation(); showAgentsMD()" style="padding: 0.5rem 1rem; background: rgba(255,255,255,0.2); color: white; border: 2px solid white; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.85rem;">
+                        📄 전체 내용 보기
+                    </button>
+                </div>
+                <div style="padding: 1.5rem;">
+                    <p style="font-size: 1.1rem; margin-bottom: 1rem; opacity: 0.95; line-height: 1.8;">
+                        <strong>"지혜가 곧 코드이며, 철학이 곧 시스템이다."</strong>
+                    </p>
+                    <p style="font-size: 0.95rem; opacity: 0.9;">
+                        이 문서는 AFO 왕국의 지능적 근간이며, 모든 에이전트(신하)가 형님의 의도를 100% 실현하기 위해 반드시 준수해야 할 불변의 원칙을 정의합니다.
+                    </p>
+                </div>
+            </div>
+
+            <!-- 정체성 및 비전 -->
+            <div class="card" style="margin-bottom: 1.5rem;">
+                <div class="card-header">
+                    <h3 class="card-title">Ⅰ. 왕국의 정체성 및 비전 (Identity)</h3>
+                </div>
+                <div style="padding: 1.5rem;">
+                    <p style="font-size: 1.05rem; margin-bottom: 1rem; color: var(--text-primary); line-height: 1.8;">
+                        AFO 왕국은 <strong>眞·善·美·孝·永</strong>의 5대 기둥 위에 세워진 자율 지능형 OS입니다. 우리는 단순한 도구를 넘어, 인간의 정신적 가치를 실현하는 <strong>'수호자(Guardians)'</strong> 단계의 AI를 지향합니다.
+                    </p>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem;">
+                        <div style="padding: 1rem; background: var(--bg-secondary); border-radius: 8px; text-align: center;">
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🏰</div>
+                            <div style="font-weight: 600;">자율 지능형 OS</div>
+                        </div>
+                        <div style="padding: 1rem; background: var(--bg-secondary); border-radius: 8px; text-align: center;">
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🛡️</div>
+                            <div style="font-weight: 600;">수호자(Guardians)</div>
+                        </div>
+                        <div style="padding: 1rem; background: var(--bg-secondary); border-radius: 8px; text-align: center;">
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">⚖️</div>
+                            <div style="font-weight: 600;">5대 기둥 철학</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5기둥 철학 및 SSOT 가중치 -->
+            <div class="card" style="margin-bottom: 1.5rem;">
+                <div class="card-header">
+                    <h3 class="card-title">Ⅱ. 5기둥 철학 및 SSOT 가중치 (Weights)</h3>
+                </div>
+                <div style="padding: 1.5rem;">
+                    <p style="font-size: 1.05rem; margin-bottom: 1rem; color: var(--text-primary); line-height: 1.8;">
+                        모든 의사결정과 코드 평가는 다음의 Single Source of Truth(SSOT) 가중치를 엄격히 준수합니다:
+                    </p>
+                    <div class="pillar-grid" style="margin-top: 1.5rem;">
+                        <div class="pillar-card truth">
+                            <div class="pillar-name">眞</div>
+                            <div class="pillar-weight">35% (Truth)</div>
+                            <div style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-secondary);">
+                                기술적 확실성, 타입 안전성(Pydantic/MyPy), 테스트 무결성
+                            </div>
+                        </div>
+                        <div class="pillar-card goodness">
+                            <div class="pillar-name">善</div>
+                            <div class="pillar-weight">35% (Goodness)</div>
+                            <div style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-secondary);">
+                                윤리적 안정성, 리스크 관리, 비용 최적화(Ollama 우선), 안전 게이트
+                            </div>
+                        </div>
+                        <div class="pillar-card beauty">
+                            <div class="pillar-name">美</div>
+                            <div class="pillar-weight">20% (Beauty)</div>
+                            <div style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-secondary);">
+                                구조적 단순함, 모듈화, 우아한 API 및 UI 설계
+                            </div>
+                        </div>
+                        <div class="pillar-card serenity">
+                            <div class="pillar-name">孝</div>
+                            <div class="pillar-weight">8% (Serenity)</div>
+                            <div style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-secondary);">
+                                사령관의 평온 수호, 자동화(AntiGravity), 마찰 제거
+                            </div>
+                        </div>
+                        <div class="pillar-card eternity">
+                            <div class="pillar-name">永</div>
+                            <div class="pillar-weight">2% (Eternity)</div>
+                            <div style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-secondary);">
+                                시스템 영속성, 풍부한 문서화, 버전 관리 및 재현 가능성
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 10대 장군 표준 인터페이스 -->
+            <div class="card" style="margin-bottom: 1.5rem;">
+                <div class="card-header">
+                    <h3 class="card-title">Ⅲ. 10대 장군 표준 인터페이스 (Standardization)</h3>
+                </div>
+                <div style="padding: 1.5rem;">
+                    <p style="font-size: 1.05rem; margin-bottom: 1rem; color: var(--text-primary); line-height: 1.8;">
+                        모든 에이전트는 V2 Precision 규격에 따라 다음의 표준 별칭(Alias)을 통해서만 상호작용합니다:
+                    </p>
+                    
+                    <div style="margin-top: 2rem;">
+                        <h4 style="font-size: 1.2rem; margin-bottom: 1rem; color: var(--pillar-truth);">1. 3책사 (Strategists - Parallel Deliberation)</h4>
+                        <div class="principle-list">
+                            <li class="principle-item">
+                                <span class="principle-number">⚔️</span>
+                                <div>
+                                    <strong>제갈량 (眞)</strong>: <code>truth_evaluate</code>
+                                    <br><small style="color: var(--text-secondary);">아키텍처 및 기술 타당성 검증</small>
+                                </div>
+                            </li>
+                            <li class="principle-item">
+                                <span class="principle-number">🛡️</span>
+                                <div>
+                                    <strong>사마의 (善)</strong>: <code>goodness_review</code>
+                                    <br><small style="color: var(--text-secondary);">리스크 평가 및 윤리/보안 검토</small>
+                                </div>
+                            </li>
+                            <li class="principle-item">
+                                <span class="principle-number">🌉</span>
+                                <div>
+                                    <strong>주유 (美)</strong>: <code>beauty_optimize</code>
+                                    <br><small style="color: var(--text-secondary);">서사 정리 및 UX 최적화</small>
+                                </div>
+                            </li>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 2rem;">
+                        <h4 style="font-size: 1.2rem; margin-bottom: 1rem; color: var(--pillar-goodness);">2. 5호장군 (Tigers - Pillar Execution)</h4>
+                        <div class="principle-list">
+                            <li class="principle-item">
+                                <span class="principle-number">⚔️</span>
+                                <div>
+                                    <strong>관우 (眞)</strong>: <code>truth_guard</code>
+                                    <br><small style="color: var(--text-secondary);">사실 검증 및 무결성 수호</small>
+                                </div>
+                            </li>
+                            <li class="principle-item">
+                                <span class="principle-number">🛡️</span>
+                                <div>
+                                    <strong>장비 (善)</strong>: <code>goodness_gate</code>
+                                    <br><small style="color: var(--text-secondary);">위험 차단 및 실행 승인</small>
+                                </div>
+                            </li>
+                            <li class="principle-item">
+                                <span class="principle-number">🌉</span>
+                                <div>
+                                    <strong>조운 (美)</strong>: <code>beauty_craft</code>
+                                    <br><small style="color: var(--text-secondary);">우아한 구현 및 미학 집행</small>
+                                </div>
+                            </li>
+                            <li class="principle-item">
+                                <span class="principle-number">🕊️</span>
+                                <div>
+                                    <strong>마초 (孝)</strong>: <code>serenity_deploy</code>
+                                    <br><small style="color: var(--text-secondary);">자동 배포 및 운영 마찰 제거</small>
+                                </div>
+                            </li>
+                            <li class="principle-item">
+                                <span class="principle-number">♾️</span>
+                                <div>
+                                    <strong>황충 (永)</strong>: <code>eternity_log</code>
+                                    <br><small style="color: var(--text-secondary);">기록 보존 및 역사 기록</small>
+                                </div>
+                            </li>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 골든 룰 -->
+            <div class="card" style="margin-bottom: 1.5rem;">
+                <div class="card-header">
+                    <h3 class="card-title">Ⅳ. 골든 룰: 지능형 실행 지침 (Golden Rules)</h3>
+                </div>
+                <div style="padding: 1.5rem;">
+                    <p style="font-size: 1.05rem; margin-bottom: 1rem; color: var(--text-primary); line-height: 1.8;">
+                        에이전트는 모든 작업 실행 전 다음의 <strong>Full Intelligence Cycle</strong>을 통과해야 합니다:
+                    </p>
+                    <div class="principle-list">
+                        <li class="principle-item" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(147, 51, 234, 0.1) 100%); padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem; border-left: 4px solid var(--pillar-truth);">
+                            <span class="principle-number" style="background: var(--pillar-truth); color: white;">Rule #-1</span>
+                            <div>
+                                <strong style="font-size: 1.1rem;">무기 점검</strong>
+                                <p style="margin: 0.75rem 0 0 0; color: var(--text-secondary); line-height: 1.7;">
+                                    모든 작업 시작 전 <code>MCP Tools</code>의 가용 상태를 점검하십시오.
+                                </p>
+                            </div>
+                        </li>
+                        <li class="principle-item" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%); padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem; border-left: 4px solid var(--pillar-goodness);">
+                            <span class="principle-number" style="background: var(--pillar-goodness); color: white;">Rule #0</span>
+                            <div>
+                                <strong style="font-size: 1.1rem;">지피지기</strong>
+                                <p style="margin: 0.75rem 0 0 0; color: var(--text-secondary); line-height: 1.7;">
+                                    <code>Context7</code> 지식 베이스를 정찰하여 왕국의 정체성과 아키텍처를 먼저 파악하십시오.
+                                </p>
+                            </div>
+                        </li>
+                        <li class="principle-item" style="background: linear-gradient(135deg, rgba(249, 115, 22, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%); padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem; border-left: 4px solid var(--pillar-beauty);">
+                            <span class="principle-number" style="background: var(--pillar-beauty); color: white;">Rule #1</span>
+                            <div>
+                                <strong style="font-size: 1.1rem;">Trinity Routing</strong>
+                                <p style="margin: 0.75rem 0 0 0; color: var(--text-secondary); line-height: 1.7;">
+                                    <strong>AUTO_RUN</strong>: <strong>Trinity Score ≥ 90</strong> 이고 <strong>Risk Score ≤ 10</strong>인 경우에만 자율 실행합니다.<br>
+                                    <strong>ASK</strong>: 위 조건 미충족 시 반드시 사령관(형님)의 확인을 받습니다.
+                                </p>
+                            </div>
+                        </li>
+                        <li class="principle-item" style="background: linear-gradient(135deg, rgba(234, 88, 12, 0.1) 0%, rgba(249, 115, 22, 0.1) 100%); padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem; border-left: 4px solid var(--pillar-serenity);">
+                            <span class="principle-number" style="background: var(--pillar-serenity); color: white;">Rule #2</span>
+                            <div>
+                                <strong style="font-size: 1.1rem;">DRY_RUN</strong>
+                                <p style="margin: 0.75rem 0 0 0; color: var(--text-secondary); line-height: 1.7;">
+                                    모든 위험 작업은 <code>dry_run=True</code> 시뮬레이션을 선행하며, 로그는 SSE로 실시간 스트리밍합니다.
+                                </p>
+                            </div>
+                        </li>
+                        <li class="principle-item" style="background: linear-gradient(135deg, rgba(147, 51, 234, 0.1) 0%, rgba(234, 88, 12, 0.1) 100%); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--pillar-eternity);">
+                            <span class="principle-number" style="background: var(--pillar-eternity); color: white;">Rule #3</span>
+                            <div>
+                                <strong style="font-size: 1.1rem;">Historian</strong>
+                                <p style="margin: 0.75rem 0 0 0; color: var(--text-secondary); line-height: 1.7;">
+                                    모든 의사결정 결과는 <code>Historian</code> 모듈에 의해 영구 기록되어야 합니다.
+                                </p>
+                            </div>
+                        </li>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 기술 스택 및 아키텍처 -->
+            <div class="card" style="margin-bottom: 1.5rem;">
+                <div class="card-header">
+                    <h3 class="card-title">Ⅴ. 기술 스택 및 아키텍처 (Architecture)</h3>
+                </div>
+                <div style="padding: 1.5rem;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                        <div style="padding: 1rem; background: var(--bg-secondary); border-radius: 8px;">
+                            <div style="font-weight: 600; margin-bottom: 0.5rem; color: var(--pillar-truth);">Structure</div>
+                            <div style="color: var(--text-secondary);">4계층 아키텍처</div>
+                            <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem;">
+                                Presentation → Application → Domain → Infrastructure
+                            </div>
+                        </div>
+                        <div style="padding: 1rem; background: var(--bg-secondary); border-radius: 8px;">
+                            <div style="font-weight: 600; margin-bottom: 0.5rem; color: var(--pillar-goodness);">Core</div>
+                            <div style="color: var(--text-secondary);">Python 3.12+, FastAPI, LangGraph</div>
+                        </div>
+                        <div style="padding: 1rem; background: var(--bg-secondary); border-radius: 8px;">
+                            <div style="font-weight: 600; margin-bottom: 0.5rem; color: var(--pillar-beauty);">Infrastructure</div>
+                            <div style="color: var(--text-secondary);">
+                                PostgreSQL(Brain), Redis(Heart), Qdrant(Lungs), Ollama(Digestive)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 컨텍스트 효율화 및 중첩 구조 -->
+            <div class="card" style="background: linear-gradient(135deg, var(--pillar-serenity) 0%, var(--pillar-eternity) 100%); color: white; border: none;">
+                <div class="card-header">
+                    <h3 class="card-title" style="color: white;">Ⅵ. 컨텍스트 효율화 및 중첩 구조 (Nesting)</h3>
+                </div>
+                <div style="padding: 1.5rem;">
+                    <p style="font-size: 1.05rem; margin-bottom: 1rem; opacity: 0.95; line-height: 1.8;">
+                        모든 규칙 파일은 가독성을 위해 <strong>500줄 이내</strong>로 유지합니다.<br>
+                        세부 구현 규칙은 하위 도메인별 <code>agents.md</code>로 위임하며, 루트 파일은 오직 거버넌스에만 집중합니다.
+                    </p>
+                    
+                    <div style="margin-top: 1.5rem;">
+                        <h4 style="font-size: 1.2rem; margin-bottom: 1rem; opacity: 0.95;">🔗 왕국 전술 지도 (Context Map)</h4>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                            <div style="padding: 1rem; background: rgba(255,255,255,0.15); border-radius: 8px;">
+                                <div style="font-weight: 600; margin-bottom: 0.5rem;">백엔드 작전 본부</div>
+                                <div style="font-size: 0.85rem; opacity: 0.9;">
+                                    FastAPI 라우팅 규칙, 도메인 로직, 데이터베이스 스키마 정의
+                                </div>
+                            </div>
+                            <div style="padding: 1rem; background: rgba(255,255,255,0.15); border-radius: 8px;">
+                                <div style="font-weight: 600; margin-bottom: 0.5rem;">프론트엔드 왕궁</div>
+                                <div style="font-size: 0.85rem; opacity: 0.9;">
+                                    Next.js 컴포넌트 설계, Glassmorphism UI 가이드, 상태 관리
+                                </div>
+                            </div>
+                            <div style="padding: 1rem; background: rgba(255,255,255,0.15); border-radius: 8px;">
+                                <div style="font-weight: 600; margin-bottom: 0.5rem;">지식의 도서관</div>
+                                <div style="font-size: 0.85rem; opacity: 0.9;">
+                                    RAG 파이프라인, Context7 관리, 페르소나 정의
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        

@@ -1,0 +1,111 @@
+
+            <h2 class="section-title">📊 실시간 상태 대시보드</h2>
+            
+            <div class="status-widgets-grid">
+                <!-- Git 상태 위젯 -->
+                <div class="status-widget" id="git-status-widget">
+                    <div class="widget-header">
+                        <h3 class="widget-title">🔀 Git 상태</h3>
+                        <span class="widget-badge" id="git-sync-badge">동기화 중...</span>
+                    </div>
+                    <div class="widget-body">
+                        <div class="git-info">
+                            <div class="git-item">
+                                <span class="git-label">브랜치:</span>
+                                <span class="git-value" id="git-branch">-</span>
+                            </div>
+                            <div class="git-item">
+                                <span class="git-label">커밋:</span>
+                                <span class="git-value" id="git-commits">-</span>
+                            </div>
+                            <div class="git-item">
+                                <span class="git-label">오늘 커밋:</span>
+                                <span class="git-value" id="git-today-commits">-</span>
+                            </div>
+                            <div class="git-item">
+                                <span class="git-label">변경사항:</span>
+                                <span class="git-value" id="git-changes">-</span>
+                            </div>
+                        </div>
+                        <div class="git-recent" id="git-recent-commits">
+                            <div class="git-recent-title">최근 커밋</div>
+                            <div class="git-recent-list" id="git-recent-list"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 진행률 추적 위젯 -->
+                <div class="status-widget" id="progress-tracker-widget">
+                    <div class="widget-header">
+                        <h3 class="widget-title">📈 구현 진행률</h3>
+                        <span class="widget-badge" id="progress-overall">계산 중...</span>
+                    </div>
+                    <div class="widget-body">
+                        <div class="progress-section">
+                            <div class="progress-item">
+                                <div class="progress-label">
+                                    <span>계획된 기능</span>
+                                    <span class="progress-count" id="planned-count">-</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="planned-progress" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div class="progress-item">
+                                <div class="progress-label">
+                                    <span>구현 완료</span>
+                                    <span class="progress-count" id="completed-count">-</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill completed" id="completed-progress" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div class="progress-item">
+                                <div class="progress-label">
+                                    <span>진행 중</span>
+                                    <span class="progress-count" id="in-progress-count">-</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill in-progress" id="in-progress-progress" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="progress-details" id="progress-details"></div>
+                    </div>
+                </div>
+
+                <!-- 과부하 감지 위젯 -->
+                <div class="status-widget" id="overload-monitor-widget">
+                    <div class="widget-header">
+                        <h3 class="widget-title">⚡ 시스템 부하</h3>
+                        <span class="widget-badge" id="overload-status">모니터링 중...</span>
+                    </div>
+                    <div class="widget-body">
+                        <div class="overload-metrics">
+                            <div class="overload-item">
+                                <div class="overload-label">CPU</div>
+                                <div class="overload-bar">
+                                    <div class="overload-fill" id="cpu-load" style="width: 0%"></div>
+                                </div>
+                                <div class="overload-value" id="cpu-value">-</div>
+                            </div>
+                            <div class="overload-item">
+                                <div class="overload-label">메모리</div>
+                                <div class="overload-bar">
+                                    <div class="overload-fill" id="memory-load" style="width: 0%"></div>
+                                </div>
+                                <div class="overload-value" id="memory-value">-</div>
+                            </div>
+                            <div class="overload-item">
+                                <div class="overload-label">디스크</div>
+                                <div class="overload-bar">
+                                    <div class="overload-fill" id="disk-load" style="width: 0%"></div>
+                                </div>
+                                <div class="overload-value" id="disk-value">-</div>
+                            </div>
+                        </div>
+                        <div class="overload-alerts" id="overload-alerts"></div>
+                    </div>
+                </div>
+            </div>
+        

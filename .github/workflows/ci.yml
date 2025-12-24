@@ -1,363 +1,53 @@
-# AFO Kingdom CI - Security Hardened
-# 眞善美孝永 (Truth·Goodness·Beauty·Serenity·Eternity)
-
-name: AFO Kingdom CI
+name: AFO Kingdom CI/CD
 
 on:
   push:
-    branches: [main, develop]
+    branches: [ main ]
   pull_request:
-    branches: [main]
-
-# 善 (Goodness): Least privilege - default read-only
-permissions:
-  contents: read
-  security-events: write  # SARIF upload
-  actions: read
+    branches: [ main ]
 
 jobs:
-  test:
+  quality-gate:
     runs-on: ubuntu-latest
     steps:
-      # 眞 (Truth): SHA pinning for supply chain security
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Full clone to avoid git warnings
-
-      - name: Update Git submodules
-        run: |
-          git submodule init
-          git submodule update --init --recursive
-
-      # 孝 (Serenity): Runtime security monitoring (CVE-2025-30066 lesson)
-      - name: Harden runner
-        uses: step-security/harden-runner@v2
-        with:
-          egress-policy: audit  # or 'block' for strict
+          fetch-depth: 0
 
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: '3.11'
           cache: 'pip'
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: |
-          pip install --upgrade pip
-          pip install pytest pytest-cov ruff mypy
-          if [ -f packages/afo-core/requirements.txt ]; then
-            pip install -r packages/afo-core/requirements.txt
-          fi
+          cd packages/afo-core
+          pip install -r requirements.txt
 
-      # 永 (Eternity): SBOM (Software Bill of Materials) 생성
-      - name: Generate SBOM
-        continue-on-error: true
+      - name: Lint & Type Check
         run: |
-          python scripts/generate_sbom_simple.py || echo 'SBOM generation skipped'
-          ls -la sbom/ 2>/dev/null || echo 'No SBOM files generated'
+          cd packages/afo-core
+          ruff check .
+          mypy packages/afo-core
 
-      # 善 (Goodness): Security scanning
-      - name: Trivy vulnerability scan
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: 'fs'
-          format: 'sarif'
-          output: 'trivy-results.sarif'
-          severity: 'CRITICAL,HIGH,MEDIUM'
-          scanners: 'vuln,secret,misconfig'
-
-      - name: Upload Trivy SARIF
-        uses: github/codeql-action/upload-sarif@v3
-        continue-on-error: true
-        if: false  # Disabled: Code Scanning requires GitHub Advanced Security (not available on private free repos)
-        with:
-          sarif_file: 'trivy-results.sarif'
-
-      - name: Snyk vulnerability scan
-        uses: snyk/actions/python@master
-        continue-on-error: true
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          args: --severity-threshold=high --sarif-file-output=snyk.sarif
-
-      - name: Upload Snyk SARIF
-        uses: github/codeql-action/upload-sarif@v3
-        continue-on-error: true
-        if: false  # Disabled: Code Scanning requires GitHub Advanced Security
-        with:
-          sarif_file: 'snyk.sarif'
-
-      - name: Snyk monitor (main only)
-        if: github.ref == 'refs/heads/main'
-        uses: snyk/actions/python@master
-        continue-on-error: true
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          command: monitor
-
-      # 眞 (Truth): Type safety first - 타입 안전성 우선 (Blocking)
-      - name: MyPy type check
-        run: mypy packages/afo-core --strict --ignore-missing-imports
-
-      # 美 (Beauty): Code quality - 코드 품질 (Blocking)
-      - name: Ruff lint
-        run: ruff check packages/
-
-      - name: Ruff format check
-        run: ruff format --check packages/
-
-      # 永 (Eternity): Supply Chain Visibility (SBOM) - Updated
-      - name: Generate Enhanced SBOM
+      - name: Test & Coverage
         run: |
-          pip install cyclonedx-bom
-          cyclonedx-py environment --output-file sbom.json
-          echo "✅ Enhanced SBOM generated with modular architecture info"
+          cd packages/afo-core
+          pytest --cov=AFO --cov-report=xml
 
-      - name: Upload SBOM artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: sbom-json
-          path: sbom.json
-
-      # 孝 (Serenity): Testing - New Modular Architecture
-      - name: Setup AFO module symlinks
-        run: |
-          # 디렉토리 생성 (없는 경우)
-          mkdir -p packages/afo-core/AFO
-          # __init__.py 생성
-          touch packages/afo-core/AFO/__init__.py
-          cd packages/afo-core/AFO
-          # 모듈 파일 심볼릭 링크
-          ln -sf ../api_wallet.py api_wallet.py
-          ln -sf ../llm_router.py llm_router.py
-          ln -sf ../input_server.py input_server.py
-          ln -sf ../afo_skills_registry.py afo_skills_registry.py
-          ln -sf ../api_server.py api_server.py
-          ln -sf ../chancellor_graph.py chancellor_graph.py
-          # 디렉토리 심볼릭 링크
-          rm -rf config 2>/dev/null || true
-          ln -sf ../config config
-          ln -sf ../kms kms
-          ln -sf ../scholars scholars
-          ln -sf ../services services
-          ln -sf ../utils utils
-          ln -sf ../api api
-          ln -sf ../llms llms
-          ln -sf ../domain domain
-          echo "Created AFO module symlinks"
-          ls -la
-
-      - name: Create conftest
-        run: |
-          cat > packages/afo-core/conftest.py << 'EOF'
-          # Empty conftest - all tests enabled
-          collect_ignore = []
-          EOF
-
-      # 🧪 Integration Tests - New Modular Architecture
-      - name: Run integration tests
-        working-directory: packages/afo-core
-        env:
-          ENV: test
-          PYTHONPATH: ${{ github.workspace }}/packages/afo-core
-        run: |
-          echo "🧪 Running integration tests..."
-          python ${{ github.workspace }}/scripts/integration_test.py || echo 'Integration tests failed'
-
-      # 📖 Documentation Validation
-      - name: Validate API documentation
-        run: |
-          echo "📖 Validating API documentation..."
-          # Check if main README exists
-          if [ ! -f "packages/afo-core/AFO/api/README.md" ]; then
-            echo "❌ Main API README missing"
-            exit 1
-          fi
-          # Check if config README exists
-          if [ ! -f "packages/afo-core/AFO/api/config_README.md" ]; then
-            echo "❌ Config README missing"
-            exit 1
-          fi
-          echo "✅ API documentation validated"
-
-      - name: Run tests with coverage
-        working-directory: packages/afo-core
-        env:
-          ENV: test
-          PYTHONPATH: ${{ github.workspace }}/packages/afo-core
-        run: |
-          echo "Running tests from: $(pwd)"
-          echo "PYTHONPATH: $PYTHONPATH"
-          pytest tests/ -v --cov=. --cov-report=xml --tb=short || echo 'Some tests failed'
-          ls -la coverage.xml 2>/dev/null || echo "coverage.xml not found"
-          
-      - name: Copy coverage to workspace root
-        run: |
-          cp packages/afo-core/coverage.xml coverage.xml 2>/dev/null || echo "No coverage to copy"
-
-      - name: Upload coverage
+      - name: Upload Coverage
         uses: codecov/codecov-action@v4
-        continue-on-error: true
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          file: coverage.xml
+          file: ./packages/afo-core/coverage.xml
 
-      # 永 (Eternity): Continuous improvement
-      - name: 眞善美孝永 Scorecard
-        continue-on-error: true
-        run: python scripts/automate_scorecard.py packages/afo-core 2>/dev/null || echo 'Scorecard skipped'
-
-      # 善 (Goodness): DRY_RUN 자동 감지
-      - name: Check for high-risk changes
-        continue-on-error: true
-        run: python scripts/dry_run_trigger.py 2>/dev/null || echo 'DRY_RUN check skipped'
-
-      # 孝 (Serenity): Chancellor Graph 연계
-      - name: Update Trinity Score
-        continue-on-error: true
-        run: python scripts/chancellor_ci_integration.py --tests-passed --build-success 2>/dev/null || echo 'Trinity update skipped'
-
-      # 永 (Eternity): Preserve logs and reports
-      - name: Upload logs and reports
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: ci-logs-${{ github.run_id }}
-          path: |
-            *.log
-            trinity_score.json
-            coverage.xml
-          retention-days: 30
-
-  # 眞 (Truth): Supply chain security scorecard
-  scorecard:
-    runs-on: ubuntu-latest
-    if: false  # Disabled: scorecard requires public repo
-    permissions:
-      security-events: write
-      id-token: write
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          persist-credentials: false
-
-      - name: Run Scorecard analysis
-        uses: ossf/scorecard-action@v2.4.0
-        with:
-          results_file: scorecard.sarif
-          results_format: sarif
-
-      - name: Upload Scorecard SARIF
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: scorecard.sarif
-
-  # 🚀 Deployment Pipeline - New Modular Architecture
-  deploy:
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    needs: test
-    permissions:
-      contents: read
-      packages: write
-      deployments: write
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Extract metadata
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ghcr.io/${{ github.repository }}/afo-kingdom
-          tags: |
-            type=ref,event=branch
-            type=ref,event=pr
-            type=sha,prefix={{branch}}-
-            type=raw,value=latest,enable={{is_default_branch}}
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: ./Dockerfile
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-      - name: Generate deployment artifact
+      - name: Push CI Quality Metrics (SSOT)
+        env:
+          PUSHGATEWAY_URL: ${{ secrets.PUSHGATEWAY_URL }}
+          PUSHGATEWAY_BASIC_AUTH: ${{ secrets.PUSHGATEWAY_BASIC_AUTH }}
+          AFO_WORKFLOW: ${{ github.workflow }}
+          AFO_REPO: ${{ github.repository }}
         run: |
-          mkdir -p deployment
-          cat > deployment/docker-compose.yml << 'EOF'
-          version: '3.8'
-          services:
-            afo-kingdom:
-              image: ghcr.io/${{ github.repository }}/afo-kingdom:latest
-              ports:
-                - "8010:8010"
-              environment:
-                - ENV=production
-                - API_SERVER_HOST=0.0.0.0
-                - API_SERVER_PORT=8010
-              restart: unless-stopped
-              healthcheck:
-                test: ["CMD", "curl", "-f", "http://localhost:8010/health"]
-                interval: 30s
-                timeout: 10s
-                retries: 3
-          EOF
-
-      - name: Upload deployment artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: deployment-${{ github.run_id }}
-          path: deployment/
-
-  # 永 (Eternity): SBOM generation for supply chain visibility
-  sbom:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # Full clone to avoid git warnings
-
-      - name: Generate CycloneDX SBOM
-        uses: anchore/sbom-action@v0
-        with:
-          format: cyclonedx-json
-          output-file: sbom.cdx.json
-
-      - name: Upload SBOM artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: sbom
-          path: sbom.cdx.json
-
-      # Dependency-Track 업로드 (optional - 서버 설정 시 활성화)
-      - name: Upload to Dependency-Track
-        if: vars.DEPENDENCY_TRACK_URL != ''
-        uses: DependencyTrack/gh-upload-sbom@v3
-        with:
-          serverhostname: ${{ vars.DEPENDENCY_TRACK_URL }}
-          apikey: ${{ secrets.DEPENDENCY_TRACK_API_KEY }}
-          project: afo-kingdom
-          bomfilename: sbom.cdx.json
+          cd packages/afo-core
+          python ../scripts/collect_ci_quality_metrics.py

@@ -1,0 +1,86 @@
+
+            <h2 class="section-title">Git 상태</h2>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">저장소 정보</h3>
+                    <button onclick="updateGitStatus()" style="padding: 0.5rem 1rem; background: var(--pillar-truth); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.85rem;">
+                        🔄 새로고침
+                    </button>
+                </div>
+                <div id="git-basic-info" class="status-grid">
+                    <div class="status-item">
+                        <div class="status-label">Branch</div>
+                        <div class="status-value" id="git-branch">로딩 중...</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-label">HEAD</div>
+                        <div class="status-value" id="git-head">로딩 중...</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-label">전체 커밋</div>
+                        <div class="status-value" id="git-total-commits">로딩 중...</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-label">오늘 커밋</div>
+                        <div class="status-value" id="git-today-commits">로딩 중...</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-label">동기화 상태</div>
+                        <div class="status-value" id="git-synced">로딩 중...</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-label">추적 파일</div>
+                        <div class="status-value" id="git-tracked-files">로딩 중...</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">최근 커밋 (10개)</h3>
+                </div>
+                <div id="git-recent-commits">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>커밋</th>
+                                <th>메시지</th>
+                            </tr>
+                        </thead>
+                        <tbody id="git-commits-tbody">
+                            <tr><td colspan="2" style="text-align: center; padding: 2rem;">로딩 중...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">변경 사항</h3>
+                </div>
+                <div id="git-changes">
+                    <div style="padding: 1rem; text-align: center;">로딩 중...</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">저장소 상세 정보</h3>
+                </div>
+                <div id="git-detail-info" class="status-grid">
+                    <div class="status-item">
+                        <div class="status-label">원격 저장소</div>
+                        <div class="status-value" id="git-remote-url">로딩 중...</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-label">사용자</div>
+                        <div class="status-value" id="git-user">로딩 중...</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-label">태그</div>
+                        <div class="status-value" id="git-tags">로딩 중...</div>
+                    </div>
+                </div>
+            </div>
+        

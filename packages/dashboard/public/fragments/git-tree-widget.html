@@ -1,0 +1,103 @@
+
+            <h2 class="section-title">🔍 Git 트리 분석</h2>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">📊 전체 통계</h3>
+                </div>
+                <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin: 20px 0;">
+                    <div class="stat-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 10px; text-align: center;">
+                        <div style="font-size: 2.5em; font-weight: bold; margin-bottom: 5px;">120</div>
+                        <div style="font-size: 0.9em; opacity: 0.9;">총 커밋</div>
+                    </div>
+                    <div class="stat-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 10px; text-align: center;">
+                        <div style="font-size: 2.5em; font-weight: bold; margin-bottom: 5px;">5</div>
+                        <div style="font-size: 0.9em; opacity: 0.9;">개발 일수</div>
+                    </div>
+                    <div class="stat-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 10px; text-align: center;">
+                        <div style="font-size: 2.5em; font-weight: bold; margin-bottom: 5px;">60</div>
+                        <div style="font-size: 0.9em; opacity: 0.9;">최고 활동일</div>
+                    </div>
+                    <div class="stat-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 10px; text-align: center;">
+                        <div style="font-size: 2.5em; font-weight: bold; margin-bottom: 5px;">1,291</div>
+                        <div style="font-size: 0.9em; opacity: 0.9;">추적 파일</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">📈 Phase별 진화 타임라인</h3>
+                </div>
+                <div class="mermaid">
+gantt
+    title AFO Kingdom 개발 타임라인
+    dateFormat YYYY-MM-DD
+    section Phase 0-2
+    Genesis &amp; Setup           :2025-12-16, 2d
+    CI/CD &amp; MCP Integration  :2025-12-17, 1d
+    section Phase 3-9
+    Code Quality &amp; Security   :2025-12-18, 1d
+    Trinity Routing           :2025-12-18, 1d
+    section Phase 12
+    Julie CPA &amp; GenUI         :2025-12-19, 1d
+    section Phase 20+
+    v100.0 &amp; Final Polish     :2025-12-20, 2d
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">🔄 Phase별 진화 과정</h3>
+                </div>
+                <div class="mermaid">
+graph TB
+    Start[Genesis Phase 0] --&gt; Phase2[Phase 2: Family Hub OS]
+    Phase2 --&gt; Phase56[Phase 5-6: Trinity Routing]
+    Phase56 --&gt; Phase6[Phase 6: LLM Transparency]
+    Phase6 --&gt; Phase7[Phase 7: Sensory Control]
+    Phase7 --&gt; Phase8[Phase 8: Governance]
+    Phase8 --&gt; Phase9[Phase 9: Hegemony]
+    Phase9 --&gt; Phase12[Phase 12: Julie CPA]
+    Phase12 --&gt; Phase23[Phase 23-26: Council]
+    Phase23 --&gt; v100[v100.0: Eternal]
+    v100 --&gt; Palace[Digital Royal Palace]
+    
+    style Start fill:#667eea,color:#fff
+    style v100 fill:#28a745,color:#fff
+    style Palace fill:#764ba2,color:#fff
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">🏆 주요 마일스톤</h3>
+                </div>
+                <ul class="principle-list">
+                    <li class="principle-item">
+                        <span class="principle-number">1.</span>
+                        <strong>v100.0 - Eternal Digital Robot Ascended</strong> (2025-12-20)
+                        <br><span style="color: var(--text-secondary); font-size: 0.9em;">커밋: b2e4589 - Perfect Entity 달성</span>
+                    </li>
+                    <li class="principle-item">
+                        <span class="principle-number">2.</span>
+                        <strong>Genesis - Digital Royal Palace</strong> (2025-12-21)
+                        <br><span style="color: var(--text-secondary); font-size: 0.9em;">커밋: 9a533eb - 디지털 왕궁 완성</span>
+                    </li>
+                    <li class="principle-item">
+                        <span class="principle-number">3.</span>
+                        <strong>Sealed Kingdom</strong> (2025-12-20)
+                        <br><span style="color: var(--text-secondary); font-size: 0.9em;">커밋: aee2f1a - 97% Pass 달성</span>
+                    </li>
+                    <li class="principle-item">
+                        <span class="principle-number">4.</span>
+                        <strong>MCP Ecosystem 대통합</strong> (2025-12-17)
+                        <br><span style="color: var(--text-secondary); font-size: 0.9em;">커밋: d856bcb - 眞善美孝永 5기둥 점수 자동 계산</span>
+                    </li>
+                </ul>
+                <p style="margin-top: 20px;">
+                    <a href="docs/git_tree_visualization.html" target="_blank" class="doc-link">📊 상세 Git 트리 시각화 보기</a> |
+                    <a href="docs/GIT_TREE_ANALYSIS.md" target="_blank" class="doc-link">📄 Git 트리 분석 보고서</a>
+                </p>
+            </div>
+        

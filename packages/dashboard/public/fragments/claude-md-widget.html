@@ -1,0 +1,49 @@
+
+            <h2 class="section-title" onclick="showClaudeMD()" style="cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">🤖 CLAUDE.md - Claude 에이전트 지침서 <span style="font-size: 0.8rem; opacity: 0.8;">(클릭하여 전체 내용 보기)</span></h2>
+            
+            <div class="card" style="background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%); color: white; border: none; margin-bottom: 2rem; cursor: pointer;" onclick="showClaudeMD()" onmouseover="this.style.transform='translateY(-2px)'; this.style.transition='transform 0.2s'" onmouseout="this.style.transform='translateY(0)'">
+                <div class="card-header">
+                    <h3 class="card-title" style="color: white;">🧠 Claude (Anthropic) 에이전트 전용 왕국 지침서</h3>
+                    <button onclick="event.stopPropagation(); showClaudeMD()" style="padding: 0.5rem 1rem; background: rgba(255,255,255,0.2); color: white; border: 2px solid white; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.85rem;">
+                        📄 전체 내용 보기
+                    </button>
+                </div>
+                <div style="padding: 1.5rem;">
+                    <p style="font-size: 1.1rem; margin-bottom: 1rem; opacity: 0.95; line-height: 1.8;">
+                        <strong>"眞善美孝永 철학 준수, 안전·정확한 코드 변경"</strong>
+                    </p>
+                    <p style="font-size: 0.95rem; opacity: 0.9;">
+                        이 문서는 AFO 왕국의 Claude 에이전트를 위한 작업 지침서입니다. AGENTS.md와 호환되며, Claude의 특성(Tree-of-Thoughts, 논리적 계획)을 반영합니다.
+                    </p>
+                </div>
+            </div>
+
+            <!-- 하위 CLAUDE.md 링크 -->
+            <div class="card" style="margin-bottom: 1.5rem;">
+                <div class="card-header">
+                    <h3 class="card-title">🔗 하위 도메인별 CLAUDE.md</h3>
+                </div>
+                <div style="padding: 1.5rem;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                        <div style="padding: 1rem; background: rgba(16, 185, 129, 0.1); border-radius: 8px; border: 1px solid rgba(16, 185, 129, 0.3);">
+                            <div style="font-weight: 600; margin-bottom: 0.5rem; color: #10b981;">백엔드 작전 본부</div>
+                            <div style="font-size: 0.85rem; opacity: 0.9;">
+                                <code>./packages/afo-core/CLAUDE.md</code>
+                            </div>
+                        </div>
+                        <div style="padding: 1rem; background: rgba(59, 130, 246, 0.1); border-radius: 8px; border: 1px solid rgba(59, 130, 246, 0.3);">
+                            <div style="font-weight: 600; margin-bottom: 0.5rem; color: #3b82f6;">프론트엔드 왕궁</div>
+                            <div style="font-size: 0.85rem; opacity: 0.9;">
+                                <code>./packages/dashboard/CLAUDE.md</code>
+                            </div>
+                        </div>
+                        <div style="padding: 1rem; background: rgba(139, 92, 246, 0.1); border-radius: 8px; border: 1px solid rgba(139, 92, 246, 0.3);">
+                            <div style="font-weight: 600; margin-bottom: 0.5rem; color: #8b5cf6;">지식의 도서관</div>
+                            <div style="font-size: 0.85rem; opacity: 0.9;">
+                                <code>./packages/trinity-os/CLAUDE.md</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
