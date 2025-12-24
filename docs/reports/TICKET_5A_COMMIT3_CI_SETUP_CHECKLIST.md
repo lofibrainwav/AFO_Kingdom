@@ -106,6 +106,8 @@ docker exec <container> env | grep REVALIDATE_SECRET
 
 ### A) 배포 URL POST 동작 확인
 
+**멀티라인 버전 (그대로 복붙 가능):**
+
 ```bash
 export REVALIDATE_URL="https://<your-domain>/api/revalidate"
 export REVALIDATE_SECRET="(배포 환경과 동일한 값)"
@@ -115,6 +117,8 @@ curl -i -X POST "$REVALIDATE_URL" \
   -H "content-type: application/json" \
   -d '{"fragmentKey":"home-hero"}'
 ```
+
+> **주의:** 위의 커맨드는 **멀티라인**으로 작성되어 있어 그대로 복붙하면 정상 실행됩니다. 한 줄로 붙이면 bash에서 실행 실패할 수 있습니다.
 
 **예상 결과:**
 - ✅ 200 OK: `{"ok": true, "revalidated": ["/fragments/home-hero.html"]}`
@@ -283,6 +287,8 @@ Value: [배포 환경과 동일한 값]
 - [ ] 대소문자 정확
 - [ ] 배포 환경 값과 동일
 
+> **주의:** 위의 템플릿은 줄바꿈이 포함되어 있어 복붙 시 실수를 줄일 수 있습니다.
+
 #### Variable 설정
 
 ```
@@ -293,8 +299,10 @@ Value: https://<your-domain>/api/revalidate
 **체크리스트:**
 - [ ] `https://`로 시작
 - [ ] `/api/revalidate` 경로 포함
-- [ ] 마지막 슬래시 없음
+- [ ] 마지막 슬래시 없음 (`/api/revalidate/` ❌)
 - [ ] 실제 배포 도메인 사용 (프리뷰/스테이징 아님)
+
+> **주의:** 위의 템플릿은 줄바꿈이 포함되어 있어 복붙 시 실수를 줄일 수 있습니다. 마지막 슬래시(`/`)는 포함하지 마세요.
 
 ---
 

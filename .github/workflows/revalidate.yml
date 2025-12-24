@@ -40,6 +40,9 @@ jobs:
             echo "Missing vars.REVALIDATE_URL (e.g., https://<domain>/api/revalidate)" >&2
             exit 1
           fi
+          # Trailing slash 제거 (308 리다이렉트/차단 방지)
+          REVALIDATE_URL="${REVALIDATE_URL%/}"
+          echo "REVALIDATE_URL=${REVALIDATE_URL}" >> "$GITHUB_ENV"
 
       - name: Detect changed fragment keys
         id: detect
