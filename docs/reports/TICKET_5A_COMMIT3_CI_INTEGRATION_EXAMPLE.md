@@ -23,20 +23,40 @@
 > - GitHub **Variables** (또는 Secrets): `REVALIDATE_URL`
 >   예: `https://afo.kingdom/api/revalidate` (실서버 엔드포인트)
 
+### FACTS
+
+- CI에서 "변경된 fragments/*.html"만 찾아 **해당 key만 revalidate**하는 안전 자동화.
+- Secret/URL은 **하드코딩 금지**:
+  - `secrets.REVALIDATE_SECRET` 필수
+  - `vars.REVALIDATE_URL` 권장 (예: `https://your-domain.com/api/revalidate`)
+- 변경 파일이 많아도 폭주 방지 위해 **상한(MAX_KEYS)** 적용.
+
+### PASTE (최종 붙여넣기 버전)
+
 ```yaml
-name: Revalidate changed fragments
+name: Revalidate fragments (dynamic)
 
 on:
   push:
     branches: [main]
     paths:
-      - "packages/dashboard/public/fragments/**"
-      - "packages/dashboard/src/app/docs/**"
-      - "docs/**"
+      - "fragments/**"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: revalidate-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   revalidate:
     runs-on: ubuntu-latest
+
+    env:
+      REVALIDATE_URL: ${{ vars.REVALIDATE_URL }}
+      MAX_KEYS: "25"
 
     steps:
       - name: Checkout
@@ -44,59 +64,79 @@ jobs:
         with:
           fetch-depth: 2
 
+      - name: Guard - required secret/url
+        shell: bash
+        run: |
+          if [[ -z "${{ secrets.REVALIDATE_SECRET }}" ]]; then
+            echo "Missing secrets.REVALIDATE_SECRET" >&2
+            exit 1
+          fi
+          if [[ -z "${REVALIDATE_URL}" ]]; then
+            echo "Missing vars.REVALIDATE_URL (e.g., https://<domain>/api/revalidate)" >&2
+            exit 1
+          fi
+
       - name: Detect changed fragment keys
         id: detect
         shell: bash
         run: |
-          set -euo pipefail
-
           BEFORE="${{ github.event.before }}"
           AFTER="${{ github.sha }}"
 
-          # diff가 실패하면(예: 첫 커밋/얕은 히스토리) fallback
-          CHANGED="$(git diff --name-only "$BEFORE" "$AFTER" 2>/dev/null || git diff --name-only HEAD~1 HEAD || true)"
-          echo "Changed files:"
-          echo "$CHANGED"
-
-          # fragments/*.html 에서 key 추출
-          KEYS=""
-          while IFS= read -r f; do
-            [[ "$f" =~ ^packages/dashboard/public/fragments/.*\.html$ ]] || continue
-            key="$(basename "$f" .html)"
-
-            # API와 동일한 정규식으로 1차 검증 (공백 없음)
-            if [[ "$key" =~ ^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$ ]]; then
-              KEYS="$KEYS $key"
-            fi
-          done <<< "$CHANGED"
-
-          # 중복 제거 + 최대 20개 제한(폭주 방지)
-          KEYS="$(echo "$KEYS" | tr ' ' '\n' | awk 'NF' | sort -u | head -n 20 | tr '\n' ' ')"
-
-          echo "fragment_keys=$KEYS" >> "$GITHUB_OUTPUT"
-          echo "Detected fragment keys: $KEYS"
-
-      - name: Trigger revalidate API (per fragment)
-        if: steps.detect.outputs.fragment_keys != ''
-        env:
-          REVALIDATE_URL: ${{ vars.REVALIDATE_URL }}
-          REVALIDATE_SECRET: ${{ secrets.REVALIDATE_SECRET }}
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          if [[ -z "${REVALIDATE_URL:-}" ]]; then
-            echo "Missing vars.REVALIDATE_URL"
-            exit 1
+          # 첫 푸시/예외 케이스 대비
+          if [[ -z "$BEFORE" || "$BEFORE" == "0000000000000000000000000000000000000000" ]]; then
+            BEFORE="HEAD~1"
+            AFTER="HEAD"
           fi
 
-          for key in ${{ steps.detect.outputs.fragment_keys }}; do
-            echo "Revalidating: $key"
-            curl -fS -X POST "$REVALIDATE_URL" \
-              -H "content-type: application/json" \
-              -H "x-revalidate-secret: $REVALIDATE_SECRET" \
-              -d "{\"fragmentKey\":\"$key\"}"
+          CHANGED="$(git diff --name-only "$BEFORE" "$AFTER" || true)"
+          KEYS=""
+
+          while IFS= read -r f; do
+            [[ -z "$f" ]] && continue
+            [[ "$f" != fragments/* ]] && continue
+            [[ "$f" != *.html ]] && continue
+
+            key="$(basename "$f" .html)"
+
+            # fragmentKey와 동일한 정규식 (Commit 1과 일치)
+            if [[ ! "$key" =~ ^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$ ]]; then
+              echo "Skip invalid key derived from file: $f" >&2
+              continue
+            fi
+
+            KEYS="$KEYS $key"
+          done <<< "$CHANGED"
+
+          # 상한 적용
+          COUNT=0
+          OUT=""
+          for k in $KEYS; do
+            COUNT=$((COUNT+1))
+            if [[ "$COUNT" -le "${MAX_KEYS}" ]]; then
+              OUT="$OUT $k"
+            fi
           done
+
+          echo "keys=$OUT" >> "$GITHUB_OUTPUT"
+
+      - name: Call revalidate API
+        if: steps.detect.outputs.keys != ''
+        shell: bash
+        run: |
+          echo "Revalidating keys:${{ steps.detect.outputs.keys }}"
+          for key in ${{ steps.detect.outputs.keys }}; do
+            payload='{"fragmentKey":"'"$key"'"}'
+            curl --fail-with-body -sS -X POST "${REVALIDATE_URL}" \
+              -H "x-revalidate-secret: ${{ secrets.REVALIDATE_SECRET }}" \
+              -H "content-type: application/json" \
+              -d "${payload}"
+            echo ""
+          done
+
+      - name: No-op (no fragment changes)
+        if: steps.detect.outputs.keys == ''
+        run: echo "No fragment changes detected; skipping."
 ```
 
 ---
