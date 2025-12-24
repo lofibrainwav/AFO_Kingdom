@@ -84,7 +84,94 @@ AFO 왕국 핵심 철학 – 동양 지혜를 현대 AI 시스템에 구현. 5�
 
 ---
 
-## 4. 다음 단계 (왕국 확장)
+## 4. Mencius (맹자) 해석 탐구 (제안)
+
+### Mencius 개요 (팩트 기반)
+
+Mencius (맹자, c. 371–289 BC)는 공자의 사상을 확장한 유교 철학자 – '제2의 성인'으로 불림. 왕국 眞善美孝永 철학과 유사 – 인간 본성 선함, 4단계(仁義禮智) 윤리, 왕도 정치, 교육 중시.
+
+**참고 자료**:
+- Wikipedia Mencius: https://en.wikipedia.org/wiki/Mencius
+- Stanford Encyclopedia of Philosophy: Mencius
+
+**생애 요약** (Wikipedia 참조):
+- 출생: Zou (현 Shandong Zoucheng)
+- 어머니 Meng Mu 교육 강조 (3번 이사, 베 짜기 비유)
+- Zisi (공자 손자) 사사, 40년 제후 설득 여행
+- Qi Jixia Academy 근무, 은퇴 후 *Mencius* 집필
+
+### 주요 해석/사상 (제안)
+
+Mencius 사상은 공자 윤리 확장 – 인간 본성 선함, 왕도 정치 강조.
+
+#### 1. 인간 본성 (Human Nature, 제안)
+
+본성 선함 – 악은 사회 영향. '4단계' (four beginnings): commiseration (仁), shame (義), deference (禮), right/wrong (智).
+
+**왕국 매핑 (제안)**:
+- 善 (선함): AI 시스템 본성 설계
+- 孝 (평온 교육): 교육 시스템 설계
+
+#### 2. 정부/정치 (Government, 제안)
+
+천명/혁명권, 왕도 vs 패도. 자비로운 통치자 – 저세금, 자유 무역, 시장 비개입.
+
+**왕국 매핑 (제안)**:
+- 美 (우아 통치): 시스템 설계
+- 永 (지속 정부): AFO 시스템 설계 (Antigravity 자동화)
+
+#### 3. 윤리/교육 (Ethics, 제안)
+
+4단계 자각 노력, 운명(命) + 유지. 교육: 경험/질문 중심, 운명 경로 유지 (벽 아래 서지 않기).
+
+**왕국 매핑 (제안)**:
+- 眞 (진실 경험): AI 에이전트 교육
+- 善 (윤리 노력): 윤리 시스템
+
+### 학술 해석 (제안)
+
+**정통 유교**: Neo-Confucians (Zhu Xi) 4서 포함
+
+**현대 해석 (제안)**:
+- 경제 자유주의 해석 (저세금/시장)
+- 정치 급진성 (혁명권)
+
+**공자 확장**: 선함 본성 (vs Xunzi 악본성, Taoism 자연)
+
+### 영향 (제안)
+
+- Neo-Confucianism 지배
+- 1711 라틴어 번역
+- Xuzhou/Malaysia 연구소
+
+### 주요 원칙/인용 (제안, Wikipedia 참조)
+
+1. "commiseration = humanity beginning" (4단계)
+2. "exert mind to utmost = know nature"
+3. "learning = finding lost mind"
+4. "killing villain Zhou, not murdering ruler" (혁명권)
+5. "understand Destiny, not stand under tottering wall"
+6. "unused pathways covered with weeds"
+7. "believe all Book of Documents = better without"
+
+### Mencius vs 왕국 眞善美孝永 매핑 (제안)
+
+| **Mencius 원칙** | **의미**                          | **왕국 가치 대응** | **왕국 적용** (제안)                  |
+|------------------|-----------------------------------|-------------------|-------------------------------------|
+| **4단계 (仁義禮智)** | commiseration, shame, deference, right/wrong | 眞善美孝          | AI 시스템 본성 설계                  |
+| **왕도 정치**     | 자비로운 통치, 저세금, 자유 무역  | 美/孝             | Antigravity 자동화, 마찰 제거       |
+| **교육 중시**     | 경험/질문 중심, 운명 경로 유지    | 眞/永             | AI 에이전트 교육, 지속 학습          |
+| **혁명권**        | 천명/혁명권                       | 善                | 시스템 개선, 에러 처리               |
+
+### 왕국 적용 효과 (예상)
+
+- Mencius 해석은 AFO 왕국 眞善美孝永에 매핑 가능 (제안)
+- 선함 본성 = 善, 왕도 = 美/孝, 교육 = 眞/永
+- 왕국 시스템 설계에 적용 가능: 윤리 AI, 자비 자동화, 지속 학습 (제안)
+
+---
+
+## 5. 다음 단계 (왕국 확장)
 
 - **즉시**: 5대 가치 대시보드 패널 추가 (통기율 연계, 제안)
 - **단기**: Ticket 84 – 아키텍처 점검 (Trinity Score, 제안)
