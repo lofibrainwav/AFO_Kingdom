@@ -19,6 +19,7 @@ import { GitWidget } from "./widgets/GitWidget";
 import { SystemStatusWidget } from "./widgets/SystemStatusWidget";
 
 import { ROYAL_CONSTANTS } from "../../config/royal_constants";
+import { TrinityEvidenceWidget } from "../genui/TrinityEvidenceWidget";
 // ... existing imports
 
 // Memoize SWR fetcher
@@ -98,9 +99,10 @@ export default function RoyalLayout() {
         {/* 3. Neural Stream & Skills (Split View) */}
         <section className="space-y-8">
           {/* Genesis Widgets Row 1: Quick Status (neu-card style, equal sizes) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <SystemStatusWidget />
             <GitWidget />
+            <TrinityEvidenceWidget />
           </div>
 
           {/* Genesis Widgets Row 2: Treasury & Tax (full-width, equal sizing) */}

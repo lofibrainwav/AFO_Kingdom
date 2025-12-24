@@ -11,7 +11,7 @@ import json
 import logging
 import time
 from collections import defaultdict
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Optional
 
 from ..cache.manager import cache_manager
 
@@ -169,7 +169,7 @@ class LearningEngine:
         self.feedback_queue: asyncio.Queue[dict[str, Any]] = asyncio.Queue()
 
         # Start background learning task
-        asyncio.create_task(self._continuous_learning())
+        self.learning_task = asyncio.create_task(self._continuous_learning())
 
     async def learn_from_decision(
         self,

@@ -278,5 +278,6 @@ Mencius 사상은 공자 윤리 확장 – 인간 본성 선함, 왕도 정치 �
 ---
 
 **참고 자료 링크**:
+
 - [Next.js: revalidatePath](https://nextjs.org/docs/app/api-reference/functions/revalidatePath)
 - [중국어 텍스트 프로젝트: 논어 학而](https://ctext.org/analects/xue-er)

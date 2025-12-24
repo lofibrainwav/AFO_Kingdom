@@ -241,19 +241,23 @@ echo "✅ fragments: https://brnestrm.com/fragments/*.html" && echo "✅ revalid
 ### A안 (prod): `X = brnestrm.com`
 
 **조건**:
+
 - Vercel Project에 커스텀 도메인 연결 완료 후
 - Vercel Env(Production)에 `REVALIDATE_SECRET` 세팅
 
 **GitHub Actions 설정**:
+
 - Secret: `REVALIDATE_SECRET` (Vercel과 **완전 동일**)
 - Variable: `REVALIDATE_URL=https://brnestrm.com/api/revalidate` (마지막 `/` 없이)
 
 ### B안 (staging/preview 먼저): `X = <project>.vercel.app`
 
 **조건**:
+
 - 먼저 vercel.app 도메인으로 검증 성공 → 그 다음 brnestrm.com으로 옮기면 마찰이 제일 적음
 
 **GitHub Actions 설정**:
+
 - Secret: `REVALIDATE_SECRET` (Vercel과 **완전 동일**)
 - Variable: `REVALIDATE_URL=https://<project>.vercel.app/api/revalidate` (마지막 `/` 없이)
 
@@ -296,6 +300,7 @@ curl -i -X POST "${REVALIDATE_URL}" \
 **원인**: 공백/대소문자 포함. Vercel 값 = GitHub Secret = 로컬 export 값 **셋이 동일**해야 함.
 
 **해결**:
+
 - Vercel Production Environment Variables 확인
 - GitHub Secrets 확인 (앞뒤 공백 없음, 대소문자 정확)
 - 로컬 export 값 확인
@@ -305,6 +310,7 @@ curl -i -X POST "${REVALIDATE_URL}" \
 **원인**: URL 끝에 `/` 붙었거나 리다이렉트 발생
 
 **해결**:
+
 - REVALIDATE_URL에서 마지막 `/` 제거 (지금 워크플로우에서 `%/` 제거 넣어둔 건 정답)
 - 로컬 테스트도 마지막 `/` 없이
 
@@ -313,6 +319,7 @@ curl -i -X POST "${REVALIDATE_URL}" \
 **원인**: Cloudflare/WAF가 POST 요청을 차단
 
 **해결**:
+
 - `/api/revalidate`만 예외 룰 필요할 수 있음
 - Cloudflare Dashboard에서 Firewall Rules 확인
 
@@ -321,6 +328,7 @@ curl -i -X POST "${REVALIDATE_URL}" \
 **원인**: 빌드/라우팅 확인 필요
 
 **해결**:
+
 - Vercel Build Log 확인
 - `packages/dashboard/src/app/api/revalidate/route.ts` 파일 존재 확인
 - Next.js 빌드 성공 여부 확인

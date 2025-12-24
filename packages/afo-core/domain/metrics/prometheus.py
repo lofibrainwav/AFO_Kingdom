@@ -5,8 +5,9 @@ Centralized location for all Prometheus metrics to avoid circular imports and du
 
 from __future__ import annotations
 
-from AFO.domain.metrics.trinity_ssot import TrinityWeights
 from prometheus_client import REGISTRY, Counter, Gauge, Histogram
+
+from AFO.domain.metrics.trinity_ssot import TrinityWeights
 
 # ============================================================
 # VibeCoding Metrics (Phase 3.2)

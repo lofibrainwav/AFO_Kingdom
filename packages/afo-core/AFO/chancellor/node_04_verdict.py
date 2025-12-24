@@ -2,8 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
-from AFO.observability.verdict_event import (Decision, VerdictEvent,
-                                             VerdictFlags)
+from AFO.observability.verdict_event import Decision, VerdictEvent, VerdictFlags
 
 if TYPE_CHECKING:
     from collections.abc import Mapping
