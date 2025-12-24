@@ -1,0 +1,57 @@
+
+            <h2 class="section-title">MCP 도구 상세 관리</h2>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">MCP 서버 현황</h3>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button onclick="checkAllMCPTools()" style="padding: 0.5rem 1rem; background: var(--pillar-truth); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                            🔍 전체 연결 상태 확인
+                        </button>
+                        <button onclick="showMCPDefinition()" style="padding: 0.5rem 1rem; background: var(--pillar-beauty); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                            📜 완벽 정의서 보기
+                        </button>
+                    </div>
+                </div>
+                <div id="mcp-tools-list" class="skill-grid" style="grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));">
+                    <!-- JavaScript로 동적 생성 -->
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">새 MCP 도구 추가</h3>
+                </div>
+                <form id="add-mcp-tool-form" style="padding: 1rem;">
+                    <div style="display: grid; gap: 1rem;">
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">MCP 서버 이름</label>
+                            <input type="text" id="mcp-name" autocomplete="organization" required="" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 8px; font-size: 1rem;" placeholder="예: my-custom-mcp">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">명령어 (Command)</label>
+                            <input type="text" id="mcp-command" autocomplete="off" required="" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 8px; font-size: 1rem;" placeholder="예: npx -y @modelcontextprotocol/server-filesystem">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">인자 (Args) - 쉼표로 구분</label>
+                            <input type="text" id="mcp-args" autocomplete="off" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 8px; font-size: 1rem;" placeholder="예: /Users/brnestrm/AFO_Kingdom">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">API 키 (필요한 경우)</label>
+                            <input type="password" id="mcp-api-key" autocomplete="current-password" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 8px; font-size: 1rem;" placeholder="API 키를 입력하세요">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">환경 변수 (JSON 형식)</label>
+                            <textarea id="mcp-env" rows="3" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 8px; font-size: 1rem; font-family: monospace;" placeholder="{&quot;API_KEY&quot;: &quot;your-key&quot;, &quot;WORKSPACE_ROOT&quot;: &quot;/path&quot;}"></textarea>
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">설명</label>
+                            <textarea id="mcp-description" rows="2" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 8px; font-size: 1rem;" placeholder="MCP 서버에 대한 설명을 입력하세요"></textarea>
+                        </div>
+                        <button type="submit" style="padding: 0.75rem 1.5rem; background: linear-gradient(135deg, var(--pillar-truth) 0%, var(--pillar-goodness) 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 1rem; box-shadow: var(--shadow);">
+                            ➕ MCP 도구 추가
+                        </button>
+                    </div>
+                </form>
+            </div>
+        

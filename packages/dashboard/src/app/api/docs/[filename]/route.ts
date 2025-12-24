@@ -11,10 +11,10 @@ import { join } from "path";
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { filename: string } }
+  { params }: { params: Promise<{ filename: string }> }
 ) {
   try {
-    const { filename } = params;
+    const { filename } = await params;
     
     // 허용된 파일명만 처리 (보안)
     const allowedFiles = [

@@ -9,6 +9,8 @@ const nextConfig: NextConfig = {
   
   // 성능 최적화 설정
   experimental: {
+    // Note: Turbopack은 dev 명령어에 --turbo 플래그가 없으면 자동으로 webpack 사용
+    // Next.js 16에서는 experimental.turbo 속성이 없음
     optimizePackageImports: [
       "framer-motion",
       "lucide-react",
@@ -17,6 +19,9 @@ const nextConfig: NextConfig = {
       "@radix-ui/react-slot",
     ],
   },
+  
+  // Turbopack 설정 (Next.js 16 기본 활성화, webpack과 충돌 방지)
+  turbopack: {},
   
   // 번들 최적화
   webpack: (config, { isServer }) => {
@@ -43,12 +48,8 @@ const nextConfig: NextConfig = {
         source: "/api/proxy/:path*",
         destination: `${soulEngineUrl}/:path*`, // Proxy to Soul Engine
       },
-      // Strangler Fig Pattern: Legacy HTML dashboard (port 8000) proxy
-      // This allows gradual migration from kingdom_dashboard.html to Next.js
-      {
-        source: "/docs/legacy/:path*",
-        destination: "http://localhost:8000/:path*",
-      },
+      // Legacy HTML은 public/legacy/로 직접 서빙 (8000 포트 불필요)
+      // Next.js는 public/legacy/*를 자동으로 /legacy/*로 서빙합니다.
     ];
   },
 };

@@ -1,0 +1,64 @@
+
+            <h2 class="section-title">眞善美孝永 - 왕국의 철학</h2>
+            
+            <div class="pillar-grid">
+                <div class="pillar-card truth" data-pillar="truth">
+                    <div class="pillar-name">眞</div>
+                    <div class="pillar-weight">35% (Truth)</div>
+                    <div class="pillar-role">제갈량 - 기술적 확실성</div>
+                    <div class="pillar-hint">클릭하여 상세 보기</div>
+                </div>
+                <div class="pillar-card goodness" data-pillar="goodness">
+                    <div class="pillar-name">善</div>
+                    <div class="pillar-weight">35% (Goodness)</div>
+                    <div class="pillar-role">사마의 - 윤리·안정성</div>
+                    <div class="pillar-hint">클릭하여 상세 보기</div>
+                </div>
+                <div class="pillar-card beauty" data-pillar="beauty">
+                    <div class="pillar-name">美</div>
+                    <div class="pillar-weight">20% (Beauty)</div>
+                    <div class="pillar-role">주유 - 단순함·우아함</div>
+                    <div class="pillar-hint">클릭하여 상세 보기</div>
+                </div>
+                <div class="pillar-card serenity" data-pillar="serenity">
+                    <div class="pillar-name">孝</div>
+                    <div class="pillar-weight">8% (Serenity)</div>
+                    <div class="pillar-role">승상 - 평온 수호</div>
+                    <div class="pillar-hint">클릭하여 상세 보기</div>
+                </div>
+                <div class="pillar-card eternity" data-pillar="eternity">
+                    <div class="pillar-name">永</div>
+                    <div class="pillar-weight">2% (Eternity)</div>
+                    <div class="pillar-role">승상 - 영속성</div>
+                    <div class="pillar-hint">클릭하여 상세 보기</div>
+                </div>
+            </div>
+
+            <!-- 기둥 상세 정보 모달 -->
+            <div id="pillar-modal" class="pillar-modal" onclick="if(event.target === this) closePillarDetails()">
+                <div class="pillar-modal-content" onclick="event.stopPropagation()">
+                    <button onclick="closePillarDetails()" class="pillar-modal-close" aria-label="닫기">×</button>
+                    
+                    <div id="pillar-modal-content">
+                        <div class="text-center p-4">
+                            <div class="spinner"></div>
+                            <p class="mt-2 text-secondary">🧠 Sequential Thinking과 Context7을 통해 상세 정보를 생성 중...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Trinity Score 공식</h3>
+                </div>
+                <p class="trinity-formula">
+                    Trinity Score = 0.35×眞 + 0.35×善 + 0.20×美 + 0.08×孝 + 0.02×永
+                </p>
+                <p class="text-center text-secondary">
+                    AUTO_RUN 조건: Trinity Score ≥ 90 AND Risk Score ≤ 10
+                </p>
+            </div>
+        

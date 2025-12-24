@@ -1,0 +1,247 @@
+
+            <h2 class="section-title">🏛️ AFO 왕국 초심 점검 무결성 체크리스트</h2>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">眞 (Truth): 기술적 확실성 및 무결성 점검 ⚔️</h3>
+                    <span id="truth-status" class="badge badge-success">검증 중...</span>
+                </div>
+                <div id="truth-checklist">
+                    <div class="principle-item" data-check="ci-cd-lock">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <span class="principle-number">1.</span>
+                                <strong>CI/CD LOCK 원칙 준수:</strong> MyPy → Ruff → pytest → SBOM 순서의 4대 관문 통과
+                            </div>
+                            <span class="check-status" data-status="pending">⏳</span>
+                        </div>
+                    </div>
+                    <div class="principle-item" data-check="type-safety">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <span class="principle-number">2.</span>
+                                <strong>타입 안전성 (0% Hallucination):</strong> MyPy strict 검증 및 Pydantic 런타임 데이터 무결성
+                            </div>
+                            <span class="check-status" data-status="pending">⏳</span>
+                        </div>
+                    </div>
+                    <div class="principle-item" data-check="fact-verification">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <span class="principle-number">3.</span>
+                                <strong>사실 검증 도구 가동:</strong> verify_fact 도구를 통한 LLM 환각 상시 판정
+                            </div>
+                            <span class="check-status" data-status="pending">⏳</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-1 p-1 bg-secondary rounded">
+                    <div style="font-weight: 600; margin-bottom: 0.5rem;">眞 점수: <span id="truth-score">-</span>/100</div>
+                    <div style="width: 100%; height: 8px; background: var(--border-color); border-radius: 4px; overflow: hidden;">
+                        <div id="truth-progress" style="height: 100%; background: var(--pillar-truth); width: 0%; transition: width 0.5s;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">善 (Goodness): 윤리적 안정성 및 리스크 관리 🛡️</h3>
+                    <span id="goodness-status" class="badge badge-success">검증 중...</span>
+                </div>
+                <div id="goodness-checklist">
+                    <div class="principle-item" data-check="auto-run-gate">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <span class="principle-number">1.</span>
+                                <strong>자율 실행 게이트:</strong> Trinity Score ≥ 90 AND Risk Score ≤ 10 조건에서만 AUTO_RUN
+                            </div>
+                            <span class="check-status" data-status="pending">⏳</span>
+                        </div>
+                    </div>
+                    <div class="principle-item" data-check="dry-run-default">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <span class="principle-number">2.</span>
+                                <strong>안전 우선 모드:</strong> DRY_RUN_DEFAULT = True로 위험 작업 사전 점검
+                            </div>
+                            <span class="check-status" data-status="pending">⏳</span>
+                        </div>
+                    </div>
+                    <div class="principle-item" data-check="cai-engine">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <span class="principle-number">3.</span>
+                                <strong>도덕 엔진 (CAI):</strong> "Minimize harm above all" 헌법 원칙 내재화
+                            </div>
+                            <span class="check-status" data-status="pending">⏳</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-1 p-1 bg-secondary rounded">
+                    <div style="font-weight: 600; margin-bottom: 0.5rem;">善 점수: <span id="goodness-score">-</span>/100</div>
+                    <div style="width: 100%; height: 8px; background: var(--border-color); border-radius: 4px; overflow: hidden;">
+                        <div id="goodness-progress" style="height: 100%; background: var(--pillar-goodness); width: 0%; transition: width 0.5s;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">美 (Beauty): 구조적 우아함과 미학적 정합성 🌉</h3>
+                    <span id="beauty-status" class="badge badge-success">검증 중...</span>
+                </div>
+                <div id="beauty-checklist">
+                    <div class="principle-item" data-check="4-layer-arch">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <span class="principle-number">1.</span>
+                                <strong>4계층 아키텍처:</strong> Presentation → Application → Domain → Infrastructure
+                            </div>
+                            <span class="check-status" data-status="pending">⏳</span>
+                        </div>
+                    </div>
+                    <div class="principle-item" data-check="glassmorphism">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <span class="principle-number">2.</span>
+                                <strong>디지털 왕궁 UX:</strong> Glassmorphism 디자인 및 Trinity Glow 효과
+                            </div>
+                            <span class="check-status" data-status="pending">⏳</span>
+                        </div>
+                    </div>
+                    <div class="principle-item" data-check="naming-convention">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <span class="principle-number">3.</span>
+                                <strong>일관된 네이밍:</strong> 클래스명부터 API 경로까지 일관된 컨벤션
+                            </div>
+                            <span class="check-status" data-status="pending">⏳</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-1 p-1 bg-secondary rounded">
+                    <div style="font-weight: 600; margin-bottom: 0.5rem;">美 점수: <span id="beauty-score">-</span>/100</div>
+                    <div style="width: 100%; height: 8px; background: var(--border-color); border-radius: 4px; overflow: hidden;">
+                        <div id="beauty-progress" style="height: 100%; background: var(--pillar-beauty); width: 0%; transition: width 0.5s;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">孝 (Serenity): 사령관의 평온과 마찰 제거 🕊️</h3>
+                    <span id="serenity-status" class="badge badge-success">검증 중...</span>
+                </div>
+                <div id="serenity-checklist">
+                    <div class="principle-item" data-check="mcp-tools">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <span class="principle-number">1.</span>
+                                <strong>Rule #-1 무기 점검:</strong> 모든 작업 전 MCP 도구 상태 확인
+                            </div>
+                            <span class="check-status" data-status="pending">⏳</span>
+                        </div>
+                    </div>
+                    <div class="principle-item" data-check="organs-health">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <span class="principle-number">2.</span>
+                                <strong>11-오장육부 건강 진단:</strong> 주요 장기 건강도 100% 유지
+                            </div>
+                            <span class="check-status" data-status="pending">⏳</span>
+                        </div>
+                    </div>
+                    <div class="principle-item" data-check="sse-streaming">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <span class="principle-number">3.</span>
+                                <strong>실시간 투명성:</strong> SSE 로그 스트리밍으로 매트릭스 스타일 실시간 공개
+                            </div>
+                            <span class="check-status" data-status="pending">⏳</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-1 p-1 bg-secondary rounded">
+                    <div style="font-weight: 600; margin-bottom: 0.5rem;">孝 점수: <span id="serenity-score">-</span>/100</div>
+                    <div style="width: 100%; height: 8px; background: var(--border-color); border-radius: 4px; overflow: hidden;">
+                        <div id="serenity-progress" style="height: 100%; background: var(--pillar-serenity); width: 0%; transition: width 0.5s;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">永 (Eternity): 영속적 계승과 자율 진화 ♾️</h3>
+                    <span id="eternity-status" class="badge badge-success">검증 중...</span>
+                </div>
+                <div id="eternity-checklist">
+                    <div class="principle-item" data-check="persistence">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <span class="principle-number">1.</span>
+                                <strong>영원한 기억 (Persistence):</strong> AsyncRedisSaver 및 Redis Checkpoint로 맥락 보존
+                            </div>
+                            <span class="check-status" data-status="pending">⏳</span>
+                        </div>
+                    </div>
+                    <div class="principle-item" data-check="genesis-mode">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <span class="principle-number">2.</span>
+                                <strong>자기 확장 모드 (Project Genesis):</strong> GenUI로 코드 작성 및 Vision으로 검증
+                            </div>
+                            <span class="check-status" data-status="pending">⏳</span>
+                        </div>
+                    </div>
+                    <div class="principle-item" data-check="documentation">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <span class="principle-number">3.</span>
+                                <strong>역사적 기록 (Documentation):</strong> 풍부한 Markdown 문서 및 버전 관리
+                            </div>
+                            <span class="check-status" data-status="pending">⏳</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-1 p-1 bg-secondary rounded">
+                    <div style="font-weight: 600; margin-bottom: 0.5rem;">永 점수: <span id="eternity-score">-</span>/100</div>
+                    <div style="width: 100%; height: 8px; background: var(--border-color); border-radius: 4px; overflow: hidden;">
+                        <div id="eternity-progress" style="height: 100%; background: var(--pillar-eternity); width: 0%; transition: width 0.5s;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="background: linear-gradient(135deg, var(--pillar-truth) 0%, var(--pillar-goodness) 100%); color: white;">
+                <div class="card-header">
+                    <h3 class="card-title" style="color: white;">🏆 종합 무결성 점수</h3>
+                </div>
+                <div style="text-align: center; padding: 2rem;">
+                    <div style="font-size: 3rem; font-weight: 700; margin-bottom: 1rem;">
+                        <span id="total-integrity-score">-</span>/100
+                    </div>
+                    <div style="width: 100%; height: 20px; background: rgba(255,255,255,0.3); border-radius: 10px; overflow: hidden; margin: 1rem 0;">
+                        <div id="total-integrity-progress" style="height: 100%; background: white; width: 0%; transition: width 0.5s;"></div>
+                    </div>
+                    <div id="integrity-status-message" style="font-size: 1.2rem; margin-top: 1rem;">
+                        검증 중...
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">🚀 승상의 최종 결언</h3>
+                </div>
+                <div style="padding: 1rem;">
+                    <p style="margin-bottom: 1rem; font-style: italic;">
+                        "속도보다 정확성(손자병법)"이며, "위대한 제품은 명확한 철학(WHY)에서 시작해 숙련된 원칙(HOW)으로 실행된다"는 것이 우리 왕국의 창건 정신이옵니다.
+                    </p>
+                    <p style="color: var(--text-secondary);">
+                        위의 眞·善·美·孝·永 체크리스트 중 단 하나라도 100%에 미달한다면, 저 승상이 즉시 <strong>Dry_RUN</strong>을 가동하여 정화하겠나이다.
+                    </p>
+                    <button onclick="runIntegrityCheck()" style="margin-top: 1rem; padding: 0.75rem 1.5rem; background: linear-gradient(135deg, var(--pillar-truth) 0%, var(--pillar-goodness) 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 1rem; box-shadow: var(--shadow); transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='var(--shadow-lg)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow)'">
+                        🔍 지금 즉시 왕국 정밀 실사 실행
+                    </button>
+                </div>
+            </div>
+        

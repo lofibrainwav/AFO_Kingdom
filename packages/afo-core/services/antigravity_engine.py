@@ -33,13 +33,14 @@ class AntigravityEngine:
     Trinity Score 기반 ML 예측 및 동적 임계값 조정
     """
 
-    def __init__(self, protocol_officer: Optional[Any] = None):
+    def __init__(self, protocol_officer: Any | None = None):
         self.quality_history: list[dict[str, Any]] = []
         self.prediction_model = None
         self.dynamic_thresholds = self._initialize_thresholds()
         # [Phase B] Protocol Officer 주입 (없으면 생성) - 강제 사용
         if protocol_officer is None and ProtocolOfficer is not None:
-            from services.protocol_officer import protocol_officer as default_officer
+            from services.protocol_officer import \
+                protocol_officer as default_officer
 
             self.protocol_officer = default_officer
         elif protocol_officer is None:
@@ -446,7 +447,7 @@ class AntigravityEngine:
         confidence = result.get("confidence", 0.0)
 
         if report_lang == "ko":
-            msg = f"품질 게이트 평가 결과:\n"
+            msg = "품질 게이트 평가 결과:\n"
             msg += f"- 결정: {decision}\n"
             msg += f"- Trinity Score: {trinity_score:.1f}\n"
             msg += f"- Risk Score: {risk_score:.1f}\n"
@@ -454,11 +455,11 @@ class AntigravityEngine:
 
             recommendations = result.get("recommendations", [])
             if recommendations:
-                msg += f"\n\n권장사항:\n"
+                msg += "\n\n권장사항:\n"
                 for rec in recommendations:
                     msg += f"- {rec}\n"
         else:
-            msg = f"Quality Gate Evaluation Result:\n"
+            msg = "Quality Gate Evaluation Result:\n"
             msg += f"- Decision: {decision}\n"
             msg += f"- Trinity Score: {trinity_score:.1f}\n"
             msg += f"- Risk Score: {risk_score:.1f}\n"
@@ -466,7 +467,7 @@ class AntigravityEngine:
 
             recommendations = result.get("recommendations", [])
             if recommendations:
-                msg += f"\n\nRecommendations:\n"
+                msg += "\n\nRecommendations:\n"
                 for rec in recommendations:
                     msg += f"- {rec}\n"
 
@@ -536,7 +537,9 @@ class AntigravityEngine:
             report += "## Context\n"
             report += f"- 상황: {context.get('situation', 'N/A')}\n"
             report += f"- 위치: {context.get('location', 'N/A')}\n"
-            report += f"- 시점: {context.get('timestamp', datetime.now().isoformat())}\n"
+            report += (
+                f"- 시점: {context.get('timestamp', datetime.now().isoformat())}\n"
+            )
             report += f"- 영향: {context.get('impact', 'N/A')}\n\n"
 
             report += "## Analysis\n"
@@ -562,7 +565,9 @@ class AntigravityEngine:
             report += "## Context\n"
             report += f"- Situation: {context.get('situation', 'N/A')}\n"
             report += f"- Location: {context.get('location', 'N/A')}\n"
-            report += f"- Timestamp: {context.get('timestamp', datetime.now().isoformat())}\n"
+            report += (
+                f"- Timestamp: {context.get('timestamp', datetime.now().isoformat())}\n"
+            )
             report += f"- Impact: {context.get('impact', 'N/A')}\n\n"
 
             report += "## Analysis\n"
@@ -617,8 +622,7 @@ class AntigravityEngine:
             has_commit = any(
                 key in evidence and evidence[key] for key in commit_keys
             ) or any(
-                "commit" in str(k).lower() or "git" in str(k).lower()
-                for k in evidence.keys()
+                "commit" in str(k).lower() or "git" in str(k).lower() for k in evidence
             )
         else:
             # 폴백: 문자열 매칭
@@ -632,8 +636,7 @@ class AntigravityEngine:
             has_files = any(
                 key in evidence and evidence[key] for key in file_keys
             ) or any(
-                "file" in str(k).lower() or "path" in str(k).lower()
-                for k in evidence.keys()
+                "file" in str(k).lower() or "path" in str(k).lower() for k in evidence
             )
         else:
             evidence_str = str(evidence).lower()
@@ -650,7 +653,7 @@ class AntigravityEngine:
                 or "cmd" in str(k).lower()
                 or "exec" in str(k).lower()
                 or "result" in str(k).lower()
-                for k in evidence.keys()
+                for k in evidence
             )
         else:
             evidence_str = str(evidence).lower()
@@ -681,7 +684,9 @@ class AntigravityEngine:
             )
 
             # ssot_report_gate.py로 검증
-            script_path = Path(__file__).parent.parent.parent / "scripts" / "ssot_report_gate.py"
+            script_path = (
+                Path(__file__).parent.parent.parent / "scripts" / "ssot_report_gate.py"
+            )
             if script_path.exists():
                 result = subprocess.run(
                     [sys.executable, str(script_path), temp_report],
@@ -695,7 +700,9 @@ class AntigravityEngine:
                     )
                     return None  # FAIL이면 완료 리포트 생성 금지
         except Exception as e:
-            logger.warning(f"[SSOT] Report Gate 검증 실패: {e}. 분석 리포트로 다운그레이드.")
+            logger.warning(
+                f"[SSOT] Report Gate 검증 실패: {e}. 분석 리포트로 다운그레이드."
+            )
             return None
 
         # 완료 리포트 생성 (SSOT 증거 + Gate 통과)

@@ -1,0 +1,90 @@
+
+            <h2 class="section-title">승상 시스템 구도</h2>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">3책사 병렬 조율</h3>
+                </div>
+                <div class="mermaid">
+graph LR
+    Query[사용자 쿼리] --&gt; Zhuge[제갈량<br>眞 Truth]
+    Query --&gt; Sima[사마의<br>善 Goodness]
+    Query --&gt; Zhou[주유<br>美 Beauty]
+    Zhuge --&gt; Trinity[Trinity Score<br>계산]
+    Sima --&gt; Trinity
+    Zhou --&gt; Trinity
+    Trinity --&gt; Decision{의사결정}
+    Decision --&gt;|Score≥90 &amp; Risk≤10| AutoRun[AUTO_RUN]
+    Decision --&gt;|조건 미충족| Ask[ASK_COMMANDER]
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">5호대장군 실행 구조</h3>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>장군</th>
+                            <th>기둥</th>
+                            <th>역할</th>
+                            <th>인터페이스</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>관우</td>
+                            <td>眞</td>
+                            <td>사실 검증 및 무결성 수호</td>
+                            <td>truth_guard</td>
+                        </tr>
+                        <tr>
+                            <td>장비</td>
+                            <td>善</td>
+                            <td>위험 차단 및 실행 승인</td>
+                            <td>goodness_gate</td>
+                        </tr>
+                        <tr>
+                            <td>조운</td>
+                            <td>美</td>
+                            <td>우아한 구현 및 미학 집행</td>
+                            <td>beauty_craft</td>
+                        </tr>
+                        <tr>
+                            <td>마초</td>
+                            <td>孝</td>
+                            <td>자동 배포 및 운영 마찰 제거</td>
+                            <td>serenity_deploy</td>
+                        </tr>
+                        <tr>
+                            <td>황충</td>
+                            <td>永</td>
+                            <td>기록 보존 및 역사 기록</td>
+                            <td>eternity_log</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">LangGraph 상태 머신</h3>
+                </div>
+                <div class="mermaid">
+stateDiagram-v2
+    [*] --&gt; Constitutional: 쿼리 입력
+    Constitutional --&gt; ZhugeNode: 헌법 검증 통과
+    Constitutional --&gt; Blocked: 헌법 위반
+    ZhugeNode --&gt; SimaNode: Truth 평가
+    SimaNode --&gt; ZhouNode: Goodness 검토
+    ZhouNode --&gt; TrinityNode: Beauty 최적화
+    TrinityNode --&gt; DecisionGate: Trinity Score 계산
+    DecisionGate --&gt; TigersNode: AUTO_RUN
+    DecisionGate --&gt; AskCommander: ASK
+    TigersNode --&gt; HistorianNode: 실행 완료
+    HistorianNode --&gt; [*]: 기록 저장
+    AskCommander --&gt; [*]: 사용자 승인 대기
+                </div>
+            </div>
+        

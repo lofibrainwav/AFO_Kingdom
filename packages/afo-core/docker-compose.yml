@@ -78,8 +78,7 @@ services:
     image: grafana/grafana:latest
     container_name: afo-grafana
     profiles: ["monitoring", "production"]  # 프로파일 기반 활성화
-    ports:
-      - "3000:3000"
+    network_mode: host  # 호스트 네트워크 모드 적용
     environment:
       GF_SECURITY_ADMIN_PASSWORD: admin
     volumes:

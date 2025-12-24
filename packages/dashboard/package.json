@@ -10,7 +10,11 @@
     "lint:fix": "eslint . --fix",
     "type-check": "tsc --noEmit",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
-    "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,css,md}\""
+    "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
+    "gen:widgets": "node scripts/generate_widgets_from_html.mjs",
+    "gen:fragments": "node scripts/generate_fragments.mjs",
+    "predev": "pnpm gen:widgets && pnpm gen:fragments",
+    "prebuild": "pnpm gen:widgets && pnpm gen:fragments"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.11",
@@ -20,10 +24,10 @@
     "framer-motion": "^12.23.26",
     "gsap": "^3.14.2",
     "lucide-react": "^0.561.0",
+    "mermaid": "^10.9.1",
     "next": "16.0.10",
     "react": "19.2.1",
     "react-dom": "19.2.1",
-    "mermaid": "^10.9.1",
     "recharts": "^3.6.0",
     "swr": "^2.3.8",
     "tailwind-merge": "^3.4.0",
@@ -34,6 +38,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "cheerio": "^1.1.2",
     "eslint": "^9",
     "eslint-config-next": "16.0.10",
     "eslint-config-prettier": "^10.1.8",
