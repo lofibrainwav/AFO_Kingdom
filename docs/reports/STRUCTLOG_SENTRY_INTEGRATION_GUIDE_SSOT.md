@@ -1332,39 +1332,326 @@ replicas: 1
 
 **확장된 Dashboard Examples**: 왕국 Prometheus 메트릭스를 위한 추가 패널 예시
 
-**추가 패널 예시** (제안):
+**각 패널 타입별 JSON 설정 예시** (제안):
 
-1. **Gauge 패널**: 현재 활성 요청 / Skills 큐
-2. **Table 패널**: 상세 메트릭스 테이블 (endpoint별)
-3. **Bar Gauge 패널**: MCP 호출 수 type별 비교
-4. **Pie Chart 패널**: 에러 타입 분포
-5. **Logs 패널**: structlog JSON 로그 검색
-6. **Area Chart 패널**: 통기율 변화 추적
-7. **Stacked Bar 패널**: 클러스터별 호출 비교
-8. **Scatter Plot 패널**: 지연 vs 요청 수
-9. **Dashboard Layout 패널**: MCP/Skills/Context7 통합
-10. **Alerting Panel 패널**: Threshold 초과 강조
-11. **Heatmap + Timeseries 조합**: 지연 트렌드 + 분포
-12. **Trinity Score Trend 패널**: 커스텤 시각화 (제안)
+#### 1. Timeseries 패널 (요청 지연 트렌드 – LCP/INP 연계)
 
-**Grafana Dashboard JSON 예시** (제안):
+**Prometheus 쿼리**:
+```
+histogram_quantile(0.95, sum(rate(request_latency_seconds_bucket[5m])) by (le, endpoint))
+```
+
+**Grafana 패널 JSON** (제안):
+```json
+{
+  "title": "Request Latency (p95)",
+  "type": "timeseries",
+  "targets": [
+    {
+      "expr": "histogram_quantile(0.95, sum(rate(request_latency_seconds_bucket[5m])) by (le, endpoint))",
+      "legendFormat": "{{endpoint}}"
+    }
+  ],
+  "fieldConfig": {
+    "defaults": {
+      "unit": "ms",
+      "thresholds": {
+        "mode": "absolute",
+        "steps": [
+          {"value": null, "color": "green"},
+          {"value": 1000, "color": "yellow"},
+          {"value": 2000, "color": "red"}
+        ]
+      }
+    }
+  }
+}
+```
+
+#### 2. Heatmap 패널 (응답 시간 분포 – p95 강조)
+
+**Prometheus 쿼리**:
+```
+sum by (le) (rate(request_latency_seconds_bucket[5m]))
+```
+
+**Grafana 패널 JSON** (제안):
+```json
+{
+  "title": "Latency Distribution (Heatmap)",
+  "type": "heatmap",
+  "targets": [
+    {
+      "expr": "sum by (le) (rate(request_latency_seconds_bucket[5m]))",
+      "format": "heatmap"
+    }
+  ],
+  "options": {
+    "color": {
+      "mode": "spectrum",
+      "scheme": "Reds"
+    }
+  }
+}
+```
+
+#### 3. Stat 패널 (통기율 100% / MCP 수 강조)
+
+**Prometheus 쿼리**:
+```
+100 - (sum(rate(errors_total[5m])) / sum(rate(requests_total[5m]))) * 100
+```
+
+**Grafana 패널 JSON** (제안):
+```json
+{
+  "title": "통기율",
+  "type": "stat",
+  "targets": [
+    {
+      "expr": "100 - (sum(rate(errors_total[5m])) / sum(rate(requests_total[5m]))) * 100"
+    }
+  ],
+  "fieldConfig": {
+    "defaults": {
+      "unit": "percent",
+      "thresholds": {
+        "mode": "absolute",
+        "steps": [
+          {"value": null, "color": "red"},
+          {"value": 95, "color": "yellow"},
+          {"value": 100, "color": "green"}
+        ]
+      }
+    }
+  },
+  "options": {
+    "graphMode": "area",
+    "colorMode": "thresholds"
+  }
+}
+```
+
+#### 4. Gauge 패널 (활성 사용자 / 큐 길이)
+
+**Prometheus 쿼리**:
+```
+active_connections{service="afo-kingdom-api"}
+```
+
+**Grafana 패널 JSON** (제안):
+```json
+{
+  "title": "Active Connections",
+  "type": "gauge",
+  "targets": [
+    {
+      "expr": "active_connections{service=\"afo-kingdom-api\"}"
+    }
+  ],
+  "fieldConfig": {
+    "defaults": {
+      "min": 0,
+      "max": 100,
+      "thresholds": {
+        "mode": "absolute",
+        "steps": [
+          {"value": null, "color": "green"},
+          {"value": 50, "color": "yellow"},
+          {"value": 80, "color": "red"}
+        ]
+      }
+    }
+  }
+}
+```
+
+#### 5. Table 패널 (상세 메트릭스 테이블)
+
+**Prometheus 쿼리**:
+```
+sum by (endpoint, method) (rate(http_requests_total[5m]))
+```
+
+**Grafana 패널 JSON** (제안):
+```json
+{
+  "title": "Requests by Endpoint",
+  "type": "table",
+  "targets": [
+    {
+      "expr": "sum by (endpoint, method) (rate(http_requests_total[5m]))",
+      "format": "table"
+    }
+  ],
+  "options": {
+    "showHeader": true,
+    "sortBy": [
+      {
+        "displayName": "Value",
+        "desc": true
+      }
+    ]
+  }
+}
+```
+
+#### 6. Logs 패널 (JSON 구조화 로그)
+
+**참고**: Logs 패널은 Loki 데이터소스 필요 (Prometheus 직접 연계 불가)
+
+**Grafana 패널 JSON** (제안, Loki 연계):
+```json
+{
+  "title": "Application Logs",
+  "type": "logs",
+  "targets": [
+    {
+      "expr": "{job=\"afo-kingdom\"} |= \"error\"",
+      "refId": "A"
+    }
+  ],
+  "options": {
+    "dedupStrategy": "none",
+    "enableLogDetails": true,
+    "prettifyLogMessage": true,
+    "showCommonLabels": false,
+    "showLabels": false,
+    "showTime": true,
+    "sortOrder": "Descending"
+  }
+}
+```
+
+#### 7. Bar Gauge 패널 (카테고리 비교)
+
+**Prometheus 쿼리**:
+```
+sum by (type) (rate(mcp_calls_total[5m]))
+```
+
+**Grafana 패널 JSON** (제안):
+```json
+{
+  "title": "MCP Calls by Type",
+  "type": "bargauge",
+  "targets": [
+    {
+      "expr": "sum by (type) (rate(mcp_calls_total[5m]))",
+      "legendFormat": "{{type}}"
+    }
+  ],
+  "options": {
+    "orientation": "horizontal",
+    "displayMode": "gradient"
+  },
+  "fieldConfig": {
+    "defaults": {
+      "color": {
+        "mode": "palette-classic"
+      }
+    }
+  }
+}
+```
+
+#### 8. Pie Chart 패널 (에러 분포)
+
+**Prometheus 쿼리**:
+```
+sum by (error_type) (rate(api_errors_total[5m]))
+```
+
+**Grafana 패널 JSON** (제안):
+```json
+{
+  "title": "Error Distribution",
+  "type": "piechart",
+  "targets": [
+    {
+      "expr": "sum by (error_type) (rate(api_errors_total[5m]))",
+      "legendFormat": "{{error_type}}"
+    }
+  ],
+  "options": {
+    "legend": {
+      "displayMode": "table",
+      "placement": "right"
+    },
+    "pieType": "pie",
+    "tooltip": {
+      "mode": "single"
+    }
+  }
+}
+```
+
+#### 9. 전체 대시보드 레이아웃 예시
+
+**Grafana Dashboard JSON** (제안, 통합 예시):
 ```json
 {
   "title": "AFO Kingdom Dashboard",
+  "tags": ["afo", "prometheus"],
+  "timezone": "browser",
   "panels": [
     {
-      "title": "통기율 100%",
+      "id": 1,
+      "title": "통기율",
       "type": "stat",
-      "targets": [{"expr": "100 - (sum(rate(errors_total[5m])) / sum(rate(requests_total[5m]))) * 100"}]
+      "gridPos": {"x": 0, "y": 0, "w": 6, "h": 4},
+      "targets": [
+        {
+          "expr": "100 - (sum(rate(errors_total[5m])) / sum(rate(requests_total[5m]))) * 100"
+        }
+      ]
     },
     {
-      "title": "MCP Calls",
+      "id": 2,
+      "title": "Request Latency (p95)",
       "type": "timeseries",
-      "targets": [{"expr": "rate(mcp_calls_total[5m])"}]
+      "gridPos": {"x": 6, "y": 0, "w": 12, "h": 8},
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(request_latency_seconds_bucket[5m])) by (le, endpoint))",
+          "legendFormat": "{{endpoint}}"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "MCP Calls by Type",
+      "type": "bargauge",
+      "gridPos": {"x": 0, "y": 4, "w": 6, "h": 4},
+      "targets": [
+        {
+          "expr": "sum by (type) (rate(mcp_calls_total[5m]))",
+          "legendFormat": "{{type}}"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Latency Distribution",
+      "type": "heatmap",
+      "gridPos": {"x": 6, "y": 8, "w": 12, "h": 8},
+      "targets": [
+        {
+          "expr": "sum by (le) (rate(request_latency_seconds_bucket[5m]))",
+          "format": "heatmap"
+        }
+      ]
     }
-  ]
+  ],
+  "refresh": "30s",
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  }
 }
 ```
+
+**참고**: 위 JSON은 Grafana Dashboard Import 기능으로 직접 임포트 가능합니다 (Grafana UI → Dashboards → Import → JSON 붙여넣기).
 
 ---
 
