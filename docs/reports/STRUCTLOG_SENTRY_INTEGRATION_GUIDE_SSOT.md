@@ -462,6 +462,108 @@ structlog.configure(
 
 ---
 
+## 8. 성능 벤치마크 (제안)
+
+### AsyncRenderer 벤치마크 (제안)
+
+**공식 문서 결론**: processor 체인이 예측 가능하고 외부 의존성 없으면 async 비용 불필요 (성능 저하 가능).
+
+**참조 출처**:
+- structlog 공식 문서 (performance 섹션): "moving log processing into separate threads [...] comes with a performance cost"
+- structlog 공식 문서: https://www.structlog.org/en/stable/performance.html
+
+#### 벤치마크 비교
+
+| **항목**                  | **Sync 로깅**                                      | **AsyncRenderer**                          | **비교 결과 (공식 문서)**                  | **왕국 적용 추천** (FastAPI) |
+|---------------------------|---------------------------------------------------|-------------------------------------------|-------------------------------------------|-----------------------------------|
+| **성능 (throughput)**   | 높음 (직접 실행, 오버헤드 최소)                   | 낮음 (스레드 풀 오버헤드)                 | sync 1.5-2x 빠름 (processor 체인 단순 시) | sync 우선 (기본 JSONRenderer)    |
+| **I/O 블로킹**           | 블로킹 가능 (파일/네트워크 I/O)                   | 비블로킹 (스레드 풀 처리)                 | async 우위 (대량 I/O 시)                  | async (Sentry/파일 로깅 많을 때) |
+| **CPU 오버헤드**         | 낮음                                              | 높음 (스레드 컨텍스트 스위칭)             | sync 우위 (공식: "performance cost")      | sync (CPU 바운드)                 |
+| **대량 요청 처리**       | 블로킹 위험                                       | 안전 (애플리케이션 지연 방지)             | async 우위 (high-throughput)              | async (왕국 대시보드 고부하)      |
+| **예측 가능 체인**       | 최적                                              | 불필요 (공식 권장 피함)                   | sync 추천                                 | sync (기본 설정)                  |
+
+#### 적용 추천
+
+**sync 기본 (권장, 성능 최적)**:
+```python
+structlog.configure(
+    processors=[
+        add_log_level,
+        TimeStamper(key="ts"),
+        JSONRenderer()
+    ],
+    cache_logger_on_first_use=True  # 성능 향상
+)
+```
+
+**async 적용 (I/O 많을 때 제안)**:
+```python
+from structlog.processors import AsyncRenderer
+
+structlog.configure(
+    processors=[
+        AsyncRenderer(),  # 비동기 I/O 처리
+        # 기타 processors
+    ]
+)
+```
+
+---
+
+### Sentry 벤치마크 (제안)
+
+**공식 문서 결론**: Sentry tracing은 minimal overhead 설계 (대부분 imperceptible to end users).
+
+**주요 팩트** (공식 문서):
+- Overhead: Minimal (imperceptible), backend backpressure 자동 조정
+- CPU: 1-5% 목표 (profiling)
+- Sampling: tracesSampleRate 0.2 권장 (production)
+
+**참조 출처**:
+- Sentry 공식 문서: https://docs.sentry.io/platforms/python/performance/
+- Sentry 공식 문서: https://docs.sentry.io/product/performance/
+
+#### 벤치마크 비교
+
+| **항목**                  | **성능 영향**                                      | **권장 설정**                          | **왕국 적용 예상** (FastAPI/Next.js)                  |
+|---------------------------|---------------------------------------------------|---------------------------------------|-------------------------------------------------------|
+| **Tracing Overhead**     | Minimal (imperceptible)                           | tracesSampleRate 1.0 (dev), 0.2 (prod) | 초기 로드 영향 없음 (통기율 100% 유지)              |
+| **CPU Usage**            | 1-5% (profiling 기준)                             | dynamic sampling 활성화               | 대량 요청 시 backpressure 자동 조정                  |
+| **Memory**               | 낮음 (sampling으로 제어)                          | cache_logger_on_first_use             | MCP/Skills 처리 메모리 안정                         |
+| **Throughput Impact**    | Low (sampling으로 제어)                           | high-load 시 0.1-0.2                 | 대시보드 고부하 안정 (INP <100ms 목표)              |
+| **Distributed Tracing**  | Span 연결 오버헤드 낮음                          | propagation context                   | FastAPI → Next.js 호출 추적                         |
+
+#### 적용 추천
+
+- **Dev**: tracesSampleRate 1.0 (전체 캡처)
+- **Prod**: 0.2 (비용/성능 균형)
+- **효과**: 에러/성능 중앙화 (Sentry 대시보드 실시간)
+
+---
+
+### 시각화 참고 자료 (제안)
+
+**참고**: 실제 그래프/이미지는 Sentry 대시보드에서 확인 가능합니다.
+
+**Sentry Performance Tracing 시각화**:
+- Transaction & Span Waterfall: Sentry 대시보드에서 자동 생성
+- Performance Overhead Graph: Sentry Profiling에서 확인 가능
+
+**참고 자료**:
+- Sentry Performance 대시보드: https://docs.sentry.io/product/performance/
+- Sentry Profiling: https://docs.sentry.io/product/profiling/
+
+**인터랙티브 그래프 라이브러리 (참고용)**:
+- Recharts: https://recharts.org/ (React 차트 라이브러리)
+- Plotly: https://plotly.com/python/ (Python/JavaScript 차트)
+- ECharts: https://echarts.apache.org/ (Apache ECharts)
+- Chart.js: https://www.chartjs.org/ (JavaScript 차트)
+- D3.js: https://d3js.org/ (데이터 시각화)
+
+> **주의**: 위 라이브러리들은 "참고용"입니다. 실제 그래프 구현은 별도 작업이 필요합니다.
+
+---
+
 ## 다음 단계 (왕국 확장)
 
 - **즉시**: structlog 설치 → logging_config.py 수정 테스트 (제안)
@@ -469,6 +571,8 @@ structlog.configure(
 - **중기**: Sentry + structlog 통합 (에러/성능 중앙화)
 - **고급**: Ticket 54 – structlog 고급 processors (TimeStamper/JSONRenderer) 적용
 - **성능**: Ticket 55 – AsyncRenderer 대량 요청 벤치마크
+- **벤치마크**: Ticket 56 – AsyncRenderer 적용 여부 결정 (high-throughput 테스트)
+- **Sentry**: Ticket 59 – production sampling 0.2 적용
 
 ---
 
