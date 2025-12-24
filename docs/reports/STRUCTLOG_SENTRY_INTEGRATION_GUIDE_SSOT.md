@@ -909,6 +909,276 @@ scrape_configs:
 
 ---
 
+## 11. Grafana Dashboard 가이드 (제안)
+
+### Grafana Dashboard 개요 (팩트 기반)
+
+**Grafana**: Prometheus 데이터 시각화 대시보드
+
+**참고 자료**:
+- Grafana 공식 문서: https://grafana.com/docs/
+- Grafana Prometheus 데이터 소스: https://grafana.com/docs/grafana/latest/datasources/prometheus/
+- Grafana Panels: https://grafana.com/docs/grafana/latest/panels-visualizations/
+
+**왕국 현재 상태**: Grafana 미통합 (Prometheus 제안 상태)
+
+---
+
+### 11.1 Dashboard Panel List (초간결 버전)
+
+**Panel List** (제안):
+
+| **패널 타입**    | **지표**                          | **설명**                          |
+|------------------|-----------------------------------|-----------------------------------|
+| Timeseries      | 요청 지연 (LCP/INP)               | 응답 시간 트렌드                  |
+| Gauge           | 활성 사용자 / MCP 큐              | 현재 상태                         |
+| Stat            | 통기율 / 총 요청 수               | 핵심 KPI                          |
+| Heatmap         | 응답 시간 분포 (p95)               | 지연 히트맵                       |
+| Table           | 상세 로그/메트릭스                | 필터링 테이블                     |
+| Bar Gauge       | MCP 호출 수 (type별)              | 카테고리 비교                     |
+| Pie Chart       | 에러 타입 분포                    | 에러 비율                         |
+| Logs            | structlog JSON 로그               | 검색 가능 로그                    |
+
+**적용 추천** (제안):
+- Prometheus 메트릭스 연계 (request_count, request_latency 등)
+- Hover/zoom 인터랙티브 (Grafana 기본)
+
+---
+
+### 11.2 Timeseries Panel 상세 설명 (제안)
+
+**Timeseries Panel**: 시간 기반 메트릭스 시각화
+
+**참고 자료**:
+- Grafana Timeseries: https://grafana.com/docs/grafana/latest/panels-visualizations/visualizations/time-series/
+
+**Timeseries Panel 기능 테이블** (제안):
+
+| **기능**                  | **상세 설명**                                      | **이점**                          | **왕국 적용 예시** (Prometheus 메트릭스)                  | **설정 팁** |
+|---------------------------|---------------------------------------------------|-----------------------------------|----------------------------------------------------------|------------|
+| **Graph Style**          | Line/Area/Bar/Points 선택                         | 트렌드/분포 시각화                | 요청 지연 (Line), MCP 호출 누적 (Area)                   | Graph style: Line |
+| **Legend**               | Table/Right/List 모드, 계산 (avg/max)             | 메트릭스 라벨링                   | endpoint별 latency legend                               | Mode: Table, Calculations: avg |
+| **Tooltip**              | Hover 상세 (value/time)                           | 상세 분석                         | hover 시 p95 지연 확인                                  | Mode: All series |
+| **Axis**                 | Y축 왼쪽/오른쪽, 단위 (s/ms), 스케일 (log/linear) | 다중 메트릭스 비교                | 왼쪽: latency (ms), 오른쪽: calls (count)               | Left Y: ms, Right Y: none |
+| **Thresholds**           | 색상 기준선 (alert)                               | 이상치 강조                       | latency >2s 빨강 표시                                   | Thresholds: 2s (red) |
+| **Fill/Gradient**        | 면적 채우기 (gradient)                            | 시각 강조                         | Area 그래프 gradient                                    | Fill opacity: 0.5, Gradient |
+| **Stacking**             | 누적 그래프                                       | 비율 분석                         | endpoint별 호출 누적                                     | Stacking: Normal |
+| **Null Value**           | 연결/0/break 처리                                 | 데이터 결측 처리                  | 결측 시 break                                           | Null value: connected |
+
+**Prometheus 쿼리 예시** (제안):
+- **요청 지연**:
+  ```
+  histogram_quantile(0.95, sum(rate(request_latency_seconds_bucket[5m])) by (le, endpoint))
+  ```
+- **MCP 호출 수**:
+  ```
+  rate(mcp_calls_total[5m])
+  ```
+
+---
+
+### 11.3 Heatmap Panel 상세 설명 (제안)
+
+**Heatmap Panel**: 값 분포를 색상으로 시각화
+
+**참고 자료**:
+- Grafana Heatmap: https://grafana.com/docs/grafana/latest/panels-visualizations/visualizations/heatmaps/
+
+**Heatmap Panel 기능 테이블** (제안):
+
+| **기능**                  | **상세 설명**                                      | **이점**                          | **왕국 적용 예시** (Prometheus 메트릭스)                  | **설정 팁** |
+|---------------------------|---------------------------------------------------|-----------------------------------|----------------------------------------------------------|------------|
+| **Data Format**          | Bucket 기반 (histogram)                           | 분포 분석 (p50/p95)               | request_latency_seconds_bucket                          | Format as: Heatmap |
+| **Color Mode**           | Spectrum/Opacity                                  | 강도 시각화                       | 지연 높을수록 빨강                                       | Color scheme: Reds |
+| **Y-Axis Buckets**       | Bucket 크기/수 설정                               | 세밀 분포                         | latency 0-50ms, 50-100ms 등 bucket                      | Calculate from data |
+| **X-Axis**               | 시간 간격 (1m/5m)                                 | 트렌드 분석                       | 시간별 지연 분포 변화                                   | Interval: 5m |
+| **Cell Values**          | Count/Sum/Mean                                    | 메트릭스 종류 선택                | 호출 수 (count) 또는 평균 지연                           | Value: Count |
+| **Tooltip**              | Hover 상세 (bucket 값)                            | 상세 분석                         | hover 시 p95 지연 확인                                  | Mode: All series |
+| **Legend**               | 색상 스케일 표시                                  | 기준 이해                         | 색상별 지연 범위 표시                                   | Show legend: true |
+
+**Prometheus 쿼리 예시** (제안):
+```
+sum by (le) (rate(request_latency_seconds_bucket[5m]))
+```
+
+---
+
+### 11.4 Stat Panel 상세 설명 (제안)
+
+**Stat Panel**: 단일 값/KPI 시각화
+
+**참고 자료**:
+- Grafana Stat: https://grafana.com/docs/grafana/latest/panels-visualizations/visualizations/stat/
+
+**Stat Panel 기능 테이블** (제안):
+
+| **기능**                  | **상세 설명**                                      | **이점**                          | **왕국 적용 예시** (Prometheus 메트릭스)                  | **설정 팁** |
+|---------------------------|---------------------------------------------------|-----------------------------------|----------------------------------------------------------|------------|
+| **Value Mode**           | Text/Value/Graph (sparkline) 선택                  | KPI 강조                          | 통기율 (Text), MCP 수 (Value)                            | Value mode: Text |
+| **Color Mode**           | Value/Background/Thresholds                       | 상태 시각화                       | 통기율 100% 녹색, <100% 빨강                            | Color mode: Thresholds |
+| **Thresholds**           | 값 기준 색상 변경                                 | 이상치 강조                       | latency >2s 빨강                                        | Thresholds: 2s (red) |
+| **Sparkline**            | 미니 트렌드 그래프                                | 변화 추적                         | 최근 1h 호출 수 트렌드                                   | Show sparkline: true |
+| **Unit/Decimals**        | 단위 (percent/seconds) + 소수점                   | 가독성 향상                       | 통기율 % 표시                                           | Unit: percent (0-100) |
+| **Text Size**            | Title/Value 크기 조정                             | 강조 효과                         | "통기율 100%" 크게 표시                                 | Text size: 200% |
+| **Orientation**          | Auto/Horizontal/Vertical                           | 레이아웃 최적화                   | 대시보드 그리드 배치                                    | Orientation: Auto |
+
+**Prometheus 쿼리 예시** (제안):
+- **통기율**:
+  ```
+  100 - (sum(rate(errors_total[5m])) / sum(rate(requests_total[5m]))) * 100
+  ```
+- **MCP 수**:
+  ```
+  mcp_count
+  ```
+
+---
+
+### 11.5 Grafana Alerting Features (제안)
+
+**Grafana Alerting**: 메트릭스 기준 이상치 자동 알림
+
+**참고 자료**:
+- Grafana Alerting: https://grafana.com/docs/grafana/latest/alerting/
+
+**Alerting Features 테이블** (제안):
+
+| **기능**                  | **상세 설명**                                      | **이점**                          | **왕국 적용 예시** (Prometheus 메트릭스)                  | **설정 팁** |
+|---------------------------|---------------------------------------------------|-----------------------------------|----------------------------------------------------------|------------|
+| **Alert Rule**           | 쿼리 + 조건 (reduce/when)                         | 이상치 조건 정의                  | 통기율 <100% (reduce: last)                             | Query: 통기율 쿼리, When: is below 100 |
+| **Evaluation**           | 간격/시간 설정                                    | 주기적 평가                       | 1m 간격 평가                                            | Evaluation interval: 1m |
+| **Notification Policy**  | 라우팅/그룹화 (label matcher)                     | 알림 채널 분리                    | 지연 알림 Slack, 에러 알림 Email                        | Matcher: {severity="critical"} |
+| **Contact Point**        | Slack/Email/Webhook 등                            | 다채널 알림                       | Slack webhook                                           | Type: Slack, URL: webhook |
+| **Mute Timings**         | 시간대 알림 뮤트                                  | 야간 알림 방지                    | 주말/야간 뮤트                                          | Mute: weekends |
+| **Alert Groups**         | 유사 알림 그룹화                                  | 노이즈 감소                       | 동일 엔드포인트 지연 그룹                               | Group interval: 5m |
+| **Silence**              | 일시 알림 중지                                    | 유지보수 시 사용                  | 배포 중 알림 silence                                    | Silence duration: 1h |
+| **Labels/Annotations**   | 커스텀 라벨/설명 추가                             | 알림 컨텍스트                     | runbook_url, severity                                   | Labels: severity=critical |
+
+---
+
+### 11.6 Prometheus Alertmanager (제안)
+
+**Alertmanager**: Prometheus 알림 관리
+
+**참고 자료**:
+- Prometheus Alertmanager: https://prometheus.io/docs/alerting/latest/alertmanager/
+
+**Alertmanager 기능 테이블** (제안):
+
+| **기능**                  | **상세 설명**                                      | **이점**                          | **왕국 적용 예시** (Prometheus 메트릭스)                  | **설정 팁** |
+|---------------------------|---------------------------------------------------|-----------------------------------|----------------------------------------------------------|------------|
+| **Grouping**             | 동일 알림 그룹화 (group_by)                       | 노이즈 감소                       | endpoint별 지연 그룹 (5m 간격)                           | group_by: ['endpoint'] |
+| **Inhibition**           | 상위 알림 시 하위 억제                            | 불필요 알림 방지                  | instance down 시 service 알림 억제                      | inhibit_rules |
+| **Receiver**             | 알림 채널 (Slack/Email/Webhook)                   | 다채널 알림                       | Slack (왕국 채널), Email (on-call)                      | receivers: - name: slack |
+| **Routing**              | 라벨 매처 (route)                                 | 우선순위 알림                     | severity=critical → Slack 즉시                           | match: {severity: "critical"} |
+| **Silence**              | 시간대 알림 뮤트                                  | 야간/유지보수 알림 방지           | 주말 뮤트                                               | silence (duration: 8h) |
+| **Repeat Interval**      | 알림 반복 간격                                    | 지속 알림                         | 4h 반복 (해결 안 될 시)                                 | repeat_interval: 4h |
+
+**alertmanager.yml 예시** (제안):
+```yaml
+global:
+  slack_api_url: 'YOUR_SLACK_WEBHOOK'
+
+route:
+  group_by: ['endpoint']
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 4h
+  receiver: 'slack'
+
+receivers:
+  - name: 'slack'
+    slack_configs:
+      - channel: '#afo-alerts'
+        text: 'Alert: {{ .CommonAnnotations.summary }}'
+
+inhibit_rules:
+  - source_match:
+      severity: 'critical'
+    target_match:
+      severity: 'warning'
+```
+
+---
+
+### 11.7 Prometheus Federation Setup (제안)
+
+**Prometheus Federation**: 계층적 메트릭스 수집
+
+**참고 자료**:
+- Prometheus Federation: https://prometheus.io/docs/prometheus/latest/federation/
+
+**Federation Setup 단계별 가이드** (제안):
+
+1. **하위 Prometheus 설정** (지역/서비스별):
+   - /metrics 엔드포인트 노출 (기본)
+
+2. **상위 Prometheus 설정** (prometheus.yml 제안):
+   ```yaml
+   scrape_configs:
+     - job_name: 'federate-regional'
+       honor_labels: true
+       metrics_path: '/federate'
+       params:
+         'match[]':
+           - '{job="node"}'
+           - '{__name__=~"^request_.*"}'
+       static_configs:
+         - targets:
+             - 'regional-prometheus-1:9090'
+             - 'regional-prometheus-2:9090'
+   ```
+
+3. **하위 Prometheus federation 엔드포인트 활성화** (제안):
+   ```bash
+   --web.enable-lifecycle
+   ```
+
+4. **쿼리 필터** (match[] 예시):
+   - '{job="mcp"}' : MCP 메트릭스만
+   - '{__name__=~"request_latency_.*"}' : 지연 메트릭스
+
+---
+
+### 11.8 Advanced match[] Filters (제안)
+
+**Advanced match[]**: Federation /federate 엔드포인트에서 메트릭스 필터링
+
+**참고 자료**:
+- Prometheus Federation: https://prometheus.io/docs/prometheus/latest/federation/
+
+**Advanced match[] 기능 테이블** (제안):
+
+| **Matcher 타입**         | **구문**                                      | **설명**                          | **왕국 적용 예시** (메트릭스 필터)                  | **yaml 예시** |
+|---------------------------|-----------------------------------------------|-----------------------------------|-----------------------------------------------------|---------------|
+| **Exact Match**          | label="value"                                 | 정확 일치                         | job="mcp" (MCP 메트릭스만)                        | - '{job="mcp"}' |
+| **Not Equal**            | label!="value"                                | 제외                              | job!="prometheus" (자기 메트릭스 제외)            | - '{job!="prometheus"}' |
+| **Regex Match**          | label=~"regex"                                | 정규식 일치                       | __name__=~"request_latency_.*" (지연 메트릭스)   | - '{__name__=~"request_latency_.*"}' |
+| **Regex Not Match**      | label!~"regex"                                | 정규식 제외                       | job!~"test|dev" (테스트 제외)                     | - '{job!~"test|dev"}' |
+| **Multiple Conditions**  | 다중 match[] 배열                             | OR 조건 (union)                   | job="mcp" 또는 __name__=~"skills_.*"             | - '{job="mcp"}'<br>- '{__name__=~"skills_.*"}' |
+| **All Metrics**          | __name__=~".+"                                | 모든 메트릭스 (주의: 과부하)      | 전체 federation (권장 아님)                              | - '{__name__=~".+"}' |
+| **Non-empty Matcher**    | 최소 하나 non-empty                           | 안전 규칙 (empty matcher 금지)    | __name__=~".+" 필수 (empty 방지)                 | - '{__name__=~".+"}' |
+
+**prometheus.yml 예시** (제안):
+```yaml
+scrape_configs:
+  - job_name: 'federate-afo'
+    honor_labels: true
+    metrics_path: '/federate'
+    params:
+      'match[]':
+        - '{job="mcp"}'
+        - '{job="skills"}'
+        - '{__name__=~"request_latency_.*"}'
+        - '{__name__=~"up|node_.*"}'
+    static_configs:
+      - targets:
+          - 'local-prometheus:9090'
+          - 'remote-prometheus:9090'
+```
+
+---
+
 ## 다음 단계 (왕국 확장)
 
 - **즉시**: structlog 설치 → logging_config.py 수정 테스트 (제안)
@@ -921,6 +1191,14 @@ scrape_configs:
 - **Datadog**: Ticket 61 – Datadog APM tracing (span 자동 캡처, 제안)
 - **Custom Metrics**: Ticket 64 – Custom metrics 대시보드 (MCP 호출 수, 제안)
 - **Prometheus**: Ticket 65 – Prometheus 메트릭스 통합 (MCP 호출 수, 제안)
+- **Grafana**: Ticket 68 – Grafana Dashboard Panel List 적용 (제안)
+- **Grafana**: Ticket 69 – Timeseries 패널 (latency p95 + calls rate, 제안)
+- **Grafana**: Ticket 70 – Heatmap 패널 (p95 지연 강조, 제안)
+- **Grafana**: Ticket 71 – Stat 패널 (통기율 100% 강조, 제안)
+- **Grafana**: Ticket 72 – Alert Policy (Slack 연계, 제안)
+- **Alertmanager**: Ticket 73 – Slack receiver 설정 (제안)
+- **Federation**: Ticket 74 – Federation (하위/상위 Prometheus, 제안)
+- **Federation**: Ticket 75 – Advanced match[] (MCP/Skills 필터, 제안)
 - **선택**: Sentry vs Datadog vs Prometheus 비교 (왕국 모니터링 선택, 제안)
 
 ---
@@ -939,6 +1217,14 @@ scrape_configs:
 - **Prometheus Python Client**: https://github.com/prometheus/client_python
 - **FastAPI Prometheus 통합**: https://github.com/trallnag/prometheus-fastapi-instrumentator
 - **Grafana 공식 문서**: https://grafana.com/docs/
+- **Grafana Prometheus 데이터 소스**: https://grafana.com/docs/grafana/latest/datasources/prometheus/
+- **Grafana Panels**: https://grafana.com/docs/grafana/latest/panels-visualizations/
+- **Grafana Timeseries**: https://grafana.com/docs/grafana/latest/panels-visualizations/visualizations/time-series/
+- **Grafana Heatmap**: https://grafana.com/docs/grafana/latest/panels-visualizations/visualizations/heatmaps/
+- **Grafana Stat**: https://grafana.com/docs/grafana/latest/panels-visualizations/visualizations/stat/
+- **Grafana Alerting**: https://grafana.com/docs/grafana/latest/alerting/
+- **Prometheus Alertmanager**: https://prometheus.io/docs/alerting/latest/alertmanager/
+- **Prometheus Federation**: https://prometheus.io/docs/prometheus/latest/federation/
 - **FastAPI 공식 문서**: https://fastapi.tiangolo.com/
 - **pytest 공식 문서**: https://docs.pytest.org/
 - **현재 구현**: `packages/afo-core/utils/logging_config.py`
