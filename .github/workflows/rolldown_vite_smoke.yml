@@ -1,0 +1,67 @@
+name: Rolldown (rolldown-vite) smoke test - aicpa-core
+
+on:
+  workflow_dispatch:
+    inputs:
+      rolldownViteVersion:
+        description: "Pinned rolldown-vite version (e.g. 0.0.0-...)"
+        required: true
+  pull_request:
+    paths:
+      - "packages/aicpa-core/**"
+      - ".github/workflows/rolldown_vite_smoke.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: rolldown-smoke-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        mode: [baseline_vite, rolldown_vite]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Enable corepack
+        run: corepack enable
+
+      - name: Patch vite -> rolldown-vite (rolldown mode only)
+        if: matrix.mode == 'rolldown_vite'
+        working-directory: packages/aicpa-core
+        env:
+          ROLLDOWN_VITE_VERSION: ${{ github.event.inputs.rolldownViteVersion }}
+        run: |
+          node -e "const fs=require('fs');const p='./package.json';const j=JSON.parse(fs.readFileSync(p,'utf8'));j.devDependencies=j.devDependencies||{};j.devDependencies.vite=`npm:rolldown-vite@${process.env.ROLLDOWN_VITE_VERSION}`;fs.writeFileSync(p,JSON.stringify(j,null,2)+'\n');"
+
+      - name: Install (no frozen; smoke only)
+        working-directory: packages/aicpa-core
+        run: |
+          pnpm -v
+          pnpm install --no-frozen-lockfile
+
+      - name: Build
+        working-directory: packages/aicpa-core
+        run: |
+          echo "MODE=${{ matrix.mode }}"
+          time pnpm run build
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "### Rolldown smoke: packages/aicpa-core" >> $GITHUB_STEP_SUMMARY
+          echo "- Mode: ${{ matrix.mode }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Node: $(node -v)" >> $GITHUB_STEP_SUMMARY
+          echo "- pnpm: $(pnpm -v)" >> $GITHUB_STEP_SUMMARY
+
