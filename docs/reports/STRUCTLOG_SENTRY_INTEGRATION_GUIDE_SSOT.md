@@ -1179,6 +1179,195 @@ scrape_configs:
 
 ---
 
+### 11.9 Grafana Federation Dashboard (제안)
+
+**Grafana Federation Dashboard**: Prometheus federation을 통해 다중 클러스터/인스턴스 메트릭스를 단일 Grafana에서 시각화
+
+**참고 자료**:
+- Prometheus Federation: https://prometheus.io/docs/prometheus/latest/federation/
+- Grafana Multi-datasource: https://grafana.com/docs/grafana/latest/datasources/
+
+**왕국 현재 상태**: 단일 Prometheus 제안 (federation 미설정)
+
+**Federation Setup + Grafana Dashboard 단계별 가이드** (제안):
+
+1. **하위 Prometheus 설정** (지역/패키지별):
+   - prometheus.yml 기본 /metrics 노출 (federate 엔드포인트 자동)
+
+2. **중앙 Prometheus 설정** (prometheus.yml federation job, 제안):
+   ```yaml
+   scrape_configs:
+     - job_name: 'federation-afo'
+       honor_labels: true
+       scrape_interval: 15s
+       metrics_path: '/federate'
+       params:
+         'match[]':
+           - '{job="mcp"}'
+           - '{job="skills"}'
+           - '{__name__=~"request_latency_.*"}'
+           - '{__name__=~"up|node_memory_.*"}'
+       static_configs:
+         - targets:
+             - 'dashboard-prometheus:9090'
+             - 'afo-core-prometheus:9090'
+       labels:
+         cluster: 'afo-kingdom'
+   ```
+
+3. **Grafana 데이터소스 추가** (중앙 Prometheus):
+   - Grafana UI → Configuration → Data Sources → Add → Prometheus
+   - URL: http://central-prometheus:9090
+   - Multi-cluster 쿼리: cluster="afo-kingdom" 라벨 필터
+
+4. **Federation Dashboard 예시** (Grafana JSON 임포트, 제안):
+   ```json
+   {
+     "title": "AFO Kingdom Federation Dashboard",
+     "panels": [
+       {
+         "title": "MCP Calls by Cluster",
+         "type": "timeseries",
+         "targets": [{"expr": "rate(mcp_calls_total[5m]) by (cluster, job)"}]
+       },
+       {
+         "title": "통기율 (Federated)",
+         "type": "stat",
+         "targets": [{"expr": "100 - (sum(rate(errors_total[5m])) by (cluster) / sum(rate(requests_total[5m])) by (cluster)) * 100"}],
+         "thresholds": [{"color": "green", "value": null}, {"color": "red", "value": 95}]
+       },
+       {
+         "title": "Latency Heatmap (Multi-Cluster)",
+         "type": "heatmap",
+         "targets": [{"expr": "sum by (le, cluster) (rate(request_latency_seconds_bucket[5m]))"}]
+       }
+     ]
+   }
+   ```
+
+5. **Multi-Cluster 쿼리 예시** (Grafana 패널 쿼리, 제안):
+   - MCP 호출: `rate(mcp_calls_total{cluster="afo-kingdom"}[5m]) by (job)`
+   - 통기율: `100 - (sum(rate(errors_total{cluster="afo-kingdom"}[5m])) / sum(rate(requests_total{cluster="afo-kingdom"}[5m]))) * 100`
+   - Latency p95: `histogram_quantile(0.95, sum(rate(request_latency_seconds_bucket{cluster="afo-kingdom"}[5m])) by (le))`
+
+---
+
+### 11.10 Thanos for Long-term Storage (제안)
+
+**Thanos**: Prometheus 장기 저장/고가용성 솔루션
+
+**참고 자료**:
+- Thanos 공식 문서: https://thanos.io/
+- CNCF Thanos: https://www.cncf.io/projects/thanos/
+
+**왕국 현재 상태**: Prometheus 단기 저장 (2주 기본)
+
+**Thanos 구성 요소 테이블** (제안):
+
+| **컴포넌트**             | **상세 설명**                                      | **이점**                          | **왕국 적용 예시** (Prometheus 메트릭스)                  | **설정 팁** |
+|---------------------------|---------------------------------------------------|-----------------------------------|----------------------------------------------------------|------------|
+| **Sidecar**              | Prometheus와 함께 실행 (메트릭스 업로드)         | 장기 저장 자동                    | MCP/Skills 메트릭스 S3 업로드                           | --tsdb.path + --objstore.config |
+| **Store Gateway**        | object storage 쿼리 게이트웨이                    | 장기 메트릭스 읽기                | 1년 전 통기율 조회                                      | store: s3 bucket |
+| **Query**                | 글로벌 쿼리 (deduplication)                       | 고가용성 쿼리                     | 다중 Prometheus 통합 쿼리                               | query: --store |
+| **Compactor**            | downsampling + compaction                         | 저장 비용 절감                    | 5m → 1h downsampling (장기 데이터)                      | compactor: --downsample |
+| **Ruler**                | 알림 규칙 평가                                    | 분산 알림                         | 통기율 <100% 알림 (Grafana 연계)                        | ruler: --rule.file |
+| **Receiver**             | 원격 쓰기 (remote write)                          | 메트릭스 수집                     | 외부 시스템 메트릭스 왕국으로                            | receiver: --remote-write |
+
+**thanos.yaml 예시** (제안):
+```yaml
+type: s3
+config:
+  bucket: "afo-kingdom-metrics"
+  endpoint: "s3.amazonaws.com"
+sidecar:
+  prometheus_url: "http://localhost:9090"
+store:
+  - --objstore.config-file=/etc/thanos/s3.yaml
+query:
+  - --store=store-gateway:10901
+compactor:
+  - --downsample-resolution=5m-1h
+```
+
+---
+
+### 11.11 Thanos Downsampling Techniques (제안)
+
+**Thanos Downsampling**: Prometheus TSDB 블록 compaction + downsampling
+
+**참고 자료**:
+- Thanos Compactor: https://thanos.io/components/compact/
+
+**Downsampling Techniques 테이블** (제안):
+
+| **Technique**            | **설명**                                      | **타이밍/조건**                          | **이점**                          | **왕국 적용 예시** (Prometheus 메트릭스) | **yaml 예시** |
+|--------------------------|-----------------------------------------------|-----------------------------------------|-----------------------------------|------------------------------------------|---------------|
+| **5m Downsampling**     | raw (1m/15s) → 5m 해상도 집계                | 40시간 후 자동 (Compactor)               | 쿼리 속도 향상                | 최근 2주 latency p95 분석                | --retention.resolution-5m=90d |
+| **1h Downsampling**     | 5m → 1h 해상도 집계                          | 10일 후 자동                             | 쿼리 속도 향상, 저장 증가 | 장기 (1년) MCP 호출 트렌드               | --retention.resolution-1h=2y |
+| **Compaction**          | 블록 병합 (공통 구조 공유)                    | 지속 (Compactor 싱글톤)                  | 저장 효율화                       | Skills 19개 메트릭스 블록 최적화         | --retention.resolution-raw=15d |
+| **Downsampling Query**  | 쿼리 시 자동 (Thanos Query --query.auto-downsampling) | 장기 범위 쿼리                           | 쿼리 비용 감소 (주의: 값 부풀림 가능) | Grafana 30일 latency 히트맵             | query.auto-downsampling=true |
+| **Retention Policy**    | 해상도별 보관 기간 설정                        | Compactor flag                           | 비용 최적화 (tiered retention)    | raw 15d, 5m 90d, 1h 2y                  | --retention.resolution-raw=15d --retention.resolution-5m=90d |
+
+**thanos-compactor.yaml 예시** (제안):
+```yaml
+retentionResolutionRaw: 15d
+retentionResolution5m: 90d
+retentionResolution1h: 2y
+objstoreConfig:
+  type: S3
+  config:
+    bucket: afo-kingdom-metrics
+# Compactor 싱글톤 배포
+replicas: 1
+```
+
+**주의 사항** (공식 문서 기준):
+- Downsampling 정확성을 위해 5 시리즈 생성 (저장 증가)
+- auto-downsampling 쿼리 값 부풀림 가능 (비활성화 권장)
+- Compactor singleton 필수 (concurrency safe 아님)
+
+---
+
+### 11.12 Grafana Dashboard Examples 확장 (제안)
+
+**확장된 Dashboard Examples**: 왕국 Prometheus 메트릭스를 위한 추가 패널 예시
+
+**추가 패널 예시** (제안):
+
+1. **Gauge 패널**: 현재 활성 요청 / Skills 큐
+2. **Table 패널**: 상세 메트릭스 테이블 (endpoint별)
+3. **Bar Gauge 패널**: MCP 호출 수 type별 비교
+4. **Pie Chart 패널**: 에러 타입 분포
+5. **Logs 패널**: structlog JSON 로그 검색
+6. **Area Chart 패널**: 통기율 변화 추적
+7. **Stacked Bar 패널**: 클러스터별 호출 비교
+8. **Scatter Plot 패널**: 지연 vs 요청 수
+9. **Dashboard Layout 패널**: MCP/Skills/Context7 통합
+10. **Alerting Panel 패널**: Threshold 초과 강조
+11. **Heatmap + Timeseries 조합**: 지연 트렌드 + 분포
+12. **Trinity Score Trend 패널**: 커스텤 시각화 (제안)
+
+**Grafana Dashboard JSON 예시** (제안):
+```json
+{
+  "title": "AFO Kingdom Dashboard",
+  "panels": [
+    {
+      "title": "통기율 100%",
+      "type": "stat",
+      "targets": [{"expr": "100 - (sum(rate(errors_total[5m])) / sum(rate(requests_total[5m]))) * 100"}]
+    },
+    {
+      "title": "MCP Calls",
+      "type": "timeseries",
+      "targets": [{"expr": "rate(mcp_calls_total[5m])"}]
+    }
+  ]
+}
+```
+
+---
+
 ## 다음 단계 (왕국 확장)
 
 - **즉시**: structlog 설치 → logging_config.py 수정 테스트 (제안)
@@ -1199,6 +1388,11 @@ scrape_configs:
 - **Alertmanager**: Ticket 73 – Slack receiver 설정 (제안)
 - **Federation**: Ticket 74 – Federation (하위/상위 Prometheus, 제안)
 - **Federation**: Ticket 75 – Advanced match[] (MCP/Skills 필터, 제안)
+- **Federation Dashboard**: Ticket 76 – Federation Dashboard JSON 임포트 (MCP/통기율 패널, 제안)
+- **Thanos**: Ticket 77 – Thanos Store/Compactor 적용 (제안)
+- **Thanos Downsampling**: Ticket 78 – Downsampling retention (5m 90d, 1h 2y, 제안)
+- **Dashboard Examples**: Ticket 79 – More Panels (Heatmap/Table) 추가 (제안)
+- **Visual Examples**: Ticket 80 – Visual Examples (Heatmap/Table) 적용 (제안)
 - **선택**: Sentry vs Datadog vs Prometheus 비교 (왕국 모니터링 선택, 제안)
 
 ---
@@ -1225,6 +1419,10 @@ scrape_configs:
 - **Grafana Alerting**: https://grafana.com/docs/grafana/latest/alerting/
 - **Prometheus Alertmanager**: https://prometheus.io/docs/alerting/latest/alertmanager/
 - **Prometheus Federation**: https://prometheus.io/docs/prometheus/latest/federation/
+- **Grafana Multi-datasource**: https://grafana.com/docs/grafana/latest/datasources/
+- **Thanos 공식 문서**: https://thanos.io/
+- **CNCF Thanos**: https://www.cncf.io/projects/thanos/
+- **Thanos Compactor**: https://thanos.io/components/compact/
 - **FastAPI 공식 문서**: https://fastapi.tiangolo.com/
 - **pytest 공식 문서**: https://docs.pytest.org/
 - **현재 구현**: `packages/afo-core/utils/logging_config.py`
