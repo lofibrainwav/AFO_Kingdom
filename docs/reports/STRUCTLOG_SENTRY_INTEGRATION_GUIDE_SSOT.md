@@ -344,11 +344,131 @@ pytest -v tests/test_revalidate.py --cov=api
 
 ---
 
+## 6. 고급 설정 (제안)
+
+### Processors 체인 커스터마이징
+
+```python
+import structlog
+from structlog.processors import JSONRenderer, add_log_level, TimeStamper, StackInfoRenderer, format_exc_info
+from structlog.contextvars import merge_contextvars
+from structlog_sentry import SentryProcessor
+import logging
+
+structlog.configure(
+    processors=[
+        merge_contextvars,  # contextvars 병합 (FastAPI 미들웨어 연계)
+        add_log_level,
+        TimeStamper(key="ts", fmt="iso"),
+        StackInfoRenderer(),  # 개발 환경에서만 사용 권장
+        format_exc_info,
+        SentryProcessor(level=logging.ERROR, tag_keys=["request_id"]),  # Sentry 자동 전송
+        JSONRenderer(sort_keys=True)  # 프로덕션 JSON
+    ],
+    context_class=dict,
+    logger_factory=structlog.stdlib.LoggerFactory(),
+    wrapper_class=structlog.stdlib.BoundLogger,
+    cache_logger_on_first_use=True,  # 성능 최적화
+)
+```
+
+### Context Binding (요청 컨텍스트 자동 바인딩)
+
+```python
+from fastapi import Request
+import uuid
+import structlog
+
+@app.middleware("http")
+async def add_request_context(request: Request, call_next):
+    structlog.contextvars.clear_contextvars()
+    structlog.contextvars.bind_contextvars(
+        request_id=str(uuid.uuid4()),
+        method=request.method,
+        path=request.url.path
+    )
+    response = await call_next(request)
+    return response
+```
+
+### Custom Processor (사용자 정의 처리)
+
+```python
+class CustomTagProcessor:
+    """커스텀 태그 추가 processor (제안)"""
+    def __call__(self, logger, method_name, event_dict):
+        event_dict["kingdom"] = "AFO"
+        return event_dict
+
+structlog.configure(
+    processors=[
+        CustomTagProcessor(),  # 커스텀 processor 추가
+        # 기타 processors
+    ],
+)
+```
+
+---
+
+## 7. 성능 최적화 (제안)
+
+### 성능 최적화 팁
+
+| **팁**                  | **상세 설명**                                      | **이점**                          | **코드 예시** |
+|-------------------------|---------------------------------------------------|-----------------------------------|---------------|
+| **Async Renderer**     | 비동기 로깅 (I/O 블로킹 방지)                     | 대량 요청 시 성능 향상            | `processors=[AsyncRenderer()]` |
+| **Cache Logger**       | cache_logger_on_first_use=True                    | 로거 생성 오버헤드 제거           | `cache_logger_on_first_use=True` |
+| **Processors 최소화**  | 불필요 processor 제거 (StackInfoRenderer 개발 시만) | CPU/메모리 절감                   | 프로덕션: JSONRenderer + TimeStamper만 |
+| **Contextvars 사용**   | merge_contextvars (요청 컨텍스트 바인딩)         | 로깅 컨텍스트 자동 전파           | `processors=[merge_contextvars]` |
+| **레벨 필터링**        | make_filtering_bound_logger (환경별 레벨)        | 불필요 로그 방지                  | 개발: DEBUG, 프로덕션: INFO+ |
+
+### 비동기 로깅 설정 (대량 요청 제안)
+
+```python
+from structlog.processors import AsyncRenderer
+
+structlog.configure(
+    processors=[
+        merge_contextvars,
+        add_log_level,
+        TimeStamper(key="ts", fmt="iso"),
+        AsyncRenderer(),  # I/O 블로킹 방지
+        JSONRenderer(sort_keys=True)
+    ],
+    cache_logger_on_first_use=True,
+)
+```
+
+### 프로덕션 최적화 설정 (제안)
+
+```python
+import structlog
+from structlog.processors import JSONRenderer, add_log_level, TimeStamper
+from structlog.contextvars import merge_contextvars
+from structlog_sentry import SentryProcessor
+import logging
+
+structlog.configure(
+    processors=[
+        merge_contextvars,  # 컨텍스트 바인딩
+        add_log_level,
+        TimeStamper(key="ts", fmt="iso"),
+        SentryProcessor(level=logging.ERROR),  # error Sentry 전송
+        JSONRenderer(sort_keys=True)  # JSON 최적화
+    ],
+    cache_logger_on_first_use=True,  # 로거 캐싱 (성능 향상)
+)
+```
+
+---
+
 ## 다음 단계 (왕국 확장)
 
 - **즉시**: structlog 설치 → logging_config.py 수정 테스트 (제안)
 - **단기**: Ticket 42 – structlog 전체 적용 (JSON 로깅)
 - **중기**: Sentry + structlog 통합 (에러/성능 중앙화)
+- **고급**: Ticket 54 – structlog 고급 processors (TimeStamper/JSONRenderer) 적용
+- **성능**: Ticket 55 – AsyncRenderer 대량 요청 벤치마크
 
 ---
 
