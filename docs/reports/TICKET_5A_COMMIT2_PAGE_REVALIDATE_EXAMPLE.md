@@ -20,85 +20,81 @@
 
 > **주의**: 아래 코드는 **예시/준비 단계**입니다. 실제 구현 전 검토 필요.
 
+### FACTS
+
+- Commit 2는 **"예시/준비 단계(미구현)"**로 문서에만 존재해야 함.
+- Commit 1의 보안 원칙 유지: **헤더 인증 / Query 금지 / fragmentKey 검증 / GET 차단**
+- Commit 2에서 추가되는 건 **pageSlug(선택)** 뿐.
+
+### PASTE (최종 붙여넣기 버전)
+
 ```typescript
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 
 export const runtime = "edge";
 
-const HEADER = "x-revalidate-secret";
 const FRAGMENT_KEY_RE = /^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$/;
-const PAGE_SLUG_RE = /^[A-Za-z0-9][A-Za-z0-9/_-]{0,255}$/;
+const PAGE_SLUG_RE = /^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$/;
 
-type Body = {
-  fragmentKey?: unknown;
-  pageSlug?: unknown; // 선택
-};
+function methodNotAllowed() {
+  return NextResponse.json({ error: "Method Not Allowed" }, { status: 405 });
+}
 
-export async function POST(req: NextRequest) {
-  // Query Parameter 금지
-  if (req.nextUrl.searchParams.size > 0) {
-    return NextResponse.json(
-      { ok: false, error: "query_params_not_allowed" },
-      { status: 400 }
-    );
+export async function POST(request: Request) {
+  // Query parameter 금지 (보안)
+  const url = new URL(request.url);
+  if (url.search && url.search.length > 0) {
+    return NextResponse.json({ error: "Query parameters are not allowed" }, { status: 400 });
   }
 
   // 헤더 인증
-  const expected = process.env.REVALIDATE_SECRET;
-  const provided = req.headers.get(HEADER);
-  if (!expected || !provided || provided !== expected) {
-    return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401 });
+  const secret = request.headers.get("x-revalidate-secret");
+  if (!secret || secret !== process.env.REVALIDATE_SECRET) {
+    return NextResponse.json({ error: "Invalid secret" }, { status: 401 });
   }
 
-  // JSON 파싱
-  let body: Body;
+  // JSON 파싱 안전 처리
+  let body: unknown;
   try {
-    body = (await req.json()) as Body;
+    body = await request.json();
   } catch {
-    return NextResponse.json({ ok: false, error: "invalid_json" }, { status: 400 });
+    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const fragmentKey = body.fragmentKey;
-  const pageSlug = body.pageSlug;
+  const fragmentKey = (body as any)?.fragmentKey;
+  const pageSlug = (body as any)?.pageSlug;
 
   // fragmentKey 검증 (필수)
   if (typeof fragmentKey !== "string" || !FRAGMENT_KEY_RE.test(fragmentKey)) {
-    return NextResponse.json(
-      { ok: false, error: "invalid_fragmentKey" },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: "Invalid fragmentKey" }, { status: 400 });
   }
-
-  const fragmentPath = `/fragments/${fragmentKey}.html`;
 
   // pageSlug 검증 (선택)
-  let pagePath: string | null = null;
-  if (typeof pageSlug === "string" && pageSlug.trim().length > 0) {
-    const normalized = pageSlug.trim().replace(/^\/+/, "");
-    if (!PAGE_SLUG_RE.test(normalized)) {
-      return NextResponse.json(
-        { ok: false, error: "invalid_pageSlug" },
-        { status: 400 }
-      );
+  if (pageSlug !== undefined) {
+    if (typeof pageSlug !== "string" || !PAGE_SLUG_RE.test(pageSlug)) {
+      return NextResponse.json({ error: "Invalid pageSlug" }, { status: 400 });
     }
-    // 설계 기준: /docs/[slug]
-    pagePath = `/docs/${normalized}`;
   }
 
-  // revalidate
+  const paths: string[] = [];
+  const fragmentPath = `/fragments/${fragmentKey}.html`;
   revalidatePath(fragmentPath);
-  if (pagePath) revalidatePath(pagePath);
+  paths.push(fragmentPath);
 
-  return NextResponse.json({
-    ok: true,
-    revalidated: pagePath ? [fragmentPath, pagePath] : [fragmentPath],
-  });
+  if (typeof pageSlug === "string" && pageSlug.length > 0) {
+    const pagePath = `/docs/${pageSlug}`;
+    revalidatePath(pagePath);
+    paths.push(pagePath);
+  }
+
+  return NextResponse.json({ revalidated: true, paths });
 }
 
-export async function GET() {
-  return NextResponse.json({ ok: false, error: "method_not_allowed" }, { status: 405 });
-}
+export function GET() { return methodNotAllowed(); }
+export function PUT() { return methodNotAllowed(); }
+export function PATCH() { return methodNotAllowed(); }
+export function DELETE() { return methodNotAllowed(); }
 ```
 
 ---
@@ -111,33 +107,50 @@ feat(dashboard): extend revalidate API to optionally revalidate pages (edge, hea
 
 ---
 
-## ✅ 테스트 curl (예시)
+## ✅ 테스트 curl (예시) — 전부 Content-Type 포함
 
-### 1) Fragment만 (기본)
+### 1) 성공 (fragment만)
 
 ```bash
 curl -i -X POST "http://localhost:3000/api/revalidate" \
-  -H "content-type: application/json" \
   -H "x-revalidate-secret: $REVALIDATE_SECRET" \
+  -H "content-type: application/json" \
   -d '{"fragmentKey":"home-hero"}'
 ```
 
-### 2) Fragment + Page (선택)
+### 2) 성공 (fragment + page)
 
 ```bash
 curl -i -X POST "http://localhost:3000/api/revalidate" \
-  -H "content-type: application/json" \
   -H "x-revalidate-secret: $REVALIDATE_SECRET" \
+  -H "content-type: application/json" \
   -d '{"fragmentKey":"home-hero","pageSlug":"home"}'
 ```
 
-### 3) pageSlug 불량 (400)
+### 3) 헤더 없음 (401)
 
 ```bash
 curl -i -X POST "http://localhost:3000/api/revalidate" \
   -H "content-type: application/json" \
+  -d '{"fragmentKey":"home-hero"}'
+```
+
+### 4) fragmentKey 불량 (400)
+
+```bash
+curl -i -X POST "http://localhost:3000/api/revalidate" \
   -H "x-revalidate-secret: $REVALIDATE_SECRET" \
-  -d '{"fragmentKey":"home-hero","pageSlug":"../evil"}'
+  -H "content-type: application/json" \
+  -d '{"fragmentKey":"../evil"}'
+```
+
+### 5) Query 금지 (400)
+
+```bash
+curl -i -X POST "http://localhost:3000/api/revalidate?x=1" \
+  -H "x-revalidate-secret: $REVALIDATE_SECRET" \
+  -H "content-type: application/json" \
+  -d '{"fragmentKey":"home-hero"}'
 ```
 
 ---
@@ -178,4 +191,5 @@ curl -i -X POST "http://localhost:3000/api/revalidate" \
 
 **Status:** 🟡 **Example/Ready (Not Implemented)**  
 **Next Action:** 필요 시 구현 시작
+
 
