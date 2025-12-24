@@ -20,16 +20,25 @@ DRY (Don't Repeat Yourself)는 코드/지식 중복 제거 원칙입니다.
 
 ---
 
-## DRY 적용 베스트 프랙티스 테이블 (왕국 코드베이스 기준)
+## DRY 적용 베스트 프랙티스 테이블 (간결 버전, 왕국 코드베이스 기준)
 
-| **카테고리**              | **적용 방법**                                      | **상세 설명**                          | **왕국 적용 예시** (대시보드/FastAPI)                  | **주의점**                          |
-|---------------------------|---------------------------------------------------|---------------------------------------|-------------------------------------------------------|------------------------------------|
-| **코드 중복**            | 함수/클래스 추출, 모듈화                          | 동일 로직 단일 함수로                   | fragmentKey 검증 로직 (Ticket 5A) → utils.validate_key | 추상화 과잉 (YAGNI 주의)           |
-| **설정 중복**            | config 파일/환경 변수 중앙화                      | .env + pydantic Settings               | REVALIDATE_SECRET (Secrets/Vars 통합)                | 환경별 차이 허용                   |
-| **템플릿 중복**          | Templater/partials 사용                           | 반복 UI/보고서 템플릿 추출             | 보고서 헤더/푸터 (Trinity Score 표시)                 | 동적 부분 분리                     |
-| **검증 로직**            | validator 함수/데코레이터 재사용                  | Pydantic custom validator              | 입력 검증 (strict mode + field_validator)             | 런타임 오버헤드                    |
-| **데이터 구조**          | 모델/인터페이스 재사용                            | BaseModel 상속                         | Request/Response 모델 (API 공통 필드)                 | 계층 깊이 제한                     |
-| **테스트 코드**          | fixture/헬퍼 함수                                 | pytest fixture 재사용                  | API 테스트 클라이언트 (TestClient)                    | 테스트 독립성 유지                 |
+| **카테고리**              | **적용 방법**                                      | **왕국 적용 예시** (대시보드/FastAPI/MCP)                  |
+|---------------------------|---------------------------------------------------|-----------------------------------------------------------|
+| **코드 중복**            | 함수/클래스 추출, 모듈화                          | fragmentKey 검증 → utils.validate_key                    |
+| **설정 중복**            | config 파일/환경 변수 중앙화                      | REVALIDATE_SECRET (Secrets/Vars 통합)                    |
+| **템플릿 중복**          | Templater/partials 사용                           | 보고서 헤더/푸터 (Trinity Score 표시)                     |
+| **검증 로직**            | validator 함수/데코레이터 재사용                  | Pydantic custom validator (strict mode)                  |
+| **데이터 구조**          | 모델/인터페이스 재사용                            | Request/Response 모델 (API 공통 필드)                     |
+| **테스트 코드**          | fixture/헬퍼 함수                                 | pytest fixture (TestClient)                               |
+| **에러 처리**            | 중앙화된 에러 핸들러                              | HTTPException 커스텀 클래스 (401/400)                     |
+| **로깅**                 | 로거 인스턴스 단일화                              | get_logger() 모든 모듈 사용                               |
+| **API 라우터**           | 공통 prefix/middleware 재사용                     | /api/revalidate guard (Ticket 5A)                        |
+| **유틸 함수**            | utils 모듈 집중                                   | date.now() / slug 생성 함수                               |
+
+**축소 기준**:
+- 상세 설명/주의점 병합 → 핵심 예시 중심
+- 행 수 확장 (10개), 컬럼 3개로 간결화
+- 왕국 적용 예시 강화 (대시보드/MCP 중심)
 
 ---
 
