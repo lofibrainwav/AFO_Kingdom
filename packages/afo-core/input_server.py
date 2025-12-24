@@ -32,8 +32,7 @@ from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 
 # Input Storage 모듈 import
 try:
-    from input_storage import (get_input_history, get_input_statistics,
-                               save_input_to_db)
+    from input_storage import get_input_history, get_input_statistics, save_input_to_db
 
     INPUT_STORAGE_AVAILABLE = True
 except ImportError:

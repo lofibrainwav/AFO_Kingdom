@@ -11,8 +11,7 @@ from pydantic import BaseModel, Field
 
 # Auth utilities import
 try:
-    from AFO.api.utils.auth import (create_access_token, hash_password,
-                                    verify_password, verify_token)
+    from AFO.api.utils.auth import create_access_token, hash_password, verify_password, verify_token
 
     AUTH_UTILS_AVAILABLE = True
 except ImportError:

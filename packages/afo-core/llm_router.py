@@ -222,8 +222,7 @@ class LLMRouter:
                     ollama_url = settings.OLLAMA_BASE_URL
                 except ImportError:
                     try:
-                        from config.settings import \
-                            get_settings  # type: ignore
+                        from config.settings import get_settings  # type: ignore
 
                         settings = get_settings()
                         ollama_url = settings.OLLAMA_BASE_URL
@@ -521,8 +520,7 @@ class LLMRouter:
 
             # 1. Check Redis Cache (Phase 1.1: LLM 응답 캐싱)
             try:
-                from AFO.services.llm_cache_service import \
-                    get_llm_cache_service
+                from AFO.services.llm_cache_service import get_llm_cache_service
 
                 cache_service = await get_llm_cache_service()
                 if cache_service and cache_service._initialized:
@@ -612,8 +610,7 @@ class LLMRouter:
 
                 # 3. Save to Redis Cache (Phase 1.1: LLM 응답 캐싱)
                 try:
-                    from AFO.services.llm_cache_service import \
-                        get_llm_cache_service
+                    from AFO.services.llm_cache_service import get_llm_cache_service
 
                     cache_service = await get_llm_cache_service()
                     if cache_service and cache_service._initialized:
@@ -678,12 +675,10 @@ class LLMRouter:
         try:
             # Phase 5: REST API 사용 (google.generativeai 대체)
             try:
-                from AFO.llms.gemini_api import \
-                    gemini_api  # type: ignore[assignment]
+                from AFO.llms.gemini_api import gemini_api  # type: ignore[assignment]
             except ImportError:
                 try:
-                    from llms.gemini_api import \
-                        gemini_api  # type: ignore[assignment]
+                    from llms.gemini_api import gemini_api  # type: ignore[assignment]
                 except ImportError as e:
                     raise ImportError("Gemini API Wrapper not available") from e
 

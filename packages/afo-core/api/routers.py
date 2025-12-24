@@ -4,16 +4,42 @@ AFO Kingdom API Router Registration
 Centralized router registration system for organized API management.
 """
 
-from AFO.api.compat import (  # Phase-specific routers; Core routers; Feature routers
-    aicpa_router, auth_router, budget_router, chancellor_router, chat_router,
-    council_router, education_system_router, finance_router, got_router,
-    grok_stream_router, health_router, learning_log_router, learning_pipeline,
-    matrix_router, modal_data_router, multi_agent_router, n8n_router,
-    personas_router, pillars_router, rag_query_router, root_router,
-    serenity_router, skills_router, ssot_router, strangler_router,
-    streams_router, system_health_router, trinity_policy_router,
-    trinity_sbt_router, users_router, voice_router, wallet_router)
 from fastapi import FastAPI
+
+from AFO.api.compat import (  # Phase-specific routers; Core routers; Feature routers
+    aicpa_router,
+    auth_router,
+    budget_router,
+    chancellor_router,
+    chat_router,
+    council_router,
+    education_system_router,
+    finance_router,
+    got_router,
+    grok_stream_router,
+    health_router,
+    learning_log_router,
+    learning_pipeline,
+    matrix_router,
+    modal_data_router,
+    multi_agent_router,
+    n8n_router,
+    personas_router,
+    pillars_router,
+    rag_query_router,
+    root_router,
+    serenity_router,
+    skills_router,
+    ssot_router,
+    strangler_router,
+    streams_router,
+    system_health_router,
+    trinity_policy_router,
+    trinity_sbt_router,
+    users_router,
+    voice_router,
+    wallet_router,
+)
 
 
 def setup_routers(app: FastAPI) -> None:
@@ -201,6 +227,17 @@ def _register_phase_routers(app: FastAPI) -> None:
     except Exception as e:
         print(f"⚠️ Serenity Router 등록 실패: {e}")
 
+    # 철학적 Copilot Dashboard (眞善美孝永 철학의 실시간 조화 모니터링)
+    try:
+        from AFO.api.routes.philosophical_copilot import router as philosophical_copilot_router
+
+        app.include_router(philosophical_copilot_router, tags=["철학적 Copilot"])
+        print(
+            "🎯 철학적 Copilot Router 등록 완료 (제갈량의 전략 + 관우의 검증 + 여포의 맥박)"
+        )
+    except Exception as e:
+        print(f"⚠️ 철학적 Copilot Router 등록 실패: {e}")
+
     # Additional RAG and query routers
     if rag_query_router:
         app.include_router(rag_query_router, prefix="/api", tags=["RAG (Phase 12)"])
@@ -305,15 +342,13 @@ def _register_legacy_routers(app: FastAPI) -> None:
 
     # Comprehensive Health Check (integrated)
     try:
-        from AFO.api.routes.comprehensive_health import \
-            router as comprehensive_health_router
+        from AFO.api.routes.comprehensive_health import router as comprehensive_health_router
 
         app.include_router(comprehensive_health_router)
         print("✅ Comprehensive Health Check 라우터 등록 완료 (조기 등록)")
     except ImportError:
         try:
-            from api.routes.comprehensive_health import \
-                router as comprehensive_health_router
+            from api.routes.comprehensive_health import router as comprehensive_health_router
 
             app.include_router(comprehensive_health_router)
             print(
@@ -339,15 +374,13 @@ def _register_legacy_routers(app: FastAPI) -> None:
 
     # Integrity Check API
     try:
-        from AFO.api.routes.integrity_check import \
-            router as integrity_check_router
+        from AFO.api.routes.integrity_check import router as integrity_check_router
 
         app.include_router(integrity_check_router)
         print("✅ Integrity Check 라우터 등록 완료")
     except ImportError:
         try:
-            from api.routes.integrity_check import \
-                router as integrity_check_router
+            from api.routes.integrity_check import router as integrity_check_router
 
             app.include_router(integrity_check_router)
             print("✅ Integrity Check 라우터 등록 완료 (fallback)")
@@ -377,8 +410,7 @@ def _register_legacy_routers(app: FastAPI) -> None:
         print("✅ Intake API 라우터 등록 완료 (조기 등록)")
     except ImportError:
         try:
-            from AFO.afo_soul_engine.routers.intake import \
-                router as intake_router
+            from AFO.afo_soul_engine.routers.intake import router as intake_router
 
             app.include_router(intake_router)
             print("✅ Intake API 라우터 등록 완료 (fallback, 조기 등록)")

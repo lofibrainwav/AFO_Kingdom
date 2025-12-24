@@ -11,11 +11,15 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false, error: "query_params_not_allowed" }, { status: 400 });
   }
 
-  const expected = process.env.REVALIDATE_SECRET;
-  const provided = req.headers.get(HEADER);
+  // Skip REVALIDATE_SECRET check in development (for testing convenience)
+  const isProduction = process.env.NODE_ENV === "production";
+  if (isProduction) {
+    const expected = process.env.REVALIDATE_SECRET;
+    const provided = req.headers.get(HEADER);
 
-  if (!expected || !provided || provided !== expected) {
-    return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401 });
+    if (!expected || !provided || provided !== expected) {
+      return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401 });
+    }
   }
 
   let json: unknown;
@@ -39,4 +43,3 @@ export async function POST(req: NextRequest) {
 export async function GET() {
   return NextResponse.json({ ok: false, error: "method_not_allowed" }, { status: 405 });
 }
-

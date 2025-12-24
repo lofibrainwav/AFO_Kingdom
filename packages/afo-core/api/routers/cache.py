@@ -3,10 +3,11 @@ Cache Metrics Router
 Phase 6B: Expose cache performance metrics to the dashboard
 """
 
-from typing import Any, Dict
+from typing import Any
+
+from fastapi import APIRouter, HTTPException
 
 from AFO.cache import get_cache_metrics
-from fastapi import APIRouter, HTTPException
 
 router = APIRouter(prefix="/api/cache", tags=["Cache Metrics"])
 

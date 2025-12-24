@@ -11,8 +11,7 @@ from typing import Any
 # LangChain 1.2.0+ API 변경사항 반영
 # 타입 별칭 문제를 피하기 위해 런타임에서만 import
 try:
-    from langchain_core.messages import (BaseMessage, HumanMessage,
-                                         SystemMessage)
+    from langchain_core.messages import BaseMessage, HumanMessage, SystemMessage
     from langchain_core.prompts import PromptTemplate
     from langchain_openai import ChatOpenAI
 
@@ -20,8 +19,7 @@ try:
 except ImportError:
     # Fallback for older versions
     try:
-        from langchain.llms import \
-            OpenAI as ChatOpenAI  # type: ignore[no-redef]
+        from langchain.llms import OpenAI as ChatOpenAI  # type: ignore[no-redef]
         from langchain.prompts import PromptTemplate  # type: ignore[no-redef]
         from langchain.schema import BaseMessage, HumanMessage, SystemMessage
 

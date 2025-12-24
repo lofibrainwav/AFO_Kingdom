@@ -11,6 +11,7 @@ from typing import Any, cast
 
 import httpx
 import redis.asyncio as redis
+
 # AFO internal imports
 from AFO.api.compat import TrinityMetrics, calculate_trinity
 from AFO.config.settings import get_settings

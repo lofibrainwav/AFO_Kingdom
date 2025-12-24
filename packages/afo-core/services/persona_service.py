@@ -23,9 +23,17 @@ except ImportError:
         return func
 
 
-from AFO.domain.persona import (Persona, commander, creator, current_persona,
-                                family_head, learner, sima_yi, zhou_yu,
-                                zhuge_liang)
+from AFO.domain.persona import (
+    Persona,
+    commander,
+    creator,
+    current_persona,
+    family_head,
+    learner,
+    sima_yi,
+    zhou_yu,
+    zhuge_liang,
+)
 
 logger = logging.getLogger(__name__)
 

@@ -22,6 +22,7 @@ import os
 from typing import TYPE_CHECKING, Any
 
 import httpx
+
 from AFO.afo_skills_registry import register_core_skills
 from AFO.scholars.libraries.obsidian_bridge import LocalObsidianBridge
 
