@@ -1380,10 +1380,27 @@ networks:
 
 **각 컴포넌트별 주요 옵션** (제안):
 
-- **Sidecar**: `--prometheus.url`, `--objstore.config-file`, `--tsdb.path`
+- **Sidecar**: `--prometheus.url`, `--objstore.config-file`, `--tsdb.path`, `--http-address`, `--grpc-address`
 - **Store**: `--objstore.config-file`, `--data-dir`, `--grpc-address`, `--http-address`
 - **Query**: `--store` (다중), `--http-address`, `--grpc-address`
 - **Compactor**: `--objstore.config-file`, `--retention.resolution-*`, `--downsample`, `--data-dir`
+
+#### Grafana 연계 (제안)
+
+**Thanos Query를 Grafana 데이터소스로 추가**:
+1. Grafana UI → Configuration → Data Sources → Add → Prometheus
+2. URL: `http://thanos-query:10902`
+3. Thanos Query는 Prometheus API 호환 (Grafana에서 직접 사용 가능)
+
+**쿼리 예시** (Grafana 패널, 제안):
+- **통기율 (장기)**: `100 - (sum(rate(errors_total[5m])) / sum(rate(requests_total[5m]))) * 100`
+- **MCP 호출 (1년 전)**: `rate(mcp_calls_total[5m])` (Thanos Query가 자동으로 Store Gateway에서 조회)
+
+#### 왕국 적용 효과 (예상)
+- 메트릭스 무한 저장 (S3 비용 효율).
+- downsampling으로 장기 데이터 효율.
+- Grafana + Thanos Query로 통기율 100% 장기 시각화.
+- 다중 Prometheus 통합 쿼리 (Query 컴포넌트).
 
 ---
 
