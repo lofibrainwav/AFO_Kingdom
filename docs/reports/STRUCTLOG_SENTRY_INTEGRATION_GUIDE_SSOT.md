@@ -1273,21 +1273,117 @@ scrape_configs:
 | **Ruler**                | 알림 규칙 평가                                    | 분산 알림                         | 통기율 <100% 알림 (Grafana 연계)                        | ruler: --rule.file |
 | **Receiver**             | 원격 쓰기 (remote write)                          | 메트릭스 수집                     | 외부 시스템 메트릭스 왕국으로                            | receiver: --remote-write |
 
-**thanos.yaml 예시** (제안):
+**s3.yaml (object storage 설정, 제안)**:
 ```yaml
-type: s3
+type: S3
 config:
   bucket: "afo-kingdom-metrics"
   endpoint: "s3.amazonaws.com"
-sidecar:
-  prometheus_url: "http://localhost:9090"
-store:
-  - --objstore.config-file=/etc/thanos/s3.yaml
-query:
-  - --store=store-gateway:10901
-compactor:
-  - --downsample-resolution=5m-1h
+  access_key: "YOUR_ACCESS_KEY"
+  secret_key: "YOUR_SECRET_KEY"
+  # 또는 AWS IAM 역할 사용 시 access_key/secret_key 생략 가능
 ```
+
+**docker-compose.yml (전체 구성 예시, 제안)**:
+```yaml
+version: '3.8'
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    ports:
+      - "9090:9090"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=15d'
+    networks:
+      - thanos
+
+  thanos-sidecar:
+    image: quay.io/thanos/thanos:v0.32.0
+    command:
+      - "sidecar"
+      - "--prometheus.url=http://prometheus:9090"
+      - "--objstore.config-file=/etc/thanos/s3.yaml"
+      - "--tsdb.path=/prometheus"
+    volumes:
+      - ./s3.yaml:/etc/thanos/s3.yaml
+      - prometheus-data:/prometheus
+    depends_on:
+      - prometheus
+    networks:
+      - thanos
+
+  thanos-store:
+    image: quay.io/thanos/thanos:v0.32.0
+    command:
+      - "store"
+      - "--objstore.config-file=/etc/thanos/s3.yaml"
+      - "--data-dir=/var/thanos/store"
+      - "--grpc-address=0.0.0.0:10901"
+      - "--http-address=0.0.0.0:10902"
+    volumes:
+      - ./s3.yaml:/etc/thanos/s3.yaml
+      - thanos-store-data:/var/thanos/store
+    ports:
+      - "10901:10901"
+      - "10902:10902"
+    networks:
+      - thanos
+
+  thanos-query:
+    image: quay.io/thanos/thanos:v0.32.0
+    command:
+      - "query"
+      - "--store=thanos-store:10901"
+      - "--store=thanos-sidecar:10901"
+      - "--http-address=0.0.0.0:10902"
+      - "--grpc-address=0.0.0.0:10901"
+    ports:
+      - "10902:10902"
+      - "10901:10901"
+    depends_on:
+      - thanos-store
+      - thanos-sidecar
+    networks:
+      - thanos
+
+  thanos-compactor:
+    image: quay.io/thanos/thanos:v0.32.0
+    command:
+      - "compact"
+      - "--objstore.config-file=/etc/thanos/s3.yaml"
+      - "--data-dir=/var/thanos/compact"
+      - "--retention.resolution-raw=15d"
+      - "--retention.resolution-5m=90d"
+      - "--retention.resolution-1h=2y"
+      - "--downsample"
+    volumes:
+      - ./s3.yaml:/etc/thanos/s3.yaml
+      - thanos-compact-data:/var/thanos/compact
+    networks:
+      - thanos
+    # Compactor는 싱글톤 배포 필수 (replicas: 1)
+
+volumes:
+  prometheus-data:
+  thanos-store-data:
+  thanos-compact-data:
+
+networks:
+  thanos:
+    driver: bridge
+```
+
+**각 컴포넌트별 주요 옵션** (제안):
+
+- **Sidecar**: `--prometheus.url`, `--objstore.config-file`, `--tsdb.path`
+- **Store**: `--objstore.config-file`, `--data-dir`, `--grpc-address`, `--http-address`
+- **Query**: `--store` (다중), `--http-address`, `--grpc-address`
+- **Compactor**: `--objstore.config-file`, `--retention.resolution-*`, `--downsample`, `--data-dir`
 
 ---
 
