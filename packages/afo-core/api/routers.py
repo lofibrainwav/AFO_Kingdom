@@ -229,7 +229,9 @@ def _register_phase_routers(app: FastAPI) -> None:
 
     # 철학적 Copilot Dashboard (眞善美孝永 철학의 실시간 조화 모니터링)
     try:
-        from AFO.api.routes.philosophical_copilot import router as philosophical_copilot_router
+        from AFO.api.routes.philosophical_copilot import (
+            router as philosophical_copilot_router,
+        )
 
         app.include_router(philosophical_copilot_router, tags=["철학적 Copilot"])
         print(
@@ -342,13 +344,17 @@ def _register_legacy_routers(app: FastAPI) -> None:
 
     # Comprehensive Health Check (integrated)
     try:
-        from AFO.api.routes.comprehensive_health import router as comprehensive_health_router
+        from AFO.api.routes.comprehensive_health import (
+            router as comprehensive_health_router,
+        )
 
         app.include_router(comprehensive_health_router)
         print("✅ Comprehensive Health Check 라우터 등록 완료 (조기 등록)")
     except ImportError:
         try:
-            from api.routes.comprehensive_health import router as comprehensive_health_router
+            from api.routes.comprehensive_health import (
+                router as comprehensive_health_router,
+            )
 
             app.include_router(comprehensive_health_router)
             print(

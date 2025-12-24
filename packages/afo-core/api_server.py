@@ -16,6 +16,12 @@ if _AFO_ROOT not in sys.path:
     sys.path.insert(0, _AFO_ROOT)
 
 # Core FastAPI imports
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.util import get_remote_address
+
+# Initialize Limiter
+limiter = Limiter(key_func=get_remote_address)
 
 # AFO Kingdom imports via Strangler Fig Facade
 
@@ -50,6 +56,8 @@ logger = logging.getLogger(__name__)
 
 # Create FastAPI app with configuration
 app = get_app_config()
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # Setup middleware (CORS, security, monitoring)
 setup_middleware(app)

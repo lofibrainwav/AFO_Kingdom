@@ -24,7 +24,9 @@ router = APIRouter(prefix="/health", tags=["Health"])
 
 # Comprehensive Health Check 통합
 try:
-    from AFO.api.routes.comprehensive_health import router as comprehensive_health_router
+    from AFO.api.routes.comprehensive_health import (
+        router as comprehensive_health_router,
+    )
 
     # comprehensive_health_router는 이미 prefix="/api/health"를 가지고 있으므로
     # health_router에 직접 통합하면 경로가 중복될 수 있음

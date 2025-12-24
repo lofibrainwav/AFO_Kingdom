@@ -229,7 +229,10 @@ class HybridRAG:
 
             # Advanced RAG (A+B)
             try:
-                from AFO.services.hybrid_rag import generate_hyde_query_async, query_qdrant_async
+                from AFO.services.hybrid_rag import (
+                    generate_hyde_query_async,
+                    query_qdrant_async,
+                )
 
                 cls.query_qdrant_async = query_qdrant_async
                 cls.generate_hyde_query_async = generate_hyde_query_async
