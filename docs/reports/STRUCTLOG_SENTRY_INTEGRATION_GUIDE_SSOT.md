@@ -895,6 +895,119 @@ statsd.gauge("skills.count", 19, tags=["kingdom:afo", "version:2025"])
 
 ---
 
+### 9.3 Datadog Metrics Alerting Setup (제안)
+
+**Datadog Metrics Alerting**: 커스텀 메트릭스 기준 이상치 알림
+
+**참고 자료**:
+- Datadog Monitors: https://docs.datadoghq.com/monitors/
+- Datadog Metric Monitors: https://docs.datadoghq.com/monitors/types/metric/
+- Datadog Notification Channels: https://docs.datadoghq.com/monitors/notify/
+
+**왕국 현재 상태**: Datadog 미통합 (Custom Metrics 제안 상태)
+
+**Alerting Setup 단계별 가이드** (제안):
+
+#### 1. Monitor 생성 (Datadog UI)
+
+- Monitors → New Monitor → Metric
+- Query: 커스텀 메트릭스 선택 (e.g., `mcp.calls.total`)
+
+#### 2. 쿼리 및 조건 설정 (예시)
+
+**통기율 <100% 알림**:
+```
+Query: 100 - (avg:mcp.errors.total{*} / avg:mcp.calls.total{*}) * 100
+Condition: avg(last_5m) < 100
+```
+
+**MCP 호출 급증**:
+```
+Query: avg:mcp.calls.total{*}
+Condition: change(last_5m) > 50% (급증 감지)
+```
+
+**지연 p95 >2s**:
+```
+Query: p95:request.latency{*}
+Condition: avg(last_5m) > 2
+```
+
+#### 3. 알림 채널 (Notification)
+
+- @slack-#afo-alerts
+- @email (on-call)
+- Message 템플릿:
+  ```
+  @all 통기율 저하 감지!
+  현재: {{value}}%
+  클러스터: {{cluster.name}}
+  ```
+
+#### 4. Multi-Alert & Grouping
+
+- Group by: `cluster`, `endpoint` (다중 클러스터 알림 분리)
+
+#### 5. Thresholds & Recovery
+
+- Critical: <100%
+- Warning: <99%
+- No Data: 10m (데이터 미수집 알림)
+
+**왕국 적용 효과 (예상)**:
+- 통기율 100% 실시간 보호 (저하 즉시 알림)
+- MCP/Skills 메트릭스 이상치 감지
+- Slack 연계 (왕국 채널 실시간)
+
+---
+
+### 9.4 Datadog Anomaly Detection (제안)
+
+**Datadog Anomaly Detection**: 메트릭스 과거 패턴 기반 이상치 탐지
+
+**참고 자료**:
+- Datadog Anomaly Monitors: https://docs.datadoghq.com/monitors/types/anomaly/
+- Datadog Anomaly Detection Algorithm: https://docs.datadoghq.com/monitors/types/anomaly/#anomaly-detection-algorithm
+
+**왕국 현재 상태**: Datadog 미통합
+
+**Anomaly Detection 기능 테이블** (제안):
+
+| **기능**                  | **상세 설명**                                      | **이점**                          | **왕국 적용 예시** (Custom Metrics)                  | **설정 팁** |
+|---------------------------|---------------------------------------------------|-----------------------------------|-------------------------------------------------------|------------|
+| **Algorithm**            | Seasonal (주기성), Algorithmic (비주기성) 선택   | 패턴 맞춤 탐지                    | MCP 호출 (주간 패턴 seasonal)                        | Algorithm: Seasonal |
+| **Deviation Bands**      | 정상 범위 밴드 (rolling median + deviation)       | 이상치 강조                       | 통기율 100% 밖 변화 빨강 표시                        | Sensitivity: Medium |
+| **Window**               | 학습 기간 (1w/4w 등)                              | 과거 데이터 기반                   | 최근 4주 MCP 트렌드 학습                             | Lookback: 4 weeks |
+| **Alert Conditions**     | Above/Below/Both bands                            | 방향성 알림                       | 통기율 below band (저하 알림)                        | Alert when: Below band |
+| **Recovery**             | 정상 복귀 알림                                    | 빠른 대응                         | 통기율 복구 시 알림                                  | Notify on recovery |
+| **Multi-Alert**          | 라벨별 그룹화                                     | 클러스터별 알림                   | cluster="afo" 별 MCP 이상                            | Group by: cluster |
+| **Seasonality**          | Daily/Weekly/Monthly 자동 감지                    | 주기성 패턴 처리                  | 주말 MCP 호출 감소 예상                              | Seasonality: Weekly |
+
+**왕국 적용 추천 Monitor (UI 설정 제안)**:
+
+**통기율 Anomaly Monitor**:
+```
+Query: avg:last_1h):100 - (sum:mcp.errors.total{*} by {cluster} / sum:mcp.calls.total{*} by {cluster}) * 100
+Algorithm: Seasonal
+Sensitivity: High (급락 즉시 감지)
+Alert when: Below lower band
+Notification: @slack-#afo-alerts "통기율 이상 감지: {{value.name}} = {{value}}%"
+```
+
+**MCP 호출 Anomaly Monitor**:
+```
+Query: avg:last_1h):mcp.calls.total{*} by {type}
+Algorithm: Algorithmic (비주기성)
+Alert when: Above upper band (급증)
+```
+
+**왕국 적용 효과 (예상)**:
+- 예상 밖 통기율 저하 자동 알림 (100% 유지)
+- MCP/Skills 호출 이상 패턴 탐지 (시즌성 고려)
+- Datadog 대시보드 + Alert (실시간 대응)
+
+---
+
 ## 10. Prometheus 메트릭스 통합 (제안)
 
 ### Prometheus 개요 (팩트 기반)
