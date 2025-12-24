@@ -2135,6 +2135,239 @@ sum by (error_type) (rate(api_errors_total[5m]))
 
 ---
 
+### 11.13 Grafana Dashboard JSON 초간결 버전 (제안)
+
+**Grafana Dashboard JSON**: 초간결화된 대시보드 JSON (임포트용)
+
+**참고 자료**:
+- Grafana Dashboard JSON: https://grafana.com/docs/grafana/latest/dashboards/json-model/
+- Grafana Import: https://grafana.com/docs/grafana/latest/dashboards/export-import/
+
+**왕국 현재 상태**: Grafana 미통합 (Prometheus 제안 상태)
+
+**전체 대시보드 JSON 초간결 예시 (임포트용, 제안)**:
+```json
+{
+  "title": "AFO Kingdom Core Dashboard",
+  "uid": "afo-core",
+  "panels": [
+    {
+      "title": "Request Latency p95",
+      "type": "timeseries",
+      "targets": [{"expr": "histogram_quantile(0.95, sum(rate(request_latency_seconds_bucket[5m])) by (le))"}],
+      "fieldConfig": {"defaults": {"unit": "s"}}
+    },
+    {
+      "title": "MCP Calls Rate",
+      "type": "timeseries",
+      "targets": [{"expr": "rate(mcp_calls_total[5m])"}]
+    },
+    {
+      "title": "Uptime Rate",
+      "type": "stat",
+      "targets": [{"expr": "100 - (sum(rate(errors_total[5m])) / sum(rate(requests_total[5m]))) * 100"}],
+      "fieldConfig": {"defaults": {"unit": "percent"}}
+    },
+    {
+      "title": "Latency Heatmap",
+      "type": "heatmap",
+      "targets": [{"expr": "sum by (le) (rate(request_latency_seconds_bucket[5m]))", "format": "heatmap"}]
+    },
+    {
+      "title": "Active Users",
+      "type": "gauge",
+      "targets": [{"expr": "active_users"}],
+      "fieldConfig": {"defaults": {"max": 100}}
+    }
+  ],
+  "time": {"from": "now-6h", "to": "now"}
+}
+```
+
+**초간결화 기준 (제안)**:
+- 불필요 필드 제거 (legend/thresholds 기본값 사용)
+- 핵심 targets + fieldConfig만 유지
+- 패널 5개 (Timeseries 2, Stat 1, Heatmap 1, Gauge 1)
+- Grafana Import → JSON 붙여넣기 가능
+
+---
+
+### 11.14 Prometheus Metrics Integration 상세 설명 (제안)
+
+**Prometheus Metrics Integration**: prometheus-client로 커스텀 메트릭스 노출
+
+**참고 자료**:
+- Prometheus Client Python: https://github.com/prometheus/client_python
+- Prometheus Metrics: https://prometheus.io/docs/concepts/metric_types/
+- FastAPI Prometheus: https://github.com/trallnag/prometheus-fastapi-instrumentator
+
+**왕국 현재 상태**: Prometheus 미통합 (Grafana 제안 상태)
+
+**통합 단계별 가이드 (제안)**:
+
+#### 1. 설치
+
+```bash
+cd packages/afo-core
+poetry add prometheus-client
+```
+
+#### 2. 기본 설정 (metrics.py 제안)
+
+```python
+from prometheus_client import start_http_server, Counter, Gauge, Histogram
+import time
+
+# 메트릭스 정의
+REQUEST_COUNT = Counter('request_count', 'Total Requests', ['method', 'endpoint', 'status'])
+REQUEST_LATENCY = Histogram('request_latency_seconds', 'Request Latency', ['endpoint'])
+MCP_CALLS = Counter('mcp_calls_total', 'MCP Calls', ['type'])
+ACTIVE_USERS = Gauge('active_users', 'Active Users')
+
+# 메트릭스 서버 시작 (포트 8001)
+start_http_server(8001)
+```
+
+#### 3. FastAPI 미들웨어 연계 (제안)
+
+```python
+from fastapi import Request
+
+@app.middleware("http")
+async def prometheus_middleware(request: Request, call_next):
+    method = request.method
+    endpoint = request.url.path
+    start_time = time.time()
+
+    response = await call_next(request)
+
+    latency = time.time() - start_time
+    REQUEST_LATENCY.labels(endpoint=endpoint).observe(latency)
+    REQUEST_COUNT.labels(method=method, endpoint=endpoint, status=response.status_code).inc()
+
+    return response
+```
+
+#### 4. 커스텀 메트릭스 추가 (엔드포인트 예시, 제안)
+
+```python
+@app.post("/revalidate")
+async def revalidate(request: RevalidateRequest):
+    MCP_CALLS.labels(type="revalidate").inc()
+    ACTIVE_USERS.inc()
+    # 로직
+    ACTIVE_USERS.dec()
+    return {"revalidated": True}
+```
+
+#### 5. 노출 확인
+
+- http://localhost:8001/metrics (Prometheus 형식 출력)
+
+**왕국 적용 효과 (예상)**:
+- MCP 호출 수/지연 실시간 추적 (통기율 연계)
+- Grafana 대시보드 연계 (Timeseries/Heatmap)
+- 알림 설정 (메트릭스 기준 초과)
+
+---
+
+### 11.15 Prometheus Alerting Rules 상세 설명 (제안)
+
+**Prometheus Alerting Rules**: PromQL 기반 규칙 정의
+
+**참고 자료**:
+- Prometheus Alerting Rules: https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/
+- Prometheus Alertmanager: https://prometheus.io/docs/alerting/latest/alertmanager/
+
+**왕국 현재 상태**: Alerting Rules 미설정 (Prometheus 제안 상태)
+
+**Alerting Rules 상세 기능 테이블 (제안)**:
+
+| **기능**                  | **상세 설명**                                      | **이점**                          | **왕국 적용 예시** (메트릭스)                  | **yaml 예시** |
+|---------------------------|---------------------------------------------------|-----------------------------------|-----------------------------------------------|---------------|
+| **Rule Group**           | 규칙 그룹화 (interval)                            | 평가 주기 제어                    | MCP/Skills 그룹별 알림                                | groups: - name: afo.rules |
+| **Alert Rule**           | alert: name, expr PromQL, for duration            | 지속 조건 알림                    | 통기율 저하 5분 지속 알림                           | alert: LowUptime<br>expr: uptime < 100<br>for: 5m |
+| **Labels/Annotations**   | 라벨 (severity) / 설명 (summary/runbook_url)      | 알림 라우팅/컨텍스트              | severity=critical, runbook_url                        | labels:<br>  severity: critical |
+| **Recording Rule**       | 계산 메트릭스 사전 저장                           | 쿼리 속도 향상                    | p95 latency 사전 계산                                 | type: recording |
+| **Evaluation Interval**  | 그룹 평가 간격                                    | 자원 제어                         | 1m 간격 (고빈도)                                      | interval: 1m |
+
+**왕국 적용 추천 Rules (alert.rules.yml 제안)**:
+```yaml
+groups:
+  - name: afo.kingdom.rules
+    interval: 1m  # 평가 간격
+    rules:
+      - alert: LowUptime
+        expr: 100 - (sum(rate(errors_total[5m])) / sum(rate(requests_total[5m]))) * 100 < 100
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "통기율 저하 감지"
+          description: "통기율 {{ $value }}% (5분 평균)"
+
+      - alert: HighLatency
+        expr: histogram_quantile(0.95, sum(rate(request_latency_seconds_bucket[5m])) by (le)) > 2
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "지연 p95 >2s"
+          description: "현재 p95 {{ $value }}s"
+
+      - alert: MCPCallsSpike
+        expr: rate(mcp_calls_total[5m]) > 100
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "MCP 호출 급증"
+```
+
+---
+
+### 11.16 PromQL Query Examples (제안)
+
+**PromQL**: Prometheus 메트릭스 쿼리 언어
+
+**참고 자료**:
+- PromQL Basics: https://prometheus.io/docs/prometheus/latest/querying/basics/
+- PromQL Functions: https://prometheus.io/docs/prometheus/latest/querying/functions/
+
+**왕국 현재 상태**: PromQL 미사용 (Prometheus 제안 상태)
+
+**PromQL Query Examples 테이블 (왕국 메트릭스 중심, 제안)**:
+
+| **카테고리**              | **쿼리 예시**                                      | **설명**                          | **왕국 적용 예시** (메트릭스)                  | **Grafana 적용 팁** |
+|---------------------------|---------------------------------------------------|-----------------------------------|-----------------------------------------------|---------------------|
+| **Rate (변화율)**        | rate(mcp_calls_total[5m])                         | 5분 평균 호출 변화율              | MCP 호출 증가 추적                            | Timeseries 패널     |
+| **Histogram p95**        | histogram_quantile(0.95, sum(rate(request_latency_seconds_bucket[5m])) by (le)) | 5분 p95 지연                      | 지연 p95 분석 (LCP 연계)                      | Heatmap/Timeseries  |
+| **Uptime/통기율**        | 100 - (sum(rate(errors_total[5m])) / sum(rate(requests_total[5m]))) * 100 | 에러 비율 기반 통기율             | 통기율 모니터링                          | Stat 패널           |
+| **Topk**                 | topk(10, rate(request_count[5m]))                 | 상위 10 엔드포인트 호출           | 고부하 엔드포인트 식별                        | Table 패널          |
+| **Sum by**               | sum by (endpoint) (rate(request_count[5m]))       | 엔드포인트별 합계                 | endpoint별 호출 수                            | Bar Gauge           |
+| **Increase**             | increase(mcp_calls_total[1h])                     | 1시간 증가량                      | MCP 호출 누적 증가                            | Timeseries          |
+| **Avg Over Time**        | avg_over_time(request_latency_seconds[5m])        | 5분 평균 지연                     | 평균 응답 시간                                | Timeseries          |
+| **Predict Linear**       | predict_linear(node_memory_MemAvailable_bytes[1h], 4*3600) | 4시간 후 메모리 예측              | 메모리 부족 예측                              | Gauge/Alert         |
+
+**왕국 적용 추천 쿼리 (PASTE-ready, 제안)**:
+
+**통기율**:
+```
+100 - (sum(rate(errors_total[5m])) / sum(rate(requests_total[5m]))) * 100
+```
+
+**MCP 호출 p95 지연**:
+```
+histogram_quantile(0.95, sum(rate(mcp_latency_seconds_bucket[5m])) by (le))
+```
+
+**상위 MCP 호출**:
+```
+topk(5, rate(mcp_calls_total[5m]))
+```
+
+---
+
 ## 다음 단계 (왕국 확장)
 
 - **즉시**: structlog 설치 → logging_config.py 수정 테스트 (제안)
