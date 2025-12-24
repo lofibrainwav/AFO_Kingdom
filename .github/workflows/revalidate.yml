@@ -31,6 +31,7 @@ jobs:
       - name: Guard - required secret/url
         shell: bash
         run: |
+          set -euo pipefail
           if [[ -z "${{ secrets.REVALIDATE_SECRET }}" ]]; then
             echo "Missing secrets.REVALIDATE_SECRET" >&2
             exit 1
@@ -82,7 +83,13 @@ jobs:
             fi
           done
 
-          echo "keys=$OUT" >> "$GITHUB_OUTPUT"
+          # 선행 공백 제거 후 outputs에 추가
+          if [[ -n "$OUT" ]]; then
+            OUT="${OUT# }"
+            echo "keys=$OUT" >> "$GITHUB_OUTPUT"
+          else
+            echo "keys=" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Call revalidate API
         if: steps.detect.outputs.keys != ''
