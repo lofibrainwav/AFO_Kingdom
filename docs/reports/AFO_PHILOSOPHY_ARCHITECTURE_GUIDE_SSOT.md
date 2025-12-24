@@ -218,11 +218,14 @@ Mencius 사상은 공자 윤리 확장 – 인간 본성 선함, 왕도 정치 �
 
 공자 오덕(五德)은 유교 덕목의 핵심 – '온'(溫), '양'(良), '공'(恭), '검'(儉), '양'(讓)으로, 정치 지도자/지성인의 덕목. **왕국에서의 의미**: 온양공검양은 AI의 격(格, character/personality)으로, AI가 가져야 할 성격/인격적 특성.
 
+**팩트 근거**: "溫良恭儉讓" 문구는 **논어(學而 편)에서 공자의 태도를 설명하는 대목**으로 확인 가능. ([중국어 텍스트 프로젝트][2])
+
 **참고 자료**:
 
-- 논어(論語) - 공자 덕목 확장
+- 논어(論語) - 공자 덕목 확장 (학而 편)
 - 맹자(孟子) - 본성 선함 이론 연계
 - Stanford Encyclopedia of Philosophy: Confucianism
+- [중국어 텍스트 프로젝트: 논어 학而](https://ctext.org/analects/xue-er)
 
 **오덕 유래 (제안)**: 논어(論語)에서 공자 덕목 확장, 맹자(孟子) 본성 선함 이론 연계.
 
@@ -271,3 +274,9 @@ Mencius 사상은 공자 윤리 확장 – 인간 본성 선함, 왕도 정치 �
 ---
 
 **SSOT 원칙 준수**: 팩트 기반 (공식 문서 참조), 과장 표현 제거, 제안 명시, Gate/Contract 유지
+
+---
+
+**참고 자료 링크**:
+- [Next.js: revalidatePath](https://nextjs.org/docs/app/api-reference/functions/revalidatePath)
+- [중국어 텍스트 프로젝트: 논어 학而](https://ctext.org/analects/xue-er)
