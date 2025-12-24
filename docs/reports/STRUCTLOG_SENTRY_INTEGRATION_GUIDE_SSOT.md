@@ -564,6 +564,134 @@ structlog.configure(
 
 ---
 
+## 9. Datadog Tracing 통합 (제안)
+
+### Datadog APM 개요 (팩트 기반)
+
+**Datadog APM**: 분산 트레이싱 (trace/span)으로 병목 현상 추적
+
+**참고 자료**:
+- Datadog 공식 문서: https://docs.datadoghq.com/tracing/
+- Datadog Python SDK: https://docs.datadoghq.com/tracing/setup_overview/setup/python/
+- Datadog Next.js 통합: https://docs.datadoghq.com/tracing/setup_overview/setup/nodejs/
+
+**왕국 현재 상태**: Sentry 미통합 (structlog 로깅만)
+
+**Sentry vs Datadog 비교** (제안):
+
+| **항목**                  | **Sentry**                                      | **Datadog**                          | **왕국 적용 추천**                  |
+|---------------------------|------------------------------------------------|---------------------------------------|-----------------------------------|
+| **에러 트래킹**          | 강점 (에러 그룹핑/스택 트레이스)                | 지원 (APM 통합)                      | Sentry (에러 중심)                 |
+| **성능 트레이싱**        | 지원 (transaction)                             | 강점 (APM 대시보드)                  | Datadog (성능 중심)               |
+| **비용**                 | 오픈소스 + 클라우드 (무료 티어 있음)            | 유료 (무료 티어 제한적)              | Sentry (비용 고려)                 |
+| **통합**                 | structlog-sentry (간단)                        | ddtrace (자동 패치)                  | Sentry (구조화 로깅 연계)          |
+
+---
+
+### 통합 단계별 가이드 (제안)
+
+#### 1. 설치
+
+**FastAPI/Python**:
+```bash
+cd packages/afo-core
+poetry add ddtrace
+```
+
+**Next.js**:
+```bash
+cd packages/dashboard
+pnpm add dd-trace
+```
+
+#### 2. 기본 설정 (Python/FastAPI 제안)
+
+```python
+from ddtrace import patch_all, config
+
+patch_all()  # 자동 패치 (FastAPI, SQLAlchemy 등)
+
+config.fastapi["service_name"] = "afo-kingdom-api"
+config.fastapi["trace_query_string"] = True  # 쿼리 문자열 추적 (보안 주의)
+```
+
+**또는 수동 tracer**:
+```python
+from ddtrace import tracer
+
+@tracer.wrap(name="revalidate.process")
+def process_revalidate():
+    # 로직
+    pass
+```
+
+#### 3. Next.js 통합 (제안)
+
+```typescript
+// next.config.js
+const { withDatadog } = require('next-datadog');
+
+module.exports = withDatadog({
+  // 기존 설정
+});
+```
+
+#### 4. 커스텀 Span 추가
+
+**FastAPI**:
+```python
+from ddtrace import tracer
+
+with tracer.trace("mcp.call", service="afo-mcp"):
+    # MCP 호출
+    fetch_mcp()
+```
+
+**Next.js**:
+```typescript
+import { tracer } from 'dd-trace';
+
+tracer.trace('skills.fetch', async () => {
+  // Skills 처리
+});
+```
+
+#### 5. 환경 변수 (Datadog Agent 필요)
+
+```bash
+DD_AGENT_HOST=localhost
+DD_TRACE_AGENT_PORT=8126
+DD_ENV=production
+```
+
+---
+
+### 왕국 적용 효과 (예상)
+
+- MCP/Skills 호출 지연 추적
+- 대시보드 성능 모니터링 (INP/LCP 연계)
+- Datadog 대시보드 (Sentry 대체/보완)
+
+---
+
+### Sentry vs Datadog 선택 가이드 (제안)
+
+**Sentry 추천**:
+- 에러 트래킹 중심
+- 오픈소스 + 무료 티어
+- structlog-sentry 간단 통합
+
+**Datadog 추천**:
+- 성능 모니터링 중심
+- APM 대시보드 강점
+- 유료 (비용 고려 필요)
+
+**하이브리드** (제안):
+- Sentry: 에러 트래킹 (structlog-sentry)
+- Datadog: 성능 모니터링 (APM)
+
+---
+
 ## 다음 단계 (왕국 확장)
 
 - **즉시**: structlog 설치 → logging_config.py 수정 테스트 (제안)
@@ -573,6 +701,8 @@ structlog.configure(
 - **성능**: Ticket 55 – AsyncRenderer 대량 요청 벤치마크
 - **벤치마크**: Ticket 56 – AsyncRenderer 적용 여부 결정 (high-throughput 테스트)
 - **Sentry**: Ticket 59 – production sampling 0.2 적용
+- **Datadog**: Ticket 61 – Datadog APM tracing (span 자동 캡처, 제안)
+- **선택**: Sentry vs Datadog 비교 (왕국 모니터링 선택, 제안)
 
 ---
 
@@ -581,6 +711,9 @@ structlog.configure(
 - **structlog 공식 문서**: https://www.structlog.org
 - **Sentry Python SDK**: https://docs.sentry.io/platforms/python/
 - **structlog-sentry**: https://github.com/kiwicom/structlog-sentry
+- **Datadog APM**: https://docs.datadoghq.com/tracing/
+- **Datadog Python SDK**: https://docs.datadoghq.com/tracing/setup_overview/setup/python/
+- **Datadog Next.js 통합**: https://docs.datadoghq.com/tracing/setup_overview/setup/nodejs/
 - **FastAPI 공식 문서**: https://fastapi.tiangolo.com/
 - **pytest 공식 문서**: https://docs.pytest.org/
 - **현재 구현**: `packages/afo-core/utils/logging_config.py`
