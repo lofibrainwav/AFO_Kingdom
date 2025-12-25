@@ -14,11 +14,10 @@ from __future__ import annotations
 import logging
 import os
 from contextlib import asynccontextmanager
-from typing import Any, Optional, Tuple
-
-from fastapi import FastAPI
+from typing import Any
 
 from AFO.api.compat import get_settings_safe
+from fastapi import FastAPI
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -55,7 +54,9 @@ class APIConfig:
         self.debug = self._get_config_value("AFO_DEBUG", "true").lower() == "true"
         self.cors_origins = self._get_cors_origins()
 
-        logger.debug(f"Configuration loaded: host={self.host}, port={self.port}, debug={self.debug}")
+        logger.debug(
+            f"Configuration loaded: host={self.host}, port={self.port}, debug={self.debug}"
+        )
 
     def _get_config_value(self, key: str, default: str) -> str:
         """Get configuration value with fallback hierarchy."""
@@ -75,7 +76,9 @@ class APIConfig:
 
     def _get_cors_origins(self) -> list[str]:
         """Get CORS origins configuration."""
-        cors_env = os.getenv("AFO_CORS_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000")
+        cors_env = os.getenv(
+            "AFO_CORS_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000"
+        )
         return [origin.strip() for origin in cors_env.split(",") if origin.strip()]
 
 
@@ -115,7 +118,7 @@ class AppFactory:
             app = FastAPI(
                 lifespan=self._get_lifespan_manager(),
                 debug=self.config.debug,
-                **metadata
+                **metadata,
             )
 
             logger.info("FastAPI application created successfully")
@@ -148,7 +151,7 @@ class LifespanManager:
         self.cleanup_performed = False
 
     @asynccontextmanager
-    async def get_lifespan_manager(self, app: Optional[FastAPI] = None) -> Any:
+    async def get_lifespan_manager(self, app: FastAPI | None = None) -> Any:
         """
         Manage application lifecycle with proper initialization and cleanup.
 
@@ -235,7 +238,7 @@ class ServerConfig:
         """
         self.config = config
 
-    def get_server_config(self) -> Tuple[str, int]:
+    def get_server_config(self) -> tuple[str, int]:
         """
         Get validated server host and port configuration.
 
@@ -253,7 +256,9 @@ class ServerConfig:
             if not isinstance(self.config.port, int) or self.config.port <= 0:
                 raise ValueError("Invalid port configuration")
 
-            logger.debug(f"Server config validated: {self.config.host}:{self.config.port}")
+            logger.debug(
+                f"Server config validated: {self.config.host}:{self.config.port}"
+            )
             return self.config.host, self.config.port
 
         except Exception as e:
@@ -266,19 +271,22 @@ class ServerConfig:
 api_config = APIConfig()
 lifespan_manager = LifespanManager()
 
+
 # Public API functions with backward compatibility
 def get_app_config() -> FastAPI:
     """Create and configure FastAPI application instance (backward compatibility)."""
     factory = AppFactory(api_config)
     return factory.create_application()
 
-def get_server_config() -> Tuple[str, int]:
+
+def get_server_config() -> tuple[str, int]:
     """Get server host and port configuration (backward compatibility)."""
     server_config = ServerConfig(api_config)
     return server_config.get_server_config()
 
+
 @asynccontextmanager
-async def get_lifespan_manager(app: Optional[FastAPI] = None) -> Any:
+async def get_lifespan_manager(app: FastAPI | None = None) -> Any:
     """Manage application lifecycle (backward compatibility)."""
     async with lifespan_manager.get_lifespan_manager(app):
         yield

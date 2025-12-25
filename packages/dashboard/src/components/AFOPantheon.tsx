@@ -10,6 +10,7 @@ import { useSpatialAudio } from "../hooks/useSpatialAudio";
 import { KingdomMessageBoard } from "./genui";
 import AutomatedDebuggingStreamWidget from "./genui/AutomatedDebuggingStreamWidget";
 import { SSOTMonitor } from "./genui/SSOTMonitor";
+import { TrinityMirrorStatus } from "./genui/TrinityMirrorStatus";
 import { VisualAgentOverlay } from "./visual-agent/VisualAgentOverlay";
 
 // Lazy load heavy widgets
@@ -176,7 +177,7 @@ export function AFOPantheon() {
           <h2 className="text-white/50 text-sm font-bold uppercase tracking-widest mb-4 border-b border-white/10 pb-2">
             🏛️ Command Center
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <TrinityGlowCard
               trinityScore={state.trinityScore}
               riskScore={state.riskScore}
@@ -245,6 +246,10 @@ export function AFOPantheon() {
                   ))}
                 </div>
               )}
+            </div>
+
+            <div className="md:col-span-1">
+              <TrinityMirrorStatus />
             </div>
           </div>
         </section>

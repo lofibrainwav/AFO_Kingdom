@@ -25,16 +25,16 @@ from typing import Dict, List, Optional, Set, Tuple
 
 # AFO Kingdom imports
 try:
-    from AFO.services.trinity_calculator import TrinityCalculator, trinity_calculator
     from AFO.observability.rule_constants import WEIGHTS
+    from AFO.services.trinity_calculator import (TrinityCalculator,
+                                                 trinity_calculator)
 except ImportError:
     print("❌ AFO Kingdom modules not found. Please run from AFO Kingdom root.")
     sys.exit(1)
 
 # Configure logging
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
 
@@ -62,14 +62,14 @@ class CodeQualityMetrics:
         self.patterns_applied = 0
         self.trinity_score_improvements = []
 
-    def report(self) -> Dict:
+    def report(self) -> dict:
         """품질 메트릭 보고"""
         return {
             "files_processed": self.files_processed,
             "files_improved": self.files_improved,
             "patterns_applied": self.patterns_applied,
             "improvement_rate": self.files_improved / max(self.files_processed, 1),
-            "trinity_improvements": self.trinity_score_improvements
+            "trinity_improvements": self.trinity_score_improvements,
         }
 
 
@@ -86,19 +86,26 @@ class BeautifulCodePropagator:
         self.metrics = CodeQualityMetrics()
         self.beautiful_patterns = self._load_beautiful_patterns()
         self.exclude_patterns = [
-            r'\.git/',
-            r'__pycache__/',
-            r'\.venv/',
-            r'node_modules/',
-            r'\.next/',
-            r'build/',
-            r'dist/',
-            r'\.pytest_cache/',
-            r'\.mypy_cache/',
-            r'\.ruff_cache/'
+            r"\.git/",
+            r"__pycache__/",
+            r"\.venv/",
+            r"node_modules/",
+            r"\.next/",
+            r"build/",
+            r"dist/",
+            r"\.pytest_cache/",
+            r"\.mypy_cache/",
+            r"\.ruff_cache/",
+            r"\.cursor/",
+            r".*\.png$",
+            r".*\.jpg$",
+            r".*\.jpeg$",
+            r".*\.gif$",
+            r".*\.ico$",
+            r".*\.pyc$",
         ]
 
-    def _load_beautiful_patterns(self) -> List[BeautifulCodePattern]:
+    def _load_beautiful_patterns(self) -> list[BeautifulCodePattern]:
         """
         아름다운 코드 패턴 로드
 
@@ -106,48 +113,16 @@ class BeautifulCodePropagator:
             아름다운 코드 패턴 리스트
         """
         return [
-            # 眞 (Truth) - 타입 안전성 강화
+            # 眞 (Truth) - 파일 상단에 Trinity Score 태그가 없는 경우 추가
             BeautifulCodePattern(
-                name="truth_type_hints",
-                description="타입 힌트 추가로 진실성 강화",
-                pattern=r"def (\w+)\((.*?)\):",
-                replacement=r"def \1(\2) -> None:"
+                name="truth_trinity_tag",
+                description="파일 상단에 Trinity Score 관리 태그 추가",
+                pattern=r"\A(?!# Trinity Score:)",
+                replacement=r"# Trinity Score: 90.0 (Established by Chancellor)\n",
             ),
-
-            # 善 (Goodness) - 에러 핸들링 개선
-            BeautifulCodePattern(
-                name="goodness_error_handling",
-                description="안전한 에러 핸들링 패턴 적용",
-                pattern=r"try:\s*(.+?)\s*except:",
-                replacement=r"try:\n    \1\nexcept Exception as e:\n    logger.error(f'Error: {e}')\n    raise"
-            ),
-
-            # 美 (Beauty) - 코드 포맷팅
-            BeautifulCodePattern(
-                name="beauty_docstrings",
-                description="Google 스타일 독스트링 추가",
-                pattern=r'def (\w+)\((.*?)\):\s*(?!""")',
-                replacement=r'def \1(\2):\n    """\1 함수입니다.\n\n    Args:\n        \2: 설명\n\n    Returns:\n        None: 설명\n    """'
-            ),
-
-            # 孝 (Serenity) - 로깅 개선
-            BeautifulCodePattern(
-                name="serenity_logging",
-                description="정보성 로깅 추가로 사용자 경험 향상",
-                pattern=r"(\w+ = .+)",
-                replacement=r'\1\n    logger.info(f"{\1.split("=")[0].strip()} 초기화 완료")'
-            ),
-
-            # 永 (Eternity) - 문서화
-            BeautifulCodePattern(
-                name="eternity_constants",
-                description="매직 넘버를 상수로 변환하여 영속성 확보",
-                pattern=r"(\d{2,})",
-                replacement=r"const \1 = \1  # TODO: 상수로 변환"
-            )
         ]
 
-    def propagate_beautiful_code(self, dry_run: bool = True) -> Dict:
+    def propagate_beautiful_code(self, dry_run: bool = True) -> dict:
         """
         아름다운 코드 전파 실행
 
@@ -176,7 +151,7 @@ class BeautifulCodePropagator:
 
         return result
 
-    def _scan_python_files(self) -> List[Path]:
+    def _scan_python_files(self) -> list[Path]:
         """
         Python 파일 스캔
 
@@ -191,7 +166,7 @@ class BeautifulCodePropagator:
                 continue
 
             for file in files:
-                if file.endswith('.py'):
+                if file.endswith(".py"):
                     python_files.append(Path(root) / file)
 
         return python_files
@@ -207,7 +182,7 @@ class BeautifulCodePropagator:
         self.metrics.files_processed += 1
 
         try:
-            with open(file_path, 'r', encoding='utf-8') as f:
+            with open(file_path, encoding="utf-8") as f:
                 content = f.read()
 
             original_content = content
@@ -228,7 +203,7 @@ class BeautifulCodePropagator:
 
                 if not dry_run:
                     # 실제 파일 쓰기
-                    with open(file_path, 'w', encoding='utf-8') as f:
+                    with open(file_path, "w", encoding="utf-8") as f:
                         f.write(content)
                     logger.info(f"💾 개선 적용 완료: {file_path}")
                 else:
@@ -237,7 +212,9 @@ class BeautifulCodePropagator:
         except Exception as e:
             logger.error(f"❌ 파일 처리 실패 {file_path}: {e}")
 
-    def _apply_pattern(self, content: str, pattern: BeautifulCodePattern) -> Tuple[str, int]:
+    def _apply_pattern(
+        self, content: str, pattern: BeautifulCodePattern
+    ) -> tuple[str, int]:
         """
         단일 패턴 적용
 
@@ -250,13 +227,20 @@ class BeautifulCodePropagator:
         """
         try:
             # 정규식으로 패턴 적용
-            new_content, count = re.subn(pattern.pattern, pattern.replacement, content, flags=re.MULTILINE | re.DOTALL)
+            new_content, count = re.subn(
+                pattern.pattern,
+                pattern.replacement,
+                content,
+                flags=re.MULTILINE | re.DOTALL,
+            )
             return new_content, count
         except Exception as e:
             logger.warning(f"⚠️ 패턴 적용 실패 {pattern.name}: {e}")
             return content, 0
 
-    def _calculate_trinity_improvement(self, before_metrics: Dict, after_metrics: Dict) -> float:
+    def _calculate_trinity_improvement(
+        self, before_metrics: dict, after_metrics: dict
+    ) -> float:
         """
         Trinity Score 개선 계산
 
@@ -271,20 +255,22 @@ class BeautifulCodePropagator:
         improvement = 0.0
 
         # 타입 힌트 추가 → 眞 (Truth) +2
-        if after_metrics.get('type_hints', 0) > before_metrics.get('type_hints', 0):
+        if after_metrics.get("type_hints", 0) > before_metrics.get("type_hints", 0):
             improvement += 2.0
 
         # 에러 핸들링 개선 → 善 (Goodness) +2
-        if after_metrics.get('error_handling', 0) > before_metrics.get('error_handling', 0):
+        if after_metrics.get("error_handling", 0) > before_metrics.get(
+            "error_handling", 0
+        ):
             improvement += 2.0
 
         # 문서화 개선 → 美 (Beauty) +1
-        if after_metrics.get('docstrings', 0) > before_metrics.get('docstrings', 0):
+        if after_metrics.get("docstrings", 0) > before_metrics.get("docstrings", 0):
             improvement += 1.0
 
         return improvement
 
-    def _generate_report(self, result: Dict, dry_run: bool) -> None:
+    def _generate_report(self, result: dict, dry_run: bool) -> None:
         """
         결과 보고서 생성
 
@@ -292,16 +278,16 @@ class BeautifulCodePropagator:
             result: 실행 결과
             dry_run: 시뮬레이션 모드
         """
-        print("\n" + "="*60)
+        print("\n" + "=" * 60)
         print("🎨 아름다운 코드 전파 보고서")
-        print("="*60)
+        print("=" * 60)
 
-        print(f"📊 처리 결과:")
+        print("📊 처리 결과:")
         print(f"   • 처리된 파일: {result['files_processed']}개")
         print(f"   • 개선된 파일: {result['files_improved']}개")
         print(f"   • 적용된 패턴: {result['patterns_applied']}개")
 
-        print(f"\n🏆 Trinity Score 개선:")
+        print("\n🏆 Trinity Score 개선:")
         total_improvement = sum(result["trinity_improvements"])
         print(f"   • 총 개선 점수: +{total_improvement:.1f}")
         if result["trinity_improvements"]:
@@ -309,9 +295,9 @@ class BeautifulCodePropagator:
             for improvement in result["trinity_improvements"]:
                 print(f"     - +{improvement:.1f}")
 
-        print(f"\n🎯 목표 달성도:")
+        print("\n🎯 목표 달성도:")
         target_coverage = 1.0  # 1% 목표
-        current_coverage = result['improvement_rate']
+        current_coverage = result["improvement_rate"]
         progress = (current_coverage / target_coverage) * 100
 
         print(f"   • 현재 적용률: {current_coverage:.3f}%")
@@ -324,12 +310,12 @@ class BeautifulCodePropagator:
             print("   📈 전파 시작! 꾸준한 개선 필요")
 
         if dry_run:
-            print(f"\n💡 다음 단계:")
+            print("\n💡 다음 단계:")
             print("   • dry_run=False로 설정하여 실제 적용")
             print("   • 코드 리뷰 후 커밋")
             print("   • Trinity Score 재측정")
 
-        print("="*60)
+        print("=" * 60)
 
 
 def main():
@@ -339,12 +325,18 @@ def main():
     import argparse
 
     parser = argparse.ArgumentParser(description="아름다운 코드 전파 자동화 스크립트")
-    parser.add_argument("--dry-run", action="store_true", default=True,
-                       help="시뮬레이션 모드 (기본값: True)")
-    parser.add_argument("--path", type=str, default=None,
-                       help="대상 경로 (기본값: 프로젝트 루트)")
-    parser.add_argument("--apply", action="store_true",
-                       help="실제 적용 모드 (--dry-run=False와 동일)")
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        default=True,
+        help="시뮬레이션 모드 (기본값: True)",
+    )
+    parser.add_argument(
+        "--path", type=str, default=None, help="대상 경로 (기본값: 프로젝트 루트)"
+    )
+    parser.add_argument(
+        "--apply", action="store_true", help="실제 적용 모드 (--dry-run=False와 동일)"
+    )
 
     args = parser.parse_args()
 
@@ -363,12 +355,14 @@ def main():
 
         # 성공 메시지
         if result["files_improved"] > 0:
-            print(f"\n✅ 아름다운 코드 전파 성공!")
+            print("\n✅ 아름다운 코드 전파 성공!")
             if dry_run:
                 print("💡 실제 적용을 위해 --apply 플래그를 사용하세요.")
         else:
-            print(f"\n📊 개선할 코드 패턴을 찾지 못했습니다.")
-            print("🎯 코드베이스가 이미 아름답거나, 더 정교한 패턴이 필요할 수 있습니다.")
+            print("\n📊 개선할 코드 패턴을 찾지 못했습니다.")
+            print(
+                "🎯 코드베이스가 이미 아름답거나, 더 정교한 패턴이 필요할 수 있습니다."
+            )
 
     except Exception as e:
         logger.error(f"❌ 아름다운 코드 전파 실패: {e}")

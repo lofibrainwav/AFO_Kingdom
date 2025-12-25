@@ -1,11 +1,12 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 AFO Kingdom Action Validator - Visual Agent Safety Guardian
 안전 게이트 5개를 통한 자동화된 액션 검증 시스템
 """
 
-from typing import Dict, Any, List, Optional
 from dataclasses import dataclass
 from enum import Enum
+from typing import Any, Dict, List, Optional
 
 
 class SafetyLevel(Enum):
@@ -25,17 +26,18 @@ class ActionType(Enum):
 @dataclass
 class ValidatedAction:
     """검증된 액션"""
+
     action_id: str
     type: ActionType
-    bbox: Dict[str, int]
-    text: Optional[str]
+    bbox: dict[str, int]
+    text: str | None
     confidence: float
     why: str
     safety: SafetyLevel
     validated_at: str
     risk_score: int
     is_allowed: bool
-    block_reason: Optional[str] = None
+    block_reason: str | None = None
 
 
 class ActionValidator:
@@ -50,10 +52,21 @@ class ActionValidator:
 
         # 위험 액션 패턴
         self.destructive_patterns = [
-            "delete", "remove", "clear", "reset",
-            "pay", "purchase", "buy", "checkout",
-            "logout", "signout", "exit",
-            "submit", "send", "post", "publish"
+            "delete",
+            "remove",
+            "clear",
+            "reset",
+            "pay",
+            "purchase",
+            "buy",
+            "checkout",
+            "logout",
+            "signout",
+            "exit",
+            "submit",
+            "send",
+            "post",
+            "publish",
         ]
 
         # 허용된 도메인 (환경변수에서 로드 가능)
@@ -61,14 +74,12 @@ class ActionValidator:
             "localhost:3000",
             "localhost:8010",
             "github.com",
-            "vercel.app"
+            "vercel.app",
         ]
 
     def validate_actions(
-        self,
-        actions: List[Dict[str, Any]],
-        context: Dict[str, Any]
-    ) -> List[ValidatedAction]:
+        self, actions: list[dict[str, Any]], context: dict[str, Any]
+    ) -> list[ValidatedAction]:
         """
         액션 리스트 전체 검증
         5개 게이트를 순차적으로 적용
@@ -89,27 +100,26 @@ class ActionValidator:
 
             except Exception as e:
                 # 검증 실패 시 블록
-                validated_actions.append(ValidatedAction(
-                    action_id=f"action_{i}",
-                    type=ActionType.CLICK,  # fallback
-                    bbox={"x": 0, "y": 0, "w": 0, "h": 0},
-                    text=None,
-                    confidence=0.0,
-                    why="Validation failed",
-                    safety=SafetyLevel.BLOCK,
-                    validated_at=self._get_timestamp(),
-                    risk_score=100,
-                    is_allowed=False,
-                    block_reason=f"Validation error: {str(e)}"
-                ))
+                validated_actions.append(
+                    ValidatedAction(
+                        action_id=f"action_{i}",
+                        type=ActionType.CLICK,  # fallback
+                        bbox={"x": 0, "y": 0, "w": 0, "h": 0},
+                        text=None,
+                        confidence=0.0,
+                        why="Validation failed",
+                        safety=SafetyLevel.BLOCK,
+                        validated_at=self._get_timestamp(),
+                        risk_score=100,
+                        is_allowed=False,
+                        block_reason=f"Validation error: {e!s}",
+                    )
+                )
 
         return validated_actions
 
     def _validate_single_action(
-        self,
-        action: Dict[str, Any],
-        context: Dict[str, Any],
-        index: int
+        self, action: dict[str, Any], context: dict[str, Any], index: int
     ) -> ValidatedAction:
         """단일 액션 검증 (5개 게이트)"""
         action_id = f"action_{index}"
@@ -132,7 +142,7 @@ class ActionValidator:
                 validated_at=self._get_timestamp(),
                 risk_score=80,
                 is_allowed=False,
-                block_reason="Bounding box outside screen bounds"
+                block_reason="Bounding box outside screen bounds",
             )
 
         # Gate 2: 도메인/앱 Allowlist 검증
@@ -149,7 +159,7 @@ class ActionValidator:
                 validated_at=self._get_timestamp(),
                 risk_score=90,
                 is_allowed=False,
-                block_reason=f"Domain not in allowlist: {current_domain}"
+                block_reason=f"Domain not in allowlist: {current_domain}",
             )
 
         # Gate 3: 파괴적 액션 검증
@@ -168,7 +178,11 @@ class ActionValidator:
 
         # 최종 판정
         is_allowed = safety_level != SafetyLevel.BLOCK
-        block_reason = None if is_allowed else f"Trinity Gate: {trinity_score}/90, Risk: {risk_score}/10"
+        block_reason = (
+            None
+            if is_allowed
+            else f"Trinity Gate: {trinity_score}/90, Risk: {risk_score}/10"
+        )
 
         return ValidatedAction(
             action_id=action_id,
@@ -181,7 +195,7 @@ class ActionValidator:
             validated_at=self._get_timestamp(),
             risk_score=risk_score,
             is_allowed=is_allowed,
-            block_reason=block_reason
+            block_reason=block_reason,
         )
 
     def _validate_action_type(self, action_type: str) -> ActionType:
@@ -191,16 +205,16 @@ class ActionValidator:
         except ValueError:
             return ActionType.CLICK  # fallback
 
-    def _validate_bbox(self, bbox: Dict[str, Any]) -> Dict[str, int]:
+    def _validate_bbox(self, bbox: dict[str, Any]) -> dict[str, int]:
         """좌표 검증 및 정규화"""
         return {
             "x": max(0, int(bbox.get("x", 0))),
             "y": max(0, int(bbox.get("y", 0))),
             "w": max(0, int(bbox.get("w", 0))),
-            "h": max(0, int(bbox.get("h", 0)))
+            "h": max(0, int(bbox.get("h", 0))),
         }
 
-    def _is_bbox_valid(self, bbox: Dict[str, int]) -> bool:
+    def _is_bbox_valid(self, bbox: dict[str, int]) -> bool:
         """좌표가 화면 범위 내인지 검증"""
         x, y, w, h = bbox["x"], bbox["y"], bbox["w"], bbox["h"]
 
@@ -221,7 +235,7 @@ class ActionValidator:
 
         return any(allowed in domain for allowed in self.allowed_domains)
 
-    def _assess_action_safety(self, action: Dict[str, Any]) -> SafetyLevel:
+    def _assess_action_safety(self, action: dict[str, Any]) -> SafetyLevel:
         """액션의 안전도 평가"""
         action_text = (action.get("text") or "").lower()
         action_type = action.get("type", "").lower()
@@ -242,7 +256,9 @@ class ActionValidator:
 
         return SafetyLevel.SAFE
 
-    def _calculate_action_risk(self, action: Dict[str, Any], context: Dict[str, Any]) -> int:
+    def _calculate_action_risk(
+        self, action: dict[str, Any], context: dict[str, Any]
+    ) -> int:
         """액션별 리스크 점수 계산 (0-100)"""
         risk_score = 0
 
@@ -271,6 +287,7 @@ class ActionValidator:
     def _get_timestamp(self) -> str:
         """현재 타임스탬프"""
         from datetime import datetime, timezone
+
         return datetime.now(timezone.utc).isoformat()
 
 

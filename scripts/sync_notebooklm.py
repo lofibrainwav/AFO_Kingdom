@@ -12,11 +12,10 @@ It performs the following:
 4. Indexes content into Qdrant Vector DB (Wisdom).
 """
 
-import contextlib
 import json
 import os
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from qdrant_client import QdrantClient
@@ -57,14 +56,16 @@ def ensure_structure(notebook: dict) -> dict | None:
     path_notes.mkdir(parents=True, exist_ok=True)
 
     # Count files
-    source_count = len([
-        f for f in path_sources.glob("*")
-        if f.is_file() and not f.name.startswith(".")
-    ])
-    note_count = len([
-        f for f in path_notes.glob("*")
-        if f.is_file() and not f.name.startswith(".")
-    ])
+    source_count = len(
+        [
+            f
+            for f in path_sources.glob("*")
+            if f.is_file() and not f.name.startswith(".")
+        ]
+    )
+    note_count = len(
+        [f for f in path_notes.glob("*") if f.is_file() and not f.name.startswith(".")]
+    )
 
     return {
         "slug": slug,
@@ -73,7 +74,7 @@ def ensure_structure(notebook: dict) -> dict | None:
         "note_count": note_count,
         "path_sources": str(path_sources),
         "path_notes": str(path_notes),
-        "last_sync": datetime.now(timezone.utc).isoformat(),
+        "last_sync": datetime.now(UTC).isoformat(),
     }
 
 
@@ -86,14 +87,14 @@ def update_readme(stats: list[dict]) -> None:
             "This directory contains the mirrored Knowledge Base for AFO's NotebookLM integration.\n"
         )
         f.write("Strategy: **Track A (SSOT Mirroring)**\n\n")
-        f.write(f"**Last Sync:** {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')}\n\n")
+        f.write(f"**Last Sync:** {datetime.now(UTC).strftime("%Y-%m-%d %H:%M:%S")}\n\n")
         f.write("| Notebook | Sources | Notes | Path |\n")
         f.write("|----------|:-------:|:-----:|------|\n")
 
-        for s in stats:
-            f.write(
-                f"| {s['title']} | {s['source_count']} | {s['note_count']} | `{s['path_sources']}` |\n"
-            )
+        f.writelines(
+            f"| {s["title"]} | {s["source_count"]} | {s["note_count"]} | `{s["path_sources"]}` |\n"
+            for s in stats
+        )
 
         f.write("\n\n## Usage\n")
         f.write("1. Place source documents (PDF, MD, txt) in `sources/`.\n")
@@ -110,13 +111,13 @@ def main() -> None:
 
     stats = []
     for nb in notebooks:
-        print(f"   - Processing: {nb.get('title')} ({nb.get('slug')})")
+        print(f"   - Processing: {nb.get("title")} ({nb.get("slug")})")
         stat = ensure_structure(nb)
         if stat:
             stats.append(stat)
 
     update_readme(stats)
-    print(f"✅ Sync Complete. Index updated at {KB_ROOT / 'README.md'}")
+    print(f"✅ Sync Complete. Index updated at {KB_ROOT / "README.md"}")
 
 
 if __name__ == "__main__":

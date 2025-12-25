@@ -14,18 +14,22 @@ Version: 1.0.0
 import asyncio
 import json
 import logging
+import os
 import sys
+from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional
 
 import aiohttp
 import websockets
 from pydantic import BaseModel
+from redis.asyncio import Redis
 
 # AFO Kingdom imports
 try:
     from AFO.observability.rule_constants import WEIGHTS
-    from AFO.services.trinity_calculator import TrinityCalculator, trinity_calculator
+    from AFO.services.trinity_calculator import (TrinityCalculator,
+                                                 trinity_calculator)
 except ImportError:
     print("❌ AFO Kingdom modules not found. Please run from AFO Kingdom root.")
     sys.exit(1)
@@ -68,6 +72,36 @@ class ChancellorMirror:
             "eternity": 90.0,
         }
         self.active_alerts: list[TrinityScoreAlert] = []
+        self.redis: Redis | None = None
+        self.stream_channel = "afo:verdicts"
+
+    async def _init_redis(self) -> None:
+        """Redis 연결 초기화"""
+        try:
+            host = os.environ.get("REDIS_HOST", "127.0.0.1")
+            port = int(os.environ.get("REDIS_PORT", "6379"))
+            self.redis = Redis(host=host, port=port, decode_responses=True)
+            await self.redis.ping()
+        except Exception as e:
+            logger.warning(f"Redis connection failed (Observability disabled): {e}")
+            self.redis = None
+
+    async def _publish_thought(self, content: str, level: str = "info") -> None:
+        """Matrix Stream에 생각(상태) 전파"""
+        if not self.redis:
+            return
+
+        try:
+            payload = {
+                "type": "thought",
+                "source": "Mirror",
+                "content": content,
+                "level": level,
+                "timestamp": datetime.now().isoformat(),
+            }
+            await self.redis.publish(self.stream_channel, json.dumps(payload))
+        except Exception as e:
+            logger.error(f"Failed to publish thought: {e}")
 
     async def monitor_trinity_score(self) -> None:
         """
@@ -75,7 +109,11 @@ class ChancellorMirror:
 
         SSE 스트림을 통해 Chancellor Graph의 판결을 실시간으로 모니터링합니다.
         """
+        await self._init_redis()
         logger.info("🔍 승상의 거울 가동: Trinity Score 실시간 모니터링 시작")
+        await self._publish_thought(
+            "Chancellor Mirror initialized (Perpetual Surveillance Active)"
+        )
 
         try:
             async with websockets.connect(
@@ -118,7 +156,10 @@ class ChancellorMirror:
         while True:
             try:
                 await self.check_current_trinity_score()
-                await asyncio.sleep(30)  # 30초 간격으로 체크
+                await self._publish_thought(
+                    "System Pulse: All pillars monitored and stable."
+                )
+                await asyncio.sleep(600)  # 10분 간격으로 체크 및 하트비트
 
             except Exception as e:
                 logger.error(f"❌ Trinity Score 체크 실패: {e}")
@@ -129,13 +170,17 @@ class ChancellorMirror:
         현재 Trinity Score 조회 및 분석
         """
         try:
-            async with aiohttp.ClientSession() as session:
-                async with session.get(f"{self.api_base}/api/5pillars/current") as response:
-                    if response.status == 200:
-                        data = await response.json()
-                        await self.analyze_pillars_data(data)
-                    else:
-                        logger.warning(f"⚠️ Trinity Score 조회 실패: HTTP {response.status}")
+            async with (
+                aiohttp.ClientSession() as session,
+                session.get(f"{self.api_base}/api/5pillars/current") as response,
+            ):
+                if response.status == 200:
+                    data = await response.json()
+                    overall = data.get("scores", {}).get("overall", 0) * 100
+                    logger.info(f"📊 [Mirror] Current Trinity Score: {overall:.2f}")
+                    await self.analyze_pillars_data(data)
+                else:
+                    logger.warning(f"⚠️ Trinity Score 조회 실패: HTTP {response.status}")
 
         except Exception as e:
             logger.error(f"❌ HTTP 요청 실패: {e}")
@@ -164,7 +209,10 @@ class ChancellorMirror:
         # Risk Score 알람 체크
         if risk_score > 10:
             await self.raise_alert(
-                "risk", risk_score, 10, f"⚠️ 위험: Risk Score {risk_score}점으로 위험 수준!"
+                "risk",
+                risk_score,
+                10,
+                f"⚠️ 위험: Risk Score {risk_score}점으로 위험 수준!",
             )
 
     async def analyze_pillars_data(self, data: dict) -> None:
@@ -174,20 +222,29 @@ class ChancellorMirror:
         Args:
             data: 5기둥 점수 데이터
         """
-        pillars = data.get("pillars", {})
+        pillars = data.get("scores", {})
+        if not pillars:
+            pillars = data.get("pillars", {})
 
         for pillar, score in pillars.items():
+            if pillar == "overall":
+                continue  # Skip overall in individual pillars check
+
+            # Scale up to 100 if it's 0-1 range
+            normalized_score = score * 100 if score <= 1.0 else score
             threshold = self.pillar_thresholds.get(pillar, 90.0)
 
-            if score < threshold:
+            if normalized_score < threshold:
                 await self.raise_alert(
                     pillar,
-                    score,
+                    normalized_score,
                     threshold,
-                    f"⚠️ {pillar.upper()}: {score}점으로 기준치 {threshold}점 미만!",
+                    f"⚠️ {pillar.upper()}: {normalized_score:.1f}점으로 기준치 {threshold}점 미만!",
                 )
 
-    async def raise_alert(self, pillar: str, score: float, threshold: float, message: str) -> None:
+    async def raise_alert(
+        self, pillar: str, score: float, threshold: float, message: str
+    ) -> None:
         """
         알람 발생
 
@@ -197,14 +254,16 @@ class ChancellorMirror:
             threshold: 기준치
             message: 알람 메시지
         """
-        import datetime
 
         alert = TrinityScoreAlert(
             pillar=pillar,
             score=score,
             threshold=threshold,
-            timestamp=datetime.datetime.now().isoformat(),
+            timestamp=datetime.now().isoformat(),
             message=message,
+        )
+        await self._publish_thought(
+            message, level="warning" if "⚠️" in message else "critical"
         )
 
         # 중복 알람 방지
@@ -237,7 +296,10 @@ class ChancellorMirror:
         cutoff_time = datetime.datetime.now() - datetime.timedelta(minutes=5)
 
         for alert in self.active_alerts:
-            if alert.pillar == new_alert.pillar and alert.timestamp > cutoff_time.isoformat():
+            if (
+                alert.pillar == new_alert.pillar
+                and alert.timestamp > cutoff_time.isoformat()
+            ):
                 return True
 
         return False
@@ -293,7 +355,9 @@ class ChancellorMirror:
                     logger.info(f"📊 Health Status: {health_data}")
 
                 # 시스템 메트릭
-                async with session.get(f"{self.api_base}/api/system/metrics") as response:
+                async with session.get(
+                    f"{self.api_base}/api/system/metrics"
+                ) as response:
                     if response.status == 200:
                         metrics_data = await response.json()
                         logger.info(f"📊 System Metrics: {metrics_data}")
@@ -345,7 +409,9 @@ class ChancellorMirror:
         cutoff_time = datetime.datetime.now() - datetime.timedelta(hours=1)
 
         self.active_alerts = [
-            alert for alert in self.active_alerts if alert.timestamp > cutoff_time.isoformat()
+            alert
+            for alert in self.active_alerts
+            if alert.timestamp > cutoff_time.isoformat()
         ]
 
         logger.info(f"🧹 해결된 알람 정리 완료, 남은 알람: {len(self.active_alerts)}개")

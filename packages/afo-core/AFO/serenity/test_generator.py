@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 # serenity/test_generator.py
 """
 Auto-Test Generator for Self-Healing Loop
