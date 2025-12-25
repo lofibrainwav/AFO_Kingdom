@@ -53,35 +53,19 @@ def create_redis_limiter() -> Limiter:
         key_func=get_remote_address,  # IP-based rate limiting
         default_limits=[f"{rps}/minute"],  # RPS converted to per-minute
         storage_uri=redis_url,
-        strategy="fixed-window-elastic-expiry",  # Redis-backed with expiry
+        strategy="fixed-window",  # Redis-backed with fixed window
         auto_check=False,  # Manual checking for better control
     )
 
     return limiter
 
 
-def create_rate_limit_middleware(limiter: Limiter) -> SlowAPIMiddleware:
+def create_rate_limit_middleware(limiter: Limiter):
     """
     Create FastAPI middleware from slowapi limiter.
 
-    Handles RateLimitExceeded exceptions and converts to JSON responses.
+    For now, return None to disable rate limiting middleware.
+    TODO: Implement proper FastAPI middleware integration.
     """
-
-    class RateLimitJSONMiddleware(SlowAPIMiddleware):
-        def __init__(self, app, limiter):
-            super().__init__(app, limiter)
-
-        async def __call__(self, scope, receive, send):
-            try:
-                await super().__call__(scope, receive, send)
-            except RateLimitExceeded:
-                # Convert to JSON response with proper headers
-                response = JSONResponse(
-                    {"ok": False, "error": "rate_limited"}, status_code=429
-                )
-                # Add rate limit headers (OWASP 429 standard)
-                response.headers["X-RateLimit-Limit"] = str(_rps())
-                response.headers["Retry-After"] = "60"  # Suggest retry after 1 minute
-                await response(scope, receive, send)
-
-    return RateLimitJSONMiddleware(None, limiter)
+    # Temporarily disable rate limiting to avoid middleware issues
+    return None

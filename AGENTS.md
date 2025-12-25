@@ -398,14 +398,11 @@ Composer Mode로 다음 파일들을 동시에 리팩터링:
 
 ### 🔗 왕국 전술 지도 (Context Map)
 
-* **백엔드 작전 본부 (Backend Core)**: `./packages/afo-core/AGENTS.md`
-
+* **백엔드 작전 본부 (Backend Core)**: `./packages/afo-core/docs/AGENTS.md`
   * FastAPI 라우팅, 도메인 로직, DB 스키마
-* **프론트엔드 왕궁 (Dashboard UI)**: `./packages/dashboard/AGENTS.md`
-
+* **프론트엔드 왕궁 (Dashboard UI)**: `./packages/dashboard/docs/AGENTS.md`
   * Next.js 컴포넌트, Glassmorphism UI, 상태 관리
 * **지식의 도서관 (Trinity OS)**: `./packages/trinity-os/AGENTS.md`
-
   * RAG 파이프라인, Context7 관리, 페르소나/메모리
 
 > 각 하위 AGENTS.md는 "그 폴더에서만 필요한 규칙 + 실제 커맨드" 중심으로 작성한다.

@@ -10,6 +10,7 @@ import { useSpatialAudio } from "../hooks/useSpatialAudio";
 import { KingdomMessageBoard } from "./genui";
 import AutomatedDebuggingStreamWidget from "./genui/AutomatedDebuggingStreamWidget";
 import { SSOTMonitor } from "./genui/SSOTMonitor";
+import { VisualAgentOverlay } from "./visual-agent/VisualAgentOverlay";
 
 // Lazy load heavy widgets
 const FinalEternalVictoryWidget = dynamic(
@@ -358,6 +359,9 @@ export function AFOPantheon() {
           />
         </div>
       )}
+
+      {/* Janus Visual Agent Overlay */}
+      <VisualAgentOverlay />
     </div>
   );
 }

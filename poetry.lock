@@ -3701,7 +3701,7 @@ version = "6.0.3"
 description = "Neo4j Bolt driver for Python"
 optional = false
 python-versions = ">=3.10"
-groups = ["dev"]
+groups = ["main", "dev"]
 files = [
     {file = "neo4j-6.0.3-py3-none-any.whl", hash = "sha256:a92023854da96aed4270e0d03d6429cdd7f0d3335eae977370934f4732de5678"},
     {file = "neo4j-6.0.3.tar.gz", hash = "sha256:7fb79e166e281aafd67d521f6611763ebcdc529f26db506c5605f91ddcd825ea"},
@@ -8544,4 +8544,4 @@ cffi = ["cffi (>=1.17,<2.0) ; platform_python_implementation != \"PyPy\" and pyt
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.12"
-content-hash = "ae84f34b72ab3ef3f18f67541c7f3f92790d26169d247a6a4ec951b1405a37fe"
+content-hash = "5eee16e2dcbffc20374fae6689f3be1164ccc60b57e00b5a751142164eb3b075"

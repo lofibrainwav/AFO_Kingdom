@@ -7,9 +7,8 @@ Phase 1 리팩토링: 중복 Redis 연결 로직 통합
 from typing import cast
 
 import redis
-from redis.asyncio import Redis as AsyncRedis
-
 from AFO.config.settings import get_settings
+from redis.asyncio import Redis as AsyncRedis
 
 
 def get_redis_client() -> redis.Redis:

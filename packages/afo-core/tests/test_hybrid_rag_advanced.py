@@ -2,17 +2,10 @@ from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
-
-from AFO.services.hybrid_rag import (
-    blend_results,
-    generate_answer,
-    get_embedding,
-    get_embedding_async,
-    query_pgvector,
-    query_pgvector_async,
-    query_redis,
-    select_context,
-)
+from AFO.services.hybrid_rag import (blend_results, generate_answer,
+                                     get_embedding, get_embedding_async,
+                                     query_pgvector, query_pgvector_async,
+                                     query_redis, select_context)
 
 
 # 1. Embedding Tests

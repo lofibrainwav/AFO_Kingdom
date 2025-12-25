@@ -8,11 +8,10 @@ Exposes the creative power of Samahwi to the frontend.
 
 from typing import Any
 
-from fastapi import APIRouter, BackgroundTasks, HTTPException
-
 from AFO.schemas.gen_ui import GenUIRequest, GenUIResponse
 from AFO.services.gen_ui import gen_ui_service
 from AFO.services.vision_verifier import vision_verifier
+from fastapi import APIRouter, BackgroundTasks, HTTPException
 
 router = APIRouter(prefix="/api/gen-ui", tags=["GenUI"])
 

@@ -43,6 +43,33 @@ async def calculate_tax(request: TaxCalcRequest) -> dict[str, Any]:
     Performs real-time tax simulation (Federal + CA + QBI).
     Source: JuliePerplexity Report (2025 Rules).
     """
-    return await julie_service.calculate_tax_scenario(
-        request.income, request.filing_status
+    return await julie_service.calculate_tax_scenario(request.income, request.filing_status)
+
+
+class TransactionRequest(BaseModel):
+    account_id: str
+    merchant: str
+    amount: float
+    category: str
+    date: str
+    dry_run: bool = False
+
+
+@router.post("/transaction")
+async def process_transaction(request: TransactionRequest) -> dict[str, Any]:
+    """
+    [Action Endpoint]
+    Trigger a financial transaction (or simulation).
+    Emits thoughts to the Neural Stream (ToT).
+    """
+    return await julie_service.process_transaction(
+        request_data={
+            "transaction_id": f"tx-{request.merchant.lower()}-001",
+            "merchant": request.merchant,
+            "amount": request.amount,
+            "category": request.category,
+            "date": request.date,
+        },
+        account_id=request.account_id,
+        dry_run=request.dry_run,
     )

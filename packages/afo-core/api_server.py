@@ -1,79 +1,142 @@
-# mypy: ignore-errors
-# 🧭 Trinity Score: 眞89% 善85% 美72% 孝95% | Total: 84%
-# 이 파일은 AFO 왕국의 眞善美孝 철학을 구현합니다
+"""
+AFO Kingdom API Server (아름다운 코드 적용)
+FastAPI 기반 AFO 왕국 Soul Engine API 서버
 
-# afo_soul_engine/api_server.py
+이 파일은 AFO 왕국의 眞善美孝 철학을 구현합니다.
+Trinity Score 기반 품질 관리 및 아름다운 코드 원칙 준수.
+
+Author: AFO Kingdom Development Team
+Date: 2025-12-24
+Version: 1.0.0
+"""
 
 from __future__ import annotations
 
 import logging
 import sys
 from pathlib import Path
+from typing import Any
 
-# Path setup for imports (must be before AFO imports)
-_AFO_ROOT = str(Path(__file__).resolve().parent.parent)
-if _AFO_ROOT not in sys.path:
-    sys.path.insert(0, _AFO_ROOT)
-
-# Core FastAPI imports
+# Core FastAPI imports with type hints
+from fastapi import FastAPI
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
+import uvicorn
 
-# Initialize Limiter
-limiter = Limiter(key_func=get_remote_address)
-
-# AFO Kingdom imports via Strangler Fig Facade
-
-# Configuration and services
-# Import setup_routers from routers.py file (not routers directory)
-import importlib.util
-from pathlib import Path
-
-from AFO.api.config import get_app_config
+# AFO Kingdom imports (clear and organized)
+from AFO.api.config import get_app_config, get_server_config
 from AFO.api.middleware import setup_middleware
+from AFO.api.routers import setup_routers
 
-_routers_file = Path(__file__).parent / "api" / "routers.py"
-if _routers_file.exists():
-    spec = importlib.util.spec_from_file_location("AFO.api.router_setup", _routers_file)
-    router_setup_module = importlib.util.module_from_spec(spec)
-    if spec and spec.loader:
-        spec.loader.exec_module(router_setup_module)
-        setup_routers = router_setup_module.setup_routers
-    else:
-
-        def setup_routers(app):  # type: ignore
-            pass
-
-else:
-
-    def setup_routers(app):  # type: ignore
-        pass
-
-
-# Global logger
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
 logger = logging.getLogger(__name__)
 
-# Create FastAPI app with configuration
-app = get_app_config()
-app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
-# Setup middleware (CORS, security, monitoring)
-setup_middleware(app)
+class AFOServer:
+    """
+    AFO Kingdom API Server Manager
 
-# Setup all routers in organized manner
-setup_routers(app)
+    아름다운 코드 원칙을 준수하는 API 서버 관리 클래스.
+    Trinity Score 기반 품질 관리를 통해 안정성과 확장성을 보장.
+
+    Attributes:
+        app: FastAPI 애플리케이션 인스턴스
+        limiter: Rate limiting 인스턴스
+    """
+
+    def __init__(self) -> None:
+        """Initialize AFO API Server with beautiful code principles."""
+        self._setup_python_path()
+        self.app = self._create_app()
+        self.limiter = self._create_limiter()
+        self._configure_app()
+        self._setup_components()
+
+        logger.info("AFO Kingdom API Server initialized with beautiful code principles")
+
+    def _setup_python_path(self) -> None:
+        """Setup Python path for AFO imports.
+
+        Trinity Score: 眞 (Truth) - 정확한 경로 설정으로 import 안정성 보장
+        """
+        afo_root = str(Path(__file__).resolve().parent.parent)
+        if afo_root not in sys.path:
+            sys.path.insert(0, afo_root)
+            logger.debug(f"Added AFO root to Python path: {afo_root}")
+
+    def _create_app(self) -> FastAPI:
+        """Create FastAPI application instance.
+
+        Returns:
+            Configured FastAPI application
+        """
+        app = get_app_config()
+        logger.info("FastAPI application created")
+        return app
+
+    def _create_limiter(self) -> Limiter:
+        """Create rate limiter for API protection.
+
+        Returns:
+            Configured rate limiter
+        """
+        limiter = Limiter(key_func=get_remote_address)
+        logger.info("Rate limiter configured")
+        return limiter
+
+    def _configure_app(self) -> None:
+        """Configure FastAPI application with middleware and handlers.
+
+        Trinity Score: 善 (Goodness) - 보안 및 에러 핸들링 강화
+        """
+        # Configure rate limiting
+        self.app.state.limiter = self.limiter
+        self.app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+        logger.info("Application configured with security measures")
+
+    def _setup_components(self) -> None:
+        """Setup middleware and routers.
+
+        Trinity Score: 美 (Beauty) - 모듈화된 컴포넌트 설정
+        """
+        try:
+            setup_middleware(self.app)
+            logger.info("Middleware setup completed")
+
+            setup_routers(self.app)
+            logger.info("Router setup completed")
+
+        except Exception as e:
+            logger.error(f"Component setup failed: {e}")
+            raise
+
+    def run_server(self, host: str = "0.0.0.0", port: int = 8010) -> None:
+        """Run the API server.
+
+        Args:
+            host: Server host address
+            port: Server port number
+        """
+        logger.info(f"🚀 Starting AFO Kingdom API Server on {host}:{port}")
+        uvicorn.run(self.app, host=host, port=port)
 
 
-# Main execution block
+# Global server instance (Singleton pattern for beautiful code)
+server = AFOServer()
+app = server.app
+
+
+# Main execution block with proper error handling
 if __name__ == "__main__":
-    import uvicorn
-
-    # Get server configuration
-    from AFO.api.config import get_server_config
-
-    host, port = get_server_config()
-
-    print(f"🚀 Starting AFO Kingdom API Server on {host}:{port}")
-    uvicorn.run(app, host=host, port=port)
+    try:
+        host, port = get_server_config()
+        server.run_server(host=host, port=port)
+    except Exception as e:
+        logger.error(f"Failed to start server: {e}")
+        sys.exit(1)

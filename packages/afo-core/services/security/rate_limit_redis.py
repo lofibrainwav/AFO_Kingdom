@@ -6,15 +6,14 @@ import os
 import time
 from typing import TYPE_CHECKING, Optional, Tuple
 
+from AFO.services.security.circuit_breaker import CircuitBreaker
+from AFO.services.security.rate_limit_policy import RedisDownPolicy
 from redis.asyncio import Redis
 from slowapi import Limiter
 from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import JSONResponse, Response
-
-from AFO.services.security.circuit_breaker import CircuitBreaker
-from AFO.services.security.rate_limit_policy import RedisDownPolicy
 
 if TYPE_CHECKING:
     from collections.abc import Callable

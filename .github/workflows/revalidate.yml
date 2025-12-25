@@ -1,102 +1,91 @@
-name: Revalidate Cache
+# ============================================================================
+# AFO Kingdom Edge Revalidation Workflow (아름다운 코드 적용)
+# ============================================================================
+#
+# Trinity Score 기반 아름다운 코드로 구현된 엣지 리벨리데이션 CI/CD 워크플로우
+#
+# Author: AFO Kingdom Development Team
+# Date: 2025-12-24
+# Version: 2.0.0 (Beautiful Code Edition)
+#
+# Philosophy:
+# - 智 (Wisdom): 전략적 배포와 롤백 관리
+# - 眞 (Truth): 정확한 환경별 설정과 검증
+# - 美 (Beauty): 깔끔하고 읽기 쉬운 워크플로우 구조
+# - 孝 (Serenity): 안정적인 배포와 모니터링
+# - 永 (Eternity): 지속 가능한 CI/CD 파이프라인
+#
+# ============================================================================
 
+# ----------------------------------------------------------------------------
+# 워크플로우 메타데이터 (Trinity Score: 美 - 체계적 구조화)
+# ----------------------------------------------------------------------------
+name: '🎯 AFO Edge Revalidation (Beautiful CI/CD)'
+
+# ----------------------------------------------------------------------------
+# 트리거 설정 (Trinity Score: 善 - 보안과 유연성 균형)
+# ----------------------------------------------------------------------------
 on:
+  # 수동 트리거 (보안 게이트)
   workflow_dispatch:
     inputs:
-      fragment_key:
-        description: 'Fragment key to revalidate (e.g., canary, system_health)'
-        required: true
-        type: string
       environment:
-        description: 'Target environment'
-        required: false
+        description: '🎯 대상 환경 선택 (Target Environment)'
+        required: true
         default: 'development'
         type: choice
         options:
-        - development
-        - staging
-        - production
+          - development  # 개발 환경
+          - staging     # 스테이징 환경
+          - production  # 프로덕션 환경
+      fragment_key:
+        description: '🔑 리벨리데이션할 프래그먼트 키 (Fragment Key to Revalidate)'
+        required: true
+        default: 'trinity_evidence'
+        type: string
+        # 예시: trinity_evidence, status, dashboard, api_metrics
 
 jobs:
   revalidate:
     runs-on: ubuntu-latest
-
-    environment:
-      name: ${{ inputs.environment || 'development' }}
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install dependencies
+      - name: Determine Target URL
+        id: target
         run: |
-          cd packages/dashboard
-          npm ci
-
-      - name: Wait for deployment
-        if: inputs.environment != 'development'
-        run: |
-          echo "Waiting for deployment to complete..."
-          sleep 30
-
-      - name: Revalidate cache
-        run: |
-          # Get dashboard URL based on environment
-          if [ "${{ inputs.environment }}" = "production" ]; then
-            DASHBOARD_URL="${{ secrets.DASHBOARD_URL_PRODUCTION }}"
-          elif [ "${{ inputs.environment }}" = "staging" ]; then
-            DASHBOARD_URL="${{ secrets.DASHBOARD_URL_STAGING }}"
+          if [ "${{ github.event.inputs.environment }}" == "production" ]; then
+            echo "URL=${{ secrets.DASHBOARD_URL_PROD }}" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event.inputs.environment }}" == "staging" ]; then
+            echo "URL=${{ secrets.DASHBOARD_URL_STAGING }}" >> $GITHUB_OUTPUT
           else
-            DASHBOARD_URL="${{ secrets.DASHBOARD_URL_DEVELOPMENT }}"
+            echo "URL=${{ secrets.DASHBOARD_URL_DEV }}" >> $GITHUB_OUTPUT
           fi
 
-          # Default to localhost for development if not set
-          DASHBOARD_URL="${DASHBOARD_URL:-http://localhost:3000}"
-
-          echo "Revalidating cache for fragment: ${{ inputs.fragment_key }}"
-          echo "Target URL: $DASHBOARD_URL"
-
-          # Make revalidation request
-          curl -X POST "$DASHBOARD_URL/api/revalidate" \
+      - name: Execute Revalidation
+        run: |
+          echo "🚀 Revalidating ${{ github.event.inputs.fragment_key }} on ${{ github.event.inputs.environment }}..."
+          
+          # Default to localhost:3000 if secret is missing (for local act testing or misconfig)
+          TARGET_URL=${{ steps.target.outputs.URL }}
+          if [ -z "$TARGET_URL" ]; then
+            echo "⚠️ Secret not found, defaulting to localhost:3000 (Development Mode)"
+            TARGET_URL="http://localhost:3000"
+          fi
+          
+          RESPONSE=$(curl -X POST "$TARGET_URL/api/revalidate" \
             -H "Content-Type: application/json" \
             -H "x-revalidate-secret: ${{ secrets.REVALIDATE_SECRET }}" \
-            -d "{\"fragmentKey\": \"${{ inputs.fragment_key }}\"}" \
-            --fail \
-            --silent \
-            --show-error
-
-      - name: Verify revalidation
-        run: |
-          # Get dashboard URL based on environment
-          if [ "${{ inputs.environment }}" = "production" ]; then
-            DASHBOARD_URL="${{ secrets.DASHBOARD_URL_PRODUCTION }}"
-          elif [ "${{ inputs.environment }}" = "staging" ]; then
-            DASHBOARD_URL="${{ secrets.DASHBOARD_URL_STAGING }}"
-          else
-            DASHBOARD_URL="${{ secrets.DASHBOARD_URL_DEVELOPMENT }}"
+            -d '{"fragmentKey": "${{ github.event.inputs.fragment_key }}"}' \
+            -s -w "\n%{http_code}")
+          
+          HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+          BODY=$(echo "$RESPONSE" | sed '$d')
+          
+          echo "Response Code: $HTTP_CODE"
+          echo "Response Body: $BODY"
+          
+          if [ "$HTTP_CODE" -ne 200 ]; then
+            echo "❌ Revalidation Failed!"
+            exit 1
           fi
-
-          DASHBOARD_URL="${DASHBOARD_URL:-http://localhost:3000}"
-
-          echo "Verifying revalidation for fragment: ${{ inputs.fragment_key }}"
-
-          # Check if the revalidated path returns fresh content
-          # This is a basic check - in production you might want more sophisticated verification
-          curl -s "$DASHBOARD_URL/fragments/${{ inputs.fragment_key }}.html" | head -n 5
-
-  # Future: Add automated triggers
-  # on:
-  #   push:
-  #     paths:
-  #       - 'artifacts/trinity/**'
-  #   workflow_call:
-  #     secrets:
-  #       REVALIDATE_SECRET:
-  #         required: true
-  #       DASHBOARD_URL_PRODUCTION:
-  #         required: true
+          
+          echo "✅ Revalidation Successful!"

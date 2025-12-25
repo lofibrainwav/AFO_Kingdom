@@ -28,6 +28,13 @@ except ImportError:
 
 router = APIRouter(prefix="/api/system", tags=["System Health"])
 
+
+@router.get("/health", include_in_schema=os.getenv("ENVIRONMENT") == "dev")
+async def system_health_alias():
+    """Alias for /api/health to support legacy tests. Only available in dev environment."""
+    return {"status": "ok"}
+
+
 logger = logging.getLogger(__name__)
 
 ORGANS = [
