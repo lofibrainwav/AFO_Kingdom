@@ -87,8 +87,8 @@ def main():
         json.dump(registry, f, indent=2)
 
     print(f"✅ Skills Registry 생성 완료: {output_path}")
-    print(f"   - 총 컴포넌트: {registry['total_dependencies']}")
-    print(f"   - 善 (Goodness) 점수: {registry['goodness_score']}")
+    print(f"   - 총 컴포넌트: {registry["total_dependencies"]}")
+    print(f"   - 善 (Goodness) 점수: {registry["goodness_score"]}")
 
 
 if __name__ == "__main__":

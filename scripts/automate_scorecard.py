@@ -406,7 +406,7 @@ def main():
     print("🏰 AFO 왕국 자동 스코어카드")
     print("眞善美孝永 (Truth·Goodness·Beauty·Serenity·Eternity)")
     print("=" * 60)
-    print(f"총점: {results['total']}/{results['max']}")
+    print(f"총점: {results["total"]}/{results["max"]}")
     print()
 
     pillar_names = {

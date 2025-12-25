@@ -81,9 +81,9 @@ class TypeCoverageAnalyzer:
         print("=" * 60)
 
         print(f"📁 Package Directory: {self.package_dir}")
-        print(f"📊 Total Functions: {self.stats['total_functions']:,}")
-        print(f"✅ Typed Functions: {self.stats['typed_functions']:,}")
-        print(f"📈 Coverage: {self.stats['coverage_percent']:.1f}%")
+        print(f"📊 Total Functions: {self.stats["total_functions"]:,}")
+        print(f"✅ Typed Functions: {self.stats["typed_functions"]:,}")
+        print(f"📈 Coverage: {self.stats["coverage_percent"]:.1f}%")
         # Progress bar
         bar_width = 40
         filled = int(bar_width * self.stats["coverage_percent"] / 100)
