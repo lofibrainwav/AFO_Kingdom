@@ -18,7 +18,7 @@ from __future__ import annotations
 import os
 import uuid
 from dataclasses import asdict, dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any
 
 # Lazy import PostgreSQL driver
@@ -33,7 +33,7 @@ class AuditRecord:
     trinity_score: float = 0.0
     risk_score: float = 0.0
     action: str = "ASK_COMMANDER"  # AUTO_RUN | ASK_COMMANDER
-    timestamp: datetime = field(default_factory=datetime.utcnow)
+    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     context: dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
@@ -65,10 +65,10 @@ class AuditTrail:
 
             if settings:
                 host = getattr(settings, "POSTGRES_HOST", "localhost")
-                port = getattr(settings, "POSTGRES_PORT", 5432)
+                port = getattr(settings, "POSTGRES_PORT", 15432)
                 db = getattr(settings, "POSTGRES_DB", "afo_memory")
                 user = getattr(settings, "POSTGRES_USER", "afo")
-                pw = getattr(settings, "POSTGRES_PASSWORD", "")
+                pw = getattr(settings, "POSTGRES_PASSWORD", "afo_secret_change_me")
                 self.database_url = f"postgresql://{user}:{pw}@{host}:{port}/{db}"
             else:
                 self.database_url = os.getenv(

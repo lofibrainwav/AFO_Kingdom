@@ -119,16 +119,15 @@ def get_installed_packages() -> list[dict[str, Any]]:
         logger.warning("[眞] pkg_resources 사용 불가")
         return []
 
-    components = []
     logger.info("[眞] working_set 순회 시작")
-    for dist in pkg_resources.working_set:
-        components.append(
-            {
-                "type": "library",
-                "name": dist.project_name,
-                "version": dist.version,
-            }
-        )
+    components = [
+        {
+            "type": "library",
+            "name": dist.project_name,
+            "version": dist.version,
+        }
+        for dist in pkg_resources.working_set
+    ]
 
     logger.info(f"[眞] 설치된 패키지 수집 완료: {len(components)}개")
     return components

@@ -2,8 +2,12 @@ from __future__ import annotations
 
 import re
 import sys
-from collections.abc import Iterable
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
+
 
 FORBIDDEN_PHRASES = [
     "Repairs Complete",
@@ -47,19 +51,12 @@ class Result:
 
 
 def _contains_any(text: str, phrases: Iterable[str]) -> list[str]:
-    found = []
     lowered = text.lower()
-    for p in phrases:
-        if p.lower() in lowered:
-            found.append(p)
-    return found
+    return [p for p in phrases if p.lower() in lowered]
 
 
 def _has_evidence(text: str) -> bool:
-    for pat in EVIDENCE_PATTERNS:
-        if re.search(pat, text, flags=re.IGNORECASE):
-            return True
-    return False
+    return any(re.search(pat, text, flags=re.IGNORECASE) for pat in EVIDENCE_PATTERNS)
 
 
 def _is_completion_claim(text: str) -> bool:
@@ -67,9 +64,9 @@ def _is_completion_claim(text: str) -> bool:
     if _contains_any(text, FORBIDDEN_PHRASES):
         return True
     # Also catch common patterns.
-    if re.search(r"\b(done|fixed|shipped|merged)\b", text, flags=re.IGNORECASE):
-        return True
-    return False
+    return bool(
+        re.search(r"\b(done|fixed|shipped|merged)\b", text, flags=re.IGNORECASE)
+    )
 
 
 def validate_report(text: str) -> Result:

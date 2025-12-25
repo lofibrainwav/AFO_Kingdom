@@ -64,7 +64,7 @@ class RedTeamAdversary:
                 self.results.append(result)
                 logger.info(f"🔴 [RED TEAM] {attack.__name__}: {result["status"]}")
             except Exception as e:
-                logger.error(f"🔴 [RED TEAM] {attack.__name__} failed: {e}")
+                logger.exception(f"🔴 [RED TEAM] {attack.__name__} failed: {e}")
                 self.results.append(
                     {"attack": attack.__name__, "status": "ERROR", "error": str(e)}
                 )
@@ -110,7 +110,7 @@ class RedTeamAdversary:
 
                 # Check if attack was blocked
                 if (
-                    response.status_code in [400, 403, 422]
+                    response.status_code in {400, 403, 422}
                     or "error" in response.text.lower()
                 ):
                     blocked_count += 1
@@ -160,9 +160,9 @@ class RedTeamAdversary:
             )
             tasks.append(task)
 
-        start_time = time.time()
+        time.time()
         responses = await asyncio.gather(*tasks, return_exceptions=True)
-        end_time = time.time()
+        time.time()
 
         # Analyze responses
         successful_responses = [
@@ -265,7 +265,7 @@ class RedTeamAdversary:
 
                 # Path traversal should be blocked
                 if (
-                    response.status_code in [400, 403, 404]
+                    response.status_code in {400, 403, 404}
                     or "error" in response.text.lower()
                 ):
                     blocked_count += 1
@@ -312,7 +312,7 @@ class RedTeamAdversary:
                 )
 
                 if (
-                    response.status_code in [400, 422]
+                    response.status_code in {400, 422}
                     or "error" in response.text.lower()
                 ):
                     blocked_count += 1
@@ -351,7 +351,7 @@ class RedTeamAdversary:
 
             # Should handle gracefully (413, 400, or process normally)
             blocked = (
-                response.status_code in [400, 413, 422]
+                response.status_code in {400, 413, 422}
                 or response.elapsed.total_seconds() < 30
             )
 

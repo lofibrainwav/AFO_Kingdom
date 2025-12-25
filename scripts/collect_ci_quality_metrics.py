@@ -31,7 +31,8 @@ def push_metrics(payload: str) -> None:
 
     with urlopen(req, timeout=10) as resp:
         if resp.status >= 400:
-            raise RuntimeError(f"Pushgateway error: {resp.status}")
+            msg = f"Pushgateway error: {resp.status}"
+            raise RuntimeError(msg)
 
 
 def main() -> int:

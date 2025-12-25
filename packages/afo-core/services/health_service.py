@@ -8,15 +8,19 @@ Health Service - Centralized logic for system monitoring
 import asyncio
 import logging
 from datetime import datetime
-from typing import Any, cast
+from typing import TYPE_CHECKING, Any, cast
 
 import httpx
 import redis.asyncio as redis
+
 # AFO internal imports
-from AFO.api.compat import TrinityMetrics, calculate_trinity
 from AFO.config.settings import get_settings
+from AFO.domain.metrics.trinity import calculate_trinity
 from AFO.services.database import get_db_connection
 from AFO.utils.redis_connection import get_redis_url
+
+if TYPE_CHECKING:
+    from AFO.api.compat import TrinityMetrics
 
 logger = logging.getLogger(__name__)
 

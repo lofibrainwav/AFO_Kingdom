@@ -7,7 +7,7 @@ Trinity Integration - Antigravity ↔ Trinity Evidence 연결
 import asyncio
 import logging
 from datetime import datetime
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
 from .modular_engine import ModularAntigravityEngine, create_simple_engine
 

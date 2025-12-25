@@ -18,6 +18,7 @@ Responsibilities:
 
 from __future__ import annotations
 
+import json
 import logging
 import os
 from typing import TYPE_CHECKING, Any
@@ -387,20 +388,63 @@ class YeongdeokScholar:
         # wrapping them as "using the skill".
 
         if tool_name == "skill_012_mcp_tool_bridge":
-            # Using standard MCP client logic (simulated or imported)
-            # For now, let's assume we call a local MCP client helper.
             try:
-                # Import ad-hoc for now as generalized executor isn't fully visible
-                # Or simply return a success message verifying the intent if actual MCP infra is complex.
-                # User wants "freely use".
-                # Let's try to list tools via CLI if possible or just acknowledge ready state.
-                # Actually, AFO has `AFO.api.routes.mcp_routes`? No, I saw similar files.
-                # Let's use `afo_core.scholars.mcp_client` if it exists, or build a simple one.
-                # Based on previous context, we want to ENABLE him.
+                from AFO.services.mcp_stdio_client import call_tool, list_tools
 
-                # Let's just return a placeholder "Action: Executing MCP Tool" for the first pass,
-                # effectively "registering" his ability to try.
-                pass
+                action = (kwargs.get("action") or "list_tools").strip()
+                server_name = (kwargs.get("server") or "afo-ultimate-mcp").strip()
+
+                if action == "list_tools":
+                    tools = list_tools(server_name)
+                    if not tools:
+                        return f"⚠️ [Yeongdeok] MCP server '{server_name}' returned no tools."
+                    return f"✅ [Yeongdeok] MCP tools ({server_name}): " + ", ".join(
+                        sorted(tools)
+                    )
+
+                if action == "retrieve_context":
+                    query = (
+                        kwargs.get("query") or kwargs.get("text") or "AFO Architecture"
+                    )
+                    resp = call_tool(
+                        server_name,
+                        tool_name="retrieve_context",
+                        arguments={"query": str(query), "domain": "technical"},
+                    )
+                    return json.dumps(resp.get("result", {}), ensure_ascii=False)[:2000]
+
+                if action == "sequential_thinking":
+                    thought = kwargs.get("thought") or "Proceed step by step."
+                    resp = call_tool(
+                        server_name,
+                        tool_name="sequential_thinking",
+                        arguments={
+                            "thought": str(thought),
+                            "thought_number": int(kwargs.get("thought_number") or 1),
+                            "total_thoughts": int(kwargs.get("total_thoughts") or 1),
+                            "next_thought_needed": bool(
+                                kwargs.get("next_thought_needed")
+                                if kwargs.get("next_thought_needed") is not None
+                                else False
+                            ),
+                        },
+                    )
+                    return json.dumps(resp.get("result", {}), ensure_ascii=False)[:2000]
+
+                # Generic tool call
+                tool = kwargs.get("tool") or kwargs.get("tool_name")
+                if not tool:
+                    return f"❌ [Yeongdeok] MCP action '{action}' requires 'tool'"
+                arguments = kwargs.get("arguments")
+                if arguments is not None and not isinstance(arguments, dict):
+                    return "❌ [Yeongdeok] MCP 'arguments' must be an object"
+
+                resp = call_tool(
+                    server_name,
+                    tool_name=str(tool),
+                    arguments=arguments or {},
+                )
+                return json.dumps(resp.get("result", {}), ensure_ascii=False)[:2000]
             except Exception as e:
                 return f"Error using MCP Bridge: {e}"
 

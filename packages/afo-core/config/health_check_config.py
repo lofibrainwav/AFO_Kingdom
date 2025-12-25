@@ -42,9 +42,9 @@ class HealthCheckConfig:
         MCPServerConfig("context7", "라이브러리 문서 주입"),
         MCPServerConfig("afo-ultimate-mcp", "AFO Ultimate MCP 서버"),
         MCPServerConfig("afo-skills-mcp", "AFO 스킬 MCP 서버"),
-        MCPServerConfig("obsidian-mcp", "옵시디언 MCP 서버"),
-        MCPServerConfig("playwright-bridge-mcp", "Playwright 브릿지"),
-        MCPServerConfig("cursor-browser-extension", "Cursor 브라우저 확장"),
+        MCPServerConfig("trinity-score-mcp", "Trinity Score MCP 서버"),
+        MCPServerConfig("afo-skills-registry-mcp", "AFO Skills Registry MCP 서버"),
+        MCPServerConfig("afo-obsidian-mcp", "AFO Obsidian MCP 서버"),
     )
 
     # 학자 목록

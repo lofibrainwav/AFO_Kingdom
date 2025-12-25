@@ -66,7 +66,7 @@ class AutoRecon:
     def _save_report(self, report):
         filename = f"recon_{datetime.now().strftime("%Y%m%d_%H%M%S")}.json"
         path = os.path.join(self.report_dir, filename)
-        with Path(path).open("w") as f:
+        with Path(path).open("w", encoding="utf-8") as f:
             json.dump(report, f, indent=2)
         print(f"📝 Report archived: {path}")
 

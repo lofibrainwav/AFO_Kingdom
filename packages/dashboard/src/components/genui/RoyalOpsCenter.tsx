@@ -6,77 +6,128 @@ import {
     CheckCircle2,
     Clock,
     Cpu,
-    ExternalLink,
     Heart,
     Shield,
     Terminal,
     TrendingUp,
     Zap
 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { ROYAL_CONSTANTS } from "../../config/royal_constants";
+
+interface RoyalOpsCenterProps {
+  trinityScore: number;
+  healthData?: any;
+}
 
 /**
  * Royal Ops Center (Genesis v1.1 - Optimized)
  * The central command interface for the AFO Kingdom.
  * Integrates Kingdom Health, Chancellor Stream, and Grok Insights with high-fidelity motion.
  */
-export default function RoyalOpsCenter() {
+export default function RoyalOpsCenter({ trinityScore, healthData }: RoyalOpsCenterProps) {
   const [logs, setLogs] = useState<string[]>([]);
-  const [trinityScore, setTrinityScore] = useState(98.5);
   const [currentTime, setCurrentTime] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
+  
+  const API_BASE = process.env.NEXT_PUBLIC_API_BASE || ROYAL_CONSTANTS.LINKS.API_DEFAULT;
 
-  // Mock Data Streams
+  // Real-time Clock
   useEffect(() => {
-    // Clock
     const timer = setInterval(() => {
       setCurrentTime(new Date().toLocaleTimeString());
     }, 1000);
-
-    // Mock Logs
-    const mockLogs = [
-      "[SYSTEM] Neural Link established.",
-      "[GROK] Analyzing market volatility...",
-      "[TRINITY] Serenity pillar stable at 99%.",
-      "[AFO] Core services operational.",
-      "[AUTO] Scheduled maintenance skipped (Low Risk).",
-      "[NET] Traffic spike detected in Sector 7.",
-      "[SEC] Firewall audit complete: All clear.",
-      "[GROK] Assimilating new heuristics...",
-    ];
-    let logIndex = 0;
-    const logInterval = setInterval(() => {
-      // Use simple string concatenation if template literal is causing issues
-      const timeStr = new Date().toLocaleTimeString();
-      const logMsg = mockLogs[logIndex % mockLogs.length];
-      const newLog = `[${timeStr}] ${logMsg}`;
-      
-      setLogs(prev => {
-        const updated = [...prev, newLog];
-        if (updated.length > 20) return updated.slice(updated.length - 20);
-        return updated;
-      });
-      
-      logIndex++;
-      
-      // Random score fluctuate
-      if (Math.random() > 0.7) {
-        setTrinityScore(prev => Number((prev + (Math.random() - 0.5) * 0.2).toFixed(1)));
-      }
-    }, 2000);
-
-    return () => {
-      clearInterval(timer);
-      clearInterval(logInterval);
-    };
+    return () => clearInterval(timer);
   }, []);
 
-  // Auto-scroll to bottom of logs
+  // SSE Log Stream Integration
+  const handleLogMessage = useCallback((event: MessageEvent) => {
+    if (!event.data) return;
+    setLogs((prev) => {
+      const newLogs = [...prev, event.data];
+      if (newLogs.length > 50) return newLogs.slice(newLogs.length - 50); // Keep last 50
+      return newLogs;
+    });
+  }, []);
+
+  useEffect(() => {
+    console.log("[Chancellor Stream] Connecting to SSE endpoint:", `${API_BASE}/logs/stream`);
+
+    // Chancellor Stream: Connect to SSE logs endpoint
+    const eventSource = new EventSource(`${API_BASE}/logs/stream`);
+
+    eventSource.onopen = () => {
+      console.log("[Chancellor Stream] SSE connection opened successfully");
+      setLogs(prev => [...prev, "[SSE] Chancellor Stream 연결됨 - 실시간 모니터링 시작"]);
+    };
+
+    eventSource.onmessage = (event) => {
+      console.log("[Chancellor Stream] Message received:", event.data);
+      handleLogMessage(event);
+    };
+
+    eventSource.onerror = (err) => {
+      console.error("[Chancellor Stream] SSE connection error:", err);
+      setLogs(prev => [...prev, "[SSE ERROR] Chancellor Stream 연결 실패 - 재연결 시도 중"]);
+    };
+
+    // Send initial connection test
+    setTimeout(() => {
+      console.log("[Chancellor Stream] Testing connection...");
+      setLogs(prev => [...prev, "[SSE] Chancellor Stream 초기화 완료"]);
+    }, 1000);
+
+    return () => {
+      console.log("[Chancellor Stream] Closing SSE connection");
+      eventSource.close();
+    };
+  }, [API_BASE, handleLogMessage]);
+
+  const handleHeal = async () => {
+    try {
+        setLogs(prev => [...prev, "[COMMAND] Initiating Heal Protocol..."]);
+        const res = await fetch(`${API_BASE}/api/system/heal`, { method: "POST" });
+        const data = await res.json();
+        
+        if (res.ok) {
+             setLogs(prev => [...prev, `[SYSTEM] ${data.message}`]);
+        } else {
+             setLogs(prev => [...prev, `[ERROR] ${data.detail || "Heal failed"}`]);
+        }
+    } catch (e) {
+        setLogs(prev => [...prev, `[CRITICAL] Heal request failed: ${e}`]);
+    }
+  };
+
+  // Auto-scroll
   useEffect(() => {
     if (scrollRef.current) {
         scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [logs]);
+
+  // Helper to determine Pillar status color
+  const getPillarColor = (score: number) => {
+    if (score >= 90) return "bg-emerald-500";
+    if (score >= 80) return "bg-blue-500";
+    if (score >= 70) return "bg-amber-500";
+    return "bg-red-500";
+  };
+
+  // Safe Trinity Breakdown Access
+  const breakdown = healthData?.trinity_breakdown || {};
+  const pillars = [
+    { name: "眞 Truth", status: (breakdown.truth || 0) * 100, color: "bg-blue-500" },
+    { name: "善 Goodness", status: (breakdown.goodness || 0) * 100, color: "bg-emerald-500" },
+    { name: "美 Beauty", status: (breakdown.beauty || 0) * 100, color: "bg-purple-500" },
+    { name: "孝 Serenity", status: (breakdown.filial_serenity || 0) * 100, color: "bg-indigo-500" },
+    { name: "永 Eternity", status: (breakdown.eternity || 0) * 100, color: "bg-amber-500" },
+  ];
+
+  // Docker / System Status Check
+  const postgresStatus = healthData?.organs?.["肝_PostgreSQL"]?.status === "healthy";
+  const redisStatus = healthData?.organs?.["心_Redis"]?.status === "healthy";
+  const systemOptimal = postgresStatus && redisStatus;
 
   // Animation Variants
   const containerVariants = {
@@ -119,9 +170,11 @@ export default function RoyalOpsCenter() {
             </div>
         </div>
         <div className="flex items-center gap-6 text-sm font-mono text-white/50">
-            <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/5">
-                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
-                <span className="text-emerald-400/80">SYSTEM OPTIMAL</span>
+            <div className={`flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border ${systemOptimal ? 'border-emerald-500/30' : 'border-amber-500/30'}`}>
+                <div className={`w-2 h-2 rounded-full ${systemOptimal ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]' : 'bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.5)]'} animate-pulse`} />
+                <span className={systemOptimal ? "text-emerald-400/80" : "text-amber-400/80"}>
+                  {systemOptimal ? "SYSTEM OPTIMAL" : "SYSTEM DEGRADED"}
+                </span>
             </div>
             <div className="flex items-center gap-2">
                  <Clock className="w-4 h-4" />
@@ -154,7 +207,7 @@ export default function RoyalOpsCenter() {
                 
                 <div className="mt-4 flex items-center gap-2 text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded-full border border-emerald-500/20">
                     <TrendingUp className="w-3 h-3" />
-                    +0.2% vs Avg
+                    Target: 99.0%
                 </div>
             </motion.div>
 
@@ -165,17 +218,11 @@ export default function RoyalOpsCenter() {
                     Pillar Harmony
                 </h3>
                 <div className="space-y-3">
-                    {[
-                        { name: "眞 Truth", status: 99, color: "bg-blue-500" },
-                        { name: "善 Goodness", status: 95, color: "bg-emerald-500" },
-                        { name: "美 Beauty", status: 100, color: "bg-purple-500" },
-                        { name: "孝 Serenity", status: 98, color: "bg-indigo-500" },
-                        { name: "永 Eternity", status: 100, color: "bg-amber-500" },
-                    ].map(pillar => (
+                    {pillars.map(pillar => (
                         <div key={pillar.name} className="group">
                             <div className="flex items-center justify-between text-xs mb-1">
                                 <span className="text-white/70 group-hover:text-white transition-colors">{pillar.name}</span>
-                                <span className="text-white/30">{pillar.status}%</span>
+                                <span className="text-white/30">{pillar.status.toFixed(1)}%</span>
                             </div>
                             <div className="h-1 bg-white/10 rounded-full overflow-hidden">
                                 <motion.div 
@@ -216,8 +263,8 @@ export default function RoyalOpsCenter() {
                             animate={{ opacity: 1, x: 0 }}
                             className="border-l-2 border-transparent hover:border-indigo-500/50 pl-2 py-0.5 hover:bg-white/5 cursor-default transition-colors group"
                         >
-                            <span className="text-indigo-400/40 mr-2 text-[10px] group-hover:text-indigo-400 transition-colors">{log.split("]")[0]}]</span>
-                            <span className="text-white/80 group-hover:text-white transition-colors">{log.split("]")[1] || log}</span>
+                            <span className="text-indigo-400/40 mr-2 text-[10px] group-hover:text-indigo-400 transition-colors">[{new Date().toLocaleTimeString()}]</span>
+                            <span className="text-white/80 group-hover:text-white transition-colors">{log}</span>
                         </motion.div>
                     ))}
                 </AnimatePresence>
@@ -242,26 +289,25 @@ export default function RoyalOpsCenter() {
 
                 <div className="space-y-6 relative z-10">
                     <div>
-                        <h4 className="text-[10px] text-indigo-300/70 uppercase tracking-widest mb-2 font-bold">Strategic Advice</h4>
+                        <h4 className="text-[10px] text-indigo-300/70 uppercase tracking-widest mb-2 font-bold">Strategic Observation</h4>
                         <p className="text-lg leading-relaxed font-light text-white/90 drop-shadow-sm">
-                            "Market volatility patterns indicate a potential opportunity for <span className="text-indigo-300 font-medium border-b border-indigo-500/30 pb-0.5">automated arbitrage</span>. Recommend strict resource allocation to 'Serenity' protocols."
+                            "System stability is {systemOptimal ? 'optimal' : 'at risk'}. {systemOptimal ? 'Serenity protocols active.' : 'PostgreSQL connectivity failure detected.'}"
                         </p>
                     </div>
 
                     <div className="pt-6 border-t border-white/10">
-                        <div className="flex items-center gap-3 mb-3">
-                             <h4 className="text-[10px] text-white/40 uppercase tracking-widest">Suggested Actions</h4>
+                         <div className="flex items-center gap-3 mb-3">
+                             <h4 className="text-[10px] text-white/40 uppercase tracking-widest">Active Protocols</h4>
                         </div>
                         <ul className="space-y-2 text-sm text-white/70">
                             {[
-                                "Initiate Budget Audit",
-                                "Increase Cache TTL (Redis)",
-                                "Deploy Silence Protocols"
+                                "Sequential Thinking",
+                                "Context7 Analysis",
+                                systemOptimal ? "Growth Mode" : "Recovery Mode"
                             ].map((action, i) => (
                                 <li key={i} className="flex items-center gap-2 p-2 rounded-lg hover:bg-white/5 cursor-pointer transition-all hover:translate-x-1 group/item">
                                     <CheckCircle2 className="w-4 h-4 text-emerald-500/50 group-hover/item:text-emerald-400" />
                                     <span className="group-hover/item:text-white">{action}</span>
-                                    <ExternalLink className="w-3 h-3 ml-auto opacity-0 group-hover/item:opacity-50" />
                                 </li>
                             ))}
                         </ul>
@@ -271,13 +317,15 @@ export default function RoyalOpsCenter() {
 
             {/* Quick Actions */}
             <motion.div variants={itemVariants} className="bg-white/5 rounded-2xl p-4 border border-white/10 flex gap-3 backdrop-blur-md">
-                <button className="flex-1 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium transition-all shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 flex items-center justify-center gap-2 active:scale-95">
+                <button 
+                  onClick={handleHeal}
+                  className="flex-1 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium transition-all shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 flex items-center justify-center gap-2 active:scale-95"
+                >
                     <Heart className="w-4 h-4" />
-                    Heal Kingdom
+                    Heal
                 </button>
                 <button className="flex-1 py-3 rounded-xl bg-white/5 hover:bg-white/10 text-white text-sm font-medium transition-all border border-white/5 hover:border-white/20 flex items-center justify-center gap-2 active:scale-95">
                     <AlertTriangle className="w-4 h-4 text-amber-400" />
-                    Broadcast Alert
                 </button>
             </motion.div>
 

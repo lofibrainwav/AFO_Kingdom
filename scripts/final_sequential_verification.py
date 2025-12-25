@@ -135,10 +135,10 @@ def verify_endpoints():
     for name, endpoint in endpoints:
         try:
             response = requests.get(f"{BASE_URL}{endpoint}", timeout=5)
-            is_ok = response.status_code in [
+            is_ok = response.status_code in {
                 200,
                 404,
-            ]  # 404도 확인 (서버 재시작 필요 시)
+            }  # 404도 확인 (서버 재시작 필요 시)
             results[name] = {
                 "status_code": response.status_code,
                 "ok": is_ok,

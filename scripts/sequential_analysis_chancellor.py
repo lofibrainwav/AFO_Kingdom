@@ -134,8 +134,7 @@ def sequential_thinking_step_3():
     # 증거 1: Chancellor 라우터 파일 확인
     print("증거 1: Chancellor 라우터 파일 확인")
     try:
-        from AFO.api.routers.chancellor_router import \
-            router as chancellor_router
+        from AFO.api.routers.chancellor_router import router as chancellor_router
 
         prefix = getattr(chancellor_router, "prefix", "N/A")
         # #region agent log
@@ -192,7 +191,7 @@ def sequential_thinking_step_3():
         if response.status_code == 200:
             schema = response.json()
             paths = schema.get("paths", {})
-            chancellor_paths = [p for p in paths.keys() if "chancellor" in p.lower()]
+            chancellor_paths = [p for p in paths if "chancellor" in p.lower()]
             # #region agent log
             log_debug(
                 "sequential_analysis_chancellor.py:sequential_thinking_step_3",

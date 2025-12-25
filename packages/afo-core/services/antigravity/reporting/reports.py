@@ -6,7 +6,7 @@ Antigravity Reporting Module - 보고서 생성 모듈
 
 import logging
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any
 
 logger = logging.getLogger(__name__)
 

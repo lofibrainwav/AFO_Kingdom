@@ -63,8 +63,11 @@ def test_router_loading():
     results = {}
     for router_name, expected_prefix in routers_to_test:
         try:
-            from AFO.api.compat import (chancellor_router, grok_stream_router,
-                                        learning_log_router)
+            from AFO.api.compat import (
+                chancellor_router,
+                grok_stream_router,
+                learning_log_router,
+            )
 
             if router_name == "learning_log_router":
                 router = learning_log_router
@@ -158,10 +161,7 @@ def test_router_registration():
         setup_routers(test_app)
 
         # 등록된 라우트 확인
-        routes = []
-        for route in test_app.routes:
-            if hasattr(route, "path"):
-                routes.append(route.path)
+        routes = [route.path for route in test_app.routes if hasattr(route, "path")]
 
         target_paths = [
             "/chancellor/health",

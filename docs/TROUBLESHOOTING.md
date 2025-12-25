@@ -112,14 +112,47 @@ Error: MCP server not responding
 #### 해결 방법
 
 ```bash
-# MCP 서버 상태 확인
-curl http://localhost:8010/health
+# MCP 서버 상태 확인 (API)
+curl 'http://127.0.0.1:8010/api/mcp/status'
+
+# 종합 Health (캐시 우회)
+curl 'http://127.0.0.1:8010/api/health/comprehensive?nocache=1'
 
 # Cursor MCP 설정 확인
 cat .cursor/mcp.json
 
+# Cursor MCP 설정 검증 (권장)
+bash scripts/verify_cursor_mcp_setup.sh
+
+# Codex CLI MCP 서버 등록 확인
+codex mcp list
+
 # PYTHONPATH 확인
 echo $PYTHONPATH
+```
+
+---
+
+### 5.1 PostgreSQL 건강 체크 실패
+
+#### 증상
+`/api/health/comprehensive`에서 PostgreSQL이 다음처럼 표시됩니다:
+
+- `PostgreSQL async support not available`
+- `데이터베이스 연결 실패`
+
+#### 해결 방법
+
+```bash
+# (의존성) asyncpg 설치 포함
+pip install -r packages/afo-core/requirements.txt
+
+# (서비스) PostgreSQL 기동
+open -a Docker
+docker compose -f packages/afo-core/docker-compose.yml up -d postgres
+
+# 재확인
+curl 'http://127.0.0.1:8010/api/health/comprehensive?nocache=1'
 ```
 
 ---

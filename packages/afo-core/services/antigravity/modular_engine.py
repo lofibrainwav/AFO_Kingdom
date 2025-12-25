@@ -5,7 +5,7 @@ Simple Gate를 기반으로 선택적 모듈 확장
 """
 
 import logging
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
 from .adaptive.thresholds import adaptive_thresholds
 from .core.simple_gate import evaluate_gate

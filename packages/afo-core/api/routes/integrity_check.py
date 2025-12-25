@@ -7,6 +7,7 @@ Integrity Check API
 
 from __future__ import annotations
 
+import json
 import logging
 import subprocess
 from pathlib import Path
@@ -136,6 +137,18 @@ async def _check_truth_pillar() -> dict[str, Any]:
         checks["fact_verification"] = len(fact_skills) > 0
     except Exception as e:
         logger.warning(f"Fact verification check failed: {e}")
+
+    # 3b. MCP 기반 사실 검증 도구 확인 (Cursor MCP 설정 기준)
+    if not checks["fact_verification"]:
+        try:
+            mcp_config_path = WORKSPACE_ROOT / ".cursor" / "mcp.json"
+            if mcp_config_path.exists():
+                mcp_config = json.loads(mcp_config_path.read_text(encoding="utf-8"))
+                servers = mcp_config.get("mcpServers", {})
+                # AFO Ultimate MCP는 verify_fact 도구를 제공한다.
+                checks["fact_verification"] = "afo-ultimate-mcp" in servers
+        except Exception as e:
+            logger.warning(f"MCP fact verification check failed: {e}")
 
     passed_count = sum(1 for v in checks.values() if v)
     score = (passed_count / len(checks)) * 100
@@ -283,7 +296,12 @@ async def _check_serenity_pillar() -> dict[str, Any]:
 
         health_data = await get_comprehensive_health()
         organs = health_data.get("organs", [])
-        if isinstance(organs, list):
+        if isinstance(organs, dict):
+            checks["organs_health"] = all(
+                isinstance(v, dict) and v.get("status") == "healthy"
+                for v in organs.values()
+            )
+        elif isinstance(organs, list):
             healthy_count = sum(1 for o in organs if o.get("healthy", False))
             checks["organs_health"] = healthy_count == len(organs) if organs else False
     except Exception as e:

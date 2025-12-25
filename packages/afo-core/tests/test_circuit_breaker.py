@@ -32,7 +32,7 @@ def test_circuit_breaker_state_transitions(client: TestClient):
     # Test multiple requests to potentially trigger circuit breaker
     responses = []
 
-    for i in range(10):
+    for _i in range(10):
         try:
             response = client.get("/api/system/health")
             responses.append(response.status_code)

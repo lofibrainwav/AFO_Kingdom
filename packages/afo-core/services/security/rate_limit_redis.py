@@ -5,7 +5,7 @@ import asyncio
 import logging
 import os
 import time
-from typing import TYPE_CHECKING, Optional, Tuple
+from typing import TYPE_CHECKING, Optional
 
 from AFO.services.security.circuit_breaker import CircuitBreaker
 from AFO.services.security.rate_limit_policy import RedisDownPolicy
@@ -60,9 +60,12 @@ class RedisCircuitProbe:
             if not self._breaker.allow_probe(now):
                 return False, self._breaker.state.value
 
-            if self._breaker.state.value == "CLOSED":
-                if (now - self._last_check_at) < self._ttl and self._last_ok:
-                    return True, self._breaker.state.value
+            if (
+                self._breaker.state.value == "CLOSED"
+                and (now - self._last_check_at) < self._ttl
+                and self._last_ok
+            ):
+                return True, self._breaker.state.value
 
             ok = False
             try:

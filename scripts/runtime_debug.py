@@ -125,7 +125,7 @@ def debug_lifespan_execution():
         print("1. Testing lifespan manager...")
         from AFO.api.config import get_lifespan_manager
 
-        lifespan = get_lifespan_manager()
+        get_lifespan_manager()
         print("   Lifespan manager created")
 
         print("2. Testing initialization...")
@@ -245,7 +245,7 @@ def main():
 
     if app:
         # Test 2: Router setup
-        all_routes, skills_routes = debug_router_setup(app)
+        _all_routes, skills_routes = debug_router_setup(app)
         print()
 
         # Test 3: Lifespan execution

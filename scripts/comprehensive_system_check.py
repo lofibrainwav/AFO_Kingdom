@@ -268,10 +268,7 @@ def check_router_registration():
     try:
         from api_server import app
 
-        routes = []
-        for route in app.routes:
-            if hasattr(route, "path"):
-                routes.append(route.path)
+        routes = [route.path for route in app.routes if hasattr(route, "path")]
 
         target_paths = [
             "/chancellor/health",

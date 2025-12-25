@@ -13,17 +13,30 @@ Version: 2.0.0 (Beautiful Code Edition)
 
 from __future__ import annotations
 
+import contextlib
 import logging
 import os
 from dataclasses import dataclass
-from datetime import datetime
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from datetime import datetime
 
 try:
     from api.routes.pillars import router as pillars_router
 except ImportError:
     pillars_router = None
+
+try:
+    from AFO.api.routes.system_health import router as system_health_router
+except ImportError:
+    system_health_router = None
+
+try:
+    from AFO.api.routers.health import router as health_router
+except ImportError:
+    health_router = None
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -416,10 +429,12 @@ class SettingsManager:
                 "debug": os.getenv("AFO_DEBUG", "true").lower() == "true",
                 "host": os.getenv("AFO_HOST", "0.0.0.0"),
                 "port": int(os.getenv("AFO_PORT", "8010")),
-                "cors_origins": os.getenv("AFO_CORS_ORIGINS", "http://localhost:3000").split(","),
+                "cors_origins": os.getenv(
+                    "AFO_CORS_ORIGINS", "http://localhost:3000"
+                ).split(","),
                 "database_url": os.getenv("DATABASE_URL", "sqlite:///./test.db"),
                 "redis_url": os.getenv("REDIS_URL", "redis://localhost:6379"),
-                "ollama_url": os.getenv("OLLAMA_URL", "http://localhost:11435"),
+                "ollama_url": os.getenv("OLLAMA_URL", "http://localhost:11434"),
             }
 
             logger.debug("Settings loaded successfully")
@@ -497,12 +512,21 @@ def get_project_stats() -> dict[str, int]:
     return html_facade.get_stats_data()
 
 
-def get_settings_safe() -> dict[str, Any]:
-    """안전하게 설정값을 가져오는 함수.
+def get_settings_safe() -> Any:
+    """안전하게 설정 객체를 가져온다.
 
-    Trinity Score: 善 (Goodness) - 검증된 설정 관리
+    - 가능하면 `AFO.config.settings.get_settings()`의 정식 Settings 객체를 반환한다.
+    - 불가하면 env 기반 dict를 attribute-access 가능한 객체로 래핑해 반환한다.
     """
-    return settings_manager.get_settings_safe()
+    try:
+        from AFO.config.settings import get_settings
+
+        return get_settings()
+    except Exception:
+        from types import SimpleNamespace
+
+        config = settings_manager.get_settings_safe()
+        return SimpleNamespace(**config) if isinstance(config, dict) else config
 
 
 # Compatibility exports (Legacy support)
@@ -525,7 +549,7 @@ education_system_router = None
 finance_router = None
 got_router = None
 grok_stream_router = None
-health_router = None
+# health_router is imported above
 learning_log_router = None
 learning_pipeline = None
 matrix_router = None
@@ -537,11 +561,14 @@ personas_router = None
 rag_query_router = None
 root_router = None
 serenity_router = None
+with contextlib.suppress(ImportError):
+    pass
+
 skills_router = None
 ssot_router = None
 strangler_router = None
 streams_router = None
-system_health_router = None
+# system_health_router is imported above
 trinity_policy_router = None
 trinity_sbt_router = None
 users_router = None
@@ -594,10 +621,27 @@ def calculate_trinity(scores: dict[str, float]) -> float:
     return sum(normalized[k] * weights[k] for k in weights) * 100
 
 
-# AntiGravity control function (더미)
-def get_antigravity_control() -> dict[str, Any]:
-    """AntiGravity 제어 함수"""
-    return {"status": "mock", "message": "AntiGravity not available"}
+# AntiGravity control function (compat)
+def get_antigravity_control() -> Any:
+    """AntiGravity 제어 객체를 반환한다.
+
+    우선순위:
+    1) `AFO.config.antigravity.antigravity` (정식)
+    2) 최소 기능을 가진 fallback (AUTO_DEPLOY/DRY_RUN_DEFAULT 등)
+    """
+    try:
+        from AFO.config.antigravity import antigravity
+
+        return antigravity
+    except Exception:
+        from types import SimpleNamespace
+
+        return SimpleNamespace(
+            ENVIRONMENT=os.getenv("ENVIRONMENT", "dev"),
+            AUTO_DEPLOY=os.getenv("AUTO_DEPLOY", "true").lower() == "true",
+            DRY_RUN_DEFAULT=os.getenv("DRY_RUN_DEFAULT", "true").lower() == "true",
+            AUTO_SYNC=os.getenv("AUTO_SYNC", "true").lower() == "true",
+        )
 
 
 # Settings class (더미)

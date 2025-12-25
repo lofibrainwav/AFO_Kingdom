@@ -86,6 +86,7 @@ async def comprehensive_health_check() -> dict[str, Any]:
             "timestamp": datetime.now().isoformat(),
             "organs": health_data.get("organs", {}),
             "trinity_score": trinity_score,
+            "health_percentage": round(trinity_score * 100, 2),
             "trinity_breakdown": trinity_info if isinstance(trinity_info, dict) else {},
             "skills": skills_status,
             "scholars": scholars_status,

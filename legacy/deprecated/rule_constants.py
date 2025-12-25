@@ -1,5 +1,5 @@
 """
-Chancellor Graph Rule Constants (SSOT)
+Chancellor Graph Rule Constants (SSOT).
 
 All decision rules used by the Chancellor Graph for AUTO_RUN/ASK routing.
 These constants ensure consistency across all nodes and provide audit trails.
@@ -25,14 +25,15 @@ WEIGHTS = {
 def validate_weights(weights: dict[str, float]) -> None:
     """
     SSOT 무결성 검증: 가중치 합계가 정확히 1.0인지 확인
-    SSOT 드리프트 방지를 위한 런타임 가드
+    SSOT 드리프트 방지를 위한 런타임 가드.
     """
     total = sum(float(v) for v in weights.values())
     if abs(total - 1.0) > 1e-6:  # 부동소수점 오차 고려
-        raise ValueError(
+        msg = (
             f"SSOT VIOLATION: WEIGHTS sum is {total:.6f}, must be 1.0. "
             f"SSOT drift detected in {weights}"
         )
+        raise ValueError(msg)
 
 
 # 🔐 SSOT 해시 스탬프: 변경 감지용 (SHA256 12자리)

@@ -5,6 +5,7 @@ Check Registered Routes in FastAPI Application
 
 import json
 import sys
+
 # #region agent log
 from datetime import datetime
 from pathlib import Path
@@ -152,7 +153,7 @@ def check_openapi_schema():
 def main():
     print("\n🏰 FastAPI 등록된 라우트 확인\n")
 
-    found, missing, similar = check_openapi_schema()
+    found, missing, _similar = check_openapi_schema()
 
     print("\n" + "=" * 60)
     print("📊 요약")

@@ -20,6 +20,7 @@ router = APIRouter(prefix="/api/mcp", tags=["MCP Tools"])
 
 logger = logging.getLogger(__name__)
 
+
 def _resolve_workspace_root() -> Path | None:
     """Best-effort workspace root resolver for local dev."""
     env_root = os.getenv("WORKSPACE_ROOT")
@@ -29,12 +30,20 @@ def _resolve_workspace_root() -> Path | None:
         except Exception:
             return None
 
-    # Walk upward to find repo root marker.
     here = Path(__file__).resolve()
+
+    # Prefer the actual git root when available.
+    for parent in [here, *here.parents]:
+        if (parent / ".git").exists():
+            return parent
+
+    # Fallback: choose the outermost AGENTS.md (monorepo has nested AGENTS.md).
+    last_agents: Path | None = None
     for parent in [here, *here.parents]:
         if (parent / "AGENTS.md").exists():
-            return parent
-    return None
+            last_agents = parent
+
+    return last_agents
 
 
 def _resolve_mcp_config_path() -> Path:
@@ -190,16 +199,23 @@ async def test_mcp_connection(request: MCPTestRequest) -> dict[str, Any]:
                     detail=f"MCP server '{request.server_name}' not found",
                 )
 
-        # 연결 테스트 (명령어 실행 가능 여부 확인)
-        # 실제로는 프로세스 실행 대신 파일/명령어 존재 여부만 확인
         connected = True
         error_message = None
+        tools: list[str] | None = None
 
+        # Deep check for local stdio MCP servers where possible.
         try:
-            # Python 스크립트인 경우 파일 존재 확인
-            if server and hasattr(server, "command"):
-                # 실제 구현에서는 더 정교한 검증 필요
-                pass
+            from AFO.services.mcp_stdio_client import list_tools as _list_tools
+
+            if request.server_name in {
+                "afo-ultimate-mcp",
+                "afo-skills-mcp",
+                "trinity-score-mcp",
+                "afo-skills-registry-mcp",
+                "afo-obsidian-mcp",
+            }:
+                tools = _list_tools(request.server_name)
+                connected = len(tools) > 0
         except Exception as e:
             connected = False
             error_message = str(e)
@@ -208,6 +224,7 @@ async def test_mcp_connection(request: MCPTestRequest) -> dict[str, Any]:
             "status": "success",
             "server_name": request.server_name,
             "connected": connected,
+            "tools": tools,
             "error": error_message,
         }
     except HTTPException:

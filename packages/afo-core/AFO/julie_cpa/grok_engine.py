@@ -23,7 +23,7 @@ import json
 import logging
 import os
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 # Core dependencies with graceful imports
 try:
@@ -219,7 +219,7 @@ class GrokWebClient:
         """Send prompt to Grok."""
         await input_locator.click()
         await input_locator.fill(prompt)
-        await page.wait_for_timeout(1000)
+        await input_locator.page.wait_for_timeout(1000)
         await input_locator.press("Enter")
 
     async def _extract_response(

@@ -49,12 +49,7 @@ def check_forbidden_expressions(file_path: Path) -> list[tuple[int, str]]:
 
             # 주석/문서 문자열은 제외 (설명 목적)
             stripped = line.strip()
-            if (
-                in_docstring
-                or stripped.startswith("#")
-                or stripped.startswith('"""')
-                or stripped.startswith("'''")
-            ):
+            if in_docstring or stripped.startswith(("#", '"""', "'''")):
                 continue
 
             # 허용 컨텍스트 체크

@@ -82,13 +82,13 @@ async def verify_all_dependencies():
             check_fn()
             # Perform a tiny 'pulse' check for some key ones
             if name == "numpy":
-                import numpy
+                import numpy as np
 
-                _ = numpy.array([1, 2, 3])
+                _ = np.array([1, 2, 3])
             elif name == "pandas":
-                import pandas
+                import pandas as pd
 
-                _ = pandas.DataFrame()
+                _ = pd.DataFrame()
 
             results[name] = "✅ Alive"
             print(f"  ✅ {name:<25}: Alive")

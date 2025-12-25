@@ -525,7 +525,7 @@ def main():
     # 문제점 출력
     if issues:
         print("\n⚠️  발견된 문제점:\n")
-        for i, issue in enumerate(issues, 1):
+        for issue in issues:
             level_icon = (
                 "🔴"
                 if issue["level"] == "CRITICAL"

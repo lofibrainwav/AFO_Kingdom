@@ -7,17 +7,32 @@ set -euo pipefail
 
 REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 
-PY_BIN="python3.12"
-command -v "$PY_BIN" >/dev/null 2>&1 || PY_BIN="python3"
+WORKSPACE_ROOT="${WORKSPACE_ROOT:-$REPO_ROOT}"
+export WORKSPACE_ROOT
 
-if [ -d "${REPO_ROOT}/TRINITY-OS/trinity_os" ]; then
-  export PYTHONPATH="${REPO_ROOT}/TRINITY-OS:${REPO_ROOT}${PYTHONPATH:+:${PYTHONPATH}}"
+PY_BIN="${REPO_ROOT}/packages/afo-core/.venv/bin/python"
+if [ ! -x "$PY_BIN" ]; then
+  PY_BIN="python3.12"
+  command -v "$PY_BIN" >/dev/null 2>&1 || PY_BIN="python3"
+fi
+
+TRINITY_PKG_DIR=""
+
+if [ -d "${REPO_ROOT}/packages/trinity-os/trinity_os" ]; then
+  TRINITY_PKG_DIR="${REPO_ROOT}/packages/trinity-os"
+elif [ -d "${REPO_ROOT}/TRINITY-OS/trinity_os" ]; then
+  # Legacy layout
+  TRINITY_PKG_DIR="${REPO_ROOT}/TRINITY-OS"
 elif [ -d "${REPO_ROOT}/trinity_os" ]; then
-  export PYTHONPATH="${REPO_ROOT}:${REPO_ROOT}${PYTHONPATH:+:${PYTHONPATH}}"
-else
-  echo "sixxon: missing trinity_os package (expected TRINITY-OS/trinity_os or trinity_os)" >&2
+  # Flat layout
+  TRINITY_PKG_DIR="${REPO_ROOT}"
+fi
+
+if [ -z "$TRINITY_PKG_DIR" ]; then
+  echo "sixxon: missing trinity_os package (expected packages/trinity-os/trinity_os)" >&2
   exit 2
 fi
 
-exec "$PY_BIN" -m trinity_os.cli.sixxon "$@"
+export PYTHONPATH="${TRINITY_PKG_DIR}:${REPO_ROOT}/packages/afo-core:${REPO_ROOT}${PYTHONPATH:+:${PYTHONPATH}}"
 
+exec "$PY_BIN" -m trinity_os.cli.sixxon "$@"

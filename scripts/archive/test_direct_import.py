@@ -48,8 +48,9 @@ print("=" * 60)
 log_debug("test_direct_import.py", "Testing Comprehensive Health import", {}, "A")
 # #endregion agent log
 try:
-    from AFO.api.routes.comprehensive_health import \
-        router as comprehensive_health_router
+    from AFO.api.routes.comprehensive_health import (
+        router as comprehensive_health_router,
+    )
 
     # #region agent log
     log_debug(

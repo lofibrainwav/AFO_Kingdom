@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+SIXXON_BIN="${REPO_ROOT}/packages/sixXon/scripts/sixxon"
+
 echo "=========================================="
 echo "🔐 SixXon: codex 재캡처 (수동 로그인 필요)"
 echo "=========================================="
@@ -12,16 +15,15 @@ echo "- 브라우저는 system-chrome만(혼선 제거)"
 echo
 
 echo "1) 현재 상태(doctor)"
-./scripts/sixxon auth doctor --json || true
+"$SIXXON_BIN" auth doctor --json || true
 echo
 
 echo "2) 세션 재캡처 (브라우저가 뜨면 로그인하고 완료될 때까지 기다리세요)"
-./scripts/sixxon auth capture --provider codex --browser system-chrome --keep-open --refresh --json || true
+"$SIXXON_BIN" auth capture --provider codex --browser system-chrome --keep-open --refresh --json || true
 echo
 
 echo "3) 복호화 가능 여부 확인"
-./scripts/sixxon auth status --json || true
+"$SIXXON_BIN" auth status --json || true
 echo
 
 echo "DONE"
-

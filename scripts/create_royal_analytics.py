@@ -16,12 +16,12 @@ async def main():
     prompt = """
     Create a 'RoyalAnalyticsWidget' using 'recharts' and 'framer-motion'.
     It should display a LineChart of the Kingdom's Trinity Scores (Truth, Goodness, Beauty) over 7 days.
-    
+
     Data:
     - Truth: [80, 82, 85, 88, 87, 89, 92]
     - Goodness: [75, 78, 80, 85, 90, 88, 91]
     - Beauty: [60, 65, 70, 75, 80, 85, 95]
-    
+
     Design:
     - Container: Glassmorphism Card (bg-white/10, backdrop-blur-md, border-white/20).
     - Title: "Royal Trinity Analysis" with a crown icon (Lucide).

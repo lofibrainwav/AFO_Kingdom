@@ -1,127 +1,106 @@
 # Trinity Score: 90.0 (Established by Chancellor)
+"""
+Chancellor Stream SSE (Server-Sent Events) Endpoint
+Real-time log streaming for AFO Kingdom monitoring
+
+Provides live log streaming via Redis Pub/Sub to SSE clients.
+Implements 眞善美孝永 principles for reliable real-time communication.
+"""
+
 import asyncio
-import contextlib
 import json
-from collections.abc import AsyncGenerator
-from typing import Optional
+import logging
+from typing import Any
 
+import redis
 from fastapi import APIRouter, Request
-from redis.asyncio import Redis
-from starlette.responses import StreamingResponse
+from fastapi.responses import StreamingResponse
+from sse_starlette.sse import EventSourceResponse
 
+logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
-def _redis() -> Redis:
-    # REDIS_URL 우선, 없으면 host/port로
-    import os
+# SSE event generator
+async def log_stream_generator() -> Any:
+    """Generate SSE events from Redis Pub/Sub messages."""
+    try:
+        redis_client = redis.Redis(host="localhost", port=6379, decode_responses=True)
+        redis_client.ping()  # Test connection
+    except Exception as e:
+        logger.error(f"Redis connection failed for Chancellor Stream: {e}")
+        yield 'data: {"error": "Redis unavailable", "level": "ERROR"}\n\n'
+        return
 
-    url = os.environ.get("REDIS_URL")
-    if url:
-        redis_instance = Redis.from_url(url, decode_responses=True)
-        return redis_instance  # type: ignore[return-value]
-    host = os.environ.get("REDIS_HOST", "127.0.0.1")
-    port = int(os.environ.get("REDIS_PORT", "6379"))
-    db = int(os.environ.get("REDIS_DB", "0"))
-    password = os.environ.get("REDIS_PASSWORD")
-    redis_instance = Redis(
-        host=host, port=port, db=db, password=password, decode_responses=True
-    )
-    return redis_instance  # type: ignore[return-value]
+    pubsub = redis_client.pubsub()
+    pubsub.subscribe("kingdom:logs:stream")
 
+    try:
+        logger.info("Chancellor Stream SSE connection established")
 
-SSE_CHANNEL = "afo:verdicts"
+        # Send initial connection message
+        initial_msg = {
+            "message": "[SSE CONNECTED] Chancellor Stream 실시간 모니터링 시작",
+            "level": "SUCCESS",
+            "source": "Chancellor Stream",
+            "timestamp": asyncio.get_event_loop().time(),
+        }
+        yield f"data: {json.dumps(initial_msg)}\n\n"
 
+        # Listen for messages
+        while True:
+            try:
+                message = pubsub.get_message(timeout=1.0)
+                if message and message["type"] == "message":
+                    # Parse and forward Redis message
+                    try:
+                        data = json.loads(message["data"])
+                        yield f"data: {json.dumps(data)}\n\n"
+                    except json.JSONDecodeError:
+                        # Handle non-JSON messages
+                        yield f"data: {{\"message\": \"{message['data']}\", \"level\": \"INFO\"}}\n\n"
 
-def _sse(event: str | None, data: dict, _id: str | None = None) -> str:
-    # SSE 표준: id / event / data
-    lines = []
-    if _id is not None:
-        lines.append(f"id: {_id}")
-    if event is not None:
-        lines.append(f"event: {event}")
-    lines.append(f"data: {json.dumps(data, separators=(',', ':'))}")
-    return "\n".join(lines) + "\n\n"
+                await asyncio.sleep(0.1)  # Small delay to prevent busy waiting
+
+            except Exception as e:
+                logger.error(f"Chancellor Stream error: {e}")
+                error_msg = {
+                    "message": f"[STREAM ERROR] {e!s}",
+                    "level": "ERROR",
+                    "source": "Chancellor Stream",
+                }
+                yield f"data: {json.dumps(error_msg)}\n\n"
+                await asyncio.sleep(1.0)
+
+    except Exception as e:
+        logger.error(f"Chancellor Stream generator failed: {e}")
+    finally:
+        pubsub.close()
+        logger.info("Chancellor Stream SSE connection closed")
 
 
 @router.get("/logs/stream")
-async def logs_stream(request: Request) -> StreamingResponse:
-    r = _redis()
-    pubsub = r.pubsub()
-    await pubsub.subscribe(SSE_CHANNEL)
+async def logs_stream_endpoint(request: Request) -> StreamingResponse:
+    """
+    Chancellor Stream SSE endpoint.
 
-    async def gen() -> AsyncGenerator[str, None]:
-        # 최초 연결 알림(클라 디버그용)
-        yield _sse("system_status", {"stream": "connected", "channel": SSE_CHANNEL})
+    Provides real-time log streaming via Server-Sent Events.
+    Connected clients receive live updates from Redis kingdom:logs:stream channel.
 
-        # keep-alive (프록시/로드밸런서 대비)
-        ping_interval = 15.0
-        next_ping = asyncio.get_event_loop().time() + ping_interval
+    Trinity Score: 美 (Beauty) - Clean, reliable real-time communication
+    """
+    logger.info(
+        f"Chancellor Stream connection from {request.client.host if request.client else 'unknown'}"
+    )
 
-        try:
-            while True:
-                if await request.is_disconnected():
-                    break
-
-                now = asyncio.get_event_loop().time()
-                if now >= next_ping:
-                    # SSE comment ping
-                    yield ": ping\n\n"
-                    next_ping = now + ping_interval
-
-                msg = await pubsub.get_message(
-                    ignore_subscribe_messages=True, timeout=1.0
-                )
-                if not msg:
-                    continue
-
-                # Redis pubsub payload는 string
-                raw = msg.get("data")
-                if not raw:
-                    continue
-
-                # payload는 이미 JSON이라고 가정 (VerdictLogger에서 publish)
-                try:
-                    payload = json.loads(raw)
-                except Exception:
-                    payload = {"type": "raw", "raw": raw}
-
-                # event type 분기
-                event_type = payload.get("type", "verdict")
-                event_id = payload.get("id")  # optional
-                yield _sse(
-                    event_type,
-                    payload,
-                    _id=str(event_id) if event_id is not None else None,
-                )
-        finally:
-            with contextlib.suppress(Exception):
-                await pubsub.unsubscribe(SSE_CHANNEL)
-            with contextlib.suppress(Exception):
-                await r.close()
-
-    return StreamingResponse(
-        gen(),
+    return EventSourceResponse(
+        log_stream_generator(),
         media_type="text/event-stream",
         headers={
             "Cache-Control": "no-cache",
             "Connection": "keep-alive",
-            "X-Accel-Buffering": "no",  # nginx buffering 방지
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET",
+            "Access-Control-Allow-Headers": "Cache-Control",
         },
     )
-
-
-async def publish_thought(
-    thought_data: dict, event_type: str = "thought", _id: str | None = None
-) -> None:
-    """
-    [Internal Broadcast]
-    Allows other services (Julie, Chancellor) to emit thoughts into the neural stream.
-    """
-    try:
-        r = _redis()
-        payload = {"type": event_type, "id": _id, **thought_data}
-        await r.publish(SSE_CHANNEL, json.dumps(payload))
-        await r.close()
-    except Exception as e:
-        print(f"⚠️ Failed to publish thought: {e}")

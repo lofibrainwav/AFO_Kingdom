@@ -13,7 +13,7 @@ from fastapi.testclient import TestClient
 def test_rate_limit_basic(client: TestClient):
     """Test basic rate limiting functionality"""
     # First few requests should succeed
-    for i in range(5):
+    for _i in range(5):
         response = client.get("/api/system/health")
         assert response.status_code == 200
 
@@ -36,9 +36,7 @@ def test_rate_limit_headers(client: TestClient):
     ]
 
     # At least some rate limiting headers should be present
-    has_rate_limit_header = any(
-        header in response.headers for header in rate_limit_headers
-    )
+    any(header in response.headers for header in rate_limit_headers)
     # Note: Headers presence depends on rate limit implementation
     assert True  # Basic test - middleware is loaded
 

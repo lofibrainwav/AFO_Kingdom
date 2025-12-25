@@ -7,11 +7,14 @@ Verification Script for Option A (Strategic Alignment)
 
 import asyncio
 import os
+import pathlib
 import sys
 
 # Add package root to path
 sys.path.append(
-    os.path.abspath(os.path.join(os.path.dirname(__file__), "../packages/afo-core"))
+    pathlib.Path(
+        os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")
+    ).resolve()
 )
 
 from AFO.services.trinity_calculator import trinity_calculator
@@ -54,7 +57,7 @@ async def verify():
 
     # 3. Verify AsyncRedisSaver
     print("3️⃣  Verifying AsyncRedisSaver...")
-    saver = AsyncRedisSaver()
+    AsyncRedisSaver()
     if cache.enabled and cache.redis:
         print("   ✅ AsyncRedisSaver instantiated and Redis is active")
     else:

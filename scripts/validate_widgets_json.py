@@ -114,7 +114,6 @@ def main() -> int:
         print()
         print("4. Fragment 경로 필드 검증...")
         fragment_errors = []
-        fragment_warnings = []
         fragment_key_count = 0
         fallback_count = 0
 
