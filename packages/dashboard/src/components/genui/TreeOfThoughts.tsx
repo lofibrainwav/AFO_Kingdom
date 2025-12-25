@@ -28,7 +28,7 @@ import {
   Zap,
   ZoomIn
 } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 // ============================================================================
 // TYPES & INTERFACES (아름다운 코드: 타입 안전성)
@@ -148,6 +148,7 @@ const INITIAL_NODES: Record<string, ThoughtNode> = {
   }
 };
 
+// Beautiful Code: UI Component
 export default function TreeOfThoughtsWidget() {
   const [nodes, setNodes] = useState(INITIAL_NODES);
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
@@ -156,58 +157,50 @@ export default function TreeOfThoughtsWidget() {
   const apiBase = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8010';
   const { latestEvent, connected } = useVerdictStream(apiBase);
 
-  // Effect: Process incoming thoughts
-  useEffect(() => {
-    if (!latestEvent) return;
+  // Callback: Process incoming thoughts (Beautiful Code: Callback pattern)
+  const processIncomingThought = useCallback((event: typeof latestEvent) => {
+    if (!event) return;
 
-    // Check if node already exists to prevent dupes
-    const newNodeId = latestEvent.graph_node_id || `node-${Date.now()}`;
+    const newNodeId = event.graph_node_id || `node-${Date.now()}`;
+    const parentId = 'root';
+    const isFinance = event.extra?.category === 'finance';
+    const agentName = isFinance ? 'Julie CPA' : (event.rule_id?.split('_')[0] || 'System');
+    const nodeType = isFinance ? 'finance' : 'reasoning'; 
     
-    // Logic: Identify Parent
-    // If it's a Finance node, attach to Root or a Finance Parent
-    // For simplicity in this demo, attach to Root if no better parent
-    const parentId = "root";
-    
-    // Determine Type & Agent
-    const isFinance = latestEvent.extra?.category === "finance";
-    const agentName = isFinance ? "Julie CPA" : (latestEvent.rule_id?.split('_')[0] || "System");
-    const nodeType = isFinance ? "finance" : "reasoning"; 
-    
-    // Construct new node
     const newNode: ThoughtNode = {
         id: newNodeId,
         type: nodeType,
         content: isFinance 
-            ? `Transaction: ${latestEvent.extra?.merchant} (${latestEvent.decision})`
-            : `${agentName}: ${latestEvent.decision} (Rule: ${latestEvent.rule_id})`,
-        status: "active",
-        score: latestEvent.trinity_score,
+            ? `Transaction: ${event.extra?.merchant} (${event.decision})`
+            : `${agentName}: ${event.decision} (Rule: ${event.rule_id})`,
+        status: 'active',
+        score: event.trinity_score,
         children: [],
-        agent: agentName,
-        category: isFinance ? "finance" : "general"
+        agent: agentName as AgentType,
+        category: isFinance ? 'finance' : 'general'
     };
 
     setNodes(prev => {
-        if (prev[newNodeId]) return prev; // Dedup
-
-        // Clone prev
+        if (prev[newNodeId]) return prev;
         const next = { ...prev };
-        
-        // Add new node
         next[newNodeId] = newNode;
-
-        // Link to parent
         if (next[parentId]) {
             next[parentId] = {
                 ...next[parentId],
                 children: [...next[parentId].children, newNodeId]
             };
         }
-
         return next;
     });
+  }, []);
 
-  }, [latestEvent]);
+  // Effect: Subscribe to stream events
+  useEffect(() => {
+    if (latestEvent) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      processIncomingThought(latestEvent);
+    }
+  }, [latestEvent, processIncomingThought]);
 
 
   // Animation: Stable Entry Only
@@ -363,7 +356,7 @@ export default function TreeOfThoughtsWidget() {
                     const parentX = (parentIndex - (level2.length - 1) / 2) * SPACING;
 
                     // For multiple children of same parent, spread them out
-                    const siblings = nodes[parentId]?.children || [];
+                    const siblings = parentId ? nodes[parentId]?.children || [] : [];
                     const childIndex = siblings.indexOf(childId);
                     const siblingOffset = siblings.length > 1 ?
                         (childIndex - (siblings.length - 1) / 2) * (SPACING / 2) : 0;
