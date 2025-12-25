@@ -133,8 +133,7 @@ markers = [
     "asyncio: Tests that use asyncio",
     "module_reload: Tests that reload modules (run in isolation)",
 ]
-asyncio_module = ["AFO.*", "api.*", "config.*", "llms.*", "afo_soul_engine.*", "afo_skills_registry", "llm_router", "chancellor_graph"]
-ignore_errors = true
+
 asyncio_mode = "auto"
 norecursedirs = ["legacy", "scripts", ".venv", "venv", "env", "node_modules"]
 pythonpath = "."
