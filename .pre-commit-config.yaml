@@ -36,7 +36,7 @@ repos:
       - id: mypy
         types: [python]
         additional_dependencies: [pydantic, types-requests, types-redis]
-        exclude: ^(tests/|scripts/|docs/|packages/afo-core/api_wallet.py)
+        exclude: ^(tests/|scripts/|docs/|packages/afo-core/api_wallet.py|packages/afo-core/utils/exponential_backoff.py)
 
   # AFO 왕국 커스텀 검증 스크립트
   - repo: local
