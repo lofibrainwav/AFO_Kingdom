@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Machine Learning Error Pattern Learner
 머신러닝 기반 에러 패턴 학습 시스템

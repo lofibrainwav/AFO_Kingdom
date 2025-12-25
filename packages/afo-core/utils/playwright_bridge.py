@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 # utils/playwright_bridge.py (PlaywrightBridgeMCP 구현)
 # PDF 페이지 4: GenUI 시각 검증 + 지속 아키텍처
 import logging

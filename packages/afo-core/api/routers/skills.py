@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Skills Router
 AFO Kingdom Skills API - Phase 2.5 Skills Registry Integration

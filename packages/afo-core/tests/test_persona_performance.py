@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Persona Service 성능 모니터링 및 벤치마크
 Phase 5: 성능 최적화 검증

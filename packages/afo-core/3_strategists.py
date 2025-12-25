@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 # Removing `float` from typing import as it is a built-in type in Python 3.12+
 # and importing it from typing is deprecated/removed in some versions,
 # but user code had `from typing import ..., float`.

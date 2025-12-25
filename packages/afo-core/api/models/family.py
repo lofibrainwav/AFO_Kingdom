@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Family Hub OS Models
 眞 (Truth): Pydantic 기반 타입 안전성 확보

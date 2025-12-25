@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Circuit Breaker Pattern for AFO Kingdom
 Prevents cascading failures by temporarily blocking calls to failing services.

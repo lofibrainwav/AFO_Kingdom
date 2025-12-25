@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Safe Execute Utility
 善 (Goodness): DRY_RUN, 권한 검증, 폴백

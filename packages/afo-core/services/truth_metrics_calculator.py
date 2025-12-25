@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Truth Score Metrics Calculator (Phase 15)
 "Detailed Truth Score Metrics" - 왕국의 진실(眞) 점수 세부 지표

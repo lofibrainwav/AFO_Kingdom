@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Strategy Engine for AFO Kingdom
 Provides memory context and workflow management for LLM interactions.

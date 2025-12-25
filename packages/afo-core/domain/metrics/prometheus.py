@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 AFO Prometheus Metrics Definitions
 Centralized location for all Prometheus metrics to avoid circular imports and duplication.

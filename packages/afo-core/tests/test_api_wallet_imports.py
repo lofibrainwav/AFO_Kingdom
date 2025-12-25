@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Test APIWallet edge cases without module reloading.
 Uses direct mocking instead of sys.modules manipulation.

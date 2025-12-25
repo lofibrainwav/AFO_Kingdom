@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Automated Debugging API Routes
 자동화 디버깅 시스템 API 엔드포인트

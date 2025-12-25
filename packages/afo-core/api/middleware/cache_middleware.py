@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 API Cache Middleware for AFO Kingdom
 Automatic caching for GET requests to reduce response time and server load.

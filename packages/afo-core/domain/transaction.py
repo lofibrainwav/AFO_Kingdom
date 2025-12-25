@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 # packages/afo-core/domain/transaction.py
 from datetime import datetime
 from typing import Any

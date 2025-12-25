@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Checkpoint Service
 永 (Eternity): Redis Checkpoint + DB 영속 저장

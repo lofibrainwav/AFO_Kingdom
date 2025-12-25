@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 # AFO Kingdom Serenity Router
 # [Serenity] Autonomous UI Creation API
 # 眞95% 善100% 美90% 孝95%

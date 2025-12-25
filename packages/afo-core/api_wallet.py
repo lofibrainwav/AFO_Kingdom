@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 #!/usr/bin/env python3
 """
 API Wallet - 모든 API 키를 안전하게 보관

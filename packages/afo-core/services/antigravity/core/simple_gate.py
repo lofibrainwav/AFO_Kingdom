@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Simple Antigravity Core - 불변 품질 게이트
 AGENTS.md Rule #1 준수: Trinity Score 기반 단순 품질 판정

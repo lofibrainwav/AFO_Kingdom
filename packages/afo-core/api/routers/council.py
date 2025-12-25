@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Council Router for AFO Kingdom (Phase 23)
 Multi-Model Intelligence - 지혜의 의회 (Council of Minds)

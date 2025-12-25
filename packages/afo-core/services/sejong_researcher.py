@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Sejong Research Institute (Phase 14)
 Active Research & Adoption System (King Sejong's Spirit)

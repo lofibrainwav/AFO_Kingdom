@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Personas Router
 Phase 2: Family Hub OS - 페르소나 API

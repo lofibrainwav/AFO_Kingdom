@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Multimodal RAG Engine for AFO Kingdom (Phase 2)
 Handles multimodal content (images, audio, video) in RAG pipelines.

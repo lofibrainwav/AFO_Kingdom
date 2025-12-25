@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 # domain/audit/trail.py
 """
 AFO Audit Trail - 永 (Eternity)

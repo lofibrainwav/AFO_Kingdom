@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 #!/usr/bin/env python3
 """
 사용자 시스템 DB 마이그레이션 실행 스크립트

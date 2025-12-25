@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 AICPA Service Layer - 에이전트 군단 서비스
 

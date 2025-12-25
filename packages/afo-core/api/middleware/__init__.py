@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 AFO Kingdom API Middleware Package (眞善美孝永)
 

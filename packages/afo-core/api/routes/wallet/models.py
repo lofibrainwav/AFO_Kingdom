@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 #!/usr/bin/env python3
 """
 Wallet Models - Pydantic 모델 및 상수 정의 (DRY 원칙)

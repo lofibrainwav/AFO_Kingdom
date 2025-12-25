@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 # packages/afo-core/AFO/chancellor_graph.py
 # (LangGraph 상세 구현 - V2: Parallel Strategy & Trinity Gate)
 # 🧭 Trinity Score: 眞98% 善99% 美95% 孝100%

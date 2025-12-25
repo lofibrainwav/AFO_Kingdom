@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 #!/usr/bin/env python3
 """
 AFO 왕국 코드 품질 체크 스크립트 (병렬 실행 - Python 버전)

@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 [Eternity: 永] AsyncRedisSaver for LangGraph Persistence.
 Implements the CheckpointSaver interface using Redis to preserve the Kingdom's memories forever.

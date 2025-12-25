@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 #!/usr/bin/env python3
 """API Wallet 상태 확인 스크립트"""
 

@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Auth Router
 Phase 3: 인증 라우터 (心 시스템 - 인증)

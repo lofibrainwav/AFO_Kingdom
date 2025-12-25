@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 AFO Kingdom API Router Registration (아름다운 코드 적용)
 

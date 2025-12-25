@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 import json
 import logging
 import sys

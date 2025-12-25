@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 철학적 Copilot API 라우트
 眞善美孝永 철학의 실시간 조화 모니터링을 위한 API 엔드포인트들

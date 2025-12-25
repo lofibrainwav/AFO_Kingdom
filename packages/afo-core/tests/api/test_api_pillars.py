@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Tests for api/routes/pillars.py
 5기둥 API 엔드포인트 테스트

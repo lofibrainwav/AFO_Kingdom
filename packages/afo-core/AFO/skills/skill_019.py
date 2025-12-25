@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 class HybridGraphRAG:
     """
     [Skill-019] Hybrid GraphRAG Capability

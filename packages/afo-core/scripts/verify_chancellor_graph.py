@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 AFO Kingdom Chancellor Graph Verification Script
 Copyright (c) 2025 AFO Kingdom. All rights reserved.

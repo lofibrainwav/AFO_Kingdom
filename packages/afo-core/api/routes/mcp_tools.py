@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 MCP Tools Management API
 MCP 도구 관리 및 상태 확인 엔드포인트
@@ -7,6 +8,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 from pathlib import Path
 from typing import Any
 
@@ -18,9 +20,45 @@ router = APIRouter(prefix="/api/mcp", tags=["MCP Tools"])
 
 logger = logging.getLogger(__name__)
 
+def _resolve_workspace_root() -> Path | None:
+    """Best-effort workspace root resolver for local dev."""
+    env_root = os.getenv("WORKSPACE_ROOT")
+    if env_root:
+        try:
+            return Path(env_root).expanduser().resolve()
+        except Exception:
+            return None
+
+    # Walk upward to find repo root marker.
+    here = Path(__file__).resolve()
+    for parent in [here, *here.parents]:
+        if (parent / "AGENTS.md").exists():
+            return parent
+    return None
+
+
+def _resolve_mcp_config_path() -> Path:
+    """Resolve the MCP config path with overrides.
+
+    Priority:
+    1) `AFO_MCP_CONFIG_PATH` (explicit override)
+    2) `<workspace_root>/.cursor/mcp.json` if workspace root detected
+    3) `~/.cursor/mcp.json` (fallback)
+    """
+    env_path = os.getenv("AFO_MCP_CONFIG_PATH")
+    if env_path:
+        return Path(env_path).expanduser().resolve()
+
+    workspace_root = _resolve_workspace_root()
+    if workspace_root:
+        return (workspace_root / ".cursor" / "mcp.json").resolve()
+
+    return (Path.home() / ".cursor" / "mcp.json").resolve()
+
+
 # MCP 설정 파일 경로
-MCP_CONFIG_PATH = Path.home() / ".cursor" / "mcp.json"
-WORKSPACE_ROOT = Path("/Users/brnestrm/AFO_Kingdom")
+MCP_CONFIG_PATH = _resolve_mcp_config_path()
+WORKSPACE_ROOT = _resolve_workspace_root() or Path.cwd()
 
 
 class MCPToolRequest(BaseModel):

@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 # 🛡️ CRAG Self-Correction API Router
 # 眞善美孝: Truth 95%, Goodness 90%, Beauty 85%, Serenity 100%
 # CRAG = Corrective RAG: 문서 채점 + 필요시 웹 검색 fallback

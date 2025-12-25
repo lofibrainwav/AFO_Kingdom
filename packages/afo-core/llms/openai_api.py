@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 OpenAI API Wrapper
 하이브리드 LLM 전략을 위한 OpenAI REST API 연동

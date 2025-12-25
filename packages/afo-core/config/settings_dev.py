@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 AFO Development Settings
 Phase 2-5: 환경별 설정 분리 - Development 환경

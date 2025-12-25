@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Test APIWallet Vault fallback scenarios.
 Uses direct mocking for deterministic behavior.

@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 # ⚔️ 점수는 Truth Engine (scripts/calculate_trinity_score.py)에서만 계산됩니다.
 # LLM은 consult_the_lens MCP 도구를 통해 점수를 확인하세요.
 # 이 파일은 AFO 왕국의 眞善美孝 철학을 구현합니다

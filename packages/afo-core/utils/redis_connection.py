@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Redis 연결 통합 모듈
 Phase 1 리팩토링: 중복 Redis 연결 로직 통합

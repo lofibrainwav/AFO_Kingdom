@@ -45,7 +45,7 @@
       "description": "Library documentation context injection"
     },
     "afo-ultimate-mcp": {
-      "command": "python3",
+      "command": "/opt/homebrew/bin/python3.12",
       "args": [
         "${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}/packages/trinity-os/trinity_os/servers/afo_ultimate_mcp_server.py"
       ],
@@ -56,7 +56,7 @@
       "description": "AFO Ultimate MCP Server - Universal connector with Trinity Score evaluation (眞善美孝永). Tools: shell_execute, read_file, write_file, kingdom_health, calculate_trinity_score, verify_fact, cupy_weighted_sum"
     },
     "afo-skills-mcp": {
-      "command": "python3",
+      "command": "/opt/homebrew/bin/python3.12",
       "args": [
         "${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}/packages/trinity-os/trinity_os/servers/afo_skills_mcp.py"
       ],
@@ -67,7 +67,7 @@
       "description": "AFO Skills MCP Server - CuPy acceleration & fact verification with Trinity Score evaluation. Tools: cupy_weighted_sum, verify_fact"
     },
     "trinity-score-mcp": {
-      "command": "python3",
+      "command": "/opt/homebrew/bin/python3.12",
       "args": [
         "${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}/packages/trinity-os/trinity_os/servers/trinity_score_mcp.py"
       ],
@@ -78,7 +78,7 @@
       "description": "Trinity Score MCP Server - Calculate 眞善美孝永 5-pillar scores with GPU acceleration (CuPy)"
     },
     "afo-skills-registry-mcp": {
-      "command": "python3",
+      "command": "/opt/homebrew/bin/python3.12",
       "args": [
         "${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}/packages/trinity-os/trinity_os/servers/afo_skills_registry_mcp.py"
       ],
@@ -89,7 +89,7 @@
       "description": "AFO Skills Registry MCP Server - 19개 스킬을 MCP 도구로 제공 (眞善美孝永 Trinity Score 포함)"
     },
     "afo-obsidian-mcp": {
-      "command": "python3",
+      "command": "/opt/homebrew/bin/python3.12",
       "args": [
         "${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}/packages/trinity-os/trinity_os/servers/obsidian_mcp.py"
       ],

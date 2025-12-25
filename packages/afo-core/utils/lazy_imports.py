@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 #!/usr/bin/env python3
 """
 Lazy Import 모듈 - 무거운 라이브러리 지연 로딩

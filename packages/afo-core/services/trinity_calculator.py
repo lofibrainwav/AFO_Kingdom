@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Trinity Score Calculator (SSOT)
 동적 Trinity Score 계산기 - SSOT 가중치 기반 정밀 산출

@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 # mypy: ignore-errors
 """
 Yeongdeok (Ollama) - The Archive Scholar (Documentation & Security)

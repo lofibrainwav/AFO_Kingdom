@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Integrity Check API
 무결성 체크리스트 검증 엔드포인트

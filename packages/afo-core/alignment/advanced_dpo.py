@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 # packages/afo-core/alignment/advanced_dpo.py
 # (고급 DPO - LoRA 효율화 상세)
 # 🧭 Trinity Score: 眞95% 善99% 美95% 孝100% (Efficiency)

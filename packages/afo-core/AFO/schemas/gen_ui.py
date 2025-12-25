@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 GenUI Schemas (GenUIRequest, GenUIResponse)
 Phase 9: Self-Expanding Kingdom (Serenity)

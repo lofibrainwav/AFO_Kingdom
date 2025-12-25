@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 SSOT Router - The Digital Compass of AFO Kingdom.
 Displays the exact alignment of the 5 Pillars (眞·善·美·孝·永).

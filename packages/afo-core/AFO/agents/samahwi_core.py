@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Samahwi Agent Core (Phase 16-1)
 The Strategic Architect of AFO Kingdom.

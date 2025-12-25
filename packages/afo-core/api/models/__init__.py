@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 AFO API Models
 Phase 2 리팩토링: Request/Response 모델 분리

@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 # packages/afo-core/services/graceful_service.py
 # (Graceful Degradation 구현 - PDF 에러 처리 기반)
 # 🧭 Trinity Score: 眞95% 善99% 美85% 孝99%

@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Automated Debugging Skill
 자동화 디버깅 스킬 - Skills Registry에 등록

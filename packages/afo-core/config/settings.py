@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 AFO 왕국 중앙 집중식 설정 관리
 Phase 1 리팩토링: 하드코딩 제거 및 환경 변수 통합

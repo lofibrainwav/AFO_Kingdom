@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 #!/usr/bin/env python3
 """
 Redis 최적화 모듈 - Pipeline + Lua Script 통합

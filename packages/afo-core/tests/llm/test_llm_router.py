@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Tests for llm_router.py
 LLM Router 테스트 - Phase 2

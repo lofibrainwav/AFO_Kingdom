@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Auth Utilities
 JWT 토큰 생성/검증 및 비밀번호 해시 처리

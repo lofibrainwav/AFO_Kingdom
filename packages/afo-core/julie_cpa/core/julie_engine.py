@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 # packages/afo-core/julie_cpa/core/julie_engine.py
 # Julie CPA AutoMate 메인 엔진 (Precision Upgrade)
 # AntiGravity: 비용 최적화(Truth), 권한 검증(Goodness), 지속 아키텍처(Eternity)

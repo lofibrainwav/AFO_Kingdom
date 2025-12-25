@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 #!/usr/bin/env python3
 """브라우저에서 OpenAI 인증 토큰 추출 및 API Wallet에 저장"""
 

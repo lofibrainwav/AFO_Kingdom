@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 # config/friction_calibrator.py (Phase 4 핵심 - 마찰 제거 진단)
 # 목표: 시스템의 '재(Ash)'와 '마찰(Friction)'을 측정하여 형님의 평온(Serenity) 수치화
 

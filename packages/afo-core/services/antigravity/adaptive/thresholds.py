@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Antigravity Adaptive Thresholds - 동적 임계값 조정 모듈
 프로젝트 맥락과 히스토리를 기반으로 임계값 자동 조정

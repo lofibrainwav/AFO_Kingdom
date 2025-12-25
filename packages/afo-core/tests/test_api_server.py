@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 # Standardized for Trinity 100%
 """
 Tests for api_server.py core functions

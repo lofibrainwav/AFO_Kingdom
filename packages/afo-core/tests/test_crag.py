@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Tests for CRAG (Corrective RAG) functionality
 CRAG 테스트

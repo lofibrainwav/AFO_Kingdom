@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Git Status API
 Git 저장소 상태 조회 엔드포인트

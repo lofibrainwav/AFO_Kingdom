@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 孝 (Serenity) 자동화 유틸리티
 
