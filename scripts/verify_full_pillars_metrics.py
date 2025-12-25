@@ -14,9 +14,8 @@ sys.path.append(
 )
 
 from services.detailed_pillars_calculator import pillars_metrics
-from services.truth_metrics_calculator import (  # Re-using Truth from Phase 15
-    truth_metrics,
-)
+from services.truth_metrics_calculator import \
+    truth_metrics  # Re-using Truth from Phase 15
 
 
 async def verify_full_pillars():

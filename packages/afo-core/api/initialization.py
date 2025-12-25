@@ -176,7 +176,8 @@ async def _initialize_yeongdeok() -> None:
 
     try:
         from AFO.api.compat import get_settings_safe
-        from AFO.memory_system.yeongdeok_complete import YeongdeokComplete as _YC
+        from AFO.memory_system.yeongdeok_complete import \
+            YeongdeokComplete as _YC
 
         settings = get_settings_safe()
         n8n_url = getattr(settings, "N8N_URL", "") if settings else ""
@@ -191,7 +192,8 @@ async def _initialize_yeongdeok() -> None:
         print("[영덕] 영덕 완전체 준비 완료 - 뇌/눈/귀/팔 모두 연결됨")
     except ImportError:
         try:
-            from memory_system.yeongdeok_complete import YeongdeokComplete as _YC
+            from memory_system.yeongdeok_complete import \
+                YeongdeokComplete as _YC
 
             yeongdeok = _YC(
                 n8n_url="",
@@ -267,7 +269,7 @@ async def _initialize_databases() -> None:
         pg_host = getattr(settings, "POSTGRES_HOST", "localhost")
         pg_port = getattr(settings, "POSTGRES_PORT", 15432)
         pg_db = getattr(settings, "POSTGRES_DB", "afo_memory")
-        pg_user = getattr(settings, "POSTGRES_USER", "postgres")
+        pg_user = getattr(settings, "POSTGRES_USER", "afo")
         pg_password = getattr(settings, "POSTGRES_PASSWORD", "afo_secret_change_me")
 
         PG_POOL = SimpleConnectionPool(
@@ -310,7 +312,8 @@ async def _initialize_llm_clients() -> None:
     """Initialize LLM client connections."""
     global OPENAI_CLIENT, CLAUDE_CLIENT
 
-    from AFO.api.compat import ANTHROPIC_AVAILABLE, OPENAI_AVAILABLE, get_settings_safe
+    from AFO.api.compat import (ANTHROPIC_AVAILABLE, OPENAI_AVAILABLE,
+                                get_settings_safe)
 
     settings = get_settings_safe()
 

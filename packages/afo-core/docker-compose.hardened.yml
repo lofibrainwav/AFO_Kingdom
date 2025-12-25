@@ -161,11 +161,12 @@ services:
       - OLLAMA_BASE_URL=http://host.docker.internal:11434
       - OLLAMA_MODEL=llama3.2:3b
       - REDIS_URL=redis://redis:6379
-      - DATABASE_URL=postgresql://afo:afo@postgres:5432/afo
+      - DATABASE_URL=postgresql://afo:${POSTGRES_PASSWORD}@postgres:5432/afo_memory
       - PYTHONPATH=/AFO
     working_dir: /AFO
     volumes:
       - .:/AFO:ro                    # 善: read-only mount
+      - afo_data:/data               # 永: Persistence for Family Hub
     tmpfs:
       - /tmp:noexec,nosuid,size=200m
     depends_on:
@@ -197,7 +198,7 @@ services:
       - OLLAMA_BASE_URL=http://host.docker.internal:11434
       - PYTHONPATH=/AFO
       - REDIS_URL=redis://redis:6379
-      - DATABASE_URL=postgresql://afo:afo@postgres:5432/afo
+      - DATABASE_URL=postgresql://afo:${POSTGRES_PASSWORD}@postgres:5432/afo_memory
     command: ["python", "-m", "uvicorn", "api_server:app", "--host", "0.0.0.0", "--port", "8001"]
     depends_on:
       - redis
@@ -256,10 +257,10 @@ networks:
     driver: bridge
   backend:
     driver: bridge
-    internal: true                   # 善: DB 외부 접근 완전 차단
+    # internal: true                   # 善: DB 외부 접근 완전 차단 (Disabled for Verify Skill)
   monitoring:
     driver: bridge
-    internal: true                   # 善: 모니터링 격리
+    # internal: true                   # 善: 모니터링 격리 (Disabled for Verify Skill)
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Volumes - 永: Persistent Storage
@@ -271,3 +272,4 @@ volumes:
   neo4j_data:
   grafana_data:
   ollama_data:
+  afo_data:

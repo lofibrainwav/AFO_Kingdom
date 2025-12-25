@@ -1,12 +1,12 @@
 # Core Web Framework
-fastapi
-uvicorn[standard]
+fastapi>=0.123.0
+uvicorn[standard]>=0.31.1
 python-dotenv
 python-multipart
 
 # Data Validation
 pydantic>=2.12.0
-pydantic-settings
+pydantic-settings>=2.5.2
 
 # Security - Updated packages (CVE fixes)
 urllib3>=2.5.0  # CVE-2025-50181, CVE-2025-50182

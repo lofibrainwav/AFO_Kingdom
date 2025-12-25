@@ -4,7 +4,6 @@ from unittest.mock import MagicMock, mock_open, patch
 
 from AFO.api.routes.wallet.billing import billing_router
 from AFO.api.routes.wallet.browser_bridge import router as browser_router
-
 # Import routers
 from AFO.api.routes.wallet.keys import keys_router
 from AFO.api.routes.wallet.session import session_router

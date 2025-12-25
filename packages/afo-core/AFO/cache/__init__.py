@@ -9,14 +9,8 @@ Implements multi-level caching with predictive capabilities.
 from .backends import MemoryBackend, RedisBackend
 from .manager import MultiLevelCache, cache_manager
 from .predictive import PredictiveCacheManager, predictive_manager
-from .query_cache import (
-    CacheInvalidator,
-    QueryCache,
-    cache_query,
-    cache_system_data,
-    cache_user_data,
-    invalidate_cache,
-)
+from .query_cache import (CacheInvalidator, QueryCache, cache_query,
+                          cache_system_data, cache_user_data, invalidate_cache)
 
 
 def get_cache_metrics() -> dict[str, any]:

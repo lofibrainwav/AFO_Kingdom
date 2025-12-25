@@ -4,7 +4,7 @@ from __future__ import annotations
 import hashlib
 import json
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime, timezone
 from typing import TYPE_CHECKING, Any, Literal, TypedDict
 
 from AFO.constitution.constitution_v1_0 import TRINITY_WEIGHTS
@@ -63,8 +63,4 @@ class VerdictEvent:
 
     @staticmethod
     def now_iso() -> str:
-        return (
-            datetime.now(timezone.utc)
-            .isoformat(timespec="seconds")
-            .replace("+00:00", "Z")
-        )
+        return datetime.now(UTC).isoformat(timespec="seconds").replace("+00:00", "Z")

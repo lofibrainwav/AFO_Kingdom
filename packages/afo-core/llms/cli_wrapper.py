@@ -41,7 +41,7 @@ class CLIWrapper:
 
                 return {"success": True, "content": result}
 
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 try:
                     process.kill()
                 except ProcessLookupError:

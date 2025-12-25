@@ -33,7 +33,7 @@
       "description": "Library documentation context injection"
     },
     "afo-ultimate-mcp": {
-      "command": "/Users/brnestrm/AFO_Kingdom/packages/afo-core/.venv/bin/python",
+      "command": "python3.12",
       "args": [
         "${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}/packages/trinity-os/trinity_os/servers/afo_ultimate_mcp_server.py"
       ],
@@ -44,7 +44,7 @@
       "description": "AFO Ultimate MCP Server - Universal connector with Trinity Score evaluation (眞善美孝永). Tools: shell_execute, read_file, write_file, kingdom_health, calculate_trinity_score, verify_fact, cupy_weighted_sum"
     },
     "afo-skills-mcp": {
-      "command": "/Users/brnestrm/AFO_Kingdom/packages/afo-core/.venv/bin/python",
+      "command": "python3.12",
       "args": [
         "${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}/packages/trinity-os/trinity_os/servers/afo_skills_mcp.py"
       ],
@@ -55,7 +55,7 @@
       "description": "AFO Skills MCP Server - CuPy acceleration & fact verification with Trinity Score evaluation. Tools: cupy_weighted_sum, verify_fact"
     },
     "trinity-score-mcp": {
-      "command": "/Users/brnestrm/AFO_Kingdom/packages/afo-core/.venv/bin/python",
+      "command": "python3.12",
       "args": [
         "${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}/packages/trinity-os/trinity_os/servers/trinity_score_mcp.py"
       ],

@@ -13,7 +13,6 @@ Version: 2.0.0 (Beautiful Code Edition)
 
 from __future__ import annotations
 
-import contextlib
 import logging
 import os
 from dataclasses import dataclass
@@ -133,7 +132,7 @@ class PortDataProvider:
                 "port": "3000",
                 "description": "Next.js 프론트엔드",
             },
-            {"service": "Ollama", "port": "11435", "description": "LLM (영덕)"},
+            {"service": "Ollama", "port": "11434", "description": "LLM (영덕)"},
             {"service": "Redis", "port": "6379", "description": "캐시/세션"},
             {"service": "PostgreSQL", "port": "15432", "description": "데이터베이스"},
             {"service": "Grafana", "port": "3100", "description": "모니터링"},
@@ -530,6 +529,15 @@ def get_settings_safe() -> Any:
 
 
 # Compatibility exports (Legacy support)
+# Router imports are centralized here to keep a single registration tree.
+def _safe_import_router(module_path: str, attr: str = "router") -> Any | None:
+    try:
+        module = __import__(module_path, fromlist=[attr])
+        return getattr(module, attr, None)
+    except Exception:
+        return None
+
+
 # LLM availability flags (디버깅용 기본값)
 ANTHROPIC_AVAILABLE = False
 OPENAI_AVAILABLE = False
@@ -538,42 +546,39 @@ CODEX_AVAILABLE = False
 OLLAMA_AVAILABLE = False
 LMSTUDIO_AVAILABLE = False
 
-# Dummy routers for compatibility (실제 라우터가 없을 때 사용)
-aicpa_router = None
-auth_router = None
-budget_router = None
-chancellor_router = None
-chat_router = None
-council_router = None
-education_system_router = None
-finance_router = None
-got_router = None
-grok_stream_router = None
+# Routers (실제 라우터가 없을 때 None)
+aicpa_router = _safe_import_router("AFO.api.routers.aicpa")
+auth_router = _safe_import_router("AFO.api.routers.auth")
+budget_router = _safe_import_router("AFO.api.routers.budget")
+chancellor_router = _safe_import_router("AFO.api.routers.chancellor_router")
+chat_router = _safe_import_router("AFO.api.routes.chat")
+council_router = _safe_import_router("AFO.api.routers.council")
+education_system_router = _safe_import_router("AFO.api.routers.thoughts")
+finance_router = _safe_import_router("AFO.api.routers.finance")
+got_router = _safe_import_router("AFO.api.routers.got")
+grok_stream_router = _safe_import_router("AFO.api.routers.grok_stream")
 # health_router is imported above
-learning_log_router = None
-learning_pipeline = None
-matrix_router = None
-modal_data_router = None
-multi_agent_router = None
-n8n_router = None
-personas_router = None
+learning_log_router = _safe_import_router("AFO.api.routers.learning_log_router")
+learning_pipeline = _safe_import_router("AFO.api.routers.learning_pipeline")
+matrix_router = _safe_import_router("AFO.api.routers.matrix")
+modal_data_router = _safe_import_router("AFO.api.routers.modal_data")
+multi_agent_router = _safe_import_router("AFO.api.routers.multi_agent")
+n8n_router = _safe_import_router("AFO.api.routers.n8n")
+personas_router = _safe_import_router("AFO.api.routers.personas")
 # pillars_router is imported above
-rag_query_router = None
-root_router = None
-serenity_router = None
-with contextlib.suppress(ImportError):
-    pass
-
-skills_router = None
-ssot_router = None
-strangler_router = None
-streams_router = None
+rag_query_router = _safe_import_router("AFO.api.routers.rag_query")
+root_router = _safe_import_router("AFO.api.routers.root")
+serenity_router = _safe_import_router("AFO.api.routes.serenity_router")
+skills_router = _safe_import_router("AFO.api.routes.skills")
+ssot_router = _safe_import_router("AFO.api.routers.ssot")
+strangler_router = _safe_import_router("AFO.api.routers.compat")
+streams_router = _safe_import_router("AFO.api.routes.streams")
 # system_health_router is imported above
-trinity_policy_router = None
-trinity_sbt_router = None
-users_router = None
-voice_router = None
-wallet_router = None
+trinity_policy_router = _safe_import_router("AFO.api.routes.trinity_policy")
+trinity_sbt_router = _safe_import_router("AFO.api.routes.trinity_sbt")
+users_router = _safe_import_router("AFO.api.routers.users")
+voice_router = _safe_import_router("AFO.api.routers.voice")
+wallet_router = _safe_import_router("AFO.api.routes.wallet", "wallet_router")
 
 # Edge Revalidate Router (Phase 6)
 try:

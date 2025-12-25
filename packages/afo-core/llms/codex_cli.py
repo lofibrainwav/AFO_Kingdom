@@ -85,7 +85,7 @@ class CodexCLIWrapper:
                 logger.error(f"Codex CLI 오류: {error_msg}")
                 return {"error": error_msg, "success": False}
 
-        except asyncio.TimeoutError:
+        except TimeoutError:
             logger.error("Codex CLI 타임아웃")
             return {"error": "Timeout", "success": False}
         except Exception as e:

@@ -71,7 +71,7 @@ async def stream_debugging_events(request: Request) -> EventSourceResponse:
                 # 이벤트 대기 (타임아웃으로 keep-alive 전송)
                 data = await asyncio.wait_for(_debugging_event_queue.get(), timeout=5.0)
                 yield {"event": "message", "data": json.dumps(data)}
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 # Keep-alive
                 yield {
                     "event": "ping",
