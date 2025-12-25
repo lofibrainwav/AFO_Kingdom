@@ -20,6 +20,7 @@ asyncpg>=0.31.0
 redis>=5.2.1
 sqlalchemy>=2.0.23
 alembic>=1.13.1
+types-redis>=4.6.0
 
 # AI and ML
 langchain>=0.2.0
