@@ -58,7 +58,7 @@ async def log_stream_generator() -> Any:
                         yield f"data: {json.dumps(data)}\n\n"
                     except json.JSONDecodeError:
                         # Handle non-JSON messages
-                        yield f"data: {{\"message\": \"{message['data']}\", \"level\": \"INFO\"}}\n\n"
+                        yield f'data: {{"message": "{message["data"]}", "level": "INFO"}}\n\n'
 
                 await asyncio.sleep(0.1)  # Small delay to prevent busy waiting
 

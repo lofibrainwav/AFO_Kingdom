@@ -465,19 +465,19 @@ def main():
         # 파일 구조 정보 출력
         structure = results["file_structure"]
         print("\n📊 파일 구조 정보:")
-        print(f"  📁 템플릿 파일 수: {structure['templates_count']}")
+        print(f"  📁 템플릿 파일 수: {structure["templates_count"]}")
         print(
-            f"  ⚙️ 옵시디언 설정 파일: {sum(structure['obsidian_config_files'].values())}/{len(structure['obsidian_config_files'])}"
+            f"  ⚙️ 옵시디언 설정 파일: {sum(structure["obsidian_config_files"].values())}/{len(structure["obsidian_config_files"])}"
         )
 
         # 종합 결과 출력
         summary = results["summary"]
         print("\n🎯 종합 결과:")
         print(
-            f"  📊 템플릿 검증율: {summary['valid_templates']}/{summary['total_templates']} ({summary['valid_templates'] / summary['total_templates'] * 100:.1f}%)"
+            f"  📊 템플릿 검증율: {summary["valid_templates"]}/{summary["total_templates"]} ({summary["valid_templates"] / summary["total_templates"] * 100:.1f}%)"
         )
-        print(f"  🔴 총 오류 수: {summary['total_errors']}")
-        print(f"  🟡 총 경고 수: {summary['total_warnings']}")
+        print(f"  🔴 총 오류 수: {summary["total_errors"]}")
+        print(f"  🟡 총 경고 수: {summary["total_warnings"]}")
 
         status_emoji = {
             "excellent": "🌟",
@@ -487,7 +487,7 @@ def main():
         }
 
         print(
-            f"  {status_emoji.get(summary['system_status'], '❓')} 시스템 상태: {summary['system_status'].upper()}"
+            f"  {status_emoji.get(summary["system_status"], "❓")} 시스템 상태: {summary["system_status"].upper()}"
         )
 
         # 검증 성공/실패 결정

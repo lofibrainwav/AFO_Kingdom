@@ -31,7 +31,7 @@ def run_cyclonedx_command(command: list[str], output_file: str | None = None) ->
         성공 여부
     """
     try:
-        print(f"실행 명령어: {' '.join(command)}")
+        print(f"실행 명령어: {" ".join(command)}")
 
         result = subprocess.run(
             command,

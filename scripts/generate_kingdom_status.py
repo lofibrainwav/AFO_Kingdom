@@ -246,7 +246,7 @@ def generate_html():
     output_path.write_text(html)
     print(f"✅ Generated: {output_path}")
     print(
-        f"📊 Commits: {git['total']}, Trinity: {trinity['total']}, Ruff: {ruff['errors']}"
+        f"📊 Commits: {git["total"]}, Trinity: {trinity["total"]}, Ruff: {ruff["errors"]}"
     )
 
 

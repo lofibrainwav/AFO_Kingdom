@@ -40,7 +40,7 @@ def verify_playwright():
 
         if content.get("success"):
             print("✅ Browser Navigation Success")
-            print(f"   Title: {content.get('title')}")
+            print(f"   Title: {content.get("title")}")
 
             # Scrape
             scrape_req = {
@@ -67,7 +67,7 @@ def verify_playwright():
             else:
                 print(f"❌ Scrape Failed: {content}")
         else:
-            print(f"❌ Navigation Failed: {content.get('error')}")
+            print(f"❌ Navigation Failed: {content.get("error")}")
 
     except Exception as e:
         print(f"❌ Test Error: {e}")

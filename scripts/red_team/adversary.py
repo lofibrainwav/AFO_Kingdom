@@ -85,7 +85,7 @@ class RedTeamAdversary:
             "assessment": self._assess_security_posture(),
         }
 
-        logger.info(".1f" f"success_rate={report["success_rate"]:.1%}")
+        logger.info(f".1fsuccess_rate={report["success_rate"]:.1%}")
         return report
 
     async def _attack_sql_injection(self) -> dict[str, Any]:
