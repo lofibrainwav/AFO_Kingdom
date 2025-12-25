@@ -166,6 +166,7 @@ services:
     working_dir: /AFO
     volumes:
       - .:/AFO:ro                    # 善: read-only mount
+      - ../../AGENTS.md:/AGENTS.md:ro # 眞: SSOT (Kingdom Constitution)
       - afo_data:/data               # 永: Persistence for Family Hub
     tmpfs:
       - /tmp:noexec,nosuid,size=200m
