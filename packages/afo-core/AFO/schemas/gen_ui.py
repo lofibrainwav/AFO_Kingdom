@@ -9,8 +9,9 @@ Truth (眞): Strict checking of prompt and requirements.
 
 from typing import Any
 
-from AFO.api.models.persona import PersonaTrinityScore as TrinityScore
 from pydantic import BaseModel, Field
+
+from AFO.api.models.persona import PersonaTrinityScore as TrinityScore
 
 
 class GenUIRequest(BaseModel):

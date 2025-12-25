@@ -11,8 +11,7 @@ try:
     GEMINI_AVAILABLE = True
 except ImportError:
     try:
-        from llms.gemini_api import (  # type: ignore[assignment]
-            GeminiAPIWrapper, gemini_api)
+        from llms.gemini_api import GeminiAPIWrapper, gemini_api  # type: ignore[assignment]
 
         GEMINI_AVAILABLE = True
     except ImportError:

@@ -29,8 +29,10 @@ try:
     from services.trinity_calculator import trinity_calculator
     from strategists.sima_yi import goodness_review as sima_yi
     from strategists.zhou_yu import beauty_optimize as zhou_yu
+
     # Import individual strategists to avoid name conflicts
     from strategists.zhuge_liang import truth_evaluate as zhuge_liang
+
     # Import individual tigers to avoid name conflicts
     from tigers.guan_yu import truth_guard as guan_yu
     from tigers.huang_zhong import eternity_log as huang_zhong
@@ -346,8 +348,7 @@ async def trinity_node(state: ChancellorState) -> dict[str, Any]:
 
     # === 헌법 v1.0 + Amendment 0001: 개별 증거 거부권 적용 ===
     try:
-        from AFO.constitution.constitution_v1_0 import (VETO_PILLARS,
-                                                        VETO_THRESHOLD)
+        from AFO.constitution.constitution_v1_0 import VETO_PILLARS, VETO_THRESHOLD
 
         # 개별 pillar 점수 확인 (0-1 scale로 변환)
         pillar_scores = {
@@ -638,9 +639,10 @@ graph.add_edge("historian", END)
 # Use AsyncRedisSaver for production persistence (Eternity 永)
 # Fallback to MemorySaver only if Redis is unavailable
 try:
+    from langgraph.checkpoint.base import BaseCheckpointSaver
+
     from AFO.utils.cache_utils import cache
     from AFO.utils.redis_saver import AsyncRedisSaver
-    from langgraph.checkpoint.base import BaseCheckpointSaver
 
     if cache.enabled:
         checkpointer: BaseCheckpointSaver = AsyncRedisSaver()

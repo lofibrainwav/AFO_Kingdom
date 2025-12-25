@@ -67,14 +67,16 @@ def _patch_typing_inspection_if_needed() -> None:
 _patch_typing_inspection_if_needed()
 
 import uvicorn
-# AFO Kingdom imports (clear and organized)
-from AFO.api.config import get_app_config, get_server_config
-from AFO.api.middleware import setup_middleware
-from AFO.api.router_manager import setup_routers
+
 # Core FastAPI imports with type hints
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
+
+# AFO Kingdom imports (clear and organized)
+from AFO.api.config import get_app_config, get_server_config
+from AFO.api.middleware import setup_middleware
+from AFO.api.router_manager import setup_routers
 
 if TYPE_CHECKING:
     from fastapi import FastAPI

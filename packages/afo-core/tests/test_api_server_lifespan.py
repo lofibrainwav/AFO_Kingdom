@@ -13,8 +13,9 @@ from fastapi.testclient import TestClient
 @pytest.mark.asyncio
 async def test_lifespan_manager_calls_init_cleanup():
     """Test that lifespan manager calls initialize and cleanup systems."""
-    from AFO.api.config import get_lifespan_manager
     from fastapi import FastAPI
+
+    from AFO.api.config import get_lifespan_manager
 
     app = FastAPI()
 

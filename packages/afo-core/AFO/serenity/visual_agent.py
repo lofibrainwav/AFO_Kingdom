@@ -6,9 +6,10 @@ import logging
 from typing import Optional
 
 import httpx
-from AFO.domain.janus.contract import VisualAction, VisualPlan
 from playwright.async_api import async_playwright
 from pydantic import ValidationError
+
+from AFO.domain.janus.contract import VisualAction, VisualPlan
 
 logger = logging.getLogger(__name__)
 
