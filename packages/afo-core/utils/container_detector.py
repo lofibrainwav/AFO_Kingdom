@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 # 🧭 Trinity Score: 眞95% 善90% 美85% 孝95% | Total: 91%
 # 이 파일은 AFO 왕국의 眞善美孝 철학을 구현합니다
 

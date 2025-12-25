@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Prometheus Metrics for AFO Kingdom
 Provides observability for the Soul Engine API.

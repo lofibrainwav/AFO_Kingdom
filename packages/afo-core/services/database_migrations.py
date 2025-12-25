@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Database Migrations for AFO Kingdom
 사용자 시스템 및 관련 테이블 스키마 정의

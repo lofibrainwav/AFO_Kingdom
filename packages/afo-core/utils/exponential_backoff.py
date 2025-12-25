@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 재시도 지수 백오프 (Retry with Exponential Backoff)
 

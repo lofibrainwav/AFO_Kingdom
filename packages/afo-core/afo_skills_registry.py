@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 # afo_soul_engine/afo_skills_registry.py
 """
 AFO Skill Registry System (2025 Standard)

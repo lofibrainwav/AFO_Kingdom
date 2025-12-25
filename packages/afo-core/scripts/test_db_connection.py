@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 PostgreSQL 연결 테스트 스크립트
 Phase 1: PostgreSQL 연결 문제 해결 검증

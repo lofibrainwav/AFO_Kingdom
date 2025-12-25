@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Grok Cookie Forensics
 Direct SQLite Access to verify if cookies exist (bypassing decryption)

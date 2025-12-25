@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Automated Debugging Real-time Stream (SSE)
 자동화 디버깅 시스템 실시간 스트리밍

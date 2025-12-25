@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 from datetime import datetime
 
 from strategists.base import log_action, robust_execute

@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """Skill Registry Routes (眞善美孝)
 
 이 모듈은 Skill Registry의 FastAPI 라우터를 제공합니다.

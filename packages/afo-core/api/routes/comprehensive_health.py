@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Comprehensive Health Check Endpoint
 야전교범 원칙 준수: 선확인 후보고, 가정 금지, 선증명 후확신

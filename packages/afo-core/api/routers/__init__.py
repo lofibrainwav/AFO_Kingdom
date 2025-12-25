@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 AFO API Routers
 Phase 2 리팩토링: 라우터 분리

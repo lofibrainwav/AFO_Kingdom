@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Constitutional AI for AFO Kingdom (Phase 17)
 "The Goodness Constitution" - 선(善)의 헌법

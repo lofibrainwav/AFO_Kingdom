@@ -53,6 +53,17 @@ python3 << 'PYTHON'
 import json
 import sys
 from pathlib import Path
+import os
+import re
+
+
+_DEFAULT_PATTERN = re.compile(r"\$\{([A-Z0-9_]+):-([^}]+)\}")
+
+
+def _expand_default_vars(value: str) -> str:
+    # Supports `${VAR:-DEFAULT}` and then standard `${VAR}` expansion.
+    value = _DEFAULT_PATTERN.sub(lambda m: os.getenv(m.group(1), m.group(2)), value)
+    return os.path.expandvars(value)
 
 try:
     mcp_file = Path(".cursor/mcp.json")
@@ -90,7 +101,8 @@ try:
             args = server_info.get("args", [])
             if args:
                 server_path = args[0] if args else None
-                if server_path and Path(server_path).exists():
+                expanded_path = _expand_default_vars(server_path) if server_path else None
+                if expanded_path and Path(expanded_path).exists():
                     print(f"       📄 {server_path} ✅")
                 elif server_path:
                     print(f"       📄 {server_path} ❌ (파일 없음)")
@@ -138,4 +150,3 @@ echo -e "  ${YELLOW}💡 MCP 서버 상태는 Cursor Settings → MCP Servers에
 echo ""
 echo -e "${GREEN}✅ MCP 설정 검증 완료${NC}"
 echo ""
-

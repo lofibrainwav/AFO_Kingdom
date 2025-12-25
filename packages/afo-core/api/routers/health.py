@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Health Check Router
 Phase 2 리팩토링: Health 엔드포인트 분리

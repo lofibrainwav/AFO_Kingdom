@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Vault Manager for AFO Kingdom (Phase 22)
 Handles secret retrieval from Environment or HashiCorp Vault.

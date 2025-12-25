@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Error Handling Utilities (야전교범 원칙 준수)
 眞善美孝永 철학에 기반한 에러 핸들링 패턴

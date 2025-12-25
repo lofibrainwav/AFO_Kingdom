@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 #!/usr/bin/env python3
 """API Wallet PostgreSQL DB 지피지기 (정확한 상태 파악)"""
 

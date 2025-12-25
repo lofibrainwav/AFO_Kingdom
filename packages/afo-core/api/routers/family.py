@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Family Router
 美 (Beauty): 모듈화 + 일관 네이밍

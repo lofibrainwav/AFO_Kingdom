@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 LLM Cache Service for AFO Kingdom
 High-performance caching for LLM requests/responses to reduce latency and API costs.

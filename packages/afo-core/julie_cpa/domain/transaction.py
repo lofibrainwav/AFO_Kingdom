@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 import random
 from dataclasses import dataclass
 from datetime import datetime

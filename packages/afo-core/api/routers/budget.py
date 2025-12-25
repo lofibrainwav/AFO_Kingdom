@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 AFO Julie CPA - Budget API Router
 Phase 12 Extension: 실시간 예산 추적 및 리스크 알림

@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 MCP 클라이언트 디버깅 테스트
 실패 원인 진단을 위한 단계별 테스트

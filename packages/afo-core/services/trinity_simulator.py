@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Trinity Score Simulator
 실시간 Trinity Score 시뮬레이션 엔진

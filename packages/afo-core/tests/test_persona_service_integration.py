@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Persona Service 통합 테스트
 Phase 4: 최종 검증 - 페르소나 전환 시나리오

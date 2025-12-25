@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Test API Health Check
 Tests the core health check functionality for system monitoring.

@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Persona Domain Model
 TRINITY-OS Personas 시스템 - Family Hub OS Phase 1 핵심

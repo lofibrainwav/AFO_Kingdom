@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 #!/usr/bin/env python3
 """OpenAI API 키를 API Wallet에 추가하는 스크립트"""
 

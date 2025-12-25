@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 # Strategists Package
 from .sima_yi import review as goodness_review
 from .zhou_yu import optimize as beauty_optimize

@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Persona Service
 페르소나 전환 서비스 (PDF 페이지 3: AFO ↔ TRINITY-OS 통합 지점)

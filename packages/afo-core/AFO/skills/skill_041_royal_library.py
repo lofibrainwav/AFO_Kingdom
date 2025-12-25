@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 AFO 왕립 도서관 41선 Skill/MCP
 4대 고전(손자병법/삼국지/군주론/전쟁론)의 전략적 지혜를 실행 가능한 도구로

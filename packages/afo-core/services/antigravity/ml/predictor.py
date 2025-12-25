@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Antigravity ML Predictor - 미래 품질 예측 모듈
 Trinity Score 기반 ML 예측 기능

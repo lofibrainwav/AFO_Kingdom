@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Logging Configuration (眞善美孝永)
 AFO 왕국 중앙 로깅 설정

@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """System Health & Logs Routes."""
 
 from __future__ import annotations

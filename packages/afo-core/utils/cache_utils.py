@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 # Redis 캐시 유틸리티
 from __future__ import annotations
 

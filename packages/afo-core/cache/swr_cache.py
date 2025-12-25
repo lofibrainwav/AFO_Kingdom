@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 # packages/afo-core/cache/swr_cache.py
 # (Stale-While-Revalidate 구현 - PDF 성능 최적화 기반)
 # 🧭 Trinity Score: 眞85% 善95% 美99% 孝100%

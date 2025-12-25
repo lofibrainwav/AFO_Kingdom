@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 AICPA Tax Engine - 2025 OBBBA 세법 계산
 

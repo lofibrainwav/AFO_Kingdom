@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 # Tigers Package
 from .guan_yu import guard as truth_guard
 from .huang_zhong import log as eternity_log

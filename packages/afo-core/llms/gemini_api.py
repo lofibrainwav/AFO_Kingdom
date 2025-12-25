@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Gemini API Wrapper
 하이브리드 LLM 전략을 위한 Google Gemini REST API 연동

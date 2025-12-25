@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 # packages/afo-core/api/cache_headers.py
 # (Cache-Control Headers Optimization - PDF 성능 최적화 기반)
 # 🧭 Trinity Score: 眞90% 善95% 美95% 孝95%

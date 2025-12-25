@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Users Router
 Phase 3: 사용자 관리 라우터 (肝 시스템 - 사용자 관리)

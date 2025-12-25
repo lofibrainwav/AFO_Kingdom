@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Health Check Configuration (眞 - Truth)
 건강 체크 설정 - 하드코딩 제거

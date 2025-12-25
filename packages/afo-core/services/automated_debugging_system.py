@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Automated Debugging System for AFO Kingdom
 완벽한 자동화 디버깅 시스템 - AFO 왕국의 모든 기술과 도구 통합

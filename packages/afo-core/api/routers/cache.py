@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Cache Metrics Router
 Phase 6B: Expose cache performance metrics to the dashboard

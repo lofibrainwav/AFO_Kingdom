@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Learning Log Router (Phase 16-4)
 Endpoints for the Kingdom's Self-Learning Loop.

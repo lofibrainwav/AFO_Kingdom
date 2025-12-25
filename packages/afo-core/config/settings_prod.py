@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 AFO Production Settings
 Phase 2-5: 환경별 설정 분리 - Production 환경

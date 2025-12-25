@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 MlxSage Adapter for AFO Kingdom
 Integrates Apple's MLX framework for native optimization of DeepSeek-R1 (Jwaja)

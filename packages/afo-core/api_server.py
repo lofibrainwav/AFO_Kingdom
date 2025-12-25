@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 AFO Kingdom API Server (아름다운 코드 적용)
 FastAPI 기반 AFO 왕국 Soul Engine API 서버

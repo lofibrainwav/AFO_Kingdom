@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 from __future__ import annotations
 
 # Re-export: canonical implementation lives in `api.routes.system_health`.

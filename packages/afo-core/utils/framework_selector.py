@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 #!/usr/bin/env python3
 """
 Framework Selector - Mission Profile 기반 자동 프레임워크 선택

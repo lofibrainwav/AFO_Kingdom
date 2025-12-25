@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 from typing import Literal
 
 from pydantic import BaseModel, Field

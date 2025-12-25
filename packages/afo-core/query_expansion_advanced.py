@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Query Expansion Advanced for AFO Kingdom (Phase 2.3)
 Expands user queries to improve RAG retrieval.

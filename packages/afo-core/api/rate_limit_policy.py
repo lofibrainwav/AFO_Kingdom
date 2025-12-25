@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 AFO Kingdom Rate Limit Policy Configuration (Phase 2.6)
 

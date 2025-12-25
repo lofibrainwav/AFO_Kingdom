@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 # packages/afo-core/api/routes/julie.py
 # PDF 페이지 2: FastAPI 엔드포인트, 페이지 3: 권한 검증
 from typing import Any

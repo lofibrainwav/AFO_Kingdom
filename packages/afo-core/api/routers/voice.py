@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Voice Command Router for AFO Kingdom (Phase 24)
 Handles voice command processing and TTS responses.

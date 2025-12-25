@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 # packages/afo-core/utils/history.py
 # (Historian - 영(永) 기록 보관소)
 # 🧭 Trinity Score: 眞95% 善99% 美90% 孝95%

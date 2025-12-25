@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Genesis Trigger: Royal Ops Center
 Phase 4: Self-Expanding Mode

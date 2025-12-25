@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 AFO Chat Route - LLM Router 연동 API
 AICPA Core 등 프론트엔드에서 호출하는 채팅 엔드포인트

@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 LangChain + OpenAI Service for AFO Kingdom (Phase 10)
 Advanced AI integration with LangChain and OpenAI for intelligent processing.

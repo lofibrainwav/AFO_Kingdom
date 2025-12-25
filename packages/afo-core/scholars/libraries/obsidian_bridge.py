@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 AFO Kingdom Local Obsidian Bridge
 영덕 학자가 직접 사용하는 로컬 옵시디언 연결 라이브러리

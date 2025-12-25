@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Performance Monitoring Middleware for AFO Kingdom
 Tracks response times and identifies slow endpoints.

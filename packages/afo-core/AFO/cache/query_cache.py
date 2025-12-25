@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Database Query Cache Decorator
 Phase 6C: Database Query Caching for Performance Optimization

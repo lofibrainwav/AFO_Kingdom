@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 # mypy: ignore-errors
 """
 Multimodal RAG Cache for AFO Kingdom (Phase 5)

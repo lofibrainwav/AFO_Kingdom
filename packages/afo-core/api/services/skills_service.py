@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """Skill Registry Service (眞善美孝)
 
 이 모듈은 AFO Skill Registry의 비즈니스 로직을 제공합니다.

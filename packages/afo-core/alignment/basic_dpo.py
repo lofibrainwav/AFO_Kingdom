@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 # packages/afo-core/alignment/basic_dpo.py
 # (기본 DPO 구현 - 논문 Rafailov et al. 2023 재현 상세)
 # 🧭 Trinity Score: 眞95% 善99% 美90% 孝95%

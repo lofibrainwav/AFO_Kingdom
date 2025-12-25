@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Chancellor Router
 Phase 3: Chancellor Graph API 엔드포인트

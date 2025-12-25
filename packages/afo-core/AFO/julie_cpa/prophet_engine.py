@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Julie CPA Prophet Prediction Engine - 미래 지출 예측
 

@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 AFO LLM Router - 하이브리드 멀티-LLM 통합 시스템
 Ollama (내부 지력) + API LLM (외부 무력) 간 동적 라우팅

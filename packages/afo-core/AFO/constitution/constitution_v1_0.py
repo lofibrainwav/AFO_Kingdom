@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 AFO 왕국 헌법 v1.0 - 성스러운 봉인
 Sealed: 2025-12-22

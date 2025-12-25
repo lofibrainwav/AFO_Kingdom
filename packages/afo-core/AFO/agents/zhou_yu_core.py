@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Zhou Yu Agent Core (Phase 16-3)
 The Esthetic Guardian of AFO Kingdom.

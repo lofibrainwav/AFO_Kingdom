@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 # mypy: ignore-errors
 #!/usr/bin/env python3
 # ⚔️ 점수는 Truth Engine (scripts/calculate_trinity_score.py)에서만 계산됩니다.

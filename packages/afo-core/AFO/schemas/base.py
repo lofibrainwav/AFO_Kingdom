@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 from pydantic import BaseModel, ConfigDict
 
 

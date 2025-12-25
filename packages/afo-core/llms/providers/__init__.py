@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 from .anthropic import AnthropicProvider
 from .base import BaseLLMProvider
 from .factory import ProviderFactory

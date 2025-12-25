@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Protocol Officer Service (Phase 18)
 "Diplomatic Protocol & AI Manners" - 왕국의 의전관

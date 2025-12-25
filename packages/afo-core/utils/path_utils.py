@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 """
 Path Utilities (眞 - Truth)
 경로 계산 유틸리티 - 하드코딩 제거
