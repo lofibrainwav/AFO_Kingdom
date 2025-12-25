@@ -26,16 +26,16 @@ jobs:
           cd packages/afo-core
           pip install -r requirements.txt
 
-      - name: Lint & Type Check
+      - name: Lint & Type Check (Makefile SSOT)
         run: |
-          cd packages/afo-core
-          ruff check .
-          mypy AFO
+          make lint
+          make type-check
 
-      - name: Test & Coverage
+      - name: Test & Coverage (Makefile SSOT)
         run: |
-          cd packages/afo-core
-          pytest --cov=AFO --cov-report=xml
+          make test
+          # Coverage extension if needed, but sticking to Makefile Truth first
+          cd packages/afo-core && pytest --cov=AFO --cov-report=xml
 
       - name: Upload Coverage
         uses: codecov/codecov-action@v4
