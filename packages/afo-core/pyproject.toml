@@ -133,6 +133,8 @@ markers = [
     "asyncio: Tests that use asyncio",
     "module_reload: Tests that reload modules (run in isolation)",
 ]
+asyncio_module = ["AFO.*", "api.*", "config.*", "llms.*", "afo_soul_engine.*", "afo_skills_registry", "llm_router", "chancellor_graph"]
+ignore_errors = true
 asyncio_mode = "auto"
 norecursedirs = ["legacy", "scripts", ".venv", "venv", "env", "node_modules"]
 pythonpath = "."
@@ -229,7 +231,3 @@ ignore_missing_imports = true
 module = "scripts.*"
 disallow_untyped_defs = false
 disallow_incomplete_defs = false
-[[tool.mypy.overrides]]
-# 【孔子】中庸 - 과도한 엄격함은 진행을 막으니, 잠시 눈을 감아 조화를 이룸
-module = "AFO.*"
-ignore_errors = true
