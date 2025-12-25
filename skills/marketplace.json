@@ -1,0 +1,146 @@
+{
+  "name": "afo-kingdom-skills",
+  "owner": {
+    "name": "AFO Kingdom",
+    "email": "brnestrm@afo.kingdom",
+    "github": "lofibrainwav"
+  },
+  "metadata": {
+    "description": "AFO Kingdom Agent Skills - 眞善美孝永 Trinity Score 기반 철학 정렬 AI 스킬 컬렉션",
+    "version": "1.0.0",
+    "repository": "https://github.com/lofibrainwav/AFO_Kingdom",
+    "homepage": "https://afo.kingdom",
+    "license": "MIT",
+    "keywords": [
+      "trinity-score",
+      "philosophy",
+      "mcp",
+      "langgraph",
+      "rag",
+      "autonomous-ai",
+      "korean-philosophy"
+    ],
+    "categories": [
+      "analysis-evaluation",
+      "rag-systems",
+      "health-monitoring",
+      "strategic-command",
+      "workflow-automation",
+      "integration",
+      "memory-management"
+    ],
+    "philosophy": {
+      "truth": "眞 - Technical accuracy and verifiability",
+      "goodness": "善 - Ethical soundness and stability",
+      "beauty": "美 - Clear structure and elegant design",
+      "serenity": "孝 - Frictionless operation",
+      "eternity": "永 - Long-term sustainability"
+    }
+  },
+  "plugins": [
+    {
+      "name": "afo-core-skills",
+      "description": "Core AFO Kingdom skills for AI agent orchestration and philosophy alignment",
+      "skills": [
+        "./trinity-score-calculator/SKILL.md",
+        "./ultimate-rag/SKILL.md",
+        "./health-monitor/SKILL.md",
+        "./strategy-engine/SKILL.md",
+        "./mcp-tool-bridge/SKILL.md"
+      ]
+    },
+    {
+      "name": "afo-rag-skills",
+      "description": "Advanced RAG and knowledge management skills",
+      "skills": [
+        "./ultimate-rag/SKILL.md",
+        "./hybrid-graphrag/SKILL.md",
+        "./ragas-evaluator/SKILL.md",
+        "./obsidian-librarian/SKILL.md"
+      ]
+    },
+    {
+      "name": "afo-automation-skills",
+      "description": "Workflow automation and development tools",
+      "skills": [
+        "./youtube-spec-gen/SKILL.md",
+        "./dev-tool-belt/SKILL.md",
+        "./automated-debugging/SKILL.md",
+        "./suno-composer/SKILL.md"
+      ]
+    },
+    {
+      "name": "afo-monitoring-skills",
+      "description": "System health monitoring and recovery",
+      "skills": [
+        "./health-monitor/SKILL.md",
+        "./docker-recovery/SKILL.md",
+        "./data-pipeline/SKILL.md"
+      ]
+    },
+    {
+      "name": "afo-integration-skills",
+      "description": "External service integration and bridges",
+      "skills": [
+        "./mcp-tool-bridge/SKILL.md",
+        "./multi-cloud-backup/SKILL.md",
+        "./strangler-integrator/SKILL.md",
+        "./web3-manager/SKILL.md"
+      ]
+    },
+    {
+      "name": "afo-philosophy-skills",
+      "description": "Philosophy alignment and soul refinement",
+      "skills": [
+        "./trinity-score-calculator/SKILL.md",
+        "./soul-refine/SKILL.md",
+        "./advanced-cosine/SKILL.md",
+        "./ml-metacognition/SKILL.md"
+      ]
+    },
+    {
+      "name": "afo-strategic-skills",
+      "description": "Strategic command and persona management",
+      "skills": [
+        "./strategy-engine/SKILL.md",
+        "./family-persona/SKILL.md"
+      ]
+    }
+  ],
+  "compatibility": {
+    "claude-code": ">=1.0.0",
+    "codex": ">=0.1.0",
+    "cursor": ">=0.45.0"
+  },
+  "mcp": {
+    "servers": [
+      {
+        "name": "afo-ultimate-mcp",
+        "description": "Universal connector with Trinity Score evaluation",
+        "tools": 12
+      },
+      {
+        "name": "afo-skills-registry-mcp",
+        "description": "All 20 skills as MCP tools",
+        "tools": 20
+      },
+      {
+        "name": "trinity-score-mcp",
+        "description": "Trinity Score calculator",
+        "tools": 1
+      },
+      {
+        "name": "afo-obsidian-mcp",
+        "description": "Obsidian vault integration",
+        "tools": 6
+      }
+    ]
+  },
+  "statistics": {
+    "total_skills": 20,
+    "categories": 7,
+    "plugins": 7,
+    "mcp_servers": 4,
+    "philosophy_average": 94.5
+  }
+}
