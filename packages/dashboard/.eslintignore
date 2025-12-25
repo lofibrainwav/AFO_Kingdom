@@ -4,6 +4,9 @@ out/
 dist/
 build/
 
+# Legacy files
+public/legacy/
+
 # Dependencies
 node_modules/
 
