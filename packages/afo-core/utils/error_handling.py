@@ -177,15 +177,11 @@ async def handle_async_errors(
     return decorator
 
 
-def safe_execute[
-    **PS, R
-](
-    func: Callable[PS, R],
+def safe_execute(
+    func: Callable[..., T],
     default: Any = None,
     log_error: bool = True,
-) -> Callable[
-    PS, R | Any
-]:
+) -> Callable[..., T | Any]:
     """
     안전한 함수 실행 (善 - Goodness)
 
@@ -199,7 +195,7 @@ def safe_execute[
     """
 
     @wraps(func)
-    def wrapper(*args: P.args, **kwargs: P.kwargs) -> T | Any:
+    def wrapper(*args: Any, **kwargs: Any) -> T | Any:
         try:
             return func(*args, **kwargs)
         except Exception as e:

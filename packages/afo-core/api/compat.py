@@ -22,6 +22,12 @@ from typing import TYPE_CHECKING, Any
 if TYPE_CHECKING:
     from datetime import datetime
 
+    from fastapi import APIRouter
+
+pillars_router: APIRouter | None
+system_health_router: APIRouter | None
+health_router: APIRouter | None
+
 try:
     from api.routes.pillars import router as pillars_router
 except ImportError:
@@ -589,6 +595,7 @@ voice_router = _safe_import_router("AFO.api.routers.voice")
 wallet_router = _safe_import_router("AFO.api.routes.wallet", "wallet_router")
 
 # Edge Revalidate Router (Phase 6)
+edge_revalidate_router: APIRouter | None
 try:
     from api.routes.edge_revalidate import router as edge_revalidate_router
 except ImportError:
