@@ -235,7 +235,7 @@ disallow_incomplete_defs = false
 # 【孔子】中庸 - 과도한 엄격함은 진행을 막으니, 잠시 눈을 감아 조화를 이룸
 module = [
     # Top Level Legacy
-    "api.*", "config.*", "llms.*", "afo_soul_engine.*", "afo_skills_registry", "llm_router", "chancellor_graph",
+    "api.*", "config.*", "llms.*", "afo_soul_engine.*", "afo_skills_registry", "llm_router", "chancellor_graph", "api_server",
     # AFO Package Legacy/Broken (Strangler Fig)
     "AFO.afo_skills_registry",
     "AFO.api.*",
