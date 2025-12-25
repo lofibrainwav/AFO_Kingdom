@@ -17,8 +17,9 @@ import os
 from contextlib import asynccontextmanager
 from typing import Any
 
-from AFO.api.compat import get_settings_safe
 from fastapi import FastAPI
+
+from AFO.api.compat import get_settings_safe
 
 # Configure logging
 logger = logging.getLogger(__name__)

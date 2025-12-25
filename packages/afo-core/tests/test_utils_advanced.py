@@ -10,8 +10,7 @@ sys.path.insert(0, str(root_dir))
 
 from AFO.utils.cache_utils import CacheManager, cached
 from AFO.utils.dry_run import DryRunMode, dry_run
-from AFO.utils.framework_selector import (FrameworkName, MissionProfile,
-                                          select_framework)
+from AFO.utils.framework_selector import FrameworkName, MissionProfile, select_framework
 
 
 class TestCacheUtils(unittest.IsolatedAsyncioTestCase):

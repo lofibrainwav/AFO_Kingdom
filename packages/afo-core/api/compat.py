@@ -29,12 +29,14 @@ except ImportError:
 
 try:
     from AFO.api.routes.system_health import router as system_health_router
-except ImportError:
+except ImportError as e:
+    logging.getLogger(__name__).warning(f"System Health Router not available: {e}")
     system_health_router = None
 
 try:
     from AFO.api.routers.health import router as health_router
-except ImportError:
+except ImportError as e:
+    logging.getLogger(__name__).warning(f"Health Router not available: {e}")
     health_router = None
 
 # Configure logging

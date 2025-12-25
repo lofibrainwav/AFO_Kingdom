@@ -40,8 +40,7 @@ class AntigravityEngine:
         self.dynamic_thresholds = self._initialize_thresholds()
         # [Phase B] Protocol Officer 주입 (없으면 생성) - 강제 사용
         if protocol_officer is None and ProtocolOfficer is not None:
-            from services.protocol_officer import \
-                protocol_officer as default_officer
+            from services.protocol_officer import protocol_officer as default_officer
 
             self.protocol_officer = default_officer
         elif protocol_officer is None:

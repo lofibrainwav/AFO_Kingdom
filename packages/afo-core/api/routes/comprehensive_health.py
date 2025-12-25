@@ -19,11 +19,12 @@ import logging
 from datetime import datetime
 from typing import Any
 
+from fastapi import APIRouter
+
 from AFO.config.health_check_config import health_check_config
 from AFO.services.health_service import get_comprehensive_health
 from AFO.utils.automation_tools import AutomationTools
 from AFO.utils.path_utils import add_to_sys_path, get_trinity_os_path
-from fastapi import APIRouter
 
 router = APIRouter(prefix="/api/health", tags=["Comprehensive Health"])
 

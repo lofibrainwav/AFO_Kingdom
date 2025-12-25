@@ -11,11 +11,12 @@ import logging
 from datetime import datetime, timedelta
 from typing import Any
 
+from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel
+
 from AFO.config.settings import Settings
 from AFO.services.antigravity_engine import AntigravityEngine
 from AFO.services.trinity_calculator import TrinityCalculator
-from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
 
 # 로깅 설정 (손자병법: 지피지기)
 logger = logging.getLogger(__name__)

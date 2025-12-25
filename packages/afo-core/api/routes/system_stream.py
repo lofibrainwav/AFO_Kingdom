@@ -25,7 +25,12 @@ router = APIRouter()
 async def log_stream_generator() -> Any:
     """Generate SSE events from Redis Pub/Sub messages."""
     try:
-        redis_client = redis.Redis(host="localhost", port=6379, decode_responses=True)
+        from AFO.config.settings import get_settings
+
+        settings = get_settings()
+        redis_url = settings.REDIS_URL
+        # Parse redis_url to pass to redis.Redis if needed, or use from_url
+        redis_client = redis.Redis.from_url(redis_url, decode_responses=True)
         redis_client.ping()  # Test connection
     except Exception as e:
         logger.error(f"Redis connection failed for Chancellor Stream: {e}")

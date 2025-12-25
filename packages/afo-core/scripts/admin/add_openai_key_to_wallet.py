@@ -30,6 +30,7 @@ def main():
     # API Wallet에 추가
     try:
         import psycopg2
+
         # PostgreSQL 연결 (중앙 설정 사용 - Phase 1 리팩토링)
         from AFO.config.settings import get_settings
         from api_wallet import APIWallet

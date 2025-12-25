@@ -25,8 +25,7 @@ except ImportError:
 
 
 try:
-    from config.friction_calibrator import \
-        friction_calibrator as _friction_calibrator
+    from config.friction_calibrator import friction_calibrator as _friction_calibrator
 
     friction_calibrator: Any = _friction_calibrator
 except ImportError:
