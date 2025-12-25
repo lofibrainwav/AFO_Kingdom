@@ -81,7 +81,7 @@ async def test_mcp_server_direct():
                     )
                 else:
                     print("   ❌ 응답 없음")
-        except asyncio.TimeoutError:
+        except TimeoutError:
             print("   ❌ 타임아웃 (5초)")
         except json.JSONDecodeError as e:
             print(f"   ❌ JSON 파싱 오류: {e}")

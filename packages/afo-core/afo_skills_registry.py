@@ -802,12 +802,51 @@ def register_core_skills() -> SkillRegistry:
         execution_mode=ExecutionMode.SYNC,
         estimated_duration_ms=500,
         philosophy_scores=PhilosophyScore(
-            truth=90,  # Consistent character
-            goodness=98,  # Supportive family
-            beauty=100,  # Rich storytelling
-            serenity=99,  # Emotional stability
+            truth=92,  # Consistent personas
+            goodness=94,  # Respectful interactions
+            beauty=96,  # Engaging dialogue
+            serenity=95,  # smooth roleplay
         ),
     )
+
+    # Skill 11: Verify Full Stack (Consolidated)
+    skill_011 = AFOSkillCard(
+        skill_id="skill_011_verify_full_stack",
+        name="Verify Full Stack Integrity",
+        description="Comprehensive system health check for all AFO components (DB, Redis, API, Dashboard)",
+        category=SkillCategory.HEALTH_MONITORING,
+        tags=["verification", "health", "fullstack", "system"],
+        version="1.0.0",
+        capabilities=[
+            "full_stack_verification",
+            "trinity_score_check",
+            "component_status_report",
+        ],
+        dependencies=["redis", "postgresql", "docker"],
+        execution_mode=ExecutionMode.ASYNC,
+        estimated_duration_ms=2000,
+        philosophy_scores=PhilosophyScore(
+            truth=99, goodness=98, beauty=90, serenity=95
+        ),
+    )
+
+    # Register all
+    for s in [
+        skill_001,
+        skill_002,
+        skill_003,
+        skill_004,
+        skill_005,
+        skill_006,
+        skill_007,
+        skill_008,
+        skill_009,
+        skill_010,
+        skill_011,
+    ]:
+        registry.register(s)
+
+    return registry
 
     # Skill 11: AFO DevTool Belt (Veteran's Weapons)
     skill_011 = AFOSkillCard(

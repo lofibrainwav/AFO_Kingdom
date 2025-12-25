@@ -15,39 +15,18 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
-from AFO.api.compat import (
-    aicpa_router,
-    auth_router,
-    budget_router,
-    chancellor_router,
-    chat_router,
-    council_router,
-    education_system_router,
-    finance_router,
-    got_router,
-    grok_stream_router,
-    health_router,
-    learning_log_router,
-    learning_pipeline,
-    matrix_router,
-    modal_data_router,
-    multi_agent_router,
-    n8n_router,
-    personas_router,
-    pillars_router,
-    rag_query_router,
-    root_router,
-    serenity_router,
-    skills_router,
-    ssot_router,
-    streams_router,
-    system_health_router,
-    trinity_policy_router,
-    trinity_sbt_router,
-    users_router,
-    voice_router,
-    wallet_router,
-)
+from AFO.api.compat import (aicpa_router, auth_router, budget_router,
+                            chancellor_router, chat_router, council_router,
+                            education_system_router, finance_router,
+                            got_router, grok_stream_router, health_router,
+                            learning_log_router, learning_pipeline,
+                            matrix_router, modal_data_router,
+                            multi_agent_router, n8n_router, personas_router,
+                            pillars_router, rag_query_router, root_router,
+                            serenity_router, skills_router, ssot_router,
+                            streams_router, system_health_router,
+                            trinity_policy_router, trinity_sbt_router,
+                            users_router, voice_router, wallet_router)
 
 if TYPE_CHECKING:
     from fastapi import FastAPI
@@ -206,9 +185,8 @@ class AFORouterManager:
 
         # Philosophical Copilot (眞善美孝永 철학 실시간 모니터링)
         try:
-            from AFO.api.routes.philosophical_copilot import (
-                router as philosophical_copilot_router,
-            )
+            from AFO.api.routes.philosophical_copilot import \
+                router as philosophical_copilot_router
 
             self._safe_register_router(
                 philosophical_copilot_router, tags=["철학적 Copilot"]
@@ -219,7 +197,8 @@ class AFORouterManager:
         # Chancellor and streaming systems
         self._safe_register_router(chancellor_router, tags=["LangGraph Optimized"])
         try:
-            from AFO.api.routes.system_stream import router as system_stream_router
+            from AFO.api.routes.system_stream import \
+                router as system_stream_router
 
             self._safe_register_router(system_stream_router, tags=["SSE 스트리밍"])
         except ImportError:
@@ -256,9 +235,12 @@ class AFORouterManager:
 
         try:
             routes_before = len([r for r in self.app.routes if hasattr(r, "path")])
-            self.app.include_router(
-                skills_router, prefix="/api/skills", tags=["Skills"]
-            )
+            prefix = "/api/skills"
+            router_prefix = getattr(skills_router, "prefix", "")
+            if router_prefix:
+                self.app.include_router(skills_router, tags=["Skills"])
+            else:
+                self.app.include_router(skills_router, prefix=prefix, tags=["Skills"])
             routes_after = len([r for r in self.app.routes if hasattr(r, "path")])
             self.registered_routers += routes_after - routes_before
             logger.info(
@@ -270,9 +252,8 @@ class AFORouterManager:
     def _register_comprehensive_health(self) -> None:
         """Register comprehensive health check router."""
         try:
-            from AFO.api.routes.comprehensive_health import (
-                router as comprehensive_health_router,
-            )
+            from AFO.api.routes.comprehensive_health import \
+                router as comprehensive_health_router
 
             self._safe_register_router(comprehensive_health_router, tags=["Health"])
         except ImportError:
@@ -299,7 +280,8 @@ class AFORouterManager:
         """Register compatibility and legacy routers."""
         # Intake API
         try:
-            from AFO.afo_soul_engine.routers.intake import router as intake_router
+            from AFO.afo_soul_engine.routers.intake import \
+                router as intake_router
 
             self._safe_register_router(intake_router, tags=["Intake"])
         except ImportError:
@@ -334,7 +316,8 @@ class AFORouterManager:
 
         # Julie Royal
         try:
-            from AFO.api.routers.julie_royal import router as julie_royal_router
+            from AFO.api.routers.julie_royal import \
+                router as julie_royal_router
 
             self._safe_register_router(julie_royal_router, tags=["Julie Royal"])
         except ImportError:

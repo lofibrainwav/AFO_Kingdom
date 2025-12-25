@@ -10,12 +10,8 @@ from typing import Any
 
 from AFO.utils.cache_utils import cache
 from langchain_core.runnables import RunnableConfig
-from langgraph.checkpoint.base import (
-    BaseCheckpointSaver,
-    Checkpoint,
-    CheckpointMetadata,
-    CheckpointTuple,
-)
+from langgraph.checkpoint.base import (BaseCheckpointSaver, Checkpoint,
+                                       CheckpointMetadata, CheckpointTuple)
 from langgraph.checkpoint.serde.jsonplus import JsonPlusSerializer
 
 

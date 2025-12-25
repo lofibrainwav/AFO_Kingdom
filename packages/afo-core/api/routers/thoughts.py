@@ -39,7 +39,7 @@ async def stream_thoughts(request: Request) -> Any:
                 # Use wait_for to allow checking disconnect + keep-alive
                 data = await asyncio.wait_for(_thought_queue.get(), timeout=5.0)
                 yield {"event": "message", "data": json.dumps(data)}
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 # Keep-alive
                 yield {"event": "ping", "data": "keep-alive"}
             except Exception as e:

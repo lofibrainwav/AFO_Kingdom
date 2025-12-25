@@ -94,7 +94,11 @@ async def trigger_vercel_revalidate(
             if response.status_code == 200:
                 return True, response.status_code, "Revalidation triggered successfully"
             else:
-                return False, response.status_code, f"Vercel returned {response.status_code}"
+                return (
+                    False,
+                    response.status_code,
+                    f"Vercel returned {response.status_code}",
+                )
 
     except httpx.TimeoutException:
         return False, 0, "Request timed out"

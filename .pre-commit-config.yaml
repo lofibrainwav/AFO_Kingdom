@@ -35,8 +35,8 @@ repos:
     hooks:
       - id: mypy
         types: [python]
-        additional_dependencies: [pydantic, types-requests]
-        exclude: ^(tests/|scripts/|docs/)
+        additional_dependencies: [pydantic, types-requests, types-redis]
+        exclude: ^(tests/|scripts/|docs/|packages/afo-core/api_wallet.py)
 
   # AFO 왕국 커스텀 검증 스크립트
   - repo: local

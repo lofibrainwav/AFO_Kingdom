@@ -5,6 +5,7 @@ AFO Kingdom Action Validator - Visual Agent Safety Guardian
 """
 
 from dataclasses import dataclass
+from datetime import UTC
 from enum import Enum
 from typing import Any, Optional
 
@@ -285,7 +286,7 @@ class ActionValidator:
         """현재 타임스탬프"""
         from datetime import datetime, timezone
 
-        return datetime.now(timezone.utc).isoformat()
+        return datetime.now(UTC).isoformat()
 
 
 # 글로벌 인스턴스

@@ -99,7 +99,7 @@ class ClaudeCLIWrapper:
                 logger.error(f"Claude CLI 오류: {error_msg}")
                 return {"error": error_msg, "success": False}
 
-        except asyncio.TimeoutError:
+        except TimeoutError:
             logger.error("Claude CLI 타임아웃")
             return {"error": "Timeout", "success": False}
         except Exception as e:

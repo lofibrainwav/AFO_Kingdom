@@ -18,7 +18,7 @@ from __future__ import annotations
 import os
 import uuid
 from dataclasses import asdict, dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 # Lazy import PostgreSQL driver
@@ -33,7 +33,7 @@ class AuditRecord:
     trinity_score: float = 0.0
     risk_score: float = 0.0
     action: str = "ASK_COMMANDER"  # AUTO_RUN | ASK_COMMANDER
-    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = field(default_factory=lambda: datetime.now(UTC))
     context: dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

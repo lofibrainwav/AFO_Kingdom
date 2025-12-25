@@ -9,15 +9,12 @@ from __future__ import annotations
 
 from typing import Any
 
-from afo_soul_engine.api.models.skills import (
-    SkillExecuteRequest,
-    SkillExecutionResult,
-    SkillFilterRequest,
-    SkillListResponse,
-    SkillRequest,
-    SkillResponse,
-    SkillStatsResponse,
-)
+from afo_soul_engine.api.models.skills import (SkillExecuteRequest,
+                                               SkillExecutionResult,
+                                               SkillFilterRequest,
+                                               SkillListResponse, SkillRequest,
+                                               SkillResponse,
+                                               SkillStatsResponse)
 from afo_soul_engine.api.services.skills_service import SkillsService
 from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import JSONResponse
