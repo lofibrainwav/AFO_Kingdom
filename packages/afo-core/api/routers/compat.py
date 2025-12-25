@@ -7,11 +7,16 @@ Provides API endpoints for React components to consume HTML dashboard data.
 Implements the Strangler Fig pattern for gradual migration from HTML to React.
 """
 
-from typing import Any, Dict, List
+from typing import Any
 
-from AFO.api.compat import (get_personas_list, get_philosophy_pillars,
-                            get_project_stats, get_royal_constitution,
-                            get_service_ports, get_system_architecture)
+from AFO.api.compat import (
+    get_personas_list,
+    get_philosophy_pillars,
+    get_project_stats,
+    get_royal_constitution,
+    get_service_ports,
+    get_system_architecture,
+)
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 

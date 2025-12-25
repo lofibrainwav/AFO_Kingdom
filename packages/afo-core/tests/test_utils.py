@@ -16,11 +16,12 @@ import pytest
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 try:
-    from AFO.utils.container_detector import (ContainerDetector,
-                                              get_redis_container)
-    from AFO.utils.exponential_backoff import (BackoffStrategies,
-                                               ExponentialBackoff,
-                                               retry_with_exponential_backoff)
+    from AFO.utils.container_detector import ContainerDetector, get_redis_container
+    from AFO.utils.exponential_backoff import (
+        BackoffStrategies,
+        ExponentialBackoff,
+        retry_with_exponential_backoff,
+    )
     from AFO.utils.friction_calibrator import FrictionCalibrator
     from AFO.utils.lazy_imports import LazyModule
 
@@ -297,9 +298,11 @@ class TestRedisConnectionReal:
     async def test_shared_clients_and_close(self) -> None:
         """싱글톤 클라이언트 및 종료 테스트"""
         import AFO.utils.redis_connection as rc_module
-        from AFO.utils.redis_connection import (close_redis_connections,
-                                                get_shared_async_redis_client,
-                                                get_shared_redis_client)
+        from AFO.utils.redis_connection import (
+            close_redis_connections,
+            get_shared_async_redis_client,
+            get_shared_redis_client,
+        )
 
         # Reset globals for test
         rc_module._redis_client = None

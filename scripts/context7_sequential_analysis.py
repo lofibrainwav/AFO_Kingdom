@@ -225,7 +225,7 @@ def identify_potential_issues():
                 ):
                     # prefix가 없는 경우
                     router_name = router_file.stem
-                    if router_name not in ["__init__", "health", "root"]:
+                    if router_name not in {"__init__", "health", "root"}:
                         prefix_issues.append(router_name)
         except Exception:
             pass

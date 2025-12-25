@@ -19,8 +19,7 @@ try:
     from julie_cpa.core.julie_engine import AdjustBudgetCommand, julie
 except ImportError:
     # Fallback import strategy
-    from packages.afo_core.julie_cpa.core.julie_engine import (
-        AdjustBudgetCommand, julie)
+    from packages.afo_core.julie_cpa.core.julie_engine import AdjustBudgetCommand, julie
 
 
 async def verify_financial_precision():

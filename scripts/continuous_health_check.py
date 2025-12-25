@@ -203,7 +203,6 @@ def check_core_endpoints() -> dict[str, tuple[bool, dict[str, Any]]]:
     ]
 
     # Family 라우터는 /family로도 등록되어 있을 수 있으므로 별도로 확인
-    family_alt_endpoint = ("Family (Spleen - alt)", "/family/health")
 
     results = {}
     # #region agent log

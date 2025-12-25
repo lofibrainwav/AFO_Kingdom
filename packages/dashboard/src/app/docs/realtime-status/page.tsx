@@ -23,7 +23,7 @@ export default function RealtimeStatusPage() {
            animate={{ opacity: 1, scale: 1 }}
            transition={{ duration: 0.5 }}
         >
-            <RoyalOpsCenter />
+            <RoyalOpsCenter trinityScore={98.5} healthData={{}} />
         </motion.div>
 
         {/* Genesis Component: Tree of Thoughts */}

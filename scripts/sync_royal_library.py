@@ -25,7 +25,6 @@ def parse_markdown(file_path):
     content = pathlib.Path(file_path).read_text(encoding="utf-8")
 
     books = []
-    current_book = None
 
     # Split by Books (Header 2)
     book_sections = re.split(r"## ([IV]+)\. (.+)", content)

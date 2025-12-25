@@ -22,13 +22,12 @@ import re
 import subprocess
 import sys
 from pathlib import Path
-from typing import Dict, List, Optional, Set, Tuple
+from typing import Optional
 
 # AFO Kingdom imports
 try:
     from AFO.observability.rule_constants import WEIGHTS
-    from AFO.services.trinity_calculator import (TrinityCalculator,
-                                                 trinity_calculator)
+    from AFO.services.trinity_calculator import TrinityCalculator, trinity_calculator
 except ImportError:
     print("❌ AFO Kingdom modules not found. Please run from AFO Kingdom root.")
     sys.exit(1)
@@ -82,7 +81,7 @@ class BeautifulCodePropagator:
     코드베이스를 분석하여 Trinity Score 기반 개선을 적용합니다.
     """
 
-    def __init__(self, root_path: str = None):
+    def __init__(self, root_path: str | None = None):
         self.root_path = Path(root_path or Path(__file__).parent.parent.parent)
         self.metrics = CodeQualityMetrics()
         self.beautiful_patterns = self._load_beautiful_patterns()
@@ -161,7 +160,7 @@ class BeautifulCodePropagator:
         """
         python_files = []
 
-        for root, dirs, files in os.walk(self.root_path):
+        for root, _dirs, files in os.walk(self.root_path):
             # 제외 패턴 체크
             if any(re.search(pattern, root) for pattern in self.exclude_patterns):
                 continue

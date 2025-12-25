@@ -31,7 +31,7 @@ def generate_ssot_violation_comment(violations: list[str]) -> str:
     """SSOT 위반 코멘트 생성"""
     links = get_documentation_links()
 
-    comment = f"""## ❌ SSOT Report Gate Failed
+    return f"""## ❌ SSOT Report Gate Failed
 
 보고서 품질 검증에 실패했습니다. AFO 왕국의 표준을 준수해주세요.
 
@@ -50,14 +50,12 @@ def generate_ssot_violation_comment(violations: list[str]) -> str:
 
 문의사항이 있으시면 언제든 말씀해주세요! 🙏"""
 
-    return comment
-
 
 def generate_english_ratio_comment(flagged_reports: list[dict[str, Any]]) -> str:
     """영어 비율 경고 코멘트 생성"""
     links = get_documentation_links()
 
-    comment = f"""## ⚠️ English-heavy Report Detected
+    return f"""## ⚠️ English-heavy Report Detected
 
 협업 효율을 위해 영어 비율을 조정해주세요.
 
@@ -74,8 +72,6 @@ def generate_english_ratio_comment(flagged_reports: list[dict[str, Any]]) -> str
 - 코드와 데이터는 원래 언어 유지
 
 영어 사용은 환영하지만, 협업 효율을 위해 한국어 비중을 조금 높여주세요! 🇰🇷"""
-
-    return comment
 
 
 def generate_combined_comment(

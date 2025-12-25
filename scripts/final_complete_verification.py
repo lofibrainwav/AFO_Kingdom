@@ -243,7 +243,7 @@ def main():
     not_working = [
         name
         for name, data in endpoint_results.items()
-        if data.get("status_code") not in [200, "timeout (expected for streaming)"]
+        if data.get("status_code") not in {200, "timeout (expected for streaming)"}
         and "error" not in data
     ]
     connection_errors = [

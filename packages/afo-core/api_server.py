@@ -13,20 +13,73 @@ Version: 1.0.0
 
 from __future__ import annotations
 
+import importlib.util
 import logging
 import sys
 from pathlib import Path
+from typing import TYPE_CHECKING
+
+
+def _patch_typing_inspection_if_needed() -> None:
+    """Self-heal for a known `typing-inspection` startup crash.
+
+    In some environments, `typing_inspection.typing_objects` raises:
+    `AttributeError: type object 'tuple' has no attribute '_name'` during import.
+    That prevents FastAPI/Pydantic from importing and blocks the API server.
+
+    This patch is safe and idempotent; it only rewrites the installed file when the
+    buggy snippet is detected.
+    """
+
+    spec = importlib.util.find_spec("typing_inspection.typing_objects")
+    if not spec or not spec.origin:
+        return
+
+    path = Path(spec.origin)
+    try:
+        text = path.read_text(encoding="utf-8")
+    except Exception:
+        return
+
+    # Already patched.
+    if "alias_name = getattr(alias" in text:
+        return
+
+    needle = (
+        "if (te_alias := getattr(typing_extensions, alias._name, None)) is not None:"
+    )
+    if needle not in text:
+        return
+
+    replacement = (
+        "alias_name = getattr(alias, '_name', None) or getattr(alias, '__name__', None)\n"
+        "    if not alias_name:\n"
+        "        continue\n"
+        "    if (te_alias := getattr(typing_extensions, alias_name, None)) is not None:"
+    )
+
+    try:
+        path.write_text(text.replace(needle, replacement, 1), encoding="utf-8")
+    except Exception:
+        return
+
+
+_patch_typing_inspection_if_needed()
 
 import uvicorn
+
 # AFO Kingdom imports (clear and organized)
 from AFO.api.config import get_app_config, get_server_config
 from AFO.api.middleware import setup_middleware
-from AFO.api.routers import setup_routers
+from AFO.api.router_manager import setup_routers
+
 # Core FastAPI imports with type hints
-from fastapi import FastAPI
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
+
+if TYPE_CHECKING:
+    from fastapi import FastAPI
 
 # Configure logging
 logging.basicConfig(

@@ -151,7 +151,7 @@ services:
   soul-engine:
     build:
       context: .
-      dockerfile: afo_soul_engine/Dockerfile
+      dockerfile: Dockerfile
     container_name: afo-soul-engine
     user: "1000:1000"                # 善: non-root
     ports:
@@ -187,7 +187,7 @@ services:
   rag-service:
     build:
       context: .
-      dockerfile: afo_soul_engine/Dockerfile
+      dockerfile: Dockerfile
     container_name: afo-rag-service
     user: "1000:1000"                # 善: non-root
     ports:

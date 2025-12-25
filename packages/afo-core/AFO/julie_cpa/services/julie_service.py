@@ -21,7 +21,7 @@ Philosophy:
 from __future__ import annotations
 
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 # Core domain imports
 from AFO.julie_cpa.domain.financial_models import FinancialTransaction

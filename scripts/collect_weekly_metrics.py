@@ -120,7 +120,7 @@ def collect_chaos_test_metrics() -> dict[str, Any]:
 
 def generate_weekly_report(week_info: dict[str, str], metrics: dict[str, Any]) -> str:
     """주간 보고서 생성 (Markdown)"""
-    report = f"""# AFO Kingdom Weekly Metrics Report - {week_info["week"]}
+    return f"""# AFO Kingdom Weekly Metrics Report - {week_info["week"]}
 
 **기간**: {week_info["start"]} ~ {week_info["end"]}
 
@@ -155,8 +155,6 @@ def generate_weekly_report(week_info: dict[str, str], metrics: dict[str, Any]) -
 
 *자동 생성된 보고서 - {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}*
 """
-
-    return report
 
 
 def save_metrics(week_info: dict[str, str], metrics: dict[str, Any]):

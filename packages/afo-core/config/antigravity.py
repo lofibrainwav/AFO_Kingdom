@@ -1,6 +1,7 @@
 # Trinity Score: 90.0 (Established by Chancellor)
 import logging
 import os
+import sys
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Literal
 
@@ -353,6 +354,13 @@ class ConfigWatcher:
             from watchdog.observers import Observer
 
             self.observer: Any = Observer()
+            if (
+                sys.platform == "darwin"
+                and "fsevents" in self.observer.__class__.__name__.lower()
+            ):
+                from watchdog.observers.polling import PollingObserver
+
+                self.observer = PollingObserver()
             self.handler: Any = self._create_handler()
             self.running: bool = False
             logger.info("🔭 ConfigWatcher initialized")
@@ -381,13 +389,51 @@ class ConfigWatcher:
                 self.running = True
                 logger.info("🔭 ConfigWatcher started monitoring .env.antigravity")
             except RuntimeError as e:
-                if "already scheduled" in str(e).lower():
+                msg = str(e).lower()
+                if "already scheduled" in msg:
                     logger.debug(
                         "🔭 ConfigWatcher already running, skipping duplicate start"
                     )
                     self.running = True
-                else:
-                    raise
+                    return
+
+                if "fsevents" in msg or "cannot start" in msg:
+                    try:
+                        from watchdog.observers.polling import PollingObserver
+
+                        self.observer = PollingObserver()
+                        self.observer.schedule(self.handler, path=".", recursive=False)
+                        self.observer.start()
+                        self.running = True
+                        logger.info(
+                            "🔭 ConfigWatcher fallback: PollingObserver active (FSEvents unavailable)"
+                        )
+                        return
+                    except Exception as fallback_e:
+                        raise RuntimeError(
+                            f"ConfigWatcher fallback failed: {fallback_e}"
+                        ) from fallback_e
+
+                raise
+            except SystemError as e:
+                msg = str(e).lower()
+                if "fsevents" in msg or "cannot start" in msg:
+                    try:
+                        from watchdog.observers.polling import PollingObserver
+
+                        self.observer = PollingObserver()
+                        self.observer.schedule(self.handler, path=".", recursive=False)
+                        self.observer.start()
+                        self.running = True
+                        logger.info(
+                            "🔭 ConfigWatcher fallback: PollingObserver active (FSEvents unavailable)"
+                        )
+                        return
+                    except Exception as fallback_e:
+                        raise RuntimeError(
+                            f"ConfigWatcher fallback failed: {fallback_e}"
+                        ) from fallback_e
+                raise
 
 
 # Initialize and start watcher (with error handling)

@@ -134,25 +134,101 @@ class TrinityScoreEngineHybrid:
         }
 
 
+class TrinityScoreMCPServer:
+    @staticmethod
+    def calculate_trinity_score(**metrics: int) -> dict[str, Any]:
+        return TrinityScoreEngineHybrid.evaluate(**metrics)
+
+    @classmethod
+    def run_loop(cls) -> None:
+        for line in sys.stdin:
+            try:
+                if not line.strip():
+                    continue
+
+                request = json.loads(line)
+                method = request.get("method")
+                msg_id = request.get("id")
+                params = request.get("params", {})
+
+                result: dict[str, Any] | None = None
+
+                if method == "initialize":
+                    result = {
+                        "protocolVersion": "2024-11-05",
+                        "capabilities": {"tools": {"listChanged": False}},
+                        "serverInfo": {"name": "TrinityScore", "version": "1.0.0"},
+                    }
+                elif method == "notifications/initialized":
+                    continue
+
+                elif method == "tools/list":
+                    result = {
+                        "tools": [
+                            {
+                                "name": "calculate_trinity_score",
+                                "description": "Calculate 眞善美孝永 Trinity Score (SSOT weights: 35/35/20/8/2).",
+                                "inputSchema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "truth_base": {"type": "integer"},
+                                        "goodness_base": {"type": "integer"},
+                                        "beauty_base": {"type": "integer"},
+                                        "risk_score": {"type": "integer"},
+                                        "friction": {"type": "integer"},
+                                        "eternity_base": {"type": "integer"},
+                                    },
+                                },
+                            }
+                        ]
+                    }
+
+                elif method == "tools/call":
+                    tool_name = params.get("name")
+                    args = params.get("arguments", {})
+                    if tool_name != "calculate_trinity_score":
+                        result = {
+                            "content": [
+                                {
+                                    "type": "text",
+                                    "text": f"Unknown tool: {tool_name}",
+                                }
+                            ],
+                            "isError": True,
+                        }
+                    else:
+                        payload = cls.calculate_trinity_score(
+                            truth_base=int(args.get("truth_base", 100)),
+                            goodness_base=int(args.get("goodness_base", 100)),
+                            beauty_base=int(args.get("beauty_base", 100)),
+                            risk_score=int(args.get("risk_score", 0)),
+                            friction=int(args.get("friction", 0)),
+                            eternity_base=int(args.get("eternity_base", 100)),
+                        )
+                        result = {
+                            "content": [
+                                {
+                                    "type": "text",
+                                    "text": json.dumps(payload, ensure_ascii=False),
+                                }
+                            ],
+                            "isError": False,
+                            "trinity_score": payload,
+                        }
+                else:
+                    result = {"error": f"Unknown method: {method}"}
+
+                response = {"jsonrpc": "2.0", "result": result, "id": msg_id}
+                print(json.dumps(response))
+                sys.stdout.flush()
+            except Exception as e:
+                print(json.dumps({"jsonrpc": "2.0", "error": str(e), "id": None}))
+                sys.stdout.flush()
+
+
 if __name__ == "__main__":
     # If run directly script-wise for testing
     if len(sys.argv) > 1 and sys.argv[1] == "evaluate":
         print(json.dumps(TrinityScoreEngineHybrid.evaluate(risk_score=5)))
     else:
-        # Lazy import asyncio only when needed (MCP server mode)
-        import asyncio
-
-        async def main():
-            # Simple JSON-RPC 2.0 Loop over Stdin/Stdout
-            while True:
-                try:
-                    line = await asyncio.to_thread(sys.stdin.readline)
-                    if not line:
-                        break
-                    json.loads(line)
-                    # Minimal implementation for "tools/list" and "tools/call"
-                    pass
-                except Exception:
-                    break
-
-        asyncio.run(main())
+        TrinityScoreMCPServer.run_loop()

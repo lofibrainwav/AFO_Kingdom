@@ -5,7 +5,7 @@ Protocol Officer를 통한 외교적 메시지 포맷팅
 """
 
 import logging
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
 logger = logging.getLogger(__name__)
 

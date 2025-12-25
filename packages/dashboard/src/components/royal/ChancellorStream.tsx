@@ -39,7 +39,7 @@ export default function ChancellorStream() {
 
   useEffect(() => {
     // SSE Connection to Backend Log Stream
-    const eventSource = new EventSource(`${API_BASE}/api/system/logs/stream`);
+    const eventSource = new EventSource(`${API_BASE}/logs/stream`);
 
     eventSource.onmessage = handleLogMessage;
     eventSource.onerror = handleError;

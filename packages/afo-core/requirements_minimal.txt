@@ -35,6 +35,7 @@ qdrant-client
 
 # Database
 psycopg2-binary
+asyncpg
 pgvector
 sqlalchemy
 

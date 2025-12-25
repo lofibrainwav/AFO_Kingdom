@@ -6,7 +6,7 @@ Trinity Score 기반 ML 예측 기능
 
 import logging
 from datetime import datetime
-from typing import Any, Dict, List
+from typing import Any
 
 import numpy as np
 

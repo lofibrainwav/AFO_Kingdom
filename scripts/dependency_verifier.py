@@ -190,8 +190,7 @@ class DependencyVerifier:
 
         # 별도 스레드에서 실행하여 메인 이벤트 루프 블록 방지
         loop = asyncio.get_event_loop()
-        result = await loop.run_in_executor(None, sync_import_test)
-        return result
+        return await loop.run_in_executor(None, sync_import_test)
 
     async def _analyze_missing_packages(self) -> None:
         """
@@ -206,16 +205,16 @@ class DependencyVerifier:
                 with Path(pyproject_path).open("rb") as f:
                     pyproject_data = tomllib.load(f)
 
-                declared_deps = []
                 # [tool.poetry.dependencies]에서 의존성 추출
                 poetry_deps = (
                     pyproject_data.get("tool", {})
                     .get("poetry", {})
                     .get("dependencies", {})
                 )
-                for dep_name in poetry_deps.keys():
-                    if dep_name != "python":  # python 버전 선언 제외
-                        declared_deps.append(dep_name)
+                # python 버전 선언 제외
+                declared_deps = [
+                    dep_name for dep_name in poetry_deps if dep_name != "python"
+                ]
 
                 # 실제 설치된 것과 비교
                 for dep in declared_deps:
@@ -259,22 +258,22 @@ class DependencyVerifier:
         print(f"  • 코어 패키지: {core_success}/{core_total} 성공")
         print(f"  • 개발 패키지: {dev_success}/{dev_total} 성공")
         print(f"  • 누락 패키지: {total_missing}개")
-        print(f"  • 총 테스트: {self.results['total_tested']}개")
+        print(f"  • 총 테스트: {self.results["total_tested"]}개")
         print(
-            f"  • 성공률: {(self.results['success_count'] / self.results['total_tested'] * 100):.1f}%"
+            f"  • 성공률: {(self.results["success_count"] / self.results["total_tested"] * 100):.1f}%"
         )
 
         if self.results["import_errors"]:
             print("\n⚠️  import 오류가 있는 패키지들:")
             for error in self.results["import_errors"]:
-                print(f"    - {error['package']}: {error['error']}")
+                print(f"    - {error["package"]}: {error["error"]}")
 
         if self.results["missing_packages"]:
             print("\n💡 설치 제안:")
             missing_names = [p["name"] for p in self.results["missing_packages"]]
-            print(f"    pip install {' '.join(missing_names)}")
+            print(f"    pip install {" ".join(missing_names)}")
             print("    # 또는")
-            print(f"    poetry add {' '.join(missing_names)}")
+            print(f"    poetry add {" ".join(missing_names)}")
 
         return {
             "summary": {
@@ -331,7 +330,6 @@ class DependencyVerifier:
             "ragas": "ragas",
             "boto3": "boto3",
             "hcloud": "hcloud",
-            "sentence-transformers": "sentence_transformers",
             "google-genai": "google.genai",
         }
 
@@ -379,7 +377,7 @@ async def main():
     results = await verifier.run_full_verification()
 
     if "error" in results:
-        print(f"\n❌ 검증 실패: {results['error']}")
+        print(f"\n❌ 검증 실패: {results["error"]}")
         sys.exit(1)
     else:
         summary = results.get("summary", {})

@@ -57,10 +57,7 @@ def verify_app_routes():
     try:
         from api_server import app
 
-        routes = []
-        for route in app.routes:
-            if hasattr(route, "path"):
-                routes.append(route.path)
+        routes = [route.path for route in app.routes if hasattr(route, "path")]
 
         target_paths = [
             "/chancellor/health",
@@ -89,7 +86,7 @@ def verify_app_routes():
                         part in route
                         for part in missing.split("/")
                         if part
-                        and part not in ["api", "chancellor", "learning", "grok"]
+                        and part not in {"api", "chancellor", "learning", "grok"}
                     ):
                         print(f"   {route}")
                         break

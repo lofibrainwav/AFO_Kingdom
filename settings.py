@@ -1,9 +1,10 @@
 """
 AFO 왕국 중앙 집중식 설정 관리
-Phase 1 리팩토링: 하드코딩 제거 및 환경 변수 통합
+Phase 1 리팩토링: 하드코딩 제거 및 환경 변수 통합.
 """
 
 import os
+import pathlib
 from typing import ClassVar
 
 from pydantic import Field
@@ -17,7 +18,7 @@ from .trinity import TrinityConfig
 class AFOSettings(BaseSettings):
     """
     AFO 왕국 중앙 설정 클래스
-    모든 환경 변수와 기본값을 한 곳에서 관리
+    모든 환경 변수와 기본값을 한 곳에서 관리.
     """
 
     # ============================================================================
@@ -38,7 +39,9 @@ class AFOSettings(BaseSettings):
     julie: JulieConfig = Field(default_factory=lambda: julie_config)
 
     model_config = SettingsConfigDict(
-        env_file=os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env"),
+        env_file=os.path.join(
+            pathlib.Path(pathlib.Path(__file__).parent).parent, ".env"
+        ),
         env_file_encoding="utf-8",
         extra="ignore",
         case_sensitive=False,
@@ -184,9 +187,9 @@ class AFOSettings(BaseSettings):
         default=None, description="AFO Soul Engine 홈 디렉토리 경로"
     )
     BASE_DIR: str = Field(
-        default=os.path.dirname(
-            os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-        ),
+        default=pathlib.Path(
+            pathlib.Path(pathlib.Path(pathlib.Path(__file__).parent).parent).parent
+        ).parent,
         description="프로젝트 루트 디렉토리",
     )
 
@@ -208,7 +211,7 @@ class AFOSettings(BaseSettings):
     # ============================================================================
 
     def get_postgres_connection_params(self) -> dict:
-        """PostgreSQL 연결 파라미터 반환"""
+        """PostgreSQL 연결 파라미터 반환."""
         if self.DATABASE_URL:
             return {"database_url": self.DATABASE_URL}
 
@@ -221,7 +224,7 @@ class AFOSettings(BaseSettings):
         }
 
     def get_redis_url(self) -> str:
-        """Redis URL 반환"""
+        """Redis URL 반환."""
         if self.REDIS_URL and not self.REDIS_URL.startswith("redis://localhost"):
             return self.REDIS_URL
         return f"redis://{self.REDIS_HOST}:{self.REDIS_PORT}"
@@ -233,7 +236,7 @@ _settings: AFOSettings | None = None
 
 def get_settings(env: str | None = None) -> AFOSettings:
     """
-    전역 설정 인스턴스 반환 (싱글톤)
+    전역 설정 인스턴스 반환 (싱글톤).
 
     Args:
         env: 환경 이름 ("dev", "prod", "test"). None이면 AFO_ENV 환경 변수 사용
@@ -250,7 +253,7 @@ def get_settings(env: str | None = None) -> AFOSettings:
     # 환경별 설정 클래스 로드
     settings_class: type[AFOSettings]
 
-    if env == "prod" or env == "production":
+    if env in {"prod", "production"}:
         try:
             from .settings_prod import AFOSettingsProd
 
@@ -258,7 +261,7 @@ def get_settings(env: str | None = None) -> AFOSettings:
         except ImportError:
             # Fallback: 기본 설정 사용
             settings_class = AFOSettings
-    elif env == "test" or env == "testing":
+    elif env in {"test", "testing"}:
         try:
             from .settings_test import AFOSettingsTest
 
@@ -278,7 +281,6 @@ def get_settings(env: str | None = None) -> AFOSettings:
     # 싱글톤 인스턴스 생성
     if _settings is None:
         _settings = settings_class()
-        print(f"✅ AFO 설정 로드 완료: {env} 환경 ({settings_class.__name__})")
 
     return _settings
 

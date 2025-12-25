@@ -1,27 +1,85 @@
-"""
-MCP Server Verification Script
-Verify AFO Ultimate MCP Server via JSON-RPC 2.0 (stdio)
+"""MCP Server Verification Script
+
+Verifies the AFO Ultimate MCP server via JSON-RPC 2.0 (stdio).
+
+SSOT:
+- Prefers `.cursor/mcp.json` server config (afo-ultimate-mcp), so the same interpreter/env
+  is used by Cursor + Codex + backend integrations.
 """
 
 import json
+import os
 import pathlib
+import re
+import selectors
 import subprocess
+import sys
+import time
 
-SERVER_PATH = "packages/trinity-os/trinity_os/servers/afo_ultimate_mcp_server.py"
+REPO_ROOT = pathlib.Path(__file__).resolve().parent.parent
+
+
+_DEFAULT_PATTERN = re.compile(r"\$\{([A-Z0-9_]+):-([^}]+)\}")
+
+
+def _expand_default_vars(value: str) -> str:
+    value = _DEFAULT_PATTERN.sub(lambda m: os.getenv(m.group(1), m.group(2)), value)
+    return os.path.expandvars(value)
+
+
+def _load_server_command() -> tuple[list[str], dict[str, str]]:
+    cfg_path = REPO_ROOT / ".cursor" / "mcp.json"
+    if cfg_path.exists():
+        data = json.loads(cfg_path.read_text(encoding="utf-8"))
+        server = data.get("mcpServers", {}).get("afo-ultimate-mcp")
+        if isinstance(server, dict) and server.get("command") and server.get("args"):
+            cmd = [_expand_default_vars(str(server["command"]))]
+            args = [_expand_default_vars(str(a)) for a in (server.get("args") or [])]
+
+            env = os.environ.copy()
+            for k, v in (server.get("env") or {}).items():
+                env[str(k)] = _expand_default_vars(str(v))
+
+            env.setdefault("WORKSPACE_ROOT", str(REPO_ROOT))
+            env.setdefault(
+                "PYTHONPYCACHEPREFIX", str(REPO_ROOT / ".pycache_mcp_verify")
+            )
+
+            return [*cmd, *args], env
+
+    # Fallback (legacy): best-effort.
+    return [
+        sys.executable,
+        "packages/trinity-os/trinity_os/servers/afo_ultimate_mcp_server.py",
+    ], os.environ.copy()
 
 
 def verify_mcp():
     print("🔌 Starting AFO Ultimate MCP Server Verification...")
 
+    cmd, env = _load_server_command()
+
     # Start the server process
     process = subprocess.Popen(
-        ["python", SERVER_PATH],
+        cmd,
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         text=True,
         bufsize=0,  # Unbuffered
+        env=env,
     )
+
+    sel = selectors.DefaultSelector()
+    assert process.stdout is not None
+    sel.register(process.stdout, selectors.EVENT_READ)
+
+    def read_line(timeout: float = 10.0) -> str:
+        events = sel.select(timeout)
+        if not events:
+            raise TimeoutError("timeout waiting for MCP response")
+        assert process.stdout is not None
+        return process.stdout.readline()
 
     try:
         # 1. Initialize
@@ -39,7 +97,7 @@ def verify_mcp():
         process.stdin.write(json.dumps(init_req) + "\n")
         process.stdin.flush()
 
-        response_line = process.stdout.readline()
+        response_line = read_line(timeout=30.0)
         if not response_line:
             print("❌ No response from server.")
             return
@@ -49,18 +107,29 @@ def verify_mcp():
         assert resp["result"]["serverInfo"]["name"] == "AfoUltimate"
         print("✅ Initialize Success")
 
+        # MCP handshake requires notifications/initialized after initialize.
+        process.stdin.write(
+            json.dumps(
+                {"jsonrpc": "2.0", "method": "notifications/initialized", "params": {}}
+            )
+            + "\n"
+        )
+        process.stdin.flush()
+
         # 2. List Tools
         print("\n🔹 Requesting tools/list...")
         list_req = {"jsonrpc": "2.0", "id": 2, "method": "tools/list", "params": {}}
         process.stdin.write(json.dumps(list_req) + "\n")
         process.stdin.flush()
 
-        response_line = process.stdout.readline()
+        response_line = read_line(timeout=30.0)
         print(f"Server Response: {response_line.strip()}")
         resp = json.loads(response_line)
         tools = resp["result"]["tools"]
         tool_names = [t["name"] for t in tools]
         print(f"Tools Found: {tool_names}")
+
+        has_playwright = "browser_navigate" in tool_names
 
         assert "shell_execute" in tool_names
         assert "kingdom_health" in tool_names
@@ -88,7 +157,7 @@ def verify_mcp():
         process.stdin.write(json.dumps(trinity_req) + "\n")
         process.stdin.flush()
 
-        response_line = process.stdout.readline()
+        response_line = read_line(timeout=30.0)
         print(f"Tool Response: {response_line.strip()}")
         resp = json.loads(response_line)
         content = json.loads(resp["result"]["content"][0]["text"])
@@ -112,7 +181,7 @@ def verify_mcp():
         process.stdin.write(json.dumps(fact_req) + "\n")
         process.stdin.flush()
 
-        response_line = process.stdout.readline()
+        response_line = read_line(timeout=30.0)
         print(f"Tool Response: {response_line.strip()}")
         resp = json.loads(response_line)
         content = json.loads(resp["result"]["content"][0]["text"])
@@ -133,7 +202,7 @@ def verify_mcp():
         process.stdin.write(json.dumps(shell_req) + "\n")
         process.stdin.flush()
 
-        response_line = process.stdout.readline()
+        response_line = read_line(timeout=30.0)
         print(f"Tool Response: {response_line.strip()}")
         resp = json.loads(response_line)
         content = resp["result"]["content"][0]["text"]
@@ -158,7 +227,7 @@ def verify_mcp():
         process.stdin.write(json.dumps(write_req) + "\n")
         process.stdin.flush()
 
-        response_line = process.stdout.readline()
+        response_line = read_line(timeout=30.0)
         print(f"Tool Response: {response_line.strip()}")
         resp = json.loads(response_line)
         assert not resp["result"]["isError"]
@@ -178,7 +247,7 @@ def verify_mcp():
         process.stdin.write(json.dumps(read_req) + "\n")
         process.stdin.flush()
 
-        response_line = process.stdout.readline()
+        response_line = read_line(timeout=30.0)
         print(f"Tool Response: {response_line.strip()}")
         resp = json.loads(response_line)
         content = resp["result"]["content"][0]["text"]
@@ -204,7 +273,7 @@ def verify_mcp():
         process.stdin.write(json.dumps(math_req) + "\n")
         process.stdin.flush()
 
-        response_line = process.stdout.readline()
+        response_line = read_line(timeout=30.0)
         print(f"Tool Response: {response_line.strip()}")
         resp = json.loads(response_line)
         # Result should be 1*0.5 + 2*0.5 + 3*0.5 = 0.5 + 1.0 + 1.5 = 3.0
@@ -231,7 +300,7 @@ def verify_mcp():
         process.stdin.write(json.dumps(think_req) + "\n")
         process.stdin.flush()
 
-        response_line = process.stdout.readline()
+        response_line = read_line(timeout=30.0)
         print(f"Tool Response: {response_line.strip()}")
         resp = json.loads(response_line)
         content = json.loads(resp["result"]["content"][0]["text"])
@@ -252,7 +321,7 @@ def verify_mcp():
         process.stdin.write(json.dumps(ctx_req) + "\n")
         process.stdin.flush()
 
-        response_line = process.stdout.readline()
+        response_line = read_line(timeout=30.0)
         print(f"Tool Response: {response_line.strip()}")
         resp = json.loads(response_line)
         content = json.loads(resp["result"]["content"][0]["text"])
@@ -277,7 +346,7 @@ def verify_mcp():
         process.stdin.write(json.dumps(soul_req) + "\n")
         process.stdin.flush()
 
-        response_line = process.stdout.readline()
+        response_line = read_line(timeout=30.0)
         print(f"Tool Response: {response_line.strip()}")
         resp = json.loads(response_line)
         content = json.loads(resp["result"]["content"][0]["text"])
@@ -288,58 +357,56 @@ def verify_mcp():
 
         # 12. Test Playwright Bridge (Navigate & Scrape)
         print("\n🔹 Testing Playwright Bridge...")
-        try:
-            # Navigate
-            nav_req = {
-                "jsonrpc": "2.0",
-                "id": 12,
-                "method": "tools/call",
-                "params": {
-                    "name": "browser_navigate",
-                    "arguments": {"url": "http://example.com"},
-                },
-            }
-            process.stdin.write(json.dumps(nav_req) + "\n")
-            process.stdin.flush()
-
-            response_line = process.stdout.readline()
-            print(f"Tool Response (Navigate): {response_line.strip()}")
-            resp = json.loads(response_line)
-            content = json.loads(resp["result"]["content"][0]["text"])
-
-            if content.get("success"):
-                print("✅ Browser Navigation Success")
-
-                # Scrape
-                scrape_req = {
+        if not has_playwright:
+            print("ℹ️ Playwright tools not available. Skipping browser_* checks.")
+        else:
+            try:
+                # Navigate
+                nav_req = {
                     "jsonrpc": "2.0",
-                    "id": 13,
+                    "id": 12,
                     "method": "tools/call",
                     "params": {
-                        "name": "browser_scrape",
-                        "arguments": {"selector": "h1"},
+                        "name": "browser_navigate",
+                        "arguments": {"url": "http://example.com"},
                     },
                 }
-                process.stdin.write(json.dumps(scrape_req) + "\n")
+                process.stdin.write(json.dumps(nav_req) + "\n")
                 process.stdin.flush()
 
-                response_line = process.stdout.readline()
-                print(f"Tool Response (Scrape): {response_line.strip()}")
+                response_line = read_line(timeout=60.0)
+                print(f"Tool Response (Navigate): {response_line.strip()}")
                 resp = json.loads(response_line)
                 content = json.loads(resp["result"]["content"][0]["text"])
-                assert "Example Domain" in content["content"]
-                print("✅ Browser Scrape Success")
-            else:
-                print(f"⚠️ Browser Navigation Failed: {content.get("error")}")
-                print("Skipping Scrape Test due to Navigation Failure")
 
-        except Exception as e:
-            print(f"⚠️ Playwright Test Skipped/Failed: {e}")
+                if content.get("success"):
+                    print("✅ Browser Navigation Success")
 
-        # Print stderr if any
-        stderr_output = process.stderr.read()
-        if stderr_output:
-            print(f"STDERR: {stderr_output}")
+                    # Scrape
+                    scrape_req = {
+                        "jsonrpc": "2.0",
+                        "id": 13,
+                        "method": "tools/call",
+                        "params": {
+                            "name": "browser_scrape",
+                            "arguments": {"selector": "h1"},
+                        },
+                    }
+                    process.stdin.write(json.dumps(scrape_req) + "\n")
+                    process.stdin.flush()
+
+                    response_line = read_line(timeout=60.0)
+                    print(f"Tool Response (Scrape): {response_line.strip()}")
+                    resp = json.loads(response_line)
+                    content = json.loads(resp["result"]["content"][0]["text"])
+                    assert "Example Domain" in content["content"]
+                    print("✅ Browser Scrape Success")
+                else:
+                    print(f"⚠️ Browser Navigation Failed: {content.get("error")}")
+                    print("Skipping Scrape Test due to Navigation Failure")
+
+            except Exception as e:
+                print(f"⚠️ Playwright Test Skipped/Failed: {e}")
 
     finally:
         process.terminate()
@@ -347,6 +414,15 @@ def verify_mcp():
             process.wait(timeout=2)
         except subprocess.TimeoutExpired:
             process.kill()
+
+        # Print stderr if any (safe only after termination)
+        try:
+            if process.stderr is not None:
+                stderr_output = process.stderr.read()
+                if stderr_output:
+                    print(f"STDERR: {stderr_output}")
+        except Exception:
+            pass
 
     print("\n🎉 MCP Verification Complete!")
 

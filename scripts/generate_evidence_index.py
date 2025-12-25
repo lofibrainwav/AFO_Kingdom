@@ -10,6 +10,7 @@ for operational analytics and trend monitoring.
 import json
 import operator
 import statistics
+import sys
 from collections import Counter
 from datetime import UTC, datetime
 from pathlib import Path
@@ -162,9 +163,7 @@ class EvidenceIndexGenerator:
             if "metadata" in ev and "generated_at" in ev["metadata"]:
                 # Parse ISO datetime and extract date
                 try:
-                    dt = datetime.fromisoformat(
-                        ev["metadata"]["generated_at"].replace("Z", "+00:00")
-                    )
+                    dt = datetime.fromisoformat(ev["metadata"]["generated_at"])
                     failure_dates.append(dt.date().isoformat())
                 except:
                     pass
@@ -205,7 +204,7 @@ class EvidenceIndexGenerator:
         print(f"✅ 유효한 증거 데이터: {len(all_evidence)}개")
 
         # Generate index
-        index = {
+        return {
             "metadata": {
                 "generated_at": datetime.now(UTC).isoformat() + "Z",
                 "kingdom": "AFO Kingdom",
@@ -238,8 +237,6 @@ class EvidenceIndexGenerator:
                 for date, ev in date_evidence
             },
         }
-
-        return index
 
     def save_index(self, index: dict[str, Any]) -> bool:
         """Save the evidence index to file"""
@@ -288,4 +285,4 @@ def main():
 
 
 if __name__ == "__main__":
-    exit(main())
+    sys.exit(main())

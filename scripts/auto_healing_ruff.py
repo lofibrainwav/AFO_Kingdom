@@ -150,12 +150,12 @@ class RuffPurifier:
             return errors
 
         except FileNotFoundError:
-            logger.error(
+            logger.exception(
                 "[美] Ruff가 설치되지 않았습니다. 'pip install ruff' 실행 필요"
             )
             return []
         except Exception as e:
-            logger.error("[美] 오류 수집 실패: %s", e)
+            logger.exception("[美] 오류 수집 실패: %s", e)
             return []
 
     def classify_errors(
@@ -190,7 +190,7 @@ class RuffPurifier:
 
         fixable: list[dict[str, Any]] = []
 
-        for code, errors in classified.items():
+        for errors in classified.values():
             for error in errors:
                 error_code = error.get("code", "").upper()
                 if error_code in auto_fixable_codes:
@@ -271,7 +271,7 @@ class RuffPurifier:
             }
 
         except Exception as e:
-            logger.error("[美] 자동 수정 실패: %s", e)
+            logger.exception("[美] 자동 수정 실패: %s", e)
             return {"status": "error", "message": str(e)}
 
     def verify_fixes(self) -> dict[str, Any]:

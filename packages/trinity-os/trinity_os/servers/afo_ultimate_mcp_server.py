@@ -9,27 +9,66 @@ from pathlib import Path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 # Import Sibling Modules (The Fragments)
-try:
-    from afo_skills_mcp import AfoSkillsMCP
-    from context7_mcp import Context7MCP
-    from playwright_bridge_mcp import PlaywrightBridgeMCP
-    from sequential_thinking_mcp import SequentialThinkingMCP
-    from trinity_score_mcp import TrinityScoreEngineHybrid
+# Import individually so optional deps (e.g., playwright) don't disable the entire server.
+AfoSkillsMCP = None
+Context7MCP = None
+PlaywrightBridgeMCP = None
+SequentialThinkingMCP = None
+TrinityScoreEngineHybrid = None
 
-    MODULES_LOADED = True
+SKILLS_LOADED = False
+CONTEXT7_LOADED = False
+SEQUENTIAL_LOADED = False
+TRINITY_LOADED = False
+PLAYWRIGHT_LOADED = False
+
+try:
+    from afo_skills_mcp import AfoSkillsMCP as _AfoSkillsMCP
+
+    AfoSkillsMCP = _AfoSkillsMCP
+    SKILLS_LOADED = True
 except ImportError as e:
-    MODULES_LOADED = False
-    print(f"⚠️ Failed to load sibling modules: {e}", file=sys.stderr)
+    print(f"⚠️ Failed to load AfoSkillsMCP: {e}", file=sys.stderr)
+
+try:
+    from context7_mcp import Context7MCP as _Context7MCP
+
+    Context7MCP = _Context7MCP
+    CONTEXT7_LOADED = True
+except ImportError as e:
+    print(f"⚠️ Failed to load Context7MCP: {e}", file=sys.stderr)
+
+try:
+    from sequential_thinking_mcp import SequentialThinkingMCP as _SequentialThinkingMCP
+
+    SequentialThinkingMCP = _SequentialThinkingMCP
+    SEQUENTIAL_LOADED = True
+except ImportError as e:
+    print(f"⚠️ Failed to load SequentialThinkingMCP: {e}", file=sys.stderr)
+
+try:
+    from trinity_score_mcp import TrinityScoreEngineHybrid as _TrinityScoreEngineHybrid
+
+    TrinityScoreEngineHybrid = _TrinityScoreEngineHybrid
+    TRINITY_LOADED = True
+except ImportError as e:
+    print(f"⚠️ Failed to load TrinityScoreEngineHybrid: {e}", file=sys.stderr)
+
+try:
+    from playwright_bridge_mcp import PlaywrightBridgeMCP as _PlaywrightBridgeMCP
+
+    PlaywrightBridgeMCP = _PlaywrightBridgeMCP
+    PLAYWRIGHT_LOADED = True
+except ImportError as e:
+    print(f"⚠️ Failed to load PlaywrightBridgeMCP: {e}", file=sys.stderr)
 
 # Trinity Score Evaluator (동적 점수 계산)
 try:
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../../../afo-core"))
-    from AFO.services.mcp_tool_trinity_evaluator import \
-        mcp_tool_trinity_evaluator
+    from AFO.services.mcp_tool_trinity_evaluator import mcp_tool_trinity_evaluator
 except ImportError:
     try:
-        from AFO.services.mcp_tool_trinity_evaluator import \
-            mcp_tool_trinity_evaluator
+        from AFO.services.mcp_tool_trinity_evaluator import mcp_tool_trinity_evaluator
     except ImportError:
         mcp_tool_trinity_evaluator = None
 
@@ -177,8 +216,7 @@ class AfoUltimateMCPServer:
                         },
                     ]
 
-                    if MODULES_LOADED:
-                        # Trinity Tools
+                    if TRINITY_LOADED:
                         tools.append(
                             {
                                 "name": "calculate_trinity_score",
@@ -197,7 +235,8 @@ class AfoUltimateMCPServer:
                                 },
                             }
                         )
-                        # Skills Tools
+
+                    if SKILLS_LOADED:
                         tools.append(
                             {
                                 "name": "verify_fact",
@@ -232,6 +271,8 @@ class AfoUltimateMCPServer:
                                 },
                             }
                         )
+
+                    if SEQUENTIAL_LOADED:
                         tools.append(
                             {
                                 "name": "sequential_thinking",
@@ -253,6 +294,8 @@ class AfoUltimateMCPServer:
                                 },
                             }
                         )
+
+                    if CONTEXT7_LOADED:
                         tools.append(
                             {
                                 "name": "retrieve_context",
@@ -267,7 +310,8 @@ class AfoUltimateMCPServer:
                                 },
                             }
                         )
-                        # Browser Tools (Playwright Bridge)
+
+                    if PLAYWRIGHT_LOADED:
                         tools.append(
                             {
                                 "name": "browser_navigate",
@@ -385,108 +429,145 @@ class AfoUltimateMCPServer:
                             trinity_metadata = None
 
                     # 2. Advanced Tools (from siblings)
-                    if MODULES_LOADED and tool_name not in [
+                    if tool_name not in [
                         "shell_execute",
                         "read_file",
                         "write_file",
                         "kingdom_health",
                     ]:
                         if tool_name == "calculate_trinity_score":
-                            # Convert args to kwargs
-                            res = TrinityScoreEngineHybrid.evaluate(**args)
-                            content = json.dumps(res, indent=2, ensure_ascii=False)
-                            trinity_metadata = res  # Use result as metadata itself
+                            if not TRINITY_LOADED or TrinityScoreEngineHybrid is None:
+                                content = (
+                                    "Tool not available: trinity_score_mcp not loaded"
+                                )
+                                is_error = True
+                            else:
+                                res = TrinityScoreEngineHybrid.evaluate(**args)
+                                content = json.dumps(res, indent=2, ensure_ascii=False)
+                                trinity_metadata = res
 
                         elif tool_name == "verify_fact":
-                            res = AfoSkillsMCP.verify_fact(
-                                args.get("claim"), args.get("context", "")
-                            )
-                            content = json.dumps(res, indent=2, ensure_ascii=False)
-                            # Implied Trinity Score for fact verification
-                            trinity_metadata = {
-                                "truth_impact": (
-                                    10 if res["verdict"] == "PLAUSIBLE" else -10
+                            if not SKILLS_LOADED or AfoSkillsMCP is None:
+                                content = (
+                                    "Tool not available: afo_skills_mcp not loaded"
                                 )
-                            }
-
-                        elif tool_name == "cupy_weighted_sum":
-                            res = AfoSkillsMCP.cupy_weighted_sum(
-                                args.get("data", []), args.get("weights", [])
-                            )
-                            content = str(res)
-
-                        elif tool_name == "sequential_thinking":
-                            res = SequentialThinkingMCP.process_thought(
-                                args.get("thought", ""),
-                                args.get("thought_number", 1),
-                                args.get("total_thoughts", 1),
-                                args.get("next_thought_needed", False),
-                            )
-                            content = json.dumps(res, indent=2, ensure_ascii=False)
-                            # Extract Trinity Metadata
-                            if "metadata" in res:
+                                is_error = True
+                            else:
+                                res = AfoSkillsMCP.verify_fact(
+                                    args.get("claim"), args.get("context", "")
+                                )
+                                content = json.dumps(res, indent=2, ensure_ascii=False)
                                 trinity_metadata = {
-                                    "truth_impact": res["metadata"].get(
-                                        "truth_impact", 0
-                                    ),
-                                    "serenity_impact": res["metadata"].get(
-                                        "serenity_impact", 0
-                                    ),
-                                }
-
-                        elif tool_name == "retrieve_context":
-                            res = Context7MCP.retrieve_context(
-                                args.get("query", ""), args.get("domain", "general")
-                            )
-                            content = json.dumps(res, indent=2, ensure_ascii=False)
-                            if "metadata" in res:
-                                trinity_metadata = {
-                                    "truth_impact": res["metadata"].get(
-                                        "truth_impact", 0
+                                    "truth_impact": (
+                                        10 if res["verdict"] == "PLAUSIBLE" else -10
                                     )
                                 }
 
+                        elif tool_name == "cupy_weighted_sum":
+                            if not SKILLS_LOADED or AfoSkillsMCP is None:
+                                content = (
+                                    "Tool not available: afo_skills_mcp not loaded"
+                                )
+                                is_error = True
+                            else:
+                                res = AfoSkillsMCP.cupy_weighted_sum(
+                                    args.get("data", []), args.get("weights", [])
+                                )
+                                content = str(res)
+
+                        elif tool_name == "sequential_thinking":
+                            if not SEQUENTIAL_LOADED or SequentialThinkingMCP is None:
+                                content = "Tool not available: sequential_thinking_mcp not loaded"
+                                is_error = True
+                            else:
+                                res = SequentialThinkingMCP.process_thought(
+                                    args.get("thought", ""),
+                                    args.get("thought_number", 1),
+                                    args.get("total_thoughts", 1),
+                                    args.get("next_thought_needed", False),
+                                )
+                                content = json.dumps(res, indent=2, ensure_ascii=False)
+                                if "metadata" in res:
+                                    trinity_metadata = {
+                                        "truth_impact": res["metadata"].get(
+                                            "truth_impact", 0
+                                        ),
+                                        "serenity_impact": res["metadata"].get(
+                                            "serenity_impact", 0
+                                        ),
+                                    }
+
+                        elif tool_name == "retrieve_context":
+                            if not CONTEXT7_LOADED or Context7MCP is None:
+                                content = "Tool not available: context7_mcp not loaded"
+                                is_error = True
+                            else:
+                                res = Context7MCP.retrieve_context(
+                                    args.get("query", ""),
+                                    args.get("domain", "general"),
+                                )
+                                content = json.dumps(res, indent=2, ensure_ascii=False)
+                                if "metadata" in res:
+                                    trinity_metadata = {
+                                        "truth_impact": res["metadata"].get(
+                                            "truth_impact", 0
+                                        )
+                                    }
+
                         # Browser Bridge Tools
                         elif tool_name == "browser_navigate":
-                            content = json.dumps(
-                                PlaywrightBridgeMCP.navigate(args.get("url")), indent=2
-                            )
+                            if not PLAYWRIGHT_LOADED or PlaywrightBridgeMCP is None:
+                                content = "Tool not available: playwright_bridge_mcp not loaded"
+                                is_error = True
+                            else:
+                                content = json.dumps(
+                                    PlaywrightBridgeMCP.navigate(args.get("url")),
+                                    indent=2,
+                                )
                         elif tool_name == "browser_screenshot":
-                            content = json.dumps(
-                                PlaywrightBridgeMCP.screenshot(
-                                    args.get("path", "screenshot.png")
-                                ),
-                                indent=2,
-                            )
+                            if not PLAYWRIGHT_LOADED or PlaywrightBridgeMCP is None:
+                                content = "Tool not available: playwright_bridge_mcp not loaded"
+                                is_error = True
+                            else:
+                                content = json.dumps(
+                                    PlaywrightBridgeMCP.screenshot(
+                                        args.get("path", "screenshot.png")
+                                    ),
+                                    indent=2,
+                                )
                         elif tool_name == "browser_click":
-                            content = json.dumps(
-                                PlaywrightBridgeMCP.click(args.get("selector")),
-                                indent=2,
-                            )
+                            if not PLAYWRIGHT_LOADED or PlaywrightBridgeMCP is None:
+                                content = "Tool not available: playwright_bridge_mcp not loaded"
+                                is_error = True
+                            else:
+                                content = json.dumps(
+                                    PlaywrightBridgeMCP.click(args.get("selector")),
+                                    indent=2,
+                                )
                         elif tool_name == "browser_type":
-                            content = json.dumps(
-                                PlaywrightBridgeMCP.type_text(
-                                    args.get("selector"), args.get("text")
-                                ),
-                                indent=2,
-                            )
+                            if not PLAYWRIGHT_LOADED or PlaywrightBridgeMCP is None:
+                                content = "Tool not available: playwright_bridge_mcp not loaded"
+                                is_error = True
+                            else:
+                                content = json.dumps(
+                                    PlaywrightBridgeMCP.type_text(
+                                        args.get("selector"), args.get("text")
+                                    ),
+                                    indent=2,
+                                )
                         elif tool_name == "browser_scrape":
-                            content = json.dumps(
-                                PlaywrightBridgeMCP.scrape(args.get("selector")),
-                                indent=2,
-                            )
+                            if not PLAYWRIGHT_LOADED or PlaywrightBridgeMCP is None:
+                                content = "Tool not available: playwright_bridge_mcp not loaded"
+                                is_error = True
+                            else:
+                                content = json.dumps(
+                                    PlaywrightBridgeMCP.scrape(args.get("selector")),
+                                    indent=2,
+                                )
 
                         else:
                             content = f"Unknown tool: {tool_name}"
-                    elif tool_name not in [
-                        "shell_execute",
-                        "read_file",
-                        "write_file",
-                        "kingdom_health",
-                    ]:
-                        content = (
-                            f"Tool not available (Modules failed to load): {tool_name}"
-                        )
+                            is_error = True
 
                     # Construct Response
                     result_body = [{"type": "text", "text": str(content)}]

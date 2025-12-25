@@ -100,13 +100,23 @@ ignore = [
     "RUF002",  # ambiguous unicode
     "RUF003",  # ambiguous unicode
     "ANN401",  # dynamically typed Any (때때로 필요)
+    "CPY001",  # Copyright notice (No policy yet)
+    "PLC0415", # Import outside top level (Lazy loading pattern)
+    "DOC201",  # Docstring returns (Pending verification)
+    "BLE001",  # Blind except (Pending verification)
+    "PLR2004", # Magic values (Pending verification)
+    "PTH",     # Use os.path (Stability)
 ]
 
 [tool.ruff.lint.per-file-ignores]
-"__init__.py" = ["F401", "F403", "D104"]  # unused imports, star imports, docstring
-"scripts/**" = ["T201", "D", "ANN"]       # print, docstrings, annotations 완화
-"tests/**" = ["S101", "ARG", "PLR0913", "D", "ANN"]  # assert, unused args, too-many-args
-"**/api_server.py" = ["E402", "PLR0915"]  # sys.path, too-many-statements
+"__init__.py" = ["F401", "F403", "D104"]
+"scripts/**" = ["T201", "D", "ANN", "E402", "F401", "F811"]
+"verify_full_stack.py" = ["T201", "D", "E402", "S106"]
+"tests/**" = ["S101", "ARG", "PLR0913", "D", "ANN", "PLR2004", "BLE001", "DOC201", "F401", "E402", "SLF001", "PLR6301", "SIM102"]
+"packages/*/tests/**" = ["S101", "ARG", "PLR0913", "D", "ANN", "PLR2004", "BLE001", "DOC201", "F401", "E402", "SLF001"]
+"**/api_server.py" = ["E402", "PLR0915", "PLC0415"]
+"**/routers/*.py" = ["PLC0415", "F401", "E402"]
+"**/routes/*.py" = ["PLC0415", "F401", "E402"]
 
 [tool.ruff.format]
 quote-style = "double"

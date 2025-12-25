@@ -84,7 +84,7 @@ class MyPyPurifier:
                             file_path = parts[0]
                             try:
                                 line_num = int(parts[1])
-                                error_type = parts[2].strip()  # "error"
+                                parts[2].strip()  # "error"
                                 error_msg = parts[3].strip()
 
                                 # 오류 코드 추출
@@ -113,12 +113,12 @@ class MyPyPurifier:
             return errors
 
         except FileNotFoundError:
-            logger.error(
+            logger.exception(
                 "[眞] MyPy가 설치되지 않았습니다. 'pip install mypy' 실행 필요"
             )
             return []
         except Exception as e:
-            logger.error("[眞] 오류 수집 실패: %s", e)
+            logger.exception("[眞] 오류 수집 실패: %s", e)
             return []
 
     def classify_errors(
@@ -233,7 +233,7 @@ class MyPyPurifier:
                     logger.info(f"[眞] 수정 완료: {file_path} ({len(fix["errors"])}개)")
 
             except Exception as e:
-                logger.error("[眞] 수정 실패: %s - %s", file_path, e)
+                logger.exception("[眞] 수정 실패: %s - %s", file_path, e)
                 results["failed_files"].append(
                     {"file": str(file_path), "error": str(e)}
                 )

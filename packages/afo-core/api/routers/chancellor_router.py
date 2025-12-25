@@ -45,8 +45,9 @@ _chancellor_import_error: str | None = None
 def _import_chancellor_graph() -> None:
     global build_chancellor_graph, chancellor_graph, _chancellor_import_error
     try:
-        from AFO.chancellor_graph import \
-            ChancellorState as _CS  # Import State Definition
+        from AFO.chancellor_graph import (
+            ChancellorState as _CS,  # Import State Definition
+        )
         from AFO.chancellor_graph import build_chancellor_graph as _bcg
         from AFO.chancellor_graph import chancellor_graph as _cg
 

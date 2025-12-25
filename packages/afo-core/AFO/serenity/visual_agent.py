@@ -24,7 +24,7 @@ class VisualAgent:
     ):
         self.ollama_url = ollama_url
         self.model = model
-        self.system_prompt = """You are a GUI Agent. 
+        self.system_prompt = """You are a GUI Agent.
         You receive a screenshot and a goal.
         You MUST output a JSON object adhering strictly to the VisualPlan schema.
         Use "bbox" [x, y, w, h] normalized (0-1) for clicks.

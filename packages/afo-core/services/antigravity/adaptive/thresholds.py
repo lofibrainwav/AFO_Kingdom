@@ -5,7 +5,7 @@ Antigravity Adaptive Thresholds - 동적 임계값 조정 모듈
 """
 
 import logging
-from typing import Any, Dict
+from typing import Any
 
 logger = logging.getLogger(__name__)
 

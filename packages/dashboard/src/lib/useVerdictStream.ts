@@ -50,6 +50,7 @@ export function useVerdictStream(
 
   // Build URL with deeplink query params
   const streamUrl = useMemo(() => {
+    // [Modified] Standardized /api/system/logs/stream
     const url = new URL(`${apiBase}/api/system/logs/stream`);
     if (category) url.searchParams.set('category', category);
     if (traceId) url.searchParams.set('trace_id', traceId);

@@ -74,7 +74,7 @@ def check_custom_verification(dep_name: str) -> tuple[bool, str]:
     """비-Python 의존성 (프론트엔드 등) 커스텀 체크"""
     repo_root = Path(__file__).parent.parent
 
-    if dep_name in ["react", "iframe"]:
+    if dep_name in {"react", "iframe"}:
         # Dashboard 패키지 존재 확인
         dashboard_path = repo_root / "packages" / "dashboard" / "package.json"
         if dashboard_path.exists():

@@ -12,7 +12,7 @@ export async function GET() {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
 
-    const response = await fetch(`${API_BASE}/health`, {
+    const response = await fetch(`${API_BASE}/api/health/comprehensive`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

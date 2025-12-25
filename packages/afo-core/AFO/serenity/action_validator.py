@@ -6,7 +6,7 @@ AFO Kingdom Action Validator - Visual Agent Safety Guardian
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 
 class SafetyLevel(Enum):
@@ -223,10 +223,7 @@ class ActionValidator:
             return False
 
         # 화면 범위 검증
-        if x + w > self.screen_width or y + h > self.screen_height:
-            return False
-
-        return True
+        return not (x + w > self.screen_width or y + h > self.screen_height)
 
     def _is_domain_allowed(self, domain: str) -> bool:
         """도메인이 허용 목록에 있는지 검증"""

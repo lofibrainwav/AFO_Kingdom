@@ -5,15 +5,12 @@ import { MessageCircle, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import useSWR from "swr";
 import { KingdomMessageBoard } from "../genui";
-import { JulieTaxWidget } from "../genui/JulieTaxWidget";
-import { RoyalTreasuryCard } from "../genui/RoyalTreasuryCard";
+import RoyalOpsCenter from "../genui/RoyalOpsCenter";
 import { GraphRAGQuery } from "../GraphRAGQuery";
-import ChancellorStream from "./ChancellorStream";
 import OrgansMonitor from "./OrgansMonitor";
 import { RoyalArchitecture } from "./RoyalArchitecture";
 import { RoyalLibrary } from "./RoyalLibrary";
 import { RoyalPhilosophy } from "./RoyalPhilosophy";
-import SkillDeck from "./SkillDeck";
 import TrinityGlow from "./TrinityGlow";
 import { GitWidget } from "./widgets/GitWidget";
 import { SystemStatusWidget } from "./widgets/SystemStatusWidget";
@@ -96,58 +93,18 @@ export default function RoyalLayout() {
           <OrgansMonitor organs={data?.organs} />
         </section>
 
-        {/* 3. Neural Stream & Skills (Split View) */}
-        <section className="space-y-8">
-          {/* Genesis Widgets Row 1: Quick Status (neu-card style, equal sizes) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <SystemStatusWidget />
-            <GitWidget />
-            <TrinityEvidenceWidget />
-          </div>
-
-          {/* Genesis Widgets Row 2: Treasury & Tax (full-width, equal sizing) */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="neu-card overflow-hidden">
-              <RoyalTreasuryCard />
-            </div>
-            <div className="neu-card overflow-hidden">
-              <JulieTaxWidget />
-            </div>
-          </div>
-
-          {/* Chancellor Stream & Skills Deck - Split View */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Left: Chancellor Stream */}
-            <div className="flex flex-col min-h-[400px]">
-              <div className="flex items-center gap-4 mb-4">
-                <h2 className="text-xl font-bold text-slate-600">
-                  {ROYAL_CONSTANTS.SECTIONS.CHANCELLOR}
-                </h2>
-                <div className="h-[1px] flex-1 bg-slate-300" />
-              </div>
-              <div className="flex-1 max-h-[500px] overflow-hidden">
-                <ChancellorStream />
-              </div>
+          {/* 3. Neural Stream & Skills (Unified Royal Ops Center) */}
+          <section className="space-y-8">
+            {/* Genesis Widgets Row 1: Quick Status (neu-card style, equal sizes) */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <SystemStatusWidget />
+              <GitWidget />
+              <TrinityEvidenceWidget />
             </div>
 
-            {/* Right: Skills Deck */}
-            <div className="flex flex-col min-h-[400px]">
-              <div className="flex items-center gap-4 mb-4">
-                <h2 className="text-xl font-bold text-slate-600">
-                  {ROYAL_CONSTANTS.SECTIONS.SKILLS}
-                </h2>
-                <div className="h-[1px] flex-1 bg-slate-300" />
-              </div>
-              <div className="flex-1 neu-card bg-slate-200/30 rounded-3xl border border-white/40 shadow-inner flex flex-col justify-center relative max-h-[500px] overflow-hidden">
-                <div className="absolute inset-0 bg-white/20 backdrop-blur-sm rounded-3xl -z-10" />
-                <SkillDeck />
-                <p className="text-center text-xs text-slate-400 mt-4">
-                  {ROYAL_CONSTANTS.MESSAGES.SKILL_HINT}
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
+            {/* Use the Unified Royal Ops Center */}
+            <RoyalOpsCenter trinityScore={trinityScore} healthData={data} />
+          </section>
 
         {/* 4. Royal Decrees & Predictions (New Generation Section) */}
         <section className="grid grid-cols-1 xl:grid-cols-2 gap-8">

@@ -94,7 +94,7 @@ class AFOKingdomUser(HttpUser):
             with self.client.post(
                 "/api/skills/execute", json=payload, catch_response=True
             ) as response:
-                if response.status_code in [200, 400, 404]:  # Accept various responses
+                if response.status_code in {200, 400, 404}:  # Accept various responses
                     response.success()
                 else:
                     response.failure(f"Skills execute failed: {response.status_code}")
@@ -159,9 +159,6 @@ class LoadTestShape:
 @events.init.add_listener
 def on_locust_init(environment, **kwargs):
     """Initialize test environment"""
-    print("🚀 AFO Kingdom Load Test Initialized")
-    print(f"Target: {environment.host}")
-    print(f"Users: {environment.runner.user_count if environment.runner else 'N/A'}")
 
     # Set up test shape if configured
     if hasattr(environment, "shape_class"):
@@ -171,39 +168,29 @@ def on_locust_init(environment, **kwargs):
 @events.test_start.add_listener
 def on_test_start(environment, **kwargs):
     """Test start event"""
-    print("▶️  AFO Kingdom Load Test Started")
 
 
 @events.test_stop.add_listener
 def on_test_stop(environment, **kwargs):
     """Test stop event"""
-    print("⏹️  AFO Kingdom Load Test Completed")
 
     # Generate summary report
     if environment.runner:
-        stats = environment.runner.stats
-        print("\n📊 Test Summary:")
-        print(f"Total Requests: {stats.num_requests}")
-        print(f"Total Failures: {stats.num_failures}")
-        print(".2f")
-        print(".2f")
-        print(".2f")
+        pass
 
 
 @events.spawning_complete.add_listener
 def on_spawning_complete(user_count, **kwargs):
     """Spawning complete event"""
-    print(f"👥 Spawned {user_count} users")
 
 
 @events.request_success.add_listener
 def on_request_success(request_type, name, response_time, response_length, **kwargs):
     """Request success event - detailed logging"""
     if response_time > 2000:  # Log slow requests (>2s)
-        print(f"🐌 Slow request: {name} took {response_time}ms")
+        pass
 
 
 @events.request_failure.add_listener
 def on_request_failure(request_type, name, response_time, exception, **kwargs):
     """Request failure event"""
-    print(f"❌ Request failed: {name} - {exception}")
