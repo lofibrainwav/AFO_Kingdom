@@ -1,120 +1,16 @@
 {
   "mcpServers": {
+    "git": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-git"]
+    },
     "memory": {
       "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-memory"
-      ],
-      "description": "Knowledge graph memory for persistent context"
+      "args": ["-y", "@modelcontextprotocol/server-memory"]
     },
     "filesystem": {
       "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-filesystem",
-        "${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}"
-      ],
-      "description": "File system access for AFO Kingdom"
-    },
-    "sequential-thinking": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-sequential-thinking"
-      ],
-      "description": "Step-by-step reasoning"
-    },
-    "brave-search": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-brave-search"
-      ],
-      "env": {
-        "BRAVE_API_KEY": "${BRAVE_API_KEY}"
-      },
-      "description": "Web search via Brave"
-    },
-    "context7": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@upstash/context7-mcp"
-      ],
-      "description": "Library documentation context injection"
-    },
-    "afo-ultimate-mcp": {
-      "command": "/Users/brnestrm/AFO_Kingdom/packages/afo-core/.venv/bin/python",
-      "args": [
-        "${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}/packages/trinity-os/trinity_os/servers/afo_ultimate_mcp_server.py"
-      ],
-      "env": {
-        "WORKSPACE_ROOT": "${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}",
-        "PYTHONPATH": "${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}/packages/afo-core:${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}/packages/trinity-os"
-      },
-      "description": "AFO Ultimate MCP Server - Universal connector with Trinity Score evaluation (眞善美孝永). Tools: shell_execute, read_file, write_file, kingdom_health, calculate_trinity_score, verify_fact, cupy_weighted_sum"
-    },
-    "afo-skills-mcp": {
-      "command": "/Users/brnestrm/AFO_Kingdom/packages/afo-core/.venv/bin/python",
-      "args": [
-        "${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}/packages/trinity-os/trinity_os/servers/afo_skills_mcp.py"
-      ],
-      "env": {
-        "WORKSPACE_ROOT": "${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}",
-        "PYTHONPATH": "${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}/packages/afo-core:${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}/packages/trinity-os"
-      },
-      "description": "AFO Skills MCP Server - CuPy acceleration & fact verification with Trinity Score evaluation. Tools: cupy_weighted_sum, verify_fact"
-    },
-    "trinity-score-mcp": {
-      "command": "/Users/brnestrm/AFO_Kingdom/packages/afo-core/.venv/bin/python",
-      "args": [
-        "${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}/packages/trinity-os/trinity_os/servers/trinity_score_mcp.py"
-      ],
-      "env": {
-        "WORKSPACE_ROOT": "${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}",
-        "PYTHONPATH": "${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}/packages/afo-core:${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}/packages/trinity-os"
-      },
-      "description": "Trinity Score MCP Server - Calculate 眞善美孝永 5-pillar scores with GPU acceleration (CuPy)"
-    },
-    "afo-skills-registry-mcp": {
-      "command": "/Users/brnestrm/AFO_Kingdom/packages/afo-core/.venv/bin/python",
-      "args": [
-        "${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}/packages/trinity-os/trinity_os/servers/afo_skills_registry_mcp.py"
-      ],
-      "env": {
-        "WORKSPACE_ROOT": "${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}",
-        "PYTHONPATH": "${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}/packages/afo-core:${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}/packages/trinity-os"
-      },
-      "description": "AFO Skills Registry MCP Server - 19개 스킬을 MCP 도구로 제공 (眞善美孝永 Trinity Score 포함)"
-    },
-    "afo-obsidian-mcp": {
-      "command": "/Users/brnestrm/AFO_Kingdom/packages/afo-core/.venv/bin/python",
-      "args": [
-        "${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}/packages/trinity-os/trinity_os/servers/obsidian_mcp.py"
-      ],
-      "env": {
-        "WORKSPACE_ROOT": "${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}",
-        "PYTHONPATH": "${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}/packages/afo-core:${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}/packages/trinity-os"
-      },
-      "description": "AFO Obsidian MCP Server - 옵시디언 템플릿 시스템 및 Context7 통합 (眞善美孝永 Trinity Score 포함). Tools: read_note, write_note, list_templates, apply_template, search_notes, search_context7"
-    }
-  },
-  "skills": {
-    "calculate_trinity_score": {
-      "endpoint": "${SOUL_ENGINE_URL:-http://localhost:8010}/api/trinity/calculate",
-      "method": "POST",
-      "description": "Calculate 眞善美孝永 5-pillar Trinity Score (SSOT weights: 35/35/20/8/2)"
-    },
-    "health_check": {
-      "endpoint": "${SOUL_ENGINE_URL:-http://localhost:8010}/health",
-      "method": "GET",
-      "description": "Check system health and get real-time Trinity metrics"
-    },
-    "chancellor_invoke": {
-      "endpoint": "${SOUL_ENGINE_URL:-http://localhost:8010}/chancellor/invoke",
-      "method": "POST",
-      "description": "Invoke Chancellor with 3 strategists (제갈량/사마의/주유)"
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/Users/brnestrm/AFO_Kingdom"]
     }
   }
 }
