@@ -16,11 +16,8 @@ try:
 except ImportError:
     # Fallback for import issues
     from collections.abc import Callable
-    from typing import TypeVar
 
-    F = TypeVar("F", bound=Callable[..., Any])
-
-    def validate_with_trinity(func: F) -> F:
+    def validate_with_trinity[TF: Callable[..., Any]](func: TF) -> TF:
         return func
 
 
@@ -408,8 +405,8 @@ class PersonaService:
             log_entry: 전송할 로그 엔트리
         """
         try:
-            # 글로벌 이벤트 큐에 추가 (api_server.py에서 소비)
-            from AFO.api_server import neural_event_queue
+            # 글로벌 이벤트 큐에 추가 (initialization.py에서 관리)
+            from AFO.api.initialization import neural_event_queue
 
             await neural_event_queue.put(
                 {

@@ -35,4 +35,4 @@ def test_health_response_structure(client: TestClient):
     for field in required_fields:
         assert field in data
 
-    assert data["status"] in ["healthy", "degraded", "unhealthy"]
+    assert data["status"] in ["balanced", "warning", "imbalanced", "unbalanced"]

@@ -530,6 +530,12 @@ def get_settings_safe() -> Any:
         return SimpleNamespace(**config) if isinstance(config, dict) else config
 
 
+# Compatibility export for TRINITY-OS MCP client (optional).
+def get_trinity_os_client() -> Any | None:
+    """Return a TRINITY-OS MCP client when available, otherwise None."""
+    return None
+
+
 # Compatibility exports (Legacy support)
 # Router imports are centralized here to keep a single registration tree.
 def _safe_import_router(module_path: str, attr: str = "router") -> Any | None:

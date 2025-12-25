@@ -33,7 +33,26 @@ router = APIRouter(prefix="/api/system", tags=["System Health"])
 @router.get("/health", include_in_schema=os.getenv("ENVIRONMENT") == "dev")
 async def system_health_alias():
     """Alias for /api/health to support legacy tests. Only available in dev environment."""
-    return {"status": "ok"}
+    current_time = datetime.now().isoformat()
+    status = "unknown"
+    timestamp = current_time
+    try:
+        from AFO.services.health_service import get_comprehensive_health
+
+        health_data = await get_comprehensive_health()
+        status = str(health_data.get("status", status))
+        timestamp = str(health_data.get("timestamp", timestamp))
+    except Exception as e:
+        logger.warning("System health alias failed to read health service: %s", e)
+
+    try:
+        from AFO.api.metadata import get_api_metadata
+
+        api_version = str(get_api_metadata().get("version", "unknown"))
+    except Exception:
+        api_version = "unknown"
+
+    return {"status": status, "timestamp": timestamp, "version": api_version}
 
 
 logger = logging.getLogger(__name__)

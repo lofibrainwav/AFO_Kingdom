@@ -177,11 +177,15 @@ async def handle_async_errors(
     return decorator
 
 
-def safe_execute(
-    func: Callable[P, T],
+def safe_execute[
+    **PS, R
+](
+    func: Callable[PS, R],
     default: Any = None,
     log_error: bool = True,
-) -> Callable[P, T | Any]:
+) -> Callable[
+    PS, R | Any
+]:
     """
     안전한 함수 실행 (善 - Goodness)
 

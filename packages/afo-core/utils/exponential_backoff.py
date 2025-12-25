@@ -523,8 +523,10 @@ class BackoffStrategies:
 
 
 # Async wrapper for ExponentialBackoff (for use in async contexts)
-async def exponential_backoff(
-    func: Callable[..., T],
+async def exponential_backoff[
+    TResult
+](
+    func: Callable[..., TResult],
     max_retries: int = 5,
     base_delay: float = 1.0,
     exponential_base: float = 2.0,
@@ -533,7 +535,7 @@ async def exponential_backoff(
     retryable_exceptions: tuple[type[BaseException], ...] = (Exception,),
     *args: Any,
     **kwargs: Any,
-) -> T:
+) -> TResult:
     """
     Async wrapper for ExponentialBackoff.execute()
 
