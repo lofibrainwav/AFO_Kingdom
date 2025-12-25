@@ -90,24 +90,37 @@ def test_route_api_selection() -> None:
         assert decision.selected_provider == LLMProvider.OPENAI  # Lower latency matches
 
 
+import uuid
+
+
 # Test Execution Caching
 @pytest.mark.asyncio
 async def test_execution_caching() -> None:
-    """眞 (Truth): 실행 결과 캐싱 기능 테스트"""
+    """眞 (Truth): 실행 결과 캐싱 기능 테스트 (Memory Cache Deterministic)"""
     router: Any = LLMRouter()
     router._call_llm = AsyncMock(return_value="Response")
 
-    # 1st call
-    await router.execute_with_routing("test query", {"key": "value"})
-    assert router._call_llm.call_count == 1
+    # Generate unique query to bypass shared Redis cache from previous runs
+    unique_query = f"test query {uuid.uuid4()}"
 
-    # 2nd call (Same)
-    await router.execute_with_routing("test query", {"key": "value"})
-    assert router._call_llm.call_count == 1  # Cached
+    # Force fallback to Memory Cache by mocking Redis service as None
+    # This ensures the test relies on deterministic in-memory logic
+    with patch(
+        "AFO.services.llm_cache_service.get_llm_cache_service", new_callable=AsyncMock
+    ) as mock_get_cache:
+        mock_get_cache.return_value = None
 
-    # 3rd call (Different context)
-    await router.execute_with_routing("test query", {"key": "other"})
-    assert router._call_llm.call_count == 2
+        # 1st call
+        await router.execute_with_routing(unique_query, {"key": "value"})
+        assert router._call_llm.call_count == 1
+
+        # 2nd call (Same)
+        await router.execute_with_routing(unique_query, {"key": "value"})
+        assert router._call_llm.call_count == 1  # Cached (Memory)
+
+        # 3rd call (Different context) - context is part of cache key
+        await router.execute_with_routing(unique_query, {"key": "other"})
+        assert router._call_llm.call_count == 2
 
 
 # Test Provider Execution: Gemini (Google) with Retry

@@ -20,7 +20,7 @@ from AFO.services.database import get_db_connection
 from AFO.utils.redis_connection import get_redis_url
 
 if TYPE_CHECKING:
-    from AFO.api.compat import TrinityMetrics
+    from AFO.domain.metrics.trinity import TrinityMetrics
 
 logger = logging.getLogger(__name__)
 

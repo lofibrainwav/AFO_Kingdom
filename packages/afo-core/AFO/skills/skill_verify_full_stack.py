@@ -52,7 +52,9 @@ async def execute_skill(context: dict[str, Any] | None = None) -> dict[str, Any]
         )
 
         for component, status in details.items():
-            is_healthy = status.get("healthy") is True or status.get("status") == "healthy"
+            is_healthy = (
+                status.get("healthy") is True or status.get("status") == "healthy"
+            )
             icon = "✅" if is_healthy else "❌"
             console.print(f"{icon} {component}: {status.get('output', 'Unknown')}")
 

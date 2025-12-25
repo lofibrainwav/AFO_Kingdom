@@ -132,8 +132,7 @@ async def get_system_metrics() -> dict[str, Any]:
         if redis_client:
             try:
                 # Count healthy services from Redis
-                # Explicitly cast to dict to avoid 'Awaitable' confusion in mypy
-                all_status = cast("dict", redis_client.hgetall("services:health"))
+                all_status = redis_client.hgetall("services:health")
 
                 # Filter for services that are 'healthy'
                 containers_running = sum(
