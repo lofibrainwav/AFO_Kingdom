@@ -7,7 +7,7 @@ test:
 	cd packages/afo-core && pytest -q -m "not integration and not external" --ignore=tests/test_scholars.py
 
 type-check:
-	cd packages/afo-core && mypy . --ignore-missing-imports
+	cd packages/afo-core && mypy AFO --ignore-missing-imports
 
 check: lint test type-check
 
