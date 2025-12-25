@@ -416,9 +416,7 @@ class SettingsManager:
                 "debug": os.getenv("AFO_DEBUG", "true").lower() == "true",
                 "host": os.getenv("AFO_HOST", "0.0.0.0"),
                 "port": int(os.getenv("AFO_PORT", "8010")),
-                "cors_origins": os.getenv(
-                    "AFO_CORS_ORIGINS", "http://localhost:3000"
-                ).split(","),
+                "cors_origins": os.getenv("AFO_CORS_ORIGINS", "http://localhost:3000").split(","),
                 "database_url": os.getenv("DATABASE_URL", "sqlite:///./test.db"),
                 "redis_url": os.getenv("REDIS_URL", "redis://localhost:6379"),
                 "ollama_url": os.getenv("OLLAMA_URL", "http://localhost:11435"),
@@ -549,6 +547,12 @@ trinity_sbt_router = None
 users_router = None
 voice_router = None
 wallet_router = None
+
+# Edge Revalidate Router (Phase 6)
+try:
+    from api.routes.edge_revalidate import router as edge_revalidate_router
+except ImportError:
+    edge_revalidate_router = None
 
 
 # Trinity metrics class (더미)
