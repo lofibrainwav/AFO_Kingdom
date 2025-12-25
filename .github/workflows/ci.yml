@@ -42,6 +42,22 @@ jobs:
         with:
           file: ./packages/afo-core/coverage.xml
 
+      - name: Upload Trinity Evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: trinity-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/trinity/**
+          if-no-files-found: warn
+
+      - name: Upload Royal Build Evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: royal-build-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/royal_build/**
+          if-no-files-found: warn
+
       - name: Push CI Quality Metrics (SSOT)
         env:
           PUSHGATEWAY_URL: ${{ secrets.PUSHGATEWAY_URL }}
