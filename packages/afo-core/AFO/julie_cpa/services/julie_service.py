@@ -30,6 +30,7 @@ from AFO.julie_cpa.utils.friction_manager import FrictionManager
 # AI Router (Truth & Goodness) with graceful import
 try:
     from AFO.llm_router import llm_router
+
     LLM_ROUTER_AVAILABLE = True
 except ImportError:
     llm_router = None
@@ -55,7 +56,7 @@ class RoyalStatusProvider:
         """
         self.friction_manager = friction_manager
 
-    async def get_status(self) -> Dict[str, Any]:
+    async def get_status(self) -> dict[str, Any]:
         """
         왕실 재무 상태를 조회합니다.
 
@@ -90,9 +91,7 @@ class FinancialDashboardProvider:
     """
 
     def __init__(
-        self,
-        connector: FinancialConnector,
-        friction_manager: FrictionManager
+        self, connector: FinancialConnector, friction_manager: FrictionManager
     ) -> None:
         """Initialize financial dashboard provider.
 
@@ -103,7 +102,7 @@ class FinancialDashboardProvider:
         self.connector = connector
         self.friction_manager = friction_manager
 
-    async def get_dashboard_data(self) -> Dict[str, Any]:
+    async def get_dashboard_data(self) -> dict[str, Any]:
         """
         재무 대시보드 데이터를 생성합니다.
 
@@ -152,7 +151,9 @@ class FinancialDashboardProvider:
             logger.warning(f"AI advice generation failed: {e}")
             return "Review cloud infrastructure costs for potential savings."
 
-    async def _emit_dashboard_event(self, health_score: float, friction_score: float) -> None:
+    async def _emit_dashboard_event(
+        self, health_score: float, friction_score: float
+    ) -> None:
         """대시보드 로드 이벤트를 발생시킵니다."""
         try:
             from AFO.api.routes.system_stream import publish_thought
@@ -166,14 +167,18 @@ class FinancialDashboardProvider:
                     "risk": friction_score,
                     "graph_node_id": "finance_dashboard_load",
                     "timestamp": "now",
-                    "extra": {"category": "finance", "merchant": "Systems Check", "status": "active"},
+                    "extra": {
+                        "category": "finance",
+                        "merchant": "Systems Check",
+                        "status": "active",
+                    },
                 },
                 event_type="verdict",
             )
         except ImportError:
             logger.debug("System stream not available for dashboard events")
 
-    def _get_recent_transactions(self) -> List[Dict[str, Any]]:
+    def _get_recent_transactions(self) -> list[dict[str, Any]]:
         """최근 거래 내역을 반환합니다."""
         return [
             {
@@ -199,7 +204,7 @@ class FinancialDashboardProvider:
             },
         ]
 
-    def _generate_risk_alerts(self) -> List[Dict[str, str]]:
+    def _generate_risk_alerts(self) -> list[dict[str, str]]:
         """리스크 알림을 생성합니다."""
         return [
             {
@@ -218,9 +223,7 @@ class TransactionProcessor:
     """
 
     def __init__(
-        self,
-        connector: FinancialConnector,
-        friction_manager: FrictionManager
+        self, connector: FinancialConnector, friction_manager: FrictionManager
     ) -> None:
         """Initialize transaction processor.
 
@@ -232,11 +235,8 @@ class TransactionProcessor:
         self.friction_manager = friction_manager
 
     async def process_transaction(
-        self,
-        request_data: Dict[str, Any],
-        account_id: str,
-        dry_run: bool = False
-    ) -> Dict[str, Any]:
+        self, request_data: dict[str, Any], account_id: str, dry_run: bool = False
+    ) -> dict[str, Any]:
         """
         거래를 처리합니다.
 
@@ -270,21 +270,22 @@ class TransactionProcessor:
         if dry_run:
             return await self._process_dry_run(transaction, friction, request_data)
         else:
-            return await self._process_live_transaction(transaction, account_id, request_data)
+            return await self._process_live_transaction(
+                transaction, account_id, request_data
+            )
 
     async def _process_dry_run(
         self,
         transaction: FinancialTransaction,
         friction: float,
-        request_data: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        request_data: dict[str, Any],
+    ) -> dict[str, Any]:
         """드라이 런 모드로 거래를 처리합니다."""
         logger.info("Executing dry run transaction")
 
         # Emit event
         await self._emit_transaction_event(
-            "DRY_RUN", "SUN_TZU_03", 95, friction * 10,
-            "finance_dry_run", request_data
+            "DRY_RUN", "SUN_TZU_03", 95, friction * 10, "finance_dry_run", request_data
         )
 
         return {
@@ -298,8 +299,8 @@ class TransactionProcessor:
         self,
         transaction: FinancialTransaction,
         account_id: str,
-        request_data: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        request_data: dict[str, Any],
+    ) -> dict[str, Any]:
         """실제 거래를 처리합니다."""
         logger.info("Executing live transaction")
 
@@ -308,8 +309,7 @@ class TransactionProcessor:
 
         # Emit event
         await self._emit_transaction_event(
-            "AUTO_RUN", "PRINCE_25", 99, 0,
-            "finance_live_tx", request_data
+            "AUTO_RUN", "PRINCE_25", 99, 0, "finance_live_tx", request_data
         )
 
         return {
@@ -327,7 +327,7 @@ class TransactionProcessor:
         trinity: int,
         risk: float,
         graph_node: str,
-        request_data: Dict[str, Any]
+        request_data: dict[str, Any],
     ) -> None:
         """거래 이벤트를 발생시킵니다."""
         try:
@@ -363,10 +363,8 @@ class TaxCalculator:
     """
 
     async def calculate_tax_scenario(
-        self,
-        income: float,
-        filing_status: str = "single"
-    ) -> Dict[str, Any]:
+        self, income: float, filing_status: str = "single"
+    ) -> dict[str, Any]:
         """
         세금 시나리오를 계산합니다.
 
@@ -382,13 +380,19 @@ class TaxCalculator:
         taxable_income = max(0, income - standard_deduction)
 
         # Calculate federal tax
-        fed_tax, fed_marginal_rate = self._calculate_federal_tax(taxable_income, filing_status)
+        fed_tax, fed_marginal_rate = self._calculate_federal_tax(
+            taxable_income, filing_status
+        )
 
         # Calculate state tax
-        ca_tax, ca_marginal_rate, surtax = self._calculate_california_tax(taxable_income)
+        ca_tax, ca_marginal_rate, surtax = self._calculate_california_tax(
+            taxable_income
+        )
 
         # Calculate QBI deduction
-        qbi_deduction = self._calculate_qbi_deduction(income, taxable_income, filing_status)
+        qbi_deduction = self._calculate_qbi_deduction(
+            income, taxable_income, filing_status
+        )
 
         # Aggregate results
         total_tax = fed_tax + ca_tax
@@ -413,7 +417,9 @@ class TaxCalculator:
             "effective_rate": round(eff_rate, 2),
             "marginal_rate": round(combined_marginal_rate * 100, 1),
             "qbi_potential_deduction": round(qbi_deduction, 2),
-            "risk_level": "safe" if eff_rate < 20 else "risk" if eff_rate > 30 else "neutral",
+            "risk_level": (
+                "safe" if eff_rate < 20 else "risk" if eff_rate > 30 else "neutral"
+            ),
             "mental_health_surtax": round(surtax, 2),
             "advice_cards": advice_cards,
         }
@@ -422,7 +428,9 @@ class TaxCalculator:
         """표준 공제를 반환합니다."""
         return 31500 if filing_status == "mfj" else 15750
 
-    def _calculate_federal_tax(self, taxable_income: float, filing_status: str) -> tuple[float, float]:
+    def _calculate_federal_tax(
+        self, taxable_income: float, filing_status: str
+    ) -> tuple[float, float]:
         """연방 세금을 계산합니다."""
         brackets = [
             (23200 if filing_status == "mfj" else 11600, 0.10),
@@ -449,7 +457,9 @@ class TaxCalculator:
 
         return fed_tax, fed_marginal_rate
 
-    def _calculate_california_tax(self, taxable_income: float) -> tuple[float, float, float]:
+    def _calculate_california_tax(
+        self, taxable_income: float
+    ) -> tuple[float, float, float]:
         """캘리포니아 주 세금을 계산합니다."""
         # Mental Health Surtax
         surtax = max(0, taxable_income - 1000000) * 0.01
@@ -474,7 +484,9 @@ class TaxCalculator:
         ca_tax += surtax
         return ca_tax, ca_marginal_rate, surtax
 
-    def _calculate_qbi_deduction(self, income: float, taxable_income: float, filing_status: str) -> float:
+    def _calculate_qbi_deduction(
+        self, income: float, taxable_income: float, filing_status: str
+    ) -> float:
         """QBI 공제를 계산합니다."""
         qbi_eligible_income = income * 0.30
         qbi_threshold = 394600 if filing_status == "mfj" else 197300
@@ -488,39 +500,45 @@ class TaxCalculator:
         marginal_rate: float,
         qbi_deduction: float,
         fed_marginal_rate: float,
-        filing_status: str
-    ) -> List[Dict[str, Any]]:
+        filing_status: str,
+    ) -> list[dict[str, Any]]:
         """조언 카드를 생성합니다."""
         advice_cards = []
 
         # 401k/SEP IRA advice
         potential_401k_saving = 23500 * marginal_rate
-        advice_cards.append({
-            "title": "Maximize 401k/SEP",
-            "action": "Contribute $23,500",
-            "impact": f"Save ${int(potential_401k_saving):,} in Taxes",
-            "type": "savings",
-        })
+        advice_cards.append(
+            {
+                "title": "Maximize 401k/SEP",
+                "action": "Contribute $23,500",
+                "impact": f"Save ${int(potential_401k_saving):,} in Taxes",
+                "type": "savings",
+            }
+        )
 
         # HSA advice
         hsa_limit = 8550 if filing_status == "mfj" else 4300
         potential_hsa_saving = hsa_limit * marginal_rate
-        advice_cards.append({
-            "title": "Health Savings Account (HSA)",
-            "action": f"Contribute ${hsa_limit:,}",
-            "impact": f"Save ${int(potential_hsa_saving):,} in Taxes",
-            "type": "health",
-        })
+        advice_cards.append(
+            {
+                "title": "Health Savings Account (HSA)",
+                "action": f"Contribute ${hsa_limit:,}",
+                "impact": f"Save ${int(potential_hsa_saving):,} in Taxes",
+                "type": "health",
+            }
+        )
 
         # QBI advice
         if qbi_deduction > 0:
             qbi_tax_value = qbi_deduction * fed_marginal_rate
-            advice_cards.append({
-                "title": "QBI Deduction (20%)",
-                "action": "Maintain Business Income",
-                "impact": f"Auto-saving ${int(qbi_tax_value):,}",
-                "type": "business",
-            })
+            advice_cards.append(
+                {
+                    "title": "QBI Deduction (20%)",
+                    "action": "Maintain Business Income",
+                    "impact": f"Auto-saving ${int(qbi_tax_value):,}",
+                    "type": "business",
+                }
+            )
 
         return advice_cards
 
@@ -547,7 +565,9 @@ class JulieService:
 
         # Initialize specialized providers
         self.status_provider = RoyalStatusProvider(friction_manager)
-        self.dashboard_provider = FinancialDashboardProvider(connector, friction_manager)
+        self.dashboard_provider = FinancialDashboardProvider(
+            connector, friction_manager
+        )
         self.transaction_processor = TransactionProcessor(connector, friction_manager)
         self.tax_calculator = TaxCalculator()
 
@@ -619,7 +639,11 @@ class JulieService:
                 "risk": friction_score,
                 "graph_node_id": "finance_dashboard_load",
                 "timestamp": "now",
-                "extra": {"category": "finance", "merchant": "Systems Check", "status": "active"},
+                "extra": {
+                    "category": "finance",
+                    "merchant": "Systems Check",
+                    "status": "active",
+                },
             },
             event_type="verdict",
         )
@@ -871,7 +895,9 @@ class JulieService:
 
         # Strategy C: QBI (if applicable)
         if qbi_deduction > 0:
-            qbi_tax_value = qbi_deduction * fed_marginal_rate  # QBI is Fed only deduction
+            qbi_tax_value = (
+                qbi_deduction * fed_marginal_rate
+            )  # QBI is Fed only deduction
             advice_cards.append(
                 {
                     "title": "QBI Deduction (20%)",

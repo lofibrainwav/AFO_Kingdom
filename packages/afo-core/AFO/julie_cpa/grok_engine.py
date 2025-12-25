@@ -27,6 +27,7 @@ from typing import Any, Dict, List, Optional
 # Core dependencies with graceful imports
 try:
     from openai import AsyncOpenAI
+
     OPENAI_AVAILABLE = True
 except ImportError:
     OPENAI_AVAILABLE = False
@@ -34,6 +35,7 @@ except ImportError:
 
 try:
     from playwright.async_api import async_playwright
+
     PLAYWRIGHT_AVAILABLE = True
 except ImportError:
     PLAYWRIGHT_AVAILABLE = False
@@ -41,6 +43,7 @@ except ImportError:
 
 try:
     import redis
+
     REDIS_AVAILABLE = True
 except ImportError:
     REDIS_AVAILABLE = False
@@ -49,12 +52,13 @@ except ImportError:
 # Configure logging
 logger = logging.getLogger(__name__)
 
+
 # Configuration with environment variable support
 class GrokConfig:
     """Grok Engine Configuration (아름다운 코드 적용)"""
 
     # API Configuration
-    XAI_API_KEY: Optional[str] = os.getenv("XAI_API_KEY")
+    XAI_API_KEY: str | None = os.getenv("XAI_API_KEY")
     XAI_BASE_URL: str = "https://api.x.ai/v1"
     GROK_MODEL_BETA: str = "grok-beta"
     GROK_MODEL_FAST: str = "grok-beta"
@@ -81,7 +85,7 @@ class CacheManager:
 
     def __init__(self, config: GrokConfig) -> None:
         self.config = config
-        self._client: Optional[redis.Redis] = None
+        self._client: redis.Redis | None = None
         self._initialize_client()
 
     def _initialize_client(self) -> None:
@@ -95,18 +99,18 @@ class CacheManager:
                 host=self.config.REDIS_HOST,
                 port=self.config.REDIS_PORT,
                 db=0,
-                decode_responses=True
+                decode_responses=True,
             )
             logger.info("Redis cache client initialized")
         except Exception as e:
             logger.warning(f"Redis connection failed: {e}")
 
-    def generate_cache_key(self, data: Dict[str, Any]) -> str:
+    def generate_cache_key(self, data: dict[str, Any]) -> str:
         """Generate cache key from data."""
         data_str = json.dumps(data, sort_keys=True)
         return f"grok_analysis:{hashlib.md5(data_str.encode()).hexdigest()}"
 
-    def get(self, key: str) -> Optional[Dict[str, Any]]:
+    def get(self, key: str) -> dict[str, Any] | None:
         """Retrieve data from cache."""
         if not self._client:
             return None
@@ -118,7 +122,7 @@ class CacheManager:
             logger.warning(f"Cache retrieval failed: {e}")
             return None
 
-    def set(self, key: str, data: Dict[str, Any]) -> None:
+    def set(self, key: str, data: dict[str, Any]) -> None:
         """Store data in cache."""
         if not self._client:
             return
@@ -140,7 +144,7 @@ class GrokWebClient:
     def __init__(self, config: GrokConfig) -> None:
         self.config = config
 
-    async def consult_grok(self, budget_summary: Dict[str, Any]) -> Dict[str, Any]:
+    async def consult_grok(self, budget_summary: dict[str, Any]) -> dict[str, Any]:
         """
         Consult Grok via web interface.
 
@@ -217,7 +221,9 @@ class GrokWebClient:
         await page.wait_for_timeout(1000)
         await input_locator.press("Enter")
 
-    async def _extract_response(self, page: Any, budget_summary: Dict[str, Any]) -> Dict[str, Any]:
+    async def _extract_response(
+        self, page: Any, budget_summary: dict[str, Any]
+    ) -> dict[str, Any]:
         """Extract response from page."""
         page_text = await page.content()
 
@@ -232,14 +238,13 @@ class GrokWebClient:
                 "model_used": "grok-web-beta",
             }
         else:
-            return self._create_mock_response(budget_summary, "Prompt not found in DOM", "WEB_FAILED")
+            return self._create_mock_response(
+                budget_summary, "Prompt not found in DOM", "WEB_FAILED"
+            )
 
     def _create_mock_response(
-        self,
-        budget_summary: Dict[str, Any],
-        error_msg: str,
-        mood: str = "MOCK"
-    ) -> Dict[str, Any]:
+        self, budget_summary: dict[str, Any], error_msg: str, mood: str = "MOCK"
+    ) -> dict[str, Any]:
         """Create mock response for fallback."""
         total_forecast = budget_summary.get("summary", {}).get("total", 0)
 
@@ -263,9 +268,9 @@ class GrokAPIClient:
 
     def __init__(self, config: GrokConfig) -> None:
         self.config = config
-        self._client: Optional[AsyncOpenAI] = None
+        self._client: AsyncOpenAI | None = None
 
-    async def consult_grok(self, budget_summary: Dict[str, Any]) -> Dict[str, Any]:
+    async def consult_grok(self, budget_summary: dict[str, Any]) -> dict[str, Any]:
         """
         Consult Grok via official API.
 
@@ -279,13 +284,10 @@ class GrokAPIClient:
             raise Exception("OpenAI client not available or API key missing")
 
         self._client = AsyncOpenAI(
-            api_key=self.config.XAI_API_KEY,
-            base_url=self.config.XAI_BASE_URL
+            api_key=self.config.XAI_API_KEY, base_url=self.config.XAI_BASE_URL
         )
 
-        system_prompt = (
-            "You are 'The Sage from the Stars', a cynical but brilliant economic strategist..."
-        )
+        system_prompt = "You are 'The Sage from the Stars', a cynical but brilliant economic strategist..."
         user_prompt = f"Analyze budget: {json.dumps(budget_summary)}"
 
         response = await self._client.chat.completions.create(
@@ -309,10 +311,10 @@ class MockGrokClient:
 
     def _create_mock_response(
         self,
-        budget_summary: Dict[str, Any],
-        error_msg: Optional[str] = None,
-        mood: str = "MOCK"
-    ) -> Dict[str, Any]:
+        budget_summary: dict[str, Any],
+        error_msg: str | None = None,
+        mood: str = "MOCK",
+    ) -> dict[str, Any]:
         """Create intelligent mock response."""
         total_forecast = budget_summary.get("summary", {}).get("total", 0)
 
@@ -320,16 +322,13 @@ class MockGrokClient:
         responses = {
             "WEB_AUTHENTICATED": {
                 "advice": "🚀 Authentication successful! Analysis complete.",
-                "score": 90
+                "score": 90,
             },
             "ECONOMY_MODE": {
                 "advice": "💰 Using cost-effective fallback analysis.",
-                "score": 80
+                "score": 80,
             },
-            "WEB_FAILED": {
-                "advice": f"Connection error: {error_msg}",
-                "score": 75
-            }
+            "WEB_FAILED": {"advice": f"Connection error: {error_msg}", "score": 75},
         }
 
         response_config = responses.get(mood, responses["MOCK"])
@@ -342,7 +341,7 @@ class MockGrokClient:
             "action_items": [
                 "Review operational expenses",
                 "Optimize resource allocation",
-                "Maintain financial health"
+                "Maintain financial health",
             ],
             "message": response_config["advice"],
             "model_used": "mock-ollama" if mood == "ECONOMY_MODE" else "grok-beta",
@@ -376,10 +375,10 @@ class GrokEngine:
 
     async def consult_grok(
         self,
-        budget_summary: Dict[str, Any],
+        budget_summary: dict[str, Any],
         market_context: str = "general",
         trinity_score: int = 85,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Consult Grok for economic analysis with smart routing.
 
@@ -399,15 +398,14 @@ class GrokEngine:
 
         if cached_response:
             logger.info("🛡️ Cache hit! Cost saved.")
-            cached_response.update({
-                "source": "Grok (Cached)",
-                "cost_saved": True
-            })
+            cached_response.update({"source": "Grok (Cached)", "cost_saved": True})
             return cached_response
 
         # 2. Smart routing based on Trinity Score
         if trinity_score < self.config.TRINITY_THRESHOLD:
-            logger.info(f"🛡️ Low Trinity Score ({trinity_score}), using cost-effective mode")
+            logger.info(
+                f"🛡️ Low Trinity Score ({trinity_score}), using cost-effective mode"
+            )
             response = self.mock_client._create_mock_response(
                 budget_summary, mood="ECONOMY_MODE"
             )
@@ -420,7 +418,9 @@ class GrokEngine:
 
         return response
 
-    async def _consult_real_grok(self, budget_summary: Dict[str, Any]) -> Dict[str, Any]:
+    async def _consult_real_grok(
+        self, budget_summary: dict[str, Any]
+    ) -> dict[str, Any]:
         """
         Consult real Grok with fallback strategy.
 
@@ -528,14 +528,16 @@ class GrokEngine:
 # Global instance (Singleton pattern)
 grok_engine = GrokEngine()
 
+
 # Backward compatibility functions
 async def consult_grok(
-    budget_summary: Dict[str, Any],
+    budget_summary: dict[str, Any],
     market_context: str = "general",
     trinity_score: int = 85,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Backward compatibility wrapper."""
     return await grok_engine.consult_grok(budget_summary, market_context, trinity_score)
+
 
 async def generate_genui_component(prompt: str) -> str:
     """Backward compatibility wrapper."""

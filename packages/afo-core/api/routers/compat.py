@@ -6,20 +6,16 @@ Provides API endpoints for React components to consume HTML dashboard data.
 Implements the Strangler Fig pattern for gradual migration from HTML to React.
 """
 
-from typing import List, Dict, Any
+from typing import Any, Dict, List
+
+from AFO.api.compat import (get_personas_list, get_philosophy_pillars,
+                            get_project_stats, get_royal_constitution,
+                            get_service_ports, get_system_architecture)
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
-from AFO.api.compat import (
-    get_personas_list,
-    get_service_ports,
-    get_royal_constitution,
-    get_philosophy_pillars,
-    get_system_architecture,
-    get_project_stats
-)
-
 router = APIRouter(prefix="/compat", tags=["compat"])
+
 
 # Pydantic models for API responses
 class PersonaResponse(BaseModel):
@@ -27,10 +23,12 @@ class PersonaResponse(BaseModel):
     code: str
     role: str
 
+
 class PortResponse(BaseModel):
     service: str
     port: str
     description: str
+
 
 class RuleResponse(BaseModel):
     id: int
@@ -38,17 +36,20 @@ class RuleResponse(BaseModel):
     principle: str
     code: str = ""
 
+
 class BookResponse(BaseModel):
     title: str
     weight: str
-    rules: List[RuleResponse]
+    rules: list[RuleResponse]
+
 
 class PhilosophyResponse(BaseModel):
-    pillars: List[Dict[str, Any]]
+    pillars: list[dict[str, Any]]
     trinity_formula: str
     auto_run_condition: str
 
-@router.get("/personas", response_model=List[PersonaResponse])
+
+@router.get("/personas", response_model=list[PersonaResponse])
 async def get_personas():
     """
     Get personas data from HTML dashboard.
@@ -58,9 +59,10 @@ async def get_personas():
         data = get_personas_list()
         return data
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to load personas: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to load personas: {e!s}")
 
-@router.get("/ports", response_model=List[PortResponse])
+
+@router.get("/ports", response_model=list[PortResponse])
 async def get_ports():
     """
     Get service ports data from HTML dashboard.
@@ -70,9 +72,10 @@ async def get_ports():
         data = get_service_ports()
         return data
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to load ports: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to load ports: {e!s}")
 
-@router.get("/royal-rules", response_model=List[BookResponse])
+
+@router.get("/royal-rules", response_model=list[BookResponse])
 async def get_royal_rules():
     """
     Get Royal Constitution rules from HTML dashboard.
@@ -82,7 +85,10 @@ async def get_royal_rules():
         data = get_royal_constitution()
         return data
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to load royal rules: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Failed to load royal rules: {e!s}"
+        )
+
 
 @router.get("/philosophy", response_model=PhilosophyResponse)
 async def get_philosophy():
@@ -94,7 +100,8 @@ async def get_philosophy():
         data = get_philosophy_pillars()
         return PhilosophyResponse(**data)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to load philosophy: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to load philosophy: {e!s}")
+
 
 @router.get("/architecture")
 async def get_architecture():
@@ -106,7 +113,10 @@ async def get_architecture():
         data = get_system_architecture()
         return data
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to load architecture: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Failed to load architecture: {e!s}"
+        )
+
 
 @router.get("/stats")
 async def get_stats():
@@ -118,7 +128,8 @@ async def get_stats():
         data = get_project_stats()
         return data
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to load stats: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to load stats: {e!s}")
+
 
 @router.get("/health")
 async def compat_health():
@@ -135,6 +146,6 @@ async def compat_health():
             "/api/compat/royal-rules",
             "/api/compat/philosophy",
             "/api/compat/architecture",
-            "/api/compat/stats"
-        ]
+            "/api/compat/stats",
+        ],
     }

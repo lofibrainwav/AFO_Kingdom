@@ -1,4 +1,4 @@
-from typing import List, Literal, Optional, Union
+from typing import Literal
 
 from pydantic import BaseModel, Field
 
@@ -21,12 +21,16 @@ class VisualAction(BaseModel):
     type: Literal["click", "type", "scroll", "wait", "goto", "done"] = Field(
         ..., description="The type of action to perform"
     )
-    bbox: Optional[BBox] = Field(
+    bbox: BBox | None = Field(
         None, description="Target coordinates for the action (required for click)"
     )
-    text: Optional[str] = Field(None, description="Text to type or reason for waiting")
-    confidence: float = Field(..., ge=0.0, le=1.0, description="Model's confidence score")
-    why: str = Field(..., description="Reasoning for this specific action (Chain of Thought)")
+    text: str | None = Field(None, description="Text to type or reason for waiting")
+    confidence: float = Field(
+        ..., ge=0.0, le=1.0, description="Model's confidence score"
+    )
+    why: str = Field(
+        ..., description="Reasoning for this specific action (Chain of Thought)"
+    )
     safety: Literal["safe", "confirm", "block"] = Field(
         "safe", description="Safety assessment of the action"
     )

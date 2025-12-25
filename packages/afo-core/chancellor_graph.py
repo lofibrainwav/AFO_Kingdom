@@ -26,18 +26,16 @@ try:
     from AFO.constitution.constitutional_ai import AFOConstitution
     from AFO.observability.verdict_logger import VerdictLogger
     from services.trinity_calculator import trinity_calculator
-
-    # Import individual strategists to avoid name conflicts
-    from strategists.zhuge_liang import truth_evaluate as zhuge_liang
     from strategists.sima_yi import goodness_review as sima_yi
     from strategists.zhou_yu import beauty_optimize as zhou_yu
-
+    # Import individual strategists to avoid name conflicts
+    from strategists.zhuge_liang import truth_evaluate as zhuge_liang
     # Import individual tigers to avoid name conflicts
     from tigers.guan_yu import truth_guard as guan_yu
+    from tigers.huang_zhong import eternity_log as huang_zhong
+    from tigers.ma_chao import serenity_deploy as ma_chao
     from tigers.zhang_fei import goodness_gate as zhang_fei
     from tigers.zhao_yun import beauty_craft as zhao_yun
-    from tigers.ma_chao import serenity_deploy as ma_chao
-    from tigers.huang_zhong import eternity_log as huang_zhong
 
     # Safe imports for circular dependencies
     # Historian and log_sse will be handled gracefully if import fails
@@ -112,7 +110,9 @@ class ChancellorState(TypedDict):
     messages: Annotated[list[Any], add_messages]
     summary: str  # [ADVANCED/永] conversation summary
     context: dict[str, Any]  # shared context (includes trinity metrics)
-    search_results: list[dict[str, Any]]  # [ADVANCED/眞] raw search results before reranking
+    search_results: list[
+        dict[str, Any]
+    ]  # [ADVANCED/眞] raw search results before reranking
     multimodal_slots: dict[str, Any]  # [ADVANCED/眞] slots for image/vision data
 
     # Pillar Assessment
@@ -313,11 +313,11 @@ async def trinity_node(state: ChancellorState) -> dict[str, Any]:
     b = results.get("beauty", 0.5)
 
     # 2. 孝/永 (Tigers - Simulation for Scoring)
-    s = (
-        ma_chao({"query": state["query"], "mode": "eval"}) if callable(ma_chao) else 1.0
-    )
+    s = ma_chao({"query": state["query"], "mode": "eval"}) if callable(ma_chao) else 1.0
     e = (
-        huang_zhong("evaluate", {"query": state["query"]}) if callable(huang_zhong) else 1.0
+        huang_zhong("evaluate", {"query": state["query"]})
+        if callable(huang_zhong)
+        else 1.0
     )
 
     # Normalize score types
@@ -423,13 +423,31 @@ async def tigers_node(state: ChancellorState) -> dict[str, Any]:
             log_sse("🐅 [Tigers] AUTO_RUN Approved - Executing Full Power")
 
         # 5호장군 호출
-        if all(callable(x) for x in [guan_yu, zhang_fei, zhao_yun, ma_chao, huang_zhong]):
+        if all(
+            callable(x) for x in [guan_yu, zhang_fei, zhao_yun, ma_chao, huang_zhong]
+        ):
             results = {
-                "guan": guan_yu({"data": state["context"]}) if callable(guan_yu) else "Success",
-                "zhang": zhang_fei(score, state["context"]) if callable(zhang_fei) else "Success",
-                "zhao": zhao_yun("Code Structure", ux_level=2) if callable(zhao_yun) else "Success",
+                "guan": (
+                    guan_yu({"data": state["context"]})
+                    if callable(guan_yu)
+                    else "Success"
+                ),
+                "zhang": (
+                    zhang_fei(score, state["context"])
+                    if callable(zhang_fei)
+                    else "Success"
+                ),
+                "zhao": (
+                    zhao_yun("Code Structure", ux_level=2)
+                    if callable(zhao_yun)
+                    else "Success"
+                ),
                 "ma": ma_chao(state["context"]) if callable(ma_chao) else "Success",
-                "huang": huang_zhong(state["query"], {"trinity": score}) if callable(huang_zhong) else "Success",
+                "huang": (
+                    huang_zhong(state["query"], {"trinity": score})
+                    if callable(huang_zhong)
+                    else "Success"
+                ),
             }
         else:
             results["execution"] = "Success (Simulated)"

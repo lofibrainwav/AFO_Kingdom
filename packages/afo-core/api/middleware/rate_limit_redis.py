@@ -3,10 +3,7 @@ from __future__ import annotations
 import os
 
 from slowapi import Limiter
-from slowapi.errors import RateLimitExceeded
-from slowapi.middleware import SlowAPIMiddleware
 from slowapi.util import get_remote_address
-from starlette.responses import JSONResponse
 
 
 def _redis_url() -> str:

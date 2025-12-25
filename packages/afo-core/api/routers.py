@@ -12,20 +12,21 @@ Version: 2.0.0 (Beautiful Code Edition)
 from __future__ import annotations
 
 import logging
-from typing import Optional
 
+from AFO.api.compat import (aicpa_router, auth_router, budget_router,
+                            chancellor_router, chat_router, council_router,
+                            education_system_router, finance_router,
+                            got_router, grok_stream_router, health_router,
+                            learning_log_router, learning_pipeline,
+                            matrix_router, modal_data_router,
+                            multi_agent_router, n8n_router, personas_router,
+                            pillars_router, rag_query_router, root_router,
+                            serenity_router, skills_router, ssot_router,
+                            strangler_router, streams_router,
+                            system_health_router, trinity_policy_router,
+                            trinity_sbt_router, users_router, voice_router,
+                            wallet_router)
 from fastapi import FastAPI
-
-from AFO.api.compat import (
-    aicpa_router, auth_router, budget_router, chancellor_router, chat_router,
-    council_router, education_system_router, finance_router, got_router,
-    grok_stream_router, health_router, learning_log_router, learning_pipeline,
-    matrix_router, modal_data_router, multi_agent_router, n8n_router,
-    personas_router, pillars_router, rag_query_router, root_router,
-    serenity_router, skills_router, ssot_router, strangler_router,
-    streams_router, system_health_router, trinity_policy_router,
-    trinity_sbt_router, users_router, voice_router, wallet_router,
-)
 
 # Strangler Fig compatibility router
 try:
@@ -77,7 +78,9 @@ class AFORouterManager:
         # Legacy and compatibility routers (last resort)
         self._register_legacy_routers()
 
-        logger.info(f"Router registration completed. Total: {self.registered_routers} routers")
+        logger.info(
+            f"Router registration completed. Total: {self.registered_routers} routers"
+        )
 
     def _register_core_routers(self) -> None:
         """Register core system routers (Health, Root, Streams).
@@ -113,8 +116,12 @@ class AFORouterManager:
 
         # Multi-agent and AI systems
         self._safe_register_router(multi_agent_router)
-        self._safe_register_router(got_router, prefix="/api/got", tags=["Graph of Thought"])
-        self._safe_register_router(n8n_router, prefix="/api/n8n", tags=["N8N Integration"])
+        self._safe_register_router(
+            got_router, prefix="/api/got", tags=["Graph of Thought"]
+        )
+        self._safe_register_router(
+            n8n_router, prefix="/api/n8n", tags=["N8N Integration"]
+        )
 
         # API and financial systems
         self._safe_register_router(wallet_router, tags=["API Wallet"])
@@ -132,10 +139,14 @@ class AFORouterManager:
         self._safe_register_router(
             education_system_router, prefix="/api/education", tags=["Education System"]
         )
-        self._safe_register_router(modal_data_router, prefix="/api/modal", tags=["Modal Data"])
+        self._safe_register_router(
+            modal_data_router, prefix="/api/modal", tags=["Modal Data"]
+        )
 
         # Advanced AI systems
-        self._safe_register_router(rag_query_router, prefix="/api", tags=["Brain Organ (RAG)"])
+        self._safe_register_router(
+            rag_query_router, prefix="/api", tags=["Brain Organ (RAG)"]
+        )
         self._safe_register_router(personas_router, tags=["Phase 2: Family Hub OS"])
 
     def _register_phase_routers(self) -> None:
@@ -147,29 +158,45 @@ class AFORouterManager:
 
         # Phase 12-13: Business Intelligence
         self._safe_register_router(budget_router, tags=["Phase 12"])
-        self._safe_register_router(aicpa_router, prefix="/api", tags=["AICPA Agent Army"])
+        self._safe_register_router(
+            aicpa_router, prefix="/api", tags=["AICPA Agent Army"]
+        )
 
         # Phase 16-18: Autonomous Learning
         self._safe_register_router(learning_log_router, tags=["Phase 16"])
         self._safe_register_router(grok_stream_router, tags=["Phase 18"])
 
         # Phase 23-27: Advanced AI
-        self._safe_register_router(voice_router, prefix="/api", tags=["Voice Interface"])
-        self._safe_register_router(council_router, prefix="/api", tags=["Council of Minds"])
-        self._safe_register_router(learning_pipeline, prefix="/api", tags=["AI Self-Improvement"])
-        self._safe_register_router(serenity_router, prefix="/api", tags=["Serenity (GenUI)"])
+        self._safe_register_router(
+            voice_router, prefix="/api", tags=["Voice Interface"]
+        )
+        self._safe_register_router(
+            council_router, prefix="/api", tags=["Council of Minds"]
+        )
+        self._safe_register_router(
+            learning_pipeline, prefix="/api", tags=["AI Self-Improvement"]
+        )
+        self._safe_register_router(
+            serenity_router, prefix="/api", tags=["Serenity (GenUI)"]
+        )
 
         # Philosophical Copilot (眞善美孝永 철학 실시간 모니터링)
         try:
-            from AFO.api.routes.philosophical_copilot import router as philosophical_copilot_router
-            self._safe_register_router(philosophical_copilot_router, tags=["철학적 Copilot"])
+            from AFO.api.routes.philosophical_copilot import \
+                router as philosophical_copilot_router
+
+            self._safe_register_router(
+                philosophical_copilot_router, tags=["철학적 Copilot"]
+            )
         except ImportError:
             logger.warning("Philosophical Copilot Router not available")
 
         # Chancellor and streaming systems
         self._safe_register_router(chancellor_router, tags=["LangGraph Optimized"])
         try:
-            from AFO.api.routes.system_stream import router as system_stream_router
+            from AFO.api.routes.system_stream import \
+                router as system_stream_router
+
             self._safe_register_router(system_stream_router, tags=["SSE 스트리밍"])
         except ImportError:
             logger.warning("System Stream Router not available")
@@ -205,17 +232,23 @@ class AFORouterManager:
 
         try:
             routes_before = len([r for r in self.app.routes if hasattr(r, "path")])
-            self.app.include_router(skills_router, prefix="/api/skills", tags=["Skills"])
+            self.app.include_router(
+                skills_router, prefix="/api/skills", tags=["Skills"]
+            )
             routes_after = len([r for r in self.app.routes if hasattr(r, "path")])
-            self.registered_routers += (routes_after - routes_before)
-            logger.info(f"Skills API registered successfully ({routes_after - routes_before} routes)")
+            self.registered_routers += routes_after - routes_before
+            logger.info(
+                f"Skills API registered successfully ({routes_after - routes_before} routes)"
+            )
         except Exception as e:
             logger.error(f"Skills router registration failed: {e}")
 
     def _register_comprehensive_health(self) -> None:
         """Register comprehensive health check router."""
         try:
-            from AFO.api.routes.comprehensive_health import router as comprehensive_health_router
+            from AFO.api.routes.comprehensive_health import \
+                router as comprehensive_health_router
+
             self._safe_register_router(comprehensive_health_router, tags=["Health"])
         except ImportError:
             logger.warning("Comprehensive Health Check Router not available")
@@ -231,8 +264,8 @@ class AFORouterManager:
 
         for module_path, name in management_routers:
             try:
-                module = __import__(module_path, fromlist=['router'])
-                router = getattr(module, 'router')
+                module = __import__(module_path, fromlist=["router"])
+                router = module.router
                 self._safe_register_router(router, tags=[name])
             except (ImportError, AttributeError) as e:
                 logger.warning(f"{name} router not available: {e}")
@@ -241,7 +274,9 @@ class AFORouterManager:
         """Register compatibility and legacy routers."""
         # Intake API
         try:
-            from AFO.afo_soul_engine.routers.intake import router as intake_router
+            from AFO.afo_soul_engine.routers.intake import \
+                router as intake_router
+
             self._safe_register_router(intake_router, tags=["Intake"])
         except ImportError:
             logger.warning("Intake API router not available")
@@ -249,6 +284,7 @@ class AFORouterManager:
         # GenUI Engine
         try:
             from AFO.api.routers.gen_ui import router as gen_ui_router
+
             self._safe_register_router(gen_ui_router, tags=["GenUI"])
         except ImportError:
             logger.warning("GenUI Engine not available")
@@ -256,34 +292,39 @@ class AFORouterManager:
         # Family Hub
         try:
             from AFO.api.routers.family import router as family_router
+
             self._safe_register_router(family_router, tags=["Family Hub"])
-            self._safe_register_router(family_router, prefix="/api", tags=["Family Hub"])
+            self._safe_register_router(
+                family_router, prefix="/api", tags=["Family Hub"]
+            )
         except ImportError:
             logger.warning("Family Hub router not available")
 
         # Cache Metrics
         try:
             from AFO.api.routers.cache import router as cache_router
+
             self._safe_register_router(cache_router, tags=["Cache Metrics"])
         except ImportError:
             logger.warning("Cache Metrics router not available")
 
         # Julie Royal
         try:
-            from AFO.api.routers.julie_royal import router as julie_royal_router
+            from AFO.api.routers.julie_royal import \
+                router as julie_royal_router
+
             self._safe_register_router(julie_royal_router, tags=["Julie Royal"])
         except ImportError:
             logger.warning("Julie Royal router not available")
 
         # Strangler Fig Compatibility
         if compat_router:
-            self._safe_register_router(compat_router, prefix="/api", tags=["Strangler Fig"])
+            self._safe_register_router(
+                compat_router, prefix="/api", tags=["Strangler Fig"]
+            )
 
     def _safe_register_router(
-        self,
-        router: Optional[object],
-        prefix: str = "",
-        tags: Optional[list[str]] = None
+        self, router: object | None, prefix: str = "", tags: list[str] | None = None
     ) -> None:
         """Safely register a router with error handling.
 
@@ -307,7 +348,7 @@ class AFORouterManager:
                 self.app.include_router(router)
 
             routes_after = len([r for r in self.app.routes if hasattr(r, "path")])
-            self.registered_routers += (routes_after - routes_before)
+            self.registered_routers += routes_after - routes_before
 
         except Exception as e:
             logger.error(f"Router registration failed: {e}")
@@ -340,7 +381,9 @@ def _register_core_routers(app: FastAPI) -> None:
         app.include_router(streams_router, prefix="/api/stream", tags=["Matrix Stream"])
 
     if matrix_router:
-        app.include_router(matrix_router, prefix="/api", tags=["Matrix Stream (Phase 10)"])
+        app.include_router(
+            matrix_router, prefix="/api", tags=["Matrix Stream (Phase 10)"]
+        )
 
 
 def _register_feature_routers(app: FastAPI) -> None:
@@ -360,7 +403,9 @@ def _register_feature_routers(app: FastAPI) -> None:
 
     # Strangler fig pattern
     if strangler_router:
-        app.include_router(strangler_router, prefix="/api/strangler", tags=["Strangler Fig"])
+        app.include_router(
+            strangler_router, prefix="/api/strangler", tags=["Strangler Fig"]
+        )
 
     # Graph of Thought
     if got_router:
@@ -472,7 +517,9 @@ def _register_phase_routers(app: FastAPI) -> None:
     # Phase 26: AI Self-Improvement
     try:
         if learning_pipeline:
-            app.include_router(learning_pipeline, prefix="/api", tags=["AI Self-Improvement"])
+            app.include_router(
+                learning_pipeline, prefix="/api", tags=["AI Self-Improvement"]
+            )
             print("🧠 Learning Pipeline Router 등록 완료 (Phase 26: 사마휘 자율 학습)")
     except Exception as e:
         print(f"⚠️ Learning Pipeline Router 등록 실패: {e}")
@@ -480,17 +527,22 @@ def _register_phase_routers(app: FastAPI) -> None:
     # Phase 27: Project Serenity
     try:
         if serenity_router:
-            app.include_router(serenity_router, prefix="/api", tags=["Serenity (GenUI)"])
+            app.include_router(
+                serenity_router, prefix="/api", tags=["Serenity (GenUI)"]
+            )
             print("🎨 Serenity Router 등록 완료 (Phase 27: 프로젝트 제네시스)")
     except Exception as e:
         print(f"⚠️ Serenity Router 등록 실패: {e}")
 
     # 철학적 Copilot Dashboard (眞善美孝永 철학의 실시간 조화 모니터링)
     try:
-        from AFO.api.routes.philosophical_copilot import router as philosophical_copilot_router
+        from AFO.api.routes.philosophical_copilot import \
+            router as philosophical_copilot_router
 
         app.include_router(philosophical_copilot_router, tags=["철학적 Copilot"])
-        print("🎯 철학적 Copilot Router 등록 완료 (제갈량의 전략 + 관우의 검증 + 여포의 맥박)")
+        print(
+            "🎯 철학적 Copilot Router 등록 완료 (제갈량의 전략 + 관우의 검증 + 여포의 맥박)"
+        )
     except Exception as e:
         print(f"⚠️ 철학적 Copilot Router 등록 실패: {e}")
 
@@ -507,7 +559,9 @@ def _register_phase_routers(app: FastAPI) -> None:
     # Chancellor (Strategy Engine)
     if chancellor_router:
         app.include_router(chancellor_router)
-        print("✅ 승상 API 라우터 등록 완료 (LangGraph Optimized: Chancellor + 3 Strategists)")
+        print(
+            "✅ 승상 API 라우터 등록 완료 (LangGraph Optimized: Chancellor + 3 Strategists)"
+        )
 
     # System Stream Routes (SSE 실시간 스트리밍)
     try:
@@ -560,7 +614,9 @@ def _register_legacy_routers(app: FastAPI) -> None:
                     all_routes_after.append(route_info)
 
             existing_routes_after = len(all_routes_after)
-            skills_routes = [r for r in all_routes_after if "skills" in r["path"].lower()]
+            skills_routes = [
+                r for r in all_routes_after if "skills" in r["path"].lower()
+            ]
             print(f"🔍 Total routes after Skills registration: {existing_routes_after}")
             print(f"🔍 Skills routes found: {len(skills_routes)}")
 
@@ -576,7 +632,9 @@ def _register_legacy_routers(app: FastAPI) -> None:
             else:
                 print("❌ No skills routes found after registration!")
                 # Check if any routes contain 'skill' (typo check)
-                skill_like_routes = [r for r in all_routes_after if "skill" in r["path"].lower()]
+                skill_like_routes = [
+                    r for r in all_routes_after if "skill" in r["path"].lower()
+                ]
                 if skill_like_routes:
                     print("🔍 Routes containing 'skill':")
                     for route in skill_like_routes:
@@ -592,16 +650,20 @@ def _register_legacy_routers(app: FastAPI) -> None:
 
     # Comprehensive Health Check (integrated)
     try:
-        from AFO.api.routes.comprehensive_health import router as comprehensive_health_router
+        from AFO.api.routes.comprehensive_health import \
+            router as comprehensive_health_router
 
         app.include_router(comprehensive_health_router)
         print("✅ Comprehensive Health Check 라우터 등록 완료 (조기 등록)")
     except ImportError:
         try:
-            from AFO.api.routes.comprehensive_health import router as comprehensive_health_router
+            from AFO.api.routes.comprehensive_health import \
+                router as comprehensive_health_router
 
             app.include_router(comprehensive_health_router)
-            print("✅ Comprehensive Health Check 라우터 등록 완료 (fallback, 조기 등록)")
+            print(
+                "✅ Comprehensive Health Check 라우터 등록 완료 (fallback, 조기 등록)"
+            )
         except Exception as e:
             print(f"⚠️ Comprehensive Health Check 라우터 등록 실패 (조기 등록): {e}")
 
@@ -622,13 +684,15 @@ def _register_legacy_routers(app: FastAPI) -> None:
 
     # Integrity Check API
     try:
-        from AFO.api.routes.integrity_check import router as integrity_check_router
+        from AFO.api.routes.integrity_check import \
+            router as integrity_check_router
 
         app.include_router(integrity_check_router)
         print("✅ Integrity Check 라우터 등록 완료")
     except ImportError:
         try:
-            from AFO.api.routes.integrity_check import router as integrity_check_router
+            from AFO.api.routes.integrity_check import \
+                router as integrity_check_router
 
             app.include_router(integrity_check_router)
             print("✅ Integrity Check 라우터 등록 완료 (fallback)")
@@ -658,7 +722,8 @@ def _register_legacy_routers(app: FastAPI) -> None:
         print("✅ Intake API 라우터 등록 완료 (조기 등록)")
     except ImportError:
         try:
-            from AFO.afo_soul_engine.routers.intake import router as intake_router
+            from AFO.afo_soul_engine.routers.intake import \
+                router as intake_router
 
             app.include_router(intake_router)
             print("✅ Intake API 라우터 등록 완료 (fallback, 조기 등록)")

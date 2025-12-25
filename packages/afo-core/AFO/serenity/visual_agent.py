@@ -1,3 +1,4 @@
+# Trinity Score: 90.0 (Established by Chancellor)
 import asyncio
 import base64
 import json
@@ -5,10 +6,9 @@ import logging
 from typing import Optional
 
 import httpx
+from AFO.domain.janus.contract import VisualAction, VisualPlan
 from playwright.async_api import async_playwright
 from pydantic import ValidationError
-
-from AFO.domain.janus.contract import VisualAction, VisualPlan
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +19,9 @@ class VisualAgent:
     Integrates Brain (Qwen3-VL), Eye (BBox), and Hand (Playwright).
     """
 
-    def __init__(self, ollama_url: str = "http://localhost:11434", model: str = "qwen3-vl:8b"):
+    def __init__(
+        self, ollama_url: str = "http://localhost:11434", model: str = "qwen3-vl:8b"
+    ):
         self.ollama_url = ollama_url
         self.model = model
         self.system_prompt = """You are a GUI Agent. 
@@ -84,7 +86,9 @@ class VisualAgent:
             }
 
             async with httpx.AsyncClient() as client:
-                resp = await client.post(f"{self.ollama_url}/api/chat", json=payload, timeout=60.0)
+                resp = await client.post(
+                    f"{self.ollama_url}/api/chat", json=payload, timeout=60.0
+                )
                 resp.raise_for_status()
                 result = resp.json()
                 content = result.get("message", {}).get("content", "")
@@ -109,7 +113,9 @@ class VisualAgent:
             )
         except Exception as e:
             logger.error(f"Brain analysis failed: {e}")
-            return VisualPlan(goal=goal, actions=[], stop=True, summary=f"Analysis error: {e!s}")
+            return VisualPlan(
+                goal=goal, actions=[], stop=True, summary=f"Analysis error: {e!s}"
+            )
 
     async def execute_action(self, action: VisualAction, screenshot_data: dict) -> dict:
         """
@@ -117,8 +123,12 @@ class VisualAgent:
         """
         try:
             # Denormalize bbox for screen coordinates
-            screen_x = int(action.bbox.x * screenshot_data["width"]) if action.bbox else 0
-            screen_y = int(action.bbox.y * screenshot_data["height"]) if action.bbox else 0
+            screen_x = (
+                int(action.bbox.x * screenshot_data["width"]) if action.bbox else 0
+            )
+            screen_y = (
+                int(action.bbox.y * screenshot_data["height"]) if action.bbox else 0
+            )
 
             async with async_playwright() as p:
                 browser = await p.chromium.launch()
@@ -141,7 +151,11 @@ class VisualAgent:
                         if action.bbox:
                             await page.mouse.click(screen_x, screen_y)
                         await page.keyboard.type(action.text)
-                        result = {"success": True, "action": "type", "text": action.text}
+                        result = {
+                            "success": True,
+                            "action": "type",
+                            "text": action.text,
+                        }
 
                     elif action.type == "scroll":
                         await page.evaluate("window.scrollBy(0, 500)")
@@ -193,7 +207,11 @@ class VisualAgent:
                 action = plan.actions[0]
                 execution_result = await self.execute_action(action, screenshot_data)
                 results.append(
-                    {"iteration": iteration, "action": action.dict(), "result": execution_result}
+                    {
+                        "iteration": iteration,
+                        "action": action.dict(),
+                        "result": execution_result,
+                    }
                 )
 
                 # If execution failed, stop the loop
