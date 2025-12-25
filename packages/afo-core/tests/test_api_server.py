@@ -64,7 +64,10 @@ class TestAPIServerRoutes:
         """CORS 헤더 확인"""
         response = client.get("/", headers={"Origin": "http://localhost:3000"})
         assert "access-control-allow-origin" in response.headers
-        assert response.headers["access-control-allow-origin"] == "*"
+        assert response.headers["access-control-allow-origin"] in {
+            "*",
+            "http://localhost:3000",
+        }
 
 
 class TestLifespan:

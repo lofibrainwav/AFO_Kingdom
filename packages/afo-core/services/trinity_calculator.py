@@ -9,17 +9,15 @@ Phase 5: Trinity Type Validator 적용 - 런타임 Trinity Score 검증
 
 import logging
 from collections.abc import Callable
-from typing import Any, TypeVar
+from typing import Any
 
 import numpy as np
-
-F = TypeVar("F", bound=Callable[..., Any])
 
 try:
     from AFO.utils.trinity_type_validator import validate_with_trinity
 except ImportError:
     # Fallback for import issues - 시그니처를 실제 함수와 일치시킴
-    def validate_with_trinity(func: F) -> F:
+    def validate_with_trinity[TF: Callable[..., Any]](func: TF) -> TF:
         """Fallback decorator when trinity_type_validator is not available."""
         return func
 

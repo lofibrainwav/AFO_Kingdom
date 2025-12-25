@@ -7,12 +7,10 @@ DRY_RUN 메커니즘 - 眞(Truth) 점수 향상
 from __future__ import annotations
 
 from functools import wraps
-from typing import TYPE_CHECKING, Any, TypeVar
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from collections.abc import Callable
-
-T = TypeVar("T")
 
 
 class DryRunMode:
@@ -36,7 +34,7 @@ class DryRunMode:
         return cls._enabled
 
 
-def dry_run(func: Callable[..., T]) -> Callable[..., Any]:
+def dry_run[T](func: Callable[..., T]) -> Callable[..., Any]:
     """DRY_RUN 데코레이터"""
 
     @wraps(func)

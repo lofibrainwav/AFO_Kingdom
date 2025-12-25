@@ -20,7 +20,6 @@ from AFO.domain.metrics.trinity_manager import TrinityManager
 # 로깅 설정
 logger = logging.getLogger(__name__)
 
-T = TypeVar("T")
 F = TypeVar("F", bound=Callable[..., Any])
 
 
@@ -638,7 +637,7 @@ class TrinityTypeValidator:
 trinity_validator = TrinityTypeValidator()
 
 
-def validate_with_trinity(func: F) -> F:
+def validate_with_trinity[TF: Callable[..., Any]](func: TF) -> TF:
     """
     Trinity 검증 데코레이터 (async 함수 지원)
 

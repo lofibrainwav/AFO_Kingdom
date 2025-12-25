@@ -159,7 +159,19 @@ async def get_comprehensive_health() -> dict[str, Any]:
         decision = "AUTO_RUN"
         decision_message = "모든 시스템 정상. 자동 실행 가능합니다."
 
+    try:
+        from AFO.api.metadata import get_api_metadata
+
+        api_metadata = get_api_metadata()
+        service_name = str(api_metadata.get("title", "AFO Kingdom Soul Engine API"))
+        api_version = str(api_metadata.get("version", "unknown"))
+    except Exception:
+        service_name = "AFO Kingdom Soul Engine API"
+        api_version = "unknown"
+
     return {
+        "service": service_name,
+        "version": api_version,
         "status": trinity_metrics.balance_status,
         "health_percentage": round(trinity_metrics.trinity_score * 100, 2),
         "healthy_organs": healthy_count,
