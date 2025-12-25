@@ -153,6 +153,43 @@ groups:
           summary: "⚖️ Trinity 기둥 불균형"
           description: "眞善美孝永 기둥 간 불균형이 감지되었습니다."
 
+      # [Phase 6 Hardening] Critical Trinity Score Alert
+      - alert: TrinityScoreCritical
+        expr: afo_trinity_score_total < 0.9
+        for: 2m
+        labels:
+          severity: critical
+          service: trinity
+        annotations:
+          summary: "🚨 Trinity Score Critical - AUTO_RUN 불가"
+          description: "Trinity Score {{ $value }}이(가) 90점 미만입니다. 수동 승인 필요."
+          runbook_url: "https://docs.afo-kingdom.local/runbooks/trinity-critical"
+
+      # [Phase 6 Hardening] Edge Revalidation Failure
+      - alert: EdgeRevalidationFailure
+        expr: |
+          rate(afo_edge_revalidate_failures_total[5m]) > 0.1
+        for: 3m
+        labels:
+          severity: warning
+          service: edge
+        annotations:
+          summary: "⚡ Edge Revalidation 실패율 증가"
+          description: "ISR 재검증 실패율이 {{ $value | humanizePercentage }}입니다."
+
+      # [Phase 6 Hardening] SLA Violation (99.5% availability)
+      - alert: SLAViolationRisk
+        expr: |
+          (1 - (sum(rate(afo_http_requests_total{status_code=~"2.."}[1h])) / 
+           sum(rate(afo_http_requests_total[1h])))) > 0.005
+        for: 10m
+        labels:
+          severity: critical
+          service: sla
+        annotations:
+          summary: "📊 SLA 위반 위험"
+          description: "지난 1시간 가용률이 {{ $value | humanizePercentage }} 미만입니다. SLA(99.5%) 위반 위험."
+
   # ============================================================
   # Lower Priority Alerts
   # ============================================================
