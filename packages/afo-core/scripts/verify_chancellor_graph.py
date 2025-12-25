@@ -19,9 +19,8 @@ sys.modules["langchain_openai"] = MagicMock()
 sys.modules["langchain_anthropic"] = MagicMock()
 
 
-from langchain_core.messages import HumanMessage
-
 from AFO import chancellor_graph
+from langchain_core.messages import HumanMessage
 
 
 # Mock the LLM Router used by the graph nodes

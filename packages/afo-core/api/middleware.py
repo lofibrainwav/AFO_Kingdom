@@ -11,15 +11,6 @@ from fastapi.middleware.cors import CORSMiddleware
 def setup_middleware(app: FastAPI) -> None:
     """Setup all middleware for the FastAPI application."""
 
-    # CORS middleware
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=["*"],  # 모든 도메인 허용 (프로덕션에서는 특정 도메인으로 제한)
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
-
     # Cache middleware (Phase 1.2: API 엔드포인트 캐싱)
     _setup_cache_middleware(app)
 
@@ -31,6 +22,18 @@ def setup_middleware(app: FastAPI) -> None:
 
     # Monitoring middleware (Prometheus)
     _setup_monitoring_middleware(app)
+
+    # CORS middleware (Must be added last to run first)
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=[
+            "http://localhost:3000",
+            "http://localhost:8010",
+        ],  # Explicit origins for credentials support
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
 
 def _setup_security_middleware(app: FastAPI) -> None:
@@ -76,7 +79,8 @@ def _setup_phase2_hardening_middleware(app: FastAPI) -> None:
         # Redis-backed rate limiting (distributed support)
         redis_limiter = create_redis_limiter()
         rate_limit_middleware = create_rate_limit_middleware(redis_limiter)
-        app.add_middleware(rate_limit_middleware)
+        if rate_limit_middleware is not None:
+            app.add_middleware(rate_limit_middleware)
 
         app.add_middleware(SqlGuardMiddleware)
 

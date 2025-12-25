@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# Copyright 2025 AFO Kingdom. All rights reserved.
 """
 AFO Kingdom - NotebookLM Mirroring Script (Track A)
 ---------------------------------------------------
@@ -12,14 +12,14 @@ It performs the following:
 4. Indexes content into Qdrant Vector DB (Wisdom).
 """
 
+import contextlib
 import json
 import os
 import sys
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 from qdrant_client import QdrantClient
-
 
 # Constants
 MANIFEST_PATH = Path("docs/kb/notebooklm/notebooklm.manifest.json")
@@ -36,38 +36,14 @@ def load_manifest() -> dict:
         sys.exit(1)
 
     try:
-        with Path(MANIFEST_PATH).open() as f:
+        with Path(MANIFEST_PATH).open(encoding="utf-8") as f:
             return json.load(f)
     except json.JSONDecodeError as e:
         print(f"❌ Invalid JSON in manifest: {e}")
         sys.exit(1)
 
 
-async def index_notebook(notebook: dict, sources_path: Path):
-    """
-    Indexes the documents in the sources path into a Qdrant collection
-    specific to this notebook (e.g., 'notebooklm_philosophy').
-    """
-    slug = notebook.get("slug")
-    collection_name = f"notebooklm_{slug}"
-
-    # Ensure collection exists
-    try:
-        qdrant.get_collection(collection_name)
-    except Exception:
-        # print(f"   ✨ Creating collection: {collection_name}")
-        # qdrant.create_collection(
-        #     collection_name=collection_name,
-        #     vectors_config=models.VectorParams(size=1536, distance=models.Distance.COSINE),
-        # )
-        pass  # Skip actual creation in dry run usually, but here we just pass
-
-    # Simple text loader (naive) or integrate with AFO's RAG pipeline
-    # print(f"   🧠 [Wisdom] Indexing documents from {sources_path} into {collection_name}...")
-    # TODO: Connect to 'services/scholar_ingestion.py' for real embedding.
-
-
-def ensure_structure(notebook: dict) -> dict:
+def ensure_structure(notebook: dict) -> dict | None:
     slug = notebook.get("slug")
     if not slug:
         print("⚠️ Skipping notebook without slug")
@@ -82,15 +58,13 @@ def ensure_structure(notebook: dict) -> dict:
 
     # Count files
     source_count = len([
-        f for f in path_sources.glob("*") if f.is_file() and not f.name.startswith(".")
+        f for f in path_sources.glob("*")
+        if f.is_file() and not f.name.startswith(".")
     ])
     note_count = len([
-        f for f in path_notes.glob("*") if f.is_file() and not f.name.startswith(".")
+        f for f in path_notes.glob("*")
+        if f.is_file() and not f.name.startswith(".")
     ])
-
-    # Trigger Async Indexing (Fire and Forget or Await)
-    # asyncio.run(index_notebook(notebook, path_sources))
-    # For now, just a placeholder print in synch
 
     return {
         "slug": slug,
@@ -99,25 +73,24 @@ def ensure_structure(notebook: dict) -> dict:
         "note_count": note_count,
         "path_sources": str(path_sources),
         "path_notes": str(path_notes),
-        "last_sync": datetime.now().isoformat(),
+        "last_sync": datetime.now(timezone.utc).isoformat(),
     }
 
 
-def update_readme(stats: list[dict]):
+def update_readme(stats: list[dict]) -> None:
     readme_path = KB_ROOT / "README.md"
 
-    with Path(readme_path).open("w") as f:
+    with Path(readme_path).open("w", encoding="utf-8") as f:
         f.write("# 📚 NotebookLM Knowledge Base (Mirror)\n\n")
         f.write(
             "This directory contains the mirrored Knowledge Base for AFO's NotebookLM integration.\n"
         )
         f.write("Strategy: **Track A (SSOT Mirroring)**\n\n")
-        f.write(f"**Last Sync:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
+        f.write(f"**Last Sync:** {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')}\n\n")
         f.write("| Notebook | Sources | Notes | Path |\n")
         f.write("|----------|:-------:|:-----:|------|\n")
 
         for s in stats:
-            link = f"[{s['slug']}](./{s['slug']}/)"
             f.write(
                 f"| {s['title']} | {s['source_count']} | {s['note_count']} | `{s['path_sources']}` |\n"
             )
@@ -128,7 +101,7 @@ def update_readme(stats: list[dict]):
         f.write("3. Run `python scripts/sync_notebooklm.py` to update this index.\n")
 
 
-def main():
+def main() -> None:
     print("🔮 Starting NotebookLM Mirror Sync...")
 
     manifest = load_manifest()

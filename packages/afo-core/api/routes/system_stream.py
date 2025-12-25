@@ -23,9 +23,7 @@ def _redis() -> Redis:
     port = int(os.environ.get("REDIS_PORT", "6379"))
     db = int(os.environ.get("REDIS_DB", "0"))
     password = os.environ.get("REDIS_PASSWORD")
-    redis_instance = Redis(
-        host=host, port=port, db=db, password=password, decode_responses=True
-    )
+    redis_instance = Redis(host=host, port=port, db=db, password=password, decode_responses=True)
     return redis_instance  # type: ignore[return-value]
 
 
@@ -68,9 +66,7 @@ async def logs_stream(request: Request) -> StreamingResponse:
                     yield ": ping\n\n"
                     next_ping = now + ping_interval
 
-                msg = await pubsub.get_message(
-                    ignore_subscribe_messages=True, timeout=1.0
-                )
+                msg = await pubsub.get_message(ignore_subscribe_messages=True, timeout=1.0)
                 if not msg:
                     continue
 
@@ -108,3 +104,19 @@ async def logs_stream(request: Request) -> StreamingResponse:
             "X-Accel-Buffering": "no",  # nginx buffering 방지
         },
     )
+
+
+async def publish_thought(
+    thought_data: dict, event_type: str = "thought", _id: str | None = None
+) -> None:
+    """
+    [Internal Broadcast]
+    Allows other services (Julie, Chancellor) to emit thoughts into the neural stream.
+    """
+    try:
+        r = _redis()
+        payload = {"type": event_type, "id": _id, **thought_data}
+        await r.publish(SSE_CHANNEL, json.dumps(payload))
+        await r.close()
+    except Exception as e:
+        print(f"⚠️ Failed to publish thought: {e}")

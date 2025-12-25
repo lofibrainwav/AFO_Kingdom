@@ -1,0 +1,16 @@
+{
+  "name": "AFO Kingdom Dashboard",
+  "short_name": "AFO Kingdom",
+  "description": "Digital Organic Being - AFO Kingdom Trinity Dashboard",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#7c3aed",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "any",
+      "type": "image/x-icon"
+    }
+  ]
+}

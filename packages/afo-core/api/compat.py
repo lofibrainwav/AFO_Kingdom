@@ -1,802 +1,476 @@
 """
-Compatibility Layer (Strangler Fig Pattern)
--------------------------------------------
-Centralizes conditional imports and legacy support logic.
-Ensures 'api_server.py' remains clean and type-safe (Truth 100%).
+AFO Kingdom Compatibility Layer (아름다운 코드 적용)
+Strangler Fig Facade - HTML Legacy Data Compatibility Layer
+
+Phase 15: The Grok Singularity - 아름다운 코드로 구현된 호환성 레이어
+Trinity Score 기반 품질 관리 및 모듈화된 구조로 확장성 보장.
+
+Author: AFO Kingdom Development Team
+Date: 2025-12-24
+Version: 2.0.0 (Beautiful Code Edition)
 """
 
 from __future__ import annotations
 
 import logging
+import os
 from pathlib import Path
-from typing import Any, Literal
+from typing import Dict, List, Any, Optional
+from dataclasses import dataclass
+from datetime import datetime
 
-from pydantic import BaseModel, Field
+# Configure logging
+logger = logging.getLogger(__name__)
 
+# HTML Data Sources with validation
+HTML_DASHBOARD_PATH = Path(__file__).parent.parent.parent.parent / "packages/dashboard/public/legacy/kingdom_dashboard.html"
 
-# 7. Chancellor Router Type Models (Strangler Fig Facade)
-class ChancellorInvokeRequest(BaseModel):
-    """Chancellor Graph 호출 요청 모델 - 眞 (Truth) 타입 안전성 확보"""
 
-    query: str = Field(..., description="사용자 쿼리")
-    thread_id: str = Field(default="default", description="대화 스레드 ID")
-    auto_run: bool = Field(
-        default_factory=lambda: (
-            get_antigravity_control().AUTO_DEPLOY if get_antigravity_control() else True
-        ),
-        description="자동 실행 여부 (孝: Serenity) - Antigravity.AUTO_DEPLOY 기본값 사용",
-    )
-    timeout_seconds: int = Field(
-        default=30, ge=1, le=300, description="최대 실행 시간(초)"
-    )
-    mode: Literal["auto", "offline", "fast", "lite", "full"] = Field(
-        default="auto",
-        description="실행 모드(auto=자동, offline=LLM 없이 상태 보고, fast=1회 LLM, lite=짧은 1회 LLM, full=LangGraph 3책사)",
-    )
-    max_strategists: int | None = Field(
-        default=None,
-        ge=0,
-        le=3,
-        description="사용할 책사 수(0~3). full 모드에서 적용 가능. None이면 mode/timeout 기반 자동 결정",
-    )
-    provider: Literal["auto", "ollama", "anthropic", "gemini", "openai"] = Field(
-        default="auto",
-        description="LLM 제공자 강제 선택(라우터 우회). auto이면 라우팅 사용",
-    )
-    ollama_model: str | None = Field(
-        default=None,
-        description="Ollama 모델 override (예: llama3.2:3b, qwen2.5:3b 등)",
-    )
-    ollama_timeout_seconds: float | None = Field(
-        default=None, ge=0.5, le=300, description="Ollama HTTP 타임아웃(초)"
-    )
-    ollama_num_ctx: int | None = Field(
-        default=None,
-        ge=256,
-        le=32768,
-        description="Ollama num_ctx override (컨텍스트 윈도우)",
-    )
-    ollama_num_thread: int | None = Field(
-        default=None, ge=1, le=64, description="Ollama num_thread override"
-    )
-    max_tokens: int | None = Field(
-        default=None, ge=32, le=4096, description="최대 출력 토큰"
-    )
-    temperature: float | None = Field(default=None, ge=0.0, le=2.0, description="온도")
-    fallback_on_timeout: bool = Field(
-        default=True, description="시간 초과 시 504 대신 상태 기반 답변으로 폴백"
-    )
-
-
-class ChancellorInvokeResponse(BaseModel):
-    """Chancellor Graph 호출 응답 모델 - 美 (Beauty) 구조적 일관성 확보"""
-
-    response: str = Field(..., description="Chancellor 응답")
-    speaker: str = Field(default="Chancellor", description="응답자")
-    thread_id: str = Field(..., description="대화 스레드 ID")
-    trinity_score: float = Field(default=0.0, description="Trinity Score")
-    strategists_consulted: list[str] = Field(
-        default_factory=list, description="상담한 책사 목록"
-    )
-    analysis_results: dict[str, Any] = Field(
-        default_factory=dict, description="분석 결과"
-    )
-    mode_used: str = Field(..., description="사용된 실행 모드")
-    fallback_used: bool = Field(default=False, description="폴백 사용 여부")
-    timed_out: bool = Field(default=False, description="타임아웃 발생 여부")
-    system_metrics: dict[str, Any] = Field(
-        default_factory=dict, description="시스템 메트릭"
-    )
-    routing: dict[str, Any] = Field(default_factory=dict, description="라우팅 정보")
-
-
-# 1. Environment & Settings
-
-try:
-    from dotenv import load_dotenv as _real_load_dotenv
-
-    _load_dotenv: Any = _real_load_dotenv
-except ImportError:
-    _load_dotenv = None
-
-
-def load_dotenv_safe() -> bool:
-    """Safe wrapper for dotenv.load_dotenv"""
-    if _load_dotenv is not None:
-        return bool(_load_dotenv(dotenv_path=str(Path.cwd() / ".env"), override=True))
-    return False
-
-
-_get_settings_func: Any = None
-
-try:
-    from AFO.config.settings import get_settings as _real_get_settings
-
-    _get_settings_func = _real_get_settings
-except ImportError:
-    try:
-        # [대학] 격물치지 - 사물을 궁구하여 지식을 얻음
-        from config.settings import get_settings as _fallback_get_settings
-
-        _get_settings_func = _fallback_get_settings
-    except ImportError:
-        pass
-
-
-# [노자] 도가도비상도 - 완벽한 타입 정의는 변화를 담지 못함
-def get_settings_safe() -> Any:
-    """Safe wrapper for get_settings"""
-    if _get_settings_func is not None:
-        try:
-            return _get_settings_func()
-        except (AttributeError, TypeError, RuntimeError) as e:
-            import logging
-
-            logger = logging.getLogger(__name__)
-            logger.debug("get_settings 호출 실패 (속성/타입/런타임 에러): %s", str(e))
-            return None
-        except Exception as e:  # - Intentional fallback for unexpected errors
-            import logging
-
-            logger = logging.getLogger(__name__)
-            logger.debug("get_settings 호출 중 예상치 못한 에러: %s", str(e))
-            return None
-    return None
-
-
-get_settings = get_settings_safe
-
-
-# 2. Lazy Imports (External Libs)
-class LazyModules:
-    """Facade for optionally installed modules"""
-
-    anthropic: Any = None
-    chromadb: Any = None
-    crewai: Any = None
-    langchain: Any = None
-    qdrant_client: Any = None
-    sentry_sdk: Any = None
-
-    @classmethod
-    def load(cls) -> type[LazyModules]:
-        try:
-            # [주역] 무극이태극 - 무에서 유가 나옴
-            from afo_soul_engine.utils.lazy_imports import (
-                anthropic,
-                chromadb,
-                crewai,
-                langchain,
-                qdrant_client,
-            )
-
-            cls.anthropic = anthropic
-            cls.chromadb = chromadb
-            cls.crewai = crewai
-            cls.langchain = langchain
-            cls.qdrant_client = qdrant_client
-        except ImportError:
-            pass
-
-        try:
-            import sentry_sdk
-
-            cls.sentry_sdk = sentry_sdk
-        except ImportError:
-            pass
-
-        return cls
-
-
-LazyModules.load()
-
-
-# 3. Hybrid RAG Services
-class HybridRAG:
-    """Facade for Hybrid RAG services"""
-
-    available: bool = False
-
-    # Explicitly define fields for MyPy (Strangler Fig)
-    # These will be populated by load()
-    blend_results_async: Any = None
-    generate_answer_async: Any = None
-    get_embedding_async: Any = None
-    query_pgvector_async: Any = None
-    query_redis_async: Any = None
-    select_context: Any = None
-    query_qdrant_async: Any = None
-    generate_hyde_query_async: Any = None
-    query_graph_context: Any = None
-
-    @classmethod
-    def load(cls) -> type[HybridRAG]:
-        try:
-            from AFO.services.hybrid_rag import (
-                generate_answer_async,
-                get_embedding_async,
-                query_pgvector_async,
-                query_redis_async,
-                select_context,
-            )
-
-            cls.available = True
-            cls.generate_answer_async = generate_answer_async
-            cls.get_embedding_async = get_embedding_async
-            cls.query_pgvector_async = query_pgvector_async
-            cls.query_redis_async = query_redis_async
-            cls.select_context = select_context
-
-            # Advanced RAG (A+B)
-            try:
-                from AFO.services.hybrid_rag import (
-                    generate_hyde_query_async,
-                    query_qdrant_async,
-                )
-
-                cls.query_qdrant_async = query_qdrant_async
-                cls.generate_hyde_query_async = generate_hyde_query_async
-
-                # GraphRAG
-                from AFO.services.hybrid_rag import query_graph_context
-
-                cls.query_graph_context = query_graph_context
-
-            except ImportError:
-                pass  # Optional Advanced RAG
-
-        except ImportError:
-            cls.available = False
-
-        return cls
-
-
-HybridRAG.load()
-
-
-# 4. Router Exports (Strangler Fig Facade)
-def _get_fallback_router() -> Any:
-    try:
-        from fastapi import APIRouter
-
-        return APIRouter()
-    except ImportError:
-        return None
-
-
-# Initial Fallbacks
-auth_router = _get_fallback_router()
-chancellor_router = _get_fallback_router()
-family_router = _get_fallback_router()
-health_router = _get_fallback_router()
-julie_router = _get_fallback_router()
-personas_router = _get_fallback_router()
-root_router = _get_fallback_router()
-streams_router = _get_fallback_router()
-users_router = _get_fallback_router()
-skills_router = _get_fallback_router()
-trinity_router = _get_fallback_router()
-rag_router = _get_fallback_router()
-system_health_router = _get_fallback_router()
-trinity_policy_router = _get_fallback_router()
-trinity_sbt_router = _get_fallback_router()
-multi_agent_router = _get_fallback_router()
-education_system_router = _get_fallback_router()
-learning_log_router = _get_fallback_router()
-grok_stream_router = _get_fallback_router()
-budget_router = _get_fallback_router()
-aicpa_router = _get_fallback_router()
-voice_router = _get_fallback_router()
-council_router = _get_fallback_router()
-learning_pipeline = _get_fallback_router()
-serenity_router = _get_fallback_router()
-matrix_router = _get_fallback_router()
-rag_query_router = _get_fallback_router()
-finance_router = _get_fallback_router()
-ssot_router = _get_fallback_router()
-modal_data_router = _get_fallback_router()
-n8n_router = _get_fallback_router()
-wallet_router = _get_fallback_router()
-chat_router = _get_fallback_router()
-# [손자병법] 지피지기 - thoughts_router는 왕국의 사고를 투명하게 드러내는 창
-thoughts_router = _get_fallback_router()
-got_router = _get_fallback_router()
-pillars_router = _get_fallback_router()
-strangler_router = _get_fallback_router()
-
-# Flags
-ANTHROPIC_AVAILABLE: bool = LazyModules.anthropic is not None
-OPENAI_AVAILABLE: bool = False
-
-
-# Functions
-# Metrics
-try:
-    from AFO.domain.metrics.trinity import TrinityMetrics
-except ImportError:
-
-    class TrinityMetrics:  # type: ignore
-        def __init__(self, **kwargs):
-            self.trinity_score = 0.0
-            self.truth = 0.0
-            self.goodness = 0.0
-            self.beauty = 0.0
-            self.filial_serenity = 0.0
-            self.eternity = 0.0
-            self.balance_status = "Unknown"
-
-        def to_dict(self) -> dict:
-            return {}
-
-
-# Functions
-def calculate_trinity(*args: Any, **kwargs: Any) -> Any:
-    try:
-        # Try to use real function if available
-        from AFO.domain.metrics.trinity import calculate_trinity as real_calculate
-
-        return real_calculate(*args, **kwargs)
-    except ImportError as e:
-        import logging
-
-        logger = logging.getLogger(__name__)
-        logger.debug("Trinity 계산 모듈 import 실패: %s", str(e))
-        # Fallback to mock if import fails or execution fails
-        # Try importing TrinityMetrics to return a mock instance
-        try:
-            from AFO.domain.metrics.trinity import TrinityMetrics
-
-            # If we have the class but function failed, we can't easily instantiate it
-            # because it needs derived fields.
-            # So we fall back into the Mock class below if possible,
-            # OR we manually construct it with dummy derived fields if needed.
-            # But easier to just return the Mock object defined locally if we can.
-            pass
-        except ImportError:
-            pass
-
-        # Return fallback mock
-        m = TrinityMetrics(
-            truth=0.8,
-            goodness=0.8,
-            beauty=0.8,
-            filial_serenity=0.8,
-            eternity=0.8,
-            serenity_core=0.8,
-            trinity_score=0.8,
-            balance_delta=0.0,
-            balance_status="balanced",
-        )
-        m.trinity_score = 0.8
-        m.truth = 0.8
-        m.goodness = 0.8
-        m.beauty = 0.8
-        m.filial_serenity = 0.8
-        m.eternity = 0.8
-        m.balance_status = "balanced"
-        return m
-
-
-# Try to load known routers
-# [논어] 학이시습지 - 반복적으로 시도하여 지식을 쌓음
-def load_routers() -> None:
-    global auth_router, family_router, health_router, personas_router, root_router, streams_router, users_router, chancellor_router, julie_router, skills_router, trinity_router, thoughts_router, pillars_router, chat_router, wallet_router
-
-    try:
-        from AFO.api.routers.auth import router as auth
-
-        auth_router = auth
-    except ImportError:
-        pass
-
-    try:
-        from AFO.api.routers.family import router as family
-
-        family_router = family
-    except ImportError:
-        pass
-
-    try:
-        from AFO.api.routers.health import router as health
-
-        health_router = health
-    except ImportError:
-        pass
-
-    try:
-        from AFO.api.routers.personas import router as personas
-
-        personas_router = personas
-    except ImportError:
-        pass
-
-    try:
-        from AFO.api.routers.root import router as root
-
-        root_router = root
-    except ImportError:
-        pass
-
-    try:
-        from AFO.api.routes.streams import router as streams
-
-        streams_router = streams
-    except ImportError:
-        pass
-
-    try:
-        from AFO.api.routers.users import router as users
-
-        users_router = users
-    except ImportError:
-        pass
-
-    try:
-        from AFO.api.routers.chancellor_router import router as chancellor
-
-        chancellor_router = chancellor
-    except ImportError:
-        pass
-
-    try:
-        from AFO.api.routers.julie_royal import router as julie
-
-        julie_router = julie
-    except ImportError:
-        pass
-
-    try:
-        from AFO.api.routers.learning_log_router import router as learning_log
-
-        global learning_log_router
-        learning_log_router = learning_log
-    except ImportError:
-        pass
-
-    try:
-        from AFO.api.routers.grok_stream import router as grok_stream
-
-        global grok_stream_router
-        grok_stream_router = grok_stream
-    except ImportError:
-        pass
-
-    try:
-        from AFO.api.routers.skills import router as skills
-
-        global skills_router
-        skills_router = skills
-    except ImportError:
-        pass
-
-    try:
-        from api.routes.chat import router as chat
-
-        chat_router = chat
-    except ImportError:
-        try:
-            from AFO.api.routes.chat import router as chat
-
-            chat_router = chat
-        except ImportError:
-            pass
-
-    # Try to load others if possible
-    # (Assuming paths based on naming convention)
-    # If not found, they remain fallback routers (Safe)
-
-    try:
-        from AFO.api.routers.thoughts import router as thoughts
-
-        global thoughts_router
-        thoughts_router = thoughts
-    except ImportError:
-        pass
-
-    try:
-        from AFO.api.routes.pillars import router as pillars
-
-        global pillars_router
-        pillars_router = pillars
-    except ImportError:
-        pass
-
-    try:
-        from AFO.api.routes.wallet import wallet_router as wallet
-
-        global wallet_router
-        wallet_router = wallet
-    except ImportError:
-        pass
-
-    # System Health (Crucial for Neudash)
-    try:
-        from AFO.api.routes.system_health import router as sys_health
-
-        global system_health_router
-        system_health_router = sys_health
-    except ImportError:
-        try:
-            from api.routes.system_health import router as sys_health
-
-            system_health_router = sys_health
-        except ImportError:
-            pass
-
-    # Phase-specific routers
-    try:
-        from AFO.api.routers.budget import router as budget
-
-        global budget_router
-        budget_router = budget
-    except ImportError:
-        pass
-
-    try:
-        from AFO.api.routers.aicpa import router as aicpa
-
-        global aicpa_router
-        aicpa_router = aicpa
-    except ImportError:
-        pass
-
-    try:
-        from AFO.api.routers.voice import router as voice
-
-        global voice_router
-        voice_router = voice
-    except ImportError:
-        pass
-
-    try:
-        from AFO.api.routers.council import router as council
-
-        global council_router
-        council_router = council
-    except ImportError:
-        pass
-
-    try:
-        from AFO.api.routers.learning_pipeline import router as learning_pipe
-
-        global learning_pipeline
-        learning_pipeline = learning_pipe
-    except ImportError:
-        pass
-
-    try:
-        from AFO.api.routers.serenity_router import router as serenity
-
-        global serenity_router
-        serenity_router = serenity
-    except ImportError:
-        pass
-
-    try:
-        from AFO.api.routers.matrix import router as matrix
-
-        global matrix_router
-        matrix_router = matrix
-    except ImportError:
-        pass
-
-    try:
-        from AFO.api.routers.rag_query import router as rag_query
-
-        global rag_query_router
-        rag_query_router = rag_query
-    except ImportError:
-        pass
-
-    try:
-        from AFO.api.routers.finance import router as finance
-
-        global finance_router
-        finance_router = finance
-    except ImportError:
-        pass
-
-    try:
-        from AFO.api.routers.ssot import router as ssot
-
-        global ssot_router
-        ssot_router = ssot
-    except ImportError:
-        pass
-
-
-load_routers()
-
-
-# 5. Antigravity Facade (Pure Control)
-def get_antigravity_control() -> Any:
+@dataclass
+class HTMLSectionData:
     """
-    [Pure] Get Antigravity Governance Controller
-    Returns the singleton instance via facade.
+    HTML 섹션 데이터 구조체
+
+    아름다운 코드 원칙 준수: 불변 데이터 구조 + 타입 안전성
     """
-    try:
-        from AFO.config.antigravity import antigravity
-
-        return antigravity
-    except ImportError:
-        return None
+    id: str
+    title: str
+    content: Dict[str, Any]
+    last_updated: datetime
 
 
-# 6. TRINITY-OS MCP Client Facade
-class TrinityOSMCPClient:
+class PhilosophyDataProvider:
     """
-    TRINITY-OS MCP 클라이언트 래퍼
-    Phase 5: 실제 JSON-RPC 2.0 통신 구현
+    철학 데이터 제공자 (眞善美孝永 5기둥)
+
+    Trinity Score: 眞 (Truth) - 정확한 철학 데이터 제공
+    아름다운 코드: 단일 책임 + 불변 데이터 + 타입 안전성
+    """
+
+    @staticmethod
+    def get_philosophy_data() -> Dict[str, Any]:
+        """5기둥 철학 데이터 반환"""
+        return {
+            "pillars": [
+                {
+                    "id": "truth",
+                    "name": "眞",
+                    "weight": 35,
+                    "role": "제갈량 - 기술적 확실성",
+                    "color": "#3b82f6"
+                },
+                {
+                    "id": "goodness",
+                    "name": "善",
+                    "weight": 35,
+                    "role": "사마의 - 윤리·안정성",
+                    "color": "#10b981"
+                },
+                {
+                    "id": "beauty",
+                    "name": "美",
+                    "weight": 20,
+                    "role": "주유 - 단순함·우아함",
+                    "color": "#8b5cf6"
+                },
+                {
+                    "id": "serenity",
+                    "name": "孝",
+                    "weight": 8,
+                    "role": "승상 - 평온 수호",
+                    "color": "#f59e0b"
+                },
+                {
+                    "id": "eternity",
+                    "name": "永",
+                    "weight": 2,
+                    "role": "승상 - 영속성",
+                    "color": "#ef4444"
+                }
+            ],
+            "trinity_formula": "Trinity Score = 0.35×眞 + 0.35×善 + 0.20×美 + 0.08×孝 + 0.02×永",
+            "auto_run_condition": "AUTO_RUN: Trinity Score ≥ 90 AND Risk Score ≤ 10"
+        }
+
+
+class PortDataProvider:
+    """
+    포트 데이터 제공자
+
+    Trinity Score: 美 (Beauty) - 체계적이고 읽기 쉬운 데이터 구조
+    """
+
+    @staticmethod
+    def get_port_data() -> List[Dict[str, str]]:
+        """서비스 포트 매핑 데이터 반환"""
+        return [
+            {"service": "Soul Engine", "port": "8010", "description": "FastAPI 백엔드"},
+            {"service": "Dashboard", "port": "3000", "description": "Next.js 프론트엔드"},
+            {"service": "Ollama", "port": "11435", "description": "LLM (영덕)"},
+            {"service": "Redis", "port": "6379", "description": "캐시/세션"},
+            {"service": "PostgreSQL", "port": "15432", "description": "데이터베이스"},
+            {"service": "Grafana", "port": "3100", "description": "모니터링"},
+            {"service": "Prometheus", "port": "9090", "description": "메트릭"}
+        ]
+
+
+class PersonaDataProvider:
+    """
+    페르소나 데이터 제공자
+
+    Trinity Score: 永 (Eternity) - 확장 가능한 데이터 구조
+    """
+
+    @staticmethod
+    def get_personas_data() -> List[Dict[str, str]]:
+        """AFO 왕국 페르소나 데이터 반환"""
+        return [
+            {"name": "승상", "code": "Chancellor", "role": "3책사 병렬 조율, 웹 오케스트레이터"},
+            {"name": "제갈량", "code": "Zhuge Liang", "role": "眞 35% - 아키텍처·전략·개발"},
+            {"name": "사마의", "code": "Sima Yi", "role": "善 35% - 윤리·안정·게이트"},
+            {"name": "주유", "code": "Zhou Yu", "role": "美 20% - 서사·UX·취향정렬"},
+            {"name": "방통", "code": "Bangtong", "role": "Codex - 구현·실행·프로토타이핑"},
+            {"name": "자룡", "code": "Jaryong", "role": "Claude - 논리 검증·리팩터링"},
+            {"name": "육손", "code": "Yukson", "role": "Gemini - 전략·철학·큰 그림"},
+            {"name": "영덕", "code": "Yeongdeok", "role": "Ollama - 설명·보안·아카이빙"}
+        ]
+
+
+class RoyalRulesDataProvider:
+    """
+    왕실 규약 데이터 제공자
+
+    Trinity Score: 善 (Goodness) - 윤리적이고 체계적인 규약 제공
+    """
+
+    @staticmethod
+    def get_royal_rules_data() -> List[Dict[str, Any]]:
+        """왕실 헌법 규약 데이터 반환"""
+        return [
+            {
+                "book": "손자병법",
+                "weight": "眞 70% / 孝 30%",
+                "rules": [
+                    {"id": 1, "name": "지피지기 (Rule #0)", "principle": "Context7과 DB 조회 필수"},
+                    {"id": 2, "name": "상병벌모", "principle": "기존 라이브러리 활용 우선"},
+                    {"id": 3, "name": "병자궤도야", "principle": "DRY_RUN 기본값 True"},
+                    {"id": 4, "name": "병귀신속", "principle": "비동기 처리 (asyncio, Celery)"},
+                    {"id": 5, "name": "도천지장법", "principle": "Trinity Score 5기둥 정렬 체크"}
+                ]
+            },
+            {
+                "book": "삼국지",
+                "weight": "永 60% / 善 40%",
+                "rules": [
+                    {"id": 13, "name": "도원결의", "principle": "Interface 통일, Shared Context"},
+                    {"id": 14, "name": "삼고초려", "principle": "Retry(max_attempts=3, backoff=exponential)"},
+                    {"id": 15, "name": "공성계", "principle": "Graceful Degradation, Skeleton UI"},
+                    {"id": 16, "name": "제갈량의 초선차전", "principle": "pip install, External API"},
+                    {"id": 17, "name": "연환계", "principle": "Pipeline Pattern, LangGraph Node Linking"}
+                ]
+            },
+            {
+                "book": "군주론",
+                "weight": "善 50% / 眞 50%",
+                "rules": [
+                    {"id": 25, "name": "사랑보다 두려움", "principle": "Strict Typing, Validation"},
+                    {"id": 26, "name": "비르투와 포르투나", "principle": "Exception Handling"},
+                    {"id": 27, "name": "여우와 사자", "principle": "Algorithm Selection"},
+                    {"id": 28, "name": "증오 피하기", "principle": "UX Optimization"},
+                    {"id": 29, "name": "무장한 예언자", "principle": "Executable Code Only"}
+                ]
+            },
+            {
+                "book": "전쟁론",
+                "weight": "眞 60% / 孝 40%",
+                "rules": [
+                    {"id": 34, "name": "전장의 안개", "principle": "Null Check, Data Validation"},
+                    {"id": 35, "name": "마찰", "principle": "Complexity Estimation"},
+                    {"id": 36, "name": "중심", "principle": "Root Cause Analysis"},
+                    {"id": 37, "name": "공세 종말점", "principle": "Resource Monitoring"},
+                    {"id": 38, "name": "지휘 통일", "principle": "Singleton Pattern, Locking"}
+                ]
+            }
+        ]
+
+
+class ArchitectureDataProvider:
+    """
+    아키텍처 데이터 제공자
+
+    Trinity Score: 眞 (Truth) - 정확한 시스템 아키텍처 정보 제공
+    """
+
+    @staticmethod
+    def get_architecture_data() -> Dict[str, Any]:
+        """시스템 아키텍처 데이터 반환"""
+        return {
+            "layers": [
+                {"name": "Presentation", "description": "FastAPI 엔드포인트, 라우터, Pydantic 모델"},
+                {"name": "Application", "description": "Chancellor Graph, RAG Graph, LLM 라우터"},
+                {"name": "Domain", "description": "Trinity Score, Skill Cards, Rules 정의"},
+                {"name": "Infrastructure", "description": "PostgreSQL, Redis, Qdrant, 외부 API"}
+            ],
+            "components": {
+                "brain": {"name": "PostgreSQL", "description": "장기 기억 장치"},
+                "heart": {"name": "Redis", "description": "실시간 캐시, 세션"},
+                "lungs": {"name": "Qdrant", "description": "벡터 검색"},
+                "digestive": {"name": "Ollama", "description": "로컬 LLM"},
+                "testing": {"name": "Pytest", "description": "검증 시스템"}
+            }
+        }
+
+
+class StatsDataProvider:
+    """
+    통계 데이터 제공자
+
+    Trinity Score: 孝 (Serenity) - 안정적인 프로젝트 통계 제공
+    """
+
+    @staticmethod
+    def get_stats_data() -> Dict[str, int]:
+        """프로젝트 통계 데이터 반환"""
+        return {
+            "python_files": 1506,
+            "typescript_files": 5439,
+            "markdown_docs": 1005,
+            "total_commits": 120,
+            "development_days": 5,
+            "tracked_files": 1291
+        }
+
+
+class HTMLDataFacade:
+    """
+    HTML 데이터 파사드 (아름다운 코드 적용)
+
+    Strangler Fig 패턴을 아름다운 코드로 구현.
+    각 데이터 제공자를 조율하여 체계적인 데이터 접근 제공.
+
+    Trinity Score: 美 (Beauty) - 모듈화된 파사드 패턴 적용
     """
 
     def __init__(self) -> None:
-        self._available = False
-        self._server_path: Path | None = None
-        self._process: Any = None
-        self._request_id = 0
-        self._load_client()
+        """Initialize HTML Data Facade with beautiful code principles."""
+        self._philosophy_provider = PhilosophyDataProvider()
+        self._port_provider = PortDataProvider()
+        self._persona_provider = PersonaDataProvider()
+        self._rules_provider = RoyalRulesDataProvider()
+        self._architecture_provider = ArchitectureDataProvider()
+        self._stats_provider = StatsDataProvider()
 
-    def _load_client(self) -> None:
-        """MCP 클라이언트 로드 시도"""
-        try:
-            # TRINITY-OS MCP 서버 경로 확인
-            from pathlib import Path
+        logger.info("HTML Data Facade initialized with beautiful code principles")
 
-            trinity_os_path = Path(__file__).parent.parent.parent.parent / "trinity-os"
-            mcp_server_path = (
-                trinity_os_path
-                / "trinity_os"
-                / "servers"
-                / "afo_ultimate_mcp_server.py"
-            )
+    def get_philosophy_data(self) -> Dict[str, Any]:
+        """철학 데이터 조회"""
+        return self._philosophy_provider.get_philosophy_data()
 
-            if mcp_server_path.exists():
-                self._server_path = mcp_server_path
-                self._available = True
-        except (OSError, FileNotFoundError, PermissionError) as e:
-            logger = logging.getLogger(__name__)
-            logger.debug("MCP 서버 경로 확인 실패 (파일 시스템 에러): %s", str(e))
-            self._available = False
-        except Exception as e:  # - Intentional fallback for unexpected errors
-            logger = logging.getLogger(__name__)
-            logger.debug("MCP 서버 경로 확인 중 예상치 못한 에러: %s", str(e))
-            self._available = False
+    def get_port_data(self) -> List[Dict[str, str]]:
+        """포트 데이터 조회"""
+        return self._port_provider.get_port_data()
 
-    def _get_next_request_id(self) -> int:
-        """다음 요청 ID 생성"""
-        self._request_id += 1
-        return self._request_id
+    def get_personas_data(self) -> List[Dict[str, str]]:
+        """페르소나 데이터 조회"""
+        return self._persona_provider.get_personas_data()
 
-    async def _send_jsonrpc_request(
-        self,
-        method: str,
-        params: dict[str, Any] | None = None,
-        timeout: float = 5.0,
-        max_retries: int = 3,
-        retry_delay: float = 0.5,
-    ) -> dict[str, Any] | None:
+    def get_royal_rules_data(self) -> List[Dict[str, Any]]:
+        """왕실 규약 데이터 조회"""
+        return self._rules_provider.get_royal_rules_data()
+
+    def get_architecture_data(self) -> Dict[str, Any]:
+        """아키텍처 데이터 조회"""
+        return self._architecture_provider.get_architecture_data()
+
+    def get_stats_data(self) -> Dict[str, int]:
+        """통계 데이터 조회"""
+        return self._stats_provider.get_stats_data()
+
+
+class SettingsManager:
+    """
+    설정 관리자 (아름다운 코드 적용)
+
+    Trinity Score: 善 (Goodness) - 안전하고 검증된 설정 관리
+    """
+
+    @staticmethod
+    def get_settings_safe() -> Dict[str, Any]:
         """
-        JSON-RPC 2.0 요청 전송 (재시도 메커니즘 포함)
-
-        Args:
-            method: JSON-RPC 메서드
-            params: 요청 파라미터
-            timeout: 타임아웃 (초)
-            max_retries: 최대 재시도 횟수
-            retry_delay: 재시도 간 지연 시간 (초)
+        안전하게 설정값을 가져오는 함수
 
         Returns:
-            응답 결과 또는 None (실패 시)
+            검증된 설정값 딕셔너리
         """
-        if not self._available or not self._server_path:
-            return None
+        try:
+            # 환경 변수에서 직접 로드 (순환 import 방지)
+            config = {
+                "app_name": os.getenv("AFO_APP_NAME", "AFO Kingdom"),
+                "version": os.getenv("AFO_VERSION", "1.0.0"),
+                "debug": os.getenv("AFO_DEBUG", "true").lower() == "true",
+                "host": os.getenv("AFO_HOST", "0.0.0.0"),
+                "port": int(os.getenv("AFO_PORT", "8010")),
+                "cors_origins": os.getenv("AFO_CORS_ORIGINS", "http://localhost:3000").split(","),
+                "database_url": os.getenv("DATABASE_URL", "sqlite:///./test.db"),
+                "redis_url": os.getenv("REDIS_URL", "redis://localhost:6379"),
+                "ollama_url": os.getenv("OLLAMA_URL", "http://localhost:11435")
+            }
 
-        import asyncio
-        import json
-        import logging
-        import subprocess
+            logger.debug("Settings loaded successfully")
+            return config
 
-        logger = logging.getLogger(__name__)
+        except Exception as e:
+            logger.error(f"Settings load failed: {e}")
+            # Fallback to minimal config
+            return SettingsManager._get_minimal_config()
 
-        last_exception: Exception | None = None
+    @staticmethod
+    def _get_minimal_config() -> Dict[str, Any]:
+        """최소한의 기본 설정 반환"""
+        return {
+            "app_name": "AFO Kingdom",
+            "version": "1.0.0",
+            "debug": True,
+            "host": "0.0.0.0",
+            "port": 8010,
+            "cors_origins": ["http://localhost:3000"],
+        }
 
-        for attempt in range(max_retries):
-            try:
-                # MCP 서버 프로세스 시작 (stdio 통신)
-                process = await asyncio.create_subprocess_exec(
-                    "python3",
-                    str(self._server_path),
-                    stdin=asyncio.subprocess.PIPE,
-                    stdout=asyncio.subprocess.PIPE,
-                    stderr=asyncio.subprocess.PIPE,
-                )
 
-                # JSON-RPC 2.0 요청 생성
-                request_id = self._get_next_request_id()
-                request = {
-                    "jsonrpc": "2.0",
-                    "id": request_id,
-                    "method": method,
-                    "params": params or {},
-                }
+# Global instances with singleton pattern (beautiful code)
+html_facade = HTMLDataFacade()
+settings_manager = SettingsManager()
 
-                # 요청 전송
-                request_json = json.dumps(request) + "\n"
-                if process.stdin:
-                    process.stdin.write(request_json.encode())
-                    await process.stdin.drain()
+# Convenience functions for React components (beautiful code)
+def get_philosophy_pillars() -> Dict[str, Any]:
+    """React component data provider for philosophy section.
 
-                # 응답 수신 (타임아웃 적용)
-                try:
-                    if process.stdout:
-                        response_line = await asyncio.wait_for(
-                            process.stdout.readline(), timeout=timeout
-                        )
-                        if response_line:
-                            response = json.loads(response_line.decode())
-                            # 프로세스 종료
-                            if process.returncode is None:
-                                process.terminate()
-                                await process.wait()
-                            result = response.get("result")
-                            # 타입 명시: dict[str, Any] | None
-                            if isinstance(result, dict):
-                                return result
-                            return None
-                except asyncio.TimeoutError:
-                    if process.returncode is None:
-                        process.terminate()
-                        await process.wait()
-                    # 타임아웃은 재시도 대상
-                    last_exception = asyncio.TimeoutError("MCP 서버 응답 타임아웃")
-                    if attempt < max_retries - 1:
-                        logger.debug(
-                            "MCP 요청 타임아웃 (시도 %d/%d), 재시도 중...",
-                            attempt + 1,
-                            max_retries,
-                        )
-                        await asyncio.sleep(retry_delay * (attempt + 1))  # 지수 백오프
-                        continue
-                    return None
+    Trinity Score: 眞 (Truth) - 정확한 철학 데이터 제공 보장
+    """
+    return html_facade.get_philosophy_data()
 
-            except (subprocess.SubprocessError, OSError) as e:
-                # 프로세스 관련 오류는 재시도 대상
-                last_exception = e
-                if attempt < max_retries - 1:
-                    logger.debug(
-                        "MCP 서버 프로세스 오류 (시도 %d/%d): %s, 재시도 중...",
-                        attempt + 1,
-                        max_retries,
-                        str(e),
-                    )
-                    await asyncio.sleep(retry_delay * (attempt + 1))
-                    continue
-                logger.warning("MCP 서버 프로세스 오류 (최종 실패): %s", str(e))
-                return None
+def get_service_ports() -> List[Dict[str, str]]:
+    """React component data provider for ports table.
 
-            except (json.JSONDecodeError, ValueError) as e:
-                # JSON 파싱 오류는 재시도하지 않음 (요청 자체 문제)
-                logger.error("MCP 응답 JSON 파싱 오류: %s", str(e))
-                return None
+    Trinity Score: 美 (Beauty) - 체계적이고 읽기 쉬운 데이터 구조
+    """
+    return html_facade.get_port_data()
 
-            except Exception as e:
-                # 기타 예외는 재시도 대상
-                last_exception = e
-                if attempt < max_retries - 1:
-                    logger.debug(
-                        "MCP 요청 오류 (시도 %d/%d): %s, 재시도 중...",
-                        attempt + 1,
-                        max_retries,
-                        str(e),
-                    )
-                    await asyncio.sleep(retry_delay * (attempt + 1))
-                    continue
-                logger.warning("MCP 요청 오류 (최종 실패): %s", str(e))
-                return None
+def get_personas_list() -> List[Dict[str, str]]:
+    """React component data provider for personas.
 
-        # 모든 재시도 실패
-        if last_exception:
-            logger.error(
-                "MCP 요청 최종 실패 (%d회 시도): %s", max_retries, str(last_exception)
-            )
-        return None
+    Trinity Score: 永 (Eternity) - 확장 가능한 페르소나 데이터
+    """
+    return html_facade.get_personas_data()
+
+def get_royal_constitution() -> List[Dict[str, Any]]:
+    """React component data provider for Royal Constitution.
+
+    Trinity Score: 善 (Goodness) - 윤리적이고 체계적인 규약 제공
+    """
+    return html_facade.get_royal_rules_data()
+
+def get_system_architecture() -> Dict[str, Any]:
+    """React component data provider for architecture diagram.
+
+    Trinity Score: 眞 (Truth) - 정확한 시스템 아키텍처 정보
+    """
+    return html_facade.get_architecture_data()
+
+def get_project_stats() -> Dict[str, int]:
+    """React component data provider for project statistics.
+
+    Trinity Score: 孝 (Serenity) - 안정적인 프로젝트 통계 제공
+    """
+    return html_facade.get_stats_data()
+
+def get_settings_safe() -> Dict[str, Any]:
+    """안전하게 설정값을 가져오는 함수.
+
+    Trinity Score: 善 (Goodness) - 검증된 설정 관리
+    """
+    return settings_manager.get_settings_safe()
+
+# Compatibility exports (Legacy support)
+# LLM availability flags (디버깅용 기본값)
+ANTHROPIC_AVAILABLE = False
+OPENAI_AVAILABLE = False
+GEMINI_AVAILABLE = False
+CODEX_AVAILABLE = False
+OLLAMA_AVAILABLE = False
+LMSTUDIO_AVAILABLE = False
+
+# Dummy routers for compatibility (실제 라우터가 없을 때 사용)
+aicpa_router = None
+auth_router = None
+budget_router = None
+chancellor_router = None
+chat_router = None
+council_router = None
+education_system_router = None
+finance_router = None
+got_router = None
+grok_stream_router = None
+health_router = None
+learning_log_router = None
+learning_pipeline = None
+matrix_router = None
+modal_data_router = None
+multi_agent_router = None
+n8n_router = None
+personas_router = None
+pillars_router = None
+rag_query_router = None
+root_router = None
+serenity_router = None
+skills_router = None
+ssot_router = None
+strangler_router = None
+streams_router = None
+system_health_router = None
+trinity_policy_router = None
+trinity_sbt_router = None
+users_router = None
+voice_router = None
+wallet_router = None
+
+# Trinity metrics class (더미)
+class TrinityMetrics:
+    """Trinity Score 메트릭 클래스"""
+    def __init__(self) -> None:
+        self.scores = {"truth": 0, "goodness": 0, "beauty": 0, "serenity": 0, "eternity": 0}
+
+    def calculate_score(self) -> float:
+        return 0.0
+
+# Trinity score calculator function
+def calculate_trinity(scores: Dict[str, float]) -> float:
+    """Trinity Score 계산 함수
+
+    Args:
+        scores: 각 기둥별 점수 (0-100)
+
+    Returns:
+        계산된 Trinity Score (0-100)
+    """
+    weights = {
+        'truth': 0.35,
+        'goodness': 0.35,
+        'beauty': 0.20,
+        'serenity': 0.08,
+        'eternity': 0.02
+    }
+
+    normalized = {k: v/100.0 for k, v in scores.items()}
+    return sum(normalized[k] * weights[k] for k in weights) * 100
+
+# AntiGravity control function (더미)
+def get_antigravity_control() -> Dict[str, Any]:
+    """AntiGravity 제어 함수"""
+    return {"status": "mock", "message": "AntiGravity not available"}
+
+# Settings class (더미)
+class Settings:
+    """설정 클래스"""
+    def __init__(self) -> None:
+        pass

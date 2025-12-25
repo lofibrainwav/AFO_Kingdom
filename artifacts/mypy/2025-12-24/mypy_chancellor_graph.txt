@@ -1,0 +1,5 @@
+packages/afo-core/AFO/constitution/constitution_v1_0.py:30: error: Missing type parameters for generic type "dict"  [type-arg]
+packages/trinity-os/trinity_os/servers/context7_mcp.py:240: error: Missing type parameters for generic type "dict"  [type-arg]
+packages/afo-core/strategy_engine.py:91: error: Function is missing a type annotation for one or more arguments  [no-untyped-def]
+packages/afo-core/AFO/models/learning_log.py:11: error: Class cannot subclass "SQLModel" (has type "Any")  [misc]
+packages/afo-core/AFO/models/learning_log.py:11: note: Error code "misc" not covered by "type: ignore" comment

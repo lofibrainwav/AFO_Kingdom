@@ -19,14 +19,8 @@ from obsidian_loader import ObsidianLoader
 from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, VectorParams
 
-from config import (
-    CHUNK_OVERLAP,
-    CHUNK_SIZE,
-    EMBEDDING_MODEL,
-    OBSIDIAN_VAULT_PATH,
-    QDRANT_COLLECTION_NAME,
-    QDRANT_URL,
-)
+from config import (CHUNK_OVERLAP, CHUNK_SIZE, EMBEDDING_MODEL,
+                    OBSIDIAN_VAULT_PATH, QDRANT_COLLECTION_NAME, QDRANT_URL)
 
 
 def create_collection_if_not_exists(

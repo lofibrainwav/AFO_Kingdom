@@ -55,10 +55,7 @@ def __getattr__(name):
         import utils
 
         return utils
-    elif name == "api":
-        import api
 
-        return api
     elif name == "llms":
         import llms
 
@@ -72,7 +69,6 @@ def __getattr__(name):
 
 __all__ = [
     "afo_skills_registry",
-    "api",
     "api_server",
     "api_wallet",
     "chancellor_graph",

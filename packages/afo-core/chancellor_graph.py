@@ -2,7 +2,7 @@
 # (LangGraph 상세 구현 - V2: Parallel Strategy & Trinity Gate)
 # 🧭 Trinity Score: 眞98% 善99% 美95% 孝100%
 
-from typing import Annotated, Any, TypedDict
+from typing import Annotated, Any, Literal, TypedDict
 
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, StateGraph
@@ -26,8 +26,18 @@ try:
     from AFO.constitution.constitutional_ai import AFOConstitution
     from AFO.observability.verdict_logger import VerdictLogger
     from services.trinity_calculator import trinity_calculator
-    from strategists import sima_yi, zhou_yu, zhuge_liang
-    from tigers import guan_yu, huang_zhong, ma_chao, zhang_fei, zhao_yun
+
+    # Import individual strategists to avoid name conflicts
+    from strategists.zhuge_liang import truth_evaluate as zhuge_liang
+    from strategists.sima_yi import goodness_review as sima_yi
+    from strategists.zhou_yu import beauty_optimize as zhou_yu
+
+    # Import individual tigers to avoid name conflicts
+    from tigers.guan_yu import truth_guard as guan_yu
+    from tigers.zhang_fei import goodness_gate as zhang_fei
+    from tigers.zhao_yun import beauty_craft as zhao_yun
+    from tigers.ma_chao import serenity_deploy as ma_chao
+    from tigers.huang_zhong import eternity_log as huang_zhong
 
     # Safe imports for circular dependencies
     # Historian and log_sse will be handled gracefully if import fails
@@ -35,29 +45,11 @@ try:
         from utils.history import Historian
         from utils.logging import log_sse
     except ImportError:
-        val = None
         Historian = None  # type: ignore
         log_sse = None  # type: ignore
 
-except ImportError as e:
-    # Fallback for when running in strictly isolated environments
-    print(f"⚠️ Import Warning: {e} - Running in Safe Mode")
-    # Define mocks or allow failure
-    # Define mocks or allow failure
-    zhuge_liang: Any = None  # type: ignore[no-redef]
-    sima_yi: Any = None
-    zhou_yu: Any = None
-
-    # Tigers
-    guan_yu: Any = None
-    zhang_fei: Any = None
-    zhao_yun: Any = None
-    ma_chao: Any = None
-    huang_zhong: Any = None
-
-    # Others
-    trinity_calculator: Any = None
-
+except ImportError:
+    # Set defaults if any imports failed
     class MockConstitution:
         @staticmethod
         def evaluate_compliance(*args, **kwargs):  # noqa: ARG004
@@ -67,18 +59,29 @@ except ImportError as e:
         async def critique_and_revise(*args, **kwargs):  # noqa: ARG004
             return "No critique", args[0], "COMPLIANT"
 
-    AFOConstitution = MockConstitution
-
-    VerdictLogger: Any = None  # type: ignore[no-redef]
-    emit_verdict: Any = None  # type: ignore[no-redef]
-    Historian: Any = None  # type: ignore
-    log_sse: Any = None  # type: ignore
+    AFOConstitution = MockConstitution  # type: ignore[assignment]
+    VerdictLogger = None  # type: ignore[assignment]
+    emit_verdict = None  # type: ignore[assignment]
+    antigravity = None  # type: ignore[assignment]
+    get_settings = None  # type: ignore[assignment]
+    trinity_calculator = None  # type: ignore[assignment]
+    zhuge_liang = None  # type: ignore[assignment]
+    sima_yi = None  # type: ignore[assignment]
+    zhou_yu = None  # type: ignore[assignment]
+    guan_yu = None  # type: ignore[assignment]
+    zhang_fei = None  # type: ignore[assignment]
+    zhao_yun = None  # type: ignore[assignment]
+    ma_chao = None  # type: ignore[assignment]
+    huang_zhong = None  # type: ignore[assignment]
+    Historian = None  # type: ignore[assignment]
+    log_sse = None  # type: ignore[assignment]
 
 
 # Define mock log_sse if missing
 if log_sse is None:
 
     def log_sse(msg: str) -> None:
+        """Mock SSE logging function"""
         print(f"[SSE Mock] {msg}")
 
 
@@ -87,11 +90,13 @@ if Historian is None:
 
     class MockHistorian:
         @staticmethod
-        async def record(*args, **kwargs):
+        async def record(*args, **kwargs) -> None:
+            """Mock record function"""
             pass
 
         @staticmethod
-        def log_preference(*args, **kwargs):
+        def log_preference(*args, **kwargs) -> None:
+            """Mock preference logging function"""
             pass
 
     Historian = MockHistorian  # type: ignore[assignment]
@@ -107,7 +112,7 @@ class ChancellorState(TypedDict):
     messages: Annotated[list[Any], add_messages]
     summary: str  # [ADVANCED/永] conversation summary
     context: dict[str, Any]  # shared context (includes trinity metrics)
-    search_results: list[dict]  # [ADVANCED/眞] raw search results before reranking
+    search_results: list[dict[str, Any]]  # [ADVANCED/眞] raw search results before reranking
     multimodal_slots: dict[str, Any]  # [ADVANCED/眞] slots for image/vision data
 
     # Pillar Assessment
@@ -128,9 +133,7 @@ graph = StateGraph(ChancellorState)
 
 
 async def constitutional_node(state: ChancellorState) -> dict[str, Any]:
-    """
-    [Constitution] 선(善) 최우선 검증 (Self-Refining Gatekeeper)
-    """
+    """[Constitution] 선(善) 최우선 검증 (Self-Refining Gatekeeper)"""
     query = state.get("query", "")
 
     # Initial Compliance Check (Static/Heuristic)
@@ -280,19 +283,20 @@ async def summarize_history_node(state: ChancellorState) -> dict[str, Any]:
 
 # 3 Strategists (Parallel Wrappers)
 async def zhuge_node(state: ChancellorState) -> dict[str, Any]:
-    score = (
-        zhuge_liang.truth_evaluate({"query": state["query"]}) if zhuge_liang else 0.5
-    )
+    """眞 Strategist Node"""
+    score = zhuge_liang({"query": state["query"]}) if callable(zhuge_liang) else 0.5
     return {"analysis_results": {"truth": score}}
 
 
 async def sima_node(state: ChancellorState) -> dict[str, Any]:
-    score = sima_yi.goodness_review({"query": state["query"]}) if sima_yi else 0.5
+    """善 Strategist Node"""
+    score = sima_yi({"query": state["query"]}) if callable(sima_yi) else 0.5
     return {"analysis_results": {"goodness": score}}
 
 
 async def zhou_node(state: ChancellorState) -> dict[str, Any]:
-    score = zhou_yu.beauty_optimize({"query": state["query"]}) if zhou_yu else 0.5
+    """美 Strategist Node"""
+    score = zhou_yu({"query": state["query"]}) if callable(zhou_yu) else 0.5
     return {"analysis_results": {"beauty": score}}
 
 
@@ -310,20 +314,16 @@ async def trinity_node(state: ChancellorState) -> dict[str, Any]:
 
     # 2. 孝/永 (Tigers - Simulation for Scoring)
     s = (
-        ma_chao.serenity_deploy({"query": state["query"], "mode": "eval"})
-        if ma_chao
-        else 1.0
+        ma_chao({"query": state["query"], "mode": "eval"}) if callable(ma_chao) else 1.0
     )
     e = (
-        huang_zhong.eternity_log("evaluate", {"query": state["query"]})
-        if huang_zhong
-        else 1.0
+        huang_zhong("evaluate", {"query": state["query"]}) if callable(huang_zhong) else 1.0
     )
 
     # Normalize score types
-    def normalize(val):
+    def normalize(val: Any) -> float:
         if isinstance(val, int | float):
-            return val
+            return float(val)
         return (
             1.0
             if any(
@@ -345,7 +345,8 @@ async def trinity_node(state: ChancellorState) -> dict[str, Any]:
 
     # === 헌법 v1.0 + Amendment 0001: 개별 증거 거부권 적용 ===
     try:
-        from AFO.constitution.constitution_v1_0 import VETO_PILLARS, VETO_THRESHOLD
+        from AFO.constitution.constitution_v1_0 import (VETO_PILLARS,
+                                                        VETO_THRESHOLD)
 
         # 개별 pillar 점수 확인 (0-1 scale로 변환)
         pillar_scores = {
@@ -422,13 +423,13 @@ async def tigers_node(state: ChancellorState) -> dict[str, Any]:
             log_sse("🐅 [Tigers] AUTO_RUN Approved - Executing Full Power")
 
         # 5호장군 호출
-        if all([guan_yu, zhang_fei, zhao_yun, ma_chao, huang_zhong]):
+        if all(callable(x) for x in [guan_yu, zhang_fei, zhao_yun, ma_chao, huang_zhong]):
             results = {
-                "guan": guan_yu.truth_guard({"data": state["context"]}),
-                "zhang": zhang_fei.goodness_gate(score, state["context"]),
-                "zhao": zhao_yun.beauty_craft("Code Structure", ux_level=2),
-                "ma": ma_chao.serenity_deploy(state["context"]),
-                "huang": huang_zhong.eternity_log(state["query"], {"trinity": score}),
+                "guan": guan_yu({"data": state["context"]}) if callable(guan_yu) else "Success",
+                "zhang": zhang_fei(score, state["context"]) if callable(zhang_fei) else "Success",
+                "zhao": zhao_yun("Code Structure", ux_level=2) if callable(zhao_yun) else "Success",
+                "ma": ma_chao(state["context"]) if callable(ma_chao) else "Success",
+                "huang": huang_zhong(state["query"], {"trinity": score}) if callable(huang_zhong) else "Success",
             }
         else:
             results["execution"] = "Success (Simulated)"
@@ -440,7 +441,7 @@ async def tigers_node(state: ChancellorState) -> dict[str, Any]:
         log_sse(f"✋ [Tigers] ASK_COMMANDER - {reason} ({score}/{risk})")
 
     # [Observability] Emit Verdict Event
-    if VerdictLogger and emit_verdict:
+    if callable(VerdictLogger) and callable(emit_verdict):
         try:
             # Create logger instance with Redis (실제 SSE 전송을 위해)
             from AFO.utils.redis_saver import get_redis_client
@@ -451,7 +452,7 @@ async def tigers_node(state: ChancellorState) -> dict[str, Any]:
             # Determine rule_id based on decision logic
             if score >= auto_run_threshold and risk <= risk_threshold:
                 rule_id = "R4_AUTORUN_THRESHOLD"
-                decision = "AUTO_RUN"
+                decision: Literal["AUTO_RUN", "ASK"] = "AUTO_RUN"
             else:
                 rule_id = (
                     "R5_FALLBACK_ASK"
@@ -503,7 +504,7 @@ async def historian_node(state: ChancellorState) -> dict[str, Any]:
     )
 
     # [Observability] Emit execution verdict event
-    if VerdictLogger and emit_verdict:
+    if callable(VerdictLogger) and callable(emit_verdict):
         try:
             # Create logger instance with Redis (실제 SSE 전송을 위해)
             from AFO.utils.redis_saver import get_redis_client
@@ -517,7 +518,7 @@ async def historian_node(state: ChancellorState) -> dict[str, Any]:
 
             # Determine execution success/failure
             if results and any("Success" in str(v) for v in results.values()):
-                decision = "AUTO_RUN"
+                decision: Literal["AUTO_RUN", "ASK"] = "AUTO_RUN"
                 rule_id = "R4_AUTORUN_THRESHOLD"
                 status = "EXECUTION_SUCCESS"
             elif "DRY_RUN" in state.get("status", ""):
@@ -618,10 +619,9 @@ graph.add_edge("historian", END)
 # Use AsyncRedisSaver for production persistence (Eternity 永)
 # Fallback to MemorySaver only if Redis is unavailable
 try:
-    from langgraph.checkpoint.base import BaseCheckpointSaver
-
     from AFO.utils.cache_utils import cache
     from AFO.utils.redis_saver import AsyncRedisSaver
+    from langgraph.checkpoint.base import BaseCheckpointSaver
 
     if cache.enabled:
         checkpointer: BaseCheckpointSaver = AsyncRedisSaver()

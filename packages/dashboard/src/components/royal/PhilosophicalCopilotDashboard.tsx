@@ -1,24 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+"use client";
 import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import {
-  Crown,
-  Shield,
-  Sword,
-  Heart,
-  Infinity,
-  BookOpen,
-  Zap,
-  CheckCircle,
-  XCircle,
-  AlertTriangle
-} from 'lucide-react';
-import { useVerdictStream } from '@/lib/useVerdictStream';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { apiClient } from '@/lib/api-client';
+import { useVerdictStream } from '@/lib/useVerdictStream';
+import {
+    AlertTriangle,
+    BookOpen,
+    CheckCircle,
+    Crown,
+    Heart,
+    Infinity,
+    Shield,
+    Sword,
+    XCircle,
+    Zap
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 // 철학적 상수들 (AFO 왕국 사서에서 영감)
 const PHILOSOPHICAL_CONSTANTS = {
@@ -61,11 +62,11 @@ const PHILOSOPHICAL_COLORS = {
 };
 
 export default function PhilosophicalCopilotDashboard() {
-  const [trinityScore, setTrinityScore] = useState(null);
-  const [systemHealth, setSystemHealth] = useState(null);
-  const [revalidateStatus, setRevalidateStatus] = useState(null);
+  const [trinityScore, setTrinityScore] = useState<any>(null);
+  const [systemHealth, setSystemHealth] = useState<any>(null);
+  const [revalidateStatus, setRevalidateStatus] = useState<any>(null);
   const [currentWisdom, setCurrentWisdom] = useState(PHILOSOPHICAL_CONSTANTS.sunzi.wisdom);
-  const { verdicts, isConnected } = useVerdictStream();
+  const { events: verdicts, connected: isConnected } = useVerdictStream(process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8010');
 
   // MCP 도구를 통한 건강 체크 (여포의 맥박 측정)
   useEffect(() => {
@@ -139,12 +140,12 @@ export default function PhilosophicalCopilotDashboard() {
   }, []);
 
   const getTrinityIcon = (pillar: string) => {
-    const IconComponent = TRINITY_ICONS[pillar] || Sword;
+    const IconComponent = TRINITY_ICONS[pillar as keyof typeof TRINITY_ICONS] || Sword;
     return IconComponent;
   };
 
   const getPillarColor = (pillar: string) => {
-    return PHILOSOPHICAL_COLORS[pillar] || PHILOSOPHICAL_COLORS.truth;
+    return PHILOSOPHICAL_COLORS[pillar as keyof typeof PHILOSOPHICAL_COLORS] || PHILOSOPHICAL_COLORS.truth;
   };
 
   return (
@@ -473,17 +474,20 @@ export default function PhilosophicalCopilotDashboard() {
             <ScrollArea className="h-32 w-full">
               {verdicts.length > 0 ? (
                 <div className="space-y-2">
-                  {verdicts.slice(-5).map((verdict, index) => (
+                  {verdicts.slice(-5).map((verdict, index) => {
+                    const status = verdict.decision === 'AUTO_RUN' ? 'default' : 'secondary';
+                    const message = `[${verdict.rule_id}] ${verdict.decision} (Trinity: ${verdict.trinity_score.toFixed(2)})`;
+                    return (
                     <div key={index} className="flex items-center gap-2 p-2 bg-gray-50 rounded">
-                      <Badge variant={verdict.status === 'success' ? 'default' : 'destructive'}>
-                        {verdict.status}
+                      <Badge variant={status as any}>
+                        {verdict.decision}
                       </Badge>
-                      <span className="text-sm">{verdict.message}</span>
+                      <span className="text-sm">{message}</span>
                       <span className="text-xs text-gray-500 ml-auto">
                         {new Date(verdict.timestamp).toLocaleTimeString()}
                       </span>
                     </div>
-                  ))}
+                  )})}
                 </div>
               ) : (
                 <div className="text-center text-gray-500 py-8">
