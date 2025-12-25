@@ -233,5 +233,36 @@ disallow_incomplete_defs = false
 
 [[tool.mypy.overrides]]
 # 【孔子】中庸 - 과도한 엄격함은 진행을 막으니, 잠시 눈을 감아 조화를 이룸
-module = ["AFO.*", "api.*", "config.*", "llms.*", "afo_soul_engine.*", "afo_skills_registry", "llm_router", "chancellor_graph"]
+module = [
+    # Top Level Legacy
+    "api.*", "config.*", "llms.*", "afo_soul_engine.*", "afo_skills_registry", "llm_router", "chancellor_graph", "api_server",
+    # AFO Package Legacy/Broken (Strangler Fig)
+    "AFO.afo_skills_registry",
+    "AFO.api.*",
+    "AFO.api_server",
+    "AFO.cache.*",
+    "AFO.chancellor.*",
+    "AFO.chancellor_graph",
+    "AFO.config.*",
+    "AFO.domain.janus.*",
+    "AFO.julie_cpa.*",
+    "AFO.llm_router",
+    "AFO.llms.*",
+    "AFO.models.*",
+    "AFO.serenity.*",
+    "AFO.services.antigravity.*",
+    "AFO.services.antigravity_engine",
+    "AFO.services.checkpoint",
+    "AFO.services.debugging_skill",
+    "AFO.services.hybrid_rag",
+    "AFO.services.langchain_openai_service",
+    "AFO.services.llm_cache_service",
+    "AFO.services.mcp_stdio_client",
+    "AFO.services.redis_cache_service",
+    "AFO.services.scholar_ingestion",
+    "AFO.services.security.*",
+    "AFO.services.system_monitoring_dashboard",
+    "AFO.start.*",
+    "AFO.utils.*"
+]
 ignore_errors = true
