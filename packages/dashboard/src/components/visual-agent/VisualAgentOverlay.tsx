@@ -4,43 +4,56 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface VisualAgentAction {
-  action_id: string;
-  type: 'click' | 'type' | 'scroll' | 'wait' | 'goto';
-  bbox: { x: number; y: number; w: number; h: number };
+  type: 'click' | 'type' | 'scroll' | 'wait' | 'goto' | 'done';
+  bbox?: { x: number; y: number; w: number; h: number };
   text?: string;
   confidence: number;
   why: string;
   safety: 'safe' | 'confirm' | 'block';
 }
 
-interface VisualAgentOverlayProps {
+interface VisualAgentPlan {
+  goal: string;
   actions: VisualAgentAction[];
-  onExecuteAction: (actionId: string) => void;
-  onStep: () => void;
-  onRun: () => void;
+  stop: boolean;
+  summary: string;
+}
+
+interface VisualAgentOverlayProps {
+  plan?: VisualAgentPlan;
+  onAnalyzeScreenshot: (goal: string) => Promise<void>;
+  onExecuteAction: (actionIndex: number) => Promise<void>;
+  onExecutePlan: () => Promise<void>;
   onPause: () => void;
   isRunning: boolean;
   currentStep: number;
   screenshot?: string;
+  executionResults?: Array<{
+    action: VisualAgentAction;
+    status: 'executed' | 'blocked' | 'error' | 'failed';
+    reason?: string;
+  }>;
 }
 
 export const VisualAgentOverlay: React.FC<VisualAgentOverlayProps> = ({
-  actions,
+  plan,
+  onAnalyzeScreenshot,
   onExecuteAction,
-  onStep,
-  onRun,
+  onExecutePlan,
   onPause,
   isRunning,
   currentStep,
-  screenshot
+  screenshot,
+  executionResults = []
 }) => {
-  const [selectedAction, setSelectedAction] = useState<string | null>(null);
+  const [goal, setGoal] = useState('');
+  const [selectedAction, setSelectedAction] = useState<number | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   // 캔버스에 bbox 오버레이 그리기
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas || !plan) return;
 
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
@@ -49,41 +62,53 @@ export const VisualAgentOverlay: React.FC<VisualAgentOverlayProps> = ({
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // 각 액션에 대한 bbox 그리기
-    actions.forEach((action, index) => {
-      const { bbox, confidence, safety } = action;
-      const alpha = safety === 'block' ? 0.3 : safety === 'confirm' ? 0.7 : 1.0;
+    plan.actions.forEach((action, index) => {
+      if (!action.bbox) return;
+
+      const alpha = action.safety === 'block' ? 0.3 : action.safety === 'confirm' ? 0.7 : 1.0;
 
       // bbox 색상 (안전도에 따라)
       let color = '#10b981'; // green for safe
-      if (safety === 'confirm') color = '#f59e0b'; // yellow for confirm
-      if (safety === 'block') color = '#ef4444'; // red for block
+      if (action.safety === 'confirm') color = '#f59e0b'; // yellow for confirm
+      if (action.safety === 'block') color = '#ef4444'; // red for block
+
+      // Denormalize bbox for canvas (0-1 -> screen coordinates)
+      const screenX = action.bbox.x * canvas.width;
+      const screenY = action.bbox.y * canvas.height;
+      const screenW = action.bbox.w * canvas.width;
+      const screenH = action.bbox.h * canvas.height;
 
       // bbox 사각형 그리기
       ctx.strokeStyle = color;
       ctx.lineWidth = 3;
       ctx.globalAlpha = alpha;
-      ctx.strokeRect(bbox.x, bbox.y, bbox.w, bbox.h);
+      ctx.strokeRect(screenX, screenY, screenW, screenH);
 
       // 신뢰도 텍스트
       ctx.fillStyle = color;
       ctx.font = '12px Arial';
       ctx.fillText(
-        `${Math.round(confidence * 100)}%`,
-        bbox.x + 5,
-        bbox.y - 5
+        `${Math.round(action.confidence * 100)}%`,
+        screenX + 5,
+        screenY - 5
       );
 
       // 액션 타입 표시
       ctx.fillStyle = color;
       ctx.fillText(
         action.type.toUpperCase(),
-        bbox.x + bbox.w - 30,
-        bbox.y + 15
+        screenX + screenW - 30,
+        screenY + 15
       );
     });
 
     ctx.globalAlpha = 1.0;
-  }, [actions]);
+  }, [plan]);
+
+  const handleAnalyze = async () => {
+    if (!goal.trim()) return;
+    await onAnalyzeScreenshot(goal);
+  };
 
   const getSafetyColor = (safety: string) => {
     switch (safety) {
@@ -100,6 +125,16 @@ export const VisualAgentOverlay: React.FC<VisualAgentOverlayProps> = ({
       case 'confirm': return '⚠️';
       case 'block': return '🚫';
       default: return '❓';
+    }
+  };
+
+  const getStatusColor = (status?: string) => {
+    switch (status) {
+      case 'executed': return 'text-green-400';
+      case 'blocked': return 'text-red-400';
+      case 'error': return 'text-red-500';
+      case 'failed': return 'text-yellow-500';
+      default: return 'text-gray-400';
     }
   };
 
@@ -122,85 +157,140 @@ export const VisualAgentOverlay: React.FC<VisualAgentOverlayProps> = ({
         height={1080}
       />
 
-      {/* 액션 리스트 패널 */}
-      <motion.div
-        initial={{ x: 400 }}
-        animate={{ x: 0 }}
-        className="absolute right-4 top-4 w-96 max-h-96 overflow-y-auto bg-black/80 backdrop-blur-sm rounded-lg border border-gray-700 pointer-events-auto"
-      >
-        <div className="p-4">
-          <h3 className="text-white font-bold mb-3">Visual Agent Actions</h3>
-
-          <div className="space-y-2">
-            {actions.map((action, index) => (
-              <motion.div
-                key={action.action_id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className={`p-3 rounded border cursor-pointer transition-all ${
-                  selectedAction === action.action_id
-                    ? 'bg-blue-900/50 border-blue-400'
-                    : `bg-gray-800/50 ${getSafetyColor(action.safety)}`
-                }`}
-                onClick={() => setSelectedAction(action.action_id)}
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-white font-medium">
-                    {index + 1}. {action.type.toUpperCase()}
-                  </span>
-                  <span className="text-sm">
-                    {getSafetyIcon(action.safety)}
-                  </span>
-                </div>
-
-                <div className="text-sm text-gray-300 mb-1">
-                  {action.why}
-                </div>
-
-                <div className="text-xs text-gray-400">
-                  Confidence: {Math.round(action.confidence * 100)}% |
-                  Bbox: {action.bbox.x},{action.bbox.y} {action.bbox.w}x{action.bbox.h}
-                </div>
-
-                {action.text && (
-                  <div className="text-xs text-blue-300 mt-1">
-                    Text: "{action.text}"
-                  </div>
-                )}
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </motion.div>
-
-      {/* 컨트롤 패널 */}
+      {/* 메인 컨트롤 패널 */}
       <motion.div
         initial={{ y: 100 }}
         animate={{ y: 0 }}
         className="absolute bottom-4 left-1/2 transform -translate-x-1/2 pointer-events-auto"
       >
-        <div className="flex space-x-2 bg-black/80 backdrop-blur-sm rounded-lg p-2 border border-gray-700">
-          <button
-            onClick={onStep}
-            disabled={isRunning}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white rounded font-medium transition-colors"
-          >
-            Step ({currentStep}/{actions.length})
-          </button>
+        <div className="bg-black/80 backdrop-blur-sm rounded-lg p-4 border border-gray-700 min-w-96">
+          <div className="flex items-center space-x-2 mb-3">
+            <input
+              type="text"
+              value={goal}
+              onChange={(e) => setGoal(e.target.value)}
+              placeholder="Enter goal for Visual Agent..."
+              className="flex-1 px-3 py-2 bg-gray-800 border border-gray-600 rounded text-white text-sm focus:outline-none focus:border-blue-400"
+              onKeyPress={(e) => e.key === 'Enter' && handleAnalyze()}
+            />
+            <button
+              onClick={handleAnalyze}
+              disabled={!goal.trim() || isRunning}
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white rounded font-medium transition-colors"
+            >
+              Analyze
+            </button>
+          </div>
 
-          <button
-            onClick={isRunning ? onPause : onRun}
-            className={`px-4 py-2 text-white rounded font-medium transition-colors ${
-              isRunning
-                ? 'bg-yellow-600 hover:bg-yellow-700'
-                : 'bg-green-600 hover:bg-green-700'
-            }`}
-          >
-            {isRunning ? 'Pause' : 'Run'}
-          </button>
+          {plan && (
+            <div className="text-center mb-3">
+              <div className="text-white text-sm font-medium">{plan.goal}</div>
+              <div className="text-gray-400 text-xs">{plan.summary}</div>
+            </div>
+          )}
+
+          <div className="flex space-x-2">
+            <button
+              onClick={() => onExecuteAction(currentStep)}
+              disabled={!plan || isRunning || currentStep >= (plan?.actions.length || 0)}
+              className="px-3 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 text-white rounded font-medium transition-colors text-sm"
+            >
+              Step ({currentStep + 1}/{plan?.actions.length || 0})
+            </button>
+
+            <button
+              onClick={isRunning ? onPause : onExecutePlan}
+              disabled={!plan}
+              className={`px-3 py-2 text-white rounded font-medium transition-colors text-sm ${
+                isRunning
+                  ? 'bg-yellow-600 hover:bg-yellow-700'
+                  : 'bg-green-600 hover:bg-green-700'
+              }`}
+            >
+              {isRunning ? 'Pause' : 'Run All'}
+            </button>
+          </div>
         </div>
       </motion.div>
+
+      {/* 액션 리스트 패널 */}
+      {plan && (
+        <motion.div
+          initial={{ x: 400 }}
+          animate={{ x: 0 }}
+          className="absolute right-4 top-4 w-96 max-h-96 overflow-y-auto bg-black/80 backdrop-blur-sm rounded-lg border border-gray-700 pointer-events-auto"
+        >
+          <div className="p-4">
+            <h3 className="text-white font-bold mb-3">Visual Agent Plan</h3>
+
+            <div className="space-y-2">
+              {plan.actions.map((action, index) => {
+                const result = executionResults[index];
+                const isCurrent = index === currentStep;
+                const isExecuted = result?.status === 'executed';
+
+                return (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    className={`p-3 rounded border cursor-pointer transition-all ${
+                      isCurrent
+                        ? 'bg-blue-900/50 border-blue-400 ring-2 ring-blue-400'
+                        : selectedAction === index
+                        ? 'bg-blue-900/30 border-blue-400'
+                        : `bg-gray-800/50 ${getSafetyColor(action.safety)}`
+                    } ${isExecuted ? 'opacity-75' : ''}`}
+                    onClick={() => setSelectedAction(index)}
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-white font-medium">
+                        {index + 1}. {action.type.toUpperCase()}
+                      </span>
+                      <div className="flex items-center space-x-2">
+                        {result && (
+                          <span className={`text-sm ${getStatusColor(result.status)}`}>
+                            {result.status === 'executed' ? '✅' :
+                             result.status === 'blocked' ? '🚫' :
+                             result.status === 'error' ? '❌' : '⚠️'}
+                          </span>
+                        )}
+                        <span className="text-sm">
+                          {getSafetyIcon(action.safety)}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="text-sm text-gray-300 mb-1">
+                      {action.why}
+                    </div>
+
+                    <div className="text-xs text-gray-400">
+                      Confidence: {Math.round(action.confidence * 100)}%
+                      {action.bbox && (
+                        <> | Bbox: {action.bbox.x.toFixed(2)},{action.bbox.y.toFixed(2)} {action.bbox.w.toFixed(2)}x{action.bbox.h.toFixed(2)}</>
+                      )}
+                    </div>
+
+                    {action.text && (
+                      <div className="text-xs text-blue-300 mt-1">
+                        Text: "{action.text}"
+                      </div>
+                    )}
+
+                    {result?.reason && (
+                      <div className="text-xs text-red-300 mt-1">
+                        Reason: {result.reason}
+                      </div>
+                    )}
+                  </motion.div>
+                );
+              })}
+            </div>
+          </div>
+        </motion.div>
+      )}
 
       {/* 진행 상태 표시 */}
       <AnimatePresence>
@@ -211,7 +301,7 @@ export const VisualAgentOverlay: React.FC<VisualAgentOverlayProps> = ({
             exit={{ opacity: 0 }}
             className="absolute top-4 left-4 bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium"
           >
-            Executing Step {currentStep}...
+            Executing Step {currentStep + 1}...
           </motion.div>
         )}
       </AnimatePresence>
