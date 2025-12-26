@@ -8,6 +8,7 @@ Implements stdio-based MCP protocol for Cursor IDE integration.
 import json
 import logging
 import os
+import select
 import socket
 import sys
 import time
@@ -265,9 +266,15 @@ def handle_notifications(request: Dict[str, Any]) -> None:
 
 
 def main():
-    """Main MCP server loop with proper EOF handling"""
+    """Main MCP server loop with proper EOF handling and select timeout"""
     while True:
         try:
+            # Use select to check for input with timeout (prevents hanging)
+            ready, _, _ = select.select([sys.stdin], [], [], 5.0)  # 5 second timeout
+            if not ready:
+                # Timeout - no input available, continue waiting
+                continue
+
             line = sys.stdin.readline()
             if not line:  # EOF reached
                 break
