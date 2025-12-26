@@ -21,6 +21,8 @@ from typing import Any
 
 from fastapi import APIRouter, Response
 from fastapi.responses import JSONResponse
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.responses import Response as StarletteResponse
 
 from AFO.config.health_check_config import health_check_config
 from AFO.services.health_service import get_comprehensive_health
@@ -28,6 +30,8 @@ from AFO.utils.automation_tools import AutomationTools
 from AFO.utils.path_utils import add_to_sys_path, get_trinity_os_path
 
 router = APIRouter(prefix="/api/health", tags=["Comprehensive Health"])
+
+# 캐시 헤더는 미들웨어에서 처리됨
 
 logger = logging.getLogger(__name__)
 
@@ -86,7 +90,7 @@ async def trinity_monitor_trend(window_minutes: int = 60) -> dict[str, Any]:
 
 
 @router.get("/comprehensive")
-async def comprehensive_health_check() -> JSONResponse:
+async def comprehensive_health_check() -> dict[str, Any]:
     """
     종합 건강 상태 진단 (야전교범 원칙 준수)
 
@@ -162,14 +166,7 @@ async def comprehensive_health_check() -> JSONResponse:
             },
         }
 
-        # HTTP 캐시 헤더 설정 (브라우저 캐시 30초)
-        return JSONResponse(
-            content=response_data,
-            headers={
-                "Cache-Control": "max-age=30, private",
-                "X-Cache-Source": "server-cache"
-            }
-        )
+        return response_data
 
     except Exception as e:
         logger.error(f"Comprehensive health check failed: {e}")
