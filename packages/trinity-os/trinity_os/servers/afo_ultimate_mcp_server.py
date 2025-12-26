@@ -92,10 +92,19 @@ class AfoUltimateMCPServer:
     @staticmethod
     def _validate_path(path: str) -> Path:
         """Security: Prevent path traversal outside workspace."""
+        if not path or path.strip() == "":
+            raise ValueError("Empty path not allowed")
+
         abs_path = Path(path).resolve()
-        # For now, allow access, but in prod we restrict to WORKSPACE_ROOT
-        # if not str(abs_path).startswith(WORKSPACE_ROOT):
-        #     raise ValueError(f"Access Denied: Path outside workspace ({path})")
+
+        # CRITICAL SECURITY: Prevent path traversal attacks
+        workspace_path = Path(WORKSPACE_ROOT).resolve()
+        try:
+            # Check if the resolved path is within workspace
+            abs_path.relative_to(workspace_path)
+        except ValueError:
+            raise ValueError(f"Access Denied: Path outside workspace ({path}) -> {abs_path}")
+
         return abs_path
 
     @staticmethod
