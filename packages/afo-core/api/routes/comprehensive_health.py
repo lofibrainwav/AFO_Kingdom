@@ -31,6 +31,59 @@ router = APIRouter(prefix="/api/health", tags=["Comprehensive Health"])
 logger = logging.getLogger(__name__)
 
 
+@router.get("/trinity-monitor/stats")
+async def trinity_monitor_stats() -> dict[str, Any]:
+    """Trinity Score 모니터링 통계 조회"""
+    try:
+        from services.trinity_score_monitor import trinity_score_monitor
+
+        stats = trinity_score_monitor.get_statistics()
+        recent_samples = trinity_score_monitor.get_recent_samples(limit=20)
+
+        return {
+            "status": "success",
+            "statistics": stats,
+            "recent_samples": recent_samples,
+        }
+    except ImportError:
+        return {
+            "status": "unavailable",
+            "error": "Trinity Score monitoring not available",
+        }
+    except Exception as e:
+        logger.error(f"Trinity monitor stats error: {e}")
+        return {
+            "status": "error",
+            "error": str(e),
+        }
+
+
+@router.get("/trinity-monitor/trend")
+async def trinity_monitor_trend(window_minutes: int = 60) -> dict[str, Any]:
+    """Trinity Score 추이 분석 조회"""
+    try:
+        from services.trinity_score_monitor import trinity_score_monitor
+
+        trend_analysis = trinity_score_monitor.get_trend_analysis(window_minutes)
+
+        return {
+            "status": "success",
+            "window_minutes": window_minutes,
+            "trend_analysis": trend_analysis,
+        }
+    except ImportError:
+        return {
+            "status": "unavailable",
+            "error": "Trinity Score monitoring not available",
+        }
+    except Exception as e:
+        logger.error(f"Trinity monitor trend error: {e}")
+        return {
+            "status": "error",
+            "error": str(e),
+        }
+
+
 @router.get("/comprehensive")
 async def comprehensive_health_check() -> dict[str, Any]:
     """

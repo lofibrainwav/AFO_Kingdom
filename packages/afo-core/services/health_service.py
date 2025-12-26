@@ -24,6 +24,15 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+# Trinity Score 모니터링 (선택적)
+try:
+    from services.trinity_score_monitor import record_trinity_score_metrics
+    TRINITY_MONITORING_AVAILABLE = True
+except ImportError:
+    TRINITY_MONITORING_AVAILABLE = False
+    if TRINITY_MONITORING_AVAILABLE is False:  # logger가 정의된 후에만 로깅
+        logger.warning("Trinity Score monitoring not available")
+
 
 async def check_redis() -> dict[str, Any]:
     """心_Redis 상태 체크"""
@@ -132,6 +141,13 @@ async def get_comprehensive_health() -> dict[str, Any]:
         filial_serenity=filial_score,
         eternity=eternity_score,
     )
+
+    # Trinity Score 모니터링 기록 (선택적)
+    if TRINITY_MONITORING_AVAILABLE:
+        try:
+            record_trinity_score_metrics(trinity_metrics)
+        except Exception as e:
+            logger.warning(f"Failed to record Trinity Score metrics: {e}")
 
     # Issue/Suggestion 생성
     issues = []
