@@ -1,16 +1,11 @@
 {
   "mcpServers": {
-    "git": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-git"]
-    },
-    "memory": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-memory"]
-    },
-    "filesystem": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/Users/brnestrm/AFO_Kingdom"]
+    "afo-ultimate-mcp": {
+      "command": "bash",
+      "args": ["scripts/mcp_afo_ultimate.sh"],
+      "env": {
+        "PYTHONPATH": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os:/Users/brnestrm/AFO_Kingdom/packages/afo-core:$PYTHONPATH"
+      }
     }
   }
 }
