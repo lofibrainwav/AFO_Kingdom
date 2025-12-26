@@ -265,9 +265,13 @@ def handle_notifications(request: Dict[str, Any]) -> None:
 
 
 def main():
-    """Main MCP server loop"""
-    for line in sys.stdin:
+    """Main MCP server loop with proper EOF handling"""
+    while True:
         try:
+            line = sys.stdin.readline()
+            if not line:  # EOF reached
+                break
+
             if not line.strip():
                 continue
 
@@ -282,6 +286,18 @@ def main():
                 handle_tools_list(request_id, params)
             elif method == "tools/call":
                 handle_tools_call(request_id, params)
+            elif method == "shutdown":
+                # Handle shutdown gracefully
+                response = {"jsonrpc": "2.0", "id": request_id, "result": {"ok": True}}
+                print(json.dumps(response), flush=True)
+                sys.stdout.flush()
+                break
+            elif method == "exit":
+                # Handle exit gracefully
+                response = {"jsonrpc": "2.0", "id": request_id, "result": {"ok": True}}
+                print(json.dumps(response), flush=True)
+                sys.stdout.flush()
+                break
             elif method.startswith("notifications/") or method == "$/cancelRequest":
                 handle_notifications(request)
             else:
@@ -293,7 +309,7 @@ def main():
             continue
         except Exception as e:
             # Unexpected error
-            if "id" in locals() and request_id is not None:
+            if "request_id" in locals() and request_id is not None:
                 send_error(request_id, -32603, f"Internal error: {str(e)}")
             continue
 
