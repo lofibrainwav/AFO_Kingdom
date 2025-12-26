@@ -105,6 +105,7 @@ async def check_self() -> dict[str, Any]:
 async def get_comprehensive_health() -> dict[str, Any]:
     """종합 건강 상태 진단 및 Trinity Score 계산 (캐시 적용)"""
     current_time = datetime.now().isoformat()
+    response: dict[str, Any] = {}  # 초기화
 
     # 캐시 확인 (글로벌 메모리 캐시 우선)
     global _health_cache, _cache_timestamp
@@ -123,7 +124,7 @@ async def get_comprehensive_health() -> dict[str, Any]:
             _health_cache = cached_result
             _cache_timestamp = time.time()
             logger.debug("Returning Redis cached health data")
-            return cached_result
+            return cast(dict[str, Any], cached_result)
     except Exception:
         pass  # Redis 캐시 실패해도 계속 진행
 
@@ -144,13 +145,13 @@ async def get_comprehensive_health() -> dict[str, Any]:
             )
         except TimeoutError:
             logger.warning("Health check timed out after 10 seconds")
-            results = [
+            results = (
                 {"healthy": False, "output": "Timeout"},
                 {"healthy": False, "output": "Timeout"},
                 {"healthy": False, "output": "Timeout"},
                 {"healthy": True, "output": "API responding"},
-                {"healthy": False, "output": "Timeout"}
-            ]
+                {"healthy": False, "output": "Timeout"},
+            )
 
     organ_names = ["心_Redis", "肝_PostgreSQL", "脾_Ollama", "肺_API_Server", "肾_MCP"]
     organs: list[dict[str, Any]] = []
@@ -273,7 +274,7 @@ async def get_comprehensive_health() -> dict[str, Any]:
         balance_status = trinity_metrics.balance_status if trinity_metrics else "unknown"
         trinity_score = trinity_metrics.trinity_score if trinity_metrics else 0.0
     except:
-        balance_status = "error"
+        balance_status = "unknown"
         trinity_score = 0.0
 
     response = {

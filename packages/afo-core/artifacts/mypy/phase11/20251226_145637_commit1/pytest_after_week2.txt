@@ -1,0 +1,58 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.12.12, pytest-9.0.2, pluggy-1.6.0 -- /opt/homebrew/opt/python@3.12/bin/python3.12
+cachedir: .pytest_cache
+hypothesis profile 'default'
+rootdir: /Users/brnestrm/AFO_Kingdom/packages/afo-core
+configfile: pyproject.toml
+plugins: anyio-4.11.0, web3-6.15.0, hypothesis-6.148.7, asyncio-1.3.0, langsmith-0.4.42, cov-7.0.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... ⚠️ Context7 trinity-os 경로 없음: /Users/brnestrm/AFO_Kingdom/packages/afo-core/trinity-os
+✅ AFO 설정 로드 완료: dev 환경 (AFOSettingsDev)
+✅ 5기둥 API Router loaded successfully
+   - GET /api/5pillars/current (현재 5기둥 점수 조회)
+   - POST /api/5pillars/live (LangFlow 실시간 평가 - Phase 23-D)
+   - GET /api/5pillars/family/hub (가족 허브 전체 상태 - Phase 23-E)
+   - POST /api/5pillars/family/hub/member/update (가족 구성원 데이터 업데이트)
+   - GET /api/5pillars/family/hub/data (실시간 가족 허브 데이터)
+[TRINITY-OS] 페르소나 전환 → 불굴의 사령관 (활성화)
+✅ API Cache Middleware 활성화
+✅ Performance Monitoring Middleware 활성화
+🛡️ Vault Manager Active (Mode: env)
+🛡️ Audit Middleware Active (Logging POST/PUT/DELETE)
+🛡️ Phase 2 Hardening Middleware Stack 활성화 (Redis 업그레이드)
+   ✅ TraceId: 요청 추적 ID 추가
+   ✅ RequestSizeLimit: 페이로드 크기 제한 (413)
+   ✅ Redis RateLimit: 분산 속도 제한 (429) - slowapi + Redis
+   ✅ SqlGuard: SQL 인젝션 패턴 감지 (400)
+   📊 Redis-backed: distributed 환경 지원 (OWASP 2025 준수)
+✅ Prometheus Metrics Middleware 활성화
+✅ Prometheus Metrics Endpoint 추가 (/metrics)
+🔥 [DEBUG] AFO.services.gen_ui is being loaded!
+✅ Context7 trinity-os 경로 추가: /Users/brnestrm/AFO_Kingdom/packages/trinity-os
+✅ AFO 설정 로드 완료: dev 환경 (AFOSettingsDev)
+Trinity Score monitoring not available
+[ProphetEngine] Prophet not installed. Using fallback LinearRegression.
+2025-12-26 15:31:00,421 - AFO.api.config - INFO - FastAPI application created successfully
+2025-12-26 15:31:00,421 - AFO.api_server - INFO - FastAPI application created
+2025-12-26 15:31:00,423 - AFO.api_server - INFO - Rate limiter configured
+2025-12-26 15:31:00,423 - AFO.api_server - INFO - Application configured with security measures
+2025-12-26 15:31:00,426 - AFO.api_server - INFO - Middleware setup completed
+2025-12-26 15:31:00,426 - AFO.api.router_manager - INFO - AFO Router Manager initialized with beautiful code principles
+2025-12-26 15:31:00,426 - AFO.api.router_manager - INFO - Starting router registration process...
+2025-12-26 15:31:00,439 - AFO.api.router_manager - WARNING - Philosophical Copilot Router not available
+2025-12-26 15:31:00,443 - AFO.api.router_manager - INFO - Skills API registered successfully (5 routes)
+2025-12-26 15:31:00,449 - AFO.api.router_manager - WARNING - Intake API router not available
+2025-12-26 15:31:00,458 - config.antigravity - INFO - ✅ [AGENTS.md] 파일 확인: /Users/brnestrm/AFO_Kingdom/AGENTS.md
+2025-12-26 15:31:00,458 - config.antigravity - INFO - ✅ [AGENTS.md] Trinity 가중치: {'truth': 0.35, 'goodness': 0.35, 'beauty': 0.2, 'serenity': 0.08, 'eternity': 0.02}
+2025-12-26 15:31:00,458 - config.antigravity - INFO - ✅ [AGENTS.md] AUTO_RUN 조건: Trinity >= 90, Risk <= 10
+2025-12-26 15:31:00,458 - config.antigravity - INFO - 🔭 ConfigWatcher initialized
+2025-12-26 15:31:00,459 - config.antigravity - INFO - 🔭 ConfigWatcher started monitoring .env.antigravity
+2025-12-26 15:31:00,465 - AFO.julie_cpa.services.julie_service - INFO - Julie CPA Service initialized with beautiful code principles
+2025-12-26 15:31:00,468 - AFO.api.router_manager - INFO - Router registration completed. Total: 117 routers
+2025-12-26 15:31:00,469 - AFO.api_server - INFO - Router setup completed
+2025-12-26 15:31:00,469 - AFO.api_server - INFO - AFO Kingdom API Server initialized with beautiful code principles
+ERROR: file or directory not found: packages/afo-core/tests/
+
+collected 0 items
+
+============================ no tests ran in 0.13s =============================
