@@ -13,7 +13,7 @@ import hashlib
 import json
 import logging
 import time
-from typing import Any
+from typing import Any, Awaitable, Callable
 
 from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -24,7 +24,7 @@ from ...utils.redis_connection import get_redis_client
 logger = logging.getLogger(__name__)
 
 # 캐시 설정
-API_CACHE_CONFIG = {
+API_CACHE_CONFIG: dict[str, Any] = {
     "key_prefix": "api:cache:",
     "default_ttl": 300,  # 5분
     "endpoint_ttl": {
@@ -57,7 +57,7 @@ class CacheMiddleware(BaseHTTPMiddleware):
         """
         try:
             self.redis_client = get_redis_client()
-            if self.redis_client:
+            if self.redis_client is not None:
                 # 연결 테스트
                 self.redis_client.ping()
                 self._initialized = True
@@ -102,7 +102,7 @@ class CacheMiddleware(BaseHTTPMiddleware):
         excluded_paths = ["/api/logs/stream", "/api/system/logs/stream"]
         return not any(request.url.path.startswith(path) for path in excluded_paths)
 
-    async def dispatch(self, request: Request, call_next: Any) -> Response:
+    async def dispatch(self, request: Request, call_next: Callable[[Request], Awaitable[Response]]) -> Response:
         """
         미들웨어 처리 (Sequential Thinking Phase 3)
         """
