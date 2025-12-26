@@ -485,7 +485,9 @@ class AfoUltimateMCPServer:
                                 content = "Tool not available: sequential_thinking_mcp not loaded"
                                 is_error = True
                             else:
-                                res = SequentialThinkingMCP.process_thought(
+                                # Create instance and call method
+                                st_instance = SequentialThinkingMCP()
+                                res = st_instance.process_thought(
                                     args.get("thought", ""),
                                     args.get("thought_number", 1),
                                     args.get("total_thoughts", 1),
@@ -507,7 +509,9 @@ class AfoUltimateMCPServer:
                                 content = "Tool not available: context7_mcp not loaded"
                                 is_error = True
                             else:
-                                res = Context7MCP.retrieve_context(
+                                # Create instance and call method
+                                ctx_instance = Context7MCP()
+                                res = ctx_instance.retrieve_context(
                                     args.get("query", ""),
                                     args.get("domain", "general"),
                                 )

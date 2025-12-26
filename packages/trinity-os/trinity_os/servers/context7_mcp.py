@@ -1,367 +1,292 @@
-from datetime import datetime
+#!/usr/bin/env python3
+"""
+Context7 MCP Module
+지식 그래프 기반 컨텍스트 검색 및 주입을 위한 MCP 도구
+"""
 
+import json
+import logging
+from typing import Dict, Any, List, Optional, Set
+from pathlib import Path
+import re
+
+logger = logging.getLogger(__name__)
 
 class Context7MCP:
     """
-    Context7 Tool (Knowledge Injector)
-    Provides pinned context and documentation retrieval for the AFO Kingdom.
+    Context7 MCP - 지식 그래프 기반 컨텍스트 관리
+    AFO 왕국의 지식 베이스에서 관련 컨텍스트를 검색하고 주입
     """
 
-    # Mock Knowledge Base (In production, this would be a Vector DB or Doc Store)
-    KNOWLEDGE_BASE = {
-        "AFO_ARCHITECTURE": """
-        AFO Kingdom Architecture (The Body):
-        - Brain: Chancellor (LangGraph) - Decision & Strategy
-        - Soul: Trinity (5 Pillars) - Philosophy & Ethics
-        - Heart: Auth (Security) - Protection & Access
-        - Liver: Users (Management) - Identity & History
-        - Stomach: Intake (Data Parsing) - Digestion & Processing
-        - Mask: Personas (Interface) - Communication & Style
-        - Spleen: Family Hub (Happiness) - Well-being & Stability
-        """,
-        "TRINITY_PHILOSOPHY": """
-        Trinity 5 Pillars (The Soul):
-        1. Truth (眞, 35%): Technical Certainty, Logic, Facts. (Scholar: Jegalyang)
-        2. Goodness (善, 35%): Ethics, Safety, Risk Management. (Scholar: Samayi)
-        3. Beauty (美, 20%): Aesthetics, UX, Simplicity. (Scholar: Zhou Yu)
-        4. Serenity (孝, 8%): Peace of Mind, Friction Reduction. (Role: Chancellor)
-        5. Eternity (永, 2%): Sustainability, Legacy, Long-term view. (Role: Chancellor)
+    def __init__(self):
+        self.knowledge_base: List[Dict[str, Any]] = []
+        self.knowledge_index: Dict[str, Set[int]] = {}
+        self._load_knowledge_base()
 
-        Governance:
-        - Trinity Score = Weighted Sum of 5 Pillars.
-        - Auto-Run Gate: Requires Score > 90 AND Risk < 10.
-        """,
-        "SIXXON_BODY": """
-        Sixxon (The Physical Manifestation):
-        - Core Framework: FastAPI (Backend), Next.js 14+ (Frontend)
-        - Infrastructure: Docker, Kubernetes (Orchestration)
-        - Database: PostgreSQL (Memory), Redis (Fast Access)
-        - AI Engine: AfoUltimateMCPServer (Neurology)
-        - Auth System: Sixxon Auth Recapture (Codex)
-        - Design System: Glassmorphism, Brutalism, "Cute" UI (Aesthetics)
-        """,
-        "MCP_PROTOCOL": """
-        MCP (Master Control Program) utilizes JSON-RPC 2.0 over stdio.
-        Unified Server: afo_ultimate_mcp_server.py
-        Tools: shell_execute, read_file, write_file, kingdom_health, calculate_trinity_score, verify_fact, cupy_weighted_sum, sequential_thinking, retrieve_context
-        """,
-        "API_ENDPOINTS": """
-        AFO Kingdom Soul Engine API - 49개 엔드포인트:
-        - Health & System: GET /, GET /health, GET /api/system/metrics
-        - Chancellor: POST /chancellor/invoke, GET /chancellor/health
-        - Skills Registry: GET /api/skills/list, POST /api/skills/{skill_id}/execute
-        - 5 Pillars: GET /api/5pillars/current, POST /api/5pillars/live
-        - RAG: POST /api/crag
-        - Family Hub: GET /family/, GET /family/members, POST /family/activity
-        - Authentication: POST /api/auth/login, POST /api/auth/verify
-        - Users: GET /api/users/{user_id}, POST /api/users, PUT /api/users/{user_id}
-        - Personas: GET /api/personas/current, POST /api/personas/switch
-        - Chat: POST /message, GET /providers, GET /stats
-        - Julie CPA: GET /api/julie/status, GET /api/julie/dashboard
-        - Wallet: POST /browser/save-token, GET /browser/extraction-script
-
-        모든 엔드포인트는 실행 시 眞善美孝永 Trinity Score를 반환합니다.
-        상세 참조: docs/API_ENDPOINTS_REFERENCE.md
-        """,
-        "SKILLS_REGISTRY": """
-        AFO Kingdom Skills Registry - 19개 스킬:
-        - Strategic Command: skill_005_strategy_engine, skill_010_family_persona
-        - RAG Systems: skill_002_ultimate_rag, skill_019_hybrid_graphrag
-        - Workflow Automation: skill_001_youtube_spec_gen, skill_011_dev_tool_belt, skill_015_suno_composer
-        - Health Monitoring: skill_003_health_monitor, skill_017_data_pipeline, skill_018_docker_recovery
-        - Memory Management: skill_013_obsidian_librarian
-        - Analysis Evaluation: skill_004_ragas_evaluator, skill_006_ml_metacognition, skill_008_soul_refine, skill_009_advanced_cosine
-        - Integration: skill_007_multi_cloud, skill_012_mcp_tool_bridge, skill_014_strangler_integrator, skill_016_web3_manager
-        - Metacognition: skill_015_vibe_coder
-
-        모든 스킬은 眞善美孝 철학 점수를 가지며, API를 통해 실행 가능합니다.
-        상세 참조: docs/SKILLS_REGISTRY_REFERENCE.md
-        """,
-        "DEPLOYMENT": """
-        AFO Kingdom 배포 가이드:
-        - Docker Compose: packages/afo-core/docker-compose.yml 사용
-        - Kubernetes: helm/afo-chart 사용
-        - 환경 변수: .env 파일 또는 환경 변수로 설정
-        - 헬스 체크: GET /health 엔드포인트 사용
-        - 모니터링: Prometheus 메트릭, 로그 스트리밍
-
-        주요 서비스:
-        - Backend (Soul Engine): Port 8010
-        - Frontend (Dashboard): Port 3000
-        - PostgreSQL: Port 15432
-        - Redis: Port 6379
-        - Qdrant: Port 6333
-
-        상세 참조: docs/DEPLOYMENT_GUIDE.md
-        """,
-        "CONFIGURATION": """
-        AFO Kingdom 설정 가이드:
-        - 데이터베이스: POSTGRES_HOST, POSTGRES_PORT, POSTGRES_DB, POSTGRES_USER, POSTGRES_PASSWORD
-        - Redis: REDIS_URL
-        - Qdrant: QDRANT_URL
-        - API Keys: OPENAI_API_KEY, ANTHROPIC_API_KEY, GEMINI_API_KEY
-        - AntiGravity: ENVIRONMENT, AUTO_DEPLOY, DRY_RUN_DEFAULT
-        - MCP: MCP_SERVER_URL, WORKSPACE_ROOT
-        - Soul Engine: SOUL_ENGINE_URL, API_PORT
-
-        설정 우선순위: 환경 변수 > 환경별 설정 파일 > 기본값
-        상세 참조: docs/CONFIGURATION_GUIDE.md
-        """,
-        "TROUBLESHOOTING": """
-        AFO Kingdom 문제 해결 가이드:
-        - 포트 충돌: lsof -i :8010으로 확인, 프로세스 종료
-        - 데이터베이스 연결 실패: PostgreSQL 연결 확인, Docker 컨테이너 확인
-        - Redis 연결 실패: redis-cli ping으로 확인
-        - 의존성 설치 실패: pip install -r requirements.txt 재실행
-        - MCP 서버 연결 실패: Cursor MCP 설정 확인, PYTHONPATH 확인
-        - Trinity Score 계산 오류: SSOT 파일 확인, Trinity Score 엔진 확인
-
-        디버깅: 로그 확인, 헬스 체크, 환경 변수 확인
-        상세 참조: docs/TROUBLESHOOTING.md
-        """,
-        "DOCUMENTATION": """
-        AFO Kingdom 문서화 완료 상태:
-        - 핵심 시스템 문서화: 100% 완료 (5개 시스템)
-        - 통합 참조 문서: 100% 완료 (5개 문서)
-        - 운영 가이드: 100% 완료 (3개 가이드)
-        - 총 문서 수: 37개
-        - 새로 생성된 문서: 9개 (2,796줄, 55.3 KB)
-
-        주요 문서:
-        - API_ENDPOINTS_REFERENCE.md: 49개 엔드포인트 문서화
-        - SKILLS_REGISTRY_REFERENCE.md: 19개 스킬 문서화
-        - DEPLOYMENT_GUIDE.md: Docker, Kubernetes 배포 가이드
-        - CONFIGURATION_GUIDE.md: 환경 변수 및 설정 가이드
-        - TROUBLESHOOTING.md: 문제 해결 가이드
-
-        검증 완료: Sequential Thinking 10단계 분석 완료
-        상세 참조: docs/DOCUMENTATION_COMPLETE_VERIFICATION.md
-        """,
-        "OBSIDIAN_LIBRARIAN": """
-        AFO Obsidian Librarian (skill_013_obsidian_librarian):
-        - 왕국의 지식 관리 시스템
-        - 옵시디언 vault 읽기/쓰기
-        - Daily Notes 관리
-        - 양방향 링크 생성
-        - 철학 점수: 眞 96%, 善 98%, 美 95%, 孝 99%
-
-        옵시디언 RAG 시스템:
-        - ObsidianLoader: Markdown 문서 로드 및 메타데이터 파싱
-        - Qdrant 벡터 DB 인덱싱
-        - LangGraph RAG 파이프라인
-        - 자동 동기화 (sync_obsidian_vault.py)
-
-        경로: packages/afo-core/scripts/rag/
-        상세 참조: packages/afo-core/docs/afo/OBSIDIAN_RAG_GOT_COMPLETE.md
-        """,
-        "ROYAL_LIBRARY": """
-        AFO 왕국의 사서 (Royal Library) - 41가지 원칙:
-
-        제1서: 손자병법 (12선) - 眞 70% / 孝 30%
-        1. 지피지기 (Rule #0): Context7과 DB 조회 필수
-        2. 상병벌모: 기존 라이브러리 활용 우선
-        3. 병자궤도야: DRY_RUN 기본값 True
-        4. 병귀신속: 비동기 처리 (asyncio, Celery)
-        5. 도천지장법: Trinity Score 5기둥 정렬 체크
-        6. 정병: 표준 패턴 준수 후 오버라이딩
-        7. 허실: Profiling & Optimization
-        8. 구변: try-except-else-finally 분기
-        9. 용간: 로그 및 모니터링 (logger.info, Sentry)
-        10. 화공: confirm_dangerous_action() 게이트
-        11. 졸속: MVP 배포 우선
-        12. 부전이굴: Cron Job, Background Service
-
-        제2서: 삼국지 (12선) - 永 60% / 善 40%
-        13. 도원결의: Interface 통일, Shared Context
-        14. 삼고초려: Retry(max_attempts=3, backoff=exponential)
-        15. 공성계: Graceful Degradation, Skeleton UI
-        16. 제갈량의 초선차전: pip install, External API
-        17. 연환계: Pipeline Pattern, LangGraph Node Linking
-        18. 미인계: Abstract complexity behind UI
-        19. 칠종칠금: Write -> Critique -> Refine Loop
-        20. 적벽대전 동남풍: Scheduled Tasks
-        21. 고육지계: Circuit Breaker
-        22. 한실 부흥: Linting, Convention Check
-        23. 천하삼분: Modular Architecture
-        24. 백제성 탁고: Checkpoint Saving, State Persistence
-
-        제3서: 군주론 (9선) - 善 50% / 眞 50%
-        25. 사랑보다 두려움: Strict Typing, Validation
-        26. 비르투와 포르투나: Exception Handling
-        27. 여우와 사자: Algorithm Selection
-        28. 증오 피하기: UX Optimization
-        29. 무장한 예언자: Executable Code Only
-        30. 잔인함의 효율적 사용: Garbage Collection, Resource Cleanup
-        31. 국가 유지: Health Checks, High Availability
-        32. 현명한 조언자: Model Router
-        33. 결과가 수단을 정당화: Creative Solution w/ High Safety
-
-        제4서: 전쟁론 (8선) - 眞 60% / 孝 40%
-        34. 전장의 안개: Null Check, Data Validation
-        35. 마찰: Complexity Estimation
-        36. 중심: Root Cause Analysis
-        37. 공세 종말점: Resource Monitoring
-        38. 지휘 통일: Singleton Pattern, Locking
-        39. 병력 절약: Token/Compute Optimization
-        40. 전쟁의 목적: Clear Objectives
-        41. 평화의 조건: Stable State
-
-        상세 참조: docs/AFO_ROYAL_LIBRARY.md
-        """,
-        "OBSIDIAN_TEMPLATES": """
-        AFO Kingdom 옵시디언 템플릿 시스템:
-        - 템플릿 위치: docs/_templates/
-        - 템플릿 수: 8개 (7개 마크다운 + 1개 HTML)
-        - 자동화: Templater 플러그인 통합
-        - 후처리: post_template.js 자동 실행
-
-        주요 템플릿:
-        1. project_doc.md - 프로젝트 문서 템플릿
-        2. system_component.md - 시스템 컴포넌트 템플릿
-        3. api_endpoint.md - API 엔드포인트 템플릿
-        4. dataview_queries.md - Dataview 쿼리 템플릿
-        5. collaboration_guide.md - 협업 워크플로우 가이드
-        6. ai_integration_guide.md - AI 통합 가이드
-        7. publish_template.html - 웹 퍼블리시 템플릿
-        8. README.md - 템플릿 시스템 설명서
-
-        자동화 기능:
-        - 폴더별 자동 템플릿 적용
-        - 템플릿 변수 자동 완성
-        - Context7 자동 등록 (register_obsidian_doc_to_context7.py)
-        - Trinity Score 자동 계산
-        - 관련 문서 자동 링크 추가
-
-        상세 참조: docs/_templates/README.md
-        """,
-    }
-
-    @staticmethod
-    def retrieve_context(query: str, domain: str = "general") -> dict:
-        """
-        Retrieve context based on query keywords.
-        """
-        results = []
-        query_upper = query.upper()
-
-        # Architecture queries
-        if "ARCH" in query_upper or "STRUCT" in query_upper:
-            results.append(Context7MCP.KNOWLEDGE_BASE["AFO_ARCHITECTURE"])
-
-        # Trinity Philosophy queries
-        if (
-            "TRINITY" in query_upper
-            or "PHILOSOPHY" in query_upper
-            or "SCORE" in query_upper
-            or "SOUL" in query_upper
-        ):
-            results.append(Context7MCP.KNOWLEDGE_BASE["TRINITY_PHILOSOPHY"])
-
-        # Sixxon Body queries
-        if "SIXXON" in query_upper or "BODY" in query_upper:
-            results.append(Context7MCP.KNOWLEDGE_BASE["SIXXON_BODY"])
-
-        # MCP Protocol queries
-        if "MCP" in query_upper or "TOOL" in query_upper:
-            results.append(Context7MCP.KNOWLEDGE_BASE["MCP_PROTOCOL"])
-
-        # API Endpoints queries
-        if "API" in query_upper or "ENDPOINT" in query_upper or "ROUTE" in query_upper:
-            results.append(Context7MCP.KNOWLEDGE_BASE["API_ENDPOINTS"])
-
-        # Skills Registry queries
-        if "SKILL" in query_upper or "REGISTRY" in query_upper:
-            results.append(Context7MCP.KNOWLEDGE_BASE["SKILLS_REGISTRY"])
-
-        # Deployment queries
-        deploy_keywords = ["DEPLOY", "DOCKER", "KUBERNETES", "배포", "컨테이너"]
-        if any(kw in query_upper for kw in deploy_keywords) or any(
-            kw in query for kw in ["배포", "컨테이너"]
-        ):
-            results.append(Context7MCP.KNOWLEDGE_BASE["DEPLOYMENT"])
-
-        # Configuration queries
-        config_keywords = ["CONFIG", "SETTING", "ENV", "환경", "설정"]
-        if any(kw in query_upper for kw in config_keywords) or any(
-            kw in query for kw in ["환경", "설정"]
-        ):
-            results.append(Context7MCP.KNOWLEDGE_BASE["CONFIGURATION"])
-
-        # Troubleshooting queries
-        troubleshoot_keywords = [
-            "TROUBLESHOOT",
-            "DEBUG",
-            "ERROR",
-            "문제",
-            "해결",
-            "디버그",
+    def _load_knowledge_base(self) -> None:
+        """지식 베이스 로드"""
+        # AFO 왕국의 핵심 문서들 로드
+        knowledge_sources = [
+            "AGENTS.md",
+            "docs/AFO_ROYAL_LIBRARY.md",
+            "docs/AFO_CHANCELLOR_GRAPH_SPEC.md",
+            "docs/AFO_EVOLUTION_LOG.md",
+            "docs/AFO_FRONTEND_ARCH.md",
+            "docs/CURSOR_MCP_SETUP.md"
         ]
-        if any(kw in query_upper for kw in troubleshoot_keywords) or any(
-            kw in query for kw in ["문제", "해결", "디버그"]
-        ):
-            results.append(Context7MCP.KNOWLEDGE_BASE["TROUBLESHOOTING"])
 
-        # Documentation queries
-        doc_keywords = ["DOC", "DOCUMENT", "문서", "문서화"]
-        if any(kw in query_upper for kw in doc_keywords) or any(
-            kw in query for kw in ["문서", "문서화"]
-        ):
-            results.append(Context7MCP.KNOWLEDGE_BASE["DOCUMENTATION"])
+        for source in knowledge_sources:
+            self._load_document(source)
 
-        # Obsidian Librarian queries
-        obsidian_keywords = ["OBSIDIAN", "LIBRARIAN", "사서", "옵시디언", "VAULT"]
-        if any(kw in query_upper for kw in obsidian_keywords) or any(
-            kw in query for kw in ["옵시디언", "사서", "vault"]
-        ):
-            results.append(Context7MCP.KNOWLEDGE_BASE["OBSIDIAN_LIBRARIAN"])
+        # 추가 지식 항목들
+        self._add_core_knowledge()
 
-        # Royal Library queries
-        royal_keywords = [
-            "ROYAL",
-            "LIBRARY",
-            "사서",
-            "원칙",
-            "헌법",
-            "손자",
-            "삼국지",
-            "군주론",
-            "전쟁론",
-        ]
-        if any(kw in query_upper for kw in royal_keywords) or any(
-            kw in query
-            for kw in ["사서", "원칙", "헌법", "손자병법", "삼국지", "군주론", "전쟁론"]
-        ):
-            results.append(Context7MCP.KNOWLEDGE_BASE["ROYAL_LIBRARY"])
+        # 색인 구축
+        self._build_index()
 
-        # Obsidian Templates queries
-        template_keywords_upper = ["TEMPLATE", "TEMPLATER"]
-        template_keywords_korean = [
-            "템플릿",
-            "옵시디언 템플릿",
-            "프로젝트 템플릿",
-            "컴포넌트 템플릿",
-            "API 템플릿",
-        ]
-        if any(kw in query_upper for kw in template_keywords_upper) or any(
-            kw in query for kw in template_keywords_korean
-        ):
-            results.append(Context7MCP.KNOWLEDGE_BASE["OBSIDIAN_TEMPLATES"])
+    def _load_document(self, filepath: str) -> None:
+        """문서 파일 로드"""
+        try:
+            path = Path(filepath)
+            if path.exists():
+                content = path.read_text(encoding='utf-8')
+                self.knowledge_base.append({
+                    "id": f"doc_{len(self.knowledge_base)}",
+                    "type": "document",
+                    "source": filepath,
+                    "content": content,
+                    "title": path.name,
+                    "keywords": self._extract_keywords(content)
+                })
+            else:
+                logger.warning(f"Document not found: {filepath}")
+        except Exception as e:
+            logger.error(f"Failed to load document {filepath}: {e}")
 
-        if not results:
-            return {
-                "found": False,
-                "message": f"No specific context found for '{query}'.",
-                "timestamp": datetime.now().isoformat(),
+    def _add_core_knowledge(self) -> None:
+        """핵심 지식 항목들 추가"""
+        core_knowledge = [
+            {
+                "id": "trinity_philosophy",
+                "type": "philosophy",
+                "title": "Trinity 철학 (眞善美孝永)",
+                "content": """
+                AFO 왕국의 5기둥 철학:
+                - 眞 (Truth): 기술적 확실성, 타입 안전성, 테스트 무결성
+                - 善 (Goodness): 윤리·안정성, 비용 최적화, 안전 게이트
+                - 美 (Beauty): 구조적 단순함, 모듈화, 일관된 API/UI
+                - 孝 (Serenity): 평온·연속성, 인지 부하 최소화
+                - 永 (Eternity): 재현 가능성, 문서화, 버전·결정 기록
+                """,
+                "keywords": ["trinity", "철학", "5기둥", "眞善美孝永", "philosophy"]
+            },
+            {
+                "id": "mcp_ecosystem",
+                "type": "technical",
+                "title": "MCP 생태계",
+                "content": """
+                Model Context Protocol (MCP) 생태계:
+                - JSON-RPC 2.0 over STDIO 기반 통신
+                - Cursor IDE 통합 지원
+                - 도구 기반 확장성
+                - 안전한 실행 환경
+                """,
+                "keywords": ["mcp", "model context protocol", "json-rpc", "cursor", "ecosystem"]
+            },
+            {
+                "id": "skills_registry",
+                "type": "technical",
+                "title": "Skills Registry 시스템",
+                "content": """
+                AFO Skills Registry:
+                - 31개 지능적 기능 제공
+                - Trinity Score 기반 실행
+                - DRY_RUN 모드 지원
+                - 실시간 상태 모니터링
+                """,
+                "keywords": ["skills", "registry", "trinity", "dry_run", "실행"]
+            },
+            {
+                "id": "sequential_thinking",
+                "type": "methodology",
+                "title": "Sequential Thinking 방법론",
+                "content": """
+                단계별 사고 방법론:
+                - 체계적인 문제 해결
+                - 진실성과 평온성 평가
+                - 사고 과정 기록 및 분석
+                - Trinity Score 기반 품질 관리
+                """,
+                "keywords": ["sequential", "thinking", "단계별", "추론", "methodology"]
             }
+        ]
 
-        combined_context = "\n---\n".join(results)
+        self.knowledge_base.extend(core_knowledge)
 
-        # Calculate Trinity Metadata (Truth Impact)
-        truth_score = 10 if results else 0
+    def _extract_keywords(self, content: str) -> List[str]:
+        """콘텐츠에서 키워드 추출"""
+        keywords = set()
+
+        # 한글 키워드 추출
+        korean_keywords = [
+            "trinity", "mcp", "skills", "api", "backend", "frontend",
+            "database", "redis", "postgresql", "docker", "kubernetes",
+            "monitoring", "metrics", "logging", "security", "auth",
+            "cache", "session", "router", "middleware", "validation",
+            "error", "handling", "async", "concurrency", "performance",
+            "testing", "ci", "cd", "deployment", "scaling"
+        ]
+
+        # 영어 키워드 추출
+        english_keywords = [
+            "trinity", "mcp", "skills", "api", "backend", "frontend",
+            "database", "redis", "postgresql", "docker", "kubernetes",
+            "monitoring", "metrics", "logging", "security", "auth",
+            "cache", "session", "router", "middleware", "validation",
+            "error", "handling", "async", "concurrency", "performance",
+            "testing", "ci", "cd", "deployment", "scaling"
+        ]
+
+        content_lower = content.lower()
+
+        for keyword in korean_keywords + english_keywords:
+            if keyword in content_lower:
+                keywords.add(keyword)
+
+        # 주요 용어들 추출
+        patterns = [
+            r'#+\s*([^\n]+)',  # 헤더들
+            r'\*\*([^*]+)\*\*',  # 볼드 텍스트
+            r'`([^`]+)`',  # 코드
+        ]
+
+        for pattern in patterns:
+            matches = re.findall(pattern, content)
+            for match in matches[:10]:  # 최대 10개까지만
+                if len(match.strip()) > 2:
+                    keywords.add(match.strip().lower())
+
+        return list(keywords)
+
+    def _build_index(self) -> None:
+        """지식 베이스 색인 구축"""
+        self.knowledge_index = {}
+
+        for idx, item in enumerate(self.knowledge_base):
+            keywords = item.get("keywords", [])
+            for keyword in keywords:
+                if keyword not in self.knowledge_index:
+                    self.knowledge_index[keyword] = set()
+                self.knowledge_index[keyword].add(idx)
+
+    def retrieve_context(self, query: str, domain: str = "general") -> Dict[str, Any]:
+        """
+        쿼리에 기반한 컨텍스트 검색
+
+        Args:
+            query: 검색 쿼리
+            domain: 검색 도메인 (general, technical, philosophy 등)
+
+        Returns:
+            관련 컨텍스트들
+        """
+
+        # 쿼리 분석
+        query_keywords = self._extract_keywords(query)
+        query_lower = query.lower()
+
+        # 관련 문서 찾기
+        relevant_docs = []
+        scores = {}
+
+        for keyword in query_keywords:
+            if keyword in self.knowledge_index:
+                for doc_idx in self.knowledge_index[keyword]:
+                    if doc_idx not in scores:
+                        scores[doc_idx] = 0
+                    scores[doc_idx] += 1
+
+        # 추가 텍스트 매칭
+        for idx, item in enumerate(self.knowledge_base):
+            content_lower = item.get("content", "").lower()
+            title_lower = item.get("title", "").lower()
+
+            if query_lower in content_lower or query_lower in title_lower:
+                if idx not in scores:
+                    scores[idx] = 0
+                scores[idx] += 2  # 텍스트 매칭은 더 높은 점수
+
+        # 도메인 필터링
+        if domain != "general":
+            filtered_scores = {}
+            for idx, score in scores.items():
+                item = self.knowledge_base[idx]
+                if item.get("type") == domain:
+                    filtered_scores[idx] = score
+            scores = filtered_scores
+
+        # 상위 결과 추출 (최대 5개)
+        sorted_docs = sorted(scores.items(), key=lambda x: x[1], reverse=True)[:5]
+
+        results = []
+        for doc_idx, score in sorted_docs:
+            item = self.knowledge_base[doc_idx]
+            results.append({
+                "id": item["id"],
+                "title": item["title"],
+                "type": item["type"],
+                "relevance_score": score,
+                "preview": item["content"][:200] + "..." if len(item["content"]) > 200 else item["content"],
+                "source": item.get("source", "knowledge_base"),
+                "keywords": item.get("keywords", [])
+            })
+
+        # Trinity Score 평가
+        truth_impact = min(len(results) * 0.1, 1.0)  # 결과 수에 따른 진실성
+        serenity_impact = 0.8 if results else 0.2  # 컨텍스트 제공으로 인한 평온성
 
         return {
-            "found": True,
-            "context": combined_context.strip(),
+            "query": query,
             "domain": domain,
-            "metadata": {"truth_impact": truth_score, "source": "Context7 Internal DB"},
+            "total_results": len(results),
+            "results": results,
+            "metadata": {
+                "truth_impact": truth_impact,
+                "serenity_impact": serenity_impact,
+                "search_method": "keyword_matching",
+                "knowledge_base_size": len(self.knowledge_base)
+            }
+        }
+
+    def add_knowledge(self, knowledge_item: Dict[str, Any]) -> str:
+        """새로운 지식 항목 추가"""
+        knowledge_item["id"] = f"custom_{len(self.knowledge_base)}"
+        knowledge_item["keywords"] = self._extract_keywords(
+            knowledge_item.get("content", "") + " " + knowledge_item.get("title", "")
+        )
+
+        self.knowledge_base.append(knowledge_item)
+
+        # 색인 업데이트
+        self._build_index()
+
+        return knowledge_item["id"]
+
+    def get_knowledge_stats(self) -> Dict[str, Any]:
+        """지식 베이스 통계 반환"""
+        types = {}
+        sources = {}
+
+        for item in self.knowledge_base:
+            item_type = item.get("type", "unknown")
+            types[item_type] = types.get(item_type, 0) + 1
+
+            source = item.get("source", "unknown")
+            sources[source] = sources.get(source, 0) + 1
+
+        return {
+            "total_items": len(self.knowledge_base),
+            "types": types,
+            "sources": sources,
+            "indexed_keywords": len(self.knowledge_index)
         }
