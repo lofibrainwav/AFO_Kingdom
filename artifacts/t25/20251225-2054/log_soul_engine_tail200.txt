@@ -1,0 +1,200 @@
+afo-soul-engine  | INFO:     162.159.134.234:43794 - "GET /metrics HTTP/1.1" 200 OK
+afo-soul-engine  | 2025-12-26 04:50:02,280 - httpx - INFO - HTTP Request: GET http://host.docker.internal:11434/api/tags "HTTP/1.1 200 OK"
+afo-soul-engine  | 2025-12-26 04:50:03,893 - AFO.api.middleware.performance_middleware - INFO - ⚠️ WARNING: Slow endpoint - GET /health took 1638.22ms (threshold: 1000ms)
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:29766 - "GET /api/skills HTTP/1.1" 307 Temporary Redirect
+afo-soul-engine  | 2025-12-26 04:50:03,905 - AFO.api.routes.skills - INFO - Initializing SkillRegistry with core skills...
+afo-soul-engine  | INFO:     162.159.134.234:29766 - "GET /api/skills/ HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:29672 - "GET /metrics HTTP/1.1" 200 OK
+afo-soul-engine  | 2025-12-26 04:50:09,437 - httpx - INFO - HTTP Request: GET http://host.docker.internal:11434/api/tags "HTTP/1.1 200 OK"
+afo-soul-engine  | 2025-12-26 04:50:11,057 - AFO.api.middleware.performance_middleware - INFO - ⚠️ WARNING: Slow endpoint - GET /health took 1642.05ms (threshold: 1000ms)
+afo-soul-engine  | INFO:     127.0.0.1:45982 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | 2025-12-26 04:50:17,717 - httpx - INFO - HTTP Request: GET http://host.docker.internal:11434/api/tags "HTTP/1.1 200 OK"
+afo-soul-engine  | 2025-12-26 04:50:19,332 - AFO.api.middleware.performance_middleware - INFO - ⚠️ WARNING: Slow endpoint - GET /health took 1639.61ms (threshold: 1000ms)
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:22284 - "GET /metrics HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | 2025-12-26 04:50:25,988 - httpx - INFO - HTTP Request: GET http://host.docker.internal:11434/api/tags "HTTP/1.1 200 OK"
+afo-soul-engine  | 2025-12-26 04:50:27,607 - AFO.api.middleware.performance_middleware - INFO - ⚠️ WARNING: Slow endpoint - GET /health took 1644.77ms (threshold: 1000ms)
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:36645 - "GET /metrics HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | 2025-12-26 04:50:34,270 - httpx - INFO - HTTP Request: GET http://host.docker.internal:11434/api/tags "HTTP/1.1 200 OK"
+afo-soul-engine  | 2025-12-26 04:50:35,885 - AFO.api.middleware.performance_middleware - INFO - ⚠️ WARNING: Slow endpoint - GET /health took 1644.60ms (threshold: 1000ms)
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:22559 - "GET /metrics HTTP/1.1" 200 OK
+afo-soul-engine  | 2025-12-26 04:50:41,433 - httpx - INFO - HTTP Request: GET http://host.docker.internal:11434/api/tags "HTTP/1.1 200 OK"
+afo-soul-engine  | 2025-12-26 04:50:43,047 - AFO.api.middleware.performance_middleware - INFO - ⚠️ WARNING: Slow endpoint - GET /health took 1638.19ms (threshold: 1000ms)
+afo-soul-engine  | INFO:     127.0.0.1:41470 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:26211 - "GET /metrics HTTP/1.1" 200 OK
+afo-soul-engine  | 2025-12-26 04:50:49,696 - httpx - INFO - HTTP Request: GET http://host.docker.internal:11434/api/tags "HTTP/1.1 200 OK"
+afo-soul-engine  | 2025-12-26 04:50:51,311 - AFO.api.middleware.performance_middleware - INFO - ⚠️ WARNING: Slow endpoint - GET /health took 1636.93ms (threshold: 1000ms)
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | 2025-12-26 04:50:57,970 - httpx - INFO - HTTP Request: GET http://host.docker.internal:11434/api/tags "HTTP/1.1 200 OK"
+afo-soul-engine  | 2025-12-26 04:50:59,584 - AFO.api.middleware.performance_middleware - INFO - ⚠️ WARNING: Slow endpoint - GET /health took 1637.60ms (threshold: 1000ms)
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:38456 - "GET /metrics HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | 2025-12-26 04:51:06,251 - httpx - INFO - HTTP Request: GET http://host.docker.internal:11434/api/tags "HTTP/1.1 200 OK"
+afo-soul-engine  | 2025-12-26 04:51:07,862 - AFO.api.middleware.performance_middleware - INFO - ⚠️ WARNING: Slow endpoint - GET /health took 1640.95ms (threshold: 1000ms)
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:33422 - "GET /metrics HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | 2025-12-26 04:51:13,412 - httpx - INFO - HTTP Request: GET http://host.docker.internal:11434/api/tags "HTTP/1.1 200 OK"
+afo-soul-engine  | 2025-12-26 04:51:15,029 - AFO.api.middleware.performance_middleware - INFO - ⚠️ WARNING: Slow endpoint - GET /health took 1643.65ms (threshold: 1000ms)
+afo-soul-engine  | INFO:     127.0.0.1:53988 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:63136 - "GET /metrics HTTP/1.1" 200 OK
+afo-soul-engine  | 2025-12-26 04:51:21,683 - httpx - INFO - HTTP Request: GET http://host.docker.internal:11434/api/tags "HTTP/1.1 200 OK"
+afo-soul-engine  | 2025-12-26 04:51:23,295 - AFO.api.middleware.performance_middleware - INFO - ⚠️ WARNING: Slow endpoint - GET /health took 1639.43ms (threshold: 1000ms)
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:31772 - "GET /metrics HTTP/1.1" 200 OK
+afo-soul-engine  | 2025-12-26 04:51:29,954 - httpx - INFO - HTTP Request: GET http://host.docker.internal:11434/api/tags "HTTP/1.1 200 OK"
+afo-soul-engine  | 2025-12-26 04:51:31,570 - AFO.api.middleware.performance_middleware - INFO - ⚠️ WARNING: Slow endpoint - GET /health took 1640.07ms (threshold: 1000ms)
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | 2025-12-26 04:51:38,232 - httpx - INFO - HTTP Request: GET http://host.docker.internal:11434/api/tags "HTTP/1.1 200 OK"
+afo-soul-engine  | 2025-12-26 04:51:39,846 - AFO.api.middleware.performance_middleware - INFO - ⚠️ WARNING: Slow endpoint - GET /health took 1639.79ms (threshold: 1000ms)
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:62753 - "GET /metrics HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | 2025-12-26 04:51:45,405 - httpx - INFO - HTTP Request: GET http://host.docker.internal:11434/api/tags "HTTP/1.1 200 OK"
+afo-soul-engine  | 2025-12-26 04:51:47,029 - AFO.api.middleware.performance_middleware - INFO - ⚠️ WARNING: Slow endpoint - GET /health took 1662.30ms (threshold: 1000ms)
+afo-soul-engine  | INFO:     127.0.0.1:47044 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:31033 - "GET /metrics HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | 2025-12-26 04:51:53,683 - httpx - INFO - HTTP Request: GET http://host.docker.internal:11434/api/tags "HTTP/1.1 200 OK"
+afo-soul-engine  | 2025-12-26 04:51:55,294 - AFO.api.middleware.performance_middleware - INFO - ⚠️ WARNING: Slow endpoint - GET /health took 1638.62ms (threshold: 1000ms)
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:25347 - "GET /metrics HTTP/1.1" 200 OK
+afo-soul-engine  | 2025-12-26 04:52:01,947 - httpx - INFO - HTTP Request: GET http://host.docker.internal:11434/api/tags "HTTP/1.1 200 OK"
+afo-soul-engine  | 2025-12-26 04:52:03,563 - AFO.api.middleware.performance_middleware - INFO - ⚠️ WARNING: Slow endpoint - GET /health took 1646.23ms (threshold: 1000ms)
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:54029 - "GET /metrics HTTP/1.1" 200 OK
+afo-soul-engine  | 2025-12-26 04:52:10,219 - httpx - INFO - HTTP Request: GET http://host.docker.internal:11434/api/tags "HTTP/1.1 200 OK"
+afo-soul-engine  | 2025-12-26 04:52:11,832 - AFO.api.middleware.performance_middleware - INFO - ⚠️ WARNING: Slow endpoint - GET /health took 1641.23ms (threshold: 1000ms)
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | 2025-12-26 04:52:17,390 - httpx - INFO - HTTP Request: GET http://host.docker.internal:11434/api/tags "HTTP/1.1 200 OK"
+afo-soul-engine  | 2025-12-26 04:52:19,007 - AFO.api.middleware.performance_middleware - INFO - ⚠️ WARNING: Slow endpoint - GET /health took 1650.75ms (threshold: 1000ms)
+afo-soul-engine  | INFO:     127.0.0.1:36738 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:31094 - "GET /metrics HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | 2025-12-26 04:52:25,671 - httpx - INFO - HTTP Request: GET http://host.docker.internal:11434/api/tags "HTTP/1.1 200 OK"
+afo-soul-engine  | 2025-12-26 04:52:27,288 - AFO.api.middleware.performance_middleware - INFO - ⚠️ WARNING: Slow endpoint - GET /health took 1645.42ms (threshold: 1000ms)
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:27084 - "GET /metrics HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | 2025-12-26 04:52:33,956 - httpx - INFO - HTTP Request: GET http://host.docker.internal:11434/api/tags "HTTP/1.1 200 OK"
+afo-soul-engine  | 2025-12-26 04:52:35,573 - AFO.api.middleware.performance_middleware - INFO - ⚠️ WARNING: Slow endpoint - GET /health took 1646.88ms (threshold: 1000ms)
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:17071 - "GET /metrics HTTP/1.1" 200 OK
+afo-soul-engine  | 2025-12-26 04:52:42,228 - httpx - INFO - HTTP Request: GET http://host.docker.internal:11434/api/tags "HTTP/1.1 200 OK"
+afo-soul-engine  | 2025-12-26 04:52:43,842 - AFO.api.middleware.performance_middleware - INFO - ⚠️ WARNING: Slow endpoint - GET /health took 1641.87ms (threshold: 1000ms)
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | 2025-12-26 04:52:49,386 - httpx - INFO - HTTP Request: GET http://host.docker.internal:11434/api/tags "HTTP/1.1 200 OK"
+afo-soul-engine  | 2025-12-26 04:52:51,008 - AFO.api.middleware.performance_middleware - INFO - ⚠️ WARNING: Slow endpoint - GET /health took 1644.37ms (threshold: 1000ms)
+afo-soul-engine  | INFO:     127.0.0.1:44936 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:18092 - "GET /metrics HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | 2025-12-26 04:52:57,655 - httpx - INFO - HTTP Request: GET http://host.docker.internal:11434/api/tags "HTTP/1.1 200 OK"
+afo-soul-engine  | 2025-12-26 04:52:59,265 - AFO.api.middleware.performance_middleware - INFO - ⚠️ WARNING: Slow endpoint - GET /health took 1633.91ms (threshold: 1000ms)
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:45238 - "GET /metrics HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | 2025-12-26 04:53:05,928 - httpx - INFO - HTTP Request: GET http://host.docker.internal:11434/api/tags "HTTP/1.1 200 OK"
+afo-soul-engine  | 2025-12-26 04:53:07,543 - AFO.api.middleware.performance_middleware - INFO - ⚠️ WARNING: Slow endpoint - GET /health took 1644.81ms (threshold: 1000ms)
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:64748 - "GET /metrics HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | 2025-12-26 04:53:14,204 - httpx - INFO - HTTP Request: GET http://host.docker.internal:11434/api/tags "HTTP/1.1 200 OK"
+afo-soul-engine  | 2025-12-26 04:53:15,818 - AFO.api.middleware.performance_middleware - INFO - ⚠️ WARNING: Slow endpoint - GET /health took 1640.52ms (threshold: 1000ms)
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:45863 - "GET /metrics HTTP/1.1" 200 OK
+afo-soul-engine  | 2025-12-26 04:53:21,372 - httpx - INFO - HTTP Request: GET http://host.docker.internal:11434/api/tags "HTTP/1.1 200 OK"
+afo-soul-engine  | 2025-12-26 04:53:22,987 - AFO.api.middleware.performance_middleware - INFO - ⚠️ WARNING: Slow endpoint - GET /health took 1649.95ms (threshold: 1000ms)
+afo-soul-engine  | INFO:     127.0.0.1:57320 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:55687 - "GET /metrics HTTP/1.1" 200 OK
+afo-soul-engine  | 2025-12-26 04:53:29,654 - httpx - INFO - HTTP Request: GET http://host.docker.internal:11434/api/tags "HTTP/1.1 200 OK"
+afo-soul-engine  | 2025-12-26 04:53:31,268 - AFO.api.middleware.performance_middleware - INFO - ⚠️ WARNING: Slow endpoint - GET /health took 1644.48ms (threshold: 1000ms)
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:40713 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:43089 - "GET /api/skills HTTP/1.1" 307 Temporary Redirect
+afo-soul-engine  | INFO:     162.159.134.234:25193 - "GET /api/skills HTTP/1.1" 307 Temporary Redirect
+afo-soul-engine  | INFO:     162.159.134.234:25193 - "GET /api/skills/ HTTP/1.1" 200 OK
+afo-soul-engine  | 2025-12-26 04:53:37,916 - httpx - INFO - HTTP Request: GET http://host.docker.internal:11434/api/tags "HTTP/1.1 200 OK"
+afo-soul-engine  | 2025-12-26 04:53:39,534 - AFO.api.middleware.performance_middleware - INFO - ⚠️ WARNING: Slow endpoint - GET /health took 1644.34ms (threshold: 1000ms)
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:24695 - "GET /metrics HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:47928 - "GET /api/5pillars/current HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | 2025-12-26 04:53:46,188 - httpx - INFO - HTTP Request: GET http://host.docker.internal:11434/api/tags "HTTP/1.1 200 OK"
+afo-soul-engine  | 2025-12-26 04:53:47,804 - AFO.api.middleware.performance_middleware - INFO - ⚠️ WARNING: Slow endpoint - GET /health took 1641.48ms (threshold: 1000ms)
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:23527 - "GET /metrics HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | 2025-12-26 04:53:53,357 - httpx - INFO - HTTP Request: GET http://host.docker.internal:11434/api/tags "HTTP/1.1 200 OK"
+afo-soul-engine  | 2025-12-26 04:53:54,973 - AFO.api.middleware.performance_middleware - INFO - ⚠️ WARNING: Slow endpoint - GET /health took 1643.96ms (threshold: 1000ms)
+afo-soul-engine  | INFO:     127.0.0.1:52084 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:40180 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:50497 - "GET /api/skills HTTP/1.1" 307 Temporary Redirect
+afo-soul-engine  | INFO:     162.159.134.234:17294 - "GET /api/skills HTTP/1.1" 307 Temporary Redirect
+afo-soul-engine  | INFO:     162.159.134.234:17294 - "GET /api/skills/ HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:41435 - "GET /metrics HTTP/1.1" 200 OK
+afo-soul-engine  | 2025-12-26 04:54:01,628 - httpx - INFO - HTTP Request: GET http://host.docker.internal:11434/api/tags "HTTP/1.1 200 OK"
+afo-soul-engine  | 2025-12-26 04:54:03,245 - AFO.api.middleware.performance_middleware - INFO - ⚠️ WARNING: Slow endpoint - GET /health took 1643.15ms (threshold: 1000ms)
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK
+afo-soul-engine  | INFO:     162.159.134.234:42113 - "GET /health HTTP/1.1" 200 OK

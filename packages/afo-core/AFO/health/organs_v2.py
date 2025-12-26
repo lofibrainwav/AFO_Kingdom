@@ -2,9 +2,10 @@ from __future__ import annotations
 
 import socket
 import time
+from collections.abc import Callable
 from dataclasses import asdict, dataclass
-from datetime import datetime, timezone
-from typing import Any, Callable, Dict, Optional, Tuple
+from datetime import UTC, datetime, timezone
+from typing import Any, Dict, Optional, Tuple
 from urllib.request import Request, urlopen
 
 
@@ -18,10 +19,10 @@ class OrganReport:
 
 
 def _now_iso() -> str:
-    return datetime.now(timezone.utc).isoformat()
+    return datetime.now(UTC).isoformat()
 
 
-def _tcp_probe(host: str, port: int, timeout_s: float) -> Tuple[bool, int, str]:
+def _tcp_probe(host: str, port: int, timeout_s: float) -> tuple[bool, int, str]:
     t0 = time.perf_counter()
     try:
         with socket.create_connection((host, port), timeout=timeout_s):
@@ -32,7 +33,7 @@ def _tcp_probe(host: str, port: int, timeout_s: float) -> Tuple[bool, int, str]:
         return False, ms, f"tcp://{host}:{port}"
 
 
-def _http_probe(url: str, timeout_s: float) -> Tuple[bool, int, str]:
+def _http_probe(url: str, timeout_s: float) -> tuple[bool, int, str]:
     t0 = time.perf_counter()
     try:
         req = Request(url, method="GET")
@@ -83,8 +84,8 @@ def build_organs_v2(
     api_port: int = 8010,
     timeout_tcp_s: float = 0.35,
     timeout_http_s: float = 0.6,
-) -> Dict[str, Any]:
-    organs: Dict[str, OrganReport] = {}
+) -> dict[str, Any]:
+    organs: dict[str, OrganReport] = {}
 
     ok, ms, t = _tcp_probe(host_local, redis_port, timeout_tcp_s)
     organs["心_Redis"] = _mk(ok, ms, t, "tcp", 98, 40, "Connected", "Disconnected")

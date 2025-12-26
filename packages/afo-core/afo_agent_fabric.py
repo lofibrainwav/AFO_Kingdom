@@ -1,5 +1,5 @@
 import json
-from typing import AsyncIterator, Optional
+from collections.abc import AsyncIterator
 
 from fastapi import APIRouter
 from pydantic import BaseModel
@@ -10,14 +10,12 @@ router = APIRouter(prefix="/chancellor", tags=["chancellor"])
 
 class ChancellorRequest(BaseModel):
     input: str
-    engine: Optional[str] = None
+    engine: str | None = None
 
 
 def _sse(event: str, data_obj) -> bytes:
     return (
-        f"event: {event}\ndata: {json.dumps(data_obj, ensure_ascii=False)}\n\n".encode(
-            "utf-8"
-        )
+        f"event: {event}\ndata: {json.dumps(data_obj, ensure_ascii=False)}\n\n".encode()
     )
 
 

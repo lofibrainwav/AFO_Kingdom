@@ -64,7 +64,8 @@ async def get_debugging_status() -> dict[str, Any]:
         시스템 상태
     """
     try:
-        from ...services.automated_debugging_system import AutomatedDebuggingSystem
+        from ...services.automated_debugging_system import \
+            AutomatedDebuggingSystem
 
         system = AutomatedDebuggingSystem()
 
@@ -100,7 +101,8 @@ async def get_debugging_history(limit: int = 10) -> dict[str, Any]:
     try:
         import json
 
-        from ...services.automated_debugging_system import AutomatedDebuggingSystem
+        from ...services.automated_debugging_system import \
+            AutomatedDebuggingSystem
 
         system = AutomatedDebuggingSystem()
 

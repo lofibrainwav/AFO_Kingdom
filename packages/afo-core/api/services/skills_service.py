@@ -15,21 +15,19 @@ from datetime import datetime
 from typing import TYPE_CHECKING, Any
 
 from afo_soul_engine.api.core.base_service import BaseService
-from afo_soul_engine.api.models.skills import (
-    PhilosophyScores,
-    SkillCategoryStats,
-    SkillExecuteRequest,
-    SkillExecutionResult,
-    SkillFilterRequest,
-    SkillListResponse,
-    SkillRequest,
-    SkillResponse,
-    SkillStatsResponse,
-)
+from afo_soul_engine.api.models.skills import (PhilosophyScores,
+                                               SkillCategoryStats,
+                                               SkillExecuteRequest,
+                                               SkillExecutionResult,
+                                               SkillFilterRequest,
+                                               SkillListResponse, SkillRequest,
+                                               SkillResponse,
+                                               SkillStatsResponse)
 
 # Trinity Score Evaluator (동적 점수 계산)
 try:
-    from AFO.services.mcp_tool_trinity_evaluator import mcp_tool_trinity_evaluator
+    from AFO.services.mcp_tool_trinity_evaluator import \
+        mcp_tool_trinity_evaluator
 
     TRINITY_EVALUATOR_AVAILABLE = True
 except ImportError:
@@ -38,15 +36,12 @@ except ImportError:
 
 # Import skill registry components for runtime
 try:
-    from AFO.afo_skills_registry import (
-        ExecutionMode,
-        SkillCategory,
-        SkillFilterParams,
-        SkillRegistry,
-        SkillStatus,
-        register_core_skills,
-    )
-    from AFO.afo_skills_registry import PhilosophyScore as RegistryPhilosophyScores
+    from AFO.afo_skills_registry import ExecutionMode
+    from AFO.afo_skills_registry import \
+        PhilosophyScore as RegistryPhilosophyScores
+    from AFO.afo_skills_registry import (SkillCategory, SkillFilterParams,
+                                         SkillRegistry, SkillStatus,
+                                         register_core_skills)
 
     SKILL_REGISTRY_AVAILABLE = True
 except ImportError:

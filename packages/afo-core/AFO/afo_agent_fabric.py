@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import json
-from typing import Any, AsyncIterator, Optional
+from collections.abc import AsyncIterator
+from typing import Any, Optional
 
 from fastapi import APIRouter
 from pydantic import BaseModel
@@ -12,13 +13,13 @@ router = APIRouter(prefix="/chancellor", tags=["chancellor"])
 
 class ChancellorRequest(BaseModel):
     input: str
-    engine: Optional[str] = None
+    engine: str | None = None
 
 
 def _sse(event: str, data_obj: Any) -> bytes:
     return (
         f"event: {event}\n" f"data: {json.dumps(data_obj, ensure_ascii=False)}\n\n"
-    ).encode("utf-8")
+    ).encode()
 
 
 async def _stream_echo(text: str) -> AsyncIterator[bytes]:
@@ -30,7 +31,7 @@ async def _stream_echo(text: str) -> AsyncIterator[bytes]:
 
 async def _stream_langgraph(text: str) -> AsyncIterator[bytes]:
     try:
-        import langgraph  # noqa: F401
+        import langgraph
 
         yield _sse("info", {"engine": "langgraph", "status": "installed"})
     except Exception:
@@ -44,7 +45,7 @@ async def _stream_langgraph(text: str) -> AsyncIterator[bytes]:
 
 async def _stream_crewai(text: str) -> AsyncIterator[bytes]:
     try:
-        import crewai  # noqa: F401
+        import crewai
 
         yield _sse("info", {"engine": "crewai", "status": "installed"})
     except Exception:
@@ -58,7 +59,7 @@ async def _stream_crewai(text: str) -> AsyncIterator[bytes]:
 
 async def _stream_autogen(text: str) -> AsyncIterator[bytes]:
     try:
-        import autogen  # noqa: F401
+        import autogen
 
         yield _sse("info", {"engine": "autogen", "status": "installed"})
     except Exception:
@@ -84,24 +85,24 @@ async def chancellor_ping_v2():
 async def chancellor_engines():
     installed = {}
     try:
-        import langgraph  # noqa: F401
+        import langgraph
 
         installed["langgraph"] = True
     except Exception:
         installed["langgraph"] = False
     try:
-        import crewai  # noqa: F401
+        import crewai
 
         installed["crewai"] = True
     except Exception:
         installed["crewai"] = False
     try:
-        import autogen  # noqa: F401
+        import autogen
 
         installed["autogen"] = True
     except Exception:
         try:
-            import autogen_agentchat  # noqa: F401
+            import autogen_agentchat
 
             installed["autogen"] = True
         except Exception:

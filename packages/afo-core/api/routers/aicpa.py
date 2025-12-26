@@ -14,10 +14,9 @@ AFO Kingdom AICPA 엔드포인트
 import logging
 from typing import Any
 
+from AFO.aicpa import get_aicpa_service
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
-
-from AFO.aicpa import get_aicpa_service
 
 logger = logging.getLogger(__name__)
 

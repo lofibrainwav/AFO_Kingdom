@@ -43,7 +43,6 @@ def save_token_to_wallet(token: str):
 
     try:
         import psycopg2
-
         from api_wallet import APIWallet
 
         # PostgreSQL 연결

@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+override="${AFO_OVERRIDE_MAIN_GATES:-0}"
+
+while read -r local_ref local_sha remote_ref remote_sha; do
+  if [[ "$remote_ref" == "refs/heads/main" ]]; then
+    echo "MAIN-GATE: running SSOT + refactor gates..."
+    ./scripts/afo_guard_ssot.sh
+    ./scripts/afo_refactor_guard.sh enforce
+
+    if [[ "$override" == "1" ]]; then
+      echo "MAIN-GATE: override is ON. Make sure you committed an OVERRIDE_*.md justification."
+    fi
+  fi
+done
+
+exit 0

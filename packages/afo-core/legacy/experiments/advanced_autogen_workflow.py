@@ -17,7 +17,8 @@ import sys
 from typing import Any
 
 try:
-    from autogen import AssistantAgent, GroupChat, GroupChatManager, UserProxyAgent
+    from autogen import (AssistantAgent, GroupChat, GroupChatManager,
+                         UserProxyAgent)
     from autogen.code_utils import create_function_tool
 
     AUTOGEN_AVAILABLE = True
@@ -25,11 +26,8 @@ except ImportError:  # pragma: no cover - optional dependency
     AUTOGEN_AVAILABLE = False
 
 from afo_soul_engine.langgraph.twin_dragon_graph import (
-    LANGGRAPH_AVAILABLE,
-    run_langgraph_state,
-    run_twin_dragon_router,
-    seed_trinity,
-)
+    LANGGRAPH_AVAILABLE, run_langgraph_state, run_twin_dragon_router,
+    seed_trinity)
 
 # CREW_MODE integration (offline by default)
 CREW_MODE = os.getenv("CREW_MODE", "offline").lower()

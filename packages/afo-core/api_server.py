@@ -67,12 +67,10 @@ def _patch_typing_inspection_if_needed() -> None:
 _patch_typing_inspection_if_needed()
 
 import uvicorn
-
 # AFO Kingdom imports (clear and organized)
 from AFO.api.config import get_app_config, get_server_config
 from AFO.api.middleware import setup_middleware
 from AFO.api.router_manager import setup_routers
-
 # Core FastAPI imports with type hints
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
@@ -175,7 +173,7 @@ class AFOServer:
             logger.error(f"Component setup failed: {e}")
             raise
 
-    def run_server(self, host: str = "0.0.0.0", port: int = 8010) -> None:
+    def run_server(self, host: str = "127.0.0.1", port: int = 8010) -> None:
         """Run the API server.
 
         Args:

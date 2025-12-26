@@ -37,6 +37,13 @@ class SkillCategory(str, Enum):
     ANALYSIS_EVALUATION = "analysis_evaluation"  # Ragas, Lyapunov
     INTEGRATION = "integration"  # External APIs, MCP
     METACOGNITION = "metacognition"  # Self-reflection, Vibe Coding
+    SECURITY = "security"  # Security scanning & patching
+    CODE_ANALYSIS = "code_analysis"  # Static analysis & linting
+    DATA_ENGINEERING = "data_engineering"  # Data pipeline & optimization
+    DEVOPS = "devops"  # CI/CD, Infrastructure, Profiling
+    SUSTAINABILITY = "sustainability"  # Energy monitoring & Green AI
+    CREATIVE_AI = "creative_ai"  # GenUI, Creative generation
+    GOVERNANCE = "governance"  # Compliance, Constitution, Trinity Protocol
 
 
 class SkillStatus(str, Enum):
@@ -60,32 +67,6 @@ class ExecutionMode(str, Enum):
 # ============================================================================
 # Skill Execution Models
 # ============================================================================
-
-
-class SkillExecutionRequest(BaseModel):
-    """
-    Request model for executing a skill.
-    """
-
-    skill_id: str = Field(..., description="ID of the skill to execute")
-    parameters: Dict[str, Any] = Field(
-        default_factory=dict, description="Execution parameters"
-    )
-    dry_run: bool = Field(
-        False, description="If True, simulate execution without side effects"
-    )
-
-
-class SkillExecutionResult(BaseModel):
-    """
-    Result model for skill execution.
-    """
-
-    skill_id: str
-    status: str
-    result: Dict[str, Any]
-    dry_run: bool
-    error: Optional[str] = None
 
 
 # ============================================================================
@@ -321,13 +302,19 @@ class AFOSkillCard(BaseModel):
 
 
 class SkillExecutionRequest(BaseModel):
-    """Request to execute a skill"""
+    """
+    Request model for executing a skill.
+    """
 
-    skill_id: str = Field(..., description="Skill to execute")
-    parameters: dict[str, Any] = Field(
+    skill_id: str = Field(..., description="ID of the skill to execute")
+    parameters: Dict[str, Any] = Field(
         default_factory=dict, description="Execution parameters"
     )
-    context: dict[str, Any] | None = Field(
+    dry_run: bool = Field(
+        False, description="If True, simulate execution without side effects"
+    )
+    # Deprecated fields (kept for compatibility if needed, but defaults provided)
+    context: Dict[str, Any] | None = Field(
         default=None, description="Additional execution context"
     )
     async_execution: bool = Field(
@@ -336,17 +323,21 @@ class SkillExecutionRequest(BaseModel):
 
 
 class SkillExecutionResult(BaseModel):
-    """Result of skill execution"""
+    """
+    Result model for skill execution.
+    """
 
     skill_id: str
-    success: bool
-    result: dict[str, Any] | None = None
-    error: str | None = None
-    execution_time_ms: int
+    status: str
+    result: Dict[str, Any]
+    dry_run: bool
+    error: Optional[str] = None
+    
+    # Legacy fields support (optional)
+    success: bool = Field(default=True, description="Legacy success flag")
+    execution_time_ms: int = Field(default=0, description="Execution time")
     timestamp: datetime = Field(default_factory=datetime.utcnow)
-    philosophy_impact: PhilosophyScore | None = Field(
-        default=None, description="Impact on 眞善美孝 scores (if measurable)"
-    )
+
 
 
 # ============================================================================
@@ -1095,34 +1086,171 @@ def register_core_skills() -> SkillRegistry:
         ),
     )
 
-    # Register all skills
-    from typing import Any, Dict, List, Optional
 
-    from pydantic import BaseModel, Field
+    # Skill 20: Auto Security Agent (Bandit/Safety)
+    skill_020 = AFOSkillCard(
+        skill_id="skill_020_auto_security",
+        name="Auto Security Agent",
+        description="Automated security patching and vulnerability scanning using Bandit and Safety (Phase 1).",
+        category=SkillCategory.SECURITY,
+        tags=["security", "bandit", "auto-patch", "vulnerability"],
+        version="1.0.0",
+        capabilities=["security_scan", "auto_patch", "vulnerability_report"],
+        dependencies=["bandit", "safety"],
+        execution_mode=ExecutionMode.ASYNC,
+        estimated_duration_ms=10000,
+        philosophy_scores=PhilosophyScore(truth=99, goodness=100, beauty=85, serenity=95),
+    )
 
-    class SkillExecutionRequest(BaseModel):
-        """
-        Request model for executing a skill.
-        """
+    # Skill 21: Code Analysis Agent (Ruff/MyPy)
+    skill_021 = AFOSkillCard(
+        skill_id="skill_021_code_analysis",
+        name="Code Analysis Agent",
+        description="Deep static code analysis and typing verification using Ruff and MyPy (Phase 1).",
+        category=SkillCategory.CODE_ANALYSIS,
+        tags=["code-analysis", "ruff", "mypy", "static-analysis"],
+        version="1.0.0",
+        capabilities=["lint_code", "type_check", "quality_report"],
+        dependencies=["ruff", "mypy"],
+        execution_mode=ExecutionMode.ASYNC,
+        estimated_duration_ms=8000,
+        philosophy_scores=PhilosophyScore(truth=100, goodness=95, beauty=90, serenity=90),
+    )
 
-        skill_id: str = Field(..., description="ID of the skill to execute")
-        parameters: Dict[str, Any] = Field(
-            default_factory=dict, description="Execution parameters"
-        )
-        dry_run: bool = Field(
-            False, description="If True, simulate execution without side effects"
-        )
+    # Skill 22: Dependency Audit
+    skill_022 = AFOSkillCard(
+        skill_id="skill_022_dependency_audit",
+        name="Dependency Audit",
+        description="Scans Python and Node.js dependencies for known vulnerabilities (Phase 1).",
+        category=SkillCategory.SECURITY,
+        tags=["dependency", "audit", "cve", "npm", "pip"],
+        version="1.0.0",
+        capabilities=["scan_dependencies", "check_cve"],
+        dependencies=["pip-audit", "npm-audit"],
+        execution_mode=ExecutionMode.BACKGROUND,
+        estimated_duration_ms=12000,
+        philosophy_scores=PhilosophyScore(truth=98, goodness=100, beauty=80, serenity=95),
+    )
 
-    class SkillExecutionResult(BaseModel):
-        """
-        Result model for skill execution.
-        """
+    # Skill 23: Secret Guardian
+    skill_023 = AFOSkillCard(
+        skill_id="skill_023_secret_guardian",
+        name="Secret Guardian",
+        description="Detects hardcoded secrets, keys, and tokens in the codebase (Phase 1).",
+        category=SkillCategory.SECURITY,
+        tags=["secrets", "leak-detection", "security", "keys"],
+        version="1.0.0",
+        capabilities=["scan_secrets", "verify_git_history"],
+        dependencies=["trufflehog-lite"],
+        execution_mode=ExecutionMode.ASYNC,
+        estimated_duration_ms=5000,
+        philosophy_scores=PhilosophyScore(truth=99, goodness=100, beauty=85, serenity=98),
+    )
 
-        skill_id: str
-        status: str
-        result: Dict[str, Any]
-        dry_run: bool
-        error: Optional[str] = None
+    # Skill 24: Container Sentry
+    skill_024 = AFOSkillCard(
+        skill_id="skill_024_container_sentry",
+        name="Container Sentry",
+        description="Security scanning for Docker containers and images (Phase 1).",
+        category=SkillCategory.SECURITY,
+        tags=["docker", "container", "security", "image-scan"],
+        version="1.0.0",
+        capabilities=["scan_image", "check_config"],
+        dependencies=["trivy-lite"],
+        execution_mode=ExecutionMode.BACKGROUND,
+        estimated_duration_ms=15000,
+        philosophy_scores=PhilosophyScore(truth=97, goodness=100, beauty=80, serenity=95),
+    )
+
+    # Skill 25: Dataset Optimizer
+    skill_025 = AFOSkillCard(
+        skill_id="skill_025_dataset_optimizer",
+        name="Dataset Optimizer",
+        description="Optimizes and prunes RAG datasets for efficiency (Phase 2).",
+        category=SkillCategory.DATA_ENGINEERING,
+        tags=["dataset", "optimization", "rag", "pruning"],
+        version="1.0.0",
+        capabilities=["deduplicate", "compress", "prune_outdated"],
+        dependencies=["pandas", "numpy"],
+        execution_mode=ExecutionMode.BACKGROUND,
+        estimated_duration_ms=20000,
+        philosophy_scores=PhilosophyScore(truth=100, goodness=90, beauty=95, serenity=90),
+    )
+
+    # Skill 26: Vector Gardener
+    skill_026 = AFOSkillCard(
+        skill_id="skill_026_vector_gardener",
+        name="Vector Gardener",
+        description="Manages and re-indexes Qdrant vector database for optimal performance (Phase 2).",
+        category=SkillCategory.DATA_ENGINEERING,
+        tags=["vector-db", "qdrant", "reindex", "optimization"],
+        version="1.0.0",
+        capabilities=["reindex", "optimize_segments", "vacuum"],
+        dependencies=["qdrant-client"],
+        execution_mode=ExecutionMode.BACKGROUND,
+        estimated_duration_ms=10000,
+        philosophy_scores=PhilosophyScore(truth=99, goodness=90, beauty=95, serenity=95),
+    )
+
+    # Skill 27: Latency Profiler
+    skill_027 = AFOSkillCard(
+        skill_id="skill_027_latency_profiler",
+        name="Latency Profiler",
+        description="Analyzes system latency and identifies bottlenecks (Phase 3).",
+        category=SkillCategory.DEVOPS,
+        tags=["latency", "profiling", "performance", "bottleneck"],
+        version="1.0.0",
+        capabilities=["profile_request", "analyze_trace"],
+        dependencies=["pyinstrument"],
+        execution_mode=ExecutionMode.SYNC,
+        estimated_duration_ms=1000,
+        philosophy_scores=PhilosophyScore(truth=100, goodness=85, beauty=90, serenity=90),
+    )
+
+    # Skill 28: Energy Monitor
+    skill_028 = AFOSkillCard(
+        skill_id="skill_028_energy_monitor",
+        name="Energy Monitor",
+        description="Estimates computational carbon footprint and energy usage (Phase 4).",
+        category=SkillCategory.SUSTAINABILITY,
+        tags=["energy", "carbon", "sustainability", "green-ai"],
+        version="1.0.0",
+        capabilities=["calc_energy", "report_carbon"],
+        dependencies=["codecarbon-lite"],
+        execution_mode=ExecutionMode.ASYNC,
+        estimated_duration_ms=500,
+        philosophy_scores=PhilosophyScore(truth=95, goodness=100, beauty=90, serenity=100),
+    )
+
+    # Skill 29: GenUI Expander
+    skill_029 = AFOSkillCard(
+        skill_id="skill_029_gen_ui_expander",
+        name="GenUI Expander",
+        description="Autonomously generates and refines React UI components (Phase 5).",
+        category=SkillCategory.CREATIVE_AI,
+        tags=["gen-ui", "react", "frontend", "auto-design"],
+        version="1.0.0",
+        capabilities=["generate_component", "refine_ui", "preview_render"],
+        dependencies=["react-agent"],
+        execution_mode=ExecutionMode.ASYNC,
+        estimated_duration_ms=15000,
+        philosophy_scores=PhilosophyScore(truth=90, goodness=95, beauty=100, serenity=95),
+    )
+
+    # Skill 30: Chancellor Monitor
+    skill_030 = AFOSkillCard(
+        skill_id="skill_030_chancellor_monitor",
+        name="Chancellor Monitor",
+        description="Ensures all system actions comply with AFO Constitution and Trinity Protocol (Governance).",
+        category=SkillCategory.GOVERNANCE,
+        tags=["governance", "compliance", "constitution", "monitor"],
+        version="1.0.0",
+        capabilities=["audit_action", "verify_compliance", "log_verdict"],
+        dependencies=["chancellor-core"],
+        execution_mode=ExecutionMode.SYNC,
+        estimated_duration_ms=200,
+        philosophy_scores=PhilosophyScore(truth=100, goodness=100, beauty=95, serenity=100),
+    )
 
     skills = [
         skill_001,
@@ -1144,44 +1272,29 @@ def register_core_skills() -> SkillRegistry:
         skill_017,
         skill_018,
         skill_019,
+        # Phase 1 Expansion (Security & Analysis)
+        skill_020,
+        skill_021,
+        skill_022,
+        skill_023,
+        skill_024,
+        # Phase 2 Expansion (Data)
+        skill_025,
+        skill_026,
+        # Phase 3 Expansion (Hardware/Perf)
+        skill_027,
+        # Phase 4 Expansion (Sustainability)
+        skill_028,
+        # Phase 5 Expansion (Self-Evolution)
+        skill_029,
+        # Governance
+        skill_030,
     ]
 
     for skill in skills:
         registry.register(skill)
 
-    # 자동화 디버깅 스킬 등록
-    try:
-        debugging_skill = AFOSkillCard(
-            skill_id="skill_020_automated_debugging",
-            name="자동화 디버깅",
-            description="AFO 왕국의 모든 기술과 도구를 통합한 완벽한 자동화 디버깅 시스템. 에러 감지, 분류, 진단, 해결책 제안, 자동 수정까지 모든 과정을 자동화합니다.",
-            category=SkillCategory.WORKFLOW_AUTOMATION,
-            tags=["debugging", "automation", "error-detection", "auto-fix"],
-            version="1.0.0",
-            capabilities=[
-                "error_detection",
-                "error_classification",
-                "auto_diagnosis",
-                "solution_suggestion",
-                "auto_fix",
-                "trinity_score_calculation",
-            ],
-            dependencies=["ruff", "black", "mypy"],
-            execution_mode=ExecutionMode.ASYNC,
-            estimated_duration_ms=30000,
-            philosophy_scores=PhilosophyScore(
-                truth=95,  # 정확한 에러 감지
-                goodness=90,  # 안전한 자동 수정
-                beauty=88,  # 우아한 워크플로우
-                serenity=92,  # 개발자 경험 최적화
-            ),
-        )
-        registry.register(debugging_skill)
-    except Exception as e:
-        import logging
 
-        logger = logging.getLogger(__name__)
-        logger.warning(f"자동화 디버깅 스킬 등록 실패: {e}")
 
     return registry
 
@@ -1221,7 +1334,6 @@ __all__ = [
 
 # Manually register verify_full_stack skill
 try:
-    from scripts.skill_verify_full_stack import run as skill_verify_full_stack
 
     registry = SkillRegistry()
     registry.register(
@@ -1245,7 +1357,7 @@ try:
             ),
         )
     )
-except Exception as e:
+except Exception:
     pass  # Silent failure for optional skill
 
 
@@ -1294,3 +1406,12 @@ if __name__ == "__main__":
         print(json.dumps(sample_skill.model_dump(), indent=2, default=str))
 
     print("\n✅ Self-test completed successfully!")
+
+# Rebuild models to resolve deferred types (Pydantic V2 + __future__.annotations)
+try:
+    SkillExecutionRequest.model_rebuild()
+    SkillExecutionResult.model_rebuild()
+    AFOSkillCard.model_rebuild()
+except Exception as e:
+    pass
+

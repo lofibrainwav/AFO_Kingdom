@@ -13,6 +13,7 @@ import { RoyalLibrary } from "./RoyalLibrary";
 import { RoyalPhilosophy } from "./RoyalPhilosophy";
 import TrinityGlow from "./TrinityGlow";
 import { GitWidget } from "./widgets/GitWidget";
+import RoyalFinanceWidget from "./widgets/RoyalFinanceWidget";
 import { SystemStatusWidget } from "./widgets/SystemStatusWidget";
 
 import { ROYAL_CONSTANTS } from "../../config/royal_constants";
@@ -122,8 +123,8 @@ export default function RoyalLayout() {
               <h2 className="text-xl font-bold text-slate-600">🚀 미래 예측 (Prophet Predictions)</h2>
               <div className="h-[1px] flex-1 bg-slate-300" />
             </div>
-            <div className="flex-1 bg-white/10 backdrop-blur-md rounded-3xl border border-white/20 p-6 shadow-inner">
-               <p className="text-slate-400 text-sm font-light italic">More autonomous components coming soon...</p>
+            <div className="flex-1 bg-white/10 backdrop-blur-md rounded-3xl border border-white/20 p-6 shadow-inner overflow-hidden">
+               <RoyalFinanceWidget />
             </div>
           </div>
         </section>

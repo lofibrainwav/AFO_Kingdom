@@ -2,16 +2,14 @@
 import sys
 from unittest.mock import MagicMock, mock_open, patch
 
-from fastapi import FastAPI
-from fastapi.testclient import TestClient
-
 from AFO.api.routes.wallet.billing import billing_router
 from AFO.api.routes.wallet.browser_bridge import router as browser_router
-
 # Import routers
 from AFO.api.routes.wallet.keys import keys_router
 from AFO.api.routes.wallet.session import session_router
 from AFO.api.routes.wallet.setup import setup_router
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
 
 # Setup App
 app = FastAPI()

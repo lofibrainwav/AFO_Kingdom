@@ -18,7 +18,7 @@ interface Skill {
 export default function SkillDeck() {
   const [executing, setExecuting] = useState<string | null>(null);
   const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8010";
-  const { data, error } = useSWR(`${API_BASE}/api/skills/list`, fetcher);
+  const { data, error } = useSWR(`${API_BASE}/api/skills`, fetcher);
 
   const skills: Skill[] = data?.skills || [];
 

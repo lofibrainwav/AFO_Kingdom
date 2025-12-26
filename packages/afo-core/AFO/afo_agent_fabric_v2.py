@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import json
-from typing import Any, AsyncIterator, Optional, TypedDict
+from collections.abc import AsyncIterator
+from typing import Any, Optional, TypedDict
 
 from fastapi import APIRouter
 from pydantic import BaseModel
@@ -12,13 +13,13 @@ router_v2 = APIRouter(prefix="/chancellor", tags=["chancellor"])
 
 class ChancellorRequestV2(BaseModel):
     input: str
-    engine: Optional[str] = None
+    engine: str | None = None
 
 
 def _sse(event: str, data_obj: Any) -> bytes:
     return (
         f"event: {event}\n" f"data: {json.dumps(data_obj, ensure_ascii=False)}\n\n"
-    ).encode("utf-8")
+    ).encode()
 
 
 async def _stream_echo(text: str) -> AsyncIterator[bytes]:
@@ -73,19 +74,19 @@ async def chancellor_ping_v2():
 async def chancellor_engines():
     installed = {}
     try:
-        import langgraph  # noqa: F401
+        import langgraph
 
         installed["langgraph"] = True
     except Exception:
         installed["langgraph"] = False
     try:
-        import crewai  # noqa: F401
+        import crewai
 
         installed["crewai"] = True
     except Exception:
         installed["crewai"] = False
     try:
-        import autogen  # noqa: F401
+        import autogen
 
         installed["autogen"] = True
     except Exception:

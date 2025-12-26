@@ -1,0 +1,19 @@
+HTTP/1.1 307 Temporary Redirect
+date: Fri, 26 Dec 2025 04:54:06 GMT
+server: uvicorn
+content-length: 0
+location: http://127.0.0.1:8010/api/skills/
+x-cache: SKIP
+x-response-time: 2.71ms
+x-trace-id: trc_5d1e71b7e774
+
+HTTP/1.1 200 OK
+date: Fri, 26 Dec 2025 04:54:06 GMT
+server: uvicorn
+content-length: 27323
+content-type: application/json
+x-cache: HIT
+x-cache-key: api:cache:GET:/api/skills/:d41d8cd9
+x-response-time: 1.80ms
+x-trace-id: trc_c55469a3401c
+

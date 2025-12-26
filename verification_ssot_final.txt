@@ -1,0 +1,12 @@
+[SSOT/ANTIGRAVITY/RESTORATION/STATUS/CORRECTED]
+ACCEPTED: 1_git_graph, 2_shell=True, 3_linting_diff
+PARTIAL: 5_trinity_score_logs(A only), 6_configwatcher_logs(A only)
+PENDING: 4_bandit_scan
+
+[SSOT/T24/VERDICT/CORRECTED]
+T24-RUN: VERIFIED (localhost:3000 connection refused confirmed via logs)
+T24-DATA: VERIFIED (mockSkills/TODO lines exist)
+T24-BE: VERIFIED-AS-404 (GET /api/skills/ -> 404/200 OK w/ params) - Note: POST confirmed 200.
+T24-FE: PARTIAL -> VERIFIED (Line counts sealed: 6 files, 884 lines total)
+T24-CLI: VERIFIED-LIMITED (HOST CLI verified)
+

@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Always try to auto-organize, do not hard-block in pre-commit
+./scripts/afo_refactor_guard.sh warn || true
+exit 0
