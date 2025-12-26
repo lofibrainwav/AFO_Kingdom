@@ -1,0 +1,9 @@
+HTTP/1.1 404 Not Found
+date: Fri, 26 Dec 2025 18:45:27 GMT
+server: uvicorn
+content-length: 37
+content-type: application/json
+x-cache: SKIP
+x-response-time: 4.88ms
+x-trace-id: trc_a21ef5a74947
+
