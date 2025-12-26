@@ -25,24 +25,34 @@ class Context7MCP:
 
     def _load_knowledge_base(self) -> None:
         """지식 베이스 로드"""
-        # AFO 왕국의 핵심 문서들 로드
-        knowledge_sources = [
-            "AGENTS.md",
-            "docs/AFO_ROYAL_LIBRARY.md",
-            "docs/AFO_CHANCELLOR_GRAPH_SPEC.md",
-            "docs/AFO_EVOLUTION_LOG.md",
-            "docs/AFO_FRONTEND_ARCH.md",
-            "docs/CURSOR_MCP_SETUP.md"
-        ]
+        try:
+            # AFO 왕국의 핵심 문서들 로드
+            knowledge_sources = [
+                "AGENTS.md",
+                "docs/AFO_ROYAL_LIBRARY.md",
+                "docs/AFO_CHANCELLOR_GRAPH_SPEC.md",
+                "docs/AFO_EVOLUTION_LOG.md",
+                "docs/AFO_FRONTEND_ARCH.md",
+                "docs/CURSOR_MCP_SETUP.md"
+            ]
 
-        for source in knowledge_sources:
-            self._load_document(source)
+            loaded_count = 0
+            for source in knowledge_sources:
+                if self._load_document(source):
+                    loaded_count += 1
 
-        # 추가 지식 항목들
-        self._add_core_knowledge()
+            logger.info(f"Loaded {loaded_count} out of {len(knowledge_sources)} knowledge sources")
 
-        # 색인 구축
-        self._build_index()
+            # 추가 지식 항목들
+            self._add_core_knowledge()
+
+            # 색인 구축
+            self._build_index()
+            logger.info(f"Knowledge base initialized with {len(self.knowledge_base)} items")
+
+        except Exception as e:
+            logger.error(f"Failed to load knowledge base: {e}")
+            raise
 
     def _load_document(self, filepath: str) -> None:
         """문서 파일 로드"""
