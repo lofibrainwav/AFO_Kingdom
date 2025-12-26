@@ -6,35 +6,75 @@ Implements stdio-based MCP protocol for Cursor IDE integration.
 """
 
 import json
+import logging
 import os
+import socket
 import sys
+import time
 import urllib.parse
 import urllib.request
 from typing import Any, Dict, Optional
 
+# Configure logging for debugging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+
 
 def _base_url() -> str:
-    """Get base URL for AFO API"""
-    return os.environ.get("AFO_API_BASE_URL", "http://127.0.0.1:8010").rstrip("/")
+    """Get base URL for AFO API with validation"""
+    base_url = os.environ.get("AFO_API_BASE_URL", "http://127.0.0.1:8010")
+    if not base_url.startswith(('http://', 'https://')):
+        raise ValueError(f"Invalid AFO_API_BASE_URL: {base_url}")
+    return base_url.rstrip("/")
 
 
-def _http(method: str, path: str, body: Optional[dict] = None, timeout: float = 15.0) -> Any:
-    """HTTP helper for AFO API calls"""
+def _http(method: str, path: str, body: Optional[dict] = None, timeout: float = 15.0, max_retries: int = 2) -> Any:
+    """HTTP helper for AFO API calls with retry logic and better error handling"""
+    if not isinstance(method, str) or method.upper() not in ['GET', 'POST', 'PUT', 'DELETE']:
+        raise ValueError(f"Invalid HTTP method: {method}")
+
     url = f"{_base_url()}{path}"
-    headers = {"Accept": "application/json"}
+    headers = {"Accept": "application/json", "User-Agent": "AFO-Skills-MCP/1.0.0"}
+
     data = None
     if body is not None:
-        data = json.dumps(body).encode("utf-8")
-        headers["Content-Type"] = "application/json"
-    req = urllib.request.Request(url, data=data, headers=headers, method=method.upper())
-    with urllib.request.urlopen(req, timeout=timeout) as resp:
-        raw = resp.read().decode("utf-8")
-        if not raw:
-            return {"ok": True, "http_status": resp.status, "body": ""}
+        if not isinstance(body, dict):
+            raise ValueError("Request body must be a dictionary")
         try:
-            return json.loads(raw)
-        except json.JSONDecodeError:
-            return {"ok": False, "http_status": resp.status, "body": raw}
+            data = json.dumps(body, ensure_ascii=False).encode("utf-8")
+            headers["Content-Type"] = "application/json"
+        except (TypeError, ValueError) as e:
+            raise ValueError(f"Invalid request body: {e}")
+
+    for attempt in range(max_retries + 1):
+        try:
+            req = urllib.request.Request(url, data=data, headers=headers, method=method.upper())
+            with urllib.request.urlopen(req, timeout=timeout) as resp:
+                raw = resp.read().decode("utf-8")
+                if not raw:
+                    return {"ok": True, "http_status": resp.status, "body": ""}
+
+                try:
+                    return json.loads(raw)
+                except json.JSONDecodeError as e:
+                    logger.warning(f"Failed to parse JSON response: {e}")
+                    return {"ok": False, "http_status": resp.status, "body": raw, "parse_error": str(e)}
+
+        except urllib.request.HTTPError as e:
+            if e.code >= 500 and attempt < max_retries:  # Retry on server errors
+                logger.warning(f"HTTP {e.code} on attempt {attempt + 1}, retrying...")
+                time.sleep(0.5 * (attempt + 1))  # Exponential backoff
+                continue
+            return {"ok": False, "http_status": e.code, "body": e.read().decode("utf-8"), "error": str(e)}
+
+        except (urllib.request.URLError, socket.timeout, OSError) as e:
+            if attempt < max_retries:
+                logger.warning(f"Network error on attempt {attempt + 1}: {e}, retrying...")
+                time.sleep(0.5 * (attempt + 1))
+                continue
+            return {"ok": False, "http_status": None, "body": "", "error": f"Network error: {e}"}
+
+    return {"ok": False, "http_status": None, "body": "", "error": "Max retries exceeded"}
 
 
 def send_response(request_id: Any, result: Any) -> None:
