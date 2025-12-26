@@ -119,7 +119,22 @@ export function TrinityEvidenceWidget() {
     );
   }
 
-  const { calculation } = evidence.evidence;
+  const calculation = evidence.evidence.calculation || evidence.evidence.score;
+
+  if (!calculation) {
+    return (
+      <Card className="w-full">
+        <CardContent className="pt-6">
+          <div className="text-center">
+            <AlertTriangle className="h-8 w-8 text-yellow-500 mx-auto mb-2" />
+            <p className="text-sm text-gray-600">데이터 형식이 올바르지 않습니다</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const gate = calculation.gate || 'UNKNOWN';
 
   return (
     <Card className="w-full">
@@ -128,9 +143,9 @@ export function TrinityEvidenceWidget() {
           Trinity Evidence — {evidence.date}
         </CardTitle>
         <div className="flex items-center gap-2">
-          <Badge variant="outline" className={getGateColor(calculation.gate)}>
-            {getGateIcon(calculation.gate)}
-            <span className="ml-1">{calculation.gate}</span>
+          <Badge variant="outline" className={getGateColor(gate)}>
+            {getGateIcon(gate)}
+            <span className="ml-1">{gate}</span>
           </Badge>
           <Button
             variant="outline"
@@ -167,7 +182,7 @@ export function TrinityEvidenceWidget() {
           </div>
           <div className="flex justify-between">
             <span>孝 Serenity</span>
-            <span className="font-medium">{calculation.serenity.toFixed(3)}</span>
+            <span className="font-medium">{(calculation.serenity ?? calculation.filial ?? 0).toFixed(3)}</span>
           </div>
           <div className="flex justify-between">
             <span>永 Eternity</span>
