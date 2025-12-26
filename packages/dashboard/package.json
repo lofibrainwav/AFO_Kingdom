@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"cd ../../packages/afo-core && python -m uvicorn AFO.api_server:app --host 127.0.0.1 --port 8010 --reload\" \"next dev\"",
+    "dev": "next dev",
+    "dev:full": "concurrently -k \"../../packages/afo-core/start_dev_server.sh\" \"next dev\"",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
