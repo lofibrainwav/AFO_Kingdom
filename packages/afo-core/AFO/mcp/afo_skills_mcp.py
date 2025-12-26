@@ -15,9 +15,14 @@ import urllib.parse
 import urllib.request
 from typing import Any, Dict, Optional
 
-# Configure logging for debugging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+# Configure logging for production
+logging.basicConfig(level=logging.WARNING, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
+
+# Custom timeout exception for cross-platform compatibility
+class MCPTimeoutError(Exception):
+    """Custom timeout exception for MCP operations"""
+    pass
 
 
 def _base_url() -> str:
@@ -181,55 +186,64 @@ def handle_tools_list(request_id: Any, params: Dict[str, Any]) -> None:
 
 
 def _execute_tool_with_timeout(tool_name: str, args: Dict[str, Any], timeout_seconds: float = 5.0) -> Any:
-    """Execute tool with timeout protection using signal"""
-    import signal
+    """Execute tool with timeout protection using threading (cross-platform)"""
+    import threading
 
-    def timeout_handler(signum, frame):
-        raise TimeoutError(f"Tool {tool_name} timed out after {timeout_seconds} seconds")
+    result_container = {"result": None, "exception": None}
 
-    # Set up timeout handler
-    old_handler = signal.signal(signal.SIGALRM, timeout_handler)
-    signal.alarm(int(timeout_seconds))
+    def execute_tool():
+        try:
+            if tool_name == "skills_list":
+                result = _http("GET", f"/api/skills/list?{urllib.parse.urlencode({k: v for k, v in args.items() if v is not None})}")
+            elif tool_name == "skills_detail":
+                if "skill_id" not in args:
+                    raise ValueError("skill_id is required")
+                safe_id = urllib.parse.quote(str(args["skill_id"]), safe="")
+                result = _http("GET", f"/api/skills/detail/{safe_id}")
+            elif tool_name == "skills_execute":
+                if "skill_id" not in args:
+                    raise ValueError("skill_id is required")
+                result = _http("POST", "/api/skills/execute", {
+                    "skill_id": args["skill_id"],
+                    "inputs": args.get("inputs", {}),
+                    "dry_run": args.get("dry_run", True)
+                })
+            elif tool_name == "genui_generate":
+                if "prompt" not in args:
+                    raise ValueError("prompt is required")
+                result = _http("POST", "/api/genui/generate", {
+                    "prompt": args["prompt"],
+                    "template": args.get("template", "component"),
+                    "constraints": args.get("constraints", "")
+                })
+            elif tool_name == "afo_api_health":
+                result = _http("GET", "/api/skills/health")
+            else:
+                raise ValueError(f"Unknown tool: {tool_name}")
 
-    try:
-        if tool_name == "skills_list":
-            result = _http("GET", f"/api/skills/list?{urllib.parse.urlencode({k: v for k, v in args.items() if v is not None})}")
-        elif tool_name == "skills_detail":
-            if "skill_id" not in args:
-                raise ValueError("skill_id is required")
-            safe_id = urllib.parse.quote(str(args["skill_id"]), safe="")
-            result = _http("GET", f"/api/skills/detail/{safe_id}")
-        elif tool_name == "skills_execute":
-            if "skill_id" not in args:
-                raise ValueError("skill_id is required")
-            result = _http("POST", "/api/skills/execute", {
-                "skill_id": args["skill_id"],
-                "inputs": args.get("inputs", {}),
-                "dry_run": args.get("dry_run", True)
-            })
-        elif tool_name == "genui_generate":
-            if "prompt" not in args:
-                raise ValueError("prompt is required")
-            result = _http("POST", "/api/genui/generate", {
-                "prompt": args["prompt"],
-                "template": args.get("template", "component"),
-                "constraints": args.get("constraints", "")
-            })
-        elif tool_name == "afo_api_health":
-            result = _http("GET", "/api/skills/health")
+            result_container["result"] = result
+
+        except Exception as e:
+            result_container["exception"] = e
+
+    # Start execution in a separate thread
+    tool_thread = threading.Thread(target=execute_tool, daemon=True)
+    tool_thread.start()
+    tool_thread.join(timeout_seconds)
+
+    # Check if thread is still alive (timed out)
+    if tool_thread.is_alive():
+        return {"ok": False, "error": f"Tool {tool_name} timed out after {timeout_seconds} seconds"}
+
+    # Check for exceptions
+    if result_container["exception"] is not None:
+        exception = result_container["exception"]
+        if isinstance(exception, ValueError):
+            return {"ok": False, "error": f"Validation error: {str(exception)}"}
         else:
-            raise ValueError(f"Unknown tool: {tool_name}")
+            return {"ok": False, "error": f"Tool execution failed: {str(exception)}"}
 
-        return result
-
-    except TimeoutError as e:
-        return {"ok": False, "error": str(e)}
-    except Exception as e:
-        return {"ok": False, "error": f"Tool execution failed: {str(e)}"}
-    finally:
-        # Restore signal handler
-        signal.alarm(0)
-        signal.signal(signal.SIGALRM, old_handler)
+    return result_container["result"]
 
 
 def handle_tools_call(request_id: Any, params: Dict[str, Any]) -> None:
