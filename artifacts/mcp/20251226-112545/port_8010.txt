@@ -1,0 +1,4 @@
+COMMAND     PID     USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME
+Python    11463 brnestrm    3u  IPv4  0x7b75b9d7ca88586      0t0  TCP 127.0.0.1:8010 (LISTEN)
+com.docke 22251 brnestrm  141u  IPv6 0xcbc23b7faec41a34      0t0  TCP *:8010 (LISTEN)
+Python    98196 brnestrm    3u  IPv4  0x7b75b9d7ca88586      0t0  TCP 127.0.0.1:8010 (LISTEN)
