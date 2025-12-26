@@ -6,6 +6,14 @@
       "env": {
         "PYTHONPATH": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os:/Users/brnestrm/AFO_Kingdom/packages/afo-core:$PYTHONPATH"
       }
+    },
+    "afo-skills": {
+      "command": "python3",
+      "args": ["-m", "AFO.mcp.afo_skills_mcp"],
+      "env": {
+        "PYTHONPATH": "/Users/brnestrm/AFO_Kingdom/packages/afo-core:$PYTHONPATH",
+        "AFO_API_BASE_URL": "http://127.0.0.1:8010"
+      }
     }
   }
 }
