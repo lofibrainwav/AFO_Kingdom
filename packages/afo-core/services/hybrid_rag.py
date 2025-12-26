@@ -15,25 +15,25 @@ from redis.commands.search.query import Query as RedisQuery
 
 # 眞 (Truth): Neo4j Integration (GraphRAG)
 try:
-    from neo4j import GraphDatabase
+    from neo4j import GraphDatabase  # type: ignore[import,assignment]
 except ImportError:
-    GraphDatabase: Any = None  # type: ignore[assignment]
+    GraphDatabase = None  # type: ignore[assignment,misc]
 
 # Qdrant Integration
 try:
-    from qdrant_client import QdrantClient
-    from qdrant_client.http import models as qmodels
+    from qdrant_client import QdrantClient  # type: ignore[import,assignment]
+    from qdrant_client.http import models as qmodels  # type: ignore[import,assignment]
 except ImportError:
-    QdrantClient: Any = None  # type: ignore[assignment]
-    qmodels: Any = None  # type: ignore[assignment]
+    QdrantClient = None  # type: ignore[assignment,misc]
+    qmodels = None  # type: ignore[assignment,misc]
 
 # Optional imports handling
 try:
-    from pgvector.psycopg2 import register_vector
-    from psycopg2.extras import RealDictCursor
+    from pgvector.psycopg2 import register_vector  # type: ignore[import,assignment]
+    from psycopg2.extras import RealDictCursor  # type: ignore[import,assignment]
 except ImportError:
-    RealDictCursor: Any = None  # type: ignore[assignment]
-    register_vector: Any = None  # type: ignore[assignment]
+    RealDictCursor = None  # type: ignore[assignment,misc]
+    register_vector = None  # type: ignore[assignment,misc]
 
 # Suppress Pydantic warnings locally
 warnings.filterwarnings("ignore", category=UserWarning, module="pydantic")
@@ -246,7 +246,7 @@ def query_graph_context(entities: list[str], limit: int = 5) -> list[dict[str, A
     美 (Beauty): GraphRAG Context Retrieval
     Neo4j 지식 그래프에서 엔티티 간의 관계를 탐색.
     """
-    if not GraphDatabase or not entities:
+    if GraphDatabase is None or not entities:
         return []
 
     uri = "bolt://localhost:7687"
