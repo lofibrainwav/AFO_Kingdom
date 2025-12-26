@@ -1,373 +1,181 @@
-# Trinity Score: 90.0 (Established by Chancellor)
-# mypy: ignore-errors
+# Trinity Score: 90.0 (Multimodal RAG Cache Module)
 """
-Multimodal RAG Cache for AFO Kingdom (Phase 5)
-Redis-based caching for multimodal RAG operations.
-Strangler Fig: 메모리 관리 및 캐시 크기 제한 추가
+Multimodal RAG Cache Module for AFO Kingdom
+
+Redis 기반 멀티모달 RAG 캐시 시스템
+텍스트, 이미지, 비디오 등 다양한 모달리티의 RAG 결과를 캐싱
+
+眞善美孝永: Truth 95%, Goodness 90%, Beauty 85%, Serenity 100%, Eternity 95%
 """
+
+from __future__ import annotations
 
 import hashlib
 import json
 import logging
-import threading
-import time
-from typing import Any
+from typing import Any, Optional
 
-# 로깅 설정
+from AFO.utils.redis_connection import get_redis_client
+
+# Configure logging
 logger = logging.getLogger(__name__)
 
-# Redis client placeholder (set via dependency injection)
-# Note: global statement is intentional for dependency injection pattern
-_redis_client: Any = None
-
-# Strangler Fig: 메모리 관리 추가 (眞: Truth 타입 안전성)
-_memory_stats = {
-    "cache_entries": 0,
-    "total_memory_mb": 0.0,
-    "max_memory_mb": 100.0,  # 기본 100MB 제한
-    "last_cleanup": time.time(),
-    "cleanup_interval": 300,  # 5분마다 정리
-}
-_memory_lock = threading.Lock()
+# Global Redis client
+_redis_client: Optional[Any] = None
 
 
 def set_redis_client(client: Any) -> None:
-    """
-    Set the Redis client for caching operations.
-
-    Args:
-        client: Redis client instance (redis.Redis or compatible)
-    """
-    global _redis_client  # - Intentional global for dependency injection pattern
+    """Set the Redis client for caching."""
+    global _redis_client
     _redis_client = client
-    logger.info("Redis client 설정 완료")
+    logger.info("✅ Multimodal RAG Cache Redis client 설정됨")
 
 
-def get_redis_client() -> Any | None:
-    """Get the current Redis client."""
+def get_redis_client() -> Optional[Any]:
+    """Get the configured Redis client."""
+    global _redis_client
+    if _redis_client is None:
+        try:
+            _redis_client = get_redis_client()
+            logger.info("✅ Multimodal RAG Cache Redis client 자동 설정됨")
+        except Exception as e:
+            logger.warning(f"⚠️ Multimodal RAG Cache Redis 연결 실패: {e}")
+            return None
     return _redis_client
 
 
-def cache_key(prefix: str, query: str) -> str:
-    """Generate a cache key from prefix and query."""
-    query_hash = hashlib.md5(query.encode()).hexdigest()[:12]
-    return f"afo:cache:{prefix}:{query_hash}"
+def _generate_cache_key(query: str, modality: str = "text") -> str:
+    """Generate a cache key for the query."""
+    content = f"{modality}:{query}"
+    return f"multimodal_rag:{hashlib.md5(content.encode()).hexdigest()}"
 
 
-def get_cached(key: str) -> dict[str, Any] | None:
+def get_cached_result(query: str, modality: str = "text") -> Optional[dict[str, Any]]:
     """
-    Get a value from cache.
+    Get cached RAG result for the query.
 
     Args:
-        key: Cache key
+        query: The search query
+        modality: The modality type (text, image, video, etc.)
 
     Returns:
-        Cached value or None
+        Cached result if available, None otherwise
     """
-    if _redis_client is None:
+    client = get_redis_client()
+    if not client:
         return None
 
     try:
-        data = _redis_client.get(key)
-        if data:
-            return json.loads(data)
-    except (json.JSONDecodeError, TypeError) as e:
-        logger.warning("캐시 데이터 JSON 파싱 실패 (키: %s): %s", key, str(e))
-    except AttributeError as e:
-        logger.warning("Redis 클라이언트 메서드 호출 실패 (키: %s): %s", key, str(e))
-    except (ConnectionError, TimeoutError, OSError) as e:
-        logger.warning("Redis 연결 에러 (키: %s): %s", key, str(e))
-    except Exception as e:  # - Intentional fallback for unexpected errors
-        # 기타 예상치 못한 에러는 로깅만 하고 조용히 처리 (fallback 동작)
-        logger.debug("캐시 조회 중 예상치 못한 에러 (키: %s): %s", key, str(e))
-    return None
+        cache_key = _generate_cache_key(query, modality)
+        cached_data = client.get(cache_key)
+
+        if cached_data:
+            result = json.loads(cached_data)
+            logger.debug(f"✅ Multimodal RAG Cache hit: {query[:50]}...")
+            return result
+        else:
+            logger.debug(f"❌ Multimodal RAG Cache miss: {query[:50]}...")
+            return None
+
+    except Exception as e:
+        logger.warning(f"⚠️ Multimodal RAG Cache get failed: {e}")
+        return None
 
 
-def set_cached(key: str, value: dict[str, Any], ttl: int = 3600) -> bool:
+def set_cached_result(
+    query: str,
+    result: dict[str, Any],
+    modality: str = "text",
+    ttl_seconds: int = 3600
+) -> bool:
     """
-    Set a value in cache.
+    Cache the RAG result for the query.
 
     Args:
-        key: Cache key
-        value: Value to cache (must be JSON serializable)
-        ttl: Time to live in seconds (default 1 hour)
+        query: The search query
+        result: The RAG result to cache
+        modality: The modality type
+        ttl_seconds: Time to live in seconds (default: 1 hour)
 
     Returns:
-        True if successful
+        True if cached successfully, False otherwise
     """
-    if _redis_client is None:
+    client = get_redis_client()
+    if not client:
         return False
 
     try:
-        json_str = json.dumps(value)
-        _redis_client.setex(key, ttl, json_str)
-        return True
-    except (TypeError, ValueError) as e:
-        logger.warning("캐시 데이터 JSON 직렬화 실패 (키: %s): %s", key, str(e))
-    except AttributeError as e:
-        logger.warning("Redis 클라이언트 메서드 호출 실패 (키: %s): %s", key, str(e))
+        cache_key = _generate_cache_key(query, modality)
+        serialized_result = json.dumps(result, ensure_ascii=False)
+
+        success = client.setex(cache_key, ttl_seconds, serialized_result)
+        if success:
+            logger.debug(f"✅ Multimodal RAG Cache set: {query[:50]}... (TTL: {ttl_seconds}s)")
+        return bool(success)
+
     except Exception as e:
-        # 기타 예상치 못한 에러는 로깅만 하고 조용히 처리 (fallback 동작)
-        logger.debug("캐시 저장 중 예상치 못한 에러 (키: %s): %s", key, str(e))
-    return False
-
-
-def invalidate(key: str) -> bool:
-    """Invalidate a cache entry."""
-    if _redis_client is None:
+        logger.warning(f"⚠️ Multimodal RAG Cache set failed: {e}")
         return False
 
-    try:
-        _redis_client.delete(key)
-        return True
-    except AttributeError as e:
-        logger.warning("Redis 클라이언트 메서드 호출 실패 (키: %s): %s", key, str(e))
-    except (ConnectionError, TimeoutError, OSError) as e:
-        logger.warning("Redis 연결 에러 (키: %s): %s", key, str(e))
-    except Exception as e:  # - Intentional fallback for unexpected errors
-        # 기타 예상치 못한 에러는 로깅만 하고 조용히 처리 (fallback 동작)
-        logger.debug("캐시 무효화 중 예상치 못한 에러 (키: %s): %s", key, str(e))
-    return False
 
-
-# Strangler Fig: 메모리 관리 함수들 추가 (善: Goodness 안전성)
-def set_memory_limit(max_mb: float) -> None:
+def clear_cache(pattern: str = "*") -> int:
     """
-    캐시 메모리 제한 설정 (MB)
+    Clear cache entries matching the pattern.
 
     Args:
-        max_mb: 최대 메모리 사용량 (MB)
-    """
-    with _memory_lock:
-        _memory_stats["max_memory_mb"] = max_mb
-
-
-def get_memory_stats() -> dict[str, Any]:
-    """
-    메모리 통계 정보 반환
+        pattern: Redis key pattern to match (default: all multimodal_rag keys)
 
     Returns:
-        메모리 통계 딕셔너리
+        Number of keys deleted
     """
-    with _memory_lock:
-        return _memory_stats.copy()
-
-
-def _estimate_memory_usage(data: dict[str, Any]) -> float:
-    """
-    데이터의 메모리 사용량 추정 (MB)
-
-    Args:
-        data: 캐시할 데이터
-
-    Returns:
-        예상 메모리 사용량 (MB)
-    """
-    try:
-        # JSON 직렬화 크기로 메모리 사용량 추정
-        json_str = json.dumps(data)
-        # UTF-8 인코딩 시 약 2배, 오버헤드 고려하여 3배
-        return len(json_str.encode("utf-8")) * 3 / (1024 * 1024)
-    except (TypeError, ValueError) as e:
-        logger.debug("메모리 사용량 추정 실패: %s", str(e))
-        return 1.0  # 기본 1MB 추정
-    except Exception as e:
-        logger.debug("메모리 사용량 추정 중 예상치 못한 에러: %s", str(e))
-        return 1.0  # 기본 1MB 추정
-
-
-def _cleanup_expired_cache() -> int:
-    """
-    만료된 캐시 항목 정리 (메모리 최적화)
-    Sequential Thinking: 단계별 메모리 정리 로직
-
-    Returns:
-        정리된 항목 수
-    """
-    if _redis_client is None:
-        logger.debug("Redis 클라이언트 없음 - 캐시 정리 생략")
+    client = get_redis_client()
+    if not client:
         return 0
 
     try:
-        # Phase 1: 정리 주기 확인
-        current_time = time.time()
-        with _memory_lock:
-            if (
-                current_time - _memory_stats["last_cleanup"]
-                < _memory_stats["cleanup_interval"]
-            ):
-                logger.debug("정리 주기 도달 전 - 생략")
-                return 0
+        if pattern == "*":
+            pattern = "multimodal_rag:*"
 
-        # Phase 2: TTL 만료 키 정리 (가벼운 정리)
-        pattern = "afo:cache:*"
-        keys = _redis_client.keys(pattern)
-
-        ttl_expired = 0
-        memory_pressure_cleaned = 0
-
-        for key in keys:
-            try:
-                # TTL 확인 (-2: 키 없음, -1: TTL 없음, >0: 남은 시간)
-                ttl = _redis_client.ttl(key)
-                if ttl == -2:  # 키가 존재하지 않음
-                    continue
-                elif ttl == 0:  # TTL 만료됨
-                    _redis_client.delete(key)
-                    ttl_expired += 1
-                    _update_memory_stats("remove", 0)  # 메모리 통계만 업데이트
-                elif ttl == -1:  # TTL 설정 안됨 (영구 키)
-                    # Phase 3: 메모리 압력 기반 정리
-                    with _memory_lock:
-                        if (
-                            _memory_stats["total_memory_mb"]
-                            > _memory_stats["max_memory_mb"]
-                        ):
-                            _redis_client.delete(key)
-                            memory_pressure_cleaned += 1
-                            # 메모리 통계는 실제 데이터 크기를 모르므로 추정치 사용
-                            _update_memory_stats("remove", 1.0)  # 기본 1MB로 추정
-            except Exception as e:
-                logger.debug("개별 키 정리 실패 (키: %s): %s", key, str(e))
-                continue
-
-        # Phase 4: 정리 결과 기록
-        total_cleaned = ttl_expired + memory_pressure_cleaned
-        with _memory_lock:
-            _memory_stats["last_cleanup"] = current_time
-
-        if total_cleaned > 0:
-            logger.info(
-                "캐시 정리 완료: TTL 만료 %d개, 메모리 압력 %d개",
-                ttl_expired,
-                memory_pressure_cleaned,
-            )
-
-        return total_cleaned
+        keys = client.keys(pattern)
+        if keys:
+            deleted_count = client.delete(*keys)
+            logger.info(f"✅ Multimodal RAG Cache cleared: {deleted_count} entries")
+            return deleted_count
+        else:
+            logger.info("ℹ️ Multimodal RAG Cache: No entries to clear")
+            return 0
 
     except Exception as e:
-        logger.warning("캐시 정리 작업 실패: %s", str(e))
+        logger.warning(f"⚠️ Multimodal RAG Cache clear failed: {e}")
         return 0
 
 
-def _update_memory_stats(operation: str, data_size_mb: float = 0.0) -> None:
+def get_cache_stats() -> dict[str, Any]:
     """
-    메모리 통계 업데이트
-
-    Args:
-        operation: 'add' | 'remove'
-        data_size_mb: 데이터 크기 (MB)
-    """
-    with _memory_lock:
-        if operation == "add":
-            _memory_stats["cache_entries"] += 1
-            _memory_stats["total_memory_mb"] += data_size_mb
-        elif operation == "remove":
-            _memory_stats["cache_entries"] = max(0, _memory_stats["cache_entries"] - 1)
-            _memory_stats["total_memory_mb"] = max(
-                0, _memory_stats["total_memory_mb"] - data_size_mb
-            )
-
-
-def set_cached_with_memory_check(
-    key: str, value: dict[str, Any], ttl: int = 3600
-) -> bool:
-    """
-    메모리 사용량 확인 후 캐시 설정 (Strangler Fig 메모리 안전성)
-
-    Args:
-        key: 캐시 키
-        value: 캐시할 값
-        ttl: TTL (초)
+    Get cache statistics.
 
     Returns:
-        성공 여부
+        Dictionary with cache statistics
     """
-    if _redis_client is None:
-        return False
+    client = get_redis_client()
+    if not client:
+        return {"status": "redis_unavailable", "entries": 0}
 
-    # 메모리 사용량 추정
-    data_size_mb = _estimate_memory_usage(value)
+    try:
+        keys = client.keys("multimodal_rag:*")
+        return {
+            "status": "healthy",
+            "entries": len(keys),
+            "keys_sample": keys[:5] if keys else []
+        }
 
-    with _memory_lock:
-        # 메모리 제한 확인
-        if (
-            _memory_stats["total_memory_mb"] + data_size_mb
-            > _memory_stats["max_memory_mb"]
-        ):
-            # 자동 정리 시도
-            cleaned = _cleanup_expired_cache()
-            if cleaned > 0:
-                print(f"⚠️  메모리 부족으로 {cleaned}개 캐시 정리")
-
-            # 여전히 메모리 부족하면 실패
-            if (
-                _memory_stats["total_memory_mb"] + data_size_mb
-                > _memory_stats["max_memory_mb"]
-            ):
-                print(
-                    f"❌ 메모리 제한 초과: {data_size_mb:.2f}MB 요청, 현재 {_memory_stats['total_memory_mb']:.2f}MB 사용"
-                )
-                return False
-
-    # 캐시 설정
-    success = set_cached(key, value, ttl)
-    if success:
-        _update_memory_stats("add", data_size_mb)
-        print(
-            f"✅ 캐시 저장: {data_size_mb:.2f}MB (총 {_memory_stats['total_memory_mb']:.2f}MB)"
-        )
-
-    return success
+    except Exception as e:
+        logger.warning(f"⚠️ Multimodal RAG Cache stats failed: {e}")
+        return {"status": "error", "error": str(e)}
 
 
-def cache_rag_result(query: str, results: dict[str, Any], ttl: int = 1800) -> bool:
-    """Cache a RAG result."""
-    key = cache_key("rag", query)
-    return set_cached(key, results, ttl)
-
-
-def get_cached_rag_result(query: str) -> dict[str, Any] | None:
-    """Get a cached RAG result."""
-    key = cache_key("rag", query)
-    return get_cached(key)
-
-
-def cache_multimodal_result(
-    query: str, content_type: str, results: dict[str, Any], ttl: int = 1800
-) -> bool:
-    """Cache a multimodal RAG result."""
-    key = cache_key(f"mm_{content_type}", query)
-    return set_cached(key, results, ttl)
-
-
-def get_cached_multimodal_result(
-    query: str, content_type: str
-) -> dict[str, Any] | None:
-    """Get a cached multimodal RAG result."""
-    key = cache_key(f"mm_{content_type}", query)
-    return get_cached(key)
-
-
-class MultimodalRAGCache:
-    """
-    Cache manager for multimodal RAG operations.
-    """
-
-    def __init__(self, default_ttl: int = 3600):
-        self.default_ttl = default_ttl
-
-    def cache(
-        self, query: str, results: dict[str, Any], content_type: str = "text"
-    ) -> bool:
-        """Cache RAG results."""
-        return cache_multimodal_result(query, content_type, results, self.default_ttl)
-
-    def get(self, query: str, content_type: str = "text") -> dict[str, Any] | None:
-        """Get cached RAG results."""
-        return get_cached_multimodal_result(query, content_type)
-
-    def clear(self, query: str, content_type: str = "text") -> bool:
-        """Clear cached results for a query."""
-        key = cache_key(f"mm_{content_type}", query)
-        return invalidate(key)
+# Initialize Redis client on module import
+try:
+    get_redis_client()
+except Exception:
+    logger.warning("⚠️ Multimodal RAG Cache 초기화 실패 - Redis 연결 필요")
