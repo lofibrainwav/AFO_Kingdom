@@ -1,10 +1,9 @@
 # Trinity Score: 90.0 (Established by Chancellor)
 from typing import Any
 
+from AFO.julie_cpa.services.julie_service import JulieService
 from fastapi import APIRouter
 from pydantic import BaseModel
-
-from AFO.julie_cpa.services.julie_service import JulieService
 
 # [Legacy Merger]
 # This router exposes the same endpoints as the legacy 'julie.py'
@@ -76,3 +75,18 @@ async def process_transaction(request: TransactionRequest) -> dict[str, Any]:
         account_id=request.account_id,
         dry_run=request.dry_run,
     )
+
+
+@router.post("/transaction/approve")
+async def approve_transaction(tx_id: str) -> dict[str, Any]:
+    """
+    [T26] Transaction Approval Action
+    """
+    # In Phase 2, this would trigger actual bank transfer or DB update.
+    # For now, we simulate approval.
+    return {
+        "success": True,
+        "message": f"Transaction {tx_id} approved",
+        "tx_id": tx_id,
+        "status": "APPROVED",
+    }

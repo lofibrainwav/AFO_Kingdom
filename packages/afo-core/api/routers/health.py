@@ -6,18 +6,18 @@ Phase 2 리팩토링: Health 엔드포인트 분리
 
 from typing import Any
 
-from fastapi import APIRouter
-
 # Phase 2 리팩토링: 상대 import 사용
 # Phase 2 리팩토링: 표준 import 사용
 from AFO.services.database import get_db_connection
 from AFO.utils.redis_connection import get_redis_url
+from fastapi import APIRouter
 
 router = APIRouter(prefix="/health", tags=["Health"])
 
 # Comprehensive Health Check 통합
 try:
-    from AFO.api.routes.comprehensive_health import router as comprehensive_health_router
+    from AFO.api.routes.comprehensive_health import \
+        router as comprehensive_health_router
 
     # comprehensive_health_router는 이미 prefix="/api/health"를 가지고 있으므로
     # health_router에 직접 통합하면 경로가 중복될 수 있음

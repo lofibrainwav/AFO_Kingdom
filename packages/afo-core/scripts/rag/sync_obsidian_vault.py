@@ -22,13 +22,8 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 from index_obsidian_to_qdrant import index_obsidian_vault
 
-from config import (
-    OBSIDIAN_VAULT_PATH,
-    QDRANT_COLLECTION_NAME,
-    QDRANT_URL,
-    SYNC_INTERVAL,
-    SYNC_STATE_FILE,
-)
+from config import (OBSIDIAN_VAULT_PATH, QDRANT_COLLECTION_NAME, QDRANT_URL,
+                    SYNC_INTERVAL, SYNC_STATE_FILE)
 
 
 class ObsidianVaultHandler(FileSystemEventHandler):

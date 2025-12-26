@@ -10,10 +10,9 @@ import logging
 from datetime import datetime
 from typing import Any
 
+from AFO.julie_cpa.models.budget import MOCK_BUDGETS, BudgetSummary
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-
-from AFO.julie_cpa.models.budget import MOCK_BUDGETS, BudgetSummary
 
 router = APIRouter(prefix="/api/julie/budget", tags=["Julie CPA - Budget"])
 logger = logging.getLogger(__name__)

@@ -66,10 +66,9 @@ def _setup_phase2_hardening_middleware(app: FastAPI) -> None:
     try:
         # Import Phase 2 Hardening middleware
         from AFO.api.middleware.rate_limit_redis import (
-            create_rate_limit_middleware,
-            create_redis_limiter,
-        )
-        from AFO.api.middleware.request_limits import RequestSizeLimitMiddleware
+            create_rate_limit_middleware, create_redis_limiter)
+        from AFO.api.middleware.request_limits import \
+            RequestSizeLimitMiddleware
         from AFO.api.middleware.sql_guard import SqlGuardMiddleware
         from AFO.api.middleware.trace_id import TraceIdMiddleware
 
@@ -118,7 +117,8 @@ def _setup_cache_middleware(app: FastAPI) -> None:
 def _setup_performance_middleware(app: FastAPI) -> None:
     """Setup performance monitoring middleware."""
     try:
-        from AFO.api.middleware.performance_middleware import PerformanceMiddleware
+        from AFO.api.middleware.performance_middleware import \
+            PerformanceMiddleware
 
         # Add performance middleware
         app.add_middleware(PerformanceMiddleware)
@@ -141,9 +141,8 @@ def _setup_monitoring_middleware(app: FastAPI) -> None:
         print("✅ Prometheus Metrics Middleware 활성화")
 
         # Add metrics endpoint
-        from fastapi.routing import APIRouter
-
         from AFO.api.middleware.prometheus import metrics_endpoint
+        from fastapi.routing import APIRouter
 
         metrics_router = APIRouter()
         metrics_router.get("/metrics")(metrics_endpoint)

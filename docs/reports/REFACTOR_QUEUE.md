@@ -1,0 +1,8 @@
+2025-12-25T21:26:25-0800 | Generated summary: artifacts/t25/20251225-2053/bandit_summary.txt (from artifacts/t25/20251225-2053/bandit.txt, 92664760 bytes)
+2025-12-25T21:26:26-0800 | Generated summary: artifacts/t25/20251225-2110/bandit_summary.txt (from artifacts/t25/20251225-2110/bandit.txt, 92665092 bytes)
+2025-12-25T21:26:26-0800 | Consider refactor: packages/afo-core/AFO/julie_cpa/services/julie_service.py (927 LOC > 700)
+2025-12-25T21:26:26-0800 | Consider refactor: packages/afo-core/afo_skills_registry.py (1417 LOC > 700)
+2025-12-25T21:26:26-0800 | Consider refactor: packages/afo-core/api/services/skills_service.py (768 LOC > 700)
+2025-12-25T21:26:26-0800 | Consider refactor: packages/afo-core/input_server.py (722 LOC > 700)
+2025-12-25T21:26:26-0800 | Consider refactor: packages/afo-core/llm_router.py (988 LOC > 700)
+2025-12-25T21:26:26-0800 | Consider refactor: packages/afo-core/services/antigravity_engine.py (752 LOC > 700)

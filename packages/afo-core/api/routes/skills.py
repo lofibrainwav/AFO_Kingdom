@@ -15,15 +15,10 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from AFO.afo_skills_registry import (
-    AFOSkillCard,
-    SkillExecutionRequest,
-    SkillExecutionResult,
-    SkillFilterParams,
-    SkillRegistry,
-    register_core_skills,
-)
-from fastapi import APIRouter, Depends, HTTPException, Query
+from AFO.afo_skills_registry import (AFOSkillCard,
+                                     SkillExecutionResult, SkillFilterParams,
+                                     SkillRegistry, register_core_skills)
+from fastapi import APIRouter, Body, Depends, HTTPException, Query
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -46,7 +41,9 @@ def get_registry() -> SkillRegistry:
 
 @router.post("/", response_model=SkillExecutionResult)
 async def execute_skill(
-    request: SkillExecutionRequest,
+    skill_id: str = Body(..., embed=True),
+    parameters: dict[str, Any] = Body(default_factory=dict, embed=True),
+    dry_run: bool = Body(False, embed=True),
     registry: SkillRegistry = Depends(get_registry),
 ) -> SkillExecutionResult:
     """
@@ -54,20 +51,19 @@ async def execute_skill(
 
     Trinity Score: 眞 (Truth) - Real execution interface
     """
-    skill = registry.get(request.skill_id)
+    skill = registry.get(skill_id)
     if not skill:
         raise HTTPException(
-            status_code=404, detail=f"Skill '{request.skill_id}' not found"
+            status_code=404, detail=f"Skill '{skill_id}' not found"
         )
 
-    dry_run = request.model_dump().get("dry_run", False)
-    logger.info(f"Executing skill: {request.skill_id} (Dry Run: {dry_run})")
+    logger.info(f"Executing skill: {skill_id} (Dry Run: {dry_run})")
 
     # In a real implementation, this would call the SkillExecutor service.
     # For Phase 2, we simulate successful execution/dry-run.
 
     return SkillExecutionResult(
-        skill_id=request.skill_id,
+        skill_id=skill_id,
         status="completed" if not dry_run else "dry_run_success",
         result={"message": f"Skill {skill.name} executed successfully"},
         dry_run=dry_run,

@@ -5,11 +5,11 @@ import logging
 from dataclasses import dataclass
 from typing import Any
 
-from fastapi import HTTPException
-from playwright.async_api import Browser, Playwright, Route, async_playwright
-from playwright.async_api import TimeoutError as PlaywrightTimeout
-
 from AFO.config import antigravity
+from fastapi import HTTPException
+from playwright.async_api import Browser, Playwright, Route
+from playwright.async_api import TimeoutError as PlaywrightTimeout
+from playwright.async_api import async_playwright
 
 logger = logging.getLogger(__name__)
 

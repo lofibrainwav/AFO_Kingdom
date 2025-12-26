@@ -3,9 +3,8 @@
 # PDF 페이지 2: FastAPI 엔드포인트, 페이지 3: 권한 검증
 from typing import Any
 
-from fastapi import APIRouter
-
 from AFO.julie_cpa.services.julie_service import JulieService
+from fastapi import APIRouter
 
 router = APIRouter(prefix="/api/julie", tags=["Julie CPA"])
 
@@ -28,4 +27,28 @@ async def julie_status() -> dict[str, Any]:
         "alerts": status_data["alerts"],
         "advice": status_data["advice"],
         "dry_run_tx_count": status_data["dry_run_tx_count"],
+    }
+
+
+@router.get("/dashboard")
+async def get_dashboard() -> dict[str, Any]:
+    """
+    [T26] Royal Finance Dashboard Logic
+    Returns Budget vs Actual, Forecast, and Recent Transactions.
+    """
+    return await julie.get_financial_dashboard()
+
+
+@router.post("/transaction/approve")
+async def approve_transaction(tx_id: str) -> dict[str, Any]:
+    """
+    [T26] Transaction Approval Action
+    """
+    # In Phase 2, this would trigger actual bank transfer or DB update.
+    # For now, we simulate approval.
+    return {
+        "success": True,
+        "message": f"Transaction {tx_id} approved",
+        "tx_id": tx_id,
+        "status": "APPROVED",
     }

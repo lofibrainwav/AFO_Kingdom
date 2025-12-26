@@ -294,10 +294,18 @@ services:
       - "8010:8010"
     environment:
       - SERVICE_NAME=soul-engine
+      - API_SERVER_HOST=0.0.0.0
       - OLLAMA_BASE_URL=http://host.docker.internal:11434
       - OLLAMA_MODEL=llama3.2:3b
-      - REDIS_URL=redis://redis:6379
-      - DATABASE_URL=postgresql://afo:afo@postgres:5432/afo
+      - REDIS_URL=redis://host.docker.internal:6379
+      - REDIS_HOST=host.docker.internal
+      - REDIS_PORT=6379
+      - DATABASE_URL=postgresql://afo:afo_secret_change_me@host.docker.internal:15432/afo_memory
+      - POSTGRES_HOST=host.docker.internal
+      - POSTGRES_PORT=15432
+      - POSTGRES_USER=afo
+      - POSTGRES_PASSWORD=afo_secret_change_me
+      - POSTGRES_DB=afo_memory
       - PYTHONPATH=/AFO
     working_dir: /AFO
     volumes:

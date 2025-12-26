@@ -17,9 +17,8 @@ import os
 from contextlib import asynccontextmanager
 from typing import Any
 
-from fastapi import FastAPI
-
 from AFO.api.compat import get_settings_safe
+from fastapi import FastAPI
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -49,7 +48,7 @@ class APIConfig:
     def _load_configuration(self) -> None:
         """Load configuration from settings and environment variables."""
         # Server configuration
-        self.host = self._get_config_value("API_SERVER_HOST", "0.0.0.0")
+        self.host = self._get_config_value("API_SERVER_HOST", "127.0.0.1")
         self.port = int(self._get_config_value("API_SERVER_PORT", "8010"))
 
         # Application configuration
@@ -266,7 +265,7 @@ class ServerConfig:
         except Exception as e:
             logger.error(f"Server configuration validation failed: {e}")
             # Return safe defaults
-            return "0.0.0.0", 8010
+            return "127.0.0.1", 8010
 
 
 # Global instances (Singleton pattern for beautiful code)

@@ -36,7 +36,6 @@ async def get_wallet_session(session_id: str) -> dict[str, Any]:
         # 세션 조회 로직 - Redis 기반 구현
         try:
             import redis
-
             from AFO.config.settings import get_settings
 
             settings = get_settings()
@@ -117,7 +116,6 @@ async def extract_wallet_session(request: WalletSessionRequest) -> dict[str, Any
         # 세션 추출 로직 - 브라우저 세션에서 API 키 추출
         try:
             import redis
-
             from AFO.api_wallet import APIWallet
             from AFO.config.settings import get_settings
 

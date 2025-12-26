@@ -26,6 +26,7 @@ from typing import Any, Optional
 # Core domain imports
 from AFO.julie_cpa.domain.financial_models import FinancialTransaction
 from AFO.julie_cpa.infrastructure.financial_connector import FinancialConnector
+from AFO.julie_cpa.prophet_engine import get_kingdom_forecast
 from AFO.julie_cpa.utils.friction_manager import FrictionManager
 
 # AI Router (Truth & Goodness) with graceful import
@@ -684,6 +685,7 @@ class JulieService:
                 {"level": "info", "message": "Budget utilization at 82%"},
             ],
             "advice": advice,
+            "forecast": get_kingdom_forecast(periods=3),
         }
 
     async def process_transaction(
