@@ -85,7 +85,7 @@ class ActionValidator:
         액션 리스트 전체 검증
         5개 게이트를 순차적으로 적용
         """
-        validated_actions = []
+        validated_actions: list[ValidatedAction] = []
 
         for i, action in enumerate(actions):
             try:
