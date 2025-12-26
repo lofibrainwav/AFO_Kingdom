@@ -82,7 +82,7 @@ class TrinityScoreMonitor:
             self.trinity_score_gauge.labels('truth').set(sample.truth)
             self.trinity_score_gauge.labels('goodness').set(sample.goodness)
             self.trinity_score_gauge.labels('beauty').set(sample.beauty)
-            self.trinity_score_gauge.labels('serenity').set(sample.familial_serenity)
+            self.trinity_score_gauge.labels('serenity').set(sample.filial_serenity)
             self.trinity_score_gauge.labels('eternity').set(sample.eternity)
 
     def record_current_score(self, trinity_metrics):
@@ -124,7 +124,7 @@ class TrinityScoreMonitor:
             'truth': current.truth - previous.truth,
             'goodness': current.goodness - previous.goodness,
             'beauty': current.beauty - previous.beauty,
-            'serenity': current.familial_serenity - previous.familial_serenity,
+            'serenity': current.filial_serenity - previous.filial_serenity,
             'eternity': current.eternity - previous.eternity,
         }
 
@@ -218,7 +218,7 @@ class TrinityScoreMonitor:
                     "truth": s.truth,
                     "goodness": s.goodness,
                     "beauty": s.beauty,
-                    "serenity": s.familial_serenity,
+                    "serenity": s.filial_serenity,
                     "eternity": s.eternity,
                 }
             }
