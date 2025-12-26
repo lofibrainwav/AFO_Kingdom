@@ -680,11 +680,26 @@ except ImportError:
 
 
 class ChancellorInvokeRequest(BaseModel):
-    """Chancellor 호출 요청 모델"""
+    """Chancellor 호출 요청 모델 - Phase 11 확장 (Strangler Fig)"""
     input: str
     engine: str | None = None
     mode: str | None = None
     options: dict[str, str] | None = None
+
+    # Phase 11 확장: chancellor_router.py 요구사항 추가
+    query: str | None = None  # Backward compatibility
+    timeout_seconds: int = 30
+    provider: str = "auto"
+    ollama_model: str | None = None
+    ollama_timeout_seconds: int | None = None
+    ollama_num_ctx: int | None = None
+    ollama_num_thread: int | None = None
+    max_tokens: int | None = None
+    temperature: float | None = None
+    thread_id: str | None = None
+    fallback_on_timeout: bool = True
+    auto_run: bool = True
+    max_strategists: int = 3
 
 
 class ChancellorInvokeResponse(BaseModel):

@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from typing import Any, Literal
+from typing import Any, Literal, cast
 
 from fastapi import APIRouter, HTTPException
 
@@ -142,8 +142,11 @@ def _determine_execution_mode(
         ]
         return any(k in q for k in keywords)
 
+    # Backward compatibility: query가 없으면 input 사용
+    query_text = request.query or request.input
+
     if request.mode == "auto":
-        if _looks_like_system_query(request.query):
+        if _looks_like_system_query(query_text):
             return "offline"
         elif request.timeout_seconds <= 12:
             return "fast"
@@ -153,7 +156,10 @@ def _determine_execution_mode(
             return "full"
     else:
         # [논어]言必信行必果 - 사용자 명시적 모드를 존중함
-        return request.mode
+        mode = request.mode
+        if mode in ["offline", "fast", "lite", "full"]:
+            return cast(Literal["offline", "fast", "lite", "full"], mode)
+        return "full"  # fallback
 
 
 def _build_llm_context(request: ChancellorInvokeRequest) -> dict[str, Any]:
@@ -350,7 +356,7 @@ async def _execute_with_fallback(
     if mode_used == "offline":
         metrics = await _get_system_metrics_safe()
         return {
-            "response": _build_fallback_text(request.query, metrics),
+            "response": _build_fallback_text(request.query or request.input, metrics),
             "thread_id": request.thread_id,
             "trinity_score": 0.0,
             "strategists_consulted": [],
@@ -378,7 +384,7 @@ async def _execute_with_fallback(
             llm_context.setdefault("ollama_num_ctx", 4096)
 
         answer, routing, timed_out = await _single_shot_answer(
-            request.query, budget_llm, llm_context
+            request.query or request.input, budget_llm, llm_context
         )
 
         if _is_real_answer(answer, routing):
@@ -401,7 +407,7 @@ async def _execute_with_fallback(
 
         metrics = await _get_system_metrics_safe()
         return {
-            "response": _build_fallback_text(request.query, metrics),
+            "response": _build_fallback_text(request.query or request.input, metrics),
             "thread_id": request.thread_id,
             "trinity_score": 0.0,
             "strategists_consulted": [],
@@ -438,8 +444,8 @@ async def _execute_full_mode(
         antigravity and antigravity.DRY_RUN_DEFAULT
     )
 
-    initial_state_dict = {
-        "query": request.query,
+    initial_state_dict: dict[str, Any] = {
+        "query": request.query or request.input,
         "messages": [],
         "summary": "",
         "context": {
@@ -472,7 +478,7 @@ async def _execute_full_mode(
     from langchain_core.messages import HumanMessage
 
     # We can modify the dict because TypedDict is a dict at runtime
-    initial_state["messages"].append(HumanMessage(content=request.query))
+    initial_state["messages"].append(HumanMessage(content=request.query or request.input))
 
     config = {"configurable": {"thread_id": request.thread_id}}
 
@@ -514,7 +520,7 @@ async def _execute_full_mode(
 
         metrics = await _get_system_metrics_safe()
         return {
-            "response": _build_fallback_text(request.query, metrics),
+            "response": _build_fallback_text(request.query or request.input, metrics),
             "thread_id": request.thread_id,
             "trinity_score": 0.0,
             "strategists_consulted": [],
