@@ -279,11 +279,12 @@ class AFORouterManager:
 
     def _register_management_apis(self) -> None:
         """Register management and utility APIs."""
-        # MCP Tools, Integrity Check, Git Status
+        # MCP Tools, Integrity Check, Git Status, Context7
         management_routers = [
             ("AFO.api.routes.mcp_tools", "MCP Tools"),
             ("AFO.api.routes.integrity_check", "Integrity Check"),
             ("AFO.api.routes.git_status", "Git Status"),
+            ("AFO.api.routes.context7", "Context7 Knowledge Base"),
         ]
 
         for module_path, name in management_routers:
