@@ -1,0 +1,21 @@
+🧪 AFO Skills MCP Server Smoke Test (Improved)
+============================================================
+📝 Note: MCP servers should continue running after tools/list
+   This is the expected behavior for long-running MCP servers
+============================================================
+🚀 Starting AFO Skills MCP Server...
+Command: /Users/brnestrm/AFO_Kingdom/.venv-mcp/bin/python -m AFO.mcp.afo_skills_mcp
+PYTHONPATH: /Users/brnestrm/AFO_Kingdom/packages/afo-core
+AFO_API_BASE_URL: http://127.0.0.1:8010
+Test timeout: 30 seconds
+
+📋 Sending initialize request...
+✅ Initialize response: Unknown vUnknown
+📋 Sending tools/list request...
+✅ Tools found: 0개
+   도구 목록: 
+❌ 누락된 도구: ['skills_list', 'skills_detail', 'skills_execute', 'genui_generate', 'afo_api_health']
+
+============================================================
+💥 SMOKE TEST FAILED
+❌ AFO Skills MCP Server needs debugging
