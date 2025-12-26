@@ -241,6 +241,28 @@ class YeongdeokComplete:
         except Exception:
             return {"error": "export failed"}
 
+    async def close_eyes(self) -> None:
+        """
+        Graceful shutdown of the memory system.
+
+        Trinity Score: 孝 (Serenity) - 마찰 없는 클린업
+        """
+        try:
+            # Clear short-term memory for clean shutdown
+            self.clear_short_term()
+
+            # Close any open connections (future expansion)
+            if hasattr(self, '_redis_client') and self._redis_client:
+                try:
+                    await self._redis_client.close()
+                except Exception:
+                    pass
+
+            logger.info("✅ Yeongdeok memory system closed gracefully")
+        except Exception as e:
+            logger.warning(f"Yeongdeok close_eyes failed: {e}")
+            # Don't raise exception during shutdown
+
 
 # Default instance
 yeongdeok = YeongdeokComplete()
