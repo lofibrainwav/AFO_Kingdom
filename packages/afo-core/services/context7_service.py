@@ -21,7 +21,7 @@ import logging
 import os
 import sys
 from pathlib import Path
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Any, Optional
 
 from AFO.utils.path_utils import get_trinity_os_path, add_to_sys_path
 
@@ -59,22 +59,20 @@ def get_context7_instance() -> "Context7MCP":
             trinity_os_path = os.environ.get("AFO_TRINITY_OS_PATH")
             if not trinity_os_path:
                 # 폴백: 동적 계산
-                trinity_os_path = get_trinity_os_path(
+                trinity_os_path_str = get_trinity_os_path(
                     Path(__file__).parent.parent.parent / "api" / "routes" / "comprehensive_health.py"
                 )
+                trinity_os_path = trinity_os_path_str
 
-            if trinity_os_path and os.path.exists(trinity_os_path):
-                add_to_sys_path(trinity_os_path)
+            if trinity_os_path and os.path.exists(str(trinity_os_path)):
+                add_to_sys_path(Path(trinity_os_path))
                 logger.debug(f"✅ Trinity-OS 경로 추가: {trinity_os_path}")
 
                 # Python 3.12+ LazyLoader 적용 시도
-                if True:  # LazyLoader 지원 (Python 3.12+)
-                    try:
-                        _load_with_lazy_loader(trinity_os_path)
-                    except Exception as lazy_error:
-                        logger.debug(f"LazyLoader 실패, 일반 임포트로 폴백: {lazy_error}")
-                        _load_normally()
-                else:
+                try:
+                    _load_with_lazy_loader(trinity_os_path)
+                except Exception as lazy_error:
+                    logger.debug(f"LazyLoader 실패, 일반 임포트로 폴백: {lazy_error}")
                     _load_normally()
 
                 _context7_initialized = True
@@ -140,7 +138,7 @@ def _load_normally() -> None:
     logger.debug("✅ 일반 임포트를 통한 Context7MCP 로딩 완료")
 
 
-def get_context7_health() -> dict[str, any]:
+def get_context7_health() -> dict[str, Any]:
     """
     Context7 건강 상태 종합 반환
 

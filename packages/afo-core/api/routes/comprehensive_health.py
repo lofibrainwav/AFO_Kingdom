@@ -113,7 +113,7 @@ async def comprehensive_health_check() -> dict[str, Any]:
         # 3. 학자 시스템 상태 확인
         scholars_status = await _check_scholars()
 
-        # 4. MCP 도구 상태 확인
+        # 4. MCP 도구 상태 확인 (SSOT: 肾_MCP 오장육부)
         mcp_tools_status = await _check_mcp_tools()
 
         # 5. Context7 상태 확인
@@ -196,12 +196,13 @@ def _extract_services_status(health_data: dict[str, Any]) -> dict[str, bool]:
             "api_server": False,
         }
 
-    # 서비스 이름 매핑 (설정으로 이동 가능)
+    # SSOT 표준: 5개 오장육부 매핑
     service_mapping = {
-        "redis": "心_Redis",
-        "postgres": "肝_PostgreSQL",
-        "ollama": "脾_Ollama",
-        "api_server": "肺_API_Server",
+        "redis": "心_Redis",          # 세션/캐시 저장소
+        "postgres": "肝_PostgreSQL",  # 메인 데이터베이스
+        "ollama": "脾_Ollama",        # AI 모델 서빙
+        "api_server": "肺_API_Server", # API 서버 상태
+        "mcp": "肾_MCP",             # 외부 서비스 연결
     }
 
     return {
