@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "concurrently \"cd ../../packages/afo-core && python -m uvicorn AFO.api_server:app --host 127.0.0.1 --port 8010 --reload\" \"next dev\"",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
@@ -39,6 +39,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "cheerio": "^1.1.2",
+    "concurrently": "^9.2.1",
     "eslint": "^9",
     "eslint-config-next": "16.0.10",
     "eslint-config-prettier": "^10.1.8",
