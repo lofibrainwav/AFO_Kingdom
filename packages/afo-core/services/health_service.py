@@ -169,6 +169,24 @@ async def get_comprehensive_health() -> dict[str, Any]:
         service_name = "AFO Kingdom Soul Engine API"
         api_version = "unknown"
 
+    # T21: Add organs_v2 with 11 keys for true 11-ORGANS system
+    try:
+        from AFO.health.organs_v2 import build_organs_v2
+
+        v2_data = build_organs_v2()
+        response_v2 = {
+            "organs_v2": v2_data["organs"],
+            "contract_v2": v2_data["contract"],
+            "ts_v2": v2_data["ts"],
+        }
+    except Exception as e:
+        logger.warning(f"organs_v2 generation failed: {e}")
+        response_v2 = {
+            "organs_v2": None,
+            "contract_v2": {"version": "organs/v2", "error": str(e)},
+            "ts_v2": current_time,
+        }
+
     return {
         "service": service_name,
         "version": api_version,
@@ -188,6 +206,7 @@ async def get_comprehensive_health() -> dict[str, Any]:
             }
             for o in organs
         },
+        **response_v2,
         "method": "bridge_perspective_v2_jiphyeonjeon",
         "timestamp": current_time,
     }

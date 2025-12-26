@@ -139,7 +139,7 @@ services:
   rag-service:
     build:
       context: .
-      dockerfile: afo_soul_engine/Dockerfile
+      dockerfile: Dockerfile
     container_name: afo-rag-service
     ports:
       - "8001:8001"
@@ -209,7 +209,7 @@ services:
   input-service:
     build:
       context: .
-      dockerfile: afo_soul_engine/Dockerfile
+      dockerfile: Dockerfile
     container_name: afo-input-service
     ports:
       - "8005:8005"
@@ -230,7 +230,7 @@ services:
   discord-bot-service:
     build:
       context: .
-      dockerfile: afo_soul_engine/Dockerfile
+      dockerfile: Dockerfile
     container_name: afo-discord-bot
     ports:
       - "8006:8006"
@@ -288,7 +288,7 @@ services:
   soul-engine:
     build:
       context: .
-      dockerfile: afo_soul_engine/Dockerfile
+      dockerfile: Dockerfile
     container_name: afo-soul-engine
     ports:
       - "8010:8010"
@@ -313,7 +313,7 @@ services:
   browser-auth-service:
     build:
       context: .
-      dockerfile: afo_soul_engine/Dockerfile
+      dockerfile: Dockerfile
     container_name: afo-browser-auth
     ports:
       - "9100:9100"

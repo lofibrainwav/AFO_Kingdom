@@ -22,7 +22,7 @@ export default function NeudashStatusBoard() {
 
   // Fetch Real Data
   const { data, error, isLoading } = useSWR<KingdomStatus>(
-    `${process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8010"}/api/system/kingdom-status`,
+    `/api/kingdom-status`,
     fetcher,
     { refreshInterval: 5000 } // Real-time pulse
   );
