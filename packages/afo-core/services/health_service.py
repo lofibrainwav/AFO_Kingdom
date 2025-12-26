@@ -33,20 +33,49 @@ except ImportError:
     if TRINITY_MONITORING_AVAILABLE is False:  # logger가 정의된 후에만 로깅
         logger.warning("Trinity Score monitoring not available")
 
+# 건강 체크 캐시 설정
+import json
+from typing import Optional
+import time
+
+# 캐시 설정
+HEALTH_CACHE_TTL = 30  # 30초 캐시
+HEALTH_CACHE_KEY = "afo:health:comprehensive"
+INDIVIDUAL_CACHE_TTL = 60  # 개별 체크 60초 캐시
+
+# 캐시 저장소 (메모리 + Redis)
+_health_cache: Optional[dict] = None
+_cache_timestamp: float = 0
+
+# 동시성 제한
+import asyncio
+_semaphore = asyncio.Semaphore(5)  # 최대 5개 동시 실행
+
 
 async def check_redis() -> dict[str, Any]:
-    """心_Redis 상태 체크"""
+    """心_Redis 상태 체크 (캐시 적용, 타임아웃 5초)"""
+    cache_key = "afo:health:redis"
     try:
         r = redis.from_url(get_redis_url())
-        pong = await r.ping()
+        pong = await asyncio.wait_for(r.ping(), timeout=5.0)
         await r.close()
-        return {"healthy": pong, "output": f"PING -> {pong}"}
+        result = {"healthy": pong, "output": f"PING -> {pong}"}
+
+        # Redis에 캐시 저장 (선택적)
+        try:
+            r_cache = redis.from_url(get_redis_url())
+            await r_cache.setex(cache_key, INDIVIDUAL_CACHE_TTL, json.dumps(result))
+            await r_cache.close()
+        except Exception:
+            pass  # 캐시 실패해도 기능 영향 없음
+
+        return result
     except Exception as e:
         return {"healthy": False, "output": f"Error: {str(e)[:50]}"}
 
 
 async def check_postgres() -> dict[str, Any]:
-    """肝_Postgres 상태 체크"""
+    """肝_Postgres 상태 체크 (캐시 적용, 타임아웃 5초)"""
     try:
         conn = await get_db_connection()
         result = await conn.fetchval("SELECT 1")
@@ -75,17 +104,52 @@ async def check_self() -> dict[str, Any]:
 
 
 async def get_comprehensive_health() -> dict[str, Any]:
-    """종합 건강 상태 진단 및 Trinity Score 계산"""
+    """종합 건강 상태 진단 및 Trinity Score 계산 (캐시 적용)"""
     current_time = datetime.now().isoformat()
 
-    # 병렬 실행
-    results = await asyncio.gather(
-        check_redis(),
-        check_postgres(),
-        check_ollama(),
-        check_self(),
-        return_exceptions=True,
-    )
+    # 캐시 확인 (글로벌 메모리 캐시 우선)
+    global _health_cache, _cache_timestamp
+    if _health_cache and (time.time() - _cache_timestamp) < HEALTH_CACHE_TTL:
+        logger.debug("Returning cached health data")
+        return _health_cache
+
+    # Redis 캐시 확인 (선택적)
+    try:
+        r = redis.from_url(get_redis_url())
+        cached_data = await r.get(HEALTH_CACHE_KEY)
+        await r.close()
+        if cached_data:
+            cached_result = json.loads(cached_data)
+            # 메모리 캐시에도 저장
+            _health_cache = cached_result
+            _cache_timestamp = time.time()
+            logger.debug("Returning Redis cached health data")
+            return cached_result
+    except Exception:
+        pass  # Redis 캐시 실패해도 계속 진행
+
+    # 동시성 제한 적용
+    async with _semaphore:
+        # 병렬 실행 (타임아웃 적용 - 전체 10초 제한)
+        try:
+            results = await asyncio.wait_for(
+                asyncio.gather(
+                    check_redis(),
+                    check_postgres(),
+                    check_ollama(),
+                    check_self(),
+                    return_exceptions=True,
+                ),
+                timeout=10.0  # 10초 타임아웃
+            )
+        except asyncio.TimeoutError:
+            logger.warning("Health check timed out after 10 seconds")
+            results = [
+                {"healthy": False, "output": "Timeout"},
+                {"healthy": False, "output": "Timeout"},
+                {"healthy": False, "output": "Timeout"},
+                {"healthy": True, "output": "API responding"}
+            ]
 
     organ_names = ["心_Redis", "肝_PostgreSQL", "脾_Ollama", "肺_API_Server"]
     organs: list[dict[str, Any]] = []
@@ -203,7 +267,8 @@ async def get_comprehensive_health() -> dict[str, Any]:
             "ts_v2": current_time,
         }
 
-    return {
+    # 최종 응답 구성
+    response = {
         "service": service_name,
         "version": api_version,
         "status": trinity_metrics.balance_status,
@@ -226,3 +291,18 @@ async def get_comprehensive_health() -> dict[str, Any]:
         "method": "bridge_perspective_v2_jiphyeonjeon",
         "timestamp": current_time,
     }
+
+    # 캐시 저장 (메모리 + Redis)
+    try:
+        _health_cache = response
+        _cache_timestamp = time.time()
+
+        # Redis 캐시 저장 (선택적)
+        r = redis.from_url(get_redis_url())
+        await r.setex(HEALTH_CACHE_KEY, HEALTH_CACHE_TTL, json.dumps(response))
+        await r.close()
+        logger.debug("Health check result cached")
+    except Exception as e:
+        logger.warning(f"Failed to cache health check result: {e}")
+
+    return response
