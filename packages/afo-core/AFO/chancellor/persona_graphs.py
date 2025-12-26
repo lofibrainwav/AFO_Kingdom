@@ -9,7 +9,7 @@ each with specialized decision-making capabilities.
 
 import asyncio
 import logging
-from typing import Any, Optional
+from typing import Any, Dict, List, Optional
 
 from ..cache.manager import cache_manager
 
@@ -18,7 +18,17 @@ from ..cache.manager import cache_manager
 class NodeConfig:
     """Configuration object for graph nodes"""
 
+    focus_areas: Optional[List[str]]
+    analysis_depth: Optional[str]
+    decision_style: Optional[str]
+
     def __init__(self, **kwargs):
+        # Initialize with defaults
+        self.focus_areas = None
+        self.analysis_depth = None
+        self.decision_style = None
+
+        # Override with provided values
         for key, value in kwargs.items():
             setattr(self, key, value)
 
@@ -36,7 +46,7 @@ class ChancellorGraph:
             "deliberate": NodeConfig(decision_style="balanced"),
         }
 
-    async def make_decision(self, situation: dict[str, any]) -> dict[str, any]:
+    async def make_decision(self, situation: dict[str, Any]) -> dict[str, Any]:
         """
         Base decision making logic - to be overridden by subclasses
         """
@@ -95,7 +105,7 @@ class PersonaChancellorGraph(ChancellorGraph):
         """
         # Check persona-specific cache first
         cache_key = f"{self.persona_cache_key}:decision:{hash(str(situation))}"
-        cached_decision = await cache_manager.get(cache_key)
+        cached_decision: Optional[dict[str, Any]] = await cache_manager.get(cache_key)
 
         if cached_decision:
             logger.info(f"💾 {self.persona_name} Persona Cache Hit")
@@ -134,8 +144,8 @@ class PersonaChancellorGraph(ChancellorGraph):
         """
         Calculate persona-specific confidence score
         """
-        base_confidence = decision.get("confidence", 0.5)
-        persona_expertise = self.persona_config.get("expertise_areas", [])
+        base_confidence: float = decision.get("confidence", 0.5)
+        persona_expertise: List[str] = self.persona_config.get("expertise_areas", [])
 
         # Boost confidence if situation matches persona expertise
         situation_tags = situation.get("tags", [])
@@ -161,7 +171,7 @@ class PersonaChancellorGraph(ChancellorGraph):
             / total_decisions
         )
 
-        decision_types = {}
+        decision_types: Dict[str, int] = {}
         for record in self.decision_history:
             decision_type = record["decision"].get("decision_type", "unknown")
             decision_types[decision_type] = decision_types.get(decision_type, 0) + 1
