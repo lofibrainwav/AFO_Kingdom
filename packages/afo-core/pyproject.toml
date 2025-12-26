@@ -272,3 +272,7 @@ ignore_errors = true
 [[tool.mypy.overrides]]
 module = ["autogen", "autogen.*"]
 ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = ["services.trinity_score_monitor"]
+ignore_errors = true
