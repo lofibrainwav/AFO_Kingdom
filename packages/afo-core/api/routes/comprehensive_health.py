@@ -289,51 +289,30 @@ async def _check_mcp_tools() -> dict[str, Any]:
 
 
 async def _check_context7() -> dict[str, Any]:
-    """Context7 지식 베이스 상태 확인 (실제 인스턴스 테스트)"""
+    """Context7 지식 베이스 상태 확인 (최적화된 캐싱 서비스 사용)"""
     try:
-        from pathlib import Path
+        # 최적화된 Context7 서비스 사용 (캐싱 + 지연 로딩)
+        from AFO.services.context7_service import get_context7_health
 
-        # trinity-os 경로 추가 (동적 계산 + 설정에서 추가된 경로 활용)
-        trinity_os_path = get_trinity_os_path(Path(__file__))
-        add_to_sys_path(trinity_os_path)
+        health_data = get_context7_health()
 
-        # 실제 Context7MCP 인스턴스 생성 및 테스트
-        from trinity_os.servers.context7_mcp import Context7MCP
-
-        # 1. 인스턴스 생성 테스트
-        context7_instance = Context7MCP()
-
-        # 2. knowledge_base 실제 접근 테스트
-        knowledge_base = getattr(context7_instance, "knowledge_base", [])
-        if not isinstance(knowledge_base, list):
-            raise ValueError(f"knowledge_base is not a list: {type(knowledge_base)}")
-
-        # 3. 지식 베이스 항목 키 추출
-        knowledge_keys = [item.get("id", f"item_{i}") for i, item in enumerate(knowledge_base)]
+        # 추가 메타데이터
         config = health_check_config
+        if health_data["status"] == "healthy":
+            # 표시 제한 적용
+            if "knowledge_base_keys" in health_data:
+                health_data["knowledge_base_keys"] = health_data["knowledge_base_keys"][: config.MAX_CONTEXT7_KEYS_DISPLAY]
 
-        # 4. retrieve_context 메서드 테스트 (샘플 쿼리로)
-        try:
-            test_result = context7_instance.retrieve_context("test query")
-            retrieval_works = bool(test_result)
-        except Exception:
-            retrieval_works = False
+        return health_data
 
-        return {
-            "status": "healthy",
-            "knowledge_base_keys": knowledge_keys[: config.MAX_CONTEXT7_KEYS_DISPLAY],
-            "total_keys": len(knowledge_keys),
-            "retrieval_works": retrieval_works,
-            "instance_created": True,
-            "knowledge_base_accessible": True,
-        }
     except Exception as e:
-        logger.warning(f"Context7 check failed: {e}")
+        logger.warning("Context7 check failed: %s", e)
         return {
             "status": "error",
             "error": str(e),
             "instance_created": False,
             "knowledge_base_accessible": False,
+            "optimization_applied": False,
         }
 
 
