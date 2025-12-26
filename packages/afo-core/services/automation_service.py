@@ -25,7 +25,7 @@ from AFO.utils.path_utils import get_project_root
 logger = logging.getLogger(__name__)
 
 # 모듈 레벨 캐싱 (싱글톤 패턴)
-_automation_cache: dict[str, Any] | None = None
+_automation_cache: Optional[dict[str, Any]] = None
 _automation_cache_timestamp: float = 0
 _AUTOMATION_CACHE_TTL = 300  # 5분 캐시 (자동화 도구는 자주 변경되지 않음)
 
