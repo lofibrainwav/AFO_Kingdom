@@ -59,6 +59,82 @@ class FinancialConnector:
             "status": "ACTIVE",
         }
 
+    async def fetch_dashboard_data(self, account_id: str) -> dict[str, Any]:
+        """
+        [Dynamic Simulation Layer]
+        Fetches consolidated dashboard data.
+        In Phase 2, this simulates a real aggregator response.
+        """
+        # Fetch basic bank status first
+        bank_status = await self.fetch_bank_data(account_id)
+        if "error" in bank_status:
+            return bank_status
+
+        # Simulate dynamic dashboard metrics
+        return self._simulate_financial_data(account_id)
+
+    def _simulate_financial_data(self, account_id: str) -> dict[str, Any]:
+        """
+        Generates realistic-looking financial data for the dashboard.
+        Simulates:
+        - Monthly Spending (Randomized around base)
+        - Budget Remaining
+        - Recent Transactions (Random mix)
+        """
+        # Base figures (Simulated volatility)
+        base_spending = 2450000
+        volatility = random.uniform(0.9, 1.1)
+        monthly_spending = int(base_spending * volatility)
+        
+        total_budget = 3000000
+        budget_remaining = max(0, total_budget - monthly_spending)
+
+        # Generate random recent transactions
+        transactions = []
+        merchants = [
+            ("Netflix", 17000, "Subscription"),
+            ("Starbucks", 9800, "Food"),
+            ("AWS", 45000, "Infrastructure"),
+            ("Coupang", 28500, "Shopping"),
+            ("Uber", 15200, "Transport"),
+            ("Spotify", 11900, "Subscription"),
+        ]
+        
+        # Pick 3-4 random transactions
+        daily_sample = random.sample(merchants, k=random.randint(3, 5))
+        for i, (name, amount, cat) in enumerate(daily_sample):
+            transactions.append({
+                "id": f"tx-{random.randint(1000, 9999)}",
+                "merchant": name,
+                "amount": amount,
+                "date": "2024-12-26", # Fixed for demo, or use datetime.now()
+                "category": cat,
+            })
+
+        return {
+            "account_id": account_id,
+            "monthly_spending": monthly_spending,
+            "budget_remaining": budget_remaining,
+            "recent_transactions": transactions,
+            "risk_alerts": self._generate_dynamic_alerts(monthly_spending, total_budget),
+        }
+
+    def _generate_dynamic_alerts(self, spending: int, budget: int) -> list[dict[str, str]]:
+        alerts = []
+        utilization = (spending / budget) * 100
+        
+        if utilization > 90:
+            alerts.append({"level": "critical", "message": "Budget Critical (>90%)"})
+        elif utilization > 80:
+            alerts.append({"level": "warning", "message": "Budget Utilization > 80%"})
+        else:
+            alerts.append({"level": "info", "message": "Spending on track"})
+            
+        if random.random() < 0.3:
+             alerts.append({"level": "warning", "message": "Unusual subscription detected"})
+
+        return alerts
+
     def _record_failure(self) -> None:
         self._failure_count += 1
         if self._failure_count >= self._threshold:

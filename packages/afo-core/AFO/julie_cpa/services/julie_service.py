@@ -562,15 +562,15 @@ class JulieService:
     def __init__(self) -> None:
         """Initialize Julie CPA service with beautiful code principles."""
         # Initialize core components
-        connector = FinancialConnector()
+        self.connector = FinancialConnector()
         friction_manager = FrictionManager()
 
         # Initialize specialized providers
         self.status_provider = RoyalStatusProvider(friction_manager)
         self.dashboard_provider = FinancialDashboardProvider(
-            connector, friction_manager
+            self.connector, friction_manager
         )
-        self.transaction_processor = TransactionProcessor(connector, friction_manager)
+        self.transaction_processor = TransactionProcessor(self.connector, friction_manager)
         self.tax_calculator = TaxCalculator()
 
         logger.info("Julie CPA Service initialized with beautiful code principles")
@@ -604,25 +604,33 @@ class JulieService:
         Returns detailed financial health data for the AICPA Dashboard.
         Uses LLM Router for dynamic advice (Server-Side AI Shift).
         """
-        # 1. Fetch real-time bank data (Mock for now)
-        await self.connector.fetch_bank_data("KB-1234")
+        # 1. Fetch real-time (simulated) dashboard data
+        dashboard_data = await self.connector.fetch_dashboard_data("KB-1234")
+        if "error" in dashboard_data:
+            # Fallback or Error handling
+            logger.error(f"Dashboard fetch failed: {dashboard_data['error']}")
+            return {"error": "Financial Data Unavailable"}
 
-        # 2. Risk Analysis
-        friction_score = 15.0
-        financial_health_score = max(0, 100 - friction_score * 2)  # e.g. 70
+        # 2. Risk Analysis (Dynamic)
+        # Recalculate based on real data
+        monthly_spending = dashboard_data.get("monthly_spending", 0)
+        budget_remaining = dashboard_data.get("budget_remaining", 0)
+        
+        # Simple friction model: High spending = High friction
+        utilization = monthly_spending / (monthly_spending + budget_remaining + 1)
+        friction_score = utilization * 20  # Max ~20
+        financial_health_score = max(0, 100 - friction_score * 2)
 
-        # 3. Dynamic Advice via LLM Router (Server-Side AI Shift)
-        # VaultManager already secures keys inside llm_router
+        # 3. Dynamic Advice via LLM Router
         context_data = {
             "health": financial_health_score,
-            "spending": 2450000,
-            "budget": 550000,
+            "spending": monthly_spending,
+            "budget": budget_remaining,
         }
 
         try:
-            # Simple prompt for advice
             ai_response = await llm_router.execute_with_routing(
-                f"As a Royal CPA, give 1 sentence of strategic financial advice based on: Health={financial_health_score}/100, Budget Remaining={context_data['budget']}. Keep it elegant."
+                f"As a Royal CPA, give 1 sentence of strategic financial advice based on: Health={int(financial_health_score)}/100, Budget Remaining={int(budget_remaining)}, Spending={int(monthly_spending)}. Keep it elegant."
             )
             advice = ai_response.get("response", "Financial data analysis unavailable.")
         except Exception as e:
@@ -652,38 +660,10 @@ class JulieService:
 
         return {
             "financial_health_score": financial_health_score,
-            "monthly_spending": 2450000,
-            "budget_remaining": 550000,
-            "recent_transactions": [
-                {
-                    "id": "t1",
-                    "merchant": "Netflix",
-                    "amount": 17000,
-                    "date": "2024-04-25",
-                    "category": "Subscription",
-                },
-                {
-                    "id": "t2",
-                    "merchant": "Starbucks",
-                    "amount": 9800,
-                    "date": "2024-04-24",
-                    "category": "Food",
-                },
-                {
-                    "id": "t3",
-                    "merchant": "AWS",
-                    "amount": 45000,
-                    "date": "2024-04-23",
-                    "category": "Infrastructure",
-                },
-            ],
-            "risk_alerts": [
-                {
-                    "level": "warning",
-                    "message": "Subscription cost increased by 15% vs last month",
-                },
-                {"level": "info", "message": "Budget utilization at 82%"},
-            ],
+            "monthly_spending": monthly_spending,
+            "budget_remaining": budget_remaining,
+            "recent_transactions": dashboard_data.get("recent_transactions", []),
+            "risk_alerts": dashboard_data.get("risk_alerts", []),
             "advice": advice,
             "forecast": get_kingdom_forecast(periods=3),
         }

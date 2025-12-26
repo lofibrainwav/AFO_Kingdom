@@ -1,0 +1,15 @@
+   20397 artifacts/t26/20251225-2144/approve_options_3000_body.txt
+     347 artifacts/t26/20251225-2144/approve_options_3000_headers.txt
+      31 artifacts/t26/20251225-2144/approve_options_8010_body.txt
+     209 artifacts/t26/20251225-2144/approve_options_8010_headers.txt
+     582 artifacts/t26/20251225-2144/dashboard_headers.txt
+    1157 artifacts/t26/20251225-2144/docker_ps.txt
+     253 artifacts/t26/20251225-2144/git_files_changed.txt
+     525 artifacts/t26/20251225-2144/git_status.txt
+     150 artifacts/t26/20251225-2144/json_parse.txt
+   20390 artifacts/t26/20251225-2144/julie_dashboard_3000_body.json
+     347 artifacts/t26/20251225-2144/julie_dashboard_3000_headers.txt
+    1515 artifacts/t26/20251225-2144/julie_dashboard_8010_body.json
+     259 artifacts/t26/20251225-2144/julie_dashboard_8010_headers.txt
+    1183 artifacts/t26/20251225-2144/ls_la.txt
+   47345 total

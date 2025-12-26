@@ -1,0 +1,11 @@
+      31 artifacts/t26/20251225-2145/approve_options_body.txt
+     209 artifacts/t26/20251225-2145/approve_options_headers.txt
+     582 artifacts/t26/20251225-2145/dashboard_headers.txt
+    1164 artifacts/t26/20251225-2145/docker_ps.txt
+     253 artifacts/t26/20251225-2145/git_files_changed.txt
+     557 artifacts/t26/20251225-2145/git_status.txt
+      41 artifacts/t26/20251225-2145/json_parse.txt
+    1515 artifacts/t26/20251225-2145/julie_dashboard_body.json
+     254 artifacts/t26/20251225-2145/julie_dashboard_headers.txt
+     819 artifacts/t26/20251225-2145/ls_la.txt
+    5425 total

@@ -1,0 +1,5 @@
+.githooks/pre-commit
+.githooks/pre-push
+docs/reports/T26_ROYAL_FINANCE_SSOT.md
+packages/afo-core/AFO/julie_cpa/infrastructure/financial_connector.py
+packages/afo-core/AFO/julie_cpa/services/julie_service.py
