@@ -1,24 +1,12 @@
-# 👑 AFO Kingdom Pull Request
-
-## ⚔️ Purpose
-<!-- What change does this PR introduce? Link to Ticket/Issue. -->
+## 변경 요약
 - 
 
-## 🛡️ Trinity Checks (Required)
-- [ ] **Truth (眞)**: `make lint` & `make test` Passed? (Or equivalent `ruff` + `pytest`)
-- [ ] **Goodness (善)**: No new security warnings? Safe paths used?
-- [ ] **Beauty (美)**: Code formatted? (Pre-commit hooks passed)
+## 검증 로그(필수)
+- [ ] lint
+- [ ] test
+- [ ] type-check
+- [ ] (있으면) artifacts/trinity 생성
 
-## 🏗️ Evidence
-- [ ] **Artifacts**: CI uploaded `trinity-evidence` & `royal-build-evidence`?
-- [ ] **Screenshots/Logs**: Attached below if UI or Complex Logic change.
-
-## 🧪 Verification Plan
-<!-- How did you test this? -->
-- [ ] Automated Tests (Unit/Integration)
-- [ ] Manual Verification (Scenario)
-
-## 🚀 Rollback Strategy
-<!-- If this breaks production, how do we revert? -->
-- [ ] Revert git commit
-- [ ] Feature Flag disable
+## SSOT 영향
+- [ ] SSOT 변경 없음
+- [ ] SSOT 변경 있음 (파일/라인)

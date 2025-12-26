@@ -63,6 +63,83 @@ export async function GET() {
     return { num: i + 1, hash, msg: msgParts.join(" ").substring(0, 50) };
   });
 
+  // Fetch Backend Health (Organs)
+  let organs = [
+    { name: "Heart", score: 0, metric: "Offline" },
+    { name: "Brain", score: 0, metric: "Offline" },
+    { name: "Lungs", score: 0, metric: "Offline" },
+    { name: "Stomach", score: 0, metric: "Offline" },
+    { name: "Eyes", score: 0, metric: "Offline" },
+  ];
+
+  try {
+    const backendUrl = process.env.SOUL_ENGINE_URL || "http://127.0.0.1:8010";
+    const healthRes = await fetch(`${backendUrl}/health`);
+    if (healthRes.ok) {
+        const healthData = await healthRes.json();
+
+        // T21: Check for organs_v2 (11 organs) first
+        const v2 = healthData.organs_v2 || null;
+
+        if (v2) {
+          // True 11-ORGANS system with v2
+          const order = [
+            "心_Redis",
+            "肝_PostgreSQL",
+            "肺_API_Server",
+            "脾_Ollama",
+            "腎_Qdrant",
+            "眼_Dashboard",
+            "神経_MCP",
+            "耳_Observability",
+            "口_Docs",
+            "骨_CI",
+            "免疫_Trinity_Gate",
+          ] as const;
+
+          organs = order.map((k) => {
+            const o = v2[k];
+            const score = typeof o?.score === "number" ? o.score : 0;
+            const metric = typeof o?.output === "string" ? o.output : "Unknown";
+            return { name: k, score, metric };
+          });
+        } else {
+          // T20: Legacy 4→5 mapping (fallback for compatibility)
+          const bOrgans = healthData.organs || {};
+
+          organs = [
+              {
+                  name: "Heart", // Redis (Memory/Blood)
+                  score: bOrgans["心_Redis"]?.status === "healthy" ? 98 : 40,
+                  metric: bOrgans["心_Redis"]?.output || "Disconnected"
+              },
+              {
+                  name: "Brain", // Ollama (Intelligence)
+                  score: bOrgans["脾_Ollama"]?.status === "healthy" ? 95 : 20,
+                  metric: bOrgans["脾_Ollama"]?.output || "Disconnected"
+              },
+              {
+                  name: "Lungs", // API Server (Breath/Interface)
+                  score: bOrgans["肺_API_Server"]?.status === "healthy" ? 100 : 0,
+                  metric: bOrgans["肺_API_Server"]?.output || "No Signal"
+              },
+              {
+                  name: "Stomach", // Postgres (Digestion/Storage)
+                  score: bOrgans["肝_PostgreSQL"]?.status === "healthy" ? 99 : 30,
+                  metric: bOrgans["肝_PostgreSQL"]?.output || "Indigestion"
+              },
+              {
+                  name: "Eyes", // GenUI/Frontend (Vision)
+                  score: 92, // Self-reported
+                  metric: "Active: Port 3000"
+              },
+          ];
+        }
+    }
+  } catch (e) {
+    console.error("Backend fetch failed", e);
+  }
+
   return NextResponse.json({
     git: {
       totalCommits: parseInt(totalCommits) || 0,
@@ -72,6 +149,7 @@ export async function GET() {
       synced,
     },
     trinity: trinityScore,
+    organs,
     trackedFiles: parseInt(trackedFiles.trim()) || 0,
     timeline,
     generatedAt: new Date().toISOString(),

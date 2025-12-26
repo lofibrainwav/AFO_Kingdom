@@ -24,16 +24,17 @@ COPY scripts /app/scripts
 ENV PYTHONPATH=/app
 ENV PYTHONUNBUFFERED=1
 
-ENV HOME=/tmp
-ENV PIP_CACHE_DIR=/tmp/pip-cache
-ENV PIP_DISABLE_PIP_VERSION_CHECK=1
-RUN python -m pip install -U pip && python -m pip install --no-cache-dir crewai 'crewai[tools]' autogen-agentchat
-
 # Expose Ports
 EXPOSE 8010 8001
 
 # Healthcheck
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+
+ENV HOME=/tmp
+ENV PIP_CACHE_DIR=/tmp/pip-cache
+ENV PIP_DISABLE_PIP_VERSION_CHECK=1
+RUN python -m pip install -U pip && python -m pip install --no-cache-dir crewai 'crewai[tools]' autogen-agentchat
+
   CMD curl -f http://localhost:8010/health || exit 1
 
 # Command

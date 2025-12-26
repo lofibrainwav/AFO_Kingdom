@@ -24,7 +24,6 @@ import os
 from typing import TYPE_CHECKING, Any
 
 import httpx
-
 from AFO.afo_skills_registry import register_core_skills
 from AFO.scholars.libraries.obsidian_bridge import LocalObsidianBridge
 
@@ -506,3 +505,16 @@ if __name__ == "__main__":
         print(res3[:200] + "...")
 
     asyncio.run(test_yeongdeok())
+
+
+def close_eyes():
+    """
+    Clean shutdown function for Yeongdeok scholar.
+    Safely closes any open resources and connections.
+    """
+    try:
+        obj = globals().get("_EYES")
+        if obj and hasattr(obj, "close"):
+            obj.close()
+    except Exception:
+        pass

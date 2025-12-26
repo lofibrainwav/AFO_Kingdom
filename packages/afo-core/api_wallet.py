@@ -198,11 +198,16 @@ class APIWallet:
 
         # Fallback: JSON file storage
         if not self.use_db:
-            self.storage_path = Path(__file__).parent / "api_wallet_storage.json"
+            # Determine data directory (AFO_DATA_DIR env var or tmp dir)
+            base_dir = Path(os.getenv("AFO_DATA_DIR") or Path.home() / ".afo")
+            base_dir.mkdir(parents=True, exist_ok=True)
+            self.storage_path = base_dir / "api_wallet_storage.json"
             self._ensure_storage_file()
 
         # Audit log
-        self.audit_log_path = Path(__file__).parent / "api_wallet_audit.log"
+        base_dir = Path(os.getenv("AFO_DATA_DIR") or Path.home() / ".afo")
+        base_dir.mkdir(parents=True, exist_ok=True)
+        self.audit_log_path = base_dir / "api_wallet_audit.log"
 
     def _get_encryption_key_from_settings(self) -> str | None:
         """Helper to get encryption key from settings with fallback"""
