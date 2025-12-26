@@ -1,0 +1,17 @@
+total 216
+drwxr-xr-x  16 brnestrm  staff    512 Dec 25 21:42 .
+drwxr-xr-x   7 brnestrm  staff    224 Dec 25 21:41 ..
+-rw-r--r--   1 brnestrm  staff  20406 Dec 25 21:42 approve_options_3000_body.txt
+-rw-r--r--   1 brnestrm  staff    347 Dec 25 21:42 approve_options_3000_headers.txt
+-rw-r--r--   1 brnestrm  staff     31 Dec 25 21:42 approve_options_8010_body.txt
+-rw-r--r--   1 brnestrm  staff    209 Dec 25 21:42 approve_options_8010_headers.txt
+-rw-r--r--   1 brnestrm  staff    582 Dec 25 21:41 dashboard_headers.txt
+-rw-r--r--   1 brnestrm  staff   1164 Dec 25 21:42 docker_ps.txt
+-rw-r--r--   1 brnestrm  staff    207 Dec 25 21:41 git_files_changed.txt
+-rw-r--r--   1 brnestrm  staff    412 Dec 25 21:41 git_status.txt
+-rw-r--r--   1 brnestrm  staff    195 Dec 25 21:42 json_parse.txt
+-rw-r--r--   1 brnestrm  staff  20386 Dec 25 21:41 julie_dashboard_3000_body.json
+-rw-r--r--   1 brnestrm  staff    347 Dec 25 21:41 julie_dashboard_3000_headers.txt
+-rw-r--r--   1 brnestrm  staff  25241 Dec 25 21:42 julie_dashboard_8010_body.json
+-rw-r--r--   1 brnestrm  staff    156 Dec 25 21:42 julie_dashboard_8010_headers.txt
+-rw-r--r--   1 brnestrm  staff      0 Dec 25 21:42 ls_la.txt

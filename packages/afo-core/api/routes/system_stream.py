@@ -21,6 +21,41 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
+async def publish_thought(content: dict = None, **kwargs) -> None:
+    """
+    Publish thought to Chancellor Stream via Redis.
+
+    Args:
+        content: Thought content dict with message, level, source, timestamp
+        **kwargs: Additional thought parameters
+    """
+    try:
+        from AFO.config.settings import get_settings
+
+        settings = get_settings()
+        redis_url = settings.REDIS_URL
+        redis_client = redis.Redis.from_url(redis_url, decode_responses=True)
+
+        # Merge content dict with kwargs
+        if content is None:
+            content = {}
+        if kwargs:
+            content.update(kwargs)
+
+        # Ensure timestamp is included
+        if "timestamp" not in content:
+            content["timestamp"] = asyncio.get_event_loop().time()
+
+        # Publish to Redis channel
+        redis_client.publish("kingdom:logs:stream", json.dumps(content))
+
+        logger.debug(f"Published thought to Chancellor Stream: {content.get('message', '')[:100]}...")
+
+    except Exception as e:
+        logger.error(f"Failed to publish thought: {e}")
+        # Don't raise exception - logging should not break business logic
+
+
 # SSE event generator
 async def log_stream_generator() -> Any:
     """Generate SSE events from Redis Pub/Sub messages."""

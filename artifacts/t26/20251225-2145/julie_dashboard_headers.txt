@@ -1,0 +1,10 @@
+HTTP/1.1 200 OK
+date: Fri, 26 Dec 2025 05:45:24 GMT
+server: uvicorn
+content-length: 1515
+content-type: application/json
+x-cache: HIT
+x-cache-key: api:cache:GET:/api/julie/dashboard:d41d8cd9
+x-response-time: 1.46ms
+x-trace-id: trc_4039770cc1e4
+

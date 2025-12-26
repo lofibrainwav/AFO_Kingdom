@@ -1,0 +1,11 @@
+ M .githooks/pre-commit
+ M .githooks/pre-push
+ M docs/reports/T26_ROYAL_FINANCE_SSOT.md
+ M packages/afo-core/AFO/julie_cpa/infrastructure/financial_connector.py
+ M packages/afo-core/AFO/julie_cpa/services/julie_service.py
+?? artifacts/t26/20251225-2131/
+?? artifacts/t26/20251225-2132/
+?? artifacts/t26/20251225-2135/
+?? artifacts/t26/20251225-2141/
+?? scripts/ssot_recapture_t26.sh
+?? scripts/ssot_truthgate.py
