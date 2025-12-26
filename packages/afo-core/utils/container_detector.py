@@ -36,14 +36,22 @@ class ContainerDetector:
             return str(self._cache["redis"])
 
         try:
+            # Shell=False로 변경하여 보안 강화
+            # docker ps --filter 'name=redis' --format '{{.Names}}' 실행 후 Python에서 필터링
             result = subprocess.run(
-                f"docker ps --filter 'name=redis' --format '{{{{.Names}}}}' | grep {self.project_prefix} | head -1",
-                shell=True,
+                ["docker", "ps", "--filter", "name=redis", "--format", "{{.Names}}"],
                 capture_output=True,
                 text=True,
                 timeout=2,
             )
-            container_name = result.stdout.strip()
+            
+            # Python에서 filtering (grep equivalent)
+            containers = result.stdout.strip().splitlines()
+            container_name = ""
+            for name in containers:
+                if self.project_prefix in name:
+                    container_name = name
+                    break
             if container_name:
                 self._cache["redis"] = str(container_name)
                 return str(container_name)
@@ -61,14 +69,21 @@ class ContainerDetector:
             return str(self._cache["postgres"])
 
         try:
+            # Shell=False로 변경하여 보안 강화
             result = subprocess.run(
-                f"docker ps --filter 'name=postgres' --format '{{{{.Names}}}}' | grep {self.project_prefix} | head -1",
-                shell=True,
+                ["docker", "ps", "--filter", "name=postgres", "--format", "{{.Names}}"],
                 capture_output=True,
                 text=True,
                 timeout=2,
             )
-            container_name = result.stdout.strip()
+            
+            # Python에서 filtering (grep equivalent)
+            containers = result.stdout.strip().splitlines()
+            container_name = ""
+            for name in containers:
+                if self.project_prefix in name:
+                    container_name = name
+                    break
             if container_name:
                 self._cache["postgres"] = container_name
                 return container_name

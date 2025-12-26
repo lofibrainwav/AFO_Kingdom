@@ -1,0 +1,4 @@
+     218 packages/dashboard/src/components/skills/SkillCard.tsx
+     112 packages/dashboard/src/components/skills/types.ts
+     320 packages/dashboard/src/components/skills/SkillsRegistry.tsx
+       3 packages/dashboard/src/components/skills/index.ts

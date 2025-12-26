@@ -1,9 +1,12 @@
-# T26 Royal Finance Widget SSOT
-Status: DONE
-Capture Timestamp: 20251225-2145
-Evidence Directory: artifacts/t26/20251225-2145/
+# T26 Royal Finance Widget SSOT Report
 
-## 1) What changed (Files edited)
+**Status**: SEALED-VERIFIED
+**Timestamp**: 20251225-2145
+**Evidence**: artifacts/t26/20251225-2145/
+**SealSHA256**: 198e7c020ac17085fc16357f79f5834f32a7a2b572ec695797219924c8126d32
+**Verify**: PASS (from verify_pass.txt)
+
+## 1. What changed (Files edited)
 - packages/afo-core/AFO/api/routers/julie_royal.py
 - packages/afo-core/AFO/julie_cpa/config.py
 - packages/afo-core/AFO/julie_cpa/infrastructure/financial_connector.py

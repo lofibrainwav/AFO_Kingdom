@@ -75,7 +75,7 @@ class CacheMiddleware(BaseHTTPMiddleware):
         # 경로와 쿼리 파라미터 기반 키 생성
         path = request.url.path
         query_string = str(request.url.query)
-        query_hash = hashlib.md5(query_string.encode()).hexdigest()[:8]
+        query_hash = hashlib.md5(query_string.encode(), usedforsecurity=False).hexdigest()[:8]
 
         cache_key = (
             f"{API_CACHE_CONFIG['key_prefix']}{request.method}:{path}:{query_hash}"

@@ -569,6 +569,7 @@ chat_router = _safe_import_router("AFO.api.routes.chat")
 council_router = _safe_import_router("AFO.api.routers.council")
 education_system_router = _safe_import_router("AFO.api.routers.thoughts")
 finance_router = _safe_import_router("AFO.api.routers.finance")
+genui_router = _safe_import_router("AFO.api.routes.genui")
 got_router = _safe_import_router("AFO.api.routers.got")
 grok_stream_router = _safe_import_router("AFO.api.routers.grok_stream")
 # health_router is imported above

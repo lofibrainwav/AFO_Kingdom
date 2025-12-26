@@ -218,6 +218,28 @@ class AFORouterManager:
         # Skills API (Critical for functionality)
         self._register_skills_router()
 
+        # GenUI API (T29 Phase 2)
+        self._register_genui_router()
+
+    def _register_genui_router(self) -> None:
+        """Register GenUI API router with enhanced error handling."""
+        try:
+            from AFO.api.routes.genui import router as genui_router
+        except ImportError:
+            logger.warning("GenUI router not available")
+            return
+
+        try:
+            routes_before = len([r for r in self.app.routes if hasattr(r, "path")])
+            self.app.include_router(genui_router, tags=["GenUI"])
+            routes_after = len([r for r in self.app.routes if hasattr(r, "path")])
+            self.registered_routers += routes_after - routes_before
+            logger.info(
+                f"GenUI API registered successfully ({routes_after - routes_before} routes)"
+            )
+        except Exception as e:
+            logger.error(f"GenUI router registration failed: {e}")
+
         # Comprehensive health and monitoring
         self._register_comprehensive_health()
 
@@ -322,6 +344,16 @@ class AFORouterManager:
             self._safe_register_router(julie_royal_router, tags=["Julie Royal"])
         except ImportError:
             logger.warning("Julie Royal router not available")
+
+        # T28: Workflow Designer API
+        try:
+            from api.routes.workflow import router as workflow_router
+
+            self._safe_register_router(
+                workflow_router, prefix="/api/workflow", tags=["Workflow Designer"]
+            )
+        except ImportError:
+            logger.warning("Workflow Designer router not available")
 
         # Strangler Fig Compatibility
         if compat_router:

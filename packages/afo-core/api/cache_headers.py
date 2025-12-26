@@ -51,7 +51,7 @@ def set_etag_and_cache(
     Generates ETag from content and applies cache headers.
     """
     # 1. Generate ETag (Strong validation)
-    etag = hashlib.md5(content).hexdigest()
+    etag = hashlib.md5(content, usedforsecurity=False).hexdigest()
     response.headers["ETag"] = f'"{etag}"'
 
     # 2. Set Cache-Control
@@ -69,6 +69,6 @@ def check_etag_match(request: Request, current_content: bytes) -> bool:
     if not client_etag:
         return False
 
-    current_etag = hashlib.md5(current_content).hexdigest()
+    current_etag = hashlib.md5(current_content, usedforsecurity=False).hexdigest()
     # Handle quoted etags
     return client_etag.strip('"') == current_etag

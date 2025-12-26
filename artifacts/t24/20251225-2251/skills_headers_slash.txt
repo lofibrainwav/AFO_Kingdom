@@ -1,0 +1,10 @@
+HTTP/1.1 200 OK
+date: Fri, 26 Dec 2025 07:01:40 GMT
+server: uvicorn
+content-length: 27323
+content-type: application/json
+x-cache: HIT
+x-cache-key: api:cache:GET:/api/skills/:d41d8cd9
+x-response-time: 3645.87ms
+x-trace-id: trc_0bd1f26d13c2
+

@@ -50,7 +50,7 @@ def get_redis_client() -> Any | None:
 
 def cache_key(prefix: str, query: str) -> str:
     """Generate a cache key from prefix and query."""
-    query_hash = hashlib.md5(query.encode()).hexdigest()[:12]
+    query_hash = hashlib.md5(query.encode(), usedforsecurity=False).hexdigest()[:12]
     return f"afo:cache:{prefix}:{query_hash}"
 
 

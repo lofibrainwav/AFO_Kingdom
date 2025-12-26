@@ -197,6 +197,8 @@ def gate():
 
     # 3) strict truth: if report Status says SEALED/DONE, require seal.json matches
     for r in reports:
+        if not r.exists():
+            continue  # Skip deleted files
         info = parse_report(r)
         status = info["status"]
         ts = info["ts"]
@@ -225,6 +227,16 @@ def gate():
             if sealj.get("evidence_dir") != ev_dir.as_posix():
                 print(f"BLOCK: report evidence_dir != seal.json evidence_dir for {r}")
                 return 1
+            # TruthGate v2: verify_pass.txt with PASS required for SEALED-VERIFIED/DONE
+            if status in ("SEALED-VERIFIED", "DONE"):
+                vp = ev_dir / "verify_pass.txt"
+                if not vp.exists():
+                    print(f"BLOCK: verify_pass.txt missing for {r}: {vp}")
+                    return 1
+                vp_content = vp.read_text(encoding="utf-8")
+                if "PASS" not in vp_content:
+                    print(f"BLOCK: verify_pass.txt has no PASS for {r}: {vp}")
+                    return 1
     return 0
 
 def main():

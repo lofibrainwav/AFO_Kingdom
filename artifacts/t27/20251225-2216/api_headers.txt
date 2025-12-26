@@ -1,0 +1,9 @@
+HTTP/1.1 500 Internal Server Error
+date: Fri, 26 Dec 2025 06:16:30 GMT
+server: uvicorn
+content-length: 117
+content-type: application/json
+x-cache: SKIP
+x-response-time: 6228.26ms
+x-trace-id: trc_a336c6b36e02
+

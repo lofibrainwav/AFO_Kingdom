@@ -1,0 +1,10 @@
+HTTP/1.1 200 OK
+date: Fri, 26 Dec 2025 06:25:09 GMT
+server: uvicorn
+content-length: 1057
+content-type: application/json
+x-cache: MISS
+x-cache-key: api:cache:GET:/api/git/history:63954b99
+x-response-time: 7128.80ms
+x-trace-id: trc_8ebc327501a9
+

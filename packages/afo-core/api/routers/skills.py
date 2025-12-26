@@ -274,6 +274,14 @@ class SkillExecutionResponse(BaseModel):
     error: str | None = Field(None, description="오류 메시지")
 
 
+@router.get("")
+async def get_skills_root() -> dict[str, Any]:
+    """
+    Root endpoint for skills - returns same as /list for frontend compatibility
+    """
+    return await list_skills()
+
+
 @router.get("/list")
 async def list_skills() -> dict[str, Any]:
     """

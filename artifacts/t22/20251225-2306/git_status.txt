@@ -1,0 +1,45 @@
+ M .githooks/pre-commit
+ M docs/reports/T25_STABILIZATION_SSOT.md
+ M docs/reports/T26_ROYAL_FINANCE_SSOT.md
+ M packages/afo-core/AFO/cache/query_cache.py
+ M packages/afo-core/AFO/julie_cpa/grok_engine.py
+ M packages/afo-core/AFO/memory_system/yeongdeok_complete.py
+ M packages/afo-core/Dockerfile
+ M packages/afo-core/api/cache_headers.py
+ M packages/afo-core/api/middleware/cache_middleware.py
+ M packages/afo-core/api/routes/git_status.py
+ M packages/afo-core/docker-compose.yml
+ M packages/afo-core/multimodal_rag_cache.py
+ M packages/afo-core/scripts/rag/sync_obsidian_vault.py
+ M packages/afo-core/utils/container_detector.py
+ M packages/afo-core/utils/redis_optimized.py
+ M scripts/ssot_capture_t25.sh
+ M scripts/ssot_truthgate.py
+?? .github/workflows/truthgate.yml
+?? artifacts/t22/
+?? artifacts/t24/
+?? artifacts/t25/20251225-2151/
+?? artifacts/t25/20251225-2156/
+?? artifacts/t25/20251225-2201/
+?? artifacts/t25/20251225-2205/
+?? artifacts/t25/20251225-2209/
+?? artifacts/t25/20251225-2210/
+?? artifacts/t26/20251225-2145/verify_pass.txt
+?? artifacts/t27/
+?? artifacts/t2w/
+?? docs/reports/T22_GRAPHRAG_BRAIN_INTERFACE_SSOT.md
+?? "docs/reports/T24_Skills Manager Widget_SSOT.md"
+?? docs/reports/T25_BANDIT_TRIAGE_20251225-2205.md
+?? docs/reports/T27_KINGDOM_HISTORY_SSOT.md
+?? packages/dashboard/src/components/royal/widgets/KingdomHistoryWidget.tsx
+?? scripts/physics_proof_pack.sh
+?? scripts/refactor_guard.py
+?? scripts/ssot_capture_seal_verify_api_ticket.sh
+?? scripts/ssot_capture_t27.sh
+?? scripts/ssot_new_ticket.sh
+?? scripts/ssot_seal_ticket.sh
+?? scripts/ssot_truthgate_v3.py
+?? scripts/ssot_verify_ticket.sh
+?? scripts/truthgate_verify_all.sh
+?? verify_output.txt
+?? verify_output_fixed.txt

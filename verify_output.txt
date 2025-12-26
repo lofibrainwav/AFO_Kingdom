@@ -1,0 +1,1 @@
+scripts/ssot_verify_ticket.sh: line 7: artifacts/${TICKET,,}/$TS: bad substitution

@@ -1,0 +1,2 @@
+PASS: SSOT verified
+PASS: T26 is SEALED-VERIFIED (by seal.json + file hashes)

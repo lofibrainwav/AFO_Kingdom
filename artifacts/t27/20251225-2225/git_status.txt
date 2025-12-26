@@ -1,0 +1,28 @@
+ M packages/afo-core/AFO/cache/query_cache.py
+ M packages/afo-core/AFO/julie_cpa/grok_engine.py
+ M packages/afo-core/AFO/memory_system/yeongdeok_complete.py
+ M packages/afo-core/Dockerfile
+ M packages/afo-core/api/cache_headers.py
+ M packages/afo-core/api/middleware/cache_middleware.py
+ M packages/afo-core/api/routes/git_status.py
+ M packages/afo-core/docker-compose.yml
+ M packages/afo-core/multimodal_rag_cache.py
+ M packages/afo-core/scripts/rag/sync_obsidian_vault.py
+ M packages/afo-core/utils/container_detector.py
+ M packages/afo-core/utils/redis_optimized.py
+ M packages/dashboard/src/components/royal/RoyalLayout.tsx
+ M scripts/ssot_capture_t25.sh
+?? artifacts/t25/20251225-2151/
+?? artifacts/t25/20251225-2156/
+?? artifacts/t25/20251225-2201/
+?? artifacts/t25/20251225-2205/
+?? artifacts/t25/20251225-2209/
+?? artifacts/t25/20251225-2210/
+?? artifacts/t27/
+?? docs/reports/T25_BANDIT_TRIAGE_20251225-2205.md
+?? packages/dashboard/src/components/royal/widgets/KingdomHistoryWidget.tsx
+?? scripts/ssot_capture_t27.sh
+?? scripts/ssot_seal_ticket.sh
+?? scripts/ssot_verify_ticket.sh
+?? verify_output.txt
+?? verify_output_fixed.txt

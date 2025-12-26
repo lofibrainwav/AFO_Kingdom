@@ -1,0 +1,14 @@
+total 128
+drwxr-xr-x  13 brnestrm  staff    416 Dec 25 23:00 .
+drwxr-xr-x   4 brnestrm  staff    128 Dec 25 22:54 ..
+-rw-r--r--   1 brnestrm  staff    251 Dec 25 22:52 component_lines.txt
+-rw-r--r--   1 brnestrm  staff   1164 Dec 25 22:52 docker_ps.txt
+-rw-r--r--   1 brnestrm  staff    825 Dec 25 22:52 evidence_summary.txt
+-rw-r--r--   1 brnestrm  staff    742 Dec 25 22:52 git_files_changed.txt
+-rw-r--r--   1 brnestrm  staff   1599 Dec 25 22:52 git_status.txt
+-rw-r--r--   1 brnestrm  staff      0 Dec 25 23:00 ls_la.txt
+-rw-r--r--@  1 brnestrm  staff   1435 Dec 25 22:56 seal.json
+-rw-r--r--   1 brnestrm  staff  27323 Dec 25 22:53 skills_body.json
+-rw-r--r--   1 brnestrm  staff    226 Dec 25 22:52 skills_headers.txt
+-rw-r--r--   1 brnestrm  staff    252 Dec 25 22:53 skills_headers_fixed.txt
+-rw-r--r--   1 brnestrm  staff     78 Dec 25 22:56 verify_pass.txt

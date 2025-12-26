@@ -1,0 +1,3 @@
+PASS: SSOT verified
+
+PASS: T29 is SEALED-VERIFIED (by seal.json + file hashes)

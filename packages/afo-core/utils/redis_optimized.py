@@ -236,8 +236,11 @@ def get_cache_stats() -> dict[str, Any]:
 # 캐시 키 생성 헬퍼
 def make_cache_key(prefix: str, *args: Any, **kwargs: Any) -> str:
     """표준화된 캐시 키 생성"""
-    key_data = f"{prefix}:{args}:{sorted(kwargs.items())}"
-    return hashlib.md5(key_data.encode()).hexdigest()
+    key_str = f"{prefix}:{args}:{sorted(kwargs.items())}"
+    return hashlib.md5(
+        key_str.encode('utf-8'),
+        usedforsecurity=False
+    ).hexdigest()
 
 
 if __name__ == "__main__":

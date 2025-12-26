@@ -17,7 +17,7 @@ import RoyalFinanceWidget from "./widgets/RoyalFinanceWidget";
 import { SystemStatusWidget } from "./widgets/SystemStatusWidget";
 import { KingdomHistoryWidget } from "./widgets/KingdomHistoryWidget";
 import { WorkflowDesigner } from "./widgets/WorkflowDesigner";
-import SkillsRegistry from "../skills/SkillsRegistry";
+import { SkillsRegistry } from "../skills/SkillsRegistry";
 import GenUICreator from "../genui/GenUICreator";
 
 import { ROYAL_CONSTANTS } from "../../config/royal_constants";

@@ -1,0 +1,3 @@
+23bef8e71361591e610d3ac15906b7731c253f68 T29 PR#1: GenUI Creator - UI Skeleton
+packages/dashboard/src/components/genui/GenUICreator.tsx
+packages/dashboard/src/components/royal/RoyalLayout.tsx

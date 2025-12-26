@@ -1,0 +1,60 @@
+>> Issue: [B102:exec_used] Use of exec detected.
+   Severity: Medium   Confidence: High
+   CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
+   More Info: https://bandit.readthedocs.io/en/1.8.6/plugins/b102_exec_used.html
+   Location: packages/afo-core/utils/playwright_bridge.py:218:12
+217	            exec_globals: dict[str, Any] = {}
+218	            exec(test_code, exec_globals)
+219	            test_func = exec_globals.get("test_scenario")
+
+--------------------------------------------------
+>> Issue: [B324:hashlib] Use of weak MD5 hash for security. Consider usedforsecurity=False
+   Severity: High   Confidence: High
+   CWE: CWE-327 (https://cwe.mitre.org/data/definitions/327.html)
+   More Info: https://bandit.readthedocs.io/en/1.8.6/plugins/b324_hashlib.html
+   Location: packages/afo-core/utils/redis_optimized.py:240:11
+239	    key_data = f"{prefix}:{args}:{sorted(kwargs.items())}"
+240	    return hashlib.md5(key_data.encode()).hexdigest()
+241	
+
+--------------------------------------------------
+>> Issue: [B110:try_except_pass] Try, Except, Pass detected.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.8.6/plugins/b110_try_except_pass.html
+   Location: packages/afo-core/utils/redis_saver.py:44:8
+43	                return val
+44	        except Exception:
+45	            pass
+46	
+
+--------------------------------------------------
+>> Issue: [B110:try_except_pass] Try, Except, Pass detected.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.8.6/plugins/b110_try_except_pass.html
+   Location: packages/afo-core/utils/redis_saver.py:64:8
+63	                return self.serde.decode(data.encode("utf-8"))
+64	        except Exception:
+65	            pass
+66	        # Fallback
+
+--------------------------------------------------
+
+Code scanned:
+	Total lines of code: 53785
+	Total lines skipped (#nosec): 0
+	Total potential issues skipped due to specifically being disabled (e.g., #nosec BXXX): 2
+
+Run metrics:
+	Total issues (by severity):
+		Undefined: 0
+		Low: 543
+		Medium: 31
+		High: 12
+	Total issues (by confidence):
+		Undefined: 0
+		Low: 2
+		Medium: 17
+		High: 567
+Files skipped (0):

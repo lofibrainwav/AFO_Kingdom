@@ -1,0 +1,32 @@
+=== T29 PR#1: UI Skeleton Evidence ===
+Timestamp: 20251225-2330
+Files Modified:
+.githooks/pre-commit
+docs/reports/T25_STABILIZATION_SSOT.md
+docs/reports/T26_ROYAL_FINANCE_SSOT.md
+packages/afo-core/AFO/cache/query_cache.py
+packages/afo-core/AFO/julie_cpa/grok_engine.py
+packages/afo-core/AFO/memory_system/yeongdeok_complete.py
+packages/afo-core/Dockerfile
+packages/afo-core/api/cache_headers.py
+packages/afo-core/api/middleware/cache_middleware.py
+packages/afo-core/api/router_manager.py
+packages/afo-core/api/routes/git_status.py
+packages/afo-core/docker-compose.yml
+packages/afo-core/multimodal_rag_cache.py
+packages/afo-core/scripts/rag/sync_obsidian_vault.py
+packages/afo-core/utils/container_detector.py
+packages/afo-core/utils/redis_optimized.py
+packages/dashboard/src/components/royal/RoyalLayout.tsx
+scripts/ssot_capture_t25.sh
+scripts/ssot_truthgate.py
+
+GenUI Creator Integration Check:
+21:import GenUICreator from "../genui/GenUICreator";
+162:        {/* 8. GenUI Creator (Template-based UI Generation) - T29 */}
+165:            <h2 className="text-xl font-bold text-slate-600">🎨 GenUI Creator (Template System)</h2>
+168:          <GenUICreator />
+
+Component Files:
+
+Dashboard HTTP Status:

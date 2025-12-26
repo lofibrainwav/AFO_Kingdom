@@ -310,6 +310,7 @@ services:
     working_dir: /AFO
     volumes:
       - .:/AFO
+      - ../../:/workspace:ro
     depends_on:
       - ollama
     healthcheck:

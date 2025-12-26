@@ -1,0 +1,12 @@
+NAMES                STATUS
+afo-soul-engine      Up 44 minutes (unhealthy)
+afo-ollama           Up 4 hours (healthy)
+afo-rag-service      Restarting (1) 59 seconds ago
+afo-qdrant           Up 13 hours
+afo-postgres         Up 13 hours (healthy)
+afo-redis            Up 13 hours (healthy)
+afo-grafana          Up 21 hours
+afo-redis-exporter   Up 21 hours
+afo-prometheus       Up 21 hours
+afo-cadvisor         Up 21 hours (healthy)
+afo-node-exporter    Up 21 hours

@@ -7,9 +7,29 @@ export async function GET(request: NextRequest) {
   const search = searchParams.get('search');
   const minPhilosophyAvg = searchParams.get('minPhilosophyAvg');
 
-  // 실제로는 백엔드 API를 호출해야 하지만, 현재는 목업 데이터 사용
-  // TODO: 백엔드 AFO Skills Registry API와 연동
+  // 백엔드 AFO Skills Registry API와 연동
+  try {
+    const backendUrl = process.env.AFO_API_BASE_URL || 'http://127.0.0.1:8010';
+    const params = new URLSearchParams();
+    if (category) params.append('category', category);
+    if (search) params.append('search', search);
+    if (minPhilosophyAvg) params.append('min_philosophy_avg', minPhilosophyAvg);
 
+    const res = await fetch(`${backendUrl}/api/skills/?${params.toString()}`, {
+      next: { revalidate: 10 }
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      return NextResponse.json(data);
+    }
+
+    console.warn("Backend skills fetch failed, falling back to mock data");
+  } catch (e) {
+    console.warn("Backend skills fetch error:", e);
+  }
+
+  // Fallback to Mock Data (Graceful Degradation)
   const mockSkills = [
     {
       skill_id: "skill_001_youtube_spec_gen",

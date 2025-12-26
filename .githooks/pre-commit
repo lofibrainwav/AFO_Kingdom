@@ -1,3 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
+
+# TruthGate: SSOT Verification
 python scripts/ssot_truthgate.py gate
+
+# Refactor Guard: Large File Warning/Block
+python3 scripts/ssot_truthgate_v3.py
+python3 scripts/refactor_guard.py
