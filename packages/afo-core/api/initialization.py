@@ -41,6 +41,9 @@ async def initialize_system() -> None:
         # Initialize AntiGravity controls
         await _initialize_antigravity()
 
+        # Initialize Database Connections (Redis needed for RAG cache)
+        await _initialize_databases()
+
         # Initialize RAG engines
         await _initialize_rag_engines()
 
@@ -55,9 +58,6 @@ async def initialize_system() -> None:
 
         # Initialize Strategy Engine
         await _initialize_strategy_engine()
-
-        # Initialize Database Connections
-        await _initialize_databases()
 
         # Initialize LLM Clients
         await _initialize_llm_clients()
@@ -141,15 +141,19 @@ async def _initialize_multimodal_rag() -> None:
 
     # Initialize Multimodal RAG Cache
     try:
+        print(f"🔍 Multimodal RAG Cache 초기화 시도... REDIS_CLIENT: {REDIS_CLIENT is not None}")
         from multimodal_rag_cache import set_redis_client as _src
+        print("✅ Multimodal RAG Cache 모듈 import 성공")
 
         if REDIS_CLIENT:
             _src(REDIS_CLIENT)
-            print("[Multimodal RAG Cache] 캐시 시스템 초기화 완료 (Redis 통합)")
+            print("✅ [Multimodal RAG Cache] 캐시 시스템 초기화 완료 (Redis 통합)")
         else:
-            print("⚠️ Multimodal RAG Cache 건너뜀 (Redis 또는 캐시 모듈 없음)")
-    except ImportError:
-        print("⚠️ Multimodal RAG Cache 건너뜀 (Multimodal RAG Phase 5 구현 필요)")
+            print("⚠️ Multimodal RAG Cache 건너뜀 (Redis 클라이언트 없음)")
+    except ImportError as e:
+        print(f"⚠️ Multimodal RAG Cache 건너뜀 (모듈 import 실패: {e})")
+    except Exception as e:
+        print(f"⚠️ Multimodal RAG Cache 건너뜀 (초기화 실패: {e})")
 
 
 async def _initialize_skills_registry() -> None:
