@@ -1,7 +1,8 @@
 # Trinity Score: 90.0 (Established by Chancellor)
 import pytest
-from AFO.api_server import app
 from starlette.testclient import TestClient
+
+from AFO.api_server import app
 
 
 @pytest.fixture

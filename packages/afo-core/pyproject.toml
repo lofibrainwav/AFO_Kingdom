@@ -203,6 +203,8 @@ module = [
     "openai.*",
     "sentence_transformers.*",
     "ragas.*",
+    "autogen.*",
+    "autogen_agentchat.*",
 ]
 ignore_missing_imports = true
 
@@ -266,3 +268,7 @@ module = [
     "AFO.utils.*"
 ]
 ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = ["autogen", "autogen.*"]
+ignore_missing_imports = true

@@ -5,7 +5,7 @@ import time
 from collections.abc import Callable
 from dataclasses import asdict, dataclass
 from datetime import UTC, datetime, timezone
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Optional
 from urllib.request import Request, urlopen
 
 

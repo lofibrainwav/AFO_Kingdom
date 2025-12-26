@@ -615,7 +615,7 @@ class JulieService:
         # Recalculate based on real data
         monthly_spending = dashboard_data.get("monthly_spending", 0)
         budget_remaining = dashboard_data.get("budget_remaining", 0)
-        
+
         # Simple friction model: High spending = High friction
         utilization = monthly_spending / (monthly_spending + budget_remaining + 1)
         friction_score = utilization * 20  # Max ~20

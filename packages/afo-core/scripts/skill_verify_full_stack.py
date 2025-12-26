@@ -1,7 +1,7 @@
 import json
 import os
-import urllib.request
 import urllib.error
+import urllib.request
 from datetime import datetime
 from pathlib import Path
 
@@ -54,7 +54,7 @@ def run() -> dict:
     # 1. Backend Health Checks
     health_j = get_json(f"{SOUL}/health")
     b_organs = health_j.get("organs") or {}
-    b_keys = sorted(list(b_organs.keys()))
+    b_keys = sorted(b_organs.keys())
     ks = len(b_organs) if b_organs else None
 
     # 2. Frontend Kingdom Status Checks

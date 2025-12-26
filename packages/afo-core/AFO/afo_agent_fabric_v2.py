@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 import json
-from collections.abc import AsyncIterator
-from typing import Any, Optional, TypedDict
+from typing import TYPE_CHECKING, Any, Optional, TypedDict, cast
 
 from fastapi import APIRouter
 from pydantic import BaseModel
 from starlette.responses import StreamingResponse
+
+if TYPE_CHECKING:
+    from collections.abc import AsyncIterator
 
 router_v2 = APIRouter(prefix="/chancellor", tags=["chancellor"])
 
@@ -41,7 +43,7 @@ def _lg_tokenize(state: _LGState) -> _LGState:
 
 async def _stream_langgraph_real(text: str) -> AsyncIterator[bytes]:
     try:
-        from langgraph.graph import END, StateGraph  # type: ignore
+        from langgraph.graph import END, StateGraph
     except Exception:
         yield _sse("info", {"engine": "langgraph_real", "status": "missing"})
         async for b in _stream_echo(text):
@@ -56,7 +58,7 @@ async def _stream_langgraph_real(text: str) -> AsyncIterator[bytes]:
     g.add_edge("tokenize", END)
     compiled = g.compile()
 
-    out = await compiled.ainvoke({"input": text})
+    out = await compiled.ainvoke(cast("Any", {"input": text}))
     tokens = out.get("tokens") or []
 
     yield _sse("start", {"engine": "langgraph_real"})

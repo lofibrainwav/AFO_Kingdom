@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 import json
-from collections.abc import AsyncIterator
-from typing import Any, Optional
+from importlib.util import find_spec
+from typing import TYPE_CHECKING, Any, Optional
 
 from fastapi import APIRouter
 from pydantic import BaseModel
 from starlette.responses import StreamingResponse
+
+if TYPE_CHECKING:
+    from collections.abc import AsyncIterator
 
 router = APIRouter(prefix="/chancellor", tags=["chancellor"])
 
@@ -126,7 +129,7 @@ async def chancellor_stream(req: ChancellorRequest):
 
 @router.post("/stream_v2")
 async def chancellor_stream_v2(req: ChancellorRequest):
-    from typing import TypedDict
+    from typing import Any, TypedDict, cast
 
     class _LGState(TypedDict, total=False):
         input: str
@@ -138,7 +141,7 @@ async def chancellor_stream_v2(req: ChancellorRequest):
 
     async def _stream_langgraph_real(text: str):
         try:
-            from langgraph.graph import END, StateGraph  # type: ignore
+            from langgraph.graph import END, StateGraph
         except Exception:
             yield _sse("info", {"engine": "langgraph_real", "status": "missing"})
             async for b in _stream_echo(text):
@@ -153,7 +156,7 @@ async def chancellor_stream_v2(req: ChancellorRequest):
         g.add_edge("tokenize", END)
         compiled = g.compile()
 
-        out = await compiled.ainvoke({"input": text})
+        out = await compiled.ainvoke(cast("Any", {"input": text}))
         tokens = out.get("tokens") or []
 
         yield _sse("start", {"engine": "langgraph_real"})
@@ -169,7 +172,6 @@ async def chancellor_stream_v2(req: ChancellorRequest):
     return StreamingResponse(gen, media_type="text/event-stream")
 
 
-from importlib.util import find_spec
 
 
 def _is_installed(mod: str) -> bool:
@@ -189,9 +191,9 @@ async def chancellor_stream_v3(req: ChancellorRequest):
             {"engine": "langgraph_real", "installed": _is_installed("langgraph")},
         )
         try:
-            from typing import TypedDict
+            from typing import Any, TypedDict, cast
 
-            from langgraph.graph import END, StateGraph  # type: ignore
+            from langgraph.graph import END, StateGraph
 
             class _LGState(TypedDict, total=False):
                 input: str
@@ -207,7 +209,7 @@ async def chancellor_stream_v3(req: ChancellorRequest):
             compiled = g.compile()
 
             yield _sse("start", {"engine": "langgraph_real"})
-            out = await compiled.ainvoke({"input": text})
+            out = await compiled.ainvoke(cast("Any", {"input": text}))
             tokens = out.get("tokens") or []
             for i, ch in enumerate(tokens):
                 yield _sse("token", {"i": i, "t": ch})

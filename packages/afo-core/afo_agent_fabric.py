@@ -89,7 +89,7 @@ async def _stream_autogen(text: str) -> AsyncIterator[bytes]:
         return
 
     try:
-        agent = AssistantAgent(name="Chancellor")
+        AssistantAgent(name="Chancellor")
         msg = f"[autogen-agentchat 기본 에코] {text}"
     except Exception:
         msg = "[autogen-agentchat 실행 실패] " + text

@@ -5,6 +5,7 @@ Phase 1 리팩토링: 하드코딩 제거 및 환경 변수 통합
 """
 
 import os
+import sys
 from typing import ClassVar
 
 from pydantic import Field
@@ -279,6 +280,13 @@ def get_settings(env: str | None = None) -> AFOSettings:
     # 싱글톤 인스턴스 생성
     if _settings is None:
         _settings = settings_class()
+
+        # Context7 trinity-os 패키지 경로 추가 (Python Path 확장)
+        trinity_os_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'trinity-os'))
+        if trinity_os_path not in sys.path:
+            sys.path.insert(0, trinity_os_path)
+            print(f"✅ Context7 trinity-os 경로 추가: {trinity_os_path}")
+
         print(f"✅ AFO 설정 로드 완료: {env} 환경 ({settings_class.__name__})")
 
     return _settings
