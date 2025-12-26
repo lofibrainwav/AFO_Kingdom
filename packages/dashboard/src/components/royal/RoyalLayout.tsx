@@ -15,6 +15,8 @@ import TrinityGlow from "./TrinityGlow";
 import { GitWidget } from "./widgets/GitWidget";
 import RoyalFinanceWidget from "./widgets/RoyalFinanceWidget";
 import { SystemStatusWidget } from "./widgets/SystemStatusWidget";
+import { KingdomHistoryWidget } from "./widgets/KingdomHistoryWidget";
+import SkillsRegistry from "../skills/SkillsRegistry";
 
 import { ROYAL_CONSTANTS } from "../../config/royal_constants";
 import { TrinityEvidenceWidget } from "../genui/TrinityEvidenceWidget";
@@ -104,6 +106,11 @@ export default function RoyalLayout() {
 
             {/* Use the Unified Royal Ops Center */}
             <RoyalOpsCenter trinityScore={trinityScore} healthData={data} />
+
+            {/* Skills Registry Integration */}
+            <div className="bg-white/10 backdrop-blur-md rounded-3xl border border-white/20 p-6 shadow-inner">
+              <SkillsRegistry />
+            </div>
           </section>
 
         {/* 4. Royal Decrees & Predictions (New Generation Section) */}
@@ -129,8 +136,14 @@ export default function RoyalLayout() {
           </div>
         </section>
 
+        {/* 4.5 Chronicles of the Kingdom (Git History) */}
+        <section>
+             <KingdomHistoryWidget />
+        </section>
+
         {/* 5. Royal Philosophy (Foundations) */}
         <RoyalPhilosophy />
+
 
         {/* 6. System Architecture (Blueprints) */}
         <RoyalArchitecture />
