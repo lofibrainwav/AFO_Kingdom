@@ -1,0 +1,3 @@
+OK: initialize
+OK: tools/list (5)
+PASS: clean exit (0)
