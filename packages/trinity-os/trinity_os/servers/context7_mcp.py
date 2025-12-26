@@ -26,14 +26,17 @@ class Context7MCP:
     def _load_knowledge_base(self) -> None:
         """지식 베이스 로드"""
         try:
-            # AFO 왕국의 핵심 문서들 로드
+            # AFO 왕국의 핵심 문서들 로드 - 절대 경로로 찾기
+            import os
+            base_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..', '..', '..'))
+
             knowledge_sources = [
-                "AGENTS.md",
-                "docs/AFO_ROYAL_LIBRARY.md",
-                "docs/AFO_CHANCELLOR_GRAPH_SPEC.md",
-                "docs/AFO_EVOLUTION_LOG.md",
-                "docs/AFO_FRONTEND_ARCH.md",
-                "docs/CURSOR_MCP_SETUP.md"
+                os.path.join(base_path, "AGENTS.md"),
+                os.path.join(base_path, "docs/AFO_ROYAL_LIBRARY.md"),
+                os.path.join(base_path, "docs/AFO_CHANCELLOR_GRAPH_SPEC.md"),
+                os.path.join(base_path, "docs/AFO_EVOLUTION_LOG.md"),
+                os.path.join(base_path, "docs/AFO_FRONTEND_ARCH.md"),
+                os.path.join(base_path, "docs/CURSOR_MCP_SETUP.md")
             ]
 
             loaded_count = 0
