@@ -85,6 +85,23 @@ _import_chancellor_graph()
 
 router = APIRouter(prefix="/chancellor", tags=["Chancellor"])
 
+# Include chancellor engines endpoint from afo_agent_fabric
+try:
+    from AFO.afo_agent_fabric import _get_cached_engine_status
+
+    @router.get("/engines")
+    async def chancellor_engines():
+        """
+        Chancellor AI 엔진 설치 상태 확인 (캐시 최적화)
+
+        Trinity Score: 眞 (Truth) - 정확한 라이브러리 상태
+        성능 최적화: 5분 캐시 + 빠른 import 순서
+        """
+        return {"installed": _get_cached_engine_status()}
+
+except ImportError:
+    logger.warning("afo_agent_fabric functions not available")
+
 # Strangler Fig: Chancellor 타입 모델들은 compat.py로 이동됨 (眞: Truth 타입 안전성)
 
 
