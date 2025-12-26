@@ -14,6 +14,15 @@
         "PYTHONPATH": "/Users/brnestrm/AFO_Kingdom/packages/afo-core:$PYTHONPATH",
         "AFO_API_BASE_URL": "http://127.0.0.1:8010"
       }
+    },
+    "afo-skills-mcp": {
+      "command": ".venv-mcp/bin/python",
+      "args": ["-m", "AFO.mcp.afo_skills_mcp"],
+      "env": {
+        "PYTHONPATH": "/Users/brnestrm/AFO_Kingdom/packages/afo-core:$PYTHONPATH",
+        "AFO_API_BASE_URL": "http://127.0.0.1:8010",
+        "PYTHONUNBUFFERED": "1"
+      }
     }
   }
 }
