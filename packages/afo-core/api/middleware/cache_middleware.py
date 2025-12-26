@@ -130,6 +130,12 @@ class CacheMiddleware(BaseHTTPMiddleware):
                         )
                         response.headers["X-Cache"] = "HIT"
                         response.headers["X-Cache-Key"] = cache_key
+
+                        # 건강 체크 엔드포인트에 브라우저 캐시 헤더 추가
+                        if request.url.path == "/api/health/comprehensive":
+                            response.headers["Cache-Control"] = "max-age=30, private"
+                            response.headers["X-Cache-Source"] = "server-cache"
+
                         return response
                     except (json.JSONDecodeError, KeyError) as e:
                         logger.warning(f"캐시 데이터 파싱 실패: {e}")
@@ -188,6 +194,12 @@ class CacheMiddleware(BaseHTTPMiddleware):
                 )
                 cached_response.headers["X-Cache"] = "MISS"
                 cached_response.headers["X-Cache-Key"] = cache_key
+
+                # 건강 체크 엔드포인트에 브라우저 캐시 헤더 추가
+                if request.url.path == "/api/health/comprehensive":
+                    cached_response.headers["Cache-Control"] = "max-age=30, private"
+                    cached_response.headers["X-Cache-Source"] = "server-cache"
+
                 return cached_response
 
             except Exception as e:
@@ -201,6 +213,12 @@ class CacheMiddleware(BaseHTTPMiddleware):
 
         # 캐싱하지 않는 경우 원본 응답 반환
         response.headers["X-Cache"] = "SKIP"
+
+        # 건강 체크 엔드포인트에 브라우저 캐시 헤더 추가
+        if request.url.path == "/api/health/comprehensive":
+            response.headers["Cache-Control"] = "max-age=30, private"
+            response.headers["X-Cache-Source"] = "server-cache"
+
         return response
 
     def get_stats(self) -> dict[str, Any]:

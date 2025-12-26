@@ -188,7 +188,6 @@ warn_unreachable = true          # 도달 불가능 코드 경고
 warn_unused_ignores = true       # 미사용 ignore 경고
 strict_equality = true           # 엄격한 동등성 검사
 
-[tool.mypy.overrides]
 [[tool.mypy.overrides]]
 module = ["services.trinity_score_monitor"]
 ignore_errors = true
