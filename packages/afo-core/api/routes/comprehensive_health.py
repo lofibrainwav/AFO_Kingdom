@@ -338,25 +338,17 @@ async def _check_sequential_thinking() -> dict[str, Any]:
 
 
 async def _check_automation_tools() -> dict[str, Any]:
-    """자동화 도구 상태 확인"""
+    """자동화 도구 상태 확인 (최적화된 캐싱 서비스 사용)"""
     try:
-        from pathlib import Path
+        # 최적화된 Automation 서비스 사용 (캐싱 적용)
+        from AFO.services.automation_service import get_automation_health
 
-        # 프로젝트 루트 동적 계산
-        from AFO.utils.path_utils import get_project_root
+        health_data = get_automation_health()
 
-        project_root = get_project_root(Path(__file__))
-        automation = AutomationTools(project_root)
-        tools_status = automation.get_tools_status()
-        score = automation.get_automation_score()
+        return health_data
 
-        return {
-            "status": "healthy" if score >= 70.0 else "warning",
-            "score": round(score, 1),
-            "details": tools_status,
-        }
     except Exception as e:
-        logger.warning(f"Automation tools check failed: {e}")
+        logger.warning("Automation tools check failed: %s", e)
         return {
             "status": "error",
             "error": str(e),
