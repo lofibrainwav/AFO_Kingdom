@@ -36,8 +36,8 @@ async def search_context7(
     """
     try:
         # Import Context7MCP (with proper path handling)
-        import sys
         import os
+        import sys
         trinity_os_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..', 'trinity-os'))
         if trinity_os_path not in sys.path:
             sys.path.insert(0, trinity_os_path)
@@ -80,7 +80,7 @@ async def search_context7(
         logger.error(f"Context7 search failed: {e}")
         raise HTTPException(
             status_code=500,
-            detail=f"Context7 search failed: {str(e)}"
+            detail=f"Context7 search failed: {e!s}"
         ) from e
 
 
@@ -93,8 +93,8 @@ async def context7_health() -> dict[str, Any]:
     """
     try:
         # Import Context7MCP
-        import sys
         import os
+        import sys
         trinity_os_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..', 'trinity-os'))
         if trinity_os_path not in sys.path:
             sys.path.insert(0, trinity_os_path)

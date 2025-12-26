@@ -13,7 +13,7 @@ from __future__ import annotations
 import hashlib
 import json
 import logging
-from typing import Any, Optional
+from typing import Any
 
 from AFO.utils.redis_connection import get_redis_client as get_redis_connection
 
@@ -21,7 +21,7 @@ from AFO.utils.redis_connection import get_redis_client as get_redis_connection
 logger = logging.getLogger(__name__)
 
 # Global Redis client
-_redis_client: Optional[Any] = None
+_redis_client: Any | None = None
 
 
 def set_redis_client(client: Any) -> None:
@@ -31,7 +31,7 @@ def set_redis_client(client: Any) -> None:
     logger.info("✅ Multimodal RAG Cache Redis client 설정됨")
 
 
-def get_redis_client() -> Optional[Any]:
+def get_redis_client() -> Any | None:
     """Get the configured Redis client."""
     global _redis_client
     if _redis_client is None:
@@ -50,7 +50,7 @@ def _generate_cache_key(query: str, modality: str = "text") -> str:
     return f"multimodal_rag:{hashlib.md5(content.encode()).hexdigest()}"
 
 
-def get_cached_result(query: str, modality: str = "text") -> Optional[dict[str, Any]]:
+def get_cached_result(query: str, modality: str = "text") -> dict[str, Any] | None:
     """
     Get cached RAG result for the query.
 

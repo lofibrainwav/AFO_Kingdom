@@ -670,3 +670,27 @@ class Settings:
 
     def __init__(self) -> None:
         pass
+
+
+# Chancellor API Models (眞: Truth 타입 안전성)
+try:
+    from pydantic import BaseModel
+except ImportError:
+    BaseModel = object  # Fallback for typing
+
+
+class ChancellorInvokeRequest(BaseModel):
+    """Chancellor 호출 요청 모델"""
+    input: str
+    engine: str | None = None
+    mode: str | None = None
+    options: dict[str, str] | None = None
+
+
+class ChancellorInvokeResponse(BaseModel):
+    """Chancellor 호출 응답 모델"""
+    result: str
+    engine_used: str
+    execution_time: float
+    mode: str
+    metadata: dict[str, str] | None = None
