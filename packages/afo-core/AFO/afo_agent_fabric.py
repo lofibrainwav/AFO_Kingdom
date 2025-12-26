@@ -84,33 +84,64 @@ async def chancellor_ping_v2():
     return {"ok": True}
 
 
+# 캐시된 라이브러리 설치 상태 (성능 최적화)
+_cached_engine_status: dict[str, bool] | None = None
+_cache_timestamp: float = 0
+_CACHE_TTL = 300  # 5분 캐시
+
+
+def _get_cached_engine_status() -> dict[str, bool]:
+    """캐시된 엔진 설치 상태 반환 (성능 최적화)"""
+    global _cached_engine_status, _cache_timestamp
+
+    import time
+    current_time = time.time()
+
+    # 캐시가 유효하면 반환
+    if _cached_engine_status and (current_time - _cache_timestamp) < _CACHE_TTL:
+        return _cached_engine_status.copy()
+
+    # 캐시 만료 또는 없음 - 새로 확인
+    installed = {}
+
+    # 빠른 import 시도 (순서 최적화: 가장 가벼운 것부터)
+    engines_to_check = [
+        ("langgraph", "langgraph"),
+        ("crewai", "crewai"),
+        ("autogen", "autogen"),  # autogen_agentchat는 fallback으로 확인
+    ]
+
+    for engine_name, module_name in engines_to_check:
+        try:
+            __import__(module_name)
+            installed[engine_name] = True
+        except ImportError:
+            # autogen의 경우 autogen_agentchat도 확인
+            if engine_name == "autogen":
+                try:
+                    __import__("autogen_agentchat")
+                    installed[engine_name] = True
+                except ImportError:
+                    installed[engine_name] = False
+            else:
+                installed[engine_name] = False
+
+    # 캐시 업데이트
+    _cached_engine_status = installed
+    _cache_timestamp = current_time
+
+    return installed.copy()
+
+
 @router.get("/engines")
 async def chancellor_engines():
-    installed = {}
-    try:
-        import langgraph
+    """
+    Chancellor AI 엔진 설치 상태 확인 (캐시 최적화)
 
-        installed["langgraph"] = True
-    except Exception:
-        installed["langgraph"] = False
-    try:
-        import crewai
-
-        installed["crewai"] = True
-    except Exception:
-        installed["crewai"] = False
-    try:
-        import autogen
-
-        installed["autogen"] = True
-    except Exception:
-        try:
-            import autogen_agentchat
-
-            installed["autogen"] = True
-        except Exception:
-            installed["autogen"] = False
-    return {"installed": installed}
+    Trinity Score: 眞 (Truth) - 정확한 라이브러리 상태
+    성능 최적화: 5분 캐시 + 빠른 import 순서
+    """
+    return {"installed": _get_cached_engine_status()}
 
 
 @router.post("/stream")

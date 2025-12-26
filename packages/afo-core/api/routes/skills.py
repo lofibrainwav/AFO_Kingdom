@@ -109,6 +109,9 @@ async def list_skills(
             "count": len(skills),
             "categories": registry.get_categories(),
         }
+    except Exception as e:
+        logger.error(f"Failed to list skills: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error") from e
 
 
 @router.get("/list", response_model=dict[str, Any])
@@ -133,9 +136,6 @@ async def list_skills_alias(
         offset=offset,
         registry=registry,
     )
-    except Exception as e:
-        logger.error(f"Failed to list skills: {e}")
-        raise HTTPException(status_code=500, detail="Internal Server Error") from e
 
 
 @router.get("/{skill_id}", response_model=AFOSkillCard)
