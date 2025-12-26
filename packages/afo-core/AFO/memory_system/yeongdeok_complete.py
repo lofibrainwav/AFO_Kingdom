@@ -256,10 +256,8 @@ class YeongdeokComplete:
 
             # Close any open connections (future expansion)
             if hasattr(self, '_redis_client') and self._redis_client:
-                try:
+                with contextlib.suppress(Exception):
                     await self._redis_client.close()
-                except Exception:
-                    pass
 
             logger.info("✅ Yeongdeok memory system closed gracefully")
         except Exception as e:

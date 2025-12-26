@@ -255,7 +255,7 @@ async def _check_scholars() -> dict[str, Any]:
             "scholars": scholars,
         }
     except Exception as e:
-        logger.warning(f"Scholars check failed: {e}")
+        logger.warning("Scholars check failed: %s", e)
         return {
             "status": "error",
             "error": str(e),
@@ -281,7 +281,7 @@ async def _check_mcp_tools() -> dict[str, Any]:
             "servers": servers,
         }
     except Exception as e:
-        logger.warning(f"MCP tools check failed: {e}")
+        logger.warning("MCP tools check failed: %s", e)
         return {
             "status": "error",
             "error": str(e),
