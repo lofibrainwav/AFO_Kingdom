@@ -1,29 +1,11 @@
 {
   "mcpServers": {
-    "afo-ultimate-mcp": {
-      "command": "bash",
-      "args": ["scripts/mcp_afo_ultimate.sh"],
-      "env": {
-        "PYTHONPATH": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os:/Users/brnestrm/AFO_Kingdom/packages/afo-core:$PYTHONPATH"
-      }
-    },
-    "afo-skills": {
-      "command": "python3",
-      "args": ["-m", "AFO.mcp.afo_skills_mcp"],
-      "env": {
-        "PYTHONPATH": "/Users/brnestrm/AFO_Kingdom/packages/afo-core:$PYTHONPATH",
-        "AFO_API_BASE_URL": "http://127.0.0.1:8010",
-        "PYTHONUNBUFFERED": "1"
-      }
-    },
     "afo-skills-mcp": {
-      "command": ".venv-mcp/bin/python",
-      "args": ["-m", "AFO.mcp.afo_skills_mcp"],
-      "env": {
-        "PYTHONPATH": "/Users/brnestrm/AFO_Kingdom/packages/afo-core:$PYTHONPATH",
-        "AFO_API_BASE_URL": "http://127.0.0.1:8010",
-        "PYTHONUNBUFFERED": "1"
-      }
+      "command": "bash",
+      "args": [
+        "-lc",
+        "export PYTHONPATH=\"$PWD/packages/afo-core\"; export AFO_API_BASE_URL=\"http://127.0.0.1:8010\"; export PYTHONUNBUFFERED=1; ./.venv-mcp/bin/python -m AFO.mcp.afo_skills_mcp"
+      ]
     }
   }
 }
