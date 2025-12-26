@@ -28,7 +28,7 @@ def _base_url() -> str:
     return base_url.rstrip("/")
 
 
-def _http(method: str, path: str, body: Optional[dict] = None, timeout: float = 15.0, max_retries: int = 2) -> Any:
+def _http(method: str, path: str, body: Optional[dict] = None, timeout: float = 5.0, max_retries: int = 2) -> Any:
     """HTTP helper for AFO API calls with retry logic and better error handling"""
     if not isinstance(method, str) or method.upper() not in ['GET', 'POST', 'PUT', 'DELETE']:
         raise ValueError(f"Invalid HTTP method: {method}")
@@ -78,13 +78,14 @@ def _http(method: str, path: str, body: Optional[dict] = None, timeout: float = 
 
 
 def send_response(request_id: Any, result: Any) -> None:
-    """Send JSON-RPC response"""
+    """Send JSON-RPC response with immediate flush"""
     response = {
         "jsonrpc": "2.0",
         "id": request_id,
         "result": result
     }
     print(json.dumps(response), flush=True)
+    sys.stdout.flush()  # Ensure immediate flush
 
 
 def send_error(request_id: Any, code: int, message: str) -> None:
@@ -179,10 +180,16 @@ def handle_tools_list(request_id: Any, params: Dict[str, Any]) -> None:
     send_response(request_id, {"tools": tools})
 
 
-def handle_tools_call(request_id: Any, params: Dict[str, Any]) -> None:
-    """Handle tools/call request"""
-    tool_name = params.get("name")
-    args = params.get("arguments", {})
+def _execute_tool_with_timeout(tool_name: str, args: Dict[str, Any], timeout_seconds: float = 5.0) -> Any:
+    """Execute tool with timeout protection using signal"""
+    import signal
+
+    def timeout_handler(signum, frame):
+        raise TimeoutError(f"Tool {tool_name} timed out after {timeout_seconds} seconds")
+
+    # Set up timeout handler
+    old_handler = signal.signal(signal.SIGALRM, timeout_handler)
+    signal.alarm(int(timeout_seconds))
 
     try:
         if tool_name == "skills_list":
@@ -213,12 +220,29 @@ def handle_tools_call(request_id: Any, params: Dict[str, Any]) -> None:
         else:
             raise ValueError(f"Unknown tool: {tool_name}")
 
-        # Format result for MCP
-        content = [{"type": "text", "text": json.dumps(result, indent=2, ensure_ascii=False)}]
-        send_response(request_id, {"content": content})
+        return result
 
+    except TimeoutError as e:
+        return {"ok": False, "error": str(e)}
     except Exception as e:
-        send_error(request_id, -32603, f"Tool execution failed: {str(e)}")
+        return {"ok": False, "error": f"Tool execution failed: {str(e)}"}
+    finally:
+        # Restore signal handler
+        signal.alarm(0)
+        signal.signal(signal.SIGALRM, old_handler)
+
+
+def handle_tools_call(request_id: Any, params: Dict[str, Any]) -> None:
+    """Handle tools/call request with timeout protection"""
+    tool_name = params.get("name")
+    args = params.get("arguments", {})
+
+    # Execute tool with timeout protection
+    result = _execute_tool_with_timeout(tool_name, args, 5.0)
+
+    # Format result for MCP
+    content = [{"type": "text", "text": json.dumps(result, indent=2, ensure_ascii=False)}]
+    send_response(request_id, {"content": content})
 
 
 def handle_notifications(request: Dict[str, Any]) -> None:
