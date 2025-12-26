@@ -12,9 +12,10 @@ import os
 from pathlib import Path
 from typing import Any
 
-from AFO.config.health_check_config import health_check_config
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
+
+from AFO.config.health_check_config import health_check_config
 
 router = APIRouter(prefix="/api/mcp", tags=["MCP Tools"])
 

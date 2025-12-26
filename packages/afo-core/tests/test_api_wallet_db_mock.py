@@ -3,8 +3,9 @@ import sys
 from datetime import datetime
 from unittest.mock import MagicMock, patch
 
-import AFO.api_wallet as api_wallet_module
 import pytest
+
+import AFO.api_wallet as api_wallet_module
 from AFO.api_wallet import APIWallet
 
 

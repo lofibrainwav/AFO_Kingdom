@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
-async def publish_thought(content: dict = None, **kwargs) -> None:
+async def publish_thought(content: dict | None = None, **kwargs) -> None:
     """
     Publish thought to Chancellor Stream via Redis.
 

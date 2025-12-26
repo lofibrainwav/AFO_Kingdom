@@ -15,10 +15,15 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from AFO.afo_skills_registry import (AFOSkillCard,
-                                     SkillExecutionResult, SkillFilterParams,
-                                     SkillRegistry, register_core_skills)
 from fastapi import APIRouter, Body, Depends, HTTPException, Query
+
+from AFO.afo_skills_registry import (
+    AFOSkillCard,
+    SkillExecutionResult,
+    SkillFilterParams,
+    SkillRegistry,
+    register_core_skills,
+)
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -106,7 +111,7 @@ async def list_skills(
         }
     except Exception as e:
         logger.error(f"Failed to list skills: {e}")
-        raise HTTPException(status_code=500, detail="Internal Server Error")
+        raise HTTPException(status_code=500, detail="Internal Server Error") from e
 
 
 @router.get("/{skill_id}", response_model=AFOSkillCard)

@@ -12,6 +12,7 @@ from typing import TYPE_CHECKING, Any, cast
 
 import httpx
 import redis.asyncio as redis
+
 # AFO internal imports
 from AFO.config.settings import get_settings
 from AFO.domain.metrics.trinity import calculate_trinity

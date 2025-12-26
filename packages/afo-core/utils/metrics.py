@@ -10,8 +10,7 @@ import time
 from functools import wraps
 
 try:
-    from prometheus_client import (CONTENT_TYPE_LATEST, Counter, Gauge,
-                                   Histogram, generate_latest)
+    from prometheus_client import CONTENT_TYPE_LATEST, Counter, Gauge, Histogram, generate_latest
 
     PROMETHEUS_AVAILABLE = True
 except ImportError:

@@ -19,11 +19,12 @@ import logging
 from datetime import datetime
 from typing import Any
 
+from fastapi import APIRouter
+
 from AFO.config.health_check_config import health_check_config
 from AFO.services.health_service import get_comprehensive_health
 from AFO.utils.automation_tools import AutomationTools
 from AFO.utils.path_utils import add_to_sys_path, get_trinity_os_path
-from fastapi import APIRouter
 
 router = APIRouter(prefix="/api/health", tags=["Comprehensive Health"])
 
@@ -227,30 +228,51 @@ async def _check_mcp_tools() -> dict[str, Any]:
 
 
 async def _check_context7() -> dict[str, Any]:
-    """Context7 지식 베이스 상태 확인"""
+    """Context7 지식 베이스 상태 확인 (실제 인스턴스 테스트)"""
     try:
         from pathlib import Path
 
-        # trinity-os 경로 추가 (동적 계산)
+        # trinity-os 경로 추가 (동적 계산 + 설정에서 추가된 경로 활용)
         trinity_os_path = get_trinity_os_path(Path(__file__))
         add_to_sys_path(trinity_os_path)
 
+        # 실제 Context7MCP 인스턴스 생성 및 테스트
         from trinity_os.servers.context7_mcp import Context7MCP
 
-        # Context7 지식 베이스 키 확인
-        knowledge_keys = list(Context7MCP.KNOWLEDGE_BASE.keys())
+        # 1. 인스턴스 생성 테스트
+        context7_instance = Context7MCP()
+
+        # 2. knowledge_base 실제 접근 테스트
+        knowledge_base = getattr(context7_instance, "knowledge_base", [])
+        if not isinstance(knowledge_base, list):
+            raise ValueError(f"knowledge_base is not a list: {type(knowledge_base)}")
+
+        # 3. 지식 베이스 항목 키 추출
+        knowledge_keys = [item.get("id", f"item_{i}") for i, item in enumerate(knowledge_base)]
         config = health_check_config
+
+        # 4. retrieve_context 메서드 테스트 (샘플 쿼리로)
+        try:
+            test_result = context7_instance.retrieve_context("test query")
+            retrieval_works = bool(test_result)
+        except Exception:
+            retrieval_works = False
 
         return {
             "status": "healthy",
             "knowledge_base_keys": knowledge_keys[: config.MAX_CONTEXT7_KEYS_DISPLAY],
             "total_keys": len(knowledge_keys),
+            "retrieval_works": retrieval_works,
+            "instance_created": True,
+            "knowledge_base_accessible": True,
         }
     except Exception as e:
         logger.warning(f"Context7 check failed: {e}")
         return {
             "status": "error",
             "error": str(e),
+            "instance_created": False,
+            "knowledge_base_accessible": False,
         }
 
 

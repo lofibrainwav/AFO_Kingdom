@@ -85,7 +85,7 @@ class FinancialConnector:
         base_spending = 2450000
         volatility = random.uniform(0.9, 1.1)
         monthly_spending = int(base_spending * volatility)
-        
+
         total_budget = 3000000
         budget_remaining = max(0, total_budget - monthly_spending)
 
@@ -99,10 +99,10 @@ class FinancialConnector:
             ("Uber", 15200, "Transport"),
             ("Spotify", 11900, "Subscription"),
         ]
-        
+
         # Pick 3-4 random transactions
         daily_sample = random.sample(merchants, k=random.randint(3, 5))
-        for i, (name, amount, cat) in enumerate(daily_sample):
+        for _i, (name, amount, cat) in enumerate(daily_sample):
             transactions.append({
                 "id": f"tx-{random.randint(1000, 9999)}",
                 "merchant": name,
@@ -122,14 +122,14 @@ class FinancialConnector:
     def _generate_dynamic_alerts(self, spending: int, budget: int) -> list[dict[str, str]]:
         alerts = []
         utilization = (spending / budget) * 100
-        
+
         if utilization > 90:
             alerts.append({"level": "critical", "message": "Budget Critical (>90%)"})
         elif utilization > 80:
             alerts.append({"level": "warning", "message": "Budget Utilization > 80%"})
         else:
             alerts.append({"level": "info", "message": "Spending on track"})
-            
+
         if random.random() < 0.3:
              alerts.append({"level": "warning", "message": "Unusual subscription detected"})
 

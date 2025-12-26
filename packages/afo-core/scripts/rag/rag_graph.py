@@ -22,8 +22,7 @@ from typing_extensions import TypedDict
 # 현재 디렉토리를 Python 경로에 추가
 sys.path.insert(0, str(Path(__file__).parent))
 
-from config import (EMBEDDING_MODEL, LLM_MODEL, QDRANT_COLLECTION_NAME,
-                    QDRANT_URL)
+from config import EMBEDDING_MODEL, LLM_MODEL, QDRANT_COLLECTION_NAME, QDRANT_URL
 
 
 class GraphState(TypedDict):

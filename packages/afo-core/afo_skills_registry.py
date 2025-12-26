@@ -16,7 +16,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from enum import Enum
-from typing import Annotated, Any, ClassVar, Dict, List, Optional
+from typing import Annotated, Any, ClassVar
 
 from pydantic import BaseModel, ConfigDict, Field, HttpUrl, field_validator
 
@@ -307,14 +307,14 @@ class SkillExecutionRequest(BaseModel):
     """
 
     skill_id: str = Field(..., description="ID of the skill to execute")
-    parameters: Dict[str, Any] = Field(
+    parameters: dict[str, Any] = Field(
         default_factory=dict, description="Execution parameters"
     )
     dry_run: bool = Field(
         False, description="If True, simulate execution without side effects"
     )
     # Deprecated fields (kept for compatibility if needed, but defaults provided)
-    context: Dict[str, Any] | None = Field(
+    context: dict[str, Any] | None = Field(
         default=None, description="Additional execution context"
     )
     async_execution: bool = Field(
@@ -329,10 +329,10 @@ class SkillExecutionResult(BaseModel):
 
     skill_id: str
     status: str
-    result: Dict[str, Any]
+    result: dict[str, Any]
     dry_run: bool
-    error: Optional[str] = None
-    
+    error: str | None = None
+
     # Legacy fields support (optional)
     success: bool = Field(default=True, description="Legacy success flag")
     execution_time_ms: int = Field(default=0, description="Execution time")
@@ -1309,6 +1309,8 @@ def register_core_skills() -> SkillRegistry:
 
 __all__ = [
     "AFOSkillCard",
+    # Registry
+    "AFOSkillCard",
     "ExecutionMode",
     "MCPConfig",
     # Models
@@ -1316,15 +1318,13 @@ __all__ = [
     # Enums
     "SkillCategory",
     "SkillExecutionRequest",
+    "SkillExecutionRequest",
     "SkillExecutionResult",
+    "SkillExecutionResult",
+    "SkillFilterParams",
     "SkillFilterParams",
     "SkillIOSchema",
     "SkillParameter",
-    # Registry
-    "AFOSkillCard",
-    "SkillExecutionRequest",
-    "SkillExecutionResult",
-    "SkillFilterParams",
     "register_core_skills",
 ]
 
@@ -1412,6 +1412,6 @@ try:
     SkillExecutionRequest.model_rebuild()
     SkillExecutionResult.model_rebuild()
     AFOSkillCard.model_rebuild()
-except Exception as e:
+except Exception:
     pass
 
