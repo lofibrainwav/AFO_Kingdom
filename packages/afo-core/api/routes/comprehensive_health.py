@@ -19,7 +19,7 @@ import logging
 from datetime import datetime
 from typing import Any
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Response
 
 from AFO.config.health_check_config import health_check_config
 from AFO.services.health_service import get_comprehensive_health
@@ -85,7 +85,7 @@ async def trinity_monitor_trend(window_minutes: int = 60) -> dict[str, Any]:
 
 
 @router.get("/comprehensive")
-async def comprehensive_health_check() -> dict[str, Any]:
+async def comprehensive_health_check(response: Response) -> dict[str, Any]:
     """
     종합 건강 상태 진단 (야전교범 원칙 준수)
 
@@ -160,6 +160,11 @@ async def comprehensive_health_check() -> dict[str, Any]:
                 ],
             },
         }
+
+        # HTTP 캐시 헤더 설정 (브라우저 캐시 30초)
+        response.headers["Cache-Control"] = "max-age=30, private"
+        response.headers["X-Cache-Source"] = "server-cache"
+
     except Exception as e:
         logger.error(f"Comprehensive health check failed: {e}")
         return {
