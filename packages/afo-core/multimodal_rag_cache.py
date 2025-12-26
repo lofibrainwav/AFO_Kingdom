@@ -15,7 +15,7 @@ import json
 import logging
 from typing import Any, Optional
 
-from AFO.utils.redis_connection import get_redis_client
+from AFO.utils.redis_connection import get_redis_client as get_redis_connection
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -36,7 +36,7 @@ def get_redis_client() -> Optional[Any]:
     global _redis_client
     if _redis_client is None:
         try:
-            _redis_client = get_redis_client()
+            _redis_client = get_redis_connection()
             logger.info("✅ Multimodal RAG Cache Redis client 자동 설정됨")
         except Exception as e:
             logger.warning(f"⚠️ Multimodal RAG Cache Redis 연결 실패: {e}")
