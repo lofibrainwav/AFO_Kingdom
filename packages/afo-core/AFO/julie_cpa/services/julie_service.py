@@ -21,7 +21,7 @@ Philosophy:
 from __future__ import annotations
 
 import logging
-from typing import Any, Optional
+from typing import Any, Optional, cast
 
 # Core domain imports
 from AFO.julie_cpa.domain.financial_models import FinancialTransaction
@@ -29,13 +29,27 @@ from AFO.julie_cpa.infrastructure.financial_connector import FinancialConnector
 from AFO.julie_cpa.prophet_engine import get_kingdom_forecast
 from AFO.julie_cpa.utils.friction_manager import FrictionManager
 
+# ValidatedAction 계약 (Week 2 SSOT 경계)
+from AFO.serenity.action_validator import ValidatedAction
+
+
+def as_validated_action(x: dict[str, Any]) -> ValidatedAction:
+    """ValidatedAction 타입 경계 함수 (Any 누수 차단)"""
+    return cast(ValidatedAction, x)
+
+
+def as_validated_actions(xs: list[dict[str, Any]]) -> list[ValidatedAction]:
+    """ValidatedAction 리스트 타입 경계 함수"""
+    return [as_validated_action(x) for x in xs]
+
+
 # AI Router (Truth & Goodness) with graceful import
 try:
     from AFO.llm_router import llm_router
 
     LLM_ROUTER_AVAILABLE = True
 except ImportError:
-    llm_router = None
+    llm_router = None  # type: ignore[assignment]
     LLM_ROUTER_AVAILABLE = False
 
 # Configure logging
@@ -66,7 +80,7 @@ class RoyalStatusProvider:
             상태 정보 딕셔너리
         """
         # Calculate Risk based on Friction logic
-        friction_score = await self.friction_manager.calculate_current_friction()
+        friction_score = self.friction_manager.assess_friction({})
 
         alerts = []
         if friction_score > 10:
@@ -115,7 +129,7 @@ class FinancialDashboardProvider:
         await self.connector.fetch_bank_data("KB-1234")
 
         # Calculate health score
-        friction_score = await self.friction_manager.calculate_current_friction()
+        friction_score = self.friction_manager.assess_friction({})
         financial_health_score = max(0, 100 - friction_score * 2)
 
         # Generate AI advice
@@ -148,7 +162,7 @@ class FinancialDashboardProvider:
             )
 
             ai_response = await llm_router.execute_with_routing(prompt)
-            return ai_response.get("response", "Financial data analysis unavailable.")
+            return cast(str, ai_response.get("response", "Financial data analysis unavailable."))
         except Exception as e:
             logger.warning(f"AI advice generation failed: {e}")
             return "Review cloud infrastructure costs for potential savings."
@@ -253,8 +267,8 @@ class TransactionProcessor:
         logger.info(f"Processing transaction (dry_run={dry_run})")
 
         # Validate friction
-        friction = await self.friction_manager.assess_friction(request_data)
-        if await self.friction_manager.check_fog_of_war(friction):
+        friction = self.friction_manager.assess_friction(request_data)
+        if self.friction_manager.check_fog_of_war(friction):
             return {
                 "success": False,
                 "reason": "Fog of War Detected (High Friction)",
@@ -435,13 +449,13 @@ class TaxCalculator:
     ) -> tuple[float, float]:
         """연방 세금을 계산합니다."""
         brackets = [
-            (23200 if filing_status == "mfj" else 11600, 0.10),
-            (94300 if filing_status == "mfj" else 47150, 0.12),
-            (201050 if filing_status == "mfj" else 100525, 0.22),
-            (383900 if filing_status == "mfj" else 191950, 0.24),
-            (487450 if filing_status == "mfj" else 243725, 0.32),
-            (731200 if filing_status == "mfj" else 609350, 0.35),
-            (float("inf"), 0.37),
+            (int(23200 if filing_status == "mfj" else 11600), 0.10),
+            (int(94300 if filing_status == "mfj" else 47150), 0.12),
+            (int(201050 if filing_status == "mfj" else 100525), 0.22),
+            (int(383900 if filing_status == "mfj" else 191950), 0.24),
+            (int(487450 if filing_status == "mfj" else 243725), 0.32),
+            (int(731200 if filing_status == "mfj" else 609350), 0.35),
+            (int(float("inf")), 0.37),
         ]
 
         fed_tax = 0.0
@@ -563,14 +577,14 @@ class JulieService:
         """Initialize Julie CPA service with beautiful code principles."""
         # Initialize core components
         self.connector = FinancialConnector()
-        friction_manager = FrictionManager()
+        self.friction_manager = FrictionManager()
 
         # Initialize specialized providers
-        self.status_provider = RoyalStatusProvider(friction_manager)
+        self.status_provider = RoyalStatusProvider(self.friction_manager)
         self.dashboard_provider = FinancialDashboardProvider(
-            self.connector, friction_manager
+            self.connector, self.friction_manager
         )
-        self.transaction_processor = TransactionProcessor(self.connector, friction_manager)
+        self.transaction_processor = TransactionProcessor(self.connector, self.friction_manager)
         self.tax_calculator = TaxCalculator()
 
         logger.info("Julie CPA Service initialized with beautiful code principles")
@@ -777,13 +791,13 @@ class JulieService:
         remaining = taxable_income
 
         brackets = [
-            (23200 if filing_status == "mfj" else 11600, 0.10),
-            (94300 if filing_status == "mfj" else 47150, 0.12),
-            (201050 if filing_status == "mfj" else 100525, 0.22),
-            (383900 if filing_status == "mfj" else 191950, 0.24),
-            (487450 if filing_status == "mfj" else 243725, 0.32),
-            (731200 if filing_status == "mfj" else 609350, 0.35),
-            (float("inf"), 0.37),
+            (int(23200 if filing_status == "mfj" else 11600), 0.10),
+            (int(94300 if filing_status == "mfj" else 47150), 0.12),
+            (int(201050 if filing_status == "mfj" else 100525), 0.22),
+            (int(383900 if filing_status == "mfj" else 191950), 0.24),
+            (int(487450 if filing_status == "mfj" else 243725), 0.32),
+            (int(731200 if filing_status == "mfj" else 609350), 0.35),
+            (int(float("inf")), 0.37),
         ]
 
         previous_limit = 0
