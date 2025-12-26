@@ -35,8 +35,8 @@ except ImportError:
 
 # 건강 체크 캐시 설정
 import json
-from typing import Optional
 import time
+from typing import Optional
 
 # 캐시 설정
 HEALTH_CACHE_TTL = 30  # 30초 캐시
@@ -44,11 +44,10 @@ HEALTH_CACHE_KEY = "afo:health:comprehensive"
 INDIVIDUAL_CACHE_TTL = 60  # 개별 체크 60초 캐시
 
 # 캐시 저장소 (메모리 + Redis)
-_health_cache: Optional[dict] = None
+_health_cache: dict | None = None
 _cache_timestamp: float = 0
 
 # 동시성 제한
-import asyncio
 _semaphore = asyncio.Semaphore(5)  # 최대 5개 동시 실행
 
 
@@ -142,7 +141,7 @@ async def get_comprehensive_health() -> dict[str, Any]:
                 ),
                 timeout=10.0  # 10초 타임아웃
             )
-        except asyncio.TimeoutError:
+        except TimeoutError:
             logger.warning("Health check timed out after 10 seconds")
             results = [
                 {"healthy": False, "output": "Timeout"},
