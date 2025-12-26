@@ -16,7 +16,9 @@ import { GitWidget } from "./widgets/GitWidget";
 import RoyalFinanceWidget from "./widgets/RoyalFinanceWidget";
 import { SystemStatusWidget } from "./widgets/SystemStatusWidget";
 import { KingdomHistoryWidget } from "./widgets/KingdomHistoryWidget";
+import { WorkflowDesigner } from "./widgets/WorkflowDesigner";
 import SkillsRegistry from "../skills/SkillsRegistry";
+import GenUICreator from "../genui/GenUICreator";
 
 import { ROYAL_CONSTANTS } from "../../config/royal_constants";
 import { TrinityEvidenceWidget } from "../genui/TrinityEvidenceWidget";
@@ -148,7 +150,25 @@ export default function RoyalLayout() {
         {/* 6. System Architecture (Blueprints) */}
         <RoyalArchitecture />
 
-        {/* 7. Royal Library & SSOT (Archives) */}
+        {/* 7. Workflow Designer (LangGraph UI) - T28 */}
+        <section>
+          <div className="flex items-center gap-4 mb-4">
+            <h2 className="text-xl font-bold text-slate-600">⚙️ Workflow Designer (LangGraph)</h2>
+            <div className="h-[1px] flex-1 bg-slate-300" />
+          </div>
+          <WorkflowDesigner />
+        </section>
+
+        {/* 8. GenUI Creator (Template-based UI Generation) - T29 */}
+        <section>
+          <div className="flex items-center gap-4 mb-4">
+            <h2 className="text-xl font-bold text-slate-600">🎨 GenUI Creator (Template System)</h2>
+            <div className="h-[1px] flex-1 bg-slate-300" />
+          </div>
+          <GenUICreator />
+        </section>
+
+        {/* 9. Royal Library & SSOT (Archives) */}
         <RoyalLibrary />
       </div>
 
