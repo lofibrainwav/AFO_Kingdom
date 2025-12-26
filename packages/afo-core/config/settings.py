@@ -282,10 +282,18 @@ def get_settings(env: str | None = None) -> AFOSettings:
         _settings = settings_class()
 
         # Context7 trinity-os 패키지 경로 추가 (Python Path 확장)
-        trinity_os_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'trinity-os'))
-        if trinity_os_path not in sys.path:
+        # 환경변수 우선 사용, 없으면 자동 계산
+        trinity_os_path = os.environ.get("AFO_TRINITY_OS_PATH")
+        if not trinity_os_path:
+            trinity_os_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'trinity-os'))
+
+        if trinity_os_path and os.path.exists(trinity_os_path) and trinity_os_path not in sys.path:
             sys.path.insert(0, trinity_os_path)
             print(f"✅ Context7 trinity-os 경로 추가: {trinity_os_path}")
+        elif not os.path.exists(trinity_os_path):
+            print(f"⚠️ Context7 trinity-os 경로 없음: {trinity_os_path}")
+        else:
+            print(f"✅ Context7 trinity-os 경로 이미 추가됨: {trinity_os_path}")
 
         print(f"✅ AFO 설정 로드 완료: {env} 환경 ({settings_class.__name__})")
 
