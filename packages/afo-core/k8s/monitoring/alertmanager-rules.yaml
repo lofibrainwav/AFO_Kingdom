@@ -128,3 +128,45 @@ groups:
       annotations:
         summary: "5xx 에러율 높음"
         description: "5xx 에러율 5% 초과 – 서비스 장애 위험"
+
+    # --- Chancellor V2 Alerts (PH22-02) ---
+    - alert: ChancellorVerifyFail
+      expr: rate(chancellor_v2_verify_fail_total[5m]) > 5
+      for: 2m
+      labels:
+        severity: warning
+        service: chancellor_v2
+      annotations:
+        summary: "Chancellor V2 검증 실패 급증"
+        description: "최근 5분간 VERIFY 실패 > 5회 – 그래프 실행 품질 저하"
+
+    - alert: ChancellorExecuteBlocked
+      expr: rate(chancellor_v2_execute_blocked_total[5m]) > 10
+      for: 2m
+      labels:
+        severity: warning
+        service: chancellor_v2
+      annotations:
+        summary: "Chancellor V2 Allowlist 차단 급증"
+        description: "최근 5분간 403 차단 > 10회 – 미승인 스킬 호출 시도"
+
+    - alert: ChancellorTraceGap
+      expr: time() - chancellor_v2_trace_last_created_timestamp > 3600
+      for: 5m
+      labels:
+        severity: critical
+        service: chancellor_v2
+      annotations:
+        summary: "Chancellor V2 실행 중단"
+        description: "60분 이상 새 trace 없음 – 그래프 실행 중단 의심"
+
+    - alert: ChancellorArtifactsDiskHigh
+      expr: chancellor_v2_artifacts_bytes > 1073741824
+      for: 10m
+      labels:
+        severity: warning
+        service: chancellor_v2
+      annotations:
+        summary: "Chancellor V2 아티팩트 디스크 과다"
+        description: "artifacts 용량 1GB 초과 – prune 스크립트 실행 필요"
+
