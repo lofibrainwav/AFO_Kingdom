@@ -236,9 +236,10 @@ async def rerank_node(state: ChancellorState) -> dict[str, Any]:
     return {"status": "RERANKED"}
 
 
-async def summarize_history_node(state: ChancellorState) -> dict[str, Any]:
+def summarize_history_node(state: ChancellorState) -> dict[str, Any]:
     """
     [Summary] 永 - 대화 요약 및 압축 (ConversationSummaryBufferMemory logic)
+    Synchronous version for LangGraph entry point compatibility
     """
     messages = state.get("messages", [])
     current_summary = state.get("summary", "")
@@ -253,22 +254,12 @@ async def summarize_history_node(state: ChancellorState) -> dict[str, Any]:
 
     if len(messages) > threshold:
         try:
-            from AFO.julie_cpa.grok_engine import consult_grok
-
+            # Simplified synchronous version - avoid async operations in entry point
             log_sse("🔄 [Eternity] Compressing long-term memory...")
 
-            prompt = {
-                "task": "summarize",
-                "current_summary": current_summary,
-                "new_messages": [m.content for m in messages[-5:]],
-            }
-            # ... rest of logic
-
-            analysis = await consult_grok(
-                prompt, market_context="memory_compression", trinity_score=95
-            )
-
-            new_summary = analysis.get("analysis", current_summary)
+            # For now, just truncate messages without complex summarization
+            # This prevents blocking the graph initialization
+            new_summary = current_summary + f" [Compressed {len(messages)} messages]"
             return {
                 "summary": new_summary,
                 "messages": messages[-3:],
