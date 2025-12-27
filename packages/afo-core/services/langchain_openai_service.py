@@ -61,25 +61,8 @@ LANGCHAIN_CONFIG = {
     "output_key": "output",
 }
 
-
-class AIRequest(BaseModel):
-    """AI 요청 모델"""
-
-    prompt: str = Field(..., description="AI 프롬프트")
-    context: dict[str, Any] | None = Field(None, description="추가 컨텍스트")
-    temperature: float | None = Field(None, description="온도 설정")
-    max_tokens: int | None = Field(None, description="최대 토큰 수")
-    use_cache: bool = Field(True, description="캐시 사용 여부")
-
-
-class AIResponse(BaseModel):
-    """AI 응답 모델"""
-
-    response: str = Field(..., description="AI 응답 텍스트")
-    usage: dict[str, int] = Field(default_factory=dict, description="토큰 사용량")
-    cached: bool = Field(False, description="캐시에서 제공 여부")
-    processing_time: float = Field(0.0, description="처리 시간 (초)")
-    model: str = Field("", description="사용된 모델")
+# AI 모델 contracts에서 import (PH12-001: symlink 호환 기본값)
+from services.contracts.ai_request import AIRequest, AIResponse
 
 
 class PromptTemplateManager:
