@@ -9,6 +9,8 @@ from typing import Any
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
+from api.guards.skills_allowlist_guard import is_skill_allowed
+
 # Skills Registry
 # try:
 #     from afo_skills_registry import SkillRegistry, register_core_skills
@@ -333,6 +335,11 @@ async def execute_skill(request: SkillExecutionRequest) -> SkillExecutionRespons
     """
     Skill 실행
     """
+    # Stage 2 Allowlist Enforcement (PH21-S2)
+    allowed, reason = is_skill_allowed(request.skill_id)
+    if not allowed:
+        raise HTTPException(status_code=403, detail=reason)
+
     try:
         if SkillRegistry is None:
             raise HTTPException(status_code=503, detail="Skills Registry not available")
