@@ -21,7 +21,7 @@ Philosophy:
 from __future__ import annotations
 
 import logging
-from typing import Any, Optional, cast
+from typing import TYPE_CHECKING, Any, Optional, cast
 
 # Core domain imports
 from AFO.julie_cpa.domain.financial_models import FinancialTransaction
@@ -30,7 +30,9 @@ from AFO.julie_cpa.prophet_engine import get_kingdom_forecast
 from AFO.julie_cpa.utils.friction_manager import FrictionManager
 
 # ValidatedAction 계약 (Week 2 SSOT 경계)
-from AFO.serenity.action_validator import ValidatedAction
+
+if TYPE_CHECKING:
+    from AFO.serenity.action_validator import ValidatedAction
 
 
 def as_validated_action(x: dict[str, Any]) -> ValidatedAction:
