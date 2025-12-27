@@ -70,16 +70,44 @@ def _checkpoint(state: GraphState, step: str) -> None:
     save_checkpoint(state.trace_id, step, payload)
 
 
-def run_v2(input_payload: dict[str, Any], nodes: dict[str, NodeFn]) -> GraphState:
+def run_v2(
+    input_payload: dict[str, Any],
+    nodes: dict[str, NodeFn],
+    *,
+    enable_thinking: bool = True,
+    enable_context7: bool = True,
+) -> GraphState:
     """Execute graph with provided nodes.
 
     Args:
         input_payload: Input from commander
         nodes: Dict mapping step names to node functions
+        enable_thinking: Enable Sequential Thinking MCP integration
+        enable_context7: Enable Context7 knowledge injection
 
     Returns:
         Final GraphState after execution
     """
+    # Import thinking/context modules lazily to avoid circular imports
+    thinking_apply = None
+    context7_inject = None
+
+    if enable_thinking:
+        try:
+            from api.chancellor_v2.thinking import apply_sequential_thinking
+
+            thinking_apply = apply_sequential_thinking
+        except ImportError:
+            pass
+
+    if enable_context7:
+        try:
+            from api.chancellor_v2.context7 import inject_context
+
+            context7_inject = inject_context
+        except ImportError:
+            pass
+
     trace_id = uuid.uuid4().hex
     state = GraphState(
         trace_id=trace_id,
@@ -89,9 +117,29 @@ def run_v2(input_payload: dict[str, Any], nodes: dict[str, NodeFn]) -> GraphStat
         updated_at=_now(),
     )
 
+    # Track thinking/context7 status
+    state.outputs["_meta"] = {
+        "thinking_enabled": thinking_apply is not None,
+        "context7_enabled": context7_inject is not None,
+    }
+
     for step in ORDER:
         state.step = step
         _emit(state, step, "enter", True)
+
+        # Apply Sequential Thinking before node (眞: step-by-step reasoning)
+        if thinking_apply is not None:
+            try:
+                state = thinking_apply(state, step)
+            except Exception as e:
+                _emit(state, step, "thinking_error", False, {"error": str(e)})
+
+        # Inject Context7 knowledge before node (眞: knowledge grounding)
+        if context7_inject is not None:
+            try:
+                state = context7_inject(state, step)
+            except Exception as e:
+                _emit(state, step, "context7_error", False, {"error": str(e)})
 
         fn = nodes.get(step)
         if fn is None:
