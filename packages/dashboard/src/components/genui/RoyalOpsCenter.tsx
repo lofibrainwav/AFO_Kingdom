@@ -43,32 +43,47 @@ export default function RoyalOpsCenter({ trinityScore, healthData }: RoyalOpsCen
   // SSE Log Stream Integration
   const handleLogMessage = useCallback((event: MessageEvent) => {
     if (!event.data) return;
-    setLogs((prev) => {
-      const newLogs = [...prev, event.data];
-      if (newLogs.length > 50) return newLogs.slice(newLogs.length - 50); // Keep last 50
-      return newLogs;
-    });
+    try {
+        const data = JSON.parse(event.data);
+        const logMsg = data.message || event.data;
+        
+        setLogs((prev) => {
+          const newLogs = [...prev, logMsg];
+          if (newLogs.length > 50) return newLogs.slice(newLogs.length - 50);
+          return newLogs;
+        });
+    } catch (e) {
+        // Fallback for non-json logs
+        setLogs((prev) => {
+          const newLogs = [...prev, event.data];
+          if (newLogs.length > 50) return newLogs.slice(newLogs.length - 50);
+          return newLogs;
+        });
+    }
   }, []);
 
   useEffect(() => {
-    console.log("[Chancellor Stream] Connecting to SSE endpoint:", `${API_BASE}/logs/stream`);
+    // Use Next.js proxy for SSE to avoid CORS issues
+    // The proxy is configured in next.config.ts: /api/logs/stream -> backend/logs/stream
+    const ssePath = "/api/logs/stream";
+    
+    console.log("[Chancellor Stream] Connecting to SSE via proxy:", ssePath);
 
-    // Chancellor Stream: Connect to SSE logs endpoint
-    const eventSource = new EventSource(`${API_BASE}/logs/stream`);
+    const eventSource = new EventSource(ssePath);
 
     eventSource.onopen = () => {
-      console.log("[Chancellor Stream] SSE connection opened successfully");
-      setLogs(prev => [...prev, "[SSE] Chancellor Stream 연결됨 - 실시간 모니터링 시작"]);
+      console.log("[Chancellor Stream] SSE opened");
+      setLogs(prev => [...prev, "✨ Chancellor Stream Connected"]);
     };
 
     eventSource.onmessage = (event) => {
-      console.log("[Chancellor Stream] Message received:", event.data);
       handleLogMessage(event);
     };
 
     eventSource.onerror = (err) => {
-      console.error("[Chancellor Stream] SSE connection error:", err);
-      setLogs(prev => [...prev, "[SSE ERROR] Chancellor Stream 연결 실패 - 재연결 시도 중"]);
+      // Don't log full error object to avoid "{}" in console
+      console.error("[Chancellor Stream] Connection error. Reconnecting...");
+      // Optional: setLogs(prev => [...prev, "⚠️ Connection Lost - Retrying..."]);
     };
 
     // Send initial connection test
