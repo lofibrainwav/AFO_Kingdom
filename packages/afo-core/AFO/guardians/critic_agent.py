@@ -31,9 +31,7 @@ class CriticAgent:
         self.role = "Guardian Critic"
         logger.info(f"🛡️ Guardian {self.name} Awoken.")
 
-    async def critique_code(
-        self, code_snippet: str, context: str = ""
-    ) -> EvaluationResult:
+    async def critique_code(self, code_snippet: str, context: str = "") -> EvaluationResult:
         """
         Analyzes code for Trinity Compliance.
         Currently a logic skeleton - will connect to LLM later.
@@ -48,9 +46,7 @@ class CriticAgent:
 
         # 2. Goodness Check (Safety)
         if "os.system" in code_snippet or "subprocess.call" in code_snippet:
-            feedback.append(
-                "⚠️ Goodness: Shell execution detected. Ensure safety gates."
-            )
+            feedback.append("⚠️ Goodness: Shell execution detected. Ensure safety gates.")
             score -= 5
 
         # 3. Beauty Check (Simulated)

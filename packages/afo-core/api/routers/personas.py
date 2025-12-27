@@ -183,9 +183,7 @@ async def list_personas() -> dict[str, Any]:
                             "trinity_os_persona_id"
                         ),
                         context=PersonaContext(
-                            current_role=DEFAULT_PERSONAS[persona_id].get(
-                                "role", "Unknown"
-                            )
+                            current_role=DEFAULT_PERSONAS[persona_id].get("role", "Unknown")
                         ),
                     )
                     personas.append(persona)
@@ -233,9 +231,7 @@ async def get_persona(persona_id: str) -> dict[str, Any]:
         HTTPException: 페르소나를 찾을 수 없을 때
     """
     if persona_id not in DEFAULT_PERSONAS:
-        raise HTTPException(
-            status_code=404, detail=f"페르소나를 찾을 수 없습니다: {persona_id}"
-        )
+        raise HTTPException(status_code=404, detail=f"페르소나를 찾을 수 없습니다: {persona_id}")
 
     persona_data = DEFAULT_PERSONAS[persona_id]
 
@@ -322,9 +318,7 @@ async def switch_persona(request: PersonaSwitchRequest) -> dict[str, Any]:
     except ImportError as e:
         logger.warning("Family Hub integration not available: %s", str(e))
     except (ValueError, KeyError, OSError) as e:
-        logger.warning(
-            "Failed to log persona switch (값/키/파일 시스템 에러): %s", str(e)
-        )
+        logger.warning("Failed to log persona switch (값/키/파일 시스템 에러): %s", str(e))
     except Exception as e:  # - Intentional fallback for unexpected errors
         logger.debug("Failed to log persona switch (예상치 못한 에러): %s", str(e))
 
@@ -381,9 +375,7 @@ async def get_persona_trinity_score(persona_id: str) -> dict[str, Any]:
         HTTPException: 페르소나를 찾을 수 없을 때
     """
     if persona_id not in DEFAULT_PERSONAS:
-        raise HTTPException(
-            status_code=404, detail=f"페르소나를 찾을 수 없습니다: {persona_id}"
-        )
+        raise HTTPException(status_code=404, detail=f"페르소나를 찾을 수 없습니다: {persona_id}")
 
     persona_data = DEFAULT_PERSONAS[persona_id]
 
@@ -417,13 +409,9 @@ async def get_persona_trinity_score(persona_id: str) -> dict[str, Any]:
                 "calculated_at": score_result.get("calculated_at"),
             }
         except (ValueError, TypeError, AttributeError) as e:
-            logger.warning(
-                "Trinity Score 계산 실패 (값/타입/속성 에러), 기본값 사용: %s", str(e)
-            )
+            logger.warning("Trinity Score 계산 실패 (값/타입/속성 에러), 기본값 사용: %s", str(e))
         except Exception as e:  # - Intentional fallback for unexpected errors
-            logger.warning(
-                "Trinity Score 계산 실패 (예상치 못한 에러), 기본값 사용: %s", str(e)
-            )
+            logger.warning("Trinity Score 계산 실패 (예상치 못한 에러), 기본값 사용: %s", str(e))
 
     # Fallback: 기본값 반환
     if PERSONA_MODELS_AVAILABLE:

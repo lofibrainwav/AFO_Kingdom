@@ -33,9 +33,7 @@ async def execute_skill(context: dict[str, Any] | None = None) -> dict[str, Any]
     Returns:
         검증 결과 리포트
     """
-    console.print(
-        "[bold blue]🛡️ [Rule #1] Weapon Check: Verifying System Integrity...[/bold blue]"
-    )
+    console.print("[bold blue]🛡️ [Rule #1] Weapon Check: Verifying System Integrity...[/bold blue]")
 
     try:
         from services.health_service import get_comprehensive_health
@@ -47,14 +45,10 @@ async def execute_skill(context: dict[str, Any] | None = None) -> dict[str, Any]
         details = health_data.get("organs", {})
 
         # 2. 결과 출력
-        console.print(
-            f"\n[bold green]⚖️ Trinity Score: {trinity_score}/100[/bold green]"
-        )
+        console.print(f"\n[bold green]⚖️ Trinity Score: {trinity_score}/100[/bold green]")
 
         for component, status in details.items():
-            is_healthy = (
-                status.get("healthy") is True or status.get("status") == "healthy"
-            )
+            is_healthy = status.get("healthy") is True or status.get("status") == "healthy"
             icon = "✅" if is_healthy else "❌"
             console.print(f"{icon} {component}: {status.get('output', 'Unknown')}")
 

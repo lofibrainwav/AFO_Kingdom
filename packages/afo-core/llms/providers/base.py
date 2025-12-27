@@ -1,8 +1,16 @@
 # Trinity Score: 90.0 (Established by Chancellor)
 from abc import ABC, abstractmethod
-from typing import Any
+from typing import Any, Protocol
 
 from AFO.llm_router import LLMConfig
+
+
+class LLMProvider(Protocol):
+    """
+    LLM Provider Protocol (眞: 봉인된 인터페이스)
+    """
+
+    async def generate_response(self, prompt: str, **kwargs: Any) -> str: ...
 
 
 class BaseLLMProvider(ABC):
@@ -17,6 +25,13 @@ class BaseLLMProvider(ABC):
     ) -> str:
         """
         Generate text response from the LLM.
+        """
+        pass
+
+    @abstractmethod
+    async def generate_response(self, prompt: str, **kwargs: Any) -> str:
+        """
+        Public contract for response generation (Royal Standard).
         """
         pass
 

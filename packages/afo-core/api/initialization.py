@@ -7,7 +7,7 @@ Handles system component initialization during FastAPI lifespan startup.
 
 import asyncio
 import logging
-from typing import Any
+from typing import Any, cast
 
 logger = logging.getLogger(__name__)
 
@@ -41,6 +41,9 @@ async def initialize_system() -> None:
         # Initialize AntiGravity controls
         await _initialize_antigravity()
 
+        # Initialize Database Connections (Redis needed for RAG cache)
+        await _initialize_databases()
+
         # Initialize RAG engines
         await _initialize_rag_engines()
 
@@ -56,15 +59,10 @@ async def initialize_system() -> None:
         # Initialize Strategy Engine
         await _initialize_strategy_engine()
 
-        # Initialize Database Connections
-        await _initialize_databases()
-
         # Initialize LLM Clients
         await _initialize_llm_clients()
 
-        print(
-            "[지휘소 v6】 '진정한 두뇌' (Chancellor Graph) 가동 준비 완료. (True Intelligence)"
-        )
+        print("[지휘소 v6】 '진정한 두뇌' (Chancellor Graph) 가동 준비 완료. (True Intelligence)")
 
     except Exception as e:
         logger.error(f"System initialization failed: {e}")
@@ -98,9 +96,7 @@ async def _initialize_antigravity() -> None:
             )
 
         if antigravity and antigravity.DRY_RUN_DEFAULT:
-            print(
-                "🛡️ [AntiGravity] DRY_RUN 모드 활성화 - 모든 위험 동작 시뮬레이션 (善)"
-            )
+            print("🛡️ [AntiGravity] DRY_RUN 모드 활성화 - 모든 위험 동작 시뮬레이션 (善)")
     except Exception as e:
         print(f"⚠️ AntiGravity 초기화 실패: {e}")
 
@@ -141,15 +137,20 @@ async def _initialize_multimodal_rag() -> None:
 
     # Initialize Multimodal RAG Cache
     try:
+        print(f"🔍 Multimodal RAG Cache 초기화 시도... REDIS_CLIENT: {REDIS_CLIENT is not None}")
         from multimodal_rag_cache import set_redis_client as _src
 
+        print("✅ Multimodal RAG Cache 모듈 import 성공")
+
         if REDIS_CLIENT:
-            _src(REDIS_CLIENT)
-            print("[Multimodal RAG Cache] 캐시 시스템 초기화 완료 (Redis 통합)")
+            _src(REDIS_CLIENT)  # type: ignore[unreachable]
+            print("✅ [Multimodal RAG Cache] 캐시 시스템 초기화 완료 (Redis 통합)")
         else:
-            print("⚠️ Multimodal RAG Cache 건너뜀 (Redis 또는 캐시 모듈 없음)")
-    except ImportError:
-        print("⚠️ Multimodal RAG Cache 건너뜀 (Multimodal RAG Phase 5 구현 필요)")
+            print("⚠️ Multimodal RAG Cache 건너뜀 (Redis 클라이언트 없음)")
+    except ImportError as e:
+        print(f"⚠️ Multimodal RAG Cache 건너뜀 (모듈 import 실패: {e})")
+    except Exception as e:
+        print(f"⚠️ Multimodal RAG Cache 건너뜀 (초기화 실패: {e})")
 
 
 async def _initialize_skills_registry() -> None:
@@ -161,9 +162,7 @@ async def _initialize_skills_registry() -> None:
 
         skill_registry = _rcs()
         skill_count = (
-            skill_registry.count()
-            if skill_registry and hasattr(skill_registry, "count")
-            else 0
+            skill_registry.count() if skill_registry and hasattr(skill_registry, "count") else 0
         )
         print(f"ℹ️ [INFO] {skill_count} Skills loaded in simulation mode")
     except ImportError:
@@ -191,9 +190,9 @@ async def _initialize_yeongdeok() -> None:
         print("[영덕] 영덕 완전체 준비 완료 - 뇌/눈/귀/팔 모두 연결됨")
     except ImportError:
         try:
-            from memory_system.yeongdeok_complete import YeongdeokComplete as _YC
+            from memory_system.yeongdeok_complete import YeongdeokComplete as _YC_FB
 
-            yeongdeok = _YC(
+            yeongdeok = _YC_FB(
                 n8n_url="",
                 n8n_api_key="",
                 enable_llm_brain=False,
@@ -227,9 +226,7 @@ async def _initialize_strategy_engine() -> None:
             from chancellor_graph import chancellor_graph
 
         strategy_app_runnable = chancellor_graph
-        print(
-            "[지휘소 v6】 '진정한 두뇌' (Chancellor Graph) 가동 준비 완료. (True Intelligence)"
-        )
+        print("[지휘소 v6】 '진정한 두뇌' (Chancellor Graph) 가동 준비 완료. (True Intelligence)")
     except ImportError:
         # Fallback to Workflow Mock Compilation
         try:
@@ -237,13 +234,11 @@ async def _initialize_strategy_engine() -> None:
             from strategy_engine import workflow as _wf
 
             if _wf and _mc:
-                strategy_app_runnable = _wf.compile(checkpointer=_mc)
+                strategy_app_runnable = cast("Any", _wf).compile(checkpointer=_mc)
                 print("[지휘소 v6】 '두뇌' (Mock) 가동 준비 완료.")
             else:
                 strategy_app_runnable = None
-                print(
-                    "⚠️ Strategy workflow 또는 memory_context 없음 - LangGraph 컴파일 건너뜀"
-                )
+                print("⚠️ Strategy workflow 또는 memory_context 없음 - LangGraph 컴파일 건너뜀")
         except (ImportError, AttributeError):
             strategy_app_runnable = None
             print("⚠️ LangGraph compilation failed - running in degraded mode")

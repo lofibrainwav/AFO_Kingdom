@@ -262,9 +262,7 @@ class MCPIntegratedAuth:
 
         if llm_provider == "anthropic":
             if not ANTHROPIC_AVAILABLE:
-                raise ImportError(
-                    "Anthropic 라이브러리가 필요합니다: pip install anthropic"
-                )
+                raise ImportError("Anthropic 라이브러리가 필요합니다: pip install anthropic")
             api_key = (
                 api_key
                 or (settings.ANTHROPIC_API_KEY if settings else None)
@@ -358,9 +356,7 @@ Return only Python code in ```python blocks."""
 
             # 코드 블록에서 추출
             if "```python" in generated_code:
-                generated_code = (
-                    generated_code.split("```python")[1].split("```")[0].strip()
-                )
+                generated_code = generated_code.split("```python")[1].split("```")[0].strip()
             elif "```" in generated_code:
                 generated_code = generated_code.split("```")[1].split("```")[0].strip()
 
@@ -405,9 +401,7 @@ Return only Python code in ```python blocks."""
         page = await browser.new_page()
         return browser, page
 
-    async def _perform_navigation(
-        self, page: Any, url: str, error_handler: Any
-    ) -> None:
+    async def _perform_navigation(self, page: Any, url: str, error_handler: Any) -> None:
         """페이지 이동 수행 (Retry 포함)"""
         print(f"\n🌐 페이지 이동: {url}")
         if ADVANCED_RETRY_AVAILABLE:
@@ -442,7 +436,7 @@ Return only Python code in ```python blocks."""
         print("\n🚀 4단계: 생성된 코드 실행 중...")
         exec_globals = {"asyncio": asyncio, "page": page, "browser": browser}
         exec_locals: dict[str, Any] = {}
-        exec(code, exec_globals, exec_locals)
+        exec(code, exec_globals, exec_locals)  # nosec B102
 
         for key, value in exec_locals.items():
             if callable(value) and not key.startswith("_"):

@@ -3,13 +3,21 @@
 # PDF 페이지 4: GenUI 시각 검증 + 지속 아키텍처
 import logging
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, TypedDict, cast
 
 from fastapi import HTTPException
 from playwright.async_api import Browser, Playwright, Route, async_playwright
 from playwright.async_api import TimeoutError as PlaywrightTimeout
 
 from AFO.config import antigravity
+
+
+class ViewportSize(TypedDict):
+    """뷰포트 크기 (眞: 타입 구체화)"""
+
+    width: int
+    height: int
+
 
 logger = logging.getLogger(__name__)
 
@@ -60,16 +68,12 @@ class PlaywrightBridgeMCP:
         """네트워크 인터셉션 설정 (善: 외부 의존성 제거)"""
         for scenario in self.mock_manager.scenarios:
 
-            async def handle_route(
-                route: Route, scenario: MockScenario = scenario
-            ) -> None:
+            async def handle_route(route: Route, scenario: MockScenario = scenario) -> None:
                 """Handle route interception for mocking."""
                 await route.fulfill(
                     status=scenario.status,
                     content_type=scenario.content_type,
-                    body=str(scenario.response_body).replace(
-                        "'", '"'
-                    ),  # 단순 JSON 변환
+                    body=str(scenario.response_body).replace("'", '"'),  # 단순 JSON 변환
                 )
 
             # 람다 대신 함수 정의로 클로저 문제 방지 가능 (현재는 단순 루프라 주의)
@@ -102,7 +106,7 @@ class PlaywrightBridgeMCP:
         # 새로운 컨텍스트 생성 (Tracing을 위해 필요)
         if not self.browser:
             raise RuntimeError("Browser not initialized")
-        context = await self.browser.new_context(viewport=vp)
+        context = await self.browser.new_context(viewport=cast("Any", vp))
 
         # Tracing 시작 (美: 투명한 디버깅)
         if enable_tracing:
@@ -134,9 +138,7 @@ class PlaywrightBridgeMCP:
             # 접근성 점수 (예시)
             if hasattr(page, "accessibility"):
                 accessibility = await page.accessibility.snapshot()
-                score = (
-                    len(accessibility.get("children", [])) / 10 if accessibility else 0
-                )
+                score = len(accessibility.get("children", [])) / 10 if accessibility else 0
             else:
                 score = 0
 
@@ -215,13 +217,11 @@ class PlaywrightBridgeMCP:
             # 2. 동적 코드 실행 (善: 안전한 샌드박스 실행)
             # 보안상 매우 위험할 수 있으므로 제한된 환경에서 실행해야 함 (현재는 데모)
             exec_globals: dict[str, Any] = {}
-            exec(test_code, exec_globals)
+            exec(test_code, exec_globals)  # nosec B102
             test_func = exec_globals.get("test_scenario")
 
             if not test_func:
-                raise ValueError(
-                    "생성된 코드에서 'test_scenario' 함수를 찾을 수 없습니다."
-                )
+                raise ValueError("생성된 코드에서 'test_scenario' 함수를 찾을 수 없습니다.")
 
             # 3. Playwright로 UI 실행 및 검증
             if not self.browser:

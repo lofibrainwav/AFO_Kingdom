@@ -1,0 +1,9 @@
+{
+  "pythonVersion": "3.12",
+  "typeCheckingMode": "basic",
+  "reportMissingTypeStubs": "none",
+  "executionEnvironments": [
+    { "root": "services", "typeCheckingMode": "strict" },
+    { "root": "AFO", "typeCheckingMode": "basic" }
+  ]
+}

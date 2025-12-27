@@ -434,11 +434,9 @@ class SettingsManager:
                 "app_name": os.getenv("AFO_APP_NAME", "AFO Kingdom"),
                 "version": os.getenv("AFO_VERSION", "1.0.0"),
                 "debug": os.getenv("AFO_DEBUG", "true").lower() == "true",
-                "host": os.getenv("AFO_HOST", "0.0.0.0"),
+                "host": os.getenv("AFO_HOST", "127.0.0.1"),
                 "port": int(os.getenv("AFO_PORT", "8010")),
-                "cors_origins": os.getenv(
-                    "AFO_CORS_ORIGINS", "http://localhost:3000"
-                ).split(","),
+                "cors_origins": os.getenv("AFO_CORS_ORIGINS", "http://localhost:3000").split(","),
                 "database_url": os.getenv("DATABASE_URL", "sqlite:///./test.db"),
                 "redis_url": os.getenv("REDIS_URL", "redis://localhost:6379"),
                 "ollama_url": os.getenv("OLLAMA_URL", "http://localhost:11434"),
@@ -459,7 +457,7 @@ class SettingsManager:
             "app_name": "AFO Kingdom",
             "version": "1.0.0",
             "debug": True,
-            "host": "0.0.0.0",
+            "host": "127.0.0.1",
             "port": 8010,
             "cors_origins": ["http://localhost:3000"],
         }
@@ -564,7 +562,15 @@ LMSTUDIO_AVAILABLE = False
 aicpa_router = _safe_import_router("AFO.api.routers.aicpa")
 auth_router = _safe_import_router("AFO.api.routers.auth")
 budget_router = _safe_import_router("AFO.api.routers.budget")
-chancellor_router = _safe_import_router("AFO.api.routers.chancellor_router")
+# Direct import for Chancellor Router to avoid import issues
+try:
+    from AFO.api.routers.chancellor_router import router as chancellor_router
+except ImportError:
+    try:
+        # Fallback for different working directory
+        from api.routers.chancellor_router import router as chancellor_router
+    except ImportError:
+        chancellor_router = None
 chat_router = _safe_import_router("AFO.api.routes.chat")
 council_router = _safe_import_router("AFO.api.routers.council")
 education_system_router = _safe_import_router("AFO.api.routers.thoughts")
@@ -670,3 +676,44 @@ class Settings:
 
     def __init__(self) -> None:
         pass
+
+
+# Chancellor API Models (眞: Truth 타입 안전성)
+try:
+    from pydantic import BaseModel
+except ImportError:
+    BaseModel = object  # type: ignore[assignment, misc]
+
+
+class ChancellorInvokeRequest(BaseModel):
+    """Chancellor 호출 요청 모델 - Phase 11 확장 (Strangler Fig)"""
+
+    input: str
+    engine: str | None = None
+    mode: str | None = None
+    options: dict[str, str] | None = None
+
+    # Phase 11 확장: chancellor_router.py 요구사항 추가
+    query: str | None = None  # Backward compatibility
+    timeout_seconds: int = 30
+    provider: str = "auto"
+    ollama_model: str | None = None
+    ollama_timeout_seconds: int | None = None
+    ollama_num_ctx: int | None = None
+    ollama_num_thread: int | None = None
+    max_tokens: int | None = None
+    temperature: float | None = None
+    thread_id: str | None = None
+    fallback_on_timeout: bool = True
+    auto_run: bool = True
+    max_strategists: int = 3
+
+
+class ChancellorInvokeResponse(BaseModel):
+    """Chancellor 호출 응답 모델"""
+
+    result: str
+    engine_used: str
+    execution_time: float
+    mode: str
+    metadata: dict[str, str] | None = None

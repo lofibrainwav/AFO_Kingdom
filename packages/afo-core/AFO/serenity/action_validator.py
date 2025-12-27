@@ -7,7 +7,7 @@ AFO Kingdom Action Validator - Visual Agent Safety Guardian
 from dataclasses import dataclass
 from datetime import UTC
 from enum import Enum
-from typing import Any, Optional
+from typing import Any, Optional, cast
 
 
 class SafetyLevel(Enum):
@@ -85,7 +85,7 @@ class ActionValidator:
         액션 리스트 전체 검증
         5개 게이트를 순차적으로 적용
         """
-        validated_actions = []
+        validated_actions: list[ValidatedAction] = []
 
         for i, action in enumerate(actions):
             try:
@@ -126,7 +126,7 @@ class ActionValidator:
         action_id = f"action_{index}"
 
         # 기본 검증
-        action_type = self._validate_action_type(action.get("type"))
+        action_type = self._validate_action_type(cast("str", action.get("type")))
         bbox = self._validate_bbox(action.get("bbox", {}))
         confidence = max(0.0, min(1.0, action.get("confidence", 0.0)))
 
@@ -180,9 +180,7 @@ class ActionValidator:
         # 최종 판정
         is_allowed = safety_level != SafetyLevel.BLOCK
         block_reason = (
-            None
-            if is_allowed
-            else f"Trinity Gate: {trinity_score}/90, Risk: {risk_score}/10"
+            None if is_allowed else f"Trinity Gate: {trinity_score}/90, Risk: {risk_score}/10"
         )
 
         return ValidatedAction(
@@ -254,9 +252,7 @@ class ActionValidator:
 
         return SafetyLevel.SAFE
 
-    def _calculate_action_risk(
-        self, action: dict[str, Any], context: dict[str, Any]
-    ) -> int:
+    def _calculate_action_risk(self, action: dict[str, Any], context: dict[str, Any]) -> int:
         """액션별 리스크 점수 계산 (0-100)"""
         risk_score = 0
 

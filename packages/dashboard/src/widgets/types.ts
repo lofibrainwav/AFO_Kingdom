@@ -13,9 +13,9 @@ export type WidgetMeta = {
   source?: "react" | "legacy-html" | "generated";
   tags?: string[];
   route?: string;
+  component?: () => Promise<{ default: React.ComponentType<any> }>;
 };
 
 export type WidgetRegistryEntry = {
   meta: WidgetMeta;
 };
-

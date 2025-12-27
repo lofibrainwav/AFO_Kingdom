@@ -21,9 +21,7 @@ class SecurityMiddleware(BaseHTTPMiddleware):
             r"(;)",
             r"(\bOR\b\s+\d+=\d+)",
         ]
-        self.sql_regex = re.compile(
-            "|".join(self.sql_injection_patterns), re.IGNORECASE
-        )
+        self.sql_regex = re.compile("|".join(self.sql_injection_patterns), re.IGNORECASE)
 
     async def dispatch(self, request: Request, call_next: Callable) -> Response:
         # Check Query Params
@@ -32,4 +30,4 @@ class SecurityMiddleware(BaseHTTPMiddleware):
                 logger.warning(f"🚨 Potential SQL Injection blocked: {key}={value}")
                 return Response("Security Violation Detected", status_code=403)
 
-        return await call_next(request)
+        return await call_next(request)  # type: ignore[no-any-return]

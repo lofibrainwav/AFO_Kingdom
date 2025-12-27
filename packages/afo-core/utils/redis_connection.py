@@ -94,5 +94,5 @@ async def close_redis_connections() -> None:
         _redis_client = None
 
     if _async_redis_client:
-        await _async_redis_client.aclose()
+        await _async_redis_client.close()
         _async_redis_client = None

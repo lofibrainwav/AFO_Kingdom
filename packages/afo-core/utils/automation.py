@@ -65,9 +65,7 @@ def auto_retry(
                     if attempt < config.max_retries - 1:
                         delay = config.base_delay
                         if config.exponential:
-                            delay = min(
-                                config.base_delay * (2**attempt), config.max_delay
-                            )
+                            delay = min(config.base_delay * (2**attempt), config.max_delay)
                         logger.warning(
                             f"[孝] 재시도 {attempt + 1}/{config.max_retries}: "
                             f"{func.__name__} ({e}) - {delay:.1f}s 대기"
@@ -115,9 +113,7 @@ def async_auto_retry(
                     if attempt < config.max_retries - 1:
                         delay = config.base_delay
                         if config.exponential:
-                            delay = min(
-                                config.base_delay * (2**attempt), config.max_delay
-                            )
+                            delay = min(config.base_delay * (2**attempt), config.max_delay)
                         logger.warning(
                             f"[孝] 비동기 재시도 {attempt + 1}/{config.max_retries}: "
                             f"{func.__name__} ({e}) - {delay:.1f}s 대기"
@@ -209,16 +205,12 @@ def cache_result(
                 result, cached_time = cache[key]
                 if now - cached_time < ttl_seconds:
                     logger.debug(f"[孝] 캐시 히트: {func.__name__}")
-                    # Cast Any back to T since we stored T
-                    from typing import cast
-
-                    return cast("T", result)
+                    # Result is already type T
+                    return result  # type: ignore[no-any-return]
 
             result = func(*args, **kwargs)
             cache[key] = (result, now)
-            from typing import cast
-
-            return cast("T", result)
+            return result
 
         return wrapper
 

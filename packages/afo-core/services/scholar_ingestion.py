@@ -14,21 +14,22 @@ try:
     from qdrant_client.http import models as models
 
     from AFO.services.hybrid_rag import query_graph_context, query_qdrant
+
+    _HAS_DEPS = True
 except ImportError:
     print("Warning: Missing dependencies for ingestion.")
-    QdrantClient = None
-    GraphDatabase = None
+    QdrantClient = None  # type: ignore[assignment, misc]
+    GraphDatabase = None  # type: ignore[assignment, misc]
+    _HAS_DEPS = False
 
 
 class ScholarIngestionService:
     def __init__(self, dry_run: bool = True):
         self.dry_run = dry_run
-        self.qdrant_client = (
-            QdrantClient("localhost", port=6333) if QdrantClient else None
-        )
+        self.qdrant_client = QdrantClient("localhost", port=6333) if _HAS_DEPS else None
         self.neo4j_driver = (
             GraphDatabase.driver("bolt://localhost:7687", auth=("neo4j", "password"))
-            if GraphDatabase
+            if _HAS_DEPS
             else None
         )
 
@@ -43,9 +44,7 @@ class ScholarIngestionService:
         try:
             self.qdrant_client.recreate_collection(
                 collection_name=self.collection_name,
-                vectors_config=models.VectorParams(
-                    size=1536, distance=models.Distance.COSINE
-                ),
+                vectors_config=models.VectorParams(size=1536, distance=models.Distance.COSINE),
             )
             print(f"✅ Qdrant collection '{self.collection_name}' ready.")
         except Exception as e:
@@ -115,9 +114,7 @@ class ScholarIngestionService:
         found = [k for k in keywords if k in text]
         return list(set(found))
 
-    def _upsert_qdrant(
-        self, filename: str, chunk_id: int, text: str, vector: list[float]
-    ):
+    def _upsert_qdrant(self, filename: str, chunk_id: int, text: str, vector: list[float]):
         if not self.qdrant_client:
             return
         point_id = f"{filename}_{chunk_id}"
@@ -141,9 +138,7 @@ class ScholarIngestionService:
         except Exception as e:
             print(f"Error upserting Qdrant: {e}")
 
-    def _upsert_neo4j(
-        self, filename: str, chunk_id: int, text: str, entities: list[str]
-    ):
+    def _upsert_neo4j(self, filename: str, chunk_id: int, text: str, entities: list[str]):
         if not self.neo4j_driver:
             return
         try:

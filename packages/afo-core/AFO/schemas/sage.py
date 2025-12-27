@@ -24,12 +24,8 @@ class SageRequest(BaseSchema):
 
     sage: SageType = Field(..., description="Target Sage (Expert)")
     prompt: str = Field(..., min_length=1, description="User query / prompt")
-    system_context: str | None = Field(
-        None, description="Optional override system prompt"
-    )
-    temperature: float = Field(
-        default=0.2, ge=0.0, le=1.0, description="Creativity control"
-    )
+    system_context: str | None = Field(None, description="Optional override system prompt")
+    temperature: float = Field(default=0.2, ge=0.0, le=1.0, description="Creativity control")
 
 
 class SageResponse(BaseSchema):
@@ -40,12 +36,8 @@ class SageResponse(BaseSchema):
 
     sage: SageType = Field(..., description="Sage who responded")
     content: str = Field(..., description="Generated content")
-    timestamp: datetime = Field(
-        default_factory=datetime.utcnow, description="Time of generation"
-    )
+    timestamp: datetime = Field(default_factory=datetime.utcnow, description="Time of generation")
     metadata: dict[str, Any] = Field(
         default_factory=dict, description="Execution metadata (latency, tokens)"
     )
-    is_fallback: bool = Field(
-        default=False, description="Whether fallback mechanism was used"
-    )
+    is_fallback: bool = Field(default=False, description="Whether fallback mechanism was used")

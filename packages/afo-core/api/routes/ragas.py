@@ -51,15 +51,12 @@ async def _get_redis_client() -> redis.Redis | None:
             redis_url = get_redis_url()
         except ImportError:
             redis_url = os.getenv("REDIS_URL", "redis://localhost:6379")
-        # Explicitly cast to redis.asyncio.Redis
-        client = cast(
-            "redis.Redis",
-            redis.from_url(
-                redis_url,
-                decode_responses=True,
-                socket_connect_timeout=2,
-                socket_timeout=2,
-            ),
+        # Redis client (cast removed - redundant per MyPy)
+        client = redis.from_url(
+            redis_url,
+            decode_responses=True,
+            socket_connect_timeout=2,
+            socket_timeout=2,
         )
         await client.ping()
         return client
@@ -73,9 +70,7 @@ class RagasEvalRequest(BaseModel):
     """Ragas 평가 요청 모델"""
 
     dataset: list[dict[str, Any]] = Field(..., description="평가 데이터셋")
-    metrics: list[str] | None = Field(
-        default=None, description="평가할 메트릭 (기본: 전체)"
-    )
+    metrics: list[str] | None = Field(default=None, description="평가할 메트릭 (기본: 전체)")
 
 
 class RagasEvalResponse(BaseModel):
@@ -129,17 +124,14 @@ async def evaluate_ragas(request: RagasEvalRequest) -> RagasEvalResponse:
             loop = asyncio.get_running_loop()
             results = await loop.run_in_executor(
                 executor,
-                lambda: evaluate(
-                    dataset=request.dataset, metrics=cast("Any", metrics_to_use)
-                ),
+                lambda: evaluate(dataset=request.dataset, metrics=cast("Any", metrics_to_use)),
             )
 
             # 점수 추출 및 정규화
             scores = {}
             if isinstance(results, dict):
                 scores = {
-                    k: float(v) if isinstance(v, (int, float)) else 0.0
-                    for k, v in results.items()
+                    k: float(v) if isinstance(v, (int, float)) else 0.0 for k, v in results.items()
                 }
             else:
                 # 결과가 다른 형식인 경우 처리
@@ -158,20 +150,18 @@ async def evaluate_ragas(request: RagasEvalRequest) -> RagasEvalResponse:
             try:
                 # Explicitly await the coroutines
                 # Note: redis.asyncio methods are awaitable
-                await redis_client.hset(  # type: ignore
+                await redis_client.hset(
                     "ragas:latest_metrics",
                     mapping={k: str(v) for k, v in scores.items()},
                 )
-                await redis_client.hset("ragas:latest_metrics", "timestamp", timestamp)  # type: ignore
+                await redis_client.hset("ragas:latest_metrics", "timestamp", timestamp)
             except Exception as e:
                 logger.warning(f"Failed to save Ragas metrics to Redis: {e}")
 
         return RagasEvalResponse(scores=scores, coverage=coverage, timestamp=timestamp)
 
     except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Ragas evaluation failed: {e}"
-        ) from e
+        raise HTTPException(status_code=500, detail=f"Ragas evaluation failed: {e}") from e
 
 
 @ragas_router.post("/benchmark")

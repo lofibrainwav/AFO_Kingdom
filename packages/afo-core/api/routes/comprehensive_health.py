@@ -19,7 +19,10 @@ import logging
 from datetime import datetime
 from typing import Any
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Response
+from fastapi.responses import JSONResponse
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.responses import Response as StarletteResponse
 
 from AFO.config.health_check_config import health_check_config
 from AFO.services.health_service import get_comprehensive_health
@@ -27,6 +30,8 @@ from AFO.utils.automation_tools import AutomationTools
 from AFO.utils.path_utils import add_to_sys_path, get_trinity_os_path
 
 router = APIRouter(prefix="/api/health", tags=["Comprehensive Health"])
+
+# 캐시 헤더는 미들웨어에서 처리됨
 
 logger = logging.getLogger(__name__)
 
@@ -108,7 +113,7 @@ async def comprehensive_health_check() -> dict[str, Any]:
         # 3. 학자 시스템 상태 확인
         scholars_status = await _check_scholars()
 
-        # 4. MCP 도구 상태 확인
+        # 4. MCP 도구 상태 확인 (SSOT: 肾_MCP 오장육부)
         mcp_tools_status = await _check_mcp_tools()
 
         # 5. Context7 상태 확인
@@ -131,11 +136,9 @@ async def comprehensive_health_check() -> dict[str, Any]:
             trinity_score = 0.0
 
         config = health_check_config
-        return {
+        response_data = {
             "status": (
-                "healthy"
-                if trinity_score >= config.TRINITY_SCORE_THRESHOLD
-                else "degraded"
+                "healthy" if trinity_score >= config.TRINITY_SCORE_THRESHOLD else "degraded"
             ),
             "timestamp": datetime.now().isoformat(),
             "organs": health_data.get("organs", {}),
@@ -160,6 +163,9 @@ async def comprehensive_health_check() -> dict[str, Any]:
                 ],
             },
         }
+
+        return response_data
+
     except Exception as e:
         logger.error(f"Comprehensive health check failed: {e}")
         return {
@@ -188,12 +194,13 @@ def _extract_services_status(health_data: dict[str, Any]) -> dict[str, bool]:
             "api_server": False,
         }
 
-    # 서비스 이름 매핑 (설정으로 이동 가능)
+    # SSOT 표준: 5개 오장육부 매핑
     service_mapping = {
-        "redis": "心_Redis",
-        "postgres": "肝_PostgreSQL",
-        "ollama": "脾_Ollama",
-        "api_server": "肺_API_Server",
+        "redis": "心_Redis",  # 세션/캐시 저장소
+        "postgres": "肝_PostgreSQL",  # 메인 데이터베이스
+        "ollama": "脾_Ollama",  # AI 모델 서빙
+        "api_server": "肺_API_Server",  # API 서버 상태
+        "mcp": "肾_MCP",  # 외부 서비스 연결
     }
 
     return {
@@ -219,9 +226,7 @@ async def _check_skills_registry() -> dict[str, Any]:
                 for skill in skills[: config.MAX_SKILLS_DISPLAY]
             ],
             "categories": (
-                registry.get_category_stats()
-                if hasattr(registry, "get_category_stats")
-                else {}
+                registry.get_category_stats() if hasattr(registry, "get_category_stats") else {}
             ),
         }
     except Exception as e:
@@ -247,7 +252,7 @@ async def _check_scholars() -> dict[str, Any]:
             "scholars": scholars,
         }
     except Exception as e:
-        logger.warning(f"Scholars check failed: {e}")
+        logger.warning("Scholars check failed: %s", e)
         return {
             "status": "error",
             "error": str(e),
@@ -273,7 +278,7 @@ async def _check_mcp_tools() -> dict[str, Any]:
             "servers": servers,
         }
     except Exception as e:
-        logger.warning(f"MCP tools check failed: {e}")
+        logger.warning("MCP tools check failed: %s", e)
         return {
             "status": "error",
             "error": str(e),
@@ -281,51 +286,31 @@ async def _check_mcp_tools() -> dict[str, Any]:
 
 
 async def _check_context7() -> dict[str, Any]:
-    """Context7 지식 베이스 상태 확인 (실제 인스턴스 테스트)"""
+    """Context7 지식 베이스 상태 확인 (최적화된 캐싱 서비스 사용)"""
     try:
-        from pathlib import Path
+        # 최적화된 Context7 서비스 사용 (캐싱 + 지연 로딩)
+        from AFO.services.context7_service import get_context7_health
 
-        # trinity-os 경로 추가 (동적 계산 + 설정에서 추가된 경로 활용)
-        trinity_os_path = get_trinity_os_path(Path(__file__))
-        add_to_sys_path(trinity_os_path)
+        health_data = get_context7_health()
 
-        # 실제 Context7MCP 인스턴스 생성 및 테스트
-        from trinity_os.servers.context7_mcp import Context7MCP
-
-        # 1. 인스턴스 생성 테스트
-        context7_instance = Context7MCP()
-
-        # 2. knowledge_base 실제 접근 테스트
-        knowledge_base = getattr(context7_instance, "knowledge_base", [])
-        if not isinstance(knowledge_base, list):
-            raise ValueError(f"knowledge_base is not a list: {type(knowledge_base)}")
-
-        # 3. 지식 베이스 항목 키 추출
-        knowledge_keys = [item.get("id", f"item_{i}") for i, item in enumerate(knowledge_base)]
+        # 추가 메타데이터
         config = health_check_config
+        if health_data["status"] == "healthy" and "knowledge_base_keys" in health_data:
+            # 표시 제한 적용
+            health_data["knowledge_base_keys"] = health_data["knowledge_base_keys"][
+                : config.MAX_CONTEXT7_KEYS_DISPLAY
+            ]
 
-        # 4. retrieve_context 메서드 테스트 (샘플 쿼리로)
-        try:
-            test_result = context7_instance.retrieve_context("test query")
-            retrieval_works = bool(test_result)
-        except Exception:
-            retrieval_works = False
+        return health_data
 
-        return {
-            "status": "healthy",
-            "knowledge_base_keys": knowledge_keys[: config.MAX_CONTEXT7_KEYS_DISPLAY],
-            "total_keys": len(knowledge_keys),
-            "retrieval_works": retrieval_works,
-            "instance_created": True,
-            "knowledge_base_accessible": True,
-        }
     except Exception as e:
-        logger.warning(f"Context7 check failed: {e}")
+        logger.warning("Context7 check failed: %s", e)
         return {
             "status": "error",
             "error": str(e),
             "instance_created": False,
             "knowledge_base_accessible": False,
+            "optimization_applied": False,
         }
 
 
@@ -351,25 +336,17 @@ async def _check_sequential_thinking() -> dict[str, Any]:
 
 
 async def _check_automation_tools() -> dict[str, Any]:
-    """자동화 도구 상태 확인"""
+    """자동화 도구 상태 확인 (최적화된 캐싱 서비스 사용)"""
     try:
-        from pathlib import Path
+        # 최적화된 Automation 서비스 사용 (캐싱 적용)
+        from AFO.services.automation_service import get_automation_health
 
-        # 프로젝트 루트 동적 계산
-        from AFO.utils.path_utils import get_project_root
+        health_data = get_automation_health()
 
-        project_root = get_project_root(Path(__file__))
-        automation = AutomationTools(project_root)
-        tools_status = automation.get_tools_status()
-        score = automation.get_automation_score()
+        return health_data
 
-        return {
-            "status": "healthy" if score >= 70.0 else "warning",
-            "score": round(score, 1),
-            "details": tools_status,
-        }
     except Exception as e:
-        logger.warning(f"Automation tools check failed: {e}")
+        logger.warning("Automation tools check failed: %s", e)
         return {
             "status": "error",
             "error": str(e),

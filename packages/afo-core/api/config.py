@@ -78,9 +78,7 @@ class APIConfig:
 
     def _get_cors_origins(self) -> list[str]:
         """Get CORS origins configuration."""
-        cors_env = os.getenv(
-            "AFO_CORS_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000"
-        )
+        cors_env = os.getenv("AFO_CORS_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000")
         return [origin.strip() for origin in cors_env.split(",") if origin.strip()]
 
 
@@ -258,9 +256,7 @@ class ServerConfig:
             if not isinstance(self.config.port, int) or self.config.port <= 0:
                 raise ValueError("Invalid port configuration")
 
-            logger.debug(
-                f"Server config validated: {self.config.host}:{self.config.port}"
-            )
+            logger.debug(f"Server config validated: {self.config.host}:{self.config.port}")
             return self.config.host, self.config.port
 
         except Exception as e:

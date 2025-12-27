@@ -83,11 +83,11 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
 
     async def dispatch(self, request: Request, call_next) -> Response:
         if not self.enabled:
-            return await call_next(request)
+            return await call_next(request)  # type: ignore[no-any-return]
 
         path = request.url.path
         if path in ("/health", "/"):
-            return await call_next(request)
+            return await call_next(request)  # type: ignore[no-any-return]
 
         key = _key_from_request(request)
         ok, remaining = await self._limiter.allow(key)
@@ -98,4 +98,4 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         resp.headers["x-ratelimit-limit-rps"] = str(self.rps)
         resp.headers["x-ratelimit-burst"] = str(self.burst)
         resp.headers["x-ratelimit-remaining"] = str(max(0, remaining))
-        return resp
+        return resp  # type: ignore[no-any-return]

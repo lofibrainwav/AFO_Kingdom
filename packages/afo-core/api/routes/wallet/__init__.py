@@ -11,16 +11,16 @@ from fastapi import APIRouter
 
 from .browser_bridge import router as browser_bridge_router
 
-# from .billing import router as billing_router
-# from .session import router as session_router
-# from .setup import router as setup_router
+from .billing import billing_router
+from .session import session_router
+from .setup import setup_router
 from .keys import keys_router
 
 wallet_router = APIRouter(prefix="/api/wallet", tags=["Wallet"])
 
-# wallet_router.include_router(billing_router)
-# wallet_router.include_router(session_router)
-# wallet_router.include_router(setup_router)
+wallet_router.include_router(billing_router)
+wallet_router.include_router(session_router)
+wallet_router.include_router(setup_router)
 wallet_router.include_router(keys_router)
 wallet_router.include_router(browser_bridge_router)
 

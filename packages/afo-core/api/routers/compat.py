@@ -92,9 +92,7 @@ async def get_royal_rules():
         data = get_royal_constitution()
         return data
     except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Failed to load royal rules: {e!s}"
-        )
+        raise HTTPException(status_code=500, detail=f"Failed to load royal rules: {e!s}")
 
 
 @router.get("/philosophy", response_model=PhilosophyResponse)
@@ -120,9 +118,7 @@ async def get_architecture():
         data = get_system_architecture()
         return data
     except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Failed to load architecture: {e!s}"
-        )
+        raise HTTPException(status_code=500, detail=f"Failed to load architecture: {e!s}")
 
 
 @router.get("/stats")

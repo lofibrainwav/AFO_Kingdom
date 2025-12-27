@@ -16,8 +16,14 @@ from __future__ import annotations
 import importlib.util
 import logging
 import sys
+from collections.abc import Awaitable, Callable
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
+
+from starlette.requests import Request
+from starlette.responses import Response
+
+ExceptionHandler = Callable[[Request, Exception], Response | Awaitable[Response]]
 
 
 def _patch_typing_inspection_if_needed() -> None:
@@ -45,9 +51,7 @@ def _patch_typing_inspection_if_needed() -> None:
     if "alias_name = getattr(alias" in text:
         return
 
-    needle = (
-        "if (te_alias := getattr(typing_extensions, alias._name, None)) is not None:"
-    )
+    needle = "if (te_alias := getattr(typing_extensions, alias._name, None)) is not None:"
     if needle not in text:
         return
 
@@ -129,12 +133,13 @@ class AFOServer:
         app = get_app_config()
         logger.info("FastAPI application created")
 
+        # Chancellor Router 직접 등록
         try:
-            from AFO.afo_agent_fabric import router as chancellor_router
-
+            from AFO.api.routers.chancellor_router import router as chancellor_router
             app.include_router(chancellor_router)
-        except Exception:
-            pass
+            logger.info("Chancellor Router registered successfully")
+        except Exception as e:
+            logger.warning(f"Chancellor Router registration failed: {e}")
 
         return app
 
@@ -155,7 +160,9 @@ class AFOServer:
         """
         # Configure rate limiting
         self.app.state.limiter = self.limiter
-        self.app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+        self.app.add_exception_handler(
+            RateLimitExceeded, cast("ExceptionHandler", _rate_limit_exceeded_handler)
+        )
 
         logger.info("Application configured with security measures")
 

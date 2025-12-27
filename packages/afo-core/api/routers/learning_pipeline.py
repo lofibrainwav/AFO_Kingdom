@@ -69,9 +69,7 @@ def analyze_evolution_logs() -> dict[str, Any]:
         }
 
     # Real analysis
-    trinity_scores = [
-        e.get("trinity_score", 90) for e in entries if "trinity_score" in e
-    ]
+    trinity_scores = [e.get("trinity_score", 90) for e in entries if "trinity_score" in e]
     avg_trinity = sum(trinity_scores) / len(trinity_scores) if trinity_scores else 90.0
 
     success_count = len([e for e in entries if e.get("mode") == "AUTO_RUN"])
@@ -130,9 +128,7 @@ async def get_learning_report() -> LearningReport:
 
 
 @router.post("/log-action")
-async def log_action(
-    action: str, trinity_score: float, mode: str = "AUTO_RUN"
-) -> dict[str, Any]:
+async def log_action(action: str, trinity_score: float, mode: str = "AUTO_RUN") -> dict[str, Any]:
     """Log an action for future learning analysis."""
     entry = {
         "timestamp": datetime.now().isoformat(),

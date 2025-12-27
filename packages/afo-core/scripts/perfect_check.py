@@ -9,9 +9,7 @@ import requests
 def check_port(port, service_name):
     # Quick socket check or lsof
     try:
-        result = subprocess.run(
-            ["lsof", "-i", f":{port}"], capture_output=True, text=True
-        )
+        result = subprocess.run(["lsof", "-i", f":{port}"], capture_output=True, text=True)
         if result.stdout and "LISTEN" in result.stdout:
             print(f"✅ [PORT {port}] {service_name} is LISTENING.")
             return True
@@ -38,9 +36,7 @@ def check_endpoint(url, expected_code=200):
                 pass
             return True
         else:
-            print(
-                f"❌ [API] {url} returned {response.status_code}. Expected {expected_code}."
-            )
+            print(f"❌ [API] {url} returned {response.status_code}. Expected {expected_code}.")
             return False
     except requests.exceptions.ConnectionError:
         print(f"❌ [API] Connection refused to {url}.")
@@ -67,9 +63,7 @@ def main():
             import os
             import sys
 
-            sys.path.insert(
-                0, os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            )
+            sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
             from config.settings import get_settings
 
             settings = get_settings()
@@ -83,18 +77,12 @@ def main():
             except Exception:
                 soul_engine_port = int(os.getenv("SOUL_ENGINE_PORT", "8010"))
 
-        logic_ok = check_endpoint(
-            f"http://localhost:{soul_engine_port}/api/5pillars/current"
-        )
-        hub_ok = check_endpoint(
-            f"http://localhost:{soul_engine_port}/api/5pillars/family/hub"
-        )
+        logic_ok = check_endpoint(f"http://localhost:{soul_engine_port}/api/5pillars/current")
+        hub_ok = check_endpoint(f"http://localhost:{soul_engine_port}/api/5pillars/family/hub")
         logic_ok = logic_ok and hub_ok
 
     # 4. Critical File Exist Check
-    agent_path = os.path.join(
-        os.getcwd(), "afo_soul_engine/agents/five_pillars_agent.py"
-    )
+    agent_path = os.path.join(os.getcwd(), "afo_soul_engine/agents/five_pillars_agent.py")
     if os.path.exists(agent_path):
         print(f"✅ [FILE] Agent file exists: {agent_path}")
     else:

@@ -37,9 +37,7 @@ class TrinityConfig:
         """Runtime validation of SSOT integrity"""
         total = sum(TrinityConfig.WEIGHTS.values())
         if abs(total - 1.0) > 1e-6:
-            raise ValueError(
-                f"SSOT VIOLATION: Trinity Weights must sum to 1.0, got {total:.6f}"
-            )
+            raise ValueError(f"SSOT VIOLATION: Trinity Weights must sum to 1.0, got {total:.6f}")
 
     @classmethod
     def get_weight(cls, pillar: Pillar) -> float:

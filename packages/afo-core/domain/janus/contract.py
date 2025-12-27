@@ -26,12 +26,8 @@ class VisualAction(BaseModel):
         None, description="Target coordinates for the action (required for click)"
     )
     text: str | None = Field(None, description="Text to type or reason for waiting")
-    confidence: float = Field(
-        ..., ge=0.0, le=1.0, description="Model's confidence score"
-    )
-    why: str = Field(
-        ..., description="Reasoning for this specific action (Chain of Thought)"
-    )
+    confidence: float = Field(..., ge=0.0, le=1.0, description="Model's confidence score")
+    why: str = Field(..., description="Reasoning for this specific action (Chain of Thought)")
     safety: Literal["safe", "confirm", "block"] = Field(
         "safe", description="Safety assessment of the action"
     )
@@ -42,7 +38,7 @@ class VisualPlan(BaseModel):
 
     goal: str = Field(..., description="The high-level goal being achieved")
     actions: list[VisualAction] = Field(
-        ..., max_items=5, description="List of atomic actions (max 5 per turn)"
+        ..., max_length=5, description="List of atomic actions (max 5 per turn)"
     )
     stop: bool = Field(False, description="Whether the task is considered complete")
     summary: str = Field(..., description="Brief summary of the plan")

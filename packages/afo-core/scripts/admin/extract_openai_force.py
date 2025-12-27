@@ -56,9 +56,7 @@ def decrypt_value(encrypted_value, safe_password):
             )
             key = kdf.derive(safe_password)
 
-            cipher = Cipher(
-                algorithms.AES(key), modes.CBC(iv), backend=default_backend()
-            )
+            cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=default_backend())
             decryptor = cipher.decryptor()
 
             # Decrypt
@@ -93,12 +91,8 @@ def main():
         sys.exit(1)
 
     profiles = [
-        os.path.expanduser(
-            "~/Library/Application Support/Google/Chrome/Default/Cookies"
-        ),
-        os.path.expanduser(
-            "~/Library/Application Support/Google/Chrome/Profile 1/Cookies"
-        ),
+        os.path.expanduser("~/Library/Application Support/Google/Chrome/Default/Cookies"),
+        os.path.expanduser("~/Library/Application Support/Google/Chrome/Profile 1/Cookies"),
     ]
 
     wallet = APIWallet()

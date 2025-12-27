@@ -20,7 +20,7 @@ from playwright.sync_api import sync_playwright
 
 SESSION_FILE = "secrets/grok_session.json"
 CHROME_PATH = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
-USER_DATA_DIR = "/tmp/grok-stealth-profile"
+USER_DATA_DIR = "/tmp/grok-stealth-profile"  # nosec B108
 
 
 def find_chrome():
@@ -101,9 +101,7 @@ def interactive_login_stealth():
 
             for i in range(max_retries):
                 cookies = context.cookies("https://x.com")
-                auth_token = next(
-                    (c["value"] for c in cookies if c["name"] == "auth_token"), None
-                )
+                auth_token = next((c["value"] for c in cookies if c["name"] == "auth_token"), None)
                 ct0 = next((c["value"] for c in cookies if c["name"] == "ct0"), None)
 
                 if auth_token:

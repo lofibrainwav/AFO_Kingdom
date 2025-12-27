@@ -74,9 +74,7 @@ def main():
     질문: {question}
     답변:"""
 
-    PROMPT = PromptTemplate(
-        template=prompt_template, input_variables=["context", "question"]
-    )
+    PROMPT = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
     print("   ✓ 프롬프트 템플릿 설정 완료\n")
 
     # 메모리 초기화

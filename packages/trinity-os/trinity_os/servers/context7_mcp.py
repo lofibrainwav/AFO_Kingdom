@@ -26,14 +26,18 @@ class Context7MCP:
     def _load_knowledge_base(self) -> None:
         """지식 베이스 로드"""
         try:
-            # AFO 왕국의 핵심 문서들 로드
+            # AFO 왕국의 핵심 문서들 로드 - 절대 경로로 찾기
+            import os
+            # trinity-os 폴더에서 AFO_Kingdom 루트까지 올라감
+            base_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..', '..'))
+
             knowledge_sources = [
-                "AGENTS.md",
-                "docs/AFO_ROYAL_LIBRARY.md",
-                "docs/AFO_CHANCELLOR_GRAPH_SPEC.md",
-                "docs/AFO_EVOLUTION_LOG.md",
-                "docs/AFO_FRONTEND_ARCH.md",
-                "docs/CURSOR_MCP_SETUP.md"
+                os.path.join(base_path, "AGENTS.md"),
+                os.path.join(base_path, "docs/AFO_ROYAL_LIBRARY.md"),
+                os.path.join(base_path, "docs/AFO_CHANCELLOR_GRAPH_SPEC.md"),
+                os.path.join(base_path, "docs/AFO_EVOLUTION_LOG.md"),
+                os.path.join(base_path, "docs/AFO_FRONTEND_ARCH.md"),
+                os.path.join(base_path, "docs/CURSOR_MCP_SETUP.md")
             ]
 
             loaded_count = 0
@@ -134,36 +138,48 @@ class Context7MCP:
         self.knowledge_base.extend(core_knowledge)
 
     def _extract_keywords(self, content: str) -> List[str]:
-        """콘텐츠에서 키워드 추출"""
+        """콘텐츠에서 키워드 추출 (개선된 버전)"""
         keywords = set()
 
-        # 한글 키워드 추출
-        korean_keywords = [
+        # 기본 키워드 리스트 (AFO 왕국 관련 추가)
+        base_keywords = [
+            # 기존 키워드들
             "trinity", "mcp", "skills", "api", "backend", "frontend",
             "database", "redis", "postgresql", "docker", "kubernetes",
             "monitoring", "metrics", "logging", "security", "auth",
             "cache", "session", "router", "middleware", "validation",
             "error", "handling", "async", "concurrency", "performance",
-            "testing", "ci", "cd", "deployment", "scaling"
-        ]
-
-        # 영어 키워드 추출
-        english_keywords = [
-            "trinity", "mcp", "skills", "api", "backend", "frontend",
-            "database", "redis", "postgresql", "docker", "kubernetes",
-            "monitoring", "metrics", "logging", "security", "auth",
-            "cache", "session", "router", "middleware", "validation",
-            "error", "handling", "async", "concurrency", "performance",
-            "testing", "ci", "cd", "deployment", "scaling"
+            "testing", "ci", "cd", "deployment", "scaling",
+            # AFO 왕국 관련 키워드 추가
+            "afo", "kingdom", "philosophy", "眞", "善", "美", "孝", "永",
+            "truth", "goodness", "beauty", "serenity", "eternity",
+            "chancellor", "agents", "cursor", "claude", "codex", "grok",
+            "sequential", "thinking", "context7", "orchestration"
         ]
 
         content_lower = content.lower()
 
-        for keyword in korean_keywords + english_keywords:
+        # 기본 키워드 매칭
+        for keyword in base_keywords:
             if keyword in content_lower:
                 keywords.add(keyword)
 
-        # 주요 용어들 추출
+        # 동적 키워드 추출 - 단어 단위로 분리
+        words = re.findall(r'\b\w+\b', content_lower)
+        significant_words = [word for word in words if len(word) > 3 and word not in {
+            'that', 'with', 'have', 'this', 'will', 'your', 'from', 'they', 'know',
+            'want', 'been', 'good', 'much', 'some', 'time', 'very', 'when', 'come',
+            'here', 'just', 'like', 'long', 'make', 'many', 'over', 'such', 'take',
+            'than', 'them', 'well', 'were', 'what', 'when', 'where', 'which', 'while',
+            'who', 'why', 'would'
+        }]
+
+        # 의미 있는 단어들 추가 (최대 10개)
+        for word in significant_words[:10]:
+            if len(word) >= 4:  # 4글자 이상만
+                keywords.add(word)
+
+        # 기존 패턴 추출 유지
         patterns = [
             r'#+\s*([^\n]+)',  # 헤더들
             r'\*\*([^*]+)\*\*',  # 볼드 텍스트
@@ -172,9 +188,10 @@ class Context7MCP:
 
         for pattern in patterns:
             matches = re.findall(pattern, content)
-            for match in matches[:10]:  # 최대 10개까지만
-                if len(match.strip()) > 2:
-                    keywords.add(match.strip().lower())
+            for match in matches[:5]:  # 최대 5개로 줄임
+                clean_match = match.strip().lower()
+                if len(clean_match) > 2:
+                    keywords.add(clean_match)
 
         return list(keywords)
 
