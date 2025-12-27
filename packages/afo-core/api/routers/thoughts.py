@@ -2,8 +2,8 @@
 import asyncio
 import json
 import logging
-from collections.abc import AsyncGenerator
-from typing import Any, AsyncIterator
+from collections.abc import AsyncGenerator, AsyncIterator
+from typing import Any
 
 from fastapi import APIRouter, Request
 from sse_starlette.sse import EventSourceResponse
@@ -19,7 +19,7 @@ async def with_heartbeat(source: AsyncIterator[Any], interval_s: float = 5.0) ->
         try:
             chunk = await asyncio.wait_for(source.__anext__(), timeout=interval_s)
             yield chunk
-        except asyncio.TimeoutError:
+        except TimeoutError:
             yield _SSE_HEARTBEAT_PAYLOAD
         except StopAsyncIteration:
             return
