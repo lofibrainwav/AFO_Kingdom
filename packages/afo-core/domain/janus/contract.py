@@ -38,7 +38,7 @@ class VisualPlan(BaseModel):
 
     goal: str = Field(..., description="The high-level goal being achieved")
     actions: list[VisualAction] = Field(
-        ..., max_items=5, description="List of atomic actions (max 5 per turn)"
+        ..., max_length=5, description="List of atomic actions (max 5 per turn)"
     )
     stop: bool = Field(False, description="Whether the task is considered complete")
     summary: str = Field(..., description="Brief summary of the plan")

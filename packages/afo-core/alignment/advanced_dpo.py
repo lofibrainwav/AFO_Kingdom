@@ -31,8 +31,8 @@ def run_advanced_dpo_lora(
     logger.info(f"🚀 [Advanced DPO] Initializing LoRA Strategy for: {model_name}")
 
     # 1. Load Model & Tokenizer
-    model = AutoModelForCausalLM.from_pretrained(model_name)  # Add load_in_4bit=True for QLoRA
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    model = AutoModelForCausalLM.from_pretrained(model_name, revision="main")  # nosec B615
+    tokenizer = AutoTokenizer.from_pretrained(model_name, revision="main")  # nosec B615
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
 
@@ -56,7 +56,7 @@ def run_advanced_dpo_lora(
     if not os.path.exists(data_path):
         logger.warning(f"⚠️ Data file {data_path} not found.")
         return
-    dataset = load_dataset("json", data_files=data_path)
+    dataset = load_dataset("json", data_files=data_path, revision="main")  # nosec B615
     if "test" not in dataset:
         dataset = dataset["train"].train_test_split(test_size=0.1)
 

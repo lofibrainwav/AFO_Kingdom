@@ -7,7 +7,7 @@ AFO Kingdom Action Validator - Visual Agent Safety Guardian
 from dataclasses import dataclass
 from datetime import UTC
 from enum import Enum
-from typing import Any, Optional
+from typing import Any, Optional, cast
 
 
 class SafetyLevel(Enum):
@@ -126,7 +126,7 @@ class ActionValidator:
         action_id = f"action_{index}"
 
         # 기본 검증
-        action_type = self._validate_action_type(action.get("type"))
+        action_type = self._validate_action_type(cast("str", action.get("type")))
         bbox = self._validate_bbox(action.get("bbox", {}))
         confidence = max(0.0, min(1.0, action.get("confidence", 0.0)))
 

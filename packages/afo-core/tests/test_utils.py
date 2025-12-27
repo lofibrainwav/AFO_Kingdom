@@ -324,7 +324,7 @@ class TestRedisConnectionReal:
             # Test close
             await close_redis_connections()
             cast("Any", c1).close.assert_called_once()
-            cast("Any", ac1).aclose.assert_awaited_once()
+            cast("Any", ac1).close.assert_awaited_once()
 
             assert rc_module._redis_client is None
             assert rc_module._async_redis_client is None

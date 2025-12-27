@@ -37,13 +37,22 @@ class ContainerDetector:
 
         try:
             result = subprocess.run(
-                f"docker ps --filter 'name=redis' --format '{{{{.Names}}}}' | grep {self.project_prefix} | head -1",
-                shell=True,
+                [
+                    "docker",
+                    "ps",
+                    "--filter",
+                    "name=redis",
+                    "--format",
+                    "{{.Names}}",
+                ],
                 capture_output=True,
                 text=True,
-                timeout=2,
+                timeout=5,
+                check=False,
             )
-            container_name = result.stdout.strip()
+            # grep {self.project_prefix} | head -1 로직을 파이썬으로 구현
+            names = [name for name in result.stdout.splitlines() if self.project_prefix in name]
+            container_name = names[0].strip() if names else ""
             if container_name:
                 self._cache["redis"] = str(container_name)
                 return str(container_name)
@@ -62,13 +71,22 @@ class ContainerDetector:
 
         try:
             result = subprocess.run(
-                f"docker ps --filter 'name=postgres' --format '{{{{.Names}}}}' | grep {self.project_prefix} | head -1",
-                shell=True,
+                [
+                    "docker",
+                    "ps",
+                    "--filter",
+                    "name=postgres",
+                    "--format",
+                    "{{.Names}}",
+                ],
                 capture_output=True,
                 text=True,
-                timeout=2,
+                timeout=5,
+                check=False,
             )
-            container_name = result.stdout.strip()
+            # grep {self.project_prefix} | head -1 로직을 파이썬으로 구현
+            names = [name for name in result.stdout.splitlines() if self.project_prefix in name]
+            container_name = names[0].strip() if names else ""
             if container_name:
                 self._cache["postgres"] = container_name
                 return container_name

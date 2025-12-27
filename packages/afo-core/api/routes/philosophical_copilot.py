@@ -9,12 +9,12 @@
 import asyncio
 import logging
 from datetime import datetime, timedelta
-from typing import Any
+from typing import Any, cast
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 
-from AFO.config.settings import Settings
+from AFO.config.settings import AFOSettings as Settings
 from AFO.services.antigravity_engine import AntigravityEngine
 from AFO.services.trinity_calculator import TrinityCalculator
 
@@ -162,8 +162,11 @@ async def calculate_trinity_score(request: TrinityScoreRequest):
         }
 
         # 가중치 적용하여 총합 계산
-        weights = PHILOSOPHICAL_CONSTANTS["trinity_weights"]
-        total_score = sum(pillars[pillar]["score"] * weight for pillar, weight in weights.items())
+        weights = cast("dict[str, float]", PHILOSOPHICAL_CONSTANTS["trinity_weights"])
+        total_score: float = 0.0
+        for pillar, weight in weights.items():
+            p_score = cast("float", pillars[pillar]["score"])
+            total_score += p_score * weight
 
         # 철학적 인용 선택 (현재 상태에 맞게)
         if total_score >= 95:

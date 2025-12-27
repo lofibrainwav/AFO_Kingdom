@@ -13,7 +13,7 @@ Version: 1.0.0
 from __future__ import annotations
 
 import logging
-from typing import Any
+from typing import Any, cast
 
 from fastapi import APIRouter, Body, Depends, HTTPException, Query
 
@@ -90,7 +90,7 @@ async def list_skills(
     try:
         # Build filter params
         params = SkillFilterParams(
-            category=category,
+            category=cast("Any", category),
             search=search,
             min_philosophy_avg=min_philosophy_avg,
             limit=limit,

@@ -109,7 +109,7 @@ class CacheManager:
     def generate_cache_key(self, data: dict[str, Any]) -> str:
         """Generate cache key from data."""
         data_str = json.dumps(data, sort_keys=True)
-        return f"grok_analysis:{hashlib.md5(data_str.encode()).hexdigest()}"
+        return f"grok_analysis:{hashlib.md5(data_str.encode(), usedforsecurity=False).hexdigest()}"
 
     def get(self, key: str) -> dict[str, Any] | None:
         """Retrieve data from cache."""

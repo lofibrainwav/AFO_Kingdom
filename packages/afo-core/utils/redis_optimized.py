@@ -235,7 +235,7 @@ def get_cache_stats() -> dict[str, Any]:
 def make_cache_key(prefix: str, *args: Any, **kwargs: Any) -> str:
     """표준화된 캐시 키 생성"""
     key_data = f"{prefix}:{args}:{sorted(kwargs.items())}"
-    return hashlib.md5(key_data.encode()).hexdigest()
+    return hashlib.md5(key_data.encode(), usedforsecurity=False).hexdigest()
 
 
 if __name__ == "__main__":

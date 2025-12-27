@@ -61,17 +61,20 @@ async def get_git_status() -> dict[str, Any]:
         status_output = _run_git_command("git status --porcelain")
 
         # 오늘 커밋 수
-        today_commits_cmd = "git log --oneline --since='midnight' | wc -l"
         try:
+            # git log --oneline --since='midnight' 결과를 가져와 Python에서 줄 수 계산
             result = subprocess.run(
-                today_commits_cmd,
-                shell=True,
+                ["git", "log", "--oneline", "--since=midnight"],
                 cwd=WORKSPACE_ROOT,
                 capture_output=True,
                 text=True,
                 timeout=10,
             )
-            today_commits = result.stdout.strip() if result.returncode == 0 else "0"
+            if result.returncode == 0:
+                commits = result.stdout.strip().split("\n")
+                today_commits = str(len([c for c in commits if c.strip()]))
+            else:
+                today_commits = "0"
         except Exception:
             today_commits = "0"
 
@@ -89,7 +92,11 @@ async def get_git_status() -> dict[str, Any]:
         synced = not bool(status_output)
 
         # 추적 중인 파일 수
-        tracked_files = _run_git_command("git ls-tree -r HEAD --name-only | wc -l")
+        tracked_files_output = _run_git_command("git ls-tree -r HEAD --name-only")
+        if tracked_files_output:
+            tracked_files = str(len([f for f in tracked_files_output.split("\n") if f.strip()]))
+        else:
+            tracked_files = "0"
 
         return {
             "status": "success",

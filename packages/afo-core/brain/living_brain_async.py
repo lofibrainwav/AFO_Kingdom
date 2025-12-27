@@ -37,13 +37,13 @@ class LivingBrainAsync:
             return {
                 "success": False,
                 "error": str(e),
-                "receipt": "/tmp/mock_receipt_dir",  # Mock path (must be dir containing receipt.json)
+                "receipt": "/tmp/mock_receipt_dir",  # nosec B108
             }
 
         # Determine success scenario based on mode and input
         success = True
         summary = f"Processed thought: {thought} in mode {mode}"
-        receipt = "/tmp/mock_receipt.json"
+        receipt = "/tmp/mock_receipt.json"  # nosec B108
 
         return {
             "success": success,

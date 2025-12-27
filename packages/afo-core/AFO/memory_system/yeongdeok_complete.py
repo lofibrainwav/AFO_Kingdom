@@ -50,7 +50,7 @@ class YeongdeokComplete:
     def _generate_key(self, content: str) -> str:
         """Generate a unique key for content."""
         try:
-            return hashlib.md5(content.encode()).hexdigest()[:16]
+            return hashlib.md5(content.encode(), usedforsecurity=False).hexdigest()[:16]
         except Exception:
             return str(hash(content))[:16]
 

@@ -206,7 +206,7 @@ def cache_result(
                 if now - cached_time < ttl_seconds:
                     logger.debug(f"[孝] 캐시 히트: {func.__name__}")
                     # Result is already type T
-                    return result  # type: ignore[return-value]
+                    return result  # type: ignore[no-any-return]
 
             result = func(*args, **kwargs)
             cache[key] = (result, now)

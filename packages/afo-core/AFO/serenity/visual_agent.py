@@ -3,7 +3,7 @@ import asyncio
 import base64
 import json
 import logging
-from typing import Optional
+from typing import Any, Optional, cast
 
 import httpx
 from playwright.async_api import async_playwright
@@ -214,7 +214,9 @@ class VisualAgent:
         return {
             "iterations_completed": iteration,
             "total_actions": len(results),
-            "successful_actions": len([r for r in results if r["result"]["success"]]),
+            "successful_actions": len(
+                [r for r in results if cast("dict[str, Any]", r["result"]).get("success")]
+            ),
             "results": results,
             "final_goal": goal,
         }

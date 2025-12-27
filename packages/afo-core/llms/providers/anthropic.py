@@ -1,7 +1,7 @@
 # Trinity Score: 90.0 (Established by Chancellor)
 import logging
 import os
-from typing import Any
+from typing import Any, cast
 
 from AFO.llm_router import LLMConfig
 
@@ -34,7 +34,7 @@ class AnthropicProvider(BaseLLMProvider):
 
         try:
             # existing wrapper signature: generate_response(prompt, model=..., max_tokens=..., temperature=...)
-            response = await claude_api.generate_response(
+            response = await cast("Any", claude_api).generate_response(
                 prompt=query,
                 model=model,
                 max_tokens=int(context.get("max_tokens", config.max_tokens)),
@@ -44,3 +44,13 @@ class AnthropicProvider(BaseLLMProvider):
         except Exception as e:
             logger.error(f"Anthropic Call Failed: {e}")
             raise
+
+    async def generate_response(self, prompt: str, **kwargs: Any) -> str:
+        """
+        Public contract implementation (眞: Anthropic)
+        """
+        if not claude_api:
+            raise ValueError("Claude API Wrapper not available")
+
+        res = await cast("Any", claude_api).generate_response(prompt=prompt, **kwargs)
+        return str(res)

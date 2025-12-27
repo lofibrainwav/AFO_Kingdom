@@ -434,7 +434,7 @@ class SettingsManager:
                 "app_name": os.getenv("AFO_APP_NAME", "AFO Kingdom"),
                 "version": os.getenv("AFO_VERSION", "1.0.0"),
                 "debug": os.getenv("AFO_DEBUG", "true").lower() == "true",
-                "host": os.getenv("AFO_HOST", "0.0.0.0"),
+                "host": os.getenv("AFO_HOST", "127.0.0.1"),
                 "port": int(os.getenv("AFO_PORT", "8010")),
                 "cors_origins": os.getenv("AFO_CORS_ORIGINS", "http://localhost:3000").split(","),
                 "database_url": os.getenv("DATABASE_URL", "sqlite:///./test.db"),
@@ -457,7 +457,7 @@ class SettingsManager:
             "app_name": "AFO Kingdom",
             "version": "1.0.0",
             "debug": True,
-            "host": "0.0.0.0",
+            "host": "127.0.0.1",
             "port": 8010,
             "cors_origins": ["http://localhost:3000"],
         }
@@ -674,7 +674,7 @@ class Settings:
 try:
     from pydantic import BaseModel
 except ImportError:
-    BaseModel = object  # type: ignore[assignment]
+    BaseModel = object  # type: ignore[assignment, misc]
 
 
 class ChancellorInvokeRequest(BaseModel):

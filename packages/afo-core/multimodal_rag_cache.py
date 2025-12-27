@@ -47,7 +47,7 @@ def get_redis_client() -> Any | None:
 def _generate_cache_key(query: str, modality: str = "text") -> str:
     """Generate a cache key for the query."""
     content = f"{modality}:{query}"
-    return f"multimodal_rag:{hashlib.md5(content.encode()).hexdigest()}"
+    return f"multimodal_rag:{hashlib.md5(content.encode(), usedforsecurity=False).hexdigest()}"
 
 
 def get_cached_result(query: str, modality: str = "text") -> dict[str, Any] | None:
