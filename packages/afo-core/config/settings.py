@@ -51,9 +51,7 @@ class AFOSettings(BaseSettings):
     # ============================================================================
     POSTGRES_HOST: str = Field(default="localhost", description="PostgreSQL 호스트")
     POSTGRES_PORT: int = Field(default=15432, description="PostgreSQL 포트")
-    POSTGRES_DB: str = Field(
-        default="afo_memory", description="PostgreSQL 데이터베이스 이름"
-    )
+    POSTGRES_DB: str = Field(default="afo_memory", description="PostgreSQL 데이터베이스 이름")
     POSTGRES_USER: str = Field(default="afo", description="PostgreSQL 사용자")
     POSTGRES_PASSWORD: str = Field(
         default="afo_secret_change_me", description="PostgreSQL 비밀번호"
@@ -65,22 +63,16 @@ class AFOSettings(BaseSettings):
     # ============================================================================
     # Redis Settings
     # ============================================================================
-    REDIS_URL: str = Field(
-        default="redis://localhost:6379", description="Redis 연결 URL"
-    )
+    REDIS_URL: str = Field(default="redis://localhost:6379", description="Redis 연결 URL")
     REDIS_HOST: str = Field(
         default="localhost", description="Redis 호스트 (REDIS_URL이 없을 때 사용)"
     )
-    REDIS_PORT: int = Field(
-        default=6379, description="Redis 포트 (REDIS_URL이 없을 때 사용)"
-    )
+    REDIS_PORT: int = Field(default=6379, description="Redis 포트 (REDIS_URL이 없을 때 사용)")
 
     # ============================================================================
     # Qdrant Settings
     # ============================================================================
-    QDRANT_URL: str = Field(
-        default="http://localhost:6333", description="Qdrant 벡터 DB URL"
-    )
+    QDRANT_URL: str = Field(default="http://localhost:6333", description="Qdrant 벡터 DB URL")
 
     # ============================================================================
     # Ollama Settings
@@ -100,9 +92,7 @@ class AFOSettings(BaseSettings):
     # ============================================================================
     # API Wallet Settings
     # ============================================================================
-    API_WALLET_URL: str = Field(
-        default="http://localhost:8000", description="API Wallet 서버 URL"
-    )
+    API_WALLET_URL: str = Field(default="http://localhost:8000", description="API Wallet 서버 URL")
 
     # ============================================================================
     # MCP Server Settings
@@ -117,25 +107,15 @@ class AFOSettings(BaseSettings):
     # ============================================================================
     API_YUNGDEOK: str = Field(default="default_yungdeok_key", description="영덕 API 키")
     OPENAI_API_KEY: str | None = Field(default=None, description="OpenAI API 키")
-    ANTHROPIC_API_KEY: str | None = Field(
-        default=None, description="Anthropic (Claude) API 키"
-    )
+    ANTHROPIC_API_KEY: str | None = Field(default=None, description="Anthropic (Claude) API 키")
     GEMINI_API_KEY: str | None = Field(default=None, description="Google Gemini API 키")
     GOOGLE_API_KEY: str | None = Field(
         default=None, description="Google API 키 (GEMINI_API_KEY 대체용)"
     )
-    CHATGPT_SESSION_TOKEN_1: str | None = Field(
-        default=None, description="ChatGPT 세션 토큰 1"
-    )
-    CHATGPT_SESSION_TOKEN_2: str | None = Field(
-        default=None, description="ChatGPT 세션 토큰 2"
-    )
-    CHATGPT_SESSION_TOKEN_3: str | None = Field(
-        default=None, description="ChatGPT 세션 토큰 3"
-    )
-    CURSOR_ACCESS_TOKEN: str | None = Field(
-        default=None, description="Cursor 액세스 토큰"
-    )
+    CHATGPT_SESSION_TOKEN_1: str | None = Field(default=None, description="ChatGPT 세션 토큰 1")
+    CHATGPT_SESSION_TOKEN_2: str | None = Field(default=None, description="ChatGPT 세션 토큰 2")
+    CHATGPT_SESSION_TOKEN_3: str | None = Field(default=None, description="ChatGPT 세션 토큰 3")
+    CURSOR_ACCESS_TOKEN: str | None = Field(default=None, description="Cursor 액세스 토큰")
     REDIS_PASSWORD: str | None = Field(default=None, description="Redis 비밀번호")
 
     # ============================================================================
@@ -152,43 +132,27 @@ class AFOSettings(BaseSettings):
     # ============================================================================
     # API Server Settings
     # ============================================================================
-    API_SERVER_PORT: int = Field(
-        default=8010, description="API Server 포트 (Soul Engine)"
-    )
+    API_SERVER_PORT: int = Field(default=8010, description="API Server 포트 (Soul Engine)")
     API_SERVER_HOST: str = Field(default="0.0.0.0", description="API Server 호스트")
-    SOUL_ENGINE_PORT: int = Field(
-        default=8010, description="Soul Engine 포트 (5 Pillars 등)"
-    )
-    ASYNC_QUERY_ENABLED: bool = Field(
-        default=True, description="비동기 쿼리 활성화 여부"
-    )
+    SOUL_ENGINE_PORT: int = Field(default=8010, description="Soul Engine 포트 (5 Pillars 등)")
+    ASYNC_QUERY_ENABLED: bool = Field(default=True, description="비동기 쿼리 활성화 여부")
     MOCK_MODE: bool = Field(default=False, description="Mock 모드 활성화 여부")
-    SENTRY_DSN: str | None = Field(
-        default=None, description="Sentry DSN (에러 모니터링)"
-    )
+    SENTRY_DSN: str | None = Field(default=None, description="Sentry DSN (에러 모니터링)")
     VAULT_ENABLED: bool = Field(default=False, description="Vault KMS 사용 여부")
     API_WALLET_ENCRYPTION_KEY: str | None = Field(
         default=None, description="API Wallet 암호화 키 (Fernet, 44자)"
     )
     # Vault Settings (Phase 3)
-    VAULT_URL: str = Field(
-        default="http://localhost:8200", description="Vault 서버 URL"
-    )
+    VAULT_URL: str = Field(default="http://localhost:8200", description="Vault 서버 URL")
     VAULT_TOKEN: str | None = Field(default=None, description="Vault 액세스 토큰")
-    TAVILY_API_KEY: str | None = Field(
-        default=None, description="Tavily API 키 (웹 검색)"
-    )
-    REDIS_RAG_INDEX: str = Field(
-        default="rag_docs", description="Redis RAG 인덱스 이름"
-    )
+    TAVILY_API_KEY: str | None = Field(default=None, description="Tavily API 키 (웹 검색)")
+    REDIS_RAG_INDEX: str = Field(default="rag_docs", description="Redis RAG 인덱스 이름")
     AFO_HOME: str | None = Field(default=None, description="AFO 홈 디렉토리 경로")
     AFO_SOUL_ENGINE_HOME: str | None = Field(
         default=None, description="AFO Soul Engine 홈 디렉토리 경로"
     )
     BASE_DIR: str = Field(
-        default=os.path.dirname(
-            os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-        ),
+        default=os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))),
         description="프로젝트 루트 디렉토리",
     )
 
@@ -285,7 +249,9 @@ def get_settings(env: str | None = None) -> AFOSettings:
         # 환경변수 우선 사용, 없으면 자동 계산
         trinity_os_path = os.environ.get("AFO_TRINITY_OS_PATH")
         if not trinity_os_path:
-            trinity_os_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'trinity-os'))
+            trinity_os_path = os.path.abspath(
+                os.path.join(os.path.dirname(__file__), "..", "..", "trinity-os")
+            )
 
         if trinity_os_path and os.path.exists(trinity_os_path) and trinity_os_path not in sys.path:
             sys.path.insert(0, trinity_os_path)

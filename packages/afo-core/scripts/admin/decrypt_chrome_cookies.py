@@ -115,9 +115,7 @@ def main():
         # Default Real Chrome
         base_path = Path.home() / "Library/Application Support/Google/Chrome"
         all_profiles = [p.name for p in base_path.glob("*") if p.is_dir()]
-        print(
-            f"📂 Found {len(all_profiles)} directories in Chrome root: {all_profiles}"
-        )
+        print(f"📂 Found {len(all_profiles)} directories in Chrome root: {all_profiles}")
 
         for p in base_path.glob("*"):
             if (p / "Cookies").exists():

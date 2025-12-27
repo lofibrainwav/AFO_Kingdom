@@ -73,15 +73,11 @@ class ApplicationMetrics(BaseModel):
     avg_response_time: float = Field(default=0.0, description="평균 응답 시간 (초)")
 
     # 메모리 메트릭
-    python_memory_mb: float = Field(
-        default=0.0, description="Python 메모리 사용량 (MB)"
-    )
+    python_memory_mb: float = Field(default=0.0, description="Python 메모리 사용량 (MB)")
     gc_collections: int = Field(default=0, description="가비지 컬렉션 실행 횟수")
 
     # 서비스 상태
-    services_status: dict[str, str] = Field(
-        default_factory=dict, description="서비스별 상태"
-    )
+    services_status: dict[str, str] = Field(default_factory=dict, description="서비스별 상태")
 
 
 class TrinityHealthScore(BaseModel):
@@ -95,14 +91,10 @@ class TrinityHealthScore(BaseModel):
     serenity_score: float = Field(default=0.0, ge=0.0, le=100.0, description="孝 점수")
     eternity_score: float = Field(default=0.0, ge=0.0, le=100.0, description="永 점수")
 
-    overall_score: float = Field(
-        default=0.0, ge=0.0, le=100.0, description="종합 Trinity 점수"
-    )
+    overall_score: float = Field(default=0.0, ge=0.0, le=100.0, description="종합 Trinity 점수")
 
     health_status: str = Field(default="unknown", description="건강 상태")
-    recommendations: list[str] = Field(
-        default_factory=list, description="개선 권장사항"
-    )
+    recommendations: list[str] = Field(default_factory=list, description="개선 권장사항")
 
 
 class Alert(BaseModel):
@@ -209,7 +201,7 @@ class SystemMonitoringDashboard:
                 self._cleanup_old_data()
 
                 # 대기
-                await asyncio.sleep(cast(float, MONITORING_CONFIG["update_interval"]))
+                await asyncio.sleep(cast("float", MONITORING_CONFIG["update_interval"]))
 
             except Exception as e:
                 logger.error(f"모니터링 루프 에러: {e}")
@@ -240,14 +232,10 @@ class SystemMonitoringDashboard:
 
             # 네트워크 변화량 계산
             sent_diff = (
-                network_bytes_sent - self._last_network_sent
-                if self._last_network_sent > 0
-                else 0
+                network_bytes_sent - self._last_network_sent if self._last_network_sent > 0 else 0
             )
             recv_diff = (
-                network_bytes_recv - self._last_network_recv
-                if self._last_network_recv > 0
-                else 0
+                network_bytes_recv - self._last_network_recv if self._last_network_recv > 0 else 0
             )
 
             self._last_network_sent = network_bytes_sent
@@ -256,9 +244,7 @@ class SystemMonitoringDashboard:
             # 프로세스 정보
             process_count = len(psutil.pids())
             thread_count = sum(
-                len(p.threads())
-                for p in psutil.process_iter(["threads"])
-                if p.info["threads"]
+                len(p.threads()) for p in psutil.process_iter(["threads"]) if p.info["threads"]
             )
 
             return SystemMetrics(
@@ -343,14 +329,10 @@ class SystemMonitoringDashboard:
             goodness_score = min(100, 100 - max(0, latest_system.memory_percent - 70))
 
             # 美 (Beauty) - 구조적 우아함: 시스템 균형
-            beauty_score = 100 - abs(
-                latest_system.cpu_percent - latest_system.memory_percent
-            )
+            beauty_score = 100 - abs(latest_system.cpu_percent - latest_system.memory_percent)
 
             # 孝 (Serenity) - 평온함: 안정적 리소스 사용
-            serenity_score = (
-                100 - (latest_system.cpu_percent + latest_system.memory_percent) / 4
-            )
+            serenity_score = 100 - (latest_system.cpu_percent + latest_system.memory_percent) / 4
 
             # 永 (Eternity) - 지속가능성: 장기 안정성
             eternity_score = min(100, 100 - latest_system.disk_percent)
@@ -384,13 +366,9 @@ class SystemMonitoringDashboard:
             if latest_system.cpu_percent > 80:
                 recommendations.append("CPU 사용량이 높습니다. 최적화가 필요합니다.")
             if latest_system.memory_percent > 85:
-                recommendations.append(
-                    "메모리 사용량이 높습니다. 메모리 관리가 필요합니다."
-                )
+                recommendations.append("메모리 사용량이 높습니다. 메모리 관리가 필요합니다.")
             if latest_system.disk_percent > 90:
-                recommendations.append(
-                    "디스크 사용량이 높습니다. 정리 또는 확장이 필요합니다."
-                )
+                recommendations.append("디스크 사용량이 높습니다. 정리 또는 확장이 필요합니다.")
             if overall_score < 80:
                 recommendations.append("전체 시스템 건강 상태 개선이 필요합니다.")
 
@@ -429,9 +407,7 @@ class SystemMonitoringDashboard:
             if len(self.system_metrics_history) > max_history:
                 self.system_metrics_history = self.system_metrics_history[-max_history:]
             if len(self.application_metrics_history) > max_history:
-                self.application_metrics_history = self.application_metrics_history[
-                    -max_history:
-                ]
+                self.application_metrics_history = self.application_metrics_history[-max_history:]
             if len(self.trinity_scores_history) > max_history:
                 self.trinity_scores_history = self.trinity_scores_history[-max_history:]
 
@@ -515,7 +491,7 @@ class SystemMonitoringDashboard:
         """
         try:
             current_time = time.time()
-            retention_time = cast(float, MONITORING_CONFIG["retention_period"])
+            retention_time = cast("float", MONITORING_CONFIG["retention_period"])
 
             # 메트릭 정리
             # 타입 명시: timestamp는 float
@@ -555,9 +531,7 @@ class SystemMonitoringDashboard:
                 "monitoring_status": "running" if self._running else "stopped",
                 # 최신 메트릭
                 "latest_system_metrics": (
-                    self.system_metrics_history[-1].dict()
-                    if self.system_metrics_history
-                    else None
+                    self.system_metrics_history[-1].dict() if self.system_metrics_history else None
                 ),
                 "latest_app_metrics": (
                     self.application_metrics_history[-1].dict()
@@ -565,9 +539,7 @@ class SystemMonitoringDashboard:
                     else None
                 ),
                 "latest_trinity_score": (
-                    self.trinity_scores_history[-1].dict()
-                    if self.trinity_scores_history
-                    else None
+                    self.trinity_scores_history[-1].dict() if self.trinity_scores_history else None
                 ),
                 # 메트릭 히스토리
                 "system_metrics_count": len(self.system_metrics_history),

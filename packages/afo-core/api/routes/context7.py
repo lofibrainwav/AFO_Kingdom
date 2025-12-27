@@ -38,7 +38,10 @@ async def search_context7(
         # Import Context7MCP (with proper path handling)
         import os
         import sys
-        trinity_os_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..', 'trinity-os'))
+
+        trinity_os_path = os.path.abspath(
+            os.path.join(os.path.dirname(__file__), "..", "..", "..", "trinity-os")
+        )
         if trinity_os_path not in sys.path:
             sys.path.insert(0, trinity_os_path)
 
@@ -50,9 +53,9 @@ async def search_context7(
 
         # Format results
         formatted_results = []
-        if hasattr(results, 'get') and 'results' in results:
+        if hasattr(results, "get") and "results" in results:
             # If results is dict with 'results' key
-            raw_results = results.get('results', [])
+            raw_results = results.get("results", [])
         elif isinstance(results, list):
             # If results is list directly
             raw_results = results
@@ -62,26 +65,25 @@ async def search_context7(
 
         for item in raw_results[:limit]:
             if isinstance(item, dict):
-                formatted_results.append({
-                    "id": item.get("id", f"item_{len(formatted_results)}"),
-                    "content": item.get("content", ""),
-                    "metadata": item.get("metadata", {}),
-                    "score": item.get("score", 0.0)
-                })
+                formatted_results.append(
+                    {
+                        "id": item.get("id", f"item_{len(formatted_results)}"),
+                        "content": item.get("content", ""),
+                        "metadata": item.get("metadata", {}),
+                        "score": item.get("score", 0.0),
+                    }
+                )
 
         return {
             "query": q,
             "results": formatted_results,
             "total": len(formatted_results),
-            "status": "success"
+            "status": "success",
         }
 
     except Exception as e:
         logger.error(f"Context7 search failed: {e}")
-        raise HTTPException(
-            status_code=500,
-            detail=f"Context7 search failed: {e!s}"
-        ) from e
+        raise HTTPException(status_code=500, detail=f"Context7 search failed: {e!s}") from e
 
 
 @router.get("/health")
@@ -95,7 +97,10 @@ async def context7_health() -> dict[str, Any]:
         # Import Context7MCP
         import os
         import sys
-        trinity_os_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..', 'trinity-os'))
+
+        trinity_os_path = os.path.abspath(
+            os.path.join(os.path.dirname(__file__), "..", "..", "..", "trinity-os")
+        )
         if trinity_os_path not in sys.path:
             sys.path.insert(0, trinity_os_path)
 
@@ -108,7 +113,7 @@ async def context7_health() -> dict[str, Any]:
             "status": "healthy",
             "instance_created": True,
             "knowledge_base_accessible": True,
-            "retrieval_works": True
+            "retrieval_works": True,
         }
 
     except Exception as e:
@@ -118,5 +123,5 @@ async def context7_health() -> dict[str, Any]:
             "error": str(e),
             "instance_created": False,
             "knowledge_base_accessible": False,
-            "retrieval_works": False
+            "retrieval_works": False,
         }

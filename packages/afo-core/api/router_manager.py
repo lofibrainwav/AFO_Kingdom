@@ -102,9 +102,7 @@ class AFORouterManager:
         # Legacy and compatibility routers (last resort)
         self._register_legacy_routers()
 
-        logger.info(
-            f"Router registration completed. Total: {self.registered_routers} routers"
-        )
+        logger.info(f"Router registration completed. Total: {self.registered_routers} routers")
 
     def _register_core_routers(self) -> None:
         """Register core system routers (Health, Root, Streams).
@@ -118,12 +116,8 @@ class AFORouterManager:
         self._safe_register_router(health_router, tags=["Core"])
 
         # Matrix streams (must be mounted before other routers)
-        self._safe_register_router(
-            streams_router, prefix="/api/stream", tags=["Matrix Stream"]
-        )
-        self._safe_register_router(
-            matrix_router, prefix="/api", tags=["Matrix Stream (Phase 10)"]
-        )
+        self._safe_register_router(streams_router, prefix="/api/stream", tags=["Matrix Stream"])
+        self._safe_register_router(matrix_router, prefix="/api", tags=["Matrix Stream (Phase 10)"])
 
     def _register_feature_routers(self) -> None:
         """Register feature-specific routers (Business Logic).
@@ -140,12 +134,8 @@ class AFORouterManager:
 
         # Multi-agent and AI systems
         self._safe_register_router(multi_agent_router)
-        self._safe_register_router(
-            got_router, prefix="/api/got", tags=["Graph of Thought"]
-        )
-        self._safe_register_router(
-            n8n_router, prefix="/api/n8n", tags=["N8N Integration"]
-        )
+        self._safe_register_router(got_router, prefix="/api/got", tags=["Graph of Thought"])
+        self._safe_register_router(n8n_router, prefix="/api/n8n", tags=["N8N Integration"])
 
         # API and financial systems
         self._safe_register_router(wallet_router, tags=["API Wallet"])
@@ -163,14 +153,10 @@ class AFORouterManager:
         self._safe_register_router(
             education_system_router, prefix="/api/education", tags=["Education System"]
         )
-        self._safe_register_router(
-            modal_data_router, prefix="/api/modal", tags=["Modal Data"]
-        )
+        self._safe_register_router(modal_data_router, prefix="/api/modal", tags=["Modal Data"])
 
         # Advanced AI systems
-        self._safe_register_router(
-            rag_query_router, prefix="/api", tags=["Brain Organ (RAG)"]
-        )
+        self._safe_register_router(rag_query_router, prefix="/api", tags=["Brain Organ (RAG)"])
         self._safe_register_router(personas_router, tags=["Phase 2: Family Hub OS"])
 
     def _register_phase_routers(self) -> None:
@@ -182,35 +168,23 @@ class AFORouterManager:
 
         # Phase 12-13: Business Intelligence
         self._safe_register_router(budget_router, tags=["Phase 12"])
-        self._safe_register_router(
-            aicpa_router, prefix="/api", tags=["AICPA Agent Army"]
-        )
+        self._safe_register_router(aicpa_router, prefix="/api", tags=["AICPA Agent Army"])
 
         # Phase 16-18: Autonomous Learning
         self._safe_register_router(learning_log_router, tags=["Phase 16"])
         self._safe_register_router(grok_stream_router, tags=["Phase 18"])
 
         # Phase 23-27: Advanced AI
-        self._safe_register_router(
-            voice_router, prefix="/api", tags=["Voice Interface"]
-        )
-        self._safe_register_router(
-            council_router, prefix="/api", tags=["Council of Minds"]
-        )
-        self._safe_register_router(
-            learning_pipeline, prefix="/api", tags=["AI Self-Improvement"]
-        )
-        self._safe_register_router(
-            serenity_router, prefix="/api", tags=["Serenity (GenUI)"]
-        )
+        self._safe_register_router(voice_router, prefix="/api", tags=["Voice Interface"])
+        self._safe_register_router(council_router, prefix="/api", tags=["Council of Minds"])
+        self._safe_register_router(learning_pipeline, prefix="/api", tags=["AI Self-Improvement"])
+        self._safe_register_router(serenity_router, prefix="/api", tags=["Serenity (GenUI)"])
 
         # Philosophical Copilot (眞善美孝永 철학 실시간 모니터링)
         try:
             from AFO.api.routes.philosophical_copilot import router as philosophical_copilot_router
 
-            self._safe_register_router(
-                philosophical_copilot_router, tags=["철학적 Copilot"]
-            )
+            self._safe_register_router(philosophical_copilot_router, tags=["철학적 Copilot"])
         except ImportError:
             logger.warning("Philosophical Copilot Router not available")
 
@@ -318,9 +292,7 @@ class AFORouterManager:
             from AFO.api.routers.family import router as family_router
 
             self._safe_register_router(family_router, tags=["Family Hub"])
-            self._safe_register_router(
-                family_router, prefix="/api", tags=["Family Hub"]
-            )
+            self._safe_register_router(family_router, prefix="/api", tags=["Family Hub"])
         except ImportError:
             logger.warning("Family Hub router not available")
 
@@ -342,9 +314,7 @@ class AFORouterManager:
 
         # Strangler Fig Compatibility
         if compat_router:
-            self._safe_register_router(
-                compat_router, prefix="/api", tags=["Strangler Fig"]
-            )
+            self._safe_register_router(compat_router, prefix="/api", tags=["Strangler Fig"])
 
     def _safe_register_router(
         self, router: object | None, prefix: str = "", tags: list[str] | None = None

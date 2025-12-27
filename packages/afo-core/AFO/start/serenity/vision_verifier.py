@@ -22,7 +22,9 @@ class VisionVerifier:
 
     def __init__(self):
         # Use absolute path to shared artifact directory
-        self.screenshot_dir = "/Users/brnestrm/.gemini/antigravity/brain/a805a42d-de23-4690-bbb3-e36fd1dfc691"
+        self.screenshot_dir = (
+            "/Users/brnestrm/.gemini/antigravity/brain/a805a42d-de23-4690-bbb3-e36fd1dfc691"
+        )
         # Ensure dir exists in a safe location
         os.makedirs(self.screenshot_dir, exist_ok=True)
 
@@ -65,9 +67,7 @@ class VisionVerifier:
                 await page.goto(url, wait_until="domcontentloaded")
 
                 # Screenshot
-                screenshot_path = os.path.join(
-                    self.screenshot_dir, f"vision_{name}.png"
-                )
+                screenshot_path = os.path.join(self.screenshot_dir, f"vision_{name}.png")
                 await page.screenshot(path=screenshot_path, full_page=True)
                 logger.info(f"📸 Screenshot captured: {screenshot_path}")
 

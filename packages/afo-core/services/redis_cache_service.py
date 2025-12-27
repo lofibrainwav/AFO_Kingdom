@@ -120,9 +120,7 @@ class RedisCacheService:
             )
             return False
         except Exception as e:  # - Intentional fallback for unexpected errors
-            logger.error(
-                "❌ Redis 캐시 서비스 초기화 실패 (예상치 못한 에러): %s", str(e)
-            )
+            logger.error("❌ Redis 캐시 서비스 초기화 실패 (예상치 못한 에러): %s", str(e))
             return False
 
     @property
@@ -151,9 +149,7 @@ class RedisCacheService:
             cache_key = f"{CACHE_CONFIG['key_prefix']}{key}"
 
             # Phase 2.2: 값 직렬화
-            serialized_value = (
-                json.dumps(value) if isinstance(value, (dict, list)) else str(value)
-            )
+            serialized_value = json.dumps(value) if isinstance(value, (dict, list)) else str(value)
 
             # Phase 2.3: 압축 적용 (선택적)
             final_value = serialized_value
@@ -165,9 +161,7 @@ class RedisCacheService:
             # Phase 2.4: TTL 설정
             default_ttl_val = CACHE_CONFIG["default_ttl"]
             default_ttl: int = (
-                int(default_ttl_val)
-                if isinstance(default_ttl_val, (int, str))
-                else 3600
+                int(default_ttl_val) if isinstance(default_ttl_val, (int, str)) else 3600
             )
             effective_ttl: int = ttl if ttl is not None else default_ttl
 
@@ -178,9 +172,7 @@ class RedisCacheService:
                 lambda: redis_client.setex(cache_key, effective_ttl, final_value),
                 max_retries=2,
             )
-            success: bool = (
-                bool(success_result) if success_result is not None else False
-            )
+            success: bool = bool(success_result) if success_result is not None else False
 
             if success:
                 logger.debug(f"캐시 저장: {cache_key} (TTL: {effective_ttl}s)")
@@ -192,9 +184,7 @@ class RedisCacheService:
             logger.error("캐시 저장 실패 (연결/타임아웃 에러, 키: %s): %s", key, str(e))
             return False
         except (TypeError, ValueError) as e:
-            logger.error(
-                "캐시 저장 실패 (타입/값/JSON 직렬화 에러, 키: %s): %s", key, str(e)
-            )
+            logger.error("캐시 저장 실패 (타입/값/JSON 직렬화 에러, 키: %s): %s", key, str(e))
             return False
         except Exception as e:  # - Intentional fallback for unexpected errors
             logger.error("캐시 저장 실패 (예상치 못한 에러, 키: %s): %s", key, str(e))
@@ -215,9 +205,7 @@ class RedisCacheService:
             # Phase 3.2: Redis 조회
             # 이미 위에서 self.redis_client None 체크 완료
             redis_client = self.redis_client  # 타입 가드
-            value = await exponential_backoff(
-                lambda: redis_client.get(cache_key), max_retries=2
-            )
+            value = await exponential_backoff(lambda: redis_client.get(cache_key), max_retries=2)
 
             if value is None:
                 # 캐시 미스
@@ -251,9 +239,7 @@ class RedisCacheService:
             self._miss_count += 1
             return None
         except (json.JSONDecodeError, TypeError, ValueError) as e:
-            logger.error(
-                "캐시 조회 실패 (JSON 파싱/타입/값 에러, 키: %s): %s", key, str(e)
-            )
+            logger.error("캐시 조회 실패 (JSON 파싱/타입/값 에러, 키: %s): %s", key, str(e))
             self._miss_count += 1
             return None
         except Exception as e:  # - Intentional fallback for unexpected errors
@@ -302,17 +288,13 @@ class RedisCacheService:
             # 이미 위에서 self.redis_client None 체크 완료
             redis_client = self.redis_client  # 타입 가드
             keys_result = redis_client.keys(f"{CACHE_CONFIG['key_prefix']}*")
-            keys: list[str] = (
-                list(keys_result) if isinstance(keys_result, list) else []
-            )
+            keys: list[str] = list(keys_result) if isinstance(keys_result, list) else []
 
             if keys:
                 delete_result = await exponential_backoff(
                     lambda: redis_client.delete(*keys), max_retries=2
                 )
-                success: bool = (
-                    bool(delete_result) if delete_result is not None else False
-                )
+                success: bool = bool(delete_result) if delete_result is not None else False
 
                 if success:
                     logger.info(f"전체 캐시 정리: {len(keys)}개 키 삭제")
@@ -362,18 +344,12 @@ class RedisCacheService:
 
             # Phase 6.3: 키 카운트
             keys_result = self.redis_client.keys(f"{CACHE_CONFIG['key_prefix']}*")
-            key_count: int = (
-                len(keys_result) if isinstance(keys_result, list) else 0
-            )
+            key_count: int = len(keys_result) if isinstance(keys_result, list) else 0
 
             # Phase 6.4: 통계 계산
             total_requests = self._hit_count + self._miss_count
-            hit_rate = (
-                (self._hit_count / total_requests * 100) if total_requests > 0 else 0.0
-            )
-            miss_rate = (
-                (self._miss_count / total_requests * 100) if total_requests > 0 else 0.0
-            )
+            hit_rate = (self._hit_count / total_requests * 100) if total_requests > 0 else 0.0
+            miss_rate = (self._miss_count / total_requests * 100) if total_requests > 0 else 0.0
 
             memory_used_bytes = memory_info.get("total.allocated", 0)
             memory_used_mb = memory_used_bytes / (1024 * 1024)
@@ -419,9 +395,7 @@ class RedisCacheService:
 
             if is_connected:
                 # Phase 7.2: 기본 동작 테스트
-                test_key = (
-                    f"{CACHE_CONFIG['key_prefix']}health_check_{int(time.time())}"
-                )
+                test_key = f"{CACHE_CONFIG['key_prefix']}health_check_{int(time.time())}"
 
                 # 쓰기 테스트
                 write_success = await self.set(test_key, "test_value", ttl=10)
@@ -480,9 +454,7 @@ class RedisCacheService:
             elif delete_operation:
                 self._stats.total_keys = max(0, self._stats.total_keys - 1)
             elif clear_operation > 0:
-                self._stats.total_keys = max(
-                    0, self._stats.total_keys - clear_operation
-                )
+                self._stats.total_keys = max(0, self._stats.total_keys - clear_operation)
 
         except (AttributeError, TypeError) as e:
             logger.debug("통계 업데이트 실패 (속성/타입 에러): %s", str(e))

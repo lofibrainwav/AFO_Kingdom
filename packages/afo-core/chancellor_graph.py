@@ -113,9 +113,7 @@ class ChancellorState(TypedDict):
     messages: Annotated[list[Any], add_messages]
     summary: str  # [ADVANCED/永] conversation summary
     context: dict[str, Any]  # shared context (includes trinity metrics)
-    search_results: list[
-        dict[str, Any]
-    ]  # [ADVANCED/眞] raw search results before reranking
+    search_results: list[dict[str, Any]]  # [ADVANCED/眞] raw search results before reranking
     multimodal_slots: dict[str, Any]  # [ADVANCED/眞] slots for image/vision data
 
     # Pillar Assessment
@@ -147,8 +145,8 @@ async def constitutional_node(state: ChancellorState) -> dict[str, Any]:
         return {"status": "BLOCKED", "trinity_score": 0.0}
 
     # [ADVANCED CAI] Anthropic-style Self-Critique & Revision Loop
-    critique, revised_query, critique_status = (
-        await AFOConstitution.critique_and_revise(query, query)
+    critique, revised_query, critique_status = await AFOConstitution.critique_and_revise(
+        query, query
     )
 
     if critique_status == "REVISED":
@@ -221,9 +219,7 @@ async def rerank_node(state: ChancellorState) -> dict[str, Any]:
         from AFO.julie_cpa.grok_engine import consult_grok
 
         # Simple LLM Reranking logic: Score each result
-        context_str = "\n".join(
-            [f"[{i}] {r['content']}" for i, r in enumerate(results[:10])]
-        )
+        context_str = "\n".join([f"[{i}] {r['content']}" for i, r in enumerate(results[:10])])
         prompt = {"task": "rerank", "query": query, "candidates": context_str}
 
         # Use Grok for high-fidelity reranking
@@ -317,11 +313,7 @@ async def trinity_node(state: ChancellorState) -> dict[str, Any]:
 
     # 2. 孝/永 (Tigers - Simulation for Scoring)
     s = ma_chao({"query": state["query"], "mode": "eval"}) if callable(ma_chao) else 1.0
-    e = (
-        huang_zhong("evaluate", {"query": state["query"]})
-        if callable(huang_zhong)
-        else 1.0
-    )
+    e = huang_zhong("evaluate", {"query": state["query"]}) if callable(huang_zhong) else 1.0
 
     # Normalize score types
     def normalize(val: Any) -> float:
@@ -329,10 +321,7 @@ async def trinity_node(state: ChancellorState) -> dict[str, Any]:
             return float(val)
         return (
             1.0
-            if any(
-                word in str(val).upper()
-                for word in ["COMPLETE", "SAVED", "MODE", "SUCCESS"]
-            )
+            if any(word in str(val).upper() for word in ["COMPLETE", "SAVED", "MODE", "SUCCESS"])
             else 0.5
         )
 
@@ -375,9 +364,7 @@ async def trinity_node(state: ChancellorState) -> dict[str, Any]:
             log_sse(
                 f"🚫 [VETO] Amendment 0001 Activated: Low pillars {low_pillars} (< {VETO_THRESHOLD})"
             )
-            log_sse(
-                "⚖️ [Trinity] VETO: Score forced to 0.0 - Commander approval required"
-            )
+            log_sse("⚖️ [Trinity] VETO: Score forced to 0.0 - Commander approval required")
 
     except ImportError:
         log_sse("⚠️ [Constitution] v1.0 not loaded - running legacy mode")
@@ -425,24 +412,12 @@ async def tigers_node(state: ChancellorState) -> dict[str, Any]:
             log_sse("🐅 [Tigers] AUTO_RUN Approved - Executing Full Power")
 
         # 5호장군 호출
-        if all(
-            callable(x) for x in [guan_yu, zhang_fei, zhao_yun, ma_chao, huang_zhong]
-        ):
+        if all(callable(x) for x in [guan_yu, zhang_fei, zhao_yun, ma_chao, huang_zhong]):
             results = {
-                "guan": (
-                    guan_yu({"data": state["context"]})
-                    if callable(guan_yu)
-                    else "Success"
-                ),
-                "zhang": (
-                    zhang_fei(score, state["context"])
-                    if callable(zhang_fei)
-                    else "Success"
-                ),
+                "guan": (guan_yu({"data": state["context"]}) if callable(guan_yu) else "Success"),
+                "zhang": (zhang_fei(score, state["context"]) if callable(zhang_fei) else "Success"),
                 "zhao": (
-                    zhao_yun("Code Structure", ux_level=2)
-                    if callable(zhao_yun)
-                    else "Success"
+                    zhao_yun("Code Structure", ux_level=2) if callable(zhao_yun) else "Success"
                 ),
                 "ma": ma_chao(state["context"]) if callable(ma_chao) else "Success",
                 "huang": (
@@ -474,11 +449,7 @@ async def tigers_node(state: ChancellorState) -> dict[str, Any]:
                 rule_id = "R4_AUTORUN_THRESHOLD"
                 decision: Literal["AUTO_RUN", "ASK"] = "AUTO_RUN"
             else:
-                rule_id = (
-                    "R5_FALLBACK_ASK"
-                    if score < auto_run_threshold
-                    else "R3_VETO_LOW_PILLARS"
-                )
+                rule_id = "R5_FALLBACK_ASK" if score < auto_run_threshold else "R3_VETO_LOW_PILLARS"
                 decision = "ASK"
 
             # Generate trace_id from query or use fallback
@@ -556,9 +527,7 @@ async def historian_node(state: ChancellorState) -> dict[str, Any]:
             # Calculate execution metrics (latency, success rate, etc.)
             import time
 
-            execution_time = (
-                time.time()
-            )  # Placeholder - would be measured in real implementation
+            execution_time = time.time()  # Placeholder - would be measured in real implementation
 
             # Emit execution verdict event
             emit_verdict(
@@ -579,9 +548,7 @@ async def historian_node(state: ChancellorState) -> dict[str, Any]:
                     "execution_time": execution_time,
                 },
             )
-            log_sse(
-                f"📊 [Execution Verdict] Emitted: {decision} via {rule_id} (Status: {status})"
-            )
+            log_sse(f"📊 [Execution Verdict] Emitted: {decision} via {rule_id} (Status: {status})")
         except Exception as e:
             log_sse(f"⚠️ [Execution Verdict] Logging failed: {e}")
 
@@ -651,9 +618,7 @@ try:
         from langgraph.checkpoint.memory import MemorySaver
 
         checkpointer = MemorySaver()
-        log_sse(
-            "⚠️ [Eternity Checklist] Redis unavailable, falling back to MemorySaver."
-        )
+        log_sse("⚠️ [Eternity Checklist] Redis unavailable, falling back to MemorySaver.")
 except ImportError:
     from langgraph.checkpoint.memory import MemorySaver
 

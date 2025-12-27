@@ -39,11 +39,11 @@ async def process_voice_command(command: VoiceCommand) -> VoiceResponse:
 
     # Keywords for specific actions
     if "상태" in command.text:
-        response_text = "왕국의 상태는 건강합니다. Trinity Score 100점, 모든 시스템 정상 가동 중입니다."
-    elif "보고" in command.text:
         response_text = (
-            "보고를 올립니다. 현재 왕국은 클라우드 우주에서 영원히 빛나고 있습니다."
+            "왕국의 상태는 건강합니다. Trinity Score 100점, 모든 시스템 정상 가동 중입니다."
         )
+    elif "보고" in command.text:
+        response_text = "보고를 올립니다. 현재 왕국은 클라우드 우주에서 영원히 빛나고 있습니다."
     elif "안녕" in command.text or "hello" in command.text.lower():
         response_text = "형님, 안녕하십니까! 왕국이 형님의 명령을 기다리고 있습니다."
 

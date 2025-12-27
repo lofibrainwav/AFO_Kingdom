@@ -101,9 +101,7 @@ def interactive_login_stealth():
 
             for i in range(max_retries):
                 cookies = context.cookies("https://x.com")
-                auth_token = next(
-                    (c["value"] for c in cookies if c["name"] == "auth_token"), None
-                )
+                auth_token = next((c["value"] for c in cookies if c["name"] == "auth_token"), None)
                 ct0 = next((c["value"] for c in cookies if c["name"] == "ct0"), None)
 
                 if auth_token:

@@ -436,9 +436,7 @@ class SettingsManager:
                 "debug": os.getenv("AFO_DEBUG", "true").lower() == "true",
                 "host": os.getenv("AFO_HOST", "0.0.0.0"),
                 "port": int(os.getenv("AFO_PORT", "8010")),
-                "cors_origins": os.getenv(
-                    "AFO_CORS_ORIGINS", "http://localhost:3000"
-                ).split(","),
+                "cors_origins": os.getenv("AFO_CORS_ORIGINS", "http://localhost:3000").split(","),
                 "database_url": os.getenv("DATABASE_URL", "sqlite:///./test.db"),
                 "redis_url": os.getenv("REDIS_URL", "redis://localhost:6379"),
                 "ollama_url": os.getenv("OLLAMA_URL", "http://localhost:11434"),
@@ -681,6 +679,7 @@ except ImportError:
 
 class ChancellorInvokeRequest(BaseModel):
     """Chancellor 호출 요청 모델 - Phase 11 확장 (Strangler Fig)"""
+
     input: str
     engine: str | None = None
     mode: str | None = None
@@ -704,6 +703,7 @@ class ChancellorInvokeRequest(BaseModel):
 
 class ChancellorInvokeResponse(BaseModel):
     """Chancellor 호출 응답 모델"""
+
     result: str
     engine_used: str
     execution_time: float

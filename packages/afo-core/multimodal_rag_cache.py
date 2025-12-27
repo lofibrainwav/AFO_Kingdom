@@ -83,10 +83,7 @@ def get_cached_result(query: str, modality: str = "text") -> dict[str, Any] | No
 
 
 def set_cached_result(
-    query: str,
-    result: dict[str, Any],
-    modality: str = "text",
-    ttl_seconds: int = 3600
+    query: str, result: dict[str, Any], modality: str = "text", ttl_seconds: int = 3600
 ) -> bool:
     """
     Cache the RAG result for the query.
@@ -163,11 +160,7 @@ def get_cache_stats() -> dict[str, Any]:
 
     try:
         keys = client.keys("multimodal_rag:*")
-        return {
-            "status": "healthy",
-            "entries": len(keys),
-            "keys_sample": keys[:5] if keys else []
-        }
+        return {"status": "healthy", "entries": len(keys), "keys_sample": keys[:5] if keys else []}
 
     except Exception as e:
         logger.warning(f"⚠️ Multimodal RAG Cache stats failed: {e}")

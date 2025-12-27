@@ -75,9 +75,7 @@ async def dry_run_transaction(
             import uuid
 
             request_data["transaction_id"] = str(uuid.uuid4())
-            request_data["timestamp"] = (
-                "2024-01-01T00:00:00"  # Mock timestamp for dry run
-            )
+            request_data["timestamp"] = "2024-01-01T00:00:00"  # Mock timestamp for dry run
 
         result = await julie.process_transaction(
             request_data=request_data, account_id=tx.account_id, dry_run=True

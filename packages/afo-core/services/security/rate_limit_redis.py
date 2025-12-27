@@ -104,11 +104,11 @@ class RedisDownPolicyMiddleware(BaseHTTPMiddleware):
         path = request.url.path
 
         if self._policy.is_exempt(path):
-            return cast(Response, await call_next(request))
+            return cast("Response", await call_next(request))
 
         redis_ok, cb_state = await self._probe.check()
         if redis_ok:
-            return cast(Response, await call_next(request))
+            return cast("Response", await call_next(request))
 
         if self._policy.should_fail_closed(path):
             headers = {
@@ -125,7 +125,7 @@ class RedisDownPolicyMiddleware(BaseHTTPMiddleware):
         if self._on_warning is not None:
             self._on_warning(request, cb_state)
 
-        response = cast(Response, await call_next(request))
+        response = cast("Response", await call_next(request))
         response.headers[self._policy.warning_header_name] = "1"
         response.headers[self._policy.cb_state_header_name] = cb_state
         return response
@@ -136,9 +136,7 @@ def _rate_limit_exceeded_handler(request: Request, exc: RateLimitExceeded) -> Re
 
 
 def setup_redis_rate_limiter(app: FastAPI) -> None:
-    redis_url = os.getenv(
-        "AFO_RATE_LIMIT_REDIS_URL", "redis://localhost:6379/0"
-    ).strip()
+    redis_url = os.getenv("AFO_RATE_LIMIT_REDIS_URL", "redis://localhost:6379/0").strip()
     strategy = os.getenv("AFO_RATE_LIMIT_STRATEGY", "fixed-window").strip()
     default_limit = os.getenv("AFO_RATE_LIMIT_DEFAULT", "10/minute").strip()
 
@@ -189,7 +187,10 @@ def setup_redis_rate_limiter(app: FastAPI) -> None:
         logger.warning("redis_down path=%s cb_state=%s", req.url.path, cb_state)
 
     app.add_middleware(
-        RedisDownPolicyMiddleware, policy=policy, probe=probe, on_warning=_warn  # type: ignore[arg-type]
+        RedisDownPolicyMiddleware,  # type: ignore[arg-type]
+        policy=policy,
+        probe=probe,
+        on_warning=_warn,
     )
 
     async def _shutdown() -> None:

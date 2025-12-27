@@ -62,9 +62,7 @@ async def initialize_system() -> None:
         # Initialize LLM Clients
         await _initialize_llm_clients()
 
-        print(
-            "[지휘소 v6】 '진정한 두뇌' (Chancellor Graph) 가동 준비 완료. (True Intelligence)"
-        )
+        print("[지휘소 v6】 '진정한 두뇌' (Chancellor Graph) 가동 준비 완료. (True Intelligence)")
 
     except Exception as e:
         logger.error(f"System initialization failed: {e}")
@@ -98,9 +96,7 @@ async def _initialize_antigravity() -> None:
             )
 
         if antigravity and antigravity.DRY_RUN_DEFAULT:
-            print(
-                "🛡️ [AntiGravity] DRY_RUN 모드 활성화 - 모든 위험 동작 시뮬레이션 (善)"
-            )
+            print("🛡️ [AntiGravity] DRY_RUN 모드 활성화 - 모든 위험 동작 시뮬레이션 (善)")
     except Exception as e:
         print(f"⚠️ AntiGravity 초기화 실패: {e}")
 
@@ -143,6 +139,7 @@ async def _initialize_multimodal_rag() -> None:
     try:
         print(f"🔍 Multimodal RAG Cache 초기화 시도... REDIS_CLIENT: {REDIS_CLIENT is not None}")
         from multimodal_rag_cache import set_redis_client as _src
+
         print("✅ Multimodal RAG Cache 모듈 import 성공")
 
         if REDIS_CLIENT:
@@ -165,9 +162,7 @@ async def _initialize_skills_registry() -> None:
 
         skill_registry = _rcs()
         skill_count = (
-            skill_registry.count()
-            if skill_registry and hasattr(skill_registry, "count")
-            else 0
+            skill_registry.count() if skill_registry and hasattr(skill_registry, "count") else 0
         )
         print(f"ℹ️ [INFO] {skill_count} Skills loaded in simulation mode")
     except ImportError:
@@ -231,9 +226,7 @@ async def _initialize_strategy_engine() -> None:
             from chancellor_graph import chancellor_graph
 
         strategy_app_runnable = chancellor_graph
-        print(
-            "[지휘소 v6】 '진정한 두뇌' (Chancellor Graph) 가동 준비 완료. (True Intelligence)"
-        )
+        print("[지휘소 v6】 '진정한 두뇌' (Chancellor Graph) 가동 준비 완료. (True Intelligence)")
     except ImportError:
         # Fallback to Workflow Mock Compilation
         try:
@@ -245,9 +238,7 @@ async def _initialize_strategy_engine() -> None:
                 print("[지휘소 v6】 '두뇌' (Mock) 가동 준비 완료.")
             else:
                 strategy_app_runnable = None
-                print(
-                    "⚠️ Strategy workflow 또는 memory_context 없음 - LangGraph 컴파일 건너뜀"
-                )
+                print("⚠️ Strategy workflow 또는 memory_context 없음 - LangGraph 컴파일 건너뜀")
         except (ImportError, AttributeError):
             strategy_app_runnable = None
             print("⚠️ LangGraph compilation failed - running in degraded mode")

@@ -38,10 +38,7 @@ def evaluate_gate(trinity_score: float, risk_score: float) -> Decision:
         raise ValueError(f"Risk Score는 0-100 사이여야 함: {risk_score}")
 
     # AGENTS.md Rule #1 적용
-    if (
-        trinity_score >= AUTO_RUN_TRINITY_THRESHOLD
-        and risk_score <= AUTO_RUN_RISK_THRESHOLD
-    ):
+    if trinity_score >= AUTO_RUN_TRINITY_THRESHOLD and risk_score <= AUTO_RUN_RISK_THRESHOLD:
         return "AUTO_RUN"
 
     return "ASK_COMMANDER"

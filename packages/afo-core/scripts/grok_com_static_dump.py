@@ -31,9 +31,7 @@ def dump_cookies():
 
             # Print potentially key tokens
             if any(k in cookie.name for k in ["token", "session", "auth"]):
-                print(
-                    f"   -> Found Access Token: {cookie.name} = {cookie.value[:10]}..."
-                )
+                print(f"   -> Found Access Token: {cookie.name} = {cookie.value[:10]}...")
 
         if found:
             os.makedirs("secrets", exist_ok=True)
@@ -50,9 +48,7 @@ def dump_cookies():
 
     except Exception as e:
         print(f"❌ Error: {e}")
-        print(
-            "💡 If 'database is locked', try copying the file manually or closing Chrome deeply."
-        )
+        print("💡 If 'database is locked', try copying the file manually or closing Chrome deeply.")
 
 
 if __name__ == "__main__":

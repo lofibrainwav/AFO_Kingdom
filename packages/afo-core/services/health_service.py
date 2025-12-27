@@ -27,6 +27,7 @@ logger = logging.getLogger(__name__)
 # Trinity Score 모니터링 (선택적)
 try:
     from services.trinity_score_monitor import record_trinity_score_metrics
+
     TRINITY_MONITORING_AVAILABLE = True
 except ImportError:
     TRINITY_MONITORING_AVAILABLE = False
@@ -112,7 +113,7 @@ async def check_mcp() -> dict[str, Any]:
             # 간단하게 구성된 서버 수만 확인
             return {
                 "healthy": True,
-                "output": f"MCP servers configured: {len(health_check_config.MCP_SERVERS)} servers"
+                "output": f"MCP servers configured: {len(health_check_config.MCP_SERVERS)} servers",
             }
         else:
             return {"healthy": False, "output": "No MCP servers configured"}
@@ -142,7 +143,7 @@ async def get_comprehensive_health() -> dict[str, Any]:
             _health_cache = cached_result
             _cache_timestamp = time.time()
             logger.debug("Returning Redis cached health data")
-            return cast(dict[str, Any], cached_result)
+            return cast("dict[str, Any]", cached_result)
     except Exception:
         pass  # Redis 캐시 실패해도 계속 진행
 
@@ -159,7 +160,7 @@ async def get_comprehensive_health() -> dict[str, Any]:
                     check_mcp(),
                     return_exceptions=True,
                 ),
-                timeout=10.0  # 10초 타임아웃
+                timeout=10.0,  # 10초 타임아웃
             )
         except TimeoutError:
             logger.warning("Health check timed out after 10 seconds")
@@ -197,9 +198,7 @@ async def get_comprehensive_health() -> dict[str, Any]:
 
     # 眞 (Truth 35%) - 핵심 데이터 계층
     core_data_organs = ["心_Redis", "肝_PostgreSQL"]
-    truth_healthy = sum(
-        1 for o in organs if o["organ"] in core_data_organs and o["healthy"]
-    )
+    truth_healthy = sum(1 for o in organs if o["organ"] in core_data_organs and o["healthy"])
     truth_score = truth_healthy / len(core_data_organs) if core_data_organs else 0.0
 
     # 善 (Goodness 35%) - 전체 서비스 기반 안정성
@@ -214,9 +213,7 @@ async def get_comprehensive_health() -> dict[str, Any]:
     filial_score = 1.0 if llm_healthy else 0.0
 
     # 永 (Eternity 2%) - 영속적 가동
-    eternity_score = (
-        1.0 if healthy_count == total_organs else healthy_count / total_organs
-    )
+    eternity_score = 1.0 if healthy_count == total_organs else healthy_count / total_organs
 
     trinity_metrics: TrinityMetrics = calculate_trinity(
         truth=truth_score,
@@ -237,11 +234,7 @@ async def get_comprehensive_health() -> dict[str, Any]:
     issues = []
     suggestions = []
     if trinity_metrics.truth < 1.0:
-        failed = [
-            o["organ"]
-            for o in organs
-            if o["organ"] in core_data_organs and not o["healthy"]
-        ]
+        failed = [o["organ"] for o in organs if o["organ"] in core_data_organs and not o["healthy"]]
         issues.append(f"眞(데이터 계층): {', '.join(failed)} 연결 실패")
         suggestions.append("docker-compose restart redis postgres")
 

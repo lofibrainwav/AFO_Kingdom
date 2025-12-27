@@ -49,7 +49,9 @@ async def publish_thought(content: dict | None = None, **kwargs) -> None:
         # Publish to Redis channel
         redis_client.publish("kingdom:logs:stream", json.dumps(content))
 
-        logger.debug(f"Published thought to Chancellor Stream: {content.get('message', '')[:100]}...")
+        logger.debug(
+            f"Published thought to Chancellor Stream: {content.get('message', '')[:100]}..."
+        )
 
     except Exception as e:
         logger.error(f"Failed to publish thought: {e}")

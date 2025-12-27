@@ -46,9 +46,7 @@ class FrictionStats:
         if ideal_parallel_time <= 0:
             return 0.0
 
-        friction_value = (
-            self.parallel_time - ideal_parallel_time
-        ) / ideal_parallel_time
+        friction_value = (self.parallel_time - ideal_parallel_time) / ideal_parallel_time
         return max(0.0, friction_value)  # 음수 방지
 
     @property

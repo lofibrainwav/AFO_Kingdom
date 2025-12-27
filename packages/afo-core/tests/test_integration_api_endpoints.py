@@ -70,11 +70,7 @@ class TestSkillsEndpointsIntegration:
             data = response.json()
             assert isinstance(data, (dict, list))
             if isinstance(data, dict):
-                assert (
-                    "skills" in data
-                    or "items" in data
-                    or isinstance(data.get("data"), list)
-                )
+                assert "skills" in data or "items" in data or isinstance(data.get("data"), list)
 
 
 class TestChancellorEndpointsIntegration:

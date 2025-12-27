@@ -43,9 +43,7 @@ class DetailedPillarsCalculator:
 
         return round(score, 2)  # 0.0 ~ 1.0
 
-    def calculate_beauty_score(
-        self, code_snippet: str, context: dict[str, Any]
-    ) -> float:
+    def calculate_beauty_score(self, code_snippet: str, context: dict[str, Any]) -> float:
         """
         미 (Beauty) - 20%: 미학, 단순함, UX 우아함
         Target: Modularity, Naming Consistency, Glassmorphism
@@ -99,9 +97,7 @@ class DetailedPillarsCalculator:
 
         return round(score, 2)
 
-    def calculate_eternity_score(
-        self, code_snippet: str, context: dict[str, Any]
-    ) -> float:
+    def calculate_eternity_score(self, code_snippet: str, context: dict[str, Any]) -> float:
         """
         영 (Eternity) - 2%: 영속성, 지속 가능성, 문서화
         Target: Docs, Git, Evolution Logs

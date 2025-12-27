@@ -48,9 +48,7 @@ def extract_grok_token():
 
             if not found_token:
                 # Try twitter.com
-                cj = browser_cookie3.chrome(
-                    cookie_file=cookie_file, domain_name="twitter.com"
-                )
+                cj = browser_cookie3.chrome(cookie_file=cookie_file, domain_name="twitter.com")
                 for cookie in cj:
                     if cookie.name == "auth_token":
                         found_token = cookie.value

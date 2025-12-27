@@ -58,9 +58,7 @@ async def execute_skill(
     """
     skill = registry.get(skill_id)
     if not skill:
-        raise HTTPException(
-            status_code=404, detail=f"Skill '{skill_id}' not found"
-        )
+        raise HTTPException(status_code=404, detail=f"Skill '{skill_id}' not found")
 
     logger.info(f"Executing skill: {skill_id} (Dry Run: {dry_run})")
 

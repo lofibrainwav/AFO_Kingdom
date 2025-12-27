@@ -138,9 +138,7 @@ async def comprehensive_health_check() -> dict[str, Any]:
         config = health_check_config
         response_data = {
             "status": (
-                "healthy"
-                if trinity_score >= config.TRINITY_SCORE_THRESHOLD
-                else "degraded"
+                "healthy" if trinity_score >= config.TRINITY_SCORE_THRESHOLD else "degraded"
             ),
             "timestamp": datetime.now().isoformat(),
             "organs": health_data.get("organs", {}),
@@ -198,11 +196,11 @@ def _extract_services_status(health_data: dict[str, Any]) -> dict[str, bool]:
 
     # SSOT 표준: 5개 오장육부 매핑
     service_mapping = {
-        "redis": "心_Redis",          # 세션/캐시 저장소
+        "redis": "心_Redis",  # 세션/캐시 저장소
         "postgres": "肝_PostgreSQL",  # 메인 데이터베이스
-        "ollama": "脾_Ollama",        # AI 모델 서빙
-        "api_server": "肺_API_Server", # API 서버 상태
-        "mcp": "肾_MCP",             # 외부 서비스 연결
+        "ollama": "脾_Ollama",  # AI 모델 서빙
+        "api_server": "肺_API_Server",  # API 서버 상태
+        "mcp": "肾_MCP",  # 외부 서비스 연결
     }
 
     return {
@@ -228,9 +226,7 @@ async def _check_skills_registry() -> dict[str, Any]:
                 for skill in skills[: config.MAX_SKILLS_DISPLAY]
             ],
             "categories": (
-                registry.get_category_stats()
-                if hasattr(registry, "get_category_stats")
-                else {}
+                registry.get_category_stats() if hasattr(registry, "get_category_stats") else {}
             ),
         }
     except Exception as e:
@@ -302,7 +298,9 @@ async def _check_context7() -> dict[str, Any]:
         if health_data["status"] == "healthy":
             # 표시 제한 적용
             if "knowledge_base_keys" in health_data:
-                health_data["knowledge_base_keys"] = health_data["knowledge_base_keys"][: config.MAX_CONTEXT7_KEYS_DISPLAY]
+                health_data["knowledge_base_keys"] = health_data["knowledge_base_keys"][
+                    : config.MAX_CONTEXT7_KEYS_DISPLAY
+                ]
 
         return health_data
 

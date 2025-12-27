@@ -160,9 +160,7 @@ class AuditTrail:
                     record.timestamp,
                     json.dumps(record.context),
                 )
-                print(
-                    f"📝 [Audit] Logged: {record.action} (Trinity: {trinity_score:.2f})"
-                )
+                print(f"📝 [Audit] Logged: {record.action} (Trinity: {trinity_score:.2f})")
             except Exception as e:
                 print(f"⚠️ [Audit] DB write failed: {e}")
                 self._records.append(record)  # Fallback to memory

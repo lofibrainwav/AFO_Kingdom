@@ -34,9 +34,7 @@ class LLMCacheEntry(BaseModel):
     """LLM 캐시 엔트리 모델"""
 
     request_hash: str = Field(..., description="요청 해시")
-    provider: str = Field(
-        ..., description="LLM 제공자 (ollama, claude, gemini, openai)"
-    )
+    provider: str = Field(..., description="LLM 제공자 (ollama, claude, gemini, openai)")
     model: str = Field(..., description="모델 이름")
     response: str = Field(..., description="LLM 응답")
     metadata: dict[str, Any] = Field(default_factory=dict, description="메타데이터")
@@ -76,9 +74,7 @@ class LLMCacheService:
             self._initialized = False
             return False
 
-    def _generate_cache_key(
-        self, request_data: dict[str, Any], provider: str, model: str
-    ) -> str:
+    def _generate_cache_key(self, request_data: dict[str, Any], provider: str, model: str) -> str:
         """
         캐시 키 생성 (Sequential Thinking Phase 2)
         요청 데이터를 해시하여 고유 키 생성
@@ -99,7 +95,7 @@ class LLMCacheService:
         cache_key = f"{LLM_CACHE_CONFIG['key_prefix']}{provider}:{model}:{request_hash}"
 
         # Redis 키 길이 제한 확인
-        if len(cache_key) > cast(int, LLM_CACHE_CONFIG["max_key_length"]):
+        if len(cache_key) > cast("int", LLM_CACHE_CONFIG["max_key_length"]):
             # 해시만 사용
             cache_key = f"{LLM_CACHE_CONFIG['key_prefix']}{request_hash}"
 
@@ -160,7 +156,9 @@ class LLMCacheService:
 
         try:
             cache_key = self._generate_cache_key(request_data, provider, model)
-            ttl_value: int = ttl if ttl is not None else cast(int, LLM_CACHE_CONFIG["default_ttl"])
+            ttl_value: int = (
+                ttl if ttl is not None else cast("int", LLM_CACHE_CONFIG["default_ttl"])
+            )
 
             # 캐시 엔트리 생성
             entry = LLMCacheEntry(

@@ -25,7 +25,7 @@ from AFO.utils.path_utils import get_project_root
 logger = logging.getLogger(__name__)
 
 # 모듈 레벨 캐싱 (싱글톤 패턴)
-_automation_cache: Optional[dict[str, Any]] = None
+_automation_cache: dict[str, Any] | None = None
 _automation_cache_timestamp: float = 0
 _AUTOMATION_CACHE_TTL = 300  # 5분 캐시 (자동화 도구는 자주 변경되지 않음)
 
@@ -42,14 +42,17 @@ def get_automation_health() -> dict[str, Any]:
     current_time = time.time()
 
     # 캐시 유효성 확인
-    if (_automation_cache is None or
-        (current_time - _automation_cache_timestamp) > _AUTOMATION_CACHE_TTL):
-
+    if (
+        _automation_cache is None
+        or (current_time - _automation_cache_timestamp) > _AUTOMATION_CACHE_TTL
+    ):
         try:
             logger.debug("🔄 AutomationTools 캐시 갱신 시작")
 
             # 프로젝트 루트 계산
-            project_root = get_project_root(Path(__file__).parent.parent.parent / "api" / "routes" / "comprehensive_health.py")
+            project_root = get_project_root(
+                Path(__file__).parent.parent.parent / "api" / "routes" / "comprehensive_health.py"
+            )
 
             # AutomationTools 실행
             automation = AutomationTools(project_root)

@@ -9,7 +9,8 @@ Phase 5: Trinity Type Validator 적용 - 런타임 Trinity Score 검증
 
 import json
 import logging
-from typing import Any, Callable, TypeVar
+from collections.abc import Callable
+from typing import Any, TypeVar
 
 TF = TypeVar("TF", bound=Callable[..., Any])
 
@@ -102,12 +103,10 @@ class CheckpointService:
                         f"[永: Checkpoint] Redis에 페르소나 상태 저장: {persona_data.get('id')}"
                     )
                 except Exception as e:
-                    logger.warning(
-                        f"[永: Checkpoint] Redis 저장 실패, 메모리 저장으로 폴백: {e}"
+                    logger.warning(f"[永: Checkpoint] Redis 저장 실패, 메모리 저장으로 폴백: {e}")
+                    self._memory_store[f"persona:{persona_data.get('id', 'unknown')}"] = (
+                        persona_data
                     )
-                    self._memory_store[
-                        f"persona:{persona_data.get('id', 'unknown')}"
-                    ] = persona_data
 
             # DB 영속 저장
             if DB_AVAILABLE:
@@ -120,18 +119,14 @@ class CheckpointService:
                         persona_json,
                     )
                     await conn.close()
-                    logger.info(
-                        f"[永: Eternity] DB에 페르소나 상태 저장: {persona_data.get('id')}"
-                    )
+                    logger.info(f"[永: Eternity] DB에 페르소나 상태 저장: {persona_data.get('id')}")
                 except Exception as e:
                     logger.warning(f"[永: Eternity] DB 저장 실패: {e}")
 
             return {
                 "status": "success",
                 "persona_id": persona_data.get("id"),
-                "storage": (
-                    "redis+db" if (REDIS_AVAILABLE and DB_AVAILABLE) else "memory"
-                ),
+                "storage": ("redis+db" if (REDIS_AVAILABLE and DB_AVAILABLE) else "memory"),
             }
 
         except Exception as e:

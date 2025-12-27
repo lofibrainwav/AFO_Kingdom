@@ -27,9 +27,7 @@ class BaseWidgetSpec(BaseModel):
     model_config = ConfigDict(extra="ignore", frozen=False)
 
     id: str = Field(..., description="Unique widget identifier")
-    source: Literal["manual", "generated", "api"] = Field(
-        ..., description="Widget source type"
-    )
+    source: Literal["manual", "generated", "api"] = Field(..., description="Widget source type")
     order: int = Field(default=0, description="Display order")
     title: str | None = Field(default=None, description="Widget title")
     route: str | None = Field(default=None, description="Widget route path")
@@ -42,20 +40,14 @@ class GeneratedWidgetSpec(BaseWidgetSpec):
     source: Literal["generated"] = "generated"
     dataWidgetId: str | None = Field(default=None)
     sourceId: str | None = Field(default=None, description="Legacy field (fallback)")
-    html_section_id: str | None = Field(
-        default=None, description="Legacy field (fallback)"
-    )
+    html_section_id: str | None = Field(default=None, description="Legacy field (fallback)")
     fragment_key: str | None = Field(
         default=None,
         description="[Ticket 3] 표준 fragment 포인터. HTML fragment 추출 시 사용. 읽을 때 fallback: fragment_key ?? html_section_id ?? sourceId",
     )
     preview: str | None = Field(default=None, description="Preview text")
-    visibility: Literal["public", "internal", "hidden"] | None = Field(
-        default="internal"
-    )
-    category: Literal["card", "panel", "chart", "legacy"] | None = Field(
-        default="panel"
-    )
+    visibility: Literal["public", "internal", "hidden"] | None = Field(default="internal")
+    category: Literal["card", "panel", "chart", "legacy"] | None = Field(default="panel")
     defaultEnabled: bool | None = Field(default=True)
     tags: list[str] | None = Field(default_factory=list)
 

@@ -103,13 +103,15 @@ class FinancialConnector:
         # Pick 3-4 random transactions
         daily_sample = random.sample(merchants, k=random.randint(3, 5))
         for _i, (name, amount, cat) in enumerate(daily_sample):
-            transactions.append({
-                "id": f"tx-{random.randint(1000, 9999)}",
-                "merchant": name,
-                "amount": amount,
-                "date": "2024-12-26", # Fixed for demo, or use datetime.now()
-                "category": cat,
-            })
+            transactions.append(
+                {
+                    "id": f"tx-{random.randint(1000, 9999)}",
+                    "merchant": name,
+                    "amount": amount,
+                    "date": "2024-12-26",  # Fixed for demo, or use datetime.now()
+                    "category": cat,
+                }
+            )
 
         return {
             "account_id": account_id,
@@ -131,7 +133,7 @@ class FinancialConnector:
             alerts.append({"level": "info", "message": "Spending on track"})
 
         if random.random() < 0.3:
-             alerts.append({"level": "warning", "message": "Unusual subscription detected"})
+            alerts.append({"level": "warning", "message": "Unusual subscription detected"})
 
         return alerts
 
