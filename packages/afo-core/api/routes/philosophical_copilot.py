@@ -11,6 +11,8 @@ import logging
 from datetime import datetime, timedelta
 from typing import Any, cast
 
+import os
+from fastapi import Header, HTTPException, status
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 
@@ -23,6 +25,15 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api", tags=["philosophical-copilot"])
 
+
+def require_internal_secret(
+    x_internal_secret: str | None = Header(default=None, alias="X-Internal-Secret"),
+) -> None:
+    expected = os.getenv("AFO_INTERNAL_SECRET")
+    if not expected:
+        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="internal secret not configured")
+    if x_internal_secret != expected:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="unauthorized")
 # 의존성 주입
 settings = Settings()
 
@@ -188,7 +199,7 @@ async def calculate_trinity_score(request: TrinityScoreRequest):
         raise HTTPException(status_code=500, detail="철학적 조화를 계산할 수 없습니다") from e
 
 
-@router.get("/revalidate/status", response_model=RevalidateStatusResponse)
+@router.get("/revalidate/status", response_model=RevalidateStatusResponse, dependencies=[Depends(require_internal_secret)])
 async def get_revalidate_status():
     """
     Revalidate 상태 확인 (제갈량의 전략적 판단)

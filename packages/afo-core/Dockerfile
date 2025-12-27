@@ -15,6 +15,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY requirements.txt requirements_minimal.txt* ./
 RUN pip install --no-cache-dir -r requirements.txt || pip install --no-cache-dir -r requirements_minimal.txt
 
+
+
+# Explicit uvicorn installation (RAG service fix)
+RUN pip install --no-cache-dir "uvicorn[standard]>=0.31.1"
+RUN python -c "import uvicorn; print('uvicorn', uvicorn.__version__)"
 # Copy Application Code
 COPY AFO /app/AFO
 COPY afo_soul_engine /app/afo_soul_engine
