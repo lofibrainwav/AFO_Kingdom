@@ -17,7 +17,7 @@ from AFO.utils.redis_connection import get_redis_client
 # 설정 및 유틸리티
 API_PROVIDERS = ["openai", "anthropic", "google", "ollama"]
 
-session_router = APIRouter()
+session_router = APIRouter(prefix="/session")
 
 
 class WalletSessionRequest(BaseModel):

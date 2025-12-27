@@ -15,7 +15,7 @@ from fastapi import APIRouter, HTTPException
 from .models import API_PROVIDERS, WalletAPIKeyRequest, WalletStatusResponse
 
 # Create router
-setup_router = APIRouter(prefix="/api/wallet/setup", tags=["Wallet Setup"])
+setup_router = APIRouter(prefix="/setup", tags=["Wallet Setup"])
 
 
 @setup_router.post("/api-key")
