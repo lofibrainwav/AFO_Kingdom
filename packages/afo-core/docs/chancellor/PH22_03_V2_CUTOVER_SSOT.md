@@ -17,10 +17,24 @@ V2 Graph를 기본 엔진으로 전환하되, 운영 리스크 최소화.
 | **저장 위치** | `artifacts/chancellor_shadow_diff/` |
 | **실패 시** | V1 응답 유지, 메트릭만 기록 |
 
+#### Shadow Diff 허용 범위 (SSOT)
+
+| 항목 | 허용 | FAIL 기준 |
+|------|------|-----------|
+| **V2 성공률** | ≥99% | <99% → FAIL |
+| **VerifyFail** | 0건/5분 | >0 → FAIL |
+| **TraceGap** | 0건 | 60분 무응답 → FAIL |
+| **sequential_thinking** | 항상 존재 | 누락 → FAIL |
+| **context7** | 항상 존재 | 누락 → FAIL |
+| **KINGDOM_DNA** | 항상 injected=true | false → FAIL |
+| **KINGDOM_DNA content** | ≥100 chars | <100 → FAIL |
+| **ExecuteBlocked** | 정상 패턴 | 급증 → WARNING |
+
 **합격 기준:**
 - [ ] V2 성공률 ≥ 99%
 - [ ] VerifyFail/TraceGap 알람 0건
-- [ ] diff 허용 범위 내 안정
+- [ ] sequential_thinking + context7 항상 존재
+- [ ] KINGDOM_DNA injected + ≥100 chars
 
 ---
 
