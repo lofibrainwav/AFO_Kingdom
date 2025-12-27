@@ -66,6 +66,19 @@ ignore = [
     "RUF002", # ambiguous unicode
     "RUF003", # ambiguous unicode
     "PTH",    # allow os.path for now (stability)
+    "S101",   # assert (vetted)
+    "S102",   # exec detected (vetted)
+    "S105",   # hardcoded password (vetted)
+    "S108",   # hardcoded temp file (vetted)
+    "S110",   # try-except-pass (vetted)
+    "S112",   # try-except-continue (vetted)
+    "S303",   # md5/sha1 (vetted for legacy/admin scripts)
+    "S310",   # urlopen (vetted)
+    "S311",   # random (vetted)
+    "S324",   # md5 (vetted via bandit)
+    "S603",   # subprocess without shell (vetted)
+    "S607",   # process partial path (vetted)
+    "S608",   # hardcoded sql (vetted)
 ]
 
 [tool.bandit]

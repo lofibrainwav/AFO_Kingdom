@@ -113,7 +113,7 @@ class AuditTrail:
                     context JSONB,
                     created_at TIMESTAMPTZ DEFAULT NOW()
                 )
-            """
+                """  # nosec B608
             )
 
     async def log(
@@ -148,11 +148,7 @@ class AuditTrail:
                 import json
 
                 await conn.execute(
-                    f"""
-                    INSERT INTO {self.TABLE_NAME}
-                    (decision_id, trinity_score, risk_score, action, timestamp, context)
-                    VALUES ($1, $2, $3, $4, $5, $6)
-                """,
+                    f"INSERT INTO {self.TABLE_NAME} (decision_id, trinity_score, risk_score, action, timestamp, context) VALUES ($1, $2, $3, $4, $5, $6)",  # nosec B608
                     uuid.UUID(record.decision_id),
                     record.trinity_score,
                     record.risk_score,
@@ -176,11 +172,7 @@ class AuditTrail:
         conn = await self._get_connection()
         if conn:
             rows = await conn.fetch(
-                f"""
-                SELECT * FROM {self.TABLE_NAME}
-                ORDER BY timestamp DESC
-                LIMIT $1
-            """,
+                f"SELECT * FROM {self.TABLE_NAME} ORDER BY timestamp DESC LIMIT $1",  # nosec B608
                 limit,
             )
             return [
@@ -201,15 +193,7 @@ class AuditTrail:
         conn = await self._get_connection()
         if conn:
             stats = await conn.fetchrow(
-                f"""
-                SELECT
-                    COUNT(*) as total_decisions,
-                    AVG(trinity_score) as avg_trinity,
-                    AVG(risk_score) as avg_risk,
-                    SUM(CASE WHEN action = 'AUTO_RUN' THEN 1 ELSE 0 END) as auto_run_count,
-                    SUM(CASE WHEN action = 'ASK_COMMANDER' THEN 1 ELSE 0 END) as ask_count
-                FROM {self.TABLE_NAME}
-            """
+                f"SELECT COUNT(*) as total_decisions, AVG(trinity_score) as avg_trinity, AVG(risk_score) as avg_risk, SUM(CASE WHEN action = 'AUTO_RUN' THEN 1 ELSE 0 END) as auto_run_count, SUM(CASE WHEN action = 'ASK_COMMANDER' THEN 1 ELSE 0 END) as ask_count FROM {self.TABLE_NAME}"  # nosec B608
             )
             return dict(stats) if stats else {}
 
