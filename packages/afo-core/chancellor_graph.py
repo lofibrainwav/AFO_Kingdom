@@ -60,8 +60,8 @@ except ImportError:
         async def critique_and_revise(*args, **kwargs):  # noqa: ARG004
             return "No critique", args[0], "COMPLIANT"
 
-    AFOConstitution = MockConstitution  # type: ignore[assignment]
-    VerdictLogger = None  # type: ignore[assignment]
+    AFOConstitution = MockConstitution  # type: ignore[assignment,misc]
+    VerdictLogger = None  # type: ignore[assignment,misc]
     emit_verdict = None  # type: ignore[assignment]
     antigravity = None  # type: ignore[assignment]
     get_settings = None  # type: ignore[assignment]
@@ -74,14 +74,14 @@ except ImportError:
     zhao_yun = None  # type: ignore[assignment]
     ma_chao = None  # type: ignore[assignment]
     huang_zhong = None  # type: ignore[assignment]
-    Historian = None  # type: ignore[assignment]
+    Historian = None  # type: ignore[assignment,misc]
     log_sse = None  # type: ignore[assignment]
 
 
 # Define mock log_sse if missing
 if log_sse is None:
 
-    def log_sse(msg: str) -> None:
+    def log_sse(msg: str) -> None:  # type: ignore[unreachable]
         """Mock SSE logging function"""
         print(f"[SSE Mock] {msg}")
 
@@ -89,7 +89,7 @@ if log_sse is None:
 # Mock Historian if missing
 if Historian is None:
 
-    class MockHistorian:
+    class MockHistorian:  # type: ignore[unreachable]
         @staticmethod
         async def record(*args, **kwargs) -> None:
             """Mock record function"""
@@ -100,7 +100,7 @@ if Historian is None:
             """Mock preference logging function"""
             pass
 
-    Historian = MockHistorian  # type: ignore[assignment]
+    Historian = MockHistorian  # type: ignore[misc]
 
 
 class ChancellorState(TypedDict):

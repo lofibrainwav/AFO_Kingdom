@@ -51,15 +51,12 @@ async def _get_redis_client() -> redis.Redis | None:
             redis_url = get_redis_url()
         except ImportError:
             redis_url = os.getenv("REDIS_URL", "redis://localhost:6379")
-        # Explicitly cast to redis.asyncio.Redis
-        client = cast(
-            "redis.Redis",
-            redis.from_url(
-                redis_url,
-                decode_responses=True,
-                socket_connect_timeout=2,
-                socket_timeout=2,
-            ),
+        # Redis client (cast removed - redundant per MyPy)
+        client = redis.from_url(
+            redis_url,
+            decode_responses=True,
+            socket_connect_timeout=2,
+            socket_timeout=2,
         )
         await client.ping()
         return client
