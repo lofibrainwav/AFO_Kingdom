@@ -101,7 +101,7 @@ class RedisBackend:
         if not self.redis:
             return None
 
-        try:
+        try:  # type: ignore[unreachable]
             val = await self.redis.get(key)
             if val:
                 try:
@@ -118,7 +118,7 @@ class RedisBackend:
         if not self.redis:
             return
 
-        try:
+        try:  # type: ignore[unreachable]
             # Serialize
             val_str = json.dumps(value) if isinstance(value, (dict, list)) else str(value)
 
@@ -132,7 +132,7 @@ class RedisBackend:
     async def delete(self, key: str) -> None:
         await self._ensure_connection()
         if self.redis:
-            try:
+            try:  # type: ignore[unreachable]
                 await self.redis.delete(key)
             except Exception as e:
                 logger.warning(f"L2 Delete Error: {e}")

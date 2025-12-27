@@ -104,7 +104,7 @@ class PrometheusMiddleware(BaseHTTPMiddleware):
                     service=self.service_name,
                 ).inc()
 
-            return response
+            return response  # type: ignore[no-any-return]
 
         except Exception:
             # Record exception metrics

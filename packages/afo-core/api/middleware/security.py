@@ -30,4 +30,4 @@ class SecurityMiddleware(BaseHTTPMiddleware):
                 logger.warning(f"🚨 Potential SQL Injection blocked: {key}={value}")
                 return Response("Security Violation Detected", status_code=403)
 
-        return await call_next(request)
+        return await call_next(request)  # type: ignore[no-any-return]

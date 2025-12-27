@@ -97,7 +97,7 @@ class SerenityCreationLoop:
             # Step 3: Capture Screenshot & Verify (眞 & 美)
             screenshot_path = None
             verification_data = {}
-            if self.bridge:
+            if self.bridge:  # type: ignore[unreachable]
                 try:
                     screenshot_path = os.path.join(self.sandbox_dir, f"screenshot_v{iteration}.png")
                     # Disable dry-run momentarily for real verification if explicitly asked or permitted
@@ -130,7 +130,7 @@ class SerenityCreationLoop:
 
             if last_result.success:
                 log_sse("✅ [Serenity] AUTO_RUN: Quality threshold met! Deploying...")
-                if self.trinity_manager:
+                if self.trinity_manager:  # type: ignore[unreachable]
                     self.trinity_manager.apply_trigger("AUTO_RUN_ACTION")
                 return last_result
 
@@ -178,7 +178,7 @@ class SerenityCreationLoop:
                 code = code.split("```tsx")[1].split("```")[0].strip()
             elif "```" in code:
                 code = code.split("```")[1].split("```")[0].strip()
-            return code
+            return str(code)
 
         return "// Code generation failed"
 

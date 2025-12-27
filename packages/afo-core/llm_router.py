@@ -781,7 +781,7 @@ class LLMRouter:
                         if CLIWrapper.is_available("ollama"):
                             res = await CLIWrapper.execute_ollama(query)
                             if res["success"]:
-                                return res["content"]
+                                return str(res["content"])
                         raise
                 return "[Ollama Error] 설정이 없습니다."
 
@@ -797,7 +797,7 @@ class LLMRouter:
                     if CLIWrapper.is_available("claude"):
                         res = await CLIWrapper.execute_claude(query)
                         if res["success"]:
-                            return res["content"]
+                            return str(res["content"])
                         return f"[Claude CLI Error] {res['error']}"
                     return "[Claude Unavailable] API 키가 설정되지 않았고 CLI 도구도 없습니다."
 
@@ -821,7 +821,7 @@ class LLMRouter:
                     if CLIWrapper.is_available("codex"):
                         res = await CLIWrapper.execute_codex(query)
                         if res["success"]:
-                            return res["content"]
+                            return str(res["content"])
                         return f"[Codex CLI Error] {res['error']}"
                     return "[OpenAI Unavailable] API 키가 설정되지 않았고 CLI 도구도 없습니다."
 

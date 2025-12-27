@@ -40,12 +40,12 @@ class AsyncRedisSaver(BaseCheckpointSaver):
                 # If dumps returns bytes, decode
                 if isinstance(val, bytes):
                     return val.decode("utf-8")
-                return val
+                return str(val)
             elif hasattr(self.serde, "encode"):
                 val = self.serde.encode(obj)
                 if isinstance(val, bytes):
                     return val.decode("utf-8")
-                return val
+                return str(val)
         except Exception:
             pass
 
