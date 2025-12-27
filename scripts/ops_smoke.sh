@@ -62,6 +62,7 @@ check_security() {
         return 0
     else
         echo -e "${RED}✗ FAIL ($code, expected $expected)${NC}"
+        echo -e "${RED}🚨 SECURITY GATE FAIL: $desc must return $expected, got $code${NC}"
         return 1
     fi
 }
