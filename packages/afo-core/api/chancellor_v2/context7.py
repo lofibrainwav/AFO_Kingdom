@@ -28,9 +28,18 @@ DOMAIN_QUERY_MAP = {
     "VERIFY": ("pytest", "testing"),
 }
 
-# Kingdom DNA: AFO-specific knowledge from our own docs
-KINGDOM_DNA_LIBRARY = "/afo-kingdom/docs"  # Our custom library if registered
-KINGDOM_DNA_TOPIC = "眞善美孝永 philosophy field manual trinity"
+# Kingdom DNA: Allowlist of approved libraries for DNA injection
+# Only these sources are trusted for "Kingdom DNA" (our philosophy/history)
+# Adding a new source requires explicit approval (SSOT change)
+KINGDOM_DNA_ALLOWLIST = frozenset(
+    [
+        "/afo-kingdom/docs",  # Our own docs (when registered)
+        "/langchain-ai/langgraphjs",  # LangGraph patterns (approved substitute)
+        "/langchain-ai/langchainjs",  # LangChain patterns (approved substitute)
+    ]
+)
+
+KINGDOM_DNA_TOPIC = "state management checkpoint workflow agent patterns"
 
 
 def _call_context7_docs(library_id: str, topic: str) -> dict[str, Any]:
@@ -107,10 +116,18 @@ def inject_kingdom_dna(state: GraphState) -> GraphState:
     """Inject Kingdom DNA at trace start (1-time constitutional injection).
 
     Contract: Always called at trace start. Failure = execution stops.
+    Hard Gate: Only allowlisted libraries can be used for Kingdom DNA.
     """
-    # For Kingdom DNA, we use a well-known library with topic matching our philosophy
+    # For Kingdom DNA, we use an allowlisted library
     library_id = "/langchain-ai/langgraphjs"  # LangGraph for agent patterns
-    topic = "state management checkpoint workflow"
+    topic = KINGDOM_DNA_TOPIC
+
+    # HARD GATE: Validate library is in allowlist
+    if library_id not in KINGDOM_DNA_ALLOWLIST:
+        raise RuntimeError(
+            f"KINGDOM DNA VIOLATION: library_id '{library_id}' not in allowlist. "
+            f"Allowed: {sorted(KINGDOM_DNA_ALLOWLIST)}"
+        )
 
     result = _call_context7_docs(library_id, topic)
 
@@ -119,18 +136,28 @@ def inject_kingdom_dna(state: GraphState) -> GraphState:
 
     context_text = result.get("context", "")[:1500]
 
+    # HARD GATE: Validate actual content was received
+    if len(context_text) < 100:
+        raise RuntimeError(
+            f"KINGDOM DNA VIOLATION: insufficient content received ({len(context_text)} chars). "
+            "Expected at least 100 chars of actual knowledge."
+        )
+
     state.outputs["context7"]["KINGDOM_DNA"] = {
         "library_id": library_id,
         "topic": topic,
         "context": context_text,
         "injected": True,
         "length": len(context_text),
+        "allowlisted": True,
     }
 
     # Also store in plan for node access
     state.plan["_kingdom_dna"] = context_text
 
-    logger.info(f"[V2] Kingdom DNA injected at trace start ({len(context_text)} chars)")
+    logger.info(
+        f"[V2] Kingdom DNA injected at trace start ({len(context_text)} chars from allowlisted {library_id})"
+    )
 
     return state
 
