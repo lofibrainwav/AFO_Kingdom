@@ -34,9 +34,9 @@ jobs:
         # Wait for Docker to be ready
         timeout 60 bash -c 'until docker info >/dev/null 2>&1; do sleep 1; done'
 
-    - name: Create .env.afo for testing
+    - name: Create .env.afo from secrets
       run: |
-        echo "AFO_INTERNAL_SECRET=test_secret_2025" > .env.afo
+        echo "AFO_INTERNAL_SECRET=${{ secrets.AFO_INTERNAL_SECRET }}" > .env.afo
         chmod 600 .env.afo
 
     - name: Start services with Docker Compose
