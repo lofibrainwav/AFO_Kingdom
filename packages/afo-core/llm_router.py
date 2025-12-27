@@ -649,7 +649,7 @@ class LLMRouter:
         try:
             # Phase 5: REST API 사용 (google.generativeai 대체)
             try:
-                from AFO.llms.gemini_api import gemini_api  # type: ignore[assignment]
+                from AFO.llms.gemini_api import gemini_api
             except ImportError:
                 try:
                     from llms.gemini_api import gemini_api  # type: ignore[assignment]
