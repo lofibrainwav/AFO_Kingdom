@@ -10,7 +10,7 @@ from .base import BaseLLMProvider
 try:
     from AFO.llms.gemini_api import gemini_api
 except ImportError:
-    gemini_api = None
+    gemini_api = None  # type: ignore[assignment]
 
 logger = logging.getLogger(__name__)
 

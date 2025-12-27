@@ -30,11 +30,11 @@ class ProviderFactory:
         if provider_type == LLMProvider.OLLAMA:
             instance = OllamaProvider()
         elif provider_type == LLMProvider.GEMINI:
-            instance = GoogleProvider()
+            instance = GoogleProvider()  # type: ignore[assignment]
         elif provider_type == LLMProvider.OPENAI:
-            instance = OpenAIProvider()
+            instance = OpenAIProvider()  # type: ignore[assignment]
         elif provider_type == LLMProvider.ANTHROPIC:
-            instance = AnthropicProvider()
+            instance = AnthropicProvider()  # type: ignore[assignment]
         else:
             raise ValueError(f"Unknown provider type: {provider_type}")
 

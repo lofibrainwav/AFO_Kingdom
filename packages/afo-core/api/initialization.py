@@ -143,7 +143,7 @@ async def _initialize_multimodal_rag() -> None:
         print("✅ Multimodal RAG Cache 모듈 import 성공")
 
         if REDIS_CLIENT:
-            _src(REDIS_CLIENT)
+            _src(REDIS_CLIENT)  # type: ignore[unreachable]
             print("✅ [Multimodal RAG Cache] 캐시 시스템 초기화 완료 (Redis 통합)")
         else:
             print("⚠️ Multimodal RAG Cache 건너뜀 (Redis 클라이언트 없음)")

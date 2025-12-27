@@ -56,7 +56,7 @@ if TYPE_CHECKING:
 try:
     from AFO.api.routers.compat import router as compat_router
 except ImportError:
-    compat_router = None
+    compat_router = None  # type: ignore[assignment]
 
 logger = logging.getLogger(__name__)
 

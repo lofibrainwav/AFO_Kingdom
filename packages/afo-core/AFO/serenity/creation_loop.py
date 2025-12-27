@@ -98,7 +98,7 @@ class SerenityCreationLoop:
             screenshot_path = None
             verification_data = {}
             if self.bridge:
-                try:
+                try:  # type: ignore[unreachable]
                     screenshot_path = os.path.join(self.sandbox_dir, f"screenshot_v{iteration}.png")
                     # Disable dry-run momentarily for real verification if explicitly asked or permitted
                     verification_data = await self.bridge.verify_ui(
@@ -131,7 +131,7 @@ class SerenityCreationLoop:
             if last_result.success:
                 log_sse("✅ [Serenity] AUTO_RUN: Quality threshold met! Deploying...")
                 if self.trinity_manager:
-                    self.trinity_manager.apply_trigger("AUTO_RUN_ACTION")
+                    self.trinity_manager.apply_trigger("AUTO_RUN_ACTION")  # type: ignore[unreachable]
                 return last_result
 
             log_sse(f"🔄 [Serenity] Refining: {feedback[:50]}...")

@@ -158,7 +158,7 @@ async def query_knowledge_base(request: RAGRequest):
         # Simple extraction: split query by space for keywords (MVP)
         entities = [w for w in request.query.split() if len(w) > 4]
         # Or use extracted entities from chunks payload if available
-        for res in results:
+        for res in results:  # type: ignore[assignment]
             if "metadata" in res and "content" in res["metadata"]:
                 # Extract capitalized words as heuristic
                 words = [w for w in res["metadata"]["content"].split() if w[0].isupper()]
