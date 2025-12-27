@@ -1,7 +1,7 @@
 # Trinity Score: 90.0 (Established by Chancellor)
 import logging
 import os
-from typing import Any
+from typing import Any, cast
 
 from AFO.llm_router import LLMConfig
 
@@ -47,7 +47,9 @@ class OpenAIProvider(BaseLLMProvider):
 
         try:
             # Using the existing wrapper
-            response = await openai_api.generate_response(prompt=query, model=model, **kwargs)
+            response = await cast("Any", openai_api).generate_response(
+                prompt=query, model=model, **kwargs
+            )
 
             # Wrapper returns str directly or raises
             return str(response)
@@ -55,3 +57,13 @@ class OpenAIProvider(BaseLLMProvider):
         except Exception as e:
             logger.error(f"OpenAI Call Failed: {e}")
             raise
+
+    async def generate_response(self, prompt: str, **kwargs: Any) -> str:
+        """
+        Public contract implementation (眞: OpenAI)
+        """
+        if not openai_api:
+            raise ValueError("OpenAI API Wrapper not available")
+
+        res = await cast("Any", openai_api).generate_response(prompt=prompt, **kwargs)
+        return str(res)

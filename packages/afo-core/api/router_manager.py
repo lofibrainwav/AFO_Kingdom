@@ -13,8 +13,7 @@ Version: 2.0.0 (Beautiful Code Edition)
 from __future__ import annotations
 
 import logging
-from collections.abc import Sequence
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast
 
 from AFO.api.compat import (
     aicpa_router,
@@ -51,6 +50,8 @@ from AFO.api.compat import (
 )
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
+
     from fastapi import FastAPI
 
 # Strangler Fig compatibility router
@@ -60,6 +61,13 @@ except ImportError:
     compat_router = None  # type: ignore[assignment]
 
 logger = logging.getLogger(__name__)
+
+
+def _coerce_tags(tags: Sequence[str] | None) -> list[str] | None:
+    """FastAPI tags 타입을 list[str]로 안전하게 변환 (眞)"""
+    if tags is None:
+        return None
+    return list(tags)
 
 
 class AFORouterManager:
@@ -318,7 +326,7 @@ class AFORouterManager:
             self._safe_register_router(compat_router, prefix="/api", tags=["Strangler Fig"])
 
     def _safe_register_router(
-        self, router: Any | None, prefix: str = "", tags: Sequence[str] | None = None
+        self, router: Any | None, prefix: str = "", tags: list[str] | None = None
     ) -> None:
         """Safely register a router with error handling.
 
@@ -333,11 +341,11 @@ class AFORouterManager:
         try:
             routes_before = len([r for r in self.app.routes if hasattr(r, "path")])
             if prefix and tags:
-                self.app.include_router(router, prefix=prefix, tags=tags)
+                self.app.include_router(router, prefix=prefix, tags=cast("Any", tags))
             elif prefix:
                 self.app.include_router(router, prefix=prefix)
             elif tags:
-                self.app.include_router(router, tags=tags)
+                self.app.include_router(router, tags=cast("Any", tags))
             else:
                 self.app.include_router(router)
 

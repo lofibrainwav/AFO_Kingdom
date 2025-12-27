@@ -384,7 +384,7 @@ async def skills_health() -> dict[str, Any]:
     Skills 시스템 건강 상태 확인
     """
     try:
-        health_status = {
+        health_status: dict[str, Any] = {
             "service": "skills_registry",
             "status": "unknown",
             "skills_count": 0,

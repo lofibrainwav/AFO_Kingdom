@@ -52,7 +52,7 @@ async def search_context7(
         results = context7.retrieve_context(q)
 
         # Format results
-        formatted_results = []
+        formatted_results: list[dict[str, Any]] = []
         if hasattr(results, "get") and "results" in results:
             # If results is dict with 'results' key
             raw_results = results.get("results", [])

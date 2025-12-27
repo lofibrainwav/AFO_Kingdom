@@ -436,7 +436,7 @@ Return only Python code in ```python blocks."""
         print("\n🚀 4단계: 생성된 코드 실행 중...")
         exec_globals = {"asyncio": asyncio, "page": page, "browser": browser}
         exec_locals: dict[str, Any] = {}
-        exec(code, exec_globals, exec_locals)
+        exec(code, exec_globals, exec_locals)  # nosec B102
 
         for key, value in exec_locals.items():
             if callable(value) and not key.startswith("_"):

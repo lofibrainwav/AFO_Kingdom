@@ -123,7 +123,7 @@ class AFOSettings(BaseSettings):
     # ============================================================================
     AFO_API_VERSION: str = Field(default="v1", description="AFO API 버전")
     INPUT_SERVER_PORT: int = Field(default=4200, description="Input Server 포트")
-    INPUT_SERVER_HOST: str = Field(default="0.0.0.0", description="Input Server 호스트")
+    INPUT_SERVER_HOST: str = Field(default="127.0.0.1", description="Input Server 호스트")
     DASHBOARD_URL: str = Field(
         default="http://localhost:3000",
         description="프론트엔드 대시보드 URL (GenUI 등)",
@@ -133,7 +133,7 @@ class AFOSettings(BaseSettings):
     # API Server Settings
     # ============================================================================
     API_SERVER_PORT: int = Field(default=8010, description="API Server 포트 (Soul Engine)")
-    API_SERVER_HOST: str = Field(default="0.0.0.0", description="API Server 호스트")
+    API_SERVER_HOST: str = Field(default="127.0.0.1", description="API Server 호스트")
     SOUL_ENGINE_PORT: int = Field(default=8010, description="Soul Engine 포트 (5 Pillars 등)")
     ASYNC_QUERY_ENABLED: bool = Field(default=True, description="비동기 쿼리 활성화 여부")
     MOCK_MODE: bool = Field(default=False, description="Mock 모드 활성화 여부")

@@ -79,3 +79,18 @@ class OllamaProvider(BaseLLMProvider):
         except Exception as e:
             logger.error(f"Ollama Call Failed: {e}")
             raise
+
+    async def generate_response(self, prompt: str, **kwargs: Any) -> str:
+        """
+        Public contract implementation (眞: Ollama)
+        """
+        # Simple configuration conversion for Ollama call
+        from AFO.llm_router import LLMConfig, LLMProvider
+
+        config = LLMConfig(
+            model=str(kwargs.get("model", "llama3")),
+            provider=LLMProvider.OLLAMA,
+            temperature=float(kwargs.get("temperature", 0.0)),
+            max_tokens=int(kwargs.get("max_tokens", 1024)),
+        )
+        return await self.generate(query=prompt, config=config, context=kwargs)

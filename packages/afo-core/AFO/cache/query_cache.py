@@ -79,7 +79,7 @@ class QueryCache:
 
         # Generate hash
         key_str = json.dumps(key_components, sort_keys=True, default=str)
-        key_hash = hashlib.md5(key_str.encode()).hexdigest()[:16]
+        key_hash = hashlib.md5(key_str.encode(), usedforsecurity=False).hexdigest()[:16]
 
         return f"{self.key_prefix}:{key_hash}"
 

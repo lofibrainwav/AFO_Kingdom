@@ -12,7 +12,7 @@ import json
 import logging
 import time
 from collections import defaultdict
-from typing import Any, Optional
+from typing import Any, Optional, cast
 
 from ..cache.manager import cache_manager
 
@@ -268,7 +268,7 @@ class LearningEngine:
             experiment.is_active = False
 
             # Apply winning variant as default
-            await self._apply_experiment_results(experiment_id, best_variant)
+            await self._apply_experiment_results(experiment_id, cast("str", best_variant))
 
     def get_learning_insights(self) -> dict[str, Any]:
         """
@@ -285,7 +285,7 @@ class LearningEngine:
         )
 
         # Analyze decision type effectiveness
-        decision_effectiveness = defaultdict(lambda: {"total": 0, "successful": 0})
+        decision_effectiveness: dict[str, Any] = defaultdict(lambda: {"total": 0, "successful": 0})
         for pattern in self.decision_patterns.values():
             decision_effectiveness[pattern.decision_type]["total"] += 1
             if pattern.get_success_rate() > 0.7:

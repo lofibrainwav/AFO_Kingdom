@@ -4,8 +4,8 @@
 Implements the CheckpointSaver interface using Redis to preserve the Kingdom's memories forever.
 """
 
-import builtins
 import json
+from collections.abc import Sequence
 from typing import Any
 
 from langchain_core.runnables import RunnableConfig
@@ -168,8 +168,9 @@ class AsyncRedisSaver(BaseCheckpointSaver):
     async def aput_writes(
         self,
         config: RunnableConfig,
-        writes: builtins.list[tuple[str, Any]],
+        writes: Sequence[tuple[str, Any]],
         task_id: str,
+        task_path: str = "",
     ) -> None:
         """Async save writes - Mock implementation to satisfy interface."""
         pass

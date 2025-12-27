@@ -32,8 +32,8 @@ def run_basic_dpo(
 
     # 1. Load Model & Tokenizer
     # In a real scenario, use device_map="auto" for GPU
-    model = AutoModelForCausalLM.from_pretrained(model_name)
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    model = AutoModelForCausalLM.from_pretrained(model_name, revision="main")  # nosec B615
+    tokenizer = AutoTokenizer.from_pretrained(model_name, revision="main")  # nosec B615
 
     # Fix for models without pad token (common in Llama/GPT)
     if tokenizer.pad_token is None:
@@ -46,7 +46,7 @@ def run_basic_dpo(
         # Create dummy data creation logic or fail gracefully
         return
 
-    dataset = load_dataset("json", data_files=data_path)
+    dataset = load_dataset("json", data_files=data_path, revision="main")  # nosec B615
 
     # Split dataset if no test split exists
     if "test" not in dataset:

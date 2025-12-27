@@ -8,7 +8,7 @@ Phase 12 Extension: 실시간 예산 추적 및 리스크 알림
 
 import logging
 from datetime import datetime
-from typing import Any
+from typing import Any, cast
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
@@ -311,7 +311,7 @@ async def get_budget_suggestions() -> dict[str, Any]:
             }
         )
 
-    total_potential_saving = sum(int(s.get("expected_saving", 0)) for s in suggestions)
+    total_potential_saving = sum(int(cast("Any", s.get("expected_saving", 0))) for s in suggestions)
 
     return {
         "spend_rate": round(spend_rate, 2),
@@ -409,7 +409,7 @@ async def get_budget_prediction() -> dict[str, Any]:
     """
     prediction = predict_next_month_spending(MOCK_HISTORY)
 
-    current_spending = int(MOCK_HISTORY[-1]["spent"])
+    current_spending = int(cast("Any", MOCK_HISTORY[-1]["spent"]))
     predicted_val = prediction.get("predicted_spending", 0)
     predicted: int = (
         int(predicted_val) if isinstance(predicted_val, (int, float)) else current_spending

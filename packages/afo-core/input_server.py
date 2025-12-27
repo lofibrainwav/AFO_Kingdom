@@ -691,7 +691,7 @@ if __name__ == "__main__":
         host = settings.INPUT_SERVER_HOST
     except ImportError:
         port = int(os.getenv("INPUT_SERVER_PORT", "4200"))
-        host = os.getenv("INPUT_SERVER_HOST", "0.0.0.0")
+        host = os.getenv("INPUT_SERVER_HOST", "127.0.0.1")
 
     print("=" * 60)
     print("🍽️  AFO Input Server - 胃 (Stomach)")

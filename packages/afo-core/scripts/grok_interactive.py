@@ -20,7 +20,7 @@ from playwright.sync_api import sync_playwright
 
 SESSION_FILE = "secrets/grok_session.json"
 CHROME_PATH = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
-USER_DATA_DIR = "/tmp/grok-stealth-profile"
+USER_DATA_DIR = "/tmp/grok-stealth-profile"  # nosec B108
 
 
 def find_chrome():

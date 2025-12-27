@@ -6,9 +6,11 @@ Health Service - Centralized logic for system monitoring
 """
 
 import asyncio
+import json
 import logging
+import time
 from datetime import datetime
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, Any, Optional, cast
 
 import httpx
 import redis.asyncio as redis
@@ -35,9 +37,6 @@ except ImportError:
         logger.warning("Trinity Score monitoring not available")
 
 # 건강 체크 캐시 설정
-import json
-import time
-from typing import Optional
 
 # 캐시 설정
 HEALTH_CACHE_TTL = 30  # 30초 캐시
@@ -121,6 +120,17 @@ async def check_mcp() -> dict[str, Any]:
         return {"healthy": False, "output": f"MCP check failed: {str(e)[:50]}"}
 
 
+async def check_security() -> dict[str, Any]:
+    """免疫_Trinity_Gate 보안 상태 체크 (PH19 통합)"""
+    try:
+        from AFO.health.organs_v2 import _security_probe
+
+        probe = _security_probe()
+        return {"healthy": probe.status == "healthy", "output": probe.output}
+    except Exception as e:
+        return {"healthy": False, "output": f"Security check failed: {str(e)[:50]}"}
+
+
 async def get_comprehensive_health() -> dict[str, Any]:
     """종합 건강 상태 진단 및 Trinity Score 계산 (캐시 적용)"""
     current_time = datetime.now().isoformat()
@@ -158,6 +168,7 @@ async def get_comprehensive_health() -> dict[str, Any]:
                     check_ollama(),
                     check_self(),
                     check_mcp(),
+                    check_security(),
                     return_exceptions=True,
                 ),
                 timeout=10.0,  # 10초 타임아웃
@@ -170,13 +181,25 @@ async def get_comprehensive_health() -> dict[str, Any]:
                 {"healthy": False, "output": "Timeout"},
                 {"healthy": True, "output": "API responding"},
                 {"healthy": False, "output": "Timeout"},
+                {"healthy": False, "output": "Timeout"},
             )
 
-    organ_names = ["心_Redis", "肝_PostgreSQL", "脾_Ollama", "肺_API_Server", "肾_MCP"]
+    organ_names = [
+        "心_Redis",
+        "肝_PostgreSQL",
+        "脾_Ollama",
+        "肺_API_Server",
+        "肾_MCP",
+        "免疫_Trinity_Gate",
+    ]
     organs: list[dict[str, Any]] = []
 
     for i, name in enumerate(organ_names):
-        res = results[i]
+        try:
+            res = results[i]
+        except IndexError:
+            res = {"healthy": False, "output": "Missing result"}
+
         if isinstance(res, Exception):
             status_data = {"healthy": False, "output": str(res)}
         else:
@@ -284,7 +307,7 @@ async def get_comprehensive_health() -> dict[str, Any]:
     try:
         balance_status = trinity_metrics.balance_status if trinity_metrics else "unknown"
         trinity_score = trinity_metrics.trinity_score if trinity_metrics else 0.0
-    except:
+    except Exception:
         balance_status = "unknown"
         trinity_score = 0.0
 

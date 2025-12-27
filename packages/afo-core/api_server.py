@@ -16,8 +16,14 @@ from __future__ import annotations
 import importlib.util
 import logging
 import sys
+from collections.abc import Awaitable, Callable
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
+
+from starlette.requests import Request
+from starlette.responses import Response
+
+ExceptionHandler = Callable[[Request, Exception], Response | Awaitable[Response]]
 
 
 def _patch_typing_inspection_if_needed() -> None:
@@ -153,7 +159,9 @@ class AFOServer:
         """
         # Configure rate limiting
         self.app.state.limiter = self.limiter
-        self.app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+        self.app.add_exception_handler(
+            RateLimitExceeded, cast("ExceptionHandler", _rate_limit_exceeded_handler)
+        )
 
         logger.info("Application configured with security measures")
 

@@ -153,6 +153,7 @@ export const GenComponent = () => (
             code=generated_code,
             classification="Molecule",
             trinity_score=90,
+            risk_score=0,
         )
 
         # 3. Guardian Review (CriticAgent)

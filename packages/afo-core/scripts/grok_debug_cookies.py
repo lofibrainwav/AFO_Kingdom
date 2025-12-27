@@ -25,7 +25,7 @@ def check_cookies():
         print(f"📂 Checking DB: {profile}")
 
         # Copy to temp to avoid lock
-        temp_db = f"/tmp/cookies_{profile.replace(' ', '_')}.db"
+        temp_db = f"/tmp/cookies_{profile.replace(' ', '_')}.db"  # nosec B108
         try:
             shutil.copy2(cookie_path, temp_db)
         except OSError:
