@@ -295,12 +295,11 @@ async def _check_context7() -> dict[str, Any]:
 
         # 추가 메타데이터
         config = health_check_config
-        if health_data["status"] == "healthy":
+        if health_data["status"] == "healthy" and "knowledge_base_keys" in health_data:
             # 표시 제한 적용
-            if "knowledge_base_keys" in health_data:
-                health_data["knowledge_base_keys"] = health_data["knowledge_base_keys"][
-                    : config.MAX_CONTEXT7_KEYS_DISPLAY
-                ]
+            health_data["knowledge_base_keys"] = health_data["knowledge_base_keys"][
+                : config.MAX_CONTEXT7_KEYS_DISPLAY
+            ]
 
         return health_data
 
