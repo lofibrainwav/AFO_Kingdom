@@ -10,7 +10,7 @@ from .base import BaseLLMProvider
 try:
     from AFO.llms.claude_api import claude_api
 except ImportError:
-    claude_api = None
+    claude_api = None  # type: ignore[assignment]
 
 logger = logging.getLogger(__name__)
 

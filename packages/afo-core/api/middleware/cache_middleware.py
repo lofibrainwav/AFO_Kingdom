@@ -48,7 +48,7 @@ class CacheMiddleware(BaseHTTPMiddleware):
 
     def __init__(self, app: Any):
         super().__init__(app)
-        self.redis_client = None
+        self.redis_client = None  # type: ignore[assignment]
         self._hit_count = 0
         self._miss_count = 0
         self._initialized = False

@@ -674,7 +674,7 @@ class Settings:
 try:
     from pydantic import BaseModel
 except ImportError:
-    BaseModel = object  # Fallback for typing
+    BaseModel = object  # type: ignore[assignment]
 
 
 class ChancellorInvokeRequest(BaseModel):

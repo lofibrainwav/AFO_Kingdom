@@ -10,7 +10,7 @@ from .base import BaseLLMProvider
 try:
     from AFO.llms.openai_api import openai_api
 except ImportError:
-    openai_api = None
+    openai_api = None  # type: ignore[assignment]
 
 logger = logging.getLogger(__name__)
 

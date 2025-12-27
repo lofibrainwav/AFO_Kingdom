@@ -88,7 +88,7 @@ class RedisBackend:
             try:
                 import redis.asyncio as redis
 
-                self.redis = redis.from_url(self._url, encoding="utf-8", decode_responses=True)
+                self.redis = redis.from_url(self._url, encoding="utf-8", decode_responses=True)  # type: ignore[assignment]
                 await self.redis.ping()
                 self._connected = True
                 logger.info(f"✅ L2 Cache Connected: {self._url}")
