@@ -3,13 +3,26 @@ import asyncio
 import json
 import logging
 from collections.abc import AsyncGenerator
-from typing import Any
+from typing import Any, AsyncIterator
 
 from fastapi import APIRouter, Request
 from sse_starlette.sse import EventSourceResponse
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
+
+# AFO_SSE_HEARTBEAT: keep SSE connection alive even when upstream is silent
+_SSE_HEARTBEAT_PAYLOAD = "event: heartbeat\ndata: ping\n\n"
+
+async def with_heartbeat(source: AsyncIterator[Any], interval_s: float = 5.0) -> AsyncIterator[Any]:
+    while True:
+        try:
+            chunk = await asyncio.wait_for(source.__anext__(), timeout=interval_s)
+            yield chunk
+        except asyncio.TimeoutError:
+            yield _SSE_HEARTBEAT_PAYLOAD
+        except StopAsyncIteration:
+            return
 
 # Simple in-memory event bus for now (Redis Pub/Sub in production)
 _thought_queue: asyncio.Queue[dict[str, Any]] = asyncio.Queue()
@@ -46,7 +59,7 @@ async def stream_thoughts(request: Request) -> Any:
                 logger.error(f"SSE Error: {e}")
                 break
 
-    return EventSourceResponse(event_generator())
+    return EventSourceResponse(with_heartbeat(event_generator()))
 
 
 # Endpoint for internal modules to push thoughts (simulating Pub/Sub publisher)
