@@ -1,6 +1,7 @@
-"""Chancellor Graph V2 Runner.
+"""Chancellor Graph V2 Runner (Contract Enforced).
 
 Orchestrates node execution with checkpoint/event logging.
+Contract: Sequential Thinking + Context7 are REQUIRED (no bypass).
 """
 
 from __future__ import annotations
@@ -70,43 +71,22 @@ def _checkpoint(state: GraphState, step: str) -> None:
     save_checkpoint(state.trace_id, step, payload)
 
 
-def run_v2(
-    input_payload: dict[str, Any],
-    nodes: dict[str, NodeFn],
-    *,
-    enable_thinking: bool = True,
-    enable_context7: bool = True,
-) -> GraphState:
+def run_v2(input_payload: dict[str, Any], nodes: dict[str, NodeFn]) -> GraphState:
     """Execute graph with provided nodes.
+
+    Contract: Sequential Thinking + Context7 are ALWAYS applied.
+    No enable_* flags - this is enforced by design.
 
     Args:
         input_payload: Input from commander
         nodes: Dict mapping step names to node functions
-        enable_thinking: Enable Sequential Thinking MCP integration
-        enable_context7: Enable Context7 knowledge injection
 
     Returns:
         Final GraphState after execution
     """
-    # Import thinking/context modules lazily to avoid circular imports
-    thinking_apply = None
-    context7_inject = None
-
-    if enable_thinking:
-        try:
-            from api.chancellor_v2.thinking import apply_sequential_thinking
-
-            thinking_apply = apply_sequential_thinking
-        except ImportError:
-            pass
-
-    if enable_context7:
-        try:
-            from api.chancellor_v2.context7 import inject_context
-
-            context7_inject = inject_context
-        except ImportError:
-            pass
+    # Import thinking/context modules (Contract: these MUST be available)
+    from api.chancellor_v2.context7 import inject_context, inject_kingdom_dna
+    from api.chancellor_v2.thinking import apply_sequential_thinking
 
     trace_id = uuid.uuid4().hex
     state = GraphState(
@@ -117,29 +97,27 @@ def run_v2(
         updated_at=_now(),
     )
 
-    # Track thinking/context7 status
+    # Contract: Always inject Kingdom DNA at trace start (Constitutional SSOT)
+    _emit(state, "INIT", "kingdom_dna_start", True)
+    state = inject_kingdom_dna(state)
+    _emit(state, "INIT", "kingdom_dna_complete", True)
+
+    # Track contract enforcement status
     state.outputs["_meta"] = {
-        "thinking_enabled": thinking_apply is not None,
-        "context7_enabled": context7_inject is not None,
+        "thinking_enforced": True,
+        "context7_enforced": True,
+        "kingdom_dna_injected": True,
     }
 
     for step in ORDER:
         state.step = step
         _emit(state, step, "enter", True)
 
-        # Apply Sequential Thinking before node (眞: step-by-step reasoning)
-        if thinking_apply is not None:
-            try:
-                state = thinking_apply(state, step)
-            except Exception as e:
-                _emit(state, step, "thinking_error", False, {"error": str(e)})
+        # Contract: Apply Sequential Thinking BEFORE every node (眞: step-by-step reasoning)
+        state = apply_sequential_thinking(state, step)
 
-        # Inject Context7 knowledge before node (眞: knowledge grounding)
-        if context7_inject is not None:
-            try:
-                state = context7_inject(state, step)
-            except Exception as e:
-                _emit(state, step, "context7_error", False, {"error": str(e)})
+        # Contract: Inject Context7 knowledge BEFORE every node (眞: knowledge grounding)
+        state = inject_context(state, step)
 
         fn = nodes.get(step)
         if fn is None:
