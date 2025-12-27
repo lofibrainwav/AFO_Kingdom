@@ -40,7 +40,7 @@ class AnthropicProvider(BaseLLMProvider):
                 max_tokens=int(context.get("max_tokens", config.max_tokens)),
                 temperature=float(context.get("temperature", config.temperature)),
             )
-            return response
+            return str(response)
         except Exception as e:
             logger.error(f"Anthropic Call Failed: {e}")
             raise

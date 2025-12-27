@@ -50,7 +50,7 @@ class OpenAIProvider(BaseLLMProvider):
             response = await openai_api.generate_response(prompt=query, model=model, **kwargs)
 
             # Wrapper returns str directly or raises
-            return response
+            return str(response)
 
         except Exception as e:
             logger.error(f"OpenAI Call Failed: {e}")

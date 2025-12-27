@@ -338,7 +338,7 @@ async def execute_skill(request: SkillExecutionRequest) -> SkillExecutionRespons
             raise HTTPException(status_code=503, detail="Skills Registry not available")
 
         # Skills Registry 초기화
-        if register_core_skills:
+        if register_core_skills:  # type: ignore[unreachable]
             registry = register_core_skills()
         else:
             registry = SkillRegistry()
@@ -399,7 +399,7 @@ async def skills_health() -> dict[str, Any]:
 
         # Skills Registry 초기화
         try:
-            if register_core_skills:
+            if register_core_skills:  # type: ignore[unreachable]
                 registry = register_core_skills()
             else:
                 registry = SkillRegistry()

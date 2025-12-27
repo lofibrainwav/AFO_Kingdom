@@ -57,7 +57,7 @@ class GenUIOrchestrator:
                     content = content.split("```tsx")[1].split("```")[0].strip()
                 elif "```" in content:
                     content = content.split("```")[1].split("```")[0].strip()
-                return content
+                return str(content)
             except Exception as e:
                 # Mock generation as fallback
                 logger.warning(f"GenUI LLM Failed: {e}. Using mockup.")
