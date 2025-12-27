@@ -48,6 +48,11 @@ const nextConfig: NextConfig = {
         source: "/api/proxy/:path*",
         destination: `${soulEngineUrl}/:path*`, // Proxy to Soul Engine
       },
+      // SSE Stream Proxy (CORS-safe)
+      {
+        source: "/api/logs/stream",
+        destination: `${soulEngineUrl}/logs/stream`,
+      },
       // Legacy HTML은 public/legacy/로 직접 서빙 (8000 포트 불필요)
       // Next.js는 public/legacy/*를 자동으로 /legacy/*로 서빙합니다.
     ];
