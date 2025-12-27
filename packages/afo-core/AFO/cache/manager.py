@@ -58,7 +58,7 @@ class CacheMetrics:
         """Get current metrics with uptime"""
         metrics = self.metrics.copy()
         metrics["uptime_seconds"] = time.time() - self._start_time
-        return metrics
+        return metrics  # type: ignore[no-any-return]
 
     def reset(self):
         """Reset metrics (for testing)"""
@@ -133,7 +133,7 @@ class MultiLevelCache:
 
     def get_metrics(self) -> dict[str, Any]:
         """Get cache performance metrics"""
-        return self.metrics.get_metrics()
+        return self.metrics.get_metrics()  # type: ignore[no-any-return]
 
 
 # Singleton Instance

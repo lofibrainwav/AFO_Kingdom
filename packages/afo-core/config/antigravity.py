@@ -245,10 +245,8 @@ class AntiGravitySettings(BaseSettings):
             # 2. Fetch Flag Data
             flag_key = f"feature_flags:{key}"
             raw_data = r.hgetall(flag_key)
-            # Handle potential awaitable (though unlikely here) or simplify for MyPy
-            from typing import cast
-
-            data = cast("dict", raw_data)
+            # Handle case where raw_data is dict directly
+            data = raw_data if isinstance(raw_data, dict) else {}
             r.close()
 
             if not data:

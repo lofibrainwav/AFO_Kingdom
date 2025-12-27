@@ -399,7 +399,7 @@ async def skills_health() -> dict[str, Any]:
 
         # Skills Registry 초기화
         try:
-            if register_core_skills:  # type: ignore[unreachable]
+            if register_core_skills:
                 registry = register_core_skills()
             else:
                 registry = SkillRegistry()

@@ -205,16 +205,12 @@ def cache_result(
                 result, cached_time = cache[key]
                 if now - cached_time < ttl_seconds:
                     logger.debug(f"[孝] 캐시 히트: {func.__name__}")
-                    # Cast Any back to T since we stored T
-                    from typing import cast
-
-                    return cast("T", result)
+                    # Result is already type T
+                    return result  # type: ignore[return-value]
 
             result = func(*args, **kwargs)
             cache[key] = (result, now)
-            from typing import cast
-
-            return cast("T", result)
+            return result
 
         return wrapper
 
