@@ -147,12 +147,12 @@ class ModularAntigravityEngine:
             "active_modules": self._get_active_modules(),
         }
 
-        # 6. Protocol Officer 포맷팅 (선택적)
         if self.config["use_protocol_officer"]:
             try:
-                result["formatted_message"] = (
+                formatted_message: str = (
                     protocol_officer_bridge.format_decision_message(result)
                 )
+                result["formatted_message"] = formatted_message  # type: ignore[assignment]
             except Exception as e:
                 logger.warning(f"Protocol Officer 포맷팅 실패: {e}")
 
@@ -234,7 +234,7 @@ class ModularAntigravityEngine:
         try:
             # 실제로는 quality_predictor의 히스토리를 사용해야 함
             # 여기서는 모의 데이터 사용
-            mock_history = []
+            mock_history: list[dict[str, Any]] = []
             return adaptive_thresholds.adapt_thresholds(mock_history)
         except Exception as e:
             logger.error(f"임계값 적응 실패: {e}")

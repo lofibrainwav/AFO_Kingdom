@@ -5,7 +5,7 @@ import asyncio
 import logging
 import os
 import time
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Optional, cast
 
 from redis.asyncio import Redis
 from slowapi import Limiter
@@ -51,7 +51,7 @@ class RedisCircuitProbe:
 
     async def close(self) -> None:
         if self._client is not None:
-            await self._client.aclose()
+            await self._client.close()
             self._client = None
 
     async def check(self) -> tuple[bool, str]:
@@ -104,11 +104,11 @@ class RedisDownPolicyMiddleware(BaseHTTPMiddleware):
         path = request.url.path
 
         if self._policy.is_exempt(path):
-            return await call_next(request)
+            return cast(Response, await call_next(request))
 
         redis_ok, cb_state = await self._probe.check()
         if redis_ok:
-            return await call_next(request)
+            return cast(Response, await call_next(request))
 
         if self._policy.should_fail_closed(path):
             headers = {
@@ -125,7 +125,7 @@ class RedisDownPolicyMiddleware(BaseHTTPMiddleware):
         if self._on_warning is not None:
             self._on_warning(request, cb_state)
 
-        response = await call_next(request)
+        response = cast(Response, await call_next(request))
         response.headers[self._policy.warning_header_name] = "1"
         response.headers[self._policy.cb_state_header_name] = cb_state
         return response
@@ -161,7 +161,7 @@ def setup_redis_rate_limiter(app: FastAPI) -> None:
     )
 
     app.state.limiter = limiter
-    app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+    app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)  # type: ignore[arg-type]
 
     policy = RedisDownPolicy.from_env()
 
@@ -189,7 +189,7 @@ def setup_redis_rate_limiter(app: FastAPI) -> None:
         logger.warning("redis_down path=%s cb_state=%s", req.url.path, cb_state)
 
     app.add_middleware(
-        RedisDownPolicyMiddleware, policy=policy, probe=probe, on_warning=_warn
+        RedisDownPolicyMiddleware, policy=policy, probe=probe, on_warning=_warn  # type: ignore[arg-type]
     )
 
     async def _shutdown() -> None:

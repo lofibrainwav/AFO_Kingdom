@@ -158,11 +158,11 @@ async def evaluate_ragas(request: RagasEvalRequest) -> RagasEvalResponse:
             try:
                 # Explicitly await the coroutines
                 # Note: redis.asyncio methods are awaitable
-                await redis_client.hset(  # type: ignore
+                await redis_client.hset(
                     "ragas:latest_metrics",
                     mapping={k: str(v) for k, v in scores.items()},
                 )
-                await redis_client.hset("ragas:latest_metrics", "timestamp", timestamp)  # type: ignore
+                await redis_client.hset("ragas:latest_metrics", "timestamp", timestamp)
             except Exception as e:
                 logger.warning(f"Failed to save Ragas metrics to Redis: {e}")
 

@@ -9,13 +9,15 @@ Phase 5: Trinity Type Validator 적용 - 런타임 Trinity Score 검증
 
 import json
 import logging
-from typing import Any
+from typing import Any, Callable, TypeVar
+
+TF = TypeVar("TF", bound=Callable[..., Any])
 
 try:
     from AFO.utils.trinity_type_validator import validate_with_trinity
 except ImportError:
-    # Fallback for import issues
-    def validate_with_trinity(func: Any) -> Any:
+    # Fallback for import issues - matches original signature
+    def validate_with_trinity(func: TF) -> TF:
         """Fallback decorator when trinity_type_validator is not available."""
         return func
 
@@ -169,10 +171,8 @@ class CheckpointService:
             # 메모리에서 로드 (폴백)
             if f"persona:{persona_id}" in self._memory_store:
                 result = self._memory_store[f"persona:{persona_id}"]
-                # 타입 명시: dict[str, Any] | None
                 if isinstance(result, dict):
                     return result
-                return None
 
             return None
 

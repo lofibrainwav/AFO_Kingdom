@@ -14,21 +14,24 @@ try:
     from qdrant_client.http import models as models
 
     from AFO.services.hybrid_rag import query_graph_context, query_qdrant
+    
+    _HAS_DEPS = True
 except ImportError:
     print("Warning: Missing dependencies for ingestion.")
-    QdrantClient = None
-    GraphDatabase = None
+    QdrantClient = None  # type: ignore[assignment, misc]
+    GraphDatabase = None  # type: ignore[assignment, misc]
+    _HAS_DEPS = False
 
 
 class ScholarIngestionService:
     def __init__(self, dry_run: bool = True):
         self.dry_run = dry_run
         self.qdrant_client = (
-            QdrantClient("localhost", port=6333) if QdrantClient else None
+            QdrantClient("localhost", port=6333) if _HAS_DEPS else None
         )
         self.neo4j_driver = (
             GraphDatabase.driver("bolt://localhost:7687", auth=("neo4j", "password"))
-            if GraphDatabase
+            if _HAS_DEPS
             else None
         )
 

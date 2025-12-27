@@ -13,7 +13,7 @@ import hashlib
 import json
 import logging
 import time
-from typing import Any
+from typing import Any, cast
 
 from pydantic import BaseModel, Field
 
@@ -99,7 +99,7 @@ class LLMCacheService:
         cache_key = f"{LLM_CACHE_CONFIG['key_prefix']}{provider}:{model}:{request_hash}"
 
         # Redis 키 길이 제한 확인
-        if len(cache_key) > LLM_CACHE_CONFIG["max_key_length"]:
+        if len(cache_key) > cast(int, LLM_CACHE_CONFIG["max_key_length"]):
             # 해시만 사용
             cache_key = f"{LLM_CACHE_CONFIG['key_prefix']}{request_hash}"
 
@@ -160,7 +160,7 @@ class LLMCacheService:
 
         try:
             cache_key = self._generate_cache_key(request_data, provider, model)
-            ttl = ttl or LLM_CACHE_CONFIG["default_ttl"]
+            ttl_value: int = ttl if ttl is not None else cast(int, LLM_CACHE_CONFIG["default_ttl"])
 
             # 캐시 엔트리 생성
             entry = LLMCacheEntry(
@@ -169,12 +169,12 @@ class LLMCacheService:
                 model=model,
                 response=response,
                 metadata=metadata or {},
-                ttl=ttl,
+                ttl=ttl_value,
             )
 
             # JSON 직렬화 및 저장
             entry_json = json.dumps(entry.model_dump())
-            self.redis_client.setex(cache_key, ttl, entry_json)
+            self.redis_client.setex(cache_key, ttl_value, entry_json)
 
             logger.debug(f"✅ LLM Response Cached: {cache_key} (TTL: {ttl}s)")
             return True
@@ -211,7 +211,7 @@ class LLMCacheService:
             if keys:
                 deleted = self.redis_client.delete(*keys)
                 logger.info(f"✅ LLM Cache Cleared: {deleted} keys deleted")
-                return deleted
+                return int(deleted)
             return 0
         except Exception as e:
             logger.error(f"캐시 삭제 실패: {e}")

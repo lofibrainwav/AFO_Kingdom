@@ -7,7 +7,7 @@ Trinity Integration - Antigravity ↔ Trinity Evidence 연결
 import asyncio
 import logging
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any, Optional, cast
 
 from .modular_engine import ModularAntigravityEngine, create_simple_engine
 
@@ -32,8 +32,8 @@ class TrinityAntigravityIntegration:
             engine: 사용할 Antigravity 엔진 (기본: simple_engine)
         """
         self.engine = engine or create_simple_engine()
-        self.last_evaluation = None
-        self.evaluation_history = []
+        self.last_evaluation: dict[str, Any] | None = None
+        self.evaluation_history: list[dict[str, Any]] = []
 
         logger.info("✅ Trinity-Antigravity 통합 초기화 완료")
         logger.info(f"사용 엔진: {self.engine._get_active_modules()}")
@@ -112,7 +112,7 @@ class TrinityAntigravityIntegration:
             raise FileNotFoundError(f"Trinity Evidence 파일 없음: {evidence_path}")
 
         with open(evidence_file, encoding="utf-8") as f:
-            return json.load(f)
+            return cast(dict[str, Any], json.load(f))
 
     def _calculate_risk_from_evidence(self, evidence_data: dict[str, Any]) -> float:
         """
@@ -160,7 +160,7 @@ class TrinityAntigravityIntegration:
 
         # 종합 리스크 계산
         total_risk = sum(risk_factors)
-        return min(total_risk, 100.0)  # 최대 100점
+        return float(min(total_risk, 100.0))  # 최대 100점
 
     def _build_evaluation_context(
         self, evidence_data: dict[str, Any], additional_context: dict[str, Any]

@@ -302,14 +302,9 @@ class RedisCacheService:
             # 이미 위에서 self.redis_client None 체크 완료
             redis_client = self.redis_client  # 타입 가드
             keys_result = redis_client.keys(f"{CACHE_CONFIG['key_prefix']}*")
-            keys: list[str] = []
-            if isinstance(keys_result, list):
-                keys = keys_result
-            elif keys_result is not None:
-                keys = await exponential_backoff(
-                    lambda: keys_result if isinstance(keys_result, list) else [],
-                    max_retries=2,
-                )
+            keys: list[str] = (
+                list(keys_result) if isinstance(keys_result, list) else []
+            )
 
             if keys:
                 delete_result = await exponential_backoff(
@@ -367,13 +362,9 @@ class RedisCacheService:
 
             # Phase 6.3: 키 카운트
             keys_result = self.redis_client.keys(f"{CACHE_CONFIG['key_prefix']}*")
-            if not isinstance(keys_result, list):
-                key_count = 0
-            else:
-                key_count = await exponential_backoff(
-                    lambda: len(keys_result),
-                    max_retries=2,
-                )
+            key_count: int = (
+                len(keys_result) if isinstance(keys_result, list) else 0
+            )
 
             # Phase 6.4: 통계 계산
             total_requests = self._hit_count + self._miss_count

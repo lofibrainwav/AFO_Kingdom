@@ -315,7 +315,7 @@ class SkillsService(BaseService):
                 )
                 filtered_skills = self.skill_registry.filter(filter_params)
             else:
-                filtered_skills = self.skill_registry.list_all()  # type: ignore[attr-defined]
+                filtered_skills = self.skill_registry.list_all()
 
             # 응답 변환 (DRY: list comprehension)
             skills = [
@@ -389,7 +389,7 @@ class SkillsService(BaseService):
 
             # 실행 통계 업데이트
             if hasattr(self.skill_registry, "increment_execution_count"):
-                self.skill_registry.increment_execution_count(request.skill_id)  # type: ignore[attr-defined]
+                self.skill_registry.increment_execution_count(request.skill_id)
             else:
                 # Fallback: execution_stats에 직접 기록
                 if request.skill_id not in self.execution_stats:

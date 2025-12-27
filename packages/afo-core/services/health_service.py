@@ -102,6 +102,24 @@ async def check_self() -> dict[str, Any]:
     return {"healthy": True, "output": "Self-check: API responding"}
 
 
+async def check_mcp() -> dict[str, Any]:
+    """肾_MCP 상태 체크 (외부 서비스 연결, 타임아웃 5초)"""
+    try:
+        # MCP 서버 구성 상태 체크
+        from config.health_check_config import health_check_config
+
+        if health_check_config.MCP_SERVERS and len(health_check_config.MCP_SERVERS) > 0:
+            # 간단하게 구성된 서버 수만 확인
+            return {
+                "healthy": True,
+                "output": f"MCP servers configured: {len(health_check_config.MCP_SERVERS)} servers"
+            }
+        else:
+            return {"healthy": False, "output": "No MCP servers configured"}
+    except Exception as e:
+        return {"healthy": False, "output": f"MCP check failed: {str(e)[:50]}"}
+
+
 async def get_comprehensive_health() -> dict[str, Any]:
     """종합 건강 상태 진단 및 Trinity Score 계산 (캐시 적용)"""
     current_time = datetime.now().isoformat()
@@ -300,24 +318,6 @@ async def get_comprehensive_health() -> dict[str, Any]:
         "method": "bridge_perspective_v2_jiphyeonjeon",
         "timestamp": current_time,
     }
-
-async def check_mcp() -> dict[str, Any]:
-    """肾_MCP 상태 체크 (외부 서비스 연결, 타임아웃 5초)"""
-    try:
-        # MCP 서버 구성 상태 체크
-        from config.health_check_config import health_check_config
-
-        if health_check_config.MCP_SERVERS and len(health_check_config.MCP_SERVERS) > 0:
-            # 간단하게 구성된 서버 수만 확인
-            return {
-                "healthy": True,
-                "output": f"MCP servers configured: {len(health_check_config.MCP_SERVERS)} servers"
-            }
-        else:
-            return {"healthy": False, "output": "No MCP servers configured"}
-    except Exception as e:
-        return {"healthy": False, "output": f"MCP check failed: {str(e)[:50]}"}
-
 
     # 캐시 저장 (메모리 + Redis)
     try:

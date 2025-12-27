@@ -3,7 +3,7 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "afo-core"
+name = "afo_core"
 version = "1.0.0"
 description = "AFO Ultimate General Command Post"
 readme = "README.md"
@@ -267,7 +267,9 @@ module = [
     "AFO.start.*",
     "AFO.utils.*"
 ]
-ignore_errors = true
+# Phase 11: ignore_errors 제거 - 진실 검사 유지
+# 이 모듈들은 이제 정상 MyPy 검사 대상
+ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
 module = ["autogen", "autogen.*"]
@@ -275,4 +277,8 @@ ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
 module = ["services.trinity_score_monitor"]
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = ["services.langchain_openai_service"]
 ignore_errors = true

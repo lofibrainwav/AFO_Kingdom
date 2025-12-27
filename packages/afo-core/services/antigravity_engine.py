@@ -25,7 +25,7 @@ except ImportError:
 try:
     from config.antigravity import antigravity
 except ImportError:
-    antigravity = None  # type: ignore[assignment, misc]
+    antigravity = None  # type: ignore[assignment]
 
 
 class AntigravityEngine:
@@ -396,12 +396,11 @@ class AntigravityEngine:
         if self.protocol_officer is not None:
             # 권장사항 리스트를 하나의 메시지로 합쳐서 포맷팅
             recommendations_text = "\n".join(f"- {rec}" for rec in recommendations)
-            formatted = self.protocol_officer.compose_diplomatic_message(
+            _ = self.protocol_officer.compose_diplomatic_message(
                 recommendations_text, audience=self.protocol_officer.AUDIENCE_COMMANDER
             )
             # 포맷팅된 텍스트에서 권장사항만 추출 (prefix/suffix 제거)
             # 간단하게 원본 리스트 반환 (이미 언어 정책 적용됨)
-            return recommendations
 
         return recommendations
 
@@ -624,10 +623,6 @@ class AntigravityEngine:
             ) or any(
                 "commit" in str(k).lower() or "git" in str(k).lower() for k in evidence
             )
-        else:
-            # 폴백: 문자열 매칭
-            evidence_str = str(evidence).lower()
-            has_commit = "commit" in evidence_str or "git" in evidence_str
 
         # 2. file 검증 (구조화된 키 또는 문자열 매칭)
         has_files = False
@@ -638,9 +633,6 @@ class AntigravityEngine:
             ) or any(
                 "file" in str(k).lower() or "path" in str(k).lower() for k in evidence
             )
-        else:
-            evidence_str = str(evidence).lower()
-            has_files = "file" in evidence_str or "path" in evidence_str
 
         # 3. command 검증 (구조화된 키 또는 문자열 매칭)
         has_command = False
@@ -654,14 +646,6 @@ class AntigravityEngine:
                 or "exec" in str(k).lower()
                 or "result" in str(k).lower()
                 for k in evidence
-            )
-        else:
-            evidence_str = str(evidence).lower()
-            has_command = (
-                "command" in evidence_str
-                or "cmd" in evidence_str
-                or "exec" in evidence_str
-                or "result" in evidence_str
             )
 
         # 증거 3종 모두 필수

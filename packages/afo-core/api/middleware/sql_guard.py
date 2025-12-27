@@ -78,7 +78,7 @@ class SqlGuardMiddleware(BaseHTTPMiddleware):
             async def _receive() -> dict:
                 return {"type": "http.request", "body": raw, "more_body": False}
 
-            request._receive = _receive  # type: ignore[attr-defined]
+            request._receive = _receive  # type: ignore[method-assign]
 
         if suspicious and mode == "block":
             return JSONResponse(

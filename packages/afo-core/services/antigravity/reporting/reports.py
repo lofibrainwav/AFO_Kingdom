@@ -241,7 +241,7 @@ class ReportGenerator:
         Returns:
             저장된 파일 경로
         """
-        report_file = self.reports_dir / filename
+        report_file: Path = self.reports_dir / filename
         report_file.write_text(report, encoding="utf-8")
         logger.info(f"✅ 보고서 저장: {report_file}")
 

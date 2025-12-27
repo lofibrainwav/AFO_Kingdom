@@ -1,0 +1,9 @@
+# Phase 11 Truth Gate Evidence
+## Gate (CI용): 0개
+services/system_monitoring_dashboard.py:136: note: By default the bodies of untyped functions are not checked, consider using --check-untyped-defs  [annotation-unchecked]
+services/system_monitoring_dashboard.py:137: note: By default the bodies of untyped functions are not checked, consider using --check-untyped-defs  [annotation-unchecked]
+Success: no issues found in 286 source files
+## Truth (진실): 124개
+AFO/api/routes/wallet/session.py: note: In function "extract_wallet_session":
+AFO/api/routes/wallet/session.py:145: error: Argument "mapping" to "hset" of "HashCommands" has incompatible type "dict[str, str]"; expected "Mapping[str | bytes, bytes | float | int | str]"  [arg-type]
+Found 124 errors in 41 files (checked 286 source files)
