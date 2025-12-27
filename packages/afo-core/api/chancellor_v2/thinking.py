@@ -1,23 +1,19 @@
-"""Chancellor Graph V2 - Sequential Thinking Integration (Contract).
+"""Chancellor Graph V2 - Sequential Thinking Integration (Hard Contract).
 
-SSOT Contract: Sequential Thinking is REQUIRED, not optional.
-MCP unavailable = execution fails (no passthrough).
+SSOT Contract: Sequential Thinking is REQUIRED. No bypass. No passthrough.
+If MCP fails, execution STOPS.
 """
 
 from __future__ import annotations
 
 import json
 import logging
-import os
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from api.chancellor_v2.graph.state import GraphState
 
 logger = logging.getLogger(__name__)
-
-# Contract: MCP is REQUIRED by default (set to "0" only for emergency bypass)
-MCP_REQUIRED = os.getenv("AFO_MCP_REQUIRED", "1") == "1"
 
 
 def _call_sequential_thinking(
@@ -28,45 +24,33 @@ def _call_sequential_thinking(
 ) -> dict[str, Any]:
     """Call MCP sequential_thinking tool.
 
-    Contract: If MCP_REQUIRED=1 and MCP unavailable, raises RuntimeError.
+    Contract: If MCP fails for any reason, raises RuntimeError.
+    NO BYPASS. NO PASSTHROUGH.
     """
-    try:
-        from AFO.services.mcp_stdio_client import call_tool
+    from AFO.services.mcp_stdio_client import call_tool
 
-        server_name = "afo-ultimate-mcp"
-        resp = call_tool(
-            server_name,
-            tool_name="sequential_thinking",
-            arguments={
-                "thought": thought,
-                "thought_number": thought_number,
-                "total_thoughts": total_thoughts,
-                "next_thought_needed": next_thought_needed,
-            },
-        )
-        return resp.get("result", {"thought": thought, "processed": True})
+    server_name = "sequential-thinking"
+    resp = call_tool(
+        server_name,
+        tool_name="sequentialthinking",
+        arguments={
+            "thought": thought,
+            "thoughtNumber": thought_number,
+            "totalThoughts": total_thoughts,
+            "nextThoughtNeeded": next_thought_needed,
+        },
+    )
 
-    except ImportError as e:
-        if MCP_REQUIRED:
-            raise RuntimeError(
-                "MCP sequential_thinking is REQUIRED but mcp_stdio_client not available. "
-                "Set AFO_MCP_REQUIRED=0 to bypass (NOT RECOMMENDED)."
-            ) from e
-        logger.warning("[V2] mcp_stdio_client not available, using passthrough mode")
-        return {"thought": thought, "processed": False, "mode": "passthrough"}
+    if "error" in resp:
+        raise RuntimeError(f"MCP sequential_thinking failed: {resp['error']}")
 
-    except Exception as e:
-        if MCP_REQUIRED:
-            # Re-raise to fail execution (contract violation)
-            raise RuntimeError(f"MCP sequential_thinking REQUIRED but failed: {e}") from e
-        logger.error(f"[V2] Sequential Thinking error: {e}")
-        return {"thought": thought, "error": str(e)}
+    return resp.get("result", {"thought": thought, "processed": True})
 
 
 def apply_sequential_thinking(state: GraphState, step: str) -> GraphState:
     """Apply Sequential Thinking to current step.
 
-    Contract: Always called before each node (no bypass).
+    Contract: Always called before each node. Failure = execution stops.
     """
     # Build thought for this step
     thought = f"[Step {step}] Processing: {json.dumps(state.input, ensure_ascii=False)[:200]}"
@@ -86,7 +70,7 @@ def apply_sequential_thinking(state: GraphState, step: str) -> GraphState:
     elif step == "VERIFY":
         thought = f"Verifying execution results: errors={len(state.errors)}"
 
-    # Call MCP Sequential Thinking (Contract: will raise if MCP_REQUIRED and unavailable)
+    # Call MCP Sequential Thinking (Contract: will raise on failure)
     result = _call_sequential_thinking(
         thought=thought,
         thought_number=1,
@@ -99,6 +83,6 @@ def apply_sequential_thinking(state: GraphState, step: str) -> GraphState:
         state.outputs["sequential_thinking"] = {}
     state.outputs["sequential_thinking"][step] = result
 
-    logger.info(f"[V2] Sequential Thinking applied to {step}: {result.get('processed', False)}")
+    logger.info(f"[V2] Sequential Thinking applied to {step}")
 
     return state

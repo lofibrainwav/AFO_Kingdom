@@ -1,7 +1,7 @@
-"""Chancellor Graph V2 - Context7 Integration (Contract).
+"""Chancellor Graph V2 - Context7 Integration (Hard Contract).
 
-SSOT Contract: Context7 is REQUIRED, not optional.
-MCP unavailable = execution fails (no passthrough).
+SSOT Contract: Context7 is REQUIRED. No bypass. No disabled mode.
+If MCP fails, execution STOPS.
 
 Includes Kingdom DNA injection at trace start.
 """
@@ -9,16 +9,12 @@ Includes Kingdom DNA injection at trace start.
 from __future__ import annotations
 
 import logging
-import os
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from api.chancellor_v2.graph.state import GraphState
 
 logger = logging.getLogger(__name__)
-
-# Contract: MCP is REQUIRED by default (set to "0" only for emergency bypass)
-MCP_REQUIRED = os.getenv("AFO_MCP_REQUIRED", "1") == "1"
 
 # Context7 knowledge domains mapping
 DOMAIN_MAP = {
@@ -44,42 +40,30 @@ KINGDOM_DNA_QUERY = (
 def _call_context7(query: str, domain: str = "technical") -> dict[str, Any]:
     """Call MCP retrieve_context tool for Context7 knowledge injection.
 
-    Contract: If MCP_REQUIRED=1 and MCP unavailable, raises RuntimeError.
+    Contract: If MCP fails for any reason, raises RuntimeError.
+    NO BYPASS. NO DISABLED MODE.
     """
-    try:
-        from AFO.services.mcp_stdio_client import call_tool
+    from AFO.services.mcp_stdio_client import call_tool
 
-        server_name = "afo-ultimate-mcp"
-        resp = call_tool(
-            server_name,
-            tool_name="retrieve_context",
-            arguments={
-                "query": query,
-                "domain": domain,
-            },
-        )
-        return resp.get("result", {"context": "", "source": "unknown"})
+    server_name = "context7"
+    resp = call_tool(
+        server_name,
+        tool_name="resolve-library-id",
+        arguments={
+            "libraryName": query,
+        },
+    )
 
-    except ImportError as e:
-        if MCP_REQUIRED:
-            raise RuntimeError(
-                "MCP Context7 (retrieve_context) is REQUIRED but mcp_stdio_client not available. "
-                "Set AFO_MCP_REQUIRED=0 to bypass (NOT RECOMMENDED)."
-            ) from e
-        logger.warning("[V2] mcp_stdio_client not available, context7 disabled")
-        return {"context": "", "mode": "disabled"}
+    if "error" in resp:
+        raise RuntimeError(f"MCP Context7 failed: {resp['error']}")
 
-    except Exception as e:
-        if MCP_REQUIRED:
-            raise RuntimeError(f"MCP Context7 REQUIRED but failed: {e}") from e
-        logger.error(f"[V2] Context7 error: {e}")
-        return {"context": "", "error": str(e)}
+    return resp.get("result", {"context": "", "source": "context7"})
 
 
 def inject_kingdom_dna(state: GraphState) -> GraphState:
     """Inject Kingdom DNA at trace start (1-time constitutional injection).
 
-    Contract: Always called at trace start before any node execution.
+    Contract: Always called at trace start. Failure = execution stops.
     """
     result = _call_context7(
         query=KINGDOM_DNA_QUERY,
@@ -92,12 +76,12 @@ def inject_kingdom_dna(state: GraphState) -> GraphState:
     state.outputs["context7"]["KINGDOM_DNA"] = {
         "domain": "afo-philosophy",
         "query": KINGDOM_DNA_QUERY,
-        "context": result.get("context", "")[:1500],  # Truncate for storage
+        "context": str(result)[:1500],
         "injected": True,
     }
 
     # Also store in plan for node access
-    state.plan["_kingdom_dna"] = result.get("context", "")[:1500]
+    state.plan["_kingdom_dna"] = str(result)[:1500]
 
     logger.info("[V2] Kingdom DNA injected at trace start")
 
@@ -107,7 +91,7 @@ def inject_kingdom_dna(state: GraphState) -> GraphState:
 def inject_context(state: GraphState, step: str) -> GraphState:
     """Inject Context7 knowledge for current step.
 
-    Contract: Always called before each node (no bypass).
+    Contract: Always called before each node. Failure = execution stops.
     """
     domain = DOMAIN_MAP.get(step, "technical")
 
@@ -129,7 +113,7 @@ def inject_context(state: GraphState, step: str) -> GraphState:
     elif step == "VERIFY":
         query = "Verification and validation standards"
 
-    # Call Context7 (Contract: will raise if MCP_REQUIRED and unavailable)
+    # Call Context7 (Contract: will raise on failure)
     result = _call_context7(query=query, domain=domain)
 
     # Store context in state
@@ -138,7 +122,7 @@ def inject_context(state: GraphState, step: str) -> GraphState:
     state.outputs["context7"][step] = {
         "domain": domain,
         "query": query,
-        "context": result.get("context", "")[:500],  # Truncate for storage
+        "context": str(result)[:500],
     }
 
     logger.info(f"[V2] Context7 injected for {step} (domain={domain})")
