@@ -51,14 +51,10 @@ async def preview_component(
                 response.description += f" [Deployed to Sandbox: {path}]"
 
                 # 3. Schedule Autonomous Verification (The Eyes)
-                background_tasks.add_task(
-                    vision_verifier.verify_component, request.component_name
-                )
+                background_tasks.add_task(vision_verifier.verify_component, request.component_name)
             except Exception as deploy_error:
                 # We don't fail the request, but mark the error
-                response.error = (
-                    f"Generation success, but deployment failed: {deploy_error}"
-                )
+                response.error = f"Generation success, but deployment failed: {deploy_error}"
 
         return response
     except Exception as e:

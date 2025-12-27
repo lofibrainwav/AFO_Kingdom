@@ -52,7 +52,7 @@ class SqlGuardMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next) -> Response:
         mode = _mode()
         if mode == "off":
-            return await call_next(request)
+            return await call_next(request)  # type: ignore[no-any-return]
 
         suspicious = False
 
@@ -78,11 +78,9 @@ class SqlGuardMiddleware(BaseHTTPMiddleware):
             async def _receive() -> dict:
                 return {"type": "http.request", "body": raw, "more_body": False}
 
-            request._receive = _receive  # type: ignore[attr-defined]
+            request._receive = _receive
 
         if suspicious and mode == "block":
-            return JSONResponse(
-                {"ok": False, "error": "suspicious_input"}, status_code=400
-            )
+            return JSONResponse({"ok": False, "error": "suspicious_input"}, status_code=400)
 
-        return await call_next(request)
+        return await call_next(request)  # type: ignore[no-any-return]

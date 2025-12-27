@@ -43,9 +43,7 @@ def main():
     print()
 
     memory_buffer = ConversationBufferMemory(return_messages=True)
-    conversation_buffer = ConversationChain(
-        llm=llm, memory=memory_buffer, verbose=False
-    )
+    conversation_buffer = ConversationChain(llm=llm, memory=memory_buffer, verbose=False)
 
     print("1️⃣ 첫 번째 대화 턴")
     response1 = conversation_buffer.predict(input="안녕하세요! 저는 영덕입니다.")
@@ -84,9 +82,7 @@ def main():
     print("💡 긴 대화를 요약하여 저장 → 토큰 절약\n")
 
     memory_summary = ConversationSummaryMemory(llm=llm, return_messages=True)
-    conversation_summary = ConversationChain(
-        llm=llm, memory=memory_summary, verbose=False
-    )
+    conversation_summary = ConversationChain(llm=llm, memory=memory_summary, verbose=False)
 
     print("1️⃣ 긴 대화 시뮬레이션")
     inputs = [
@@ -127,9 +123,7 @@ def main():
     현재 질문: {input}
     답변:"""
 
-    custom_prompt = PromptTemplate(
-        input_variables=["history", "input"], template=custom_template
-    )
+    custom_prompt = PromptTemplate(input_variables=["history", "input"], template=custom_template)
 
     memory_custom = ConversationBufferMemory(return_messages=False)
     conversation_custom = ConversationChain(

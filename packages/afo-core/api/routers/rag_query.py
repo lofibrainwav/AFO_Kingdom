@@ -135,19 +135,17 @@ async def query_knowledge_base(request: RAGRequest):
             from qdrant_client import QdrantClient
 
             q_client = QdrantClient("localhost", port=6333)
-            tasks.append(
-                HybridRAG.query_qdrant_async(embedding, request.top_k, q_client)
-            )
+            tasks.append(HybridRAG.query_qdrant_async(embedding, request.top_k, q_client))
         except:
             pass
 
     results: list[dict[str, Any]] = []
     if tasks:
         retrieval_results = await asyncio.gather(*tasks, return_exceptions=True)
-        for res in retrieval_results:
-            if isinstance(res, list) and all(isinstance(item, dict) for item in res):
-                results.extend(res)
-            elif isinstance(res, Exception):
+        for r_chunk in retrieval_results:
+            if isinstance(r_chunk, list) and all(isinstance(item, dict) for item in r_chunk):
+                results.extend(r_chunk)
+            elif isinstance(r_chunk, Exception):
                 # Log exception but continue processing
                 pass
 
@@ -161,19 +159,15 @@ async def query_knowledge_base(request: RAGRequest):
         entities = [w for w in request.query.split() if len(w) > 4]
         # Or use extracted entities from chunks payload if available
         for res in results:
-            if "metadata" in res and "content" in res["metadata"]:
+            if isinstance(res, dict) and "metadata" in res and "content" in res["metadata"]:
                 # Extract capitalized words as heuristic
-                words = [
-                    w for w in res["metadata"]["content"].split() if w[0].isupper()
-                ]
+                words = [w for w in res["metadata"]["content"].split() if w[0].isupper()]
                 entities.extend(words[:3])
 
         entities = list(set(entities))[:5]  # Limit
         if entities:
             graph_context = HybridRAG.query_graph_context(entities)
-            logs.append(
-                f"🕸️ Graph Context: Found {len(graph_context)} connections for {entities}"
-            )
+            logs.append(f"🕸️ Graph Context: Found {len(graph_context)} connections for {entities}")
 
     # 5. Rerank / Selection
     # Simple selection for now

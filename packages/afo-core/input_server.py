@@ -38,9 +38,7 @@ try:
     INPUT_STORAGE_AVAILABLE = True
 except ImportError:
     INPUT_STORAGE_AVAILABLE = False
-    print(
-        "⚠️  WARNING: input_storage module not available. PostgreSQL storage disabled."
-    )
+    print("⚠️  WARNING: input_storage module not available. PostgreSQL storage disabled.")
 
 # FastAPI 앱 초기화
 app = FastAPI(
@@ -165,9 +163,7 @@ def _get_home_template(
             ]
         )
     else:
-        keys_html = (
-            '<p style="color: #999; text-align: center;">아직 등록된 키가 없습니다</p>'
-        )
+        keys_html = '<p style="color: #999; text-align: center;">아직 등록된 키가 없습니다</p>'
 
     return f"""
 <!DOCTYPE html>
@@ -457,9 +453,7 @@ async def add_api_key(
             if response.status_code != 200:
                 error_detail = response.json().get("detail", "Unknown error")
                 print(f"❌ API 키 저장 실패: {error_detail}")
-                return RedirectResponse(
-                    url=f"/?error=저장 실패: {error_detail}", status_code=303
-                )
+                return RedirectResponse(url=f"/?error=저장 실패: {error_detail}", status_code=303)
 
         # 2. PostgreSQL에 메타데이터 저장 (API 키는 제외, 善 - Goodness 원칙)
         if INPUT_STORAGE_AVAILABLE:
@@ -495,9 +489,7 @@ async def add_api_key(
         )
     except Exception as e:
         print(f"❌ API 키 저장 중 에러: {e}")
-        return RedirectResponse(
-            url=f"/?error=저장 중 오류가 발생했습니다: {e!s}", status_code=303
-        )
+        return RedirectResponse(url=f"/?error=저장 중 오류가 발생했습니다: {e!s}", status_code=303)
 
 
 @app.get("/api/status")
@@ -580,9 +572,7 @@ async def _import_single_key(
         async with httpx.AsyncClient(timeout=5.0) as client:
             try:
                 # 존재 여부 확인 (중복 방지)
-                chk = await client.get(
-                    f"{api_server_url}/api/wallet/get/{name}", timeout=2.0
-                )
+                chk = await client.get(f"{api_server_url}/api/wallet/get/{name}", timeout=2.0)
                 if chk.status_code == 200:
                     return "skipped"
 
@@ -603,9 +593,7 @@ async def _import_single_key(
 
                 # 에러 응답 처리
                 err_detail = resp.json().get("detail", "Unknown error")
-                return (
-                    "skipped" if "already exists" in err_detail.lower() else err_detail
-                )
+                return "skipped" if "already exists" in err_detail.lower() else err_detail
             except Exception as e:
                 # 네트워크 에러 등
                 return str(e)
@@ -619,9 +607,7 @@ async def bulk_import(bulk_text: str = Form(...)) -> RedirectResponse:
     try:
         parsed = parse_env_text(bulk_text)
         if not parsed:
-            return RedirectResponse(
-                url="/?error=파싱된 환경 변수가 없습니다.", status_code=303
-            )
+            return RedirectResponse(url="/?error=파싱된 환경 변수가 없습니다.", status_code=303)
 
         # Wallet 인스턴스 준비
         wallet = None
@@ -632,9 +618,7 @@ async def bulk_import(bulk_text: str = Form(...)) -> RedirectResponse:
         except Exception:
             pass
 
-        server_url = (
-            API_WALLET_URL if await _is_api_server_available(API_WALLET_URL) else None
-        )
+        server_url = API_WALLET_URL if await _is_api_server_available(API_WALLET_URL) else None
 
         counts = {"success": 0, "skipped": 0, "failed": 0}
         failed_names = []
@@ -660,7 +644,9 @@ async def bulk_import(bulk_text: str = Form(...)) -> RedirectResponse:
 
         result_msg = " | ".join(summary)
         if failed_names:
-            result_msg += f" (실패: {', '.join(failed_names[:3])}{'...' if len(failed_names) > 3 else ''})"
+            result_msg += (
+                f" (실패: {', '.join(failed_names[:3])}{'...' if len(failed_names) > 3 else ''})"
+            )
 
         return RedirectResponse(url=f"/?success={result_msg}", status_code=303)
 
@@ -683,9 +669,7 @@ async def get_history(
         JSON: Input 히스토리 리스트
     """
     if not INPUT_STORAGE_AVAILABLE:
-        return JSONResponse(
-            status_code=503, content={"error": "PostgreSQL storage not available"}
-        )
+        return JSONResponse(status_code=503, content={"error": "PostgreSQL storage not available"})
 
     try:
         history = get_input_history(category=category, limit=limit)
@@ -707,7 +691,7 @@ if __name__ == "__main__":
         host = settings.INPUT_SERVER_HOST
     except ImportError:
         port = int(os.getenv("INPUT_SERVER_PORT", "4200"))
-        host = os.getenv("INPUT_SERVER_HOST", "0.0.0.0")
+        host = os.getenv("INPUT_SERVER_HOST", "127.0.0.1")
 
     print("=" * 60)
     print("🍽️  AFO Input Server - 胃 (Stomach)")

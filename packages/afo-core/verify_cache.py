@@ -25,9 +25,7 @@ async def verify_cache_integration():
 
         # Check Predictive Manager
         if predictive_manager:
-            print(
-                f"✅ Predictive Manager: Initialized ({type(predictive_manager).__name__})"
-            )
+            print(f"✅ Predictive Manager: Initialized ({type(predictive_manager).__name__})")
         else:
             print("❌ Predictive Manager: Failed to Load")
 

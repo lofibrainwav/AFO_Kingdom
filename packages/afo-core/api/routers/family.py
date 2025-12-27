@@ -212,9 +212,7 @@ async def get_family_happiness() -> dict[str, Any]:
     data = load_family_data()
     return {
         "happiness_score": data.get("system", {}).get("overall_happiness", 50.0),
-        "active_members": len(
-            [m for m in data.get("members", []) if m.get("status") == "Active"]
-        ),
+        "active_members": len([m for m in data.get("members", []) if m.get("status") == "Active"]),
     }
 
 

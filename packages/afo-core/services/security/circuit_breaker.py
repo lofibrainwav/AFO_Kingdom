@@ -46,8 +46,6 @@ class CircuitBreaker:
             self.half_open_attempts += 1
             return True
 
-        return False
-
     def record_success(self) -> None:
         self.state = CircuitState.CLOSED
         self.consecutive_failures = 0

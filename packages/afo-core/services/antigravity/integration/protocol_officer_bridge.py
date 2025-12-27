@@ -51,7 +51,7 @@ class ProtocolOfficerBridge:
                 formatted = self.protocol_officer.compose_diplomatic_message(
                     message, audience=self.protocol_officer.AUDIENCE_COMMANDER
                 )
-                return formatted
+                return str(formatted)
             except Exception as e:
                 logger.warning(f"Protocol Officer 포맷팅 실패: {e}")
 
@@ -110,7 +110,7 @@ class ProtocolOfficerBridge:
                 formatted = self.protocol_officer.compose_diplomatic_message(
                     report, audience=self.protocol_officer.AUDIENCE_COMMANDER
                 )
-                return formatted
+                return str(formatted)
             except Exception as e:
                 logger.warning(f"Protocol Officer 보고서 포맷팅 실패: {e}")
 

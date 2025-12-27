@@ -16,6 +16,7 @@ import logging
 import os
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
 
 from AFO.config.settings import get_settings
 from AFO.guardians.critic_agent import CriticAgent
@@ -56,12 +57,7 @@ class SerenityCreationLoop:
         settings = get_settings()
         # Ensure we use an absolute path for the sandbox
         self.sandbox_dir = sandbox_dir or str(
-            Path(settings.BASE_DIR)
-            / "packages"
-            / "dashboard"
-            / "src"
-            / "components"
-            / "genui"
+            Path(settings.BASE_DIR) / "packages" / "dashboard" / "src" / "components" / "genui"
         )
         os.makedirs(self.sandbox_dir, exist_ok=True)
 
@@ -101,12 +97,10 @@ class SerenityCreationLoop:
 
             # Step 3: Capture Screenshot & Verify (眞 & 美)
             screenshot_path = None
-            verification_data = {}
+            verification_data: dict[str, Any] = {}
             if self.bridge:
-                try:
-                    screenshot_path = os.path.join(
-                        self.sandbox_dir, f"screenshot_v{iteration}.png"
-                    )
+                try:  # type: ignore[unreachable]
+                    screenshot_path = os.path.join(self.sandbox_dir, f"screenshot_v{iteration}.png")
                     # Disable dry-run momentarily for real verification if explicitly asked or permitted
                     verification_data = await self.bridge.verify_ui(
                         f"file://{html_path}", screenshot_path
@@ -118,9 +112,7 @@ class SerenityCreationLoop:
                     log_sse(f"⚠️ [Serenity] Visual verification failed: {e}")
 
             # Step 4: Evaluate with Trinity (善)
-            trinity_score, risk_score, feedback = self._evaluate(
-                code, verification_data, prompt
-            )
+            trinity_score, risk_score, feedback = self._evaluate(code, verification_data, prompt)
             log_sse(
                 f"⚖️ [Serenity] Iteration Score: {trinity_score * 100:.1f}/100 (Risk: {risk_score * 100:.1f}%)"
             )
@@ -132,8 +124,7 @@ class SerenityCreationLoop:
                 risk_score=risk_score,
                 iteration=iteration,
                 success=(
-                    trinity_score >= self.TRINITY_THRESHOLD
-                    and risk_score <= self.RISK_THRESHOLD
+                    trinity_score >= self.TRINITY_THRESHOLD and risk_score <= self.RISK_THRESHOLD
                 ),
                 feedback=feedback,
             )
@@ -141,7 +132,7 @@ class SerenityCreationLoop:
             if last_result.success:
                 log_sse("✅ [Serenity] AUTO_RUN: Quality threshold met! Deploying...")
                 if self.trinity_manager:
-                    self.trinity_manager.apply_trigger("AUTO_RUN_ACTION")
+                    self.trinity_manager.apply_trigger("AUTO_RUN_ACTION")  # type: ignore[unreachable]
                 return last_result
 
             log_sse(f"🔄 [Serenity] Refining: {feedback[:50]}...")
@@ -188,7 +179,7 @@ class SerenityCreationLoop:
                 code = code.split("```tsx")[1].split("```")[0].strip()
             elif "```" in code:
                 code = code.split("```")[1].split("```")[0].strip()
-            return code
+            return str(code)
 
         return "// Code generation failed"
 
@@ -203,9 +194,7 @@ class SerenityCreationLoop:
 
         return file_path
 
-    def _evaluate(
-        self, code: str, verification: dict, prompt: str
-    ) -> tuple[float, float, str]:
+    def _evaluate(self, code: str, verification: dict, prompt: str) -> tuple[float, float, str]:
         """Strategic evaluation via Trinity Score."""
         # Simple evaluation logic for now, could use CriticAgent+LLM
         truth = 1.0 if "use client" in code and "export default" in code else 0.8

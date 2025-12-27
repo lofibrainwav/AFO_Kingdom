@@ -35,18 +35,14 @@ class FivePillarsAgent:
             logger.info("✅ FivePillarsAgent: Gemini REST API Initialized")
         else:
             self.gemini_api = None  # type: ignore[assignment]
-            logger.debug(
-                "⚠️ FivePillarsAgent: Gemini API not available, using heuristics only"
-            )
+            logger.debug("⚠️ FivePillarsAgent: Gemini API not available, using heuristics only")
 
     async def evaluate_five_pillars(self, data: dict[str, Any]) -> dict[str, Any]:
         """
         Analyze input data to calculate 5 Pillars scores.
         Async method to allow non-blocking LLM calls.
         """
-        input_text = str(
-            data.get("input", "") or data.get("text", "") or json.dumps(data)
-        )
+        input_text = str(data.get("input", "") or data.get("text", "") or json.dumps(data))
 
         # 1. Try LLM Evaluation (Phase 5: REST API 사용)
         if self.gemini_api:
@@ -80,12 +76,7 @@ class FivePillarsAgent:
                 )
 
                 if result.get("success"):
-                    text = (
-                        result["content"]
-                        .replace("```json", "")
-                        .replace("```", "")
-                        .strip()
-                    )
+                    text = result["content"].replace("```json", "").replace("```", "").strip()
                     scores = json.loads(text)
 
                     # Validate keys
@@ -94,9 +85,7 @@ class FivePillarsAgent:
                         return self._format_response(scores, source="gemini-1.5-flash")
 
             except Exception as e:
-                logger.warning(
-                    f"FivePillarsAgent LLM Error: {e}. Falling back to heuristics."
-                )
+                logger.warning(f"FivePillarsAgent LLM Error: {e}. Falling back to heuristics.")
 
         # 2. Heuristic Fallback (Optimization: Fast path)
         return self._heuristic_evaluate(input_text)

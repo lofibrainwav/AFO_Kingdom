@@ -103,9 +103,7 @@ class ModularAntigravityEngine:
         predicted_score = trinity_score
         if self.config["use_ml_prediction"]:
             try:
-                predicted_score = quality_predictor.predict_future_quality(
-                    trinity_score, context
-                )
+                predicted_score = quality_predictor.predict_future_quality(trinity_score, context)
                 quality_predictor.collect_learning_data(
                     trinity_score, risk_score, context, decision
                 )
@@ -137,22 +135,16 @@ class ModularAntigravityEngine:
             "decision": decision,
             "trinity_score": trinity_score,
             "risk_score": risk_score,
-            "predicted_score": (
-                predicted_score if self.config["use_ml_prediction"] else None
-            ),
-            "dynamic_thresholds": (
-                thresholds if self.config["use_adaptive_thresholds"] else None
-            ),
+            "predicted_score": (predicted_score if self.config["use_ml_prediction"] else None),
+            "dynamic_thresholds": (thresholds if self.config["use_adaptive_thresholds"] else None),
             "confidence": 0.8,  # 기본 신뢰도
             "active_modules": self._get_active_modules(),
         }
 
-        # 6. Protocol Officer 포맷팅 (선택적)
         if self.config["use_protocol_officer"]:
             try:
-                result["formatted_message"] = (
-                    protocol_officer_bridge.format_decision_message(result)
-                )
+                formatted_message: str = protocol_officer_bridge.format_decision_message(result)
+                result["formatted_message"] = formatted_message  # type: ignore[assignment]
             except Exception as e:
                 logger.warning(f"Protocol Officer 포맷팅 실패: {e}")
 
@@ -234,7 +226,7 @@ class ModularAntigravityEngine:
         try:
             # 실제로는 quality_predictor의 히스토리를 사용해야 함
             # 여기서는 모의 데이터 사용
-            mock_history = []
+            mock_history: list[dict[str, Any]] = []
             return adaptive_thresholds.adapt_thresholds(mock_history)
         except Exception as e:
             logger.error(f"임계값 적응 실패: {e}")

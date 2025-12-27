@@ -9,13 +9,16 @@ Phase 5: Trinity Type Validator 적용 - 런타임 Trinity Score 검증
 
 import json
 import logging
-from typing import Any
+from collections.abc import Callable
+from typing import Any, TypeVar
+
+TF = TypeVar("TF", bound=Callable[..., Any])
 
 try:
     from AFO.utils.trinity_type_validator import validate_with_trinity
 except ImportError:
-    # Fallback for import issues
-    def validate_with_trinity(func: Any) -> Any:
+    # Fallback for import issues - matches original signature
+    def validate_with_trinity(func: TF) -> TF:
         """Fallback decorator when trinity_type_validator is not available."""
         return func
 
@@ -100,12 +103,10 @@ class CheckpointService:
                         f"[永: Checkpoint] Redis에 페르소나 상태 저장: {persona_data.get('id')}"
                     )
                 except Exception as e:
-                    logger.warning(
-                        f"[永: Checkpoint] Redis 저장 실패, 메모리 저장으로 폴백: {e}"
+                    logger.warning(f"[永: Checkpoint] Redis 저장 실패, 메모리 저장으로 폴백: {e}")
+                    self._memory_store[f"persona:{persona_data.get('id', 'unknown')}"] = (
+                        persona_data
                     )
-                    self._memory_store[
-                        f"persona:{persona_data.get('id', 'unknown')}"
-                    ] = persona_data
 
             # DB 영속 저장
             if DB_AVAILABLE:
@@ -118,18 +119,14 @@ class CheckpointService:
                         persona_json,
                     )
                     await conn.close()
-                    logger.info(
-                        f"[永: Eternity] DB에 페르소나 상태 저장: {persona_data.get('id')}"
-                    )
+                    logger.info(f"[永: Eternity] DB에 페르소나 상태 저장: {persona_data.get('id')}")
                 except Exception as e:
                     logger.warning(f"[永: Eternity] DB 저장 실패: {e}")
 
             return {
                 "status": "success",
                 "persona_id": persona_data.get("id"),
-                "storage": (
-                    "redis+db" if (REDIS_AVAILABLE and DB_AVAILABLE) else "memory"
-                ),
+                "storage": ("redis+db" if (REDIS_AVAILABLE and DB_AVAILABLE) else "memory"),
             }
 
         except Exception as e:
@@ -169,10 +166,8 @@ class CheckpointService:
             # 메모리에서 로드 (폴백)
             if f"persona:{persona_id}" in self._memory_store:
                 result = self._memory_store[f"persona:{persona_id}"]
-                # 타입 명시: dict[str, Any] | None
                 if isinstance(result, dict):
                     return result
-                return None
 
             return None
 

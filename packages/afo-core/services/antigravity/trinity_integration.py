@@ -7,7 +7,7 @@ Trinity Integration - Antigravity ↔ Trinity Evidence 연결
 import asyncio
 import logging
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any, Optional, cast
 
 from .modular_engine import ModularAntigravityEngine, create_simple_engine
 
@@ -32,8 +32,8 @@ class TrinityAntigravityIntegration:
             engine: 사용할 Antigravity 엔진 (기본: simple_engine)
         """
         self.engine = engine or create_simple_engine()
-        self.last_evaluation = None
-        self.evaluation_history = []
+        self.last_evaluation: dict[str, Any] | None = None
+        self.evaluation_history: list[dict[str, Any]] = []
 
         logger.info("✅ Trinity-Antigravity 통합 초기화 완료")
         logger.info(f"사용 엔진: {self.engine._get_active_modules()}")
@@ -62,9 +62,7 @@ class TrinityAntigravityIntegration:
             risk_score = self._calculate_risk_from_evidence(evidence_data)
 
             # 맥락 정보 구성
-            evaluation_context = self._build_evaluation_context(
-                evidence_data, context or {}
-            )
+            evaluation_context = self._build_evaluation_context(evidence_data, context or {})
 
             # 품질 게이트 평가
             result = await self.engine.evaluate_quality_gate(
@@ -112,7 +110,7 @@ class TrinityAntigravityIntegration:
             raise FileNotFoundError(f"Trinity Evidence 파일 없음: {evidence_path}")
 
         with open(evidence_file, encoding="utf-8") as f:
-            return json.load(f)
+            return cast("dict[str, Any]", json.load(f))
 
     def _calculate_risk_from_evidence(self, evidence_data: dict[str, Any]) -> float:
         """
@@ -160,7 +158,7 @@ class TrinityAntigravityIntegration:
 
         # 종합 리스크 계산
         total_risk = sum(risk_factors)
-        return min(total_risk, 100.0)  # 최대 100점
+        return float(min(total_risk, 100.0))  # 최대 100점
 
     def _build_evaluation_context(
         self, evidence_data: dict[str, Any], additional_context: dict[str, Any]
@@ -182,9 +180,7 @@ class TrinityAntigravityIntegration:
             "test_coverage": evidence_data.get("test_coverage", 80.0),
             "ci_status": evidence_data.get("ci_status", "unknown"),
             "change_scope": self._infer_change_scope(evidence_data),
-            "team_experience": additional_context.get(
-                "team_experience", "intermediate"
-            ),
+            "team_experience": additional_context.get("team_experience", "intermediate"),
             "time_pressure": additional_context.get("time_pressure", "normal"),
         }
 
@@ -364,12 +360,8 @@ class TrinityAntigravityIntegration:
             "total_evaluations": total,
             "auto_run_rate": decisions.count("AUTO_RUN") / total * 100,
             "ask_commander_rate": decisions.count("ASK_COMMANDER") / total * 100,
-            "block_rate": (decisions.count("BLOCK") if "BLOCK" in decisions else 0)
-            / total
-            * 100,
-            "average_confidence": sum(
-                h.get("confidence", 0.0) for h in self.evaluation_history
-            )
+            "block_rate": (decisions.count("BLOCK") if "BLOCK" in decisions else 0) / total * 100,
+            "average_confidence": sum(h.get("confidence", 0.0) for h in self.evaluation_history)
             / total,
         }
 

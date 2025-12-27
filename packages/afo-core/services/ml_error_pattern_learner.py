@@ -131,11 +131,7 @@ class MLErrorPatternLearner:
         if fix_applied and success:
             # 기존 수정 사항과 비교하여 성공률 계산
             existing_fix = next(
-                (
-                    f
-                    for f in pattern.common_fixes
-                    if f.get("type") == fix_applied.get("type")
-                ),
+                (f for f in pattern.common_fixes if f.get("type") == fix_applied.get("type")),
                 None,
             )
 
@@ -156,20 +152,14 @@ class MLErrorPatternLearner:
                 )
 
             # 전체 성공률 업데이트
-            total_successes = sum(
-                f.get("success_count", 0) for f in pattern.common_fixes
-            )
+            total_successes = sum(f.get("success_count", 0) for f in pattern.common_fixes)
             total_attempts = sum(f.get("total_count", 0) for f in pattern.common_fixes)
             if total_attempts > 0:
                 pattern.success_rate = total_successes / total_attempts
         elif fix_applied:
             # 실패한 수정도 기록
             existing_fix = next(
-                (
-                    f
-                    for f in pattern.common_fixes
-                    if f.get("type") == fix_applied.get("type")
-                ),
+                (f for f in pattern.common_fixes if f.get("type") == fix_applied.get("type")),
                 None,
             )
 

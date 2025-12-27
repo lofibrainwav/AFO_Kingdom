@@ -88,8 +88,6 @@ def test_set_encryption_key_error():
     kms = VaultKMS()
     kms.client = MagicMock()
     kms.client.is_authenticated.return_value = True
-    kms.client.secrets.kv.v2.create_or_update_secret.side_effect = Exception(
-        "Write fail"
-    )
+    kms.client.secrets.kv.v2.create_or_update_secret.side_effect = Exception("Write fail")
 
     assert kms.set_encryption_key("new_key") is False

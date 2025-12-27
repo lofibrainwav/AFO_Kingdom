@@ -118,9 +118,7 @@ class LLMRouter:
 
             # Ollama (내부 지력)
             ollama_model = (
-                settings.OLLAMA_MODEL
-                if settings
-                else os.getenv("OLLAMA_MODEL", "qwen3-vl:8b")
+                settings.OLLAMA_MODEL if settings else os.getenv("OLLAMA_MODEL", "qwen3-vl:8b")
             )
             ollama_base_url = (
                 settings.OLLAMA_BASE_URL
@@ -228,9 +226,7 @@ class LLMRouter:
                         settings = get_settings()
                         ollama_url = settings.OLLAMA_BASE_URL
                     except ImportError:
-                        ollama_url = os.getenv(
-                            "OLLAMA_BASE_URL", "http://localhost:11434"
-                        )
+                        ollama_url = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 
                 self.llm_configs[LLMProvider.OLLAMA] = LLMConfig(
                     provider=LLMProvider.OLLAMA,
@@ -258,9 +254,7 @@ class LLMRouter:
 
         return results
 
-    def route_request(
-        self, query: str, context: dict[str, Any] | None = None
-    ) -> RoutingDecision:
+    def route_request(self, query: str, context: dict[str, Any] | None = None) -> RoutingDecision:
         """
         쿼리에 대한 최적 LLM 라우팅 결정
         """
@@ -298,9 +292,7 @@ class LLMRouter:
                     LLMProvider.ANTHROPIC,
                     LLMProvider.OPENAI,
                 ]
-                valid_fallbacks = [
-                    p for p in fallback_candidates if p in self.llm_configs
-                ]
+                valid_fallbacks = [p for p in fallback_candidates if p in self.llm_configs]
 
                 decision = RoutingDecision(
                     selected_provider=LLMProvider.OLLAMA,
@@ -346,10 +338,7 @@ class LLMRouter:
 
     def _has_ultra_llm(self) -> bool:
         """ULTRA 품질 LLM 보유 여부"""
-        return any(
-            config.quality_tier == QualityTier.ULTRA
-            for config in self.llm_configs.values()
-        )
+        return any(config.quality_tier == QualityTier.ULTRA for config in self.llm_configs.values())
 
     def _upgrade_to_ultra(self, query: str, context: dict[str, Any]) -> RoutingDecision:
         """ULTRA 품질로 업그레이드"""
@@ -418,9 +407,7 @@ class LLMRouter:
         return RoutingDecision(
             selected_provider=best_llm.provider,
             selected_model=best_llm.model,
-            reasoning=self._generate_reasoning(
-                best_llm, quality, max_latency, max_cost
-            ),
+            reasoning=self._generate_reasoning(best_llm, quality, max_latency, max_cost),
             confidence=0.85,
             estimated_cost=self._estimate_cost(query, best_llm),
             estimated_latency=best_llm.latency_ms,
@@ -448,9 +435,7 @@ class LLMRouter:
             # Fallback to first available
             return candidates[0]
 
-    def _calculate_llm_score(
-        self, config: LLMConfig, query: str, context: dict[str, Any]
-    ) -> float:
+    def _calculate_llm_score(self, config: LLMConfig, query: str, context: dict[str, Any]) -> float:
         """LLM 점수 계산 (0-1 범위)"""
         try:
             # 품질 점수 (0.4 가중치)
@@ -533,20 +518,14 @@ class LLMRouter:
                     # 캐시에서 조회
                     request_data = {
                         "messages": [{"role": "user", "content": query}],
-                        "temperature": (
-                            context.get("temperature", 0.7) if context else 0.7
-                        ),
-                        "max_tokens": (
-                            context.get("max_tokens", 2048) if context else 2048
-                        ),
+                        "temperature": (context.get("temperature", 0.7) if context else 0.7),
+                        "max_tokens": (context.get("max_tokens", 2048) if context else 2048),
                     }
                     cached_response = await cache_service.get_cached_response(
                         request_data, provider, model
                     )
                     if cached_response:
-                        logger.info(
-                            f"⚡️ LLM Cache Hit! Provider: {provider}, Model: {model}"
-                        )
+                        logger.info(f"⚡️ LLM Cache Hit! Provider: {provider}, Model: {model}")
                         return {
                             "success": True,
                             "response": cached_response,
@@ -559,9 +538,7 @@ class LLMRouter:
                             "cached": True,
                         }
             except (ImportError, Exception) as e:
-                logger.debug(
-                    f"LLM Cache Service 사용 불가, 메모리 캐시로 fallback: {e}"
-                )
+                logger.debug(f"LLM Cache Service 사용 불가, 메모리 캐시로 fallback: {e}")
 
             # 2. Check Memory Cache (기존 로직)
             cache_key = f"{query}::{context}"
@@ -619,12 +596,8 @@ class LLMRouter:
                         model = routing_decision.selected_model
                         request_data = {
                             "messages": [{"role": "user", "content": query}],
-                            "temperature": (
-                                context.get("temperature", 0.7) if context else 0.7
-                            ),
-                            "max_tokens": (
-                                context.get("max_tokens", 2048) if context else 2048
-                            ),
+                            "temperature": (context.get("temperature", 0.7) if context else 0.7),
+                            "max_tokens": (context.get("max_tokens", 2048) if context else 2048),
                         }
                         await cache_service.cache_response(
                             request_data,
@@ -676,7 +649,7 @@ class LLMRouter:
         try:
             # Phase 5: REST API 사용 (google.generativeai 대체)
             try:
-                from AFO.llms.gemini_api import gemini_api  # type: ignore[assignment]
+                from AFO.llms.gemini_api import gemini_api
             except ImportError:
                 try:
                     from llms.gemini_api import gemini_api  # type: ignore[assignment]
@@ -754,24 +727,18 @@ class LLMRouter:
                     )  # Fallback (settings 기본값과 일치)
 
         timeout_seconds = float(
-            (context or {}).get(
-                "ollama_timeout_seconds", os.getenv("OLLAMA_TIMEOUT_SECONDS", "30")
-            )
+            (context or {}).get("ollama_timeout_seconds", os.getenv("OLLAMA_TIMEOUT_SECONDS", "30"))
         )
         max_tokens = int((context or {}).get("max_tokens", config.max_tokens))
         temperature = float((context or {}).get("temperature", config.temperature))
         model = str((context or {}).get("ollama_model", config.model))
         num_ctx = int(
-            (context or {}).get(
-                "ollama_num_ctx", getattr(config, "context_window", 4096)
-            )
+            (context or {}).get("ollama_num_ctx", getattr(config, "context_window", 4096))
         )
         num_threads = (context or {}).get("ollama_num_thread")
 
         try:
-            async with httpx.AsyncClient(
-                timeout=httpx.Timeout(timeout_seconds)
-            ) as client:
+            async with httpx.AsyncClient(timeout=httpx.Timeout(timeout_seconds)) as client:
                 options: dict[str, Any] = {
                     "temperature": temperature,
                     "num_predict": max_tokens,
@@ -814,7 +781,7 @@ class LLMRouter:
                         if CLIWrapper.is_available("ollama"):
                             res = await CLIWrapper.execute_ollama(query)
                             if res["success"]:
-                                return res["content"]
+                                return str(res["content"])
                         raise
                 return "[Ollama Error] 설정이 없습니다."
 
@@ -830,7 +797,7 @@ class LLMRouter:
                     if CLIWrapper.is_available("claude"):
                         res = await CLIWrapper.execute_claude(query)
                         if res["success"]:
-                            return res["content"]
+                            return str(res["content"])
                         return f"[Claude CLI Error] {res['error']}"
                     return "[Claude Unavailable] API 키가 설정되지 않았고 CLI 도구도 없습니다."
 
@@ -854,7 +821,7 @@ class LLMRouter:
                     if CLIWrapper.is_available("codex"):
                         res = await CLIWrapper.execute_codex(query)
                         if res["success"]:
-                            return res["content"]
+                            return str(res["content"])
                         return f"[Codex CLI Error] {res['error']}"
                     return "[OpenAI Unavailable] API 키가 설정되지 않았고 CLI 도구도 없습니다."
 
@@ -925,9 +892,7 @@ class LLMRouter:
             )
             / min(100, len(self.routing_history)),
             "ollama_preference_ratio": (
-                provider_usage.get("ollama", 0) / total_requests
-                if total_requests > 0
-                else 0
+                provider_usage.get("ollama", 0) / total_requests if total_requests > 0 else 0
             ),
         }
 
@@ -936,9 +901,7 @@ class LLMRouter:
 llm_router = LLMRouter()
 
 
-async def route_and_execute(
-    query: str, context: dict[str, Any] | None = None
-) -> dict[str, Any]:
+async def route_and_execute(query: str, context: dict[str, Any] | None = None) -> dict[str, Any]:
     """
     LLM 라우팅 및 실행 인터페이스
     """
@@ -964,9 +927,7 @@ if __name__ == "__main__":
 
             # 라우팅 결정
             decision = router.route_request(query)
-            print(
-                f"📋 결정: {decision.selected_provider.value} ({decision.selected_model})"
-            )
+            print(f"📋 결정: {decision.selected_provider.value} ({decision.selected_model})")
             print(f"💭 이유: {decision.reasoning}")
             print(f"💰 예상 비용: ${decision.estimated_cost:.4f}")
             print(f"⏱️  예상 지연: {decision.estimated_latency}ms")

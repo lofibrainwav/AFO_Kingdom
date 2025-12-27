@@ -10,7 +10,9 @@ Implements 眞善美孝永 principles for reliable real-time communication.
 import asyncio
 import json
 import logging
-from typing import Any
+import os
+from datetime import datetime
+from typing import Any, cast
 
 import redis
 from fastapi import APIRouter, Request
@@ -49,7 +51,9 @@ async def publish_thought(content: dict | None = None, **kwargs) -> None:
         # Publish to Redis channel
         redis_client.publish("kingdom:logs:stream", json.dumps(content))
 
-        logger.debug(f"Published thought to Chancellor Stream: {content.get('message', '')[:100]}...")
+        logger.debug(
+            f"Published thought to Chancellor Stream: {content.get('message', '')[:100]}..."
+        )
 
     except Exception as e:
         logger.error(f"Failed to publish thought: {e}")
@@ -57,66 +61,88 @@ async def publish_thought(content: dict | None = None, **kwargs) -> None:
 
 
 # SSE event generator
-async def log_stream_generator() -> Any:
-    """Generate SSE events from Redis Pub/Sub messages."""
+async def log_stream_generator(request: Request) -> Any:
+    """
+    Generate SSE events from Redis Pub/Sub messages with File Fallback.
+
+    Trinity Score: 善 (Goodness) - Failover mechanism for high availability.
+    """
+    redis_available = False
+    pubsub = None
+
     try:
         from AFO.config.settings import get_settings
 
         settings = get_settings()
         redis_url = settings.REDIS_URL
-        # Parse redis_url to pass to redis.Redis if needed, or use from_url
         redis_client = redis.Redis.from_url(redis_url, decode_responses=True)
-        redis_client.ping()  # Test connection
+        redis_client.ping()
+        pubsub = redis_client.pubsub()
+        pubsub.subscribe("kingdom:logs:stream")
+        redis_available = True
+        logger.info("Chancellor Stream: Connected to Redis Pub/Sub")
     except Exception as e:
-        logger.error(f"Redis connection failed for Chancellor Stream: {e}")
-        yield 'data: {"error": "Redis unavailable", "level": "ERROR"}\n\n'
-        return
+        logger.warning(f"Chancellor Stream: Redis unavailable ({e}). Falling back to file tail.")
 
-    pubsub = redis_client.pubsub()
-    pubsub.subscribe("kingdom:logs:stream")
+    # Send initial connection message
+    initial_msg = {
+        "message": "🔌 [Serenity] Connected to Chancellor Stream"
+        + (" (Redis)" if redis_available else " (Fallback: File)"),
+        "level": "SUCCESS",
+        "source": "Chancellor Stream",
+        "timestamp": datetime.now().isoformat()
+        if not redis_available
+        else asyncio.get_event_loop().time(),
+    }
+    yield {"data": json.dumps(initial_msg)}
+
+    if redis_available and pubsub:
+        try:
+            while True:
+                if await request.is_disconnected():
+                    break
+
+                message = pubsub.get_message(ignore_subscribe_messages=True, timeout=1.0)
+                if message and message["type"] == "message":
+                    yield {"data": message["data"]}
+
+                await asyncio.sleep(0.1)
+        except Exception as e:
+            logger.error(f"Chancellor Stream Redis error: {e}")
+        finally:
+            pubsub.close()
+
+    # Fallback to File Tail (Goodness)
+    logger.info("Chancellor Stream: Starting File Fallback tailing")
+    log_file = "backend.log"
+    if not os.path.exists(log_file):
+        try:
+            with open(log_file, "a") as f:
+                f.write(f"[{datetime.now().isoformat()}] Log file initialized.\n")
+        except Exception:
+            pass
 
     try:
-        logger.info("Chancellor Stream SSE connection established")
+        with open(log_file) as f:
+            f.seek(0, 2)  # Go to end
+            while True:
+                if await request.is_disconnected():
+                    break
 
-        # Send initial connection message
-        initial_msg = {
-            "message": "[SSE CONNECTED] Chancellor Stream 실시간 모니터링 시작",
-            "level": "SUCCESS",
-            "source": "Chancellor Stream",
-            "timestamp": asyncio.get_event_loop().time(),
-        }
-        yield f"data: {json.dumps(initial_msg)}\n\n"
-
-        # Listen for messages
-        while True:
-            try:
-                message = pubsub.get_message(timeout=1.0)
-                if message and message["type"] == "message":
-                    # Parse and forward Redis message
-                    try:
-                        data = json.loads(message["data"])
-                        yield f"data: {json.dumps(data)}\n\n"
-                    except json.JSONDecodeError:
-                        # Handle non-JSON messages
-                        yield f'data: {{"message": "{message["data"]}", "level": "INFO"}}\n\n'
-
-                await asyncio.sleep(0.1)  # Small delay to prevent busy waiting
-
-            except Exception as e:
-                logger.error(f"Chancellor Stream error: {e}")
-                error_msg = {
-                    "message": f"[STREAM ERROR] {e!s}",
-                    "level": "ERROR",
-                    "source": "Chancellor Stream",
-                }
-                yield f"data: {json.dumps(error_msg)}\n\n"
-                await asyncio.sleep(1.0)
-
+                line = f.readline()
+                if line:
+                    msg = {
+                        "message": line.strip(),
+                        "level": "INFO",
+                        "source": "backend.log",
+                        "timestamp": datetime.now().isoformat(),
+                    }
+                    yield {"data": json.dumps(msg)}
+                else:
+                    await asyncio.sleep(0.5)
     except Exception as e:
-        logger.error(f"Chancellor Stream generator failed: {e}")
-    finally:
-        pubsub.close()
-        logger.info("Chancellor Stream SSE connection closed")
+        logger.error(f"Chancellor Stream File Fallback failed: {e}")
+        yield {"data": json.dumps({"message": f"Critical Stream Failure: {e}", "level": "ERROR"})}
 
 
 @router.get("/logs/stream")
@@ -133,14 +159,17 @@ async def logs_stream_endpoint(request: Request) -> StreamingResponse:
         f"Chancellor Stream connection from {request.client.host if request.client else 'unknown'}"
     )
 
-    return EventSourceResponse(
-        log_stream_generator(),
-        media_type="text/event-stream",
-        headers={
-            "Cache-Control": "no-cache",
-            "Connection": "keep-alive",
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "GET",
-            "Access-Control-Allow-Headers": "Cache-Control",
-        },
+    return cast(
+        "StreamingResponse",
+        EventSourceResponse(
+            log_stream_generator(request),
+            media_type="text/event-stream",
+            headers={
+                "Cache-Control": "no-cache",
+                "Connection": "keep-alive",
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "GET",
+                "Access-Control-Allow-Headers": "Cache-Control",
+            },
+        ),
     )

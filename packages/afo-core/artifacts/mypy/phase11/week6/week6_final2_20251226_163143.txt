@@ -1,0 +1,21 @@
+services/antigravity/ml/predictor.py: note: In member "__init__" of class "QualityPredictor":
+services/antigravity/ml/predictor.py:23: note: By default the bodies of untyped functions are not checked, consider using --check-untyped-defs  [annotation-unchecked]
+services/redis_cache_service.py: note: In member "__init__" of class "RedisCacheService":
+services/redis_cache_service.py:75: note: By default the bodies of untyped functions are not checked, consider using --check-untyped-defs  [annotation-unchecked]
+services/security/rate_limit_redis.py: note: In function "setup_redis_rate_limiter":
+services/security/rate_limit_redis.py:164: error: Argument 2 to "add_exception_handler" of "Starlette" has incompatible type "Callable[[Request, RateLimitExceeded], Response]"; expected "Callable[[Request, Exception], Response | Awaitable[Response]] | Callable[[WebSocket, Exception], Awaitable[None]]"  [arg-type]
+services/security/rate_limit_redis.py:192: error: Argument 1 to "add_middleware" of "Starlette" has incompatible type "type[RedisDownPolicyMiddleware]"; expected "_MiddlewareFactory[[RedisDownPolicy, RedisCircuitProbe, Callable[[Request, str], None]]]"  [arg-type]
+services/security/rate_limit_redis.py:192: note: Following member(s) of "RedisDownPolicyMiddleware" have conflicts:
+services/security/rate_limit_redis.py:192: note:     Expected:
+services/security/rate_limit_redis.py:192: note:         def __call__(self, Callable[[Any, Callable[[], Awaitable[Any]], Callable[[Any], Awaitable[None]]], Awaitable[None]], /, policy: RedisDownPolicy, probe: RedisCircuitProbe, on_warning: Callable[[Request, str], None]) -> Callable[[Any, Callable[[], Awaitable[Any]], Callable[[Any], Awaitable[None]]], Awaitable[None]]
+services/security/rate_limit_redis.py:192: note:     Got:
+services/security/rate_limit_redis.py:192: note:         def __init__(app: FastAPI, policy: RedisDownPolicy, probe: RedisCircuitProbe, on_warning: Callable[[Request, str], None] | None = ...) -> RedisDownPolicyMiddleware
+services/security/rate_limit_redis.py:192: note: "_MiddlewareFactory[[RedisDownPolicy, RedisCircuitProbe, Callable[[Request, str], None]]].__call__" has type "Callable[[Callable[[Any, Callable[[], Awaitable[Any]], Callable[[Any], Awaitable[None]]], Awaitable[None]], Arg(RedisDownPolicy, 'policy'), Arg(RedisCircuitProbe, 'probe'), Arg(Callable[[Arg(Request, 'req'), Arg(str, 'cb_state')], None], 'on_warning')], Callable[[Any, Callable[[], Awaitable[Any]], Callable[[Any], Awaitable[None]]], Awaitable[None]]]"
+services/system_monitoring_dashboard.py: note: In member "__init__" of class "SystemMonitoringDashboard":
+services/system_monitoring_dashboard.py:128: note: By default the bodies of untyped functions are not checked, consider using --check-untyped-defs  [annotation-unchecked]
+services/system_monitoring_dashboard.py:131: note: By default the bodies of untyped functions are not checked, consider using --check-untyped-defs  [annotation-unchecked]
+services/system_monitoring_dashboard.py:132: note: By default the bodies of untyped functions are not checked, consider using --check-untyped-defs  [annotation-unchecked]
+services/system_monitoring_dashboard.py:133: note: By default the bodies of untyped functions are not checked, consider using --check-untyped-defs  [annotation-unchecked]
+services/system_monitoring_dashboard.py:136: note: By default the bodies of untyped functions are not checked, consider using --check-untyped-defs  [annotation-unchecked]
+services/system_monitoring_dashboard.py:137: note: By default the bodies of untyped functions are not checked, consider using --check-untyped-defs  [annotation-unchecked]
+Found 2 errors in 1 file (checked 286 source files)

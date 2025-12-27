@@ -17,23 +17,23 @@ from redis.commands.search.query import Query as RedisQuery
 try:
     from neo4j import GraphDatabase
 except ImportError:
-    GraphDatabase: Any = None  # type: ignore[assignment]
+    GraphDatabase = None  # type: ignore[assignment, misc]
 
 # Qdrant Integration
 try:
     from qdrant_client import QdrantClient
     from qdrant_client.http import models as qmodels
 except ImportError:
-    QdrantClient: Any = None  # type: ignore[assignment]
-    qmodels: Any = None  # type: ignore[assignment]
+    QdrantClient = None  # type: ignore[assignment, misc]
+    qmodels = None  # type: ignore[assignment]
 
 # Optional imports handling
 try:
     from pgvector.psycopg2 import register_vector
     from psycopg2.extras import RealDictCursor
 except ImportError:
-    RealDictCursor: Any = None  # type: ignore[assignment]
-    register_vector: Any = None  # type: ignore[assignment]
+    RealDictCursor = None
+    register_vector = None
 
 # Suppress Pydantic warnings locally
 warnings.filterwarnings("ignore", category=UserWarning, module="pydantic")
@@ -109,9 +109,7 @@ def get_embedding(text: str, openai_client: Any) -> list[float]:
         return random_embedding()
 
 
-def query_pgvector(
-    embedding: list[float], top_k: int, pg_pool: Any
-) -> list[dict[str, Any]]:
+def query_pgvector(embedding: list[float], top_k: int, pg_pool: Any) -> list[dict[str, Any]]:
     """
     眞 (Truth): PostgreSQL pgvector를 이용한 벡터 검색
     善 (Goodness): 연결 풀 관리 및 예외 처리
@@ -179,9 +177,7 @@ def query_pgvector(
     return scored[:top_k]
 
 
-def query_redis(
-    embedding: list[float], top_k: int, redis_client: Any
-) -> list[dict[str, Any]]:
+def query_redis(embedding: list[float], top_k: int, redis_client: Any) -> list[dict[str, Any]]:
     """
     眞 (Truth): Redis RediSearch를 이용한 KNN 벡터 검색
     善 (Goodness): 인덱스 확인 및 예외 차단
@@ -246,7 +242,7 @@ def query_graph_context(entities: list[str], limit: int = 5) -> list[dict[str, A
     美 (Beauty): GraphRAG Context Retrieval
     Neo4j 지식 그래프에서 엔티티 간의 관계를 탐색.
     """
-    if not GraphDatabase or not entities:
+    if GraphDatabase is None or not entities:
         return []
 
     uri = "bolt://localhost:7687"
@@ -281,9 +277,7 @@ def query_graph_context(entities: list[str], limit: int = 5) -> list[dict[str, A
         return []
 
 
-def query_qdrant(
-    embedding: list[float], top_k: int, qdrant_client: Any
-) -> list[dict[str, Any]]:
+def query_qdrant(embedding: list[float], top_k: int, qdrant_client: Any) -> list[dict[str, Any]]:
     """
     眞 (Truth): Qdrant 벡터 검색 (Brain Organ)
 
@@ -524,9 +518,7 @@ def generate_answer(
     Returns:
         str | dict: 생성된 답변 또는 에러 정보
     """
-    context_block = "\n\n".join(
-        [f"Chunk {idx + 1}:\n{ctx}" for idx, ctx in enumerate(contexts)]
-    )
+    context_block = "\n\n".join([f"Chunk {idx + 1}:\n{ctx}" for idx, ctx in enumerate(contexts)])
 
     system_prompt = " ".join(
         part
@@ -588,9 +580,7 @@ async def blend_results_async(
 ) -> list[dict[str, Any]]:
     """비동기 결과 혼합 래퍼"""
     loop = asyncio.get_event_loop()
-    return await loop.run_in_executor(
-        _executor, blend_results, pg_rows, redis_rows, top_k
-    )
+    return await loop.run_in_executor(_executor, blend_results, pg_rows, redis_rows, top_k)
 
 
 async def query_qdrant_async(

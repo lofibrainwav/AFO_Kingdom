@@ -65,9 +65,7 @@ class GeminiAPIWrapper:
                 pass
             else:
                 # CLI 정기구독 사용 시 API 키 불필요
-                logger.debug(
-                    "GEMINI_API_KEY 없음 - Gemini API 비활성화 (CLI 사용 시 무시)"
-                )
+                logger.debug("GEMINI_API_KEY 없음 - Gemini API 비활성화 (CLI 사용 시 무시)")
 
     async def generate(self, prompt: str, **kwargs: Any) -> dict[str, Any]:
         """
@@ -102,12 +100,7 @@ class GeminiAPIWrapper:
                 candidates = result.get("candidates", [])
 
                 if candidates:
-                    content = (
-                        candidates[0]
-                        .get("content", {})
-                        .get("parts", [{}])[0]
-                        .get("text", "")
-                    )
+                    content = candidates[0].get("content", {}).get("parts", [{}])[0].get("text", "")
                     finish_reason = candidates[0].get("finishReason", "unknown")
 
                     return {
@@ -168,9 +161,7 @@ class GeminiAPIWrapper:
                 if role == "system":
                     # 시스템 메시지를 첫 사용자 메시지에 추가
                     if not contents:
-                        current_content["parts"].append(
-                            {"text": f"System: {content}\n\n"}
-                        )
+                        current_content["parts"].append({"text": f"System: {content}\n\n"})
                     else:
                         current_content["parts"][-1]["text"] += f"\n\nSystem: {content}"
                 elif role == "user" or role == "assistant":
@@ -201,12 +192,7 @@ class GeminiAPIWrapper:
                 candidates = result.get("candidates", [])
 
                 if candidates:
-                    content = (
-                        candidates[0]
-                        .get("content", {})
-                        .get("parts", [{}])[0]
-                        .get("text", "")
-                    )
+                    content = candidates[0].get("content", {}).get("parts", [{}])[0].get("text", "")
                     finish_reason = candidates[0].get("finishReason", "unknown")
 
                     return {

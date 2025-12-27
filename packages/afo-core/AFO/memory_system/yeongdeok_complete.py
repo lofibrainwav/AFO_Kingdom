@@ -8,9 +8,12 @@ Provides comprehensive memory management and context persistence.
 import contextlib
 import hashlib
 import json
+import logging
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -36,9 +39,7 @@ class YeongdeokComplete:
     - Memory consolidation and archival
     """
 
-    def __init__(
-        self, max_short_term: int = 100, max_long_term: int = 1000, **kwargs: Any
-    ):
+    def __init__(self, max_short_term: int = 100, max_long_term: int = 1000, **kwargs: Any):
         self.short_term: dict[str, MemoryEntry] = {}
         self.long_term: dict[str, MemoryEntry] = {}
         self.max_short_term = max_short_term
@@ -49,23 +50,17 @@ class YeongdeokComplete:
     def _generate_key(self, content: str) -> str:
         """Generate a unique key for content."""
         try:
-            return hashlib.md5(content.encode()).hexdigest()[:16]
+            return hashlib.md5(content.encode(), usedforsecurity=False).hexdigest()[:16]
         except Exception:
             return str(hash(content))[:16]
 
-    def remember(
-        self, content: Any, tags: list[str] | None = None, importance: float = 1.0
-    ) -> str:
+    def remember(self, content: Any, tags: list[str] | None = None, importance: float = 1.0) -> str:
         """Store a memory in short-term storage."""
         try:
-            content_str = (
-                json.dumps(content) if not isinstance(content, str) else content
-            )
+            content_str = json.dumps(content) if not isinstance(content, str) else content
             key = self._generate_key(content_str)
 
-            entry = MemoryEntry(
-                key=key, content=content, tags=tags or [], importance=importance
-            )
+            entry = MemoryEntry(key=key, content=content, tags=tags or [], importance=importance)
 
             self.short_term[key] = entry
 
@@ -159,9 +154,7 @@ class YeongdeokComplete:
 
             # Keep buffer manageable
             if len(self.conversation_buffer) > self.max_short_term:
-                self.conversation_buffer = self.conversation_buffer[
-                    -self.max_short_term :
-                ]
+                self.conversation_buffer = self.conversation_buffer[-self.max_short_term :]
         except Exception:
             pass
 
@@ -191,9 +184,7 @@ class YeongdeokComplete:
                     self.long_term.items(),
                     key=lambda x: x[1].importance * x[1].access_count,
                 )
-                for key, _ in sorted_entries[
-                    : len(self.long_term) - self.max_long_term
-                ]:
+                for key, _ in sorted_entries[: len(self.long_term) - self.max_long_term]:
                     del self.long_term[key]
         except Exception:
             pass
@@ -240,6 +231,26 @@ class YeongdeokComplete:
             }
         except Exception:
             return {"error": "export failed"}
+
+    async def close_eyes(self) -> None:
+        """
+        Graceful shutdown of the memory system.
+
+        Trinity Score: 孝 (Serenity) - 마찰 없는 클린업
+        """
+        try:
+            # Clear short-term memory for clean shutdown
+            self.clear_short_term()
+
+            # Close any open connections (future expansion)
+            if hasattr(self, "_redis_client") and self._redis_client:
+                with contextlib.suppress(Exception):
+                    await self._redis_client.close()
+
+            logger.info("✅ Yeongdeok memory system closed gracefully")
+        except Exception as e:
+            logger.warning(f"Yeongdeok close_eyes failed: {e}")
+            # Don't raise exception during shutdown
 
 
 # Default instance

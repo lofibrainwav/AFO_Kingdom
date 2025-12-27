@@ -32,7 +32,7 @@ try:
     OPENAI_AVAILABLE = True
 except ImportError:
     OPENAI_AVAILABLE = False
-    AsyncOpenAI = None
+    AsyncOpenAI = None  # type: ignore[assignment,misc]
 
 try:
     from playwright.async_api import async_playwright
@@ -40,7 +40,7 @@ try:
     PLAYWRIGHT_AVAILABLE = True
 except ImportError:
     PLAYWRIGHT_AVAILABLE = False
-    async_playwright = None
+    async_playwright = None  # type: ignore[assignment]
 
 try:
     import redis
@@ -48,7 +48,7 @@ try:
     REDIS_AVAILABLE = True
 except ImportError:
     REDIS_AVAILABLE = False
-    redis = None
+    redis = None  # type: ignore[assignment]
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -109,7 +109,7 @@ class CacheManager:
     def generate_cache_key(self, data: dict[str, Any]) -> str:
         """Generate cache key from data."""
         data_str = json.dumps(data, sort_keys=True)
-        return f"grok_analysis:{hashlib.md5(data_str.encode()).hexdigest()}"
+        return f"grok_analysis:{hashlib.md5(data_str.encode(), usedforsecurity=False).hexdigest()}"
 
     def get(self, key: str) -> dict[str, Any] | None:
         """Retrieve data from cache."""
@@ -222,9 +222,7 @@ class GrokWebClient:
         await input_locator.page.wait_for_timeout(1000)
         await input_locator.press("Enter")
 
-    async def _extract_response(
-        self, page: Any, budget_summary: dict[str, Any]
-    ) -> dict[str, Any]:
+    async def _extract_response(self, page: Any, budget_summary: dict[str, Any]) -> dict[str, Any]:
         """Extract response from page."""
         page_text = await page.content()
 
@@ -288,7 +286,9 @@ class GrokAPIClient:
             api_key=self.config.XAI_API_KEY, base_url=self.config.XAI_BASE_URL
         )
 
-        system_prompt = "You are 'The Sage from the Stars', a cynical but brilliant economic strategist..."
+        system_prompt = (
+            "You are 'The Sage from the Stars', a cynical but brilliant economic strategist..."
+        )
         user_prompt = f"Analyze budget: {json.dumps(budget_summary)}"
 
         response = await self._client.chat.completions.create(
@@ -300,7 +300,8 @@ class GrokAPIClient:
             response_format={"type": "json_object"},
         )
 
-        return json.loads(response.choices[0].message.content)
+        content = response.choices[0].message.content or "{}"
+        return dict(json.loads(content))
 
 
 class MockGrokClient:
@@ -404,12 +405,8 @@ class GrokEngine:
 
         # 2. Smart routing based on Trinity Score
         if trinity_score < self.config.TRINITY_THRESHOLD:
-            logger.info(
-                f"🛡️ Low Trinity Score ({trinity_score}), using cost-effective mode"
-            )
-            response = self.mock_client._create_mock_response(
-                budget_summary, mood="ECONOMY_MODE"
-            )
+            logger.info(f"🛡️ Low Trinity Score ({trinity_score}), using cost-effective mode")
+            response = self.mock_client._create_mock_response(budget_summary, mood="ECONOMY_MODE")
         else:
             response = await self._consult_real_grok(budget_summary)
 
@@ -419,9 +416,7 @@ class GrokEngine:
 
         return response
 
-    async def _consult_real_grok(
-        self, budget_summary: dict[str, Any]
-    ) -> dict[str, Any]:
+    async def _consult_real_grok(self, budget_summary: dict[str, Any]) -> dict[str, Any]:
         """
         Consult real Grok with fallback strategy.
 
@@ -517,10 +512,10 @@ class GrokEngine:
             text = await page.content()
 
         # Parse code blocks
-        if "```tsx" in text:
-            return text.split("```tsx")[1].split("```")[0].strip()
-        elif "```" in text:
-            return text.split("```")[1].split("```")[0].strip()
+        if "```tsx" in str(text):
+            return str(text.split("```tsx")[1].split("```")[0].strip())
+        elif "```" in str(text):
+            return str(text.split("```")[1].split("```")[0].strip())
         else:
             logger.warning("No code block found in response")
             return "// Error: No code block generated"

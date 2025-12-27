@@ -9,7 +9,7 @@ import time
 from collections import deque
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 
 class MCPStdioError(RuntimeError):
@@ -55,14 +55,13 @@ def _load_cursor_mcp_json(repo_root: Path) -> dict[str, Any]:
     if not cfg_path.exists():
         raise MCPStdioError(f"missing MCP config: {cfg_path}")
     try:
-        return json.loads(cfg_path.read_text(encoding="utf-8"))
+        result: dict[str, Any] = json.loads(cfg_path.read_text(encoding="utf-8"))
+        return result
     except Exception as e:
         raise MCPStdioError(f"failed to parse {cfg_path}: {e}") from e
 
 
-def load_mcp_server_config(
-    server_name: str, *, repo_root: Path | None = None
-) -> MCPServerConfig:
+def load_mcp_server_config(server_name: str, *, repo_root: Path | None = None) -> MCPServerConfig:
     root = repo_root or _find_repo_root()
     data = _load_cursor_mcp_json(root)
     servers = data.get("mcpServers", {})
@@ -182,9 +181,7 @@ def _rpc_call(
 
         # MCP handshake requires a `notifications/initialized` notification after initialize.
         proc.stdin.write(
-            json.dumps(
-                {"jsonrpc": "2.0", "method": "notifications/initialized", "params": {}}
-            )
+            json.dumps({"jsonrpc": "2.0", "method": "notifications/initialized", "params": {}})
             + "\n"
         )
         proc.stdin.flush()
@@ -225,7 +222,9 @@ def list_tools(server_name: str, *, repo_root: Path | None = None) -> list[str]:
     tools = resp.get("result", {}).get("tools", [])
     if not isinstance(tools, list):
         return []
-    return [t.get("name") for t in tools if isinstance(t, dict) and t.get("name")]
+    return [
+        str(name) for t in tools if isinstance(t, dict) and isinstance((name := t.get("name")), str)
+    ]
 
 
 def call_tool(

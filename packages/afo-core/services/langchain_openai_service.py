@@ -61,25 +61,8 @@ LANGCHAIN_CONFIG = {
     "output_key": "output",
 }
 
-
-class AIRequest(BaseModel):
-    """AI 요청 모델"""
-
-    prompt: str = Field(..., description="AI 프롬프트")
-    context: dict[str, Any] | None = Field(None, description="추가 컨텍스트")
-    temperature: float | None = Field(None, description="온도 설정")
-    max_tokens: int | None = Field(None, description="최대 토큰 수")
-    use_cache: bool = Field(True, description="캐시 사용 여부")
-
-
-class AIResponse(BaseModel):
-    """AI 응답 모델"""
-
-    response: str = Field(..., description="AI 응답 텍스트")
-    usage: dict[str, int] = Field(default_factory=dict, description="토큰 사용량")
-    cached: bool = Field(False, description="캐시에서 제공 여부")
-    processing_time: float = Field(0.0, description="처리 시간 (초)")
-    model: str = Field("", description="사용된 모델")
+# AI 모델 contracts에서 import (PH12-001: symlink 호환 기본값)
+from services.contracts.ai_request import AIRequest, AIResponse
 
 
 class PromptTemplateManager:
@@ -303,9 +286,7 @@ class LangChainOpenAIService:
             logger.error(f"AI 요청 처리 실패: {e}")
             raise
 
-    async def analyze_code(
-        self, code: str, language: str, task: str = "일반 분석"
-    ) -> AIResponse:
+    async def analyze_code(self, code: str, language: str, task: str = "일반 분석") -> AIResponse:
         """
         코드 분석 (Sequential Thinking Phase 4)
         """
@@ -318,9 +299,7 @@ class LangChainOpenAIService:
 
         return await self.process_request(request)
 
-    async def summarize_document(
-        self, document: str, max_length: int = 500
-    ) -> AIResponse:
+    async def summarize_document(self, document: str, max_length: int = 500) -> AIResponse:
         """
         문서 요약 (Sequential Thinking Phase 5)
         """
@@ -397,9 +376,7 @@ class LangChainOpenAIService:
                 # Phase 9.3: 캐시 연결 테스트
                 if OPENAI_CONFIG["cache_enabled"]:
                     cache_test = await cache_set("health_test", {"test": True}, ttl=10)
-                    details["cache_connection"] = (
-                        "healthy" if cache_test else "unhealthy"
-                    )
+                    details["cache_connection"] = "healthy" if cache_test else "unhealthy"
                 else:
                     details["cache_connection"] = "disabled"
 
@@ -506,9 +483,7 @@ async def initialize_ai_service(api_key: str) -> bool:
 
 
 # 편의 함수들
-async def analyze_code_ai(
-    code: str, language: str, task: str = "일반 분석"
-) -> AIResponse:
+async def analyze_code_ai(code: str, language: str, task: str = "일반 분석") -> AIResponse:
     """코드 분석 편의 함수"""
     return await langchain_openai_service.analyze_code(code, language, task)
 

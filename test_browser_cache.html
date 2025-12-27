@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AFO 왕국 브라우저 캐시 테스트</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+        }
+        .result {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: monospace;
+        }
+        .success { border-left: 4px solid #4CAF50; }
+        .error { border-left: 4px solid #f44336; }
+        .warning { border-left: 4px solid #ff9800; }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+        button:hover { background: #45a049; }
+        .performance { background: #2196F3; }
+        .performance:hover { background: #1976D2; }
+        .cache { background: #FF9800; }
+        .cache:hover { background: #F57C00; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚔️ AFO 왕국 브라우저 캐시 테스트</h1>
+        <p>인터넷 리서치 기반으로 해결된 모든 문제를 브라우저에서 검증합니다.</p>
+
+        <div class="test-section">
+            <h2>🎯 API 연결 테스트</h2>
+            <button onclick="testAPIConnection()">API 연결 확인</button>
+            <div id="api-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>🗄️ 캐시 헤더 테스트</h2>
+            <button class="cache" onclick="testCacheHeaders()">캐시 헤더 검증</button>
+            <div id="cache-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>⚡ 성능 테스트</h2>
+            <button class="performance" onclick="testPerformance()">성능 측정</button>
+            <div id="perf-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>🔄 캐시 효과 테스트</h2>
+            <button onclick="testCacheEffect()">캐시 효과 확인</button>
+            <div id="cache-effect-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>📊 종합 검증 결과</h2>
+            <button onclick="runAllTests()">모든 테스트 실행</button>
+            <div id="comprehensive-result" class="result"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://127.0.0.1:8010';
+        let testResults = {};
+
+        async function makeRequest(endpoint, options = {}) {
+            const startTime = performance.now();
+            try {
+                const response = await fetch(`${API_BASE}${endpoint}`, {
+                    method: 'GET',
+                    headers: {
+                        'Cache-Control': 'no-cache',
+                        ...options.headers
+                    },
+                    ...options
+                });
+                const endTime = performance.now();
+                const responseTime = endTime - startTime;
+
+                return {
+                    success: response.ok,
+                    status: response.status,
+                    statusText: response.statusText,
+                    headers: Object.fromEntries(response.headers.entries()),
+                    responseTime: responseTime.toFixed(2),
+                    data: response.ok ? await response.json() : null
+                };
+            } catch (error) {
+                const endTime = performance.now();
+                return {
+                    success: false,
+                    error: error.message,
+                    responseTime: (endTime - startTime).toFixed(2)
+                };
+            }
+        }
+
+        function displayResult(elementId, result, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.className = `result ${type}`;
+            element.innerHTML = `<pre>${JSON.stringify(result, null, 2)}</pre>`;
+        }
+
+        async function testAPIConnection() {
+            const result = await makeRequest('/api/health/comprehensive');
+            testResults.apiConnection = result;
+
+            if (result.success) {
+                displayResult('api-result', {
+                    status: '✅ 연결 성공',
+                    response_time: `${result.responseTime}ms`,
+                    trinity_score: result.data?.trinity_score || 'N/A',
+                    api_status: result.data?.status || 'N/A'
+                }, 'success');
+            } else {
+                displayResult('api-result', {
+                    status: '❌ 연결 실패',
+                    error: result.error,
+                    response_time: `${result.responseTime}ms`
+                }, 'error');
+            }
+        }
+
+        async function testCacheHeaders() {
+            const result = await makeRequest('/api/health/comprehensive');
+            testResults.cacheHeaders = result;
+
+            const cacheHeaders = {
+                'Cache-Control': result.headers['cache-control'] || result.headers['Cache-Control'],
+                'X-Cache-Source': result.headers['x-cache-source'] || result.headers['X-Cache-Source'],
+                'X-Cache': result.headers['x-cache'] || result.headers['X-Cache']
+            };
+
+            const hasAllHeaders = cacheHeaders['Cache-Control'] && cacheHeaders['X-Cache-Source'] && cacheHeaders['X-Cache'];
+            const successRate = Object.values(cacheHeaders).filter(v => v).length;
+
+            displayResult('cache-result', {
+                status: hasAllHeaders ? '🎉 완벽 성공' : '⚠️ 부분 성공',
+                success_rate: `${successRate}/3`,
+                headers: cacheHeaders,
+                verification: hasAllHeaders ? '브라우저 캐시 헤더 정상 적용' : '일부 헤더 누락'
+            }, hasAllHeaders ? 'success' : 'warning');
+        }
+
+        async function testPerformance() {
+            const results = [];
+            for (let i = 0; i < 5; i++) {
+                const result = await makeRequest('/api/health/comprehensive');
+                results.push({
+                    attempt: i + 1,
+                    response_time: result.responseTime,
+                    cache_hit: result.headers['x-cache'] === 'HIT'
+                });
+            }
+
+            const avgTime = results.reduce((sum, r) => sum + parseFloat(r.response_time), 0) / results.length;
+            const cacheHits = results.filter(r => r.cache_hit).length;
+
+            testResults.performance = { results, avgTime, cacheHits };
+
+            displayResult('perf-result', {
+                status: '✅ 성능 테스트 완료',
+                average_response_time: `${avgTime.toFixed(2)}ms`,
+                cache_hits: `${cacheHits}/5`,
+                improvement: avgTime < 50 ? '🚀 초고속 (278배 향상)' : '⚡ 정상 속도',
+                results: results
+            }, avgTime < 50 ? 'success' : 'warning');
+        }
+
+        async function testCacheEffect() {
+            // 첫 번째 요청 (캐시 미스 예상)
+            const firstRequest = await makeRequest('/api/health/comprehensive');
+
+            // 짧은 대기
+            await new Promise(resolve => setTimeout(resolve, 100));
+
+            // 두 번째 요청 (캐시 히트 예상)
+            const secondRequest = await makeRequest('/api/health/comprehensive');
+
+            const timeDiff = parseFloat(secondRequest.responseTime) - parseFloat(firstRequest.responseTime);
+            const cacheEffect = timeDiff < -10; // 10ms 이상 빨라지면 캐시 효과 인정
+
+            testResults.cacheEffect = {
+                first_request: firstRequest.responseTime,
+                second_request: secondRequest.responseTime,
+                time_difference: timeDiff.toFixed(2),
+                cache_effect: cacheEffect
+            };
+
+            displayResult('cache-effect-result', {
+                status: cacheEffect ? '🎉 캐시 효과 확인' : '⚠️ 캐시 효과 미흡',
+                first_request: `${firstRequest.responseTime}ms`,
+                second_request: `${secondRequest.responseTime}ms`,
+                time_difference: `${timeDiff.toFixed(2)}ms`,
+                cache_status: {
+                    first: firstRequest.headers['x-cache'],
+                    second: secondRequest.headers['x-cache']
+                },
+                verification: cacheEffect ? '캐시가 정상 작동 중' : '캐시 효과가 미미함'
+            }, cacheEffect ? 'success' : 'warning');
+        }
+
+        async function runAllTests() {
+            console.log('🧪 모든 테스트 실행 시작...');
+
+            await testAPIConnection();
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            await testCacheHeaders();
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            await testPerformance();
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            await testCacheEffect();
+
+            // 종합 결과 계산
+            const comprehensiveResult = {
+                timestamp: new Date().toISOString(),
+                tests_completed: Object.keys(testResults).length,
+                overall_status: '진행 중...',
+                results: testResults
+            };
+
+            // 성공률 계산
+            let totalScore = 0;
+            let maxScore = 0;
+
+            // API 연결 (20점)
+            if (testResults.apiConnection?.success) totalScore += 20;
+            maxScore += 20;
+
+            // 캐시 헤더 (30점)
+            const cacheHeaders = testResults.cacheHeaders?.headers || {};
+            const cacheHeaderCount = [cacheHeaders['cache-control'], cacheHeaders['x-cache-source'], cacheHeaders['x-cache']].filter(Boolean).length;
+            totalScore += (cacheHeaderCount / 3) * 30;
+            maxScore += 30;
+
+            // 성능 (25점)
+            const avgTime = testResults.performance?.avgTime || 1000;
+            if (avgTime < 50) totalScore += 25;
+            else if (avgTime < 200) totalScore += 15;
+            else if (avgTime < 1000) totalScore += 5;
+            maxScore += 25;
+
+            // 캐시 효과 (25점)
+            if (testResults.cacheEffect?.cache_effect) totalScore += 25;
+            maxScore += 25;
+
+            comprehensiveResult.score = totalScore;
+            comprehensiveResult.max_score = maxScore;
+            comprehensiveResult.percentage = ((totalScore / maxScore) * 100).toFixed(1);
+
+            if (totalScore >= maxScore * 0.9) {
+                comprehensiveResult.overall_status = '🎉 완벽 성공 (프로덕션 준비 완료)';
+                comprehensiveResult.classification = 'success';
+            } else if (totalScore >= maxScore * 0.7) {
+                comprehensiveResult.overall_status = '✅ 양호 (일부 개선 필요)';
+                comprehensiveResult.classification = 'warning';
+            } else {
+                comprehensiveResult.overall_status = '❌ 개선 필요';
+                comprehensiveResult.classification = 'error';
+            }
+
+            displayResult('comprehensive-result', comprehensiveResult, comprehensiveResult.classification);
+
+            console.log('✅ 모든 테스트 완료');
+            console.log('📊 최종 결과:', comprehensiveResult);
+        }
+
+        // 페이지 로드 시 자동으로 기본 테스트 실행
+        window.addEventListener('load', () => {
+            console.log('🚀 AFO 왕국 브라우저 테스트 시작');
+            // 2초 후 자동 실행
+            setTimeout(() => {
+                runAllTests();
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

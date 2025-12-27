@@ -148,15 +148,11 @@ class ReportGenerator:
             from pathlib import Path
 
             # 임시 리포트 생성
-            temp_report = self._create_analysis_report(
-                context, analysis, evidence, next_steps
-            )
+            temp_report = self._create_analysis_report(context, analysis, evidence, next_steps)
 
             # ssot_report_gate.py 경로
             script_path = (
-                Path(__file__).parent.parent.parent.parent
-                / "scripts"
-                / "ssot_report_gate.py"
+                Path(__file__).parent.parent.parent.parent / "scripts" / "ssot_report_gate.py"
             )
 
             if script_path.exists():
@@ -241,7 +237,7 @@ class ReportGenerator:
         Returns:
             저장된 파일 경로
         """
-        report_file = self.reports_dir / filename
+        report_file: Path = self.reports_dir / filename
         report_file.write_text(report, encoding="utf-8")
         logger.info(f"✅ 보고서 저장: {report_file}")
 

@@ -32,9 +32,7 @@ class CacheMetrics:
         }
         self._start_time = time.time()
 
-    def record_request(
-        self, hit: bool, level: str = "miss", response_time_ms: float = 0.0
-    ):
+    def record_request(self, hit: bool, level: str = "miss", response_time_ms: float = 0.0):
         """Record cache request metrics"""
         self.metrics["total_requests"] += 1
         self.metrics["total_response_time_ms"] += response_time_ms
@@ -54,21 +52,17 @@ class CacheMetrics:
         total = self.metrics["total_requests"]
         if total > 0:
             self.metrics["hit_rate"] = self.metrics["cache_hits"] / total
-            self.metrics["avg_response_time_ms"] = (
-                self.metrics["total_response_time_ms"] / total
-            )
+            self.metrics["avg_response_time_ms"] = self.metrics["total_response_time_ms"] / total
 
     def get_metrics(self) -> dict[str, Any]:
         """Get current metrics with uptime"""
         metrics = self.metrics.copy()
         metrics["uptime_seconds"] = time.time() - self._start_time
-        return metrics
+        return metrics  # type: ignore[no-any-return]
 
     def reset(self):
         """Reset metrics (for testing)"""
-        self.metrics = {
-            k: 0.0 if isinstance(v, float) else 0 for k, v in self.metrics.items()
-        }
+        self.metrics = {k: 0.0 if isinstance(v, float) else 0 for k, v in self.metrics.items()}
         self._start_time = time.time()
 
 
@@ -99,9 +93,7 @@ class MultiLevelCache:
             if val is not None:
                 # Phase 6B: Record L1 hit metrics
                 response_time = (time.time() - start_time) * 1000
-                self.metrics.record_request(
-                    hit=True, level="l1", response_time_ms=response_time
-                )
+                self.metrics.record_request(hit=True, level="l1", response_time_ms=response_time)
                 return val
 
             # 2. L2 Check
@@ -109,9 +101,7 @@ class MultiLevelCache:
             if val is not None:
                 # Phase 6B: Record L2 hit metrics
                 response_time = (time.time() - start_time) * 1000
-                self.metrics.record_request(
-                    hit=True, level="l2", response_time_ms=response_time
-                )
+                self.metrics.record_request(hit=True, level="l2", response_time_ms=response_time)
                 # Promote to L1 for next time
                 await self.l1.set(key, val, ttl=60)  # Short TTL for L1
                 return val
@@ -143,7 +133,7 @@ class MultiLevelCache:
 
     def get_metrics(self) -> dict[str, Any]:
         """Get cache performance metrics"""
-        return self.metrics.get_metrics()
+        return self.metrics.get_metrics()  # type: ignore[no-any-return]
 
 
 # Singleton Instance

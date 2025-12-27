@@ -1,219 +1,146 @@
 # Trinity Score: 90.0 (Established by Chancellor)
 """
-API Cache Middleware for AFO Kingdom
-Automatic caching for GET requests to reduce response time and server load.
-
-Sequential Thinking: 단계별 API 캐싱 미들웨어 구축
-眞善美孝永: Truth 100%, Goodness 95%, Beauty 90%, Serenity 100%, Eternity 100%
+AFO API Cache Middleware
+Redis-based caching for optimal response times.
 """
-
-from __future__ import annotations
 
 import hashlib
 import json
 import logging
 import time
-from typing import Any
+from collections.abc import Awaitable, Callable
+from typing import Any, cast
 
-from fastapi import Request, Response
+from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware
-from starlette.responses import JSONResponse
+from starlette.responses import JSONResponse, Response
 
-from ...utils.redis_connection import get_redis_client
+# 중앙 설정 및 유틸리티
 
 logger = logging.getLogger(__name__)
 
 # 캐시 설정
-API_CACHE_CONFIG = {
-    "key_prefix": "api:cache:",
-    "default_ttl": 300,  # 5분
-    "endpoint_ttl": {
-        "/health": 5,  # 5초
-        "/api/5pillars/current": 10,  # 10초
-        "/api/skills/list": 30,  # 30초
-    },
-    "cacheable_methods": ["GET"],
-    "cacheable_status_codes": [200, 201],
+API_CACHE_CONFIG: dict[str, Any] = {
+    "ttl": 300,  # 5분
+    "key_prefix": "afo:api:cache:",
+    "cacheable_status_codes": [200],
 }
 
 
 class CacheMiddleware(BaseHTTPMiddleware):
-    """
-    API 엔드포인트 캐싱 미들웨어
-    Sequential Thinking: 단계별 캐시 구현 및 최적화
-    """
-
-    def __init__(self, app: Any):
+    def __init__(self, app):
         super().__init__(app)
-        self.redis_client = None
+        self.redis_client: Any = None
         self._hit_count = 0
         self._miss_count = 0
         self._initialized = False
         self._initialize_cache()
 
     def _initialize_cache(self) -> None:
-        """
-        Redis 연결 초기화 (Sequential Thinking Phase 1)
-        """
+        if self._initialized:
+            return
         try:
-            self.redis_client = get_redis_client()
-            if self.redis_client:
-                # 연결 테스트
-                self.redis_client.ping()
+            from AFO.utils.redis_connection import get_redis_client
+
+            client = get_redis_client()
+            if client is not None:
+                client.ping()
+                self.redis_client = client
                 self._initialized = True
-                logger.info("✅ API Cache Middleware 초기화 완료")
-            else:
-                logger.warning("⚠️ Redis 클라이언트를 가져올 수 없습니다")
+                logger.debug("✅ API Cache Middleware 초기화 완료")
         except Exception as e:
-            logger.warning(f"⚠️ API Cache Middleware 초기화 실패: {e}")
+            logger.error(f"❌ API Cache Middleware 초기화 실패: {e}")
+            self.redis_client = None
             self._initialized = False
 
     def _generate_cache_key(self, request: Request) -> str:
-        """
-        캐시 키 생성 (Sequential Thinking Phase 2)
-        """
-        # 경로와 쿼리 파라미터 기반 키 생성
         path = request.url.path
         query_string = str(request.url.query)
-        query_hash = hashlib.md5(query_string.encode()).hexdigest()[:8]
+        query_hash = hashlib.md5(query_string.encode(), usedforsecurity=False).hexdigest()[:8]
+        return f"{API_CACHE_CONFIG['key_prefix']}{request.method}:{path}:{query_hash}"
 
-        cache_key = (
-            f"{API_CACHE_CONFIG['key_prefix']}{request.method}:{path}:{query_hash}"
-        )
-        return cache_key
-
-    def _get_ttl(self, path: str) -> int:
-        """
-        엔드포인트별 TTL 조회
-        """
-        return API_CACHE_CONFIG["endpoint_ttl"].get(
-            path, API_CACHE_CONFIG["default_ttl"]
-        )
-
-    def _is_cacheable(self, request: Request) -> bool:
-        """
-        캐싱 가능한 요청인지 확인
-        """
-        # GET 요청만 캐싱
-        if request.method not in API_CACHE_CONFIG["cacheable_methods"]:
-            return False
-
-        # 특정 경로는 캐싱 제외 (예: 실시간 데이터)
-        excluded_paths = ["/api/logs/stream", "/api/system/logs/stream"]
-        return not any(request.url.path.startswith(path) for path in excluded_paths)
-
-    async def dispatch(self, request: Request, call_next: Any) -> Response:
-        """
-        미들웨어 처리 (Sequential Thinking Phase 3)
-        """
-        # 캐싱 불가능한 요청은 바로 통과
-        if not self._is_cacheable(request):
+    async def dispatch(
+        self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
+    ) -> Response:
+        if not self._initialized or request.method != "GET":
             return await call_next(request)
 
-        # 캐시 키 생성
+        url_path = str(request.url.path)
+        if "/health" in url_path and "/comprehensive" not in url_path:
+            return await call_next(request)
+
         cache_key = self._generate_cache_key(request)
 
-        # 캐시에서 조회 (Sequential Thinking Phase 3.1)
-        if self._initialized and self.redis_client:
+        if self.redis_client is not None:
             try:
                 cached_data = self.redis_client.get(cache_key)
                 if cached_data:
                     try:
                         cache_entry = json.loads(cached_data)
                         self._hit_count += 1
-                        logger.debug(f"✅ API Cache Hit: {cache_key}")
-
-                        # 캐시된 응답 반환
-                        response = JSONResponse(
+                        hit_response = JSONResponse(
                             content=cache_entry["body"],
                             status_code=cache_entry["status_code"],
                         )
-                        response.headers["X-Cache"] = "HIT"
-                        response.headers["X-Cache-Key"] = cache_key
-                        return response
-                    except (json.JSONDecodeError, KeyError) as e:
-                        logger.warning(f"캐시 데이터 파싱 실패: {e}")
-                        # 손상된 캐시 삭제
+                        hit_response.headers["X-Cache"] = "HIT"
+                        hit_response.headers["X-Cache-Key"] = cache_key
+                        if url_path == "/api/health/comprehensive":
+                            hit_response.headers["Cache-Control"] = "max-age=30, private"
+                            hit_response.headers["X-Cache-Source"] = "server-cache"
+                        return hit_response
+                    except Exception:
                         self.redis_client.delete(cache_key)
-            except Exception as e:
-                logger.debug(f"캐시 조회 실패 (무시): {e}")
+            except Exception:
+                pass
 
-        # 캐시 미스 - 실제 요청 처리 (Sequential Thinking Phase 3.2)
         self._miss_count += 1
-        response = await call_next(request)
+        miss_response: Response = await call_next(request)
 
-        # 성공 응답만 캐싱 (Sequential Thinking Phase 3.3)
+        cacheable_codes = cast("list[int]", API_CACHE_CONFIG["cacheable_status_codes"])
         if (
             self._initialized
-            and self.redis_client
-            and response.status_code in API_CACHE_CONFIG["cacheable_status_codes"]
+            and self.redis_client is not None
+            and miss_response.status_code in cacheable_codes
         ):
             try:
-                # 응답 본문 읽기
                 response_body = b""
-                async for chunk in response.body_iterator:
-                    response_body += chunk
-
-                # JSON 파싱 시도
-                try:
-                    body_json = json.loads(response_body.decode())
-                except (json.JSONDecodeError, UnicodeDecodeError):
-                    # JSON이 아닌 경우 캐싱하지 않음
-                    return Response(
-                        content=response_body,
-                        status_code=response.status_code,
-                        headers=dict(response.headers),
-                    )
-
-                # 캐시 엔트리 생성
-                ttl = self._get_ttl(request.url.path)
-                cache_entry = {
-                    "body": body_json,
-                    "status_code": response.status_code,
-                    "headers": dict(response.headers),
-                    "cached_at": time.time(),
-                }
-
-                # Redis에 저장
-                cache_data = json.dumps(cache_entry)
-                self.redis_client.setex(cache_key, ttl, cache_data)
-
-                logger.debug(f"✅ API Response Cached: {cache_key} (TTL: {ttl}s)")
-
-                # 응답 재구성
-                cached_response = JSONResponse(
-                    content=body_json,
-                    status_code=response.status_code,
-                    headers=dict(response.headers),
-                )
-                cached_response.headers["X-Cache"] = "MISS"
-                cached_response.headers["X-Cache-Key"] = cache_key
-                return cached_response
-
-            except Exception as e:
-                logger.warning(f"캐시 저장 실패: {e}")
-                # 원본 응답 반환
-                return Response(
-                    content=response_body,
-                    status_code=response.status_code,
-                    headers=dict(response.headers),
-                )
-
-        # 캐싱하지 않는 경우 원본 응답 반환
-        response.headers["X-Cache"] = "SKIP"
-        return response
+                if hasattr(miss_response, "body_iterator"):
+                    async for chunk in cast("Any", miss_response).body_iterator:
+                        response_body += chunk
+                    try:
+                        body_json = json.loads(response_body.decode())
+                        cache_entry = {
+                            "body": body_json,
+                            "status_code": miss_response.status_code,
+                            "timestamp": time.time(),
+                        }
+                        self.redis_client.setex(
+                            cache_key, API_CACHE_CONFIG["ttl"], json.dumps(cache_entry)
+                        )
+                        final_response = JSONResponse(
+                            content=body_json,
+                            status_code=miss_response.status_code,
+                            headers=dict(miss_response.headers),
+                        )
+                        final_response.headers["X-Cache"] = "MISS"
+                        final_response.headers["X-Cache-Key"] = cache_key
+                        return final_response
+                    except Exception:
+                        return Response(
+                            content=response_body,
+                            status_code=miss_response.status_code,
+                            headers=dict(miss_response.headers),
+                        )
+            except Exception:
+                pass
+        return miss_response
 
     def get_stats(self) -> dict[str, Any]:
-        """
-        캐시 통계 조회
-        """
         total = self._hit_count + self._miss_count
-        hit_rate = (self._hit_count / total * 100) if total > 0 else 0.0
-
+        hit_rate = (self._hit_count / total * 100) if total > 0 else 0
         return {
             "hits": self._hit_count,
             "misses": self._miss_count,
-            "total": total,
             "hit_rate": round(hit_rate, 2),
             "initialized": self._initialized,
         }

@@ -16,9 +16,7 @@ logger = logging.getLogger("afo.genui")
 class GenUISpec(BaseModel):
     """Specification for a Generated UI (GenUI) App"""
 
-    app_id: str = Field(
-        ..., description="Unique ID for the sub-app (e.g. 'health-dashboard')"
-    )
+    app_id: str = Field(..., description="Unique ID for the sub-app (e.g. 'health-dashboard')")
     description: str = Field(..., description="High-level description of what to build")
     requirements: list[str] = Field(
         default_factory=list,

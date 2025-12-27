@@ -32,4 +32,4 @@ class RequestSizeLimitMiddleware(BaseHTTPMiddleware):
                 return JSONResponse(
                     {"ok": False, "error": "invalid_content_length"}, status_code=400
                 )
-        return await call_next(request)
+        return await call_next(request)  # type: ignore[no-any-return]

@@ -13,7 +13,7 @@ Version: 1.0.0
 from __future__ import annotations
 
 import logging
-from typing import Any
+from typing import Any, cast
 
 from fastapi import APIRouter, Body, Depends, HTTPException, Query
 
@@ -58,9 +58,7 @@ async def execute_skill(
     """
     skill = registry.get(skill_id)
     if not skill:
-        raise HTTPException(
-            status_code=404, detail=f"Skill '{skill_id}' not found"
-        )
+        raise HTTPException(status_code=404, detail=f"Skill '{skill_id}' not found")
 
     logger.info(f"Executing skill: {skill_id} (Dry Run: {dry_run})")
 
@@ -92,7 +90,7 @@ async def list_skills(
     try:
         # Build filter params
         params = SkillFilterParams(
-            category=category,
+            category=cast("Any", category),
             search=search,
             min_philosophy_avg=min_philosophy_avg,
             limit=limit,
@@ -112,6 +110,30 @@ async def list_skills(
     except Exception as e:
         logger.error(f"Failed to list skills: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error") from e
+
+
+@router.get("/list", response_model=dict[str, Any])
+async def list_skills_alias(
+    category: str | None = None,
+    search: str | None = None,
+    min_philosophy_avg: int | None = Query(None, ge=0, le=100),
+    limit: int = 100,
+    offset: int = 0,
+    registry: SkillRegistry = Depends(get_registry),
+) -> dict[str, Any]:
+    """
+    Alias for /api/skills/ - List all available skills with filtering.
+
+    Trinity Score: 善 (Serenity) - 프론트엔드 호환성 제공
+    """
+    return await list_skills(
+        category=category,
+        search=search,
+        min_philosophy_avg=min_philosophy_avg,
+        limit=limit,
+        offset=offset,
+        registry=registry,
+    )
 
 
 @router.get("/{skill_id}", response_model=AFOSkillCard)

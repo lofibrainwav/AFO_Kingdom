@@ -55,16 +55,12 @@ def extract_safari_token():
             print("🎉 Safari Connection Successful!")
         else:
             print("❌ 'auth_token' not found in Safari.")
-            print(
-                "   Note: Safari requires Full Disk Access for your terminal to read cookies."
-            )
+            print("   Note: Safari requires Full Disk Access for your terminal to read cookies.")
 
     except Exception as e:
         print(f"⚠️ Extraction Failed: {e}")
         if "Operation not permitted" in str(e):
-            print(
-                "   🔴 PERMISSION DENIED: Please grant Full Disk Access to Terminal/Python."
-            )
+            print("   🔴 PERMISSION DENIED: Please grant Full Disk Access to Terminal/Python.")
 
 
 if __name__ == "__main__":

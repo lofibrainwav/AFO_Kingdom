@@ -53,6 +53,34 @@ registerWidget({
   tags: ['docs'],
 });
 
+// [PH20-01] Royal Command Hierarchy Card
+registerWidget({
+  id: 'royal-command-hierarchy',
+  title: 'Royal Command Hierarchy',
+  description: '왕(형님) → 사령관 → 승상(오케스트레이터) 지휘 체계',
+  category: 'panel',
+  visibility: 'public',
+  defaultEnabled: true,
+  order: 5,
+  source: 'react',
+  component: () => import('./royal/RoyalCommandHierarchyCard').then(m => ({ default: m.RoyalCommandHierarchyCard })),
+  tags: ['royal', 'hierarchy', 'constitution'],
+});
+
+// [PH20-01] Field Manual Law Card
+registerWidget({
+  id: 'field-manual-unbreakable-law',
+  title: 'Field Manual: Unbreakable Law',
+  description: '자동 실행과 안전을 동시에 보장하는 국법',
+  category: 'panel',
+  visibility: 'public',
+  defaultEnabled: true,
+  order: 6,
+  source: 'react',
+  component: () => import('./royal/FieldManualLawCard').then(m => ({ default: m.FieldManualLawCard })),
+  tags: ['royal', 'law', 'constitution'],
+});
+
 // [Phase 2-2] Generated widgets 자동 등록 (안전 방식)
 // 중복/불량 무시로 부팅 안전성 보장
 const registerGeneratedDocs = () => {

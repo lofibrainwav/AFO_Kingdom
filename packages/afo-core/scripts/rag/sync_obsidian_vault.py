@@ -63,7 +63,7 @@ class ObsidianVaultHandler(FileSystemEventHandler):
         """파일 해시 계산"""
         try:
             with open(file_path, "rb") as f:
-                return hashlib.md5(f.read()).hexdigest()
+                return hashlib.md5(f.read(), usedforsecurity=False).hexdigest()
         except Exception:
             return ""
 

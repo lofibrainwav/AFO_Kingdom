@@ -68,3 +68,7 @@ terraform/.terraform.lock.hcl
 terraform/terraform.tfstate*
 terraform/*.tfvars
 .venv-mcp/
+
+# AFO build/test artifacts
+artifacts/
+packages/**/artifacts/

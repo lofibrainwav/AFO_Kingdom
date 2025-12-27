@@ -227,9 +227,7 @@ class KnowledgeLibraryBuilder:
         # 기본적으로 코드베이스 내부 문서는 신뢰 (외부 문서는 제외)
         return True  # 코드베이스 내부 문서는 기본적으로 신뢰
 
-    def _validate_document_quality(
-        self, content: str, file_path: Path
-    ) -> dict[str, Any]:
+    def _validate_document_quality(self, content: str, file_path: Path) -> dict[str, Any]:
         """
         메타인지적 접근: 문서 품질 검증 (기본 덕목)
 
@@ -263,9 +261,7 @@ class KnowledgeLibraryBuilder:
             validation_result["score"] *= 0.3
 
         # 4. 마크다운 형식 기본 검증 (최소한의 구조)
-        if content.strip() and not any(
-            marker in content for marker in ["#", "-", "*", "```", "`"]
-        ):
+        if content.strip() and not any(marker in content for marker in ["#", "-", "*", "```", "`"]):
             # 마크다운 형식이 없어도 내용이 있으면 허용 (경고만)
             validation_result["reasons"].append("마크다운 형식 부족 (경고)")
             validation_result["score"] *= 0.9
@@ -334,9 +330,7 @@ class KnowledgeLibraryBuilder:
 
         return sorted(markdown_files)
 
-    def process_file(
-        self, file_path: Path, force_update: bool = False
-    ) -> dict[str, Any]:
+    def process_file(self, file_path: Path, force_update: bool = False) -> dict[str, Any]:
         """
         Process a single markdown file
 
@@ -353,9 +347,7 @@ class KnowledgeLibraryBuilder:
         # Check if file needs processing
         if not force_update:
             if str(relative_path) in self.metadata.get("processed_files", {}):
-                stored_hash = self.metadata["processed_files"][str(relative_path)].get(
-                    "hash"
-                )
+                stored_hash = self.metadata["processed_files"][str(relative_path)].get("hash")
                 if stored_hash == file_hash:
                     print(f"⏭️  변경 없음 (스킵): {relative_path}")
                     return {
@@ -376,9 +368,7 @@ class KnowledgeLibraryBuilder:
             doc_validation = self._validate_document_quality(full_content, file_path)
 
             if not doc_validation["valid"]:
-                print(
-                    f"   ⚠️ 문서 품질 검증 실패: {', '.join(doc_validation['reasons'])}"
-                )
+                print(f"   ⚠️ 문서 품질 검증 실패: {', '.join(doc_validation['reasons'])}")
                 return {
                     "status": "rejected",
                     "reason": "quality_validation_failed",
@@ -423,9 +413,7 @@ class KnowledgeLibraryBuilder:
                         }
                     )
 
-            print(
-                f"   ✅ {len(validated_chunks)}개 청크 생성 (거부: {len(rejected_chunks)}개)"
-            )
+            print(f"   ✅ {len(validated_chunks)}개 청크 생성 (거부: {len(rejected_chunks)}개)")
 
             if len(validated_chunks) == 0:
                 print("   ❌ 유효한 청크가 없음")
@@ -656,9 +644,7 @@ def main():
     parser = argparse.ArgumentParser(description="왕국의 도서관 구축 시스템")
     parser.add_argument("--force", action="store_true", help="모든 파일 강제 업데이트")
     parser.add_argument("--file", type=str, help="특정 파일만 처리 (예: CLAUDE.md)")
-    parser.add_argument(
-        "--search", type=str, help="지식 검색 (예: --search 'VibeCoding 원칙')"
-    )
+    parser.add_argument("--search", type=str, help="지식 검색 (예: --search 'VibeCoding 원칙')")
     parser.add_argument("--verify", action="store_true", help="도서관 상태 검증")
 
     args = parser.parse_args()

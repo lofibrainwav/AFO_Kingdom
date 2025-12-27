@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from typing import Any, Literal
+from typing import Any, Literal, cast
 
 from fastapi import APIRouter, HTTPException
 
@@ -85,6 +85,23 @@ _import_chancellor_graph()
 
 router = APIRouter(prefix="/chancellor", tags=["Chancellor"])
 
+# Include chancellor engines endpoint from afo_agent_fabric
+try:
+    from AFO.afo_agent_fabric import _get_cached_engine_status
+
+    @router.get("/engines")
+    async def chancellor_engines():
+        """
+        Chancellor AI 엔진 설치 상태 확인 (캐시 최적화)
+
+        Trinity Score: 眞 (Truth) - 정확한 라이브러리 상태
+        성능 최적화: 5분 캐시 + 빠른 import 순서
+        """
+        return {"installed": _get_cached_engine_status()}
+
+except ImportError:
+    logger.warning("afo_agent_fabric functions not available")
+
 # Strangler Fig: Chancellor 타입 모델들은 compat.py로 이동됨 (眞: Truth 타입 안전성)
 
 
@@ -125,8 +142,11 @@ def _determine_execution_mode(
         ]
         return any(k in q for k in keywords)
 
+    # Backward compatibility: query가 없으면 input 사용
+    query_text = request.query or request.input
+
     if request.mode == "auto":
-        if _looks_like_system_query(request.query):
+        if _looks_like_system_query(query_text):
             return "offline"
         elif request.timeout_seconds <= 12:
             return "fast"
@@ -136,7 +156,10 @@ def _determine_execution_mode(
             return "full"
     else:
         # [논어]言必信行必果 - 사용자 명시적 모드를 존중함
-        return request.mode
+        mode = request.mode
+        if mode in ["offline", "fast", "lite", "full"]:
+            return cast("Literal['offline', 'fast', 'lite', 'full']", mode)
+        return "full"  # fallback
 
 
 def _build_llm_context(request: ChancellorInvokeRequest) -> dict[str, Any]:
@@ -222,10 +245,7 @@ def _build_fallback_text(query: str, metrics: dict[str, Any]) -> str:
         )
     else:
         q_lower = query.lower()
-        if any(
-            k in q_lower
-            for k in ["자기소개", "who are you", "너는 누구", "당신은 누구"]
-        ):
+        if any(k in q_lower for k in ["자기소개", "who are you", "너는 누구", "당신은 누구"]):
             lines.append(
                 "- 오프라인 응답: 저는 AFO Kingdom의 승상(Chancellor)이며, 시스템 상태/전략/실행을 정리해 사령관의 결정을 돕습니다."
             )
@@ -278,14 +298,10 @@ async def _execute_with_fallback(
             return dict(await get_system_metrics())
         except (AttributeError, TypeError, ValueError) as e:
             logger.warning("시스템 메트릭 수집 실패 (속성/타입/값 에러): %s", str(e))
-            return {
-                "error": f"failed to collect system metrics: {type(e).__name__}: {e}"
-            }
+            return {"error": f"failed to collect system metrics: {type(e).__name__}: {e}"}
         except Exception as e:  # - Intentional fallback for unexpected errors
             logger.warning("시스템 메트릭 수집 실패 (예상치 못한 에러): %s", str(e))
-            return {
-                "error": f"failed to collect system metrics: {type(e).__name__}: {e}"
-            }
+            return {"error": f"failed to collect system metrics: {type(e).__name__}: {e}"}
 
     async def _single_shot_answer(
         query: str, budget_seconds: float, context: dict[str, Any]
@@ -333,7 +349,7 @@ async def _execute_with_fallback(
     if mode_used == "offline":
         metrics = await _get_system_metrics_safe()
         return {
-            "response": _build_fallback_text(request.query, metrics),
+            "response": _build_fallback_text(request.query or request.input, metrics),
             "thread_id": request.thread_id,
             "trinity_score": 0.0,
             "strategists_consulted": [],
@@ -361,7 +377,7 @@ async def _execute_with_fallback(
             llm_context.setdefault("ollama_num_ctx", 4096)
 
         answer, routing, timed_out = await _single_shot_answer(
-            request.query, budget_llm, llm_context
+            request.query or request.input, budget_llm, llm_context
         )
 
         if _is_real_answer(answer, routing):
@@ -384,7 +400,7 @@ async def _execute_with_fallback(
 
         metrics = await _get_system_metrics_safe()
         return {
-            "response": _build_fallback_text(request.query, metrics),
+            "response": _build_fallback_text(request.query or request.input, metrics),
             "thread_id": request.thread_id,
             "trinity_score": 0.0,
             "strategists_consulted": [],
@@ -417,12 +433,10 @@ async def _execute_full_mode(
     from AFO.api.compat import get_antigravity_control
 
     antigravity = get_antigravity_control()
-    effective_auto_run = request.auto_run and not (
-        antigravity and antigravity.DRY_RUN_DEFAULT
-    )
+    effective_auto_run = request.auto_run and not (antigravity and antigravity.DRY_RUN_DEFAULT)
 
-    initial_state_dict = {
-        "query": request.query,
+    initial_state_dict: dict[str, Any] = {
+        "query": request.query or request.input,
         "messages": [],
         "summary": "",
         "context": {
@@ -430,9 +444,7 @@ async def _execute_full_mode(
             "max_strategists": request.max_strategists,
             "antigravity": {
                 "AUTO_DEPLOY": antigravity.AUTO_DEPLOY if antigravity else True,
-                "DRY_RUN_DEFAULT": (
-                    antigravity.DRY_RUN_DEFAULT if antigravity else False
-                ),
+                "DRY_RUN_DEFAULT": (antigravity.DRY_RUN_DEFAULT if antigravity else False),
                 "ENVIRONMENT": antigravity.ENVIRONMENT if antigravity else "dev",
             },
             "auto_run_eligible": effective_auto_run,
@@ -455,7 +467,7 @@ async def _execute_full_mode(
     from langchain_core.messages import HumanMessage
 
     # We can modify the dict because TypedDict is a dict at runtime
-    initial_state["messages"].append(HumanMessage(content=request.query))
+    initial_state["messages"].append(HumanMessage(content=request.query or request.input))
 
     config = {"configurable": {"thread_id": request.thread_id}}
 
@@ -483,21 +495,15 @@ async def _execute_full_mode(
             try:
                 return dict(await get_system_metrics())
             except (AttributeError, TypeError, ValueError) as e:
-                logger.warning(
-                    "시스템 메트릭 수집 실패 (속성/타입/값 에러): %s", str(e)
-                )
-                return {
-                    "error": f"failed to collect system metrics: {type(e).__name__}: {e}"
-                }
+                logger.warning("시스템 메트릭 수집 실패 (속성/타입/값 에러): %s", str(e))
+                return {"error": f"failed to collect system metrics: {type(e).__name__}: {e}"}
             except Exception as e:  # - Intentional fallback for unexpected errors
                 logger.warning("시스템 메트릭 수집 실패 (예상치 못한 에러): %s", str(e))
-                return {
-                    "error": f"failed to collect system metrics: {type(e).__name__}: {e}"
-                }
+                return {"error": f"failed to collect system metrics: {type(e).__name__}: {e}"}
 
         metrics = await _get_system_metrics_safe()
         return {
-            "response": _build_fallback_text(request.query, metrics),
+            "response": _build_fallback_text(request.query or request.input, metrics),
             "thread_id": request.thread_id,
             "trinity_score": 0.0,
             "strategists_consulted": [],
@@ -594,9 +600,7 @@ async def chancellor_health() -> dict[str, Any]:
             "strategists": ["Zhuge Liang", "Sima Yi", "Zhou Yu"],
         }
     except (ImportError, AttributeError, RuntimeError) as e:
-        logger.error(
-            "Chancellor Graph 초기화 실패 (import/속성/런타임 에러): %s", str(e)
-        )
+        logger.error("Chancellor Graph 초기화 실패 (import/속성/런타임 에러): %s", str(e))
         return {
             "status": "error",
             "message": f"Chancellor Graph 초기화 실패: {e!s}",
