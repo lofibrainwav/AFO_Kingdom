@@ -133,12 +133,13 @@ class AFOServer:
         app = get_app_config()
         logger.info("FastAPI application created")
 
+        # Chancellor Router 직접 등록
         try:
-            from AFO.afo_agent_fabric import router as chancellor_router
-
+            from AFO.api.routers.chancellor_router import router as chancellor_router
             app.include_router(chancellor_router)
-        except Exception:
-            pass
+            logger.info("Chancellor Router registered successfully")
+        except Exception as e:
+            logger.warning(f"Chancellor Router registration failed: {e}")
 
         return app
 

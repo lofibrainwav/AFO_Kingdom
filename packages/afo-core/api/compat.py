@@ -562,7 +562,15 @@ LMSTUDIO_AVAILABLE = False
 aicpa_router = _safe_import_router("AFO.api.routers.aicpa")
 auth_router = _safe_import_router("AFO.api.routers.auth")
 budget_router = _safe_import_router("AFO.api.routers.budget")
-chancellor_router = _safe_import_router("AFO.api.routers.chancellor_router")
+# Direct import for Chancellor Router to avoid import issues
+try:
+    from AFO.api.routers.chancellor_router import router as chancellor_router
+except ImportError:
+    try:
+        # Fallback for different working directory
+        from api.routers.chancellor_router import router as chancellor_router
+    except ImportError:
+        chancellor_router = None
 chat_router = _safe_import_router("AFO.api.routes.chat")
 council_router = _safe_import_router("AFO.api.routers.council")
 education_system_router = _safe_import_router("AFO.api.routers.thoughts")
