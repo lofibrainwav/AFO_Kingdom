@@ -1,18 +1,23 @@
-"""Chancellor Graph V2 - Sequential Thinking Integration.
+"""Chancellor Graph V2 - Sequential Thinking Integration (Contract).
 
-Provides step-by-step reasoning through MCP sequential_thinking tool.
+SSOT Contract: Sequential Thinking is REQUIRED, not optional.
+MCP unavailable = execution fails (no passthrough).
 """
 
 from __future__ import annotations
 
 import json
 import logging
+import os
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from api.chancellor_v2.graph.state import GraphState
 
 logger = logging.getLogger(__name__)
+
+# Contract: MCP is REQUIRED by default (set to "0" only for emergency bypass)
+MCP_REQUIRED = os.getenv("AFO_MCP_REQUIRED", "1") == "1"
 
 
 def _call_sequential_thinking(
@@ -23,7 +28,7 @@ def _call_sequential_thinking(
 ) -> dict[str, Any]:
     """Call MCP sequential_thinking tool.
 
-    Returns structured result or error dict.
+    Contract: If MCP_REQUIRED=1 and MCP unavailable, raises RuntimeError.
     """
     try:
         from AFO.services.mcp_stdio_client import call_tool
@@ -41,10 +46,19 @@ def _call_sequential_thinking(
         )
         return resp.get("result", {"thought": thought, "processed": True})
 
-    except ImportError:
+    except ImportError as e:
+        if MCP_REQUIRED:
+            raise RuntimeError(
+                "MCP sequential_thinking is REQUIRED but mcp_stdio_client not available. "
+                "Set AFO_MCP_REQUIRED=0 to bypass (NOT RECOMMENDED)."
+            ) from e
         logger.warning("[V2] mcp_stdio_client not available, using passthrough mode")
         return {"thought": thought, "processed": False, "mode": "passthrough"}
+
     except Exception as e:
+        if MCP_REQUIRED:
+            # Re-raise to fail execution (contract violation)
+            raise RuntimeError(f"MCP sequential_thinking REQUIRED but failed: {e}") from e
         logger.error(f"[V2] Sequential Thinking error: {e}")
         return {"thought": thought, "error": str(e)}
 
@@ -52,7 +66,7 @@ def _call_sequential_thinking(
 def apply_sequential_thinking(state: GraphState, step: str) -> GraphState:
     """Apply Sequential Thinking to current step.
 
-    Enhances state.plan with structured reasoning from MCP tool.
+    Contract: Always called before each node (no bypass).
     """
     # Build thought for this step
     thought = f"[Step {step}] Processing: {json.dumps(state.input, ensure_ascii=False)[:200]}"
@@ -72,7 +86,7 @@ def apply_sequential_thinking(state: GraphState, step: str) -> GraphState:
     elif step == "VERIFY":
         thought = f"Verifying execution results: errors={len(state.errors)}"
 
-    # Call MCP Sequential Thinking
+    # Call MCP Sequential Thinking (Contract: will raise if MCP_REQUIRED and unavailable)
     result = _call_sequential_thinking(
         thought=thought,
         thought_number=1,
@@ -88,22 +102,3 @@ def apply_sequential_thinking(state: GraphState, step: str) -> GraphState:
     logger.info(f"[V2] Sequential Thinking applied to {step}: {result.get('processed', False)}")
 
     return state
-
-
-def wrap_with_thinking(node_fn):
-    """Decorator to wrap a node function with Sequential Thinking.
-
-    Usage:
-        @wrap_with_thinking
-        def my_node(state: GraphState) -> GraphState:
-            ...
-    """
-
-    def _wrapped(state: GraphState) -> GraphState:
-        step = state.step
-        state = apply_sequential_thinking(state, step)
-        return node_fn(state)
-
-    _wrapped.__name__ = node_fn.__name__
-    _wrapped.__doc__ = node_fn.__doc__
-    return _wrapped
