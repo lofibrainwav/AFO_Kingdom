@@ -222,9 +222,7 @@ class AntiGravitySettings(BaseSettings):
 
         return True
 
-    def get_feature_flag(
-        self, key: str, user_id: str | None = None, default: bool = False
-    ) -> bool:
+    def get_feature_flag(self, key: str, user_id: str | None = None, default: bool = False) -> bool:
         """
         [Advanced Governance] Feature Flag Check
         Redis 기반의 실시간 기능 플래그 확인 (Hot Reloading 없이 즉시 반영)
@@ -266,9 +264,7 @@ class AntiGravitySettings(BaseSettings):
                 # Assuming comma-separated string for simplicity in Hash
                 targets = str(data.get("targeted_users", "")).split(",")
                 if user_id in targets:
-                    logger.info(
-                        f"🎯 [Governance] Targeted User {user_id} allowed for {key}"
-                    )
+                    logger.info(f"🎯 [Governance] Targeted User {user_id} allowed for {key}")
                     return True
 
             # 5. Check Percentage Rollout (Deterministic)
@@ -288,9 +284,7 @@ class AntiGravitySettings(BaseSettings):
             return False
 
         except Exception as e:
-            logger.warning(
-                f"⚠️ [Governance] Flag check failed for {key}: {e}. Using default."
-            )
+            logger.warning(f"⚠️ [Governance] Flag check failed for {key}: {e}. Using default.")
             return default
 
     def check_auto_run_eligibility(
@@ -354,10 +348,7 @@ class ConfigWatcher:
             from watchdog.observers import Observer
 
             self.observer: Any = Observer()
-            if (
-                sys.platform == "darwin"
-                and "fsevents" in self.observer.__class__.__name__.lower()
-            ):
+            if sys.platform == "darwin" and "fsevents" in self.observer.__class__.__name__.lower():
                 from watchdog.observers.polling import PollingObserver
 
                 self.observer = PollingObserver()
@@ -391,9 +382,7 @@ class ConfigWatcher:
             except RuntimeError as e:
                 msg = str(e).lower()
                 if "already scheduled" in msg:
-                    logger.debug(
-                        "🔭 ConfigWatcher already running, skipping duplicate start"
-                    )
+                    logger.debug("🔭 ConfigWatcher already running, skipping duplicate start")
                     self.running = True
                     return
 

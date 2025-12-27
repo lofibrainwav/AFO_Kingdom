@@ -107,9 +107,7 @@ def test_add_key_success(mock_post):
 
 @patch("httpx.AsyncClient.post")
 def test_add_key_wallet_failure(mock_post):
-    mock_post.return_value = MagicMock(
-        status_code=400, json=lambda: {"detail": "Bad Request"}
-    )
+    mock_post.return_value = MagicMock(status_code=400, json=lambda: {"detail": "Bad Request"})
 
     response = client.post(
         "/add_key", data={"name": "fail_key", "provider": "openai", "key": "sk-fail"}
@@ -151,12 +149,8 @@ def test_bulk_import_direct_wallet():
 
 def test_bulk_import_empty_handling():
     # If empty text passed (but valid param), it should handle it gracefully or invalid
-    response = client.post(
-        "/bulk_import", data={"bulk_text": " "}
-    )  # Space is not empty param
-    assert (
-        response.status_code == 200
-    )  # Redirects with error "파싱된 환경 변수가 없습니다"
+    response = client.post("/bulk_import", data={"bulk_text": " "})  # Space is not empty param
+    assert response.status_code == 200  # Redirects with error "파싱된 환경 변수가 없습니다"
 
 
 def test_get_history():

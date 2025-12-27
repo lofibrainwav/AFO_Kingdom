@@ -22,9 +22,7 @@ class QualityPredictor:
     def __init__(self):
         self.quality_history: list[dict[str, Any]] = []
 
-    def predict_future_quality(
-        self, current_score: float, context: dict[str, Any]
-    ) -> float:
+    def predict_future_quality(self, current_score: float, context: dict[str, Any]) -> float:
         """
         ML 기반 미래 품질 예측
         간단한 회귀 모델로 향후 Trinity Score 예측
@@ -43,9 +41,7 @@ class QualityPredictor:
         try:
             # 최근 히스토리 분석 (지난 30일)
             recent_history = [
-                h
-                for h in self.quality_history
-                if (datetime.now() - h["timestamp"]).days <= 30
+                h for h in self.quality_history if (datetime.now() - h["timestamp"]).days <= 30
             ]
 
             if len(recent_history) < 5:

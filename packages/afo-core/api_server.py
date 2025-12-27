@@ -45,9 +45,7 @@ def _patch_typing_inspection_if_needed() -> None:
     if "alias_name = getattr(alias" in text:
         return
 
-    needle = (
-        "if (te_alias := getattr(typing_extensions, alias._name, None)) is not None:"
-    )
+    needle = "if (te_alias := getattr(typing_extensions, alias._name, None)) is not None:"
     if needle not in text:
         return
 

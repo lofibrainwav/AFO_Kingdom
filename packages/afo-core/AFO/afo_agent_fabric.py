@@ -20,9 +20,7 @@ class ChancellorRequest(BaseModel):
 
 
 def _sse(event: str, data_obj: Any) -> bytes:
-    return (
-        f"event: {event}\n" f"data: {json.dumps(data_obj, ensure_ascii=False)}\n\n"
-    ).encode()
+    return (f"event: {event}\ndata: {json.dumps(data_obj, ensure_ascii=False)}\n\n").encode()
 
 
 async def _stream_echo(text: str) -> AsyncIterator[bytes]:
@@ -95,6 +93,7 @@ def _get_cached_engine_status() -> dict[str, bool]:
     global _cached_engine_status, _cache_timestamp
 
     import time
+
     current_time = time.time()
 
     # 캐시가 유효하면 반환
@@ -201,8 +200,6 @@ async def chancellor_stream_v2(req: ChancellorRequest):
     else:
         gen = _stream_echo(req.input)
     return StreamingResponse(gen, media_type="text/event-stream")
-
-
 
 
 def _is_installed(mod: str) -> bool:

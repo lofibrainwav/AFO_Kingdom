@@ -13,7 +13,8 @@ import hashlib
 import json
 import logging
 import time
-from typing import Any, Awaitable, Callable
+from collections.abc import Awaitable, Callable
+from typing import Any
 
 from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -77,18 +78,14 @@ class CacheMiddleware(BaseHTTPMiddleware):
         query_string = str(request.url.query)
         query_hash = hashlib.md5(query_string.encode()).hexdigest()[:8]
 
-        cache_key = (
-            f"{API_CACHE_CONFIG['key_prefix']}{request.method}:{path}:{query_hash}"
-        )
+        cache_key = f"{API_CACHE_CONFIG['key_prefix']}{request.method}:{path}:{query_hash}"
         return cache_key
 
     def _get_ttl(self, path: str) -> int:
         """
         엔드포인트별 TTL 조회
         """
-        return API_CACHE_CONFIG["endpoint_ttl"].get(
-            path, API_CACHE_CONFIG["default_ttl"]
-        )
+        return API_CACHE_CONFIG["endpoint_ttl"].get(path, API_CACHE_CONFIG["default_ttl"])
 
     def _is_cacheable(self, request: Request) -> bool:
         """
@@ -102,7 +99,9 @@ class CacheMiddleware(BaseHTTPMiddleware):
         excluded_paths = ["/api/logs/stream", "/api/system/logs/stream"]
         return not any(request.url.path.startswith(path) for path in excluded_paths)
 
-    async def dispatch(self, request: Request, call_next: Callable[[Request], Awaitable[Response]]) -> Response:
+    async def dispatch(
+        self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
+    ) -> Response:
         """
         미들웨어 처리 (Sequential Thinking Phase 3)
         """

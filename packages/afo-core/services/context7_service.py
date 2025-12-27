@@ -23,7 +23,7 @@ import sys
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Optional
 
-from AFO.utils.path_utils import get_trinity_os_path, add_to_sys_path
+from AFO.utils.path_utils import add_to_sys_path, get_trinity_os_path
 
 if TYPE_CHECKING:
     from trinity_os.servers.context7_mcp import Context7MCP
@@ -31,12 +31,12 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 # 모듈 레벨 캐싱 (싱글톤 패턴)
-_context7_instance: Optional["Context7MCP"] = None
+_context7_instance: Context7MCP | None = None
 _context7_initialized = False
-_initialization_error: Optional[str] = None
+_initialization_error: str | None = None
 
 
-def get_context7_instance() -> "Context7MCP":
+def get_context7_instance() -> Context7MCP:
     """
     Context7MCP 인스턴스 지능적 캐싱 및 반환
 
@@ -60,7 +60,10 @@ def get_context7_instance() -> "Context7MCP":
             if not trinity_os_path:
                 # 폴백: 동적 계산
                 computed_path = get_trinity_os_path(
-                    Path(__file__).parent.parent.parent / "api" / "routes" / "comprehensive_health.py"
+                    Path(__file__).parent.parent.parent
+                    / "api"
+                    / "routes"
+                    / "comprehensive_health.py"
                 )
                 trinity_os_path = str(computed_path) if computed_path else None
 
@@ -106,8 +109,7 @@ def _load_with_lazy_loader(trinity_os_path: str) -> None:
 
     if os.path.exists(module_path):
         spec = importlib.util.spec_from_file_location(
-            "trinity_os.servers.context7_mcp",
-            module_path
+            "trinity_os.servers.context7_mcp", module_path
         )
 
         if spec and spec.loader:
@@ -120,7 +122,7 @@ def _load_with_lazy_loader(trinity_os_path: str) -> None:
             spec.loader.exec_module(module)
 
             global _context7_instance
-            Context7MCP = getattr(module, "Context7MCP")
+            Context7MCP = module.Context7MCP
             _context7_instance = Context7MCP()
 
             logger.debug("✅ LazyLoader를 통한 Context7MCP 로딩 완료")

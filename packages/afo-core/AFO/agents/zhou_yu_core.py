@@ -65,9 +65,7 @@ class ZhouYuAgent:
 
         # Replace basic div with glass-card
         if "glass-card" not in new_code and '<div className="' in new_code:
-            new_code = new_code.replace(
-                '<div className="', '<div className="glass-card ', 1
-            )
+            new_code = new_code.replace('<div className="', '<div className="glass-card ', 1)
             refactored_items.append("Injected 'glass-card' utility")
 
         # Enforce consistency (Example: Use 'text-cyan-400' for headings)

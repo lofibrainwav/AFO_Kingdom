@@ -56,12 +56,7 @@ class SerenityCreationLoop:
         settings = get_settings()
         # Ensure we use an absolute path for the sandbox
         self.sandbox_dir = sandbox_dir or str(
-            Path(settings.BASE_DIR)
-            / "packages"
-            / "dashboard"
-            / "src"
-            / "components"
-            / "genui"
+            Path(settings.BASE_DIR) / "packages" / "dashboard" / "src" / "components" / "genui"
         )
         os.makedirs(self.sandbox_dir, exist_ok=True)
 
@@ -104,9 +99,7 @@ class SerenityCreationLoop:
             verification_data = {}
             if self.bridge:
                 try:
-                    screenshot_path = os.path.join(
-                        self.sandbox_dir, f"screenshot_v{iteration}.png"
-                    )
+                    screenshot_path = os.path.join(self.sandbox_dir, f"screenshot_v{iteration}.png")
                     # Disable dry-run momentarily for real verification if explicitly asked or permitted
                     verification_data = await self.bridge.verify_ui(
                         f"file://{html_path}", screenshot_path
@@ -118,9 +111,7 @@ class SerenityCreationLoop:
                     log_sse(f"⚠️ [Serenity] Visual verification failed: {e}")
 
             # Step 4: Evaluate with Trinity (善)
-            trinity_score, risk_score, feedback = self._evaluate(
-                code, verification_data, prompt
-            )
+            trinity_score, risk_score, feedback = self._evaluate(code, verification_data, prompt)
             log_sse(
                 f"⚖️ [Serenity] Iteration Score: {trinity_score * 100:.1f}/100 (Risk: {risk_score * 100:.1f}%)"
             )
@@ -132,8 +123,7 @@ class SerenityCreationLoop:
                 risk_score=risk_score,
                 iteration=iteration,
                 success=(
-                    trinity_score >= self.TRINITY_THRESHOLD
-                    and risk_score <= self.RISK_THRESHOLD
+                    trinity_score >= self.TRINITY_THRESHOLD and risk_score <= self.RISK_THRESHOLD
                 ),
                 feedback=feedback,
             )
@@ -203,9 +193,7 @@ class SerenityCreationLoop:
 
         return file_path
 
-    def _evaluate(
-        self, code: str, verification: dict, prompt: str
-    ) -> tuple[float, float, str]:
+    def _evaluate(self, code: str, verification: dict, prompt: str) -> tuple[float, float, str]:
         """Strategic evaluation via Trinity Score."""
         # Simple evaluation logic for now, could use CriticAgent+LLM
         truth = 1.0 if "use client" in code and "export default" in code else 0.8

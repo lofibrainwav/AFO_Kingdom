@@ -129,9 +129,7 @@ class TaxResult:
     advice: str = ""
 
 
-def calculate_federal_tax(
-    taxable_income: int, filing_status: FilingStatus
-) -> tuple[int, float]:
+def calculate_federal_tax(taxable_income: int, filing_status: FilingStatus) -> tuple[int, float]:
     """연방세 계산"""
     try:
         brackets = FEDERAL_BRACKETS_2025[filing_status]
@@ -219,9 +217,7 @@ def calculate_tax(input_data: TaxInput) -> TaxResult:
         )
 
         # 2. 연방세 계산
-        federal_tax, marginal_rate = calculate_federal_tax(
-            taxable_income, input_data.filing_status
-        )
+        federal_tax, marginal_rate = calculate_federal_tax(taxable_income, input_data.filing_status)
         effective_rate = federal_tax / taxable_income if taxable_income > 0 else 0
 
         # 3. 주세 계산
@@ -234,14 +230,10 @@ def calculate_tax(input_data: TaxInput) -> TaxResult:
         after_tax = input_data.gross_income - total_tax
 
         # 5. OBBBA Sweet Spot 분석
-        sweet_spot_headroom = calculate_obbba_sweet_spot(
-            taxable_income, input_data.filing_status
-        )
+        sweet_spot_headroom = calculate_obbba_sweet_spot(taxable_income, input_data.filing_status)
 
         # Roth Conversion 추천: Sweet Spot 여유분까지
-        roth_recommendation = min(
-            sweet_spot_headroom, input_data.traditional_ira_balance
-        )
+        roth_recommendation = min(sweet_spot_headroom, input_data.traditional_ira_balance)
 
         # 6. IRMAA 리스크 체크
         magi = input_data.gross_income + input_data.roth_conversion_amount
@@ -368,9 +360,7 @@ def simulate_roth_ladder(
         one_time_tax = int(ira_balance * 0.22)  # 22% 구간 가정
         savings = one_time_tax - total_paid
 
-        logger.info(
-            f"[RothLadder] 시뮬레이션 완료: {len(results)}년, 절세 ${savings:,}"
-        )
+        logger.info(f"[RothLadder] 시뮬레이션 완료: {len(results)}년, 절세 ${savings:,}")
 
         return {
             "strategy": "Roth Ladder",

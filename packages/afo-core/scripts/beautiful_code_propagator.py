@@ -212,9 +212,7 @@ class BeautifulCodePropagator:
         except Exception as e:
             logger.error(f"❌ 파일 처리 실패 {file_path}: {e}")
 
-    def _apply_pattern(
-        self, content: str, pattern: BeautifulCodePattern
-    ) -> tuple[str, int]:
+    def _apply_pattern(self, content: str, pattern: BeautifulCodePattern) -> tuple[str, int]:
         """
         단일 패턴 적용
 
@@ -238,9 +236,7 @@ class BeautifulCodePropagator:
             logger.warning(f"⚠️ 패턴 적용 실패 {pattern.name}: {e}")
             return content, 0
 
-    def _calculate_trinity_improvement(
-        self, before_metrics: dict, after_metrics: dict
-    ) -> float:
+    def _calculate_trinity_improvement(self, before_metrics: dict, after_metrics: dict) -> float:
         """
         Trinity Score 개선 계산
 
@@ -259,9 +255,7 @@ class BeautifulCodePropagator:
             improvement += 2.0
 
         # 에러 핸들링 개선 → 善 (Goodness) +2
-        if after_metrics.get("error_handling", 0) > before_metrics.get(
-            "error_handling", 0
-        ):
+        if after_metrics.get("error_handling", 0) > before_metrics.get("error_handling", 0):
             improvement += 2.0
 
         # 문서화 개선 → 美 (Beauty) +1
@@ -331,9 +325,7 @@ def main():
         default=True,
         help="시뮬레이션 모드 (기본값: True)",
     )
-    parser.add_argument(
-        "--path", type=str, default=None, help="대상 경로 (기본값: 프로젝트 루트)"
-    )
+    parser.add_argument("--path", type=str, default=None, help="대상 경로 (기본값: 프로젝트 루트)")
     parser.add_argument(
         "--apply", action="store_true", help="실제 적용 모드 (--dry-run=False와 동일)"
     )
@@ -360,9 +352,7 @@ def main():
                 print("💡 실제 적용을 위해 --apply 플래그를 사용하세요.")
         else:
             print("\n📊 개선할 코드 패턴을 찾지 못했습니다.")
-            print(
-                "🎯 코드베이스가 이미 아름답거나, 더 정교한 패턴이 필요할 수 있습니다."
-            )
+            print("🎯 코드베이스가 이미 아름답거나, 더 정교한 패턴이 필요할 수 있습니다.")
 
     except Exception as e:
         logger.error(f"❌ 아름다운 코드 전파 실패: {e}")

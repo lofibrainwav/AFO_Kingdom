@@ -18,9 +18,7 @@ def craft(code_snippet: str, ux_level: int = 1) -> str:
         return code.replace("div", enhanced + code + "</div>")
 
     # Robust Execute: Fallback to original code snippet (No Harm)
-    result = robust_execute(
-        _logic, (code_snippet, ux_level), fallback_value=code_snippet
-    )
+    result = robust_execute(_logic, (code_snippet, ux_level), fallback_value=code_snippet)
     log_action("Zhao Yun 美", "Crafted" if result != code_snippet else "Fallback")
     return str(result)
 

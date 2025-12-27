@@ -62,9 +62,7 @@ class MCPToolTrinityEvaluator:
             serenity_base = 0.90
 
         # 眞 (Truth): 실행 성공 여부, 검증 가능한 결과
-        truth_score = MCPToolTrinityEvaluator._evaluate_truth(
-            execution_result, is_error, tool_name
-        )
+        truth_score = MCPToolTrinityEvaluator._evaluate_truth(execution_result, is_error, tool_name)
         truth_final = min(1.0, truth_base * 0.7 + truth_score * 0.3)
 
         # 善 (Goodness): 안전성, 리스크 없음
@@ -74,9 +72,7 @@ class MCPToolTrinityEvaluator:
         goodness_final = min(1.0, goodness_base * 0.7 + goodness_score * 0.3)
 
         # 美 (Beauty): 결과의 구조화, 명확성
-        beauty_score = MCPToolTrinityEvaluator._evaluate_beauty(
-            execution_result, tool_name
-        )
+        beauty_score = MCPToolTrinityEvaluator._evaluate_beauty(execution_result, tool_name)
         beauty_final = min(1.0, beauty_base * 0.7 + beauty_score * 0.3)
 
         # 孝 (Serenity): 마찰 없음, 자동화 가능
@@ -86,9 +82,7 @@ class MCPToolTrinityEvaluator:
         serenity_final = min(1.0, serenity_base * 0.7 + serenity_score * 0.3)
 
         # 永 (Eternity): 영속성, 재사용 가능성
-        eternity_score = MCPToolTrinityEvaluator._evaluate_eternity(
-            execution_result, tool_name
-        )
+        eternity_score = MCPToolTrinityEvaluator._evaluate_eternity(execution_result, tool_name)
         eternity_final = min(1.0, eternity_score)
 
         # Trinity Metrics 계산 (SSOT 가중치 적용)

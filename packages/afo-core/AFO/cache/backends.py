@@ -88,9 +88,7 @@ class RedisBackend:
             try:
                 import redis.asyncio as redis
 
-                self.redis = redis.from_url(
-                    self._url, encoding="utf-8", decode_responses=True
-                )
+                self.redis = redis.from_url(self._url, encoding="utf-8", decode_responses=True)
                 await self.redis.ping()
                 self._connected = True
                 logger.info(f"✅ L2 Cache Connected: {self._url}")
@@ -122,9 +120,7 @@ class RedisBackend:
 
         try:
             # Serialize
-            val_str = (
-                json.dumps(value) if isinstance(value, (dict, list)) else str(value)
-            )
+            val_str = json.dumps(value) if isinstance(value, (dict, list)) else str(value)
 
             if ttl:
                 await self.redis.setex(key, ttl, val_str)

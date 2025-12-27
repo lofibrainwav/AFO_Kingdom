@@ -24,18 +24,14 @@ except ImportError:
 logger = logging.getLogger(__name__)
 
 
-async def background_revalidate(
-    key: str, fetch_func: Callable[[], Any], ttl: int, swr_grace: int
-):
+async def background_revalidate(key: str, fetch_func: Callable[[], Any], ttl: int, swr_grace: int):
     """
     백그라운드 재검증 (SWR 핵심)
     Executes the fetch function and updates the cache.
     """
     try:
         logger.info(f"[SWR] Background revalidating key: {key}")
-        data = (
-            fetch_func()
-        )  # This might be async in real app, keeping simple for pattern
+        data = fetch_func()  # This might be async in real app, keeping simple for pattern
         if asyncio.iscoroutine(data):
             data = await data
 
@@ -49,9 +45,7 @@ async def background_revalidate(
         logger.error(f"[SWR] Background revalidation failed for {key}: {e}")
 
 
-def get_with_swr(
-    key: str, fetch_func: Callable[[], Any], max_age: int = 60, swr: int = 300
-) -> Any:
+def get_with_swr(key: str, fetch_func: Callable[[], Any], max_age: int = 60, swr: int = 300) -> Any:
     """
     Stale-While-Revalidate: stale 허용 + 백그라운드 갱신 (PDF 캐싱 최적화)
 
@@ -84,15 +78,11 @@ def get_with_swr(
 
             # Case 2: Stale Hit (within grace period)
             if age < max_age + swr:
-                logger.info(
-                    f"[SWR] Stale Hit: {key} (Age: {age:.1f}s) - Triggering Revalidation"
-                )
+                logger.info(f"[SWR] Stale Hit: {key} (Age: {age:.1f}s) - Triggering Revalidation")
                 # Trigger background revalidation (assuming running in async loop context)
                 try:
                     loop = asyncio.get_running_loop()
-                    loop.create_task(
-                        background_revalidate(key, fetch_func, max_age, swr)
-                    )
+                    loop.create_task(background_revalidate(key, fetch_func, max_age, swr))
                 except RuntimeError:
                     # Fallback for sync context or no loop (simple thread usage or skip)
                     pass

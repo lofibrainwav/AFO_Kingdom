@@ -180,9 +180,7 @@ class ActionValidator:
         # 최종 판정
         is_allowed = safety_level != SafetyLevel.BLOCK
         block_reason = (
-            None
-            if is_allowed
-            else f"Trinity Gate: {trinity_score}/90, Risk: {risk_score}/10"
+            None if is_allowed else f"Trinity Gate: {trinity_score}/90, Risk: {risk_score}/10"
         )
 
         return ValidatedAction(
@@ -254,9 +252,7 @@ class ActionValidator:
 
         return SafetyLevel.SAFE
 
-    def _calculate_action_risk(
-        self, action: dict[str, Any], context: dict[str, Any]
-    ) -> int:
+    def _calculate_action_risk(self, action: dict[str, Any], context: dict[str, Any]) -> int:
         """액션별 리스크 점수 계산 (0-100)"""
         risk_score = 0
 

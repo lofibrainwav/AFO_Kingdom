@@ -42,9 +42,7 @@ def run_basic_dpo(
     # 2. Load Preference Dataset
     # Expected format: {"prompt": "...", "chosen": "...", "rejected": "..."}
     if not os.path.exists(data_path):
-        logger.warning(
-            f"⚠️ Data file {data_path} not found. Using dummy data for DRY_RUN."
-        )
+        logger.warning(f"⚠️ Data file {data_path} not found. Using dummy data for DRY_RUN.")
         # Create dummy data creation logic or fail gracefully
         return
 

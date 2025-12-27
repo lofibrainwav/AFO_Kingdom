@@ -47,9 +47,7 @@ class DecisionPattern:
     def get_confidence_score(self) -> float:
         """Calculate overall confidence score"""
         success_rate = self.get_success_rate()
-        recency_factor = min(
-            1.0, (time.time() - self.created_at) / 86400
-        )  # 24시간 정규화
+        recency_factor = min(1.0, (time.time() - self.created_at) / 86400)  # 24시간 정규화
         return (success_rate * 0.7) + (self.confidence * 0.2) + (recency_factor * 0.1)
 
     def to_dict(self) -> dict[str, Any]:
@@ -81,8 +79,7 @@ class ABTestExperiment:
         self.variants = variants
         self.target_metric = target_metric
         self.variant_stats: dict[str, dict[str, Any]] = {
-            variant: {"trials": 0, "successes": 0, target_metric: 0.0}
-            for variant in variants
+            variant: {"trials": 0, "successes": 0, target_metric: 0.0} for variant in variants
         }
         self.start_time = time.time()
         self.is_active = True
@@ -192,11 +189,7 @@ class LearningEngine:
                 situation_hash, decision_type, confidence
             )
         else:
-            success = (
-                outcome
-                if outcome is not None
-                else (decision.get("confidence", 0.5) > 0.7)
-            )
+            success = outcome if outcome is not None else (decision.get("confidence", 0.5) > 0.7)
             self.decision_patterns[pattern_key].update_success(success)
 
         # Update learning cache
@@ -224,9 +217,7 @@ class LearningEngine:
             # Adjust confidence based on learning
             learning_confidence = best_pattern.get_confidence_score()
             base_confidence = base_decision.get("confidence", 0.5)
-            optimized_decision["confidence"] = min(
-                1.0, (base_confidence + learning_confidence) / 2
-            )
+            optimized_decision["confidence"] = min(1.0, (base_confidence + learning_confidence) / 2)
             optimized_decision["learning_boost"] = learning_confidence > base_confidence
             optimized_decision["pattern_used"] = best_pattern.decision_type
 
@@ -273,9 +264,7 @@ class LearningEngine:
         # Check if experiment should be stopped
         if experiment.should_stop_experiment():
             best_variant = experiment.get_best_variant()
-            logger.info(
-                f"🎯 A/B test {experiment_id} completed. Winner: {best_variant}"
-            )
+            logger.info(f"🎯 A/B test {experiment_id} completed. Winner: {best_variant}")
             experiment.is_active = False
 
             # Apply winning variant as default
@@ -290,8 +279,7 @@ class LearningEngine:
             1 for p in self.decision_patterns.values() if p.get_success_rate() > 0.7
         )
         avg_success_rate = (
-            sum(p.get_success_rate() for p in self.decision_patterns.values())
-            / total_patterns
+            sum(p.get_success_rate() for p in self.decision_patterns.values()) / total_patterns
             if total_patterns > 0
             else 0.0
         )
@@ -307,18 +295,14 @@ class LearningEngine:
         effectiveness_rates = {}
         for decision_type, stats in decision_effectiveness.items():
             if stats["total"] > 0:
-                effectiveness_rates[decision_type] = (
-                    stats["successful"] / stats["total"]
-                )
+                effectiveness_rates[decision_type] = stats["successful"] / stats["total"]
 
         return {
             "total_patterns": total_patterns,
             "successful_patterns": successful_patterns,
             "avg_success_rate": round(avg_success_rate, 3),
             "decision_effectiveness": dict(effectiveness_rates),
-            "active_experiments": len(
-                [e for e in self.active_experiments.values() if e.is_active]
-            ),
+            "active_experiments": len([e for e in self.active_experiments.values() if e.is_active]),
             "learning_maturity": self._assess_learning_maturity(),
         }
 
@@ -406,9 +390,7 @@ class LearningEngine:
 
             if experiment.should_stop_experiment():
                 best_variant = experiment.get_best_variant()
-                logger.info(
-                    f"🎯 A/B test {exp_id} auto-completed. Winner: {best_variant}"
-                )
+                logger.info(f"🎯 A/B test {exp_id} auto-completed. Winner: {best_variant}")
                 experiment.is_active = False
                 completed_experiments.append((exp_id, best_variant))
 
@@ -425,9 +407,7 @@ class LearningEngine:
 
         # Cache the winning configuration
         config_key = f"{self.learning_cache_key}:experiment:{experiment_id}:winner"
-        await cache_manager.set(
-            config_key, winning_variant, ttl=86400 * 30
-        )  # 30 days persistence
+        await cache_manager.set(config_key, winning_variant, ttl=86400 * 30)  # 30 days persistence
 
     def _assess_learning_maturity(self) -> str:
         """Assess the maturity of the learning engine"""
