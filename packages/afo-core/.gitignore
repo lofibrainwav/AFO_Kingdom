@@ -71,3 +71,4 @@ dmypy.json
 
 # Debug Scripts
 scripts/debug/
+artifacts/
