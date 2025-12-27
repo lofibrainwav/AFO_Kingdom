@@ -32,7 +32,7 @@ try:
     OPENAI_AVAILABLE = True
 except ImportError:
     OPENAI_AVAILABLE = False
-    AsyncOpenAI = None
+    AsyncOpenAI = None  # type: ignore[assignment,misc]
 
 try:
     from playwright.async_api import async_playwright
@@ -40,7 +40,7 @@ try:
     PLAYWRIGHT_AVAILABLE = True
 except ImportError:
     PLAYWRIGHT_AVAILABLE = False
-    async_playwright = None
+    async_playwright = None  # type: ignore[assignment]
 
 try:
     import redis
@@ -48,7 +48,7 @@ try:
     REDIS_AVAILABLE = True
 except ImportError:
     REDIS_AVAILABLE = False
-    redis = None
+    redis = None  # type: ignore[assignment]
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -300,7 +300,8 @@ class GrokAPIClient:
             response_format={"type": "json_object"},
         )
 
-        return json.loads(response.choices[0].message.content)
+        content = response.choices[0].message.content or "{}"
+        return dict(json.loads(content))
 
 
 class MockGrokClient:
@@ -517,10 +518,10 @@ class GrokEngine:
             text = await page.content()
 
         # Parse code blocks
-        if "```tsx" in text:
-            return text.split("```tsx")[1].split("```")[0].strip()
-        elif "```" in text:
-            return text.split("```")[1].split("```")[0].strip()
+        if "```tsx" in str(text):
+            return str(text.split("```tsx")[1].split("```")[0].strip())
+        elif "```" in str(text):
+            return str(text.split("```")[1].split("```")[0].strip())
         else:
             logger.warning("No code block found in response")
             return "// Error: No code block generated"
