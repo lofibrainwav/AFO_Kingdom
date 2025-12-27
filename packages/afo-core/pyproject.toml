@@ -54,6 +54,7 @@ select = [
     "TCH", # flake8-type-checking
     "PTH", # flake8-use-pathlib
     "RUF", # Ruff-specific rules
+    "S",   # flake8-bandit (Security)
 ]
 ignore = [
     "E501",  # line too long (handled by formatter)
@@ -66,6 +67,9 @@ ignore = [
     "RUF003", # ambiguous unicode
     "PTH",    # allow os.path for now (stability)
 ]
+
+[tool.bandit]
+exclude_dirs = ["tests", "artifacts", ".venv", "venv", "legacy", "node_modules", ".ruff_cache", ".mypy_cache", "scripts/admin", "scripts/grok_*.py"]
 
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401"]
