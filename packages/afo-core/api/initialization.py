@@ -7,7 +7,7 @@ Handles system component initialization during FastAPI lifespan startup.
 
 import asyncio
 import logging
-from typing import Any
+from typing import Any, cast
 
 logger = logging.getLogger(__name__)
 
@@ -234,7 +234,7 @@ async def _initialize_strategy_engine() -> None:
             from strategy_engine import workflow as _wf
 
             if _wf and _mc:
-                strategy_app_runnable = _wf.compile(checkpointer=_mc)
+                strategy_app_runnable = cast("Any", _wf).compile(checkpointer=_mc)
                 print("[지휘소 v6】 '두뇌' (Mock) 가동 준비 완료.")
             else:
                 strategy_app_runnable = None
