@@ -3,6 +3,14 @@ approved_skills:
   - skill_003_filesystem_read
   - skill_005_memory_kv
   - skill_041_royal_library
+  # MockSkillRegistry skills (for V2 integration testing)
+  - truth_evaluate
+  - arch_audit
+  - code_refactor
+  - goodness_review
+  - beauty_optimize
+  - serenity_deploy
+  - eternity_log
 
 blocked_skills:
   - skill_999_experimental
