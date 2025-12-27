@@ -119,7 +119,7 @@ export function TrinityEvidenceWidget() {
     );
   }
 
-  const calculation = evidence.evidence.calculation || evidence.evidence.score;
+  const calculation = evidence.evidence.calculation;
 
   if (!calculation) {
     return (
@@ -182,7 +182,7 @@ export function TrinityEvidenceWidget() {
           </div>
           <div className="flex justify-between">
             <span>孝 Serenity</span>
-            <span className="font-medium">{(calculation.serenity ?? calculation.filial ?? 0).toFixed(3)}</span>
+            <span className="font-medium">{(calculation.serenity ?? 0).toFixed(3)}</span>
           </div>
           <div className="flex justify-between">
             <span>永 Eternity</span>

@@ -122,4 +122,3 @@ export default function SystemStatusCard() {
     </div>
   );
 }
-EOF && echo "   ✅ SWR 기반 상태 카드 컴포넌트 생성"
