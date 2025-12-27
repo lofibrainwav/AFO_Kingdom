@@ -9,7 +9,7 @@ import asyncio
 import contextlib
 import logging
 import time
-from typing import Any
+from typing import Any, cast
 
 import psutil
 from pydantic import BaseModel, Field
@@ -209,7 +209,7 @@ class SystemMonitoringDashboard:
                 self._cleanup_old_data()
 
                 # 대기
-                await asyncio.sleep(MONITORING_CONFIG["update_interval"])
+                await asyncio.sleep(cast(float, MONITORING_CONFIG["update_interval"]))
 
             except Exception as e:
                 logger.error(f"모니터링 루프 에러: {e}")
@@ -515,7 +515,7 @@ class SystemMonitoringDashboard:
         """
         try:
             current_time = time.time()
-            retention_time = MONITORING_CONFIG["retention_period"]
+            retention_time = cast(float, MONITORING_CONFIG["retention_period"])
 
             # 메트릭 정리
             # 타입 명시: timestamp는 float

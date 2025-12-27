@@ -15,25 +15,25 @@ from redis.commands.search.query import Query as RedisQuery
 
 # 眞 (Truth): Neo4j Integration (GraphRAG)
 try:
-    from neo4j import GraphDatabase  # type: ignore[import,assignment]
+    from neo4j import GraphDatabase
 except ImportError:
-    GraphDatabase = None  # type: ignore[assignment,misc]
+    GraphDatabase = None  # type: ignore[assignment, misc]
 
 # Qdrant Integration
 try:
-    from qdrant_client import QdrantClient  # type: ignore[import,assignment]
-    from qdrant_client.http import models as qmodels  # type: ignore[import,assignment]
+    from qdrant_client import QdrantClient
+    from qdrant_client.http import models as qmodels
 except ImportError:
-    QdrantClient = None  # type: ignore[assignment,misc]
-    qmodels = None  # type: ignore[assignment,misc]
+    QdrantClient = None  # type: ignore[assignment, misc]
+    qmodels = None  # type: ignore[assignment]
 
 # Optional imports handling
 try:
-    from pgvector.psycopg2 import register_vector  # type: ignore[import,assignment]
-    from psycopg2.extras import RealDictCursor  # type: ignore[import,assignment]
+    from pgvector.psycopg2 import register_vector
+    from psycopg2.extras import RealDictCursor
 except ImportError:
-    RealDictCursor = None  # type: ignore[assignment,misc]
-    register_vector = None  # type: ignore[assignment,misc]
+    RealDictCursor = None
+    register_vector = None
 
 # Suppress Pydantic warnings locally
 warnings.filterwarnings("ignore", category=UserWarning, module="pydantic")

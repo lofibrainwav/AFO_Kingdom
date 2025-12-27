@@ -56,13 +56,13 @@ def get_context7_instance() -> "Context7MCP":
             logger.debug("🔄 Context7MCP 인스턴스 초기화 시작")
 
             # 환경변수 기반 경로 우선 사용
-            trinity_os_path = os.environ.get("AFO_TRINITY_OS_PATH")
+            trinity_os_path: str | None = os.environ.get("AFO_TRINITY_OS_PATH")
             if not trinity_os_path:
                 # 폴백: 동적 계산
-                trinity_os_path_str = get_trinity_os_path(
+                computed_path = get_trinity_os_path(
                     Path(__file__).parent.parent.parent / "api" / "routes" / "comprehensive_health.py"
                 )
-                trinity_os_path = trinity_os_path_str
+                trinity_os_path = str(computed_path) if computed_path else None
 
             if trinity_os_path and os.path.exists(str(trinity_os_path)):
                 add_to_sys_path(Path(trinity_os_path))
