@@ -96,7 +96,7 @@ class SerenityCreationLoop:
 
             # Step 3: Capture Screenshot & Verify (眞 & 美)
             screenshot_path = None
-            verification_data = {}
+            verification_data: dict[str, Any] = {}
             if self.bridge:
                 try:  # type: ignore[unreachable]
                     screenshot_path = os.path.join(self.sandbox_dir, f"screenshot_v{iteration}.png")

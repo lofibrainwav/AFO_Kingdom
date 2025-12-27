@@ -190,9 +190,9 @@ async def _initialize_yeongdeok() -> None:
         print("[영덕] 영덕 완전체 준비 완료 - 뇌/눈/귀/팔 모두 연결됨")
     except ImportError:
         try:
-            from memory_system.yeongdeok_complete import YeongdeokComplete as _YC
+            from memory_system.yeongdeok_complete import YeongdeokComplete as _YC_FB
 
-            yeongdeok = _YC(
+            yeongdeok = _YC_FB(
                 n8n_url="",
                 n8n_api_key="",
                 enable_llm_brain=False,
