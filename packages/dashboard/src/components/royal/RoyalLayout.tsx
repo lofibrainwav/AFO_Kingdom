@@ -15,6 +15,8 @@ import TrinityGlow from "./TrinityGlow";
 import { GitWidget } from "./widgets/GitWidget";
 import RoyalFinanceWidget from "./widgets/RoyalFinanceWidget";
 import { SystemStatusWidget } from "./widgets/SystemStatusWidget";
+import { RoyalCommandHierarchyCard } from "../../widgets/royal/RoyalCommandHierarchyCard";
+import { FieldManualLawCard } from "../../widgets/royal/FieldManualLawCard";
 
 import { ROYAL_CONSTANTS } from "../../config/royal_constants";
 import { TrinityEvidenceWidget } from "../genui/TrinityEvidenceWidget";
@@ -126,6 +128,18 @@ export default function RoyalLayout() {
             <div className="flex-1 bg-white/10 backdrop-blur-md rounded-3xl border border-white/20 p-6 shadow-inner overflow-hidden">
                <RoyalFinanceWidget />
             </div>
+          </div>
+        </section>
+
+        {/* 4.5 Royal Governance (Command & Law) */}
+        <section className="space-y-8">
+          <div className="flex items-center gap-4 mb-6">
+            <h2 className="text-xl font-bold text-slate-600">👑 왕실 통치 (Royal Governance)</h2>
+            <div className="h-[1px] flex-1 bg-slate-300" />
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <RoyalCommandHierarchyCard />
+            <FieldManualLawCard />
           </div>
         </section>
 
