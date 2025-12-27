@@ -15,7 +15,7 @@ from fastapi import APIRouter, HTTPException
 from .models import API_PROVIDERS
 
 # Create router
-billing_router = APIRouter(prefix="/api/wallet/billing", tags=["Wallet Billing"])
+billing_router = APIRouter(prefix="/billing", tags=["Wallet Billing"])
 
 
 @billing_router.get("/usage/{api_id}")

@@ -5,21 +5,14 @@ from unittest.mock import MagicMock, mock_open, patch
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
+# Import wallet router
+from AFO.api.routes.wallet import wallet_router
 from AFO.api.routes.wallet.billing import billing_router
 from AFO.api.routes.wallet.browser_bridge import router as browser_router
 
-# Import routers
-from AFO.api.routes.wallet.keys import keys_router
-from AFO.api.routes.wallet.session import session_router
-from AFO.api.routes.wallet.setup import setup_router
-
 # Setup App
 app = FastAPI()
-app.include_router(keys_router)  # /keys
-app.include_router(billing_router)  # /api/wallet/billing
-app.include_router(browser_router)  # /browser
-app.include_router(session_router)  # /api/wallet/session
-app.include_router(setup_router)  # /api/wallet/setup
+app.include_router(wallet_router)
 
 client = TestClient(app)
 

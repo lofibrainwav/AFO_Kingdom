@@ -141,7 +141,7 @@ export default function SerenityCanvas() {
                      </pre>
                 ) : (
                     <div className="w-full h-full flex items-center justify-center text-white/20 text-sm font-mono">
-                        // Code will appear here
+                        Code will appear here
                     </div>
                 )}
              </div>
