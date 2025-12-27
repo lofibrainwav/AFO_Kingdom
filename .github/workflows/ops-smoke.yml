@@ -1,0 +1,97 @@
+name: Operations Smoke Test
+
+on:
+  push:
+    branches: [ main, feature/** ]
+    paths:
+      - 'packages/afo-core/**'
+      - 'packages/dashboard/**'
+      - 'docker-compose.yml'
+      - 'compose.yml'
+      - '.env.afo'
+  pull_request:
+    branches: [ main, feature/** ]
+    paths:
+      - 'packages/afo-core/**'
+      - 'packages/dashboard/**'
+      - 'docker-compose.yml'
+      - 'compose.yml'
+      - '.env.afo'
+
+jobs:
+  smoke-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Docker
+      run: |
+        # Start Docker daemon
+        sudo systemctl start docker
+
+        # Wait for Docker to be ready
+        timeout 60 bash -c 'until docker info >/dev/null 2>&1; do sleep 1; done'
+
+    - name: Create .env.afo for testing
+      run: |
+        echo "AFO_INTERNAL_SECRET=test_secret_2025" > .env.afo
+        chmod 600 .env.afo
+
+    - name: Start services with Docker Compose
+      run: |
+        # Try docker-compose first, then docker compose
+        if command -v docker-compose >/dev/null 2>&1; then
+          COMPOSE_CMD="docker-compose"
+        else
+          COMPOSE_CMD="docker compose"
+        fi
+
+        # Start services in background
+        $COMPOSE_CMD up -d --build
+
+        # Wait for services to be ready (max 120 seconds)
+        echo "Waiting for services to start..."
+        for i in {1..120}; do
+          if curl -s http://localhost:8010/api/health >/dev/null 2>&1 && \
+             curl -s http://localhost:8001/health >/dev/null 2>&1 && \
+             curl -s http://localhost:3000/ >/dev/null 2>&1; then
+            echo "Services are ready after ${i}s"
+            break
+          fi
+          if [[ $i -eq 120 ]]; then
+            echo "Services failed to start within 120 seconds"
+            $COMPOSE_CMD logs
+            exit 1
+          fi
+          sleep 1
+        done
+
+    - name: Run Operations Smoke Test
+      env:
+        AFO_INTERNAL_SECRET: test_secret_2025
+      run: |
+        # Make script executable and run
+        chmod +x scripts/ops_smoke.sh
+        ./scripts/ops_smoke.sh
+
+    - name: Show service logs on failure
+      if: failure()
+      run: |
+        echo "=== Service Logs ==="
+        if command -v docker-compose >/dev/null 2>&1; then
+          docker-compose logs --tail=50
+        else
+          docker compose logs --tail=50
+        fi
+
+    - name: Cleanup
+      if: always()
+      run: |
+        echo "=== Cleanup ==="
+        if command -v docker-compose >/dev/null 2>&1; then
+          docker-compose down -v --remove-orphans || true
+        else
+          docker compose down -v --remove-orphans || true
+        fi
