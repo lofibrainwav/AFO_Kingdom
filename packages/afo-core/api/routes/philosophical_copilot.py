@@ -8,12 +8,11 @@
 
 import asyncio
 import logging
+import os
 from datetime import datetime, timedelta
 from typing import Any, cast
 
-import os
-from fastapi import Header, HTTPException, status
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, Header, HTTPException, status
 from pydantic import BaseModel
 
 from AFO.config.settings import AFOSettings as Settings
