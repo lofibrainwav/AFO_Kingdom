@@ -142,10 +142,10 @@ async def query_knowledge_base(request: RAGRequest):
     results: list[dict[str, Any]] = []
     if tasks:
         retrieval_results = await asyncio.gather(*tasks, return_exceptions=True)
-        for res in retrieval_results:
-            if isinstance(res, list) and all(isinstance(item, dict) for item in res):
-                results.extend(res)
-            elif isinstance(res, Exception):
+        for r_chunk in retrieval_results:
+            if isinstance(r_chunk, list) and all(isinstance(item, dict) for item in r_chunk):
+                results.extend(r_chunk)
+            elif isinstance(r_chunk, Exception):
                 # Log exception but continue processing
                 pass
 
@@ -158,8 +158,8 @@ async def query_knowledge_base(request: RAGRequest):
         # Simple extraction: split query by space for keywords (MVP)
         entities = [w for w in request.query.split() if len(w) > 4]
         # Or use extracted entities from chunks payload if available
-        for res in results:  # type: ignore[assignment]
-            if "metadata" in res and "content" in res["metadata"]:
+        for res in results:
+            if isinstance(res, dict) and "metadata" in res and "content" in res["metadata"]:
                 # Extract capitalized words as heuristic
                 words = [w for w in res["metadata"]["content"].split() if w[0].isupper()]
                 entities.extend(words[:3])

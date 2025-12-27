@@ -13,7 +13,8 @@ Version: 2.0.0 (Beautiful Code Edition)
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING
+from collections.abc import Sequence
+from typing import TYPE_CHECKING, Any
 
 from AFO.api.compat import (
     aicpa_router,
@@ -317,7 +318,7 @@ class AFORouterManager:
             self._safe_register_router(compat_router, prefix="/api", tags=["Strangler Fig"])
 
     def _safe_register_router(
-        self, router: object | None, prefix: str = "", tags: list[str] | None = None
+        self, router: Any | None, prefix: str = "", tags: Sequence[str] | None = None
     ) -> None:
         """Safely register a router with error handling.
 
