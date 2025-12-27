@@ -9,12 +9,11 @@ from __future__ import annotations
 
 from fastapi import APIRouter
 
-from .browser_bridge import router as browser_bridge_router
-
 from .billing import billing_router
+from .browser_bridge import router as browser_bridge_router
+from .keys import keys_router
 from .session import session_router
 from .setup import setup_router
-from .keys import keys_router
 
 wallet_router = APIRouter(prefix="/api/wallet", tags=["Wallet"])
 
