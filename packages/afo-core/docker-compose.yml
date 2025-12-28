@@ -127,7 +127,6 @@ services:
       - SERVICE_NAME=api-gateway
     depends_on:
       - rag-service
-      - memory-service
       - input-service
       - monitoring-service
     healthcheck:
@@ -179,29 +178,6 @@ services:
       - ./afo_soul_engine:/app/afo_soul_engine
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8002/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
-  memory-service:
-    build:
-      context: ./services/memory-service
-      dockerfile: Dockerfile
-    container_name: afo-memory-service
-    ports:
-      - "8003:8003"
-    environment:
-      - SERVICE_NAME=memory-service
-      - POSTGRES_HOST=postgres
-      - POSTGRES_PORT=5432
-      - POSTGRES_USER=afo
-      - POSTGRES_PASSWORD=your-secure-password-here
-      - POSTGRES_DB=afo_memory
-    depends_on:
-      postgres:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8003/health"]
       interval: 30s
       timeout: 10s
       retries: 3
