@@ -81,7 +81,13 @@ jobs:
 
     - name: Warm up /health (register + set trinity metric)
       run: |
-        curl -sf ${{ env.AFO_BASE_URL }}/health >/dev/null
+        set -euo pipefail
+        echo "[info] warming up: ${{ env.AFO_BASE_URL }}/health"
+        curl -sf \
+          --retry 30 \
+          --retry-connrefused \
+          --retry-delay 1 \
+          "${{ env.AFO_BASE_URL }}/health" >/dev/null
 
     - name: Trinity Metrics Consistency Gate
       run: |
@@ -94,6 +100,12 @@ jobs:
         # 메트릭이 아직 /metrics에 안 뜨는 환경이면 0 유지(경고 후 PASS 가능)
         # /metrics 노출이 보장되면 1로 올려서 "없으면 FAIL"로 강제
         AFO_REQUIRE_TRINITY_METRIC: "0"
+
+    - name: Debug dump /metrics (only if failed)
+      if: ${{ failure() }}
+      run: |
+        echo "[debug] /metrics head (failure debug):"
+        curl -sf "${{ env.AFO_BASE_URL }}/metrics" | head -n 120 || echo "[error] curl failed"
     - name: Show service logs on failure
       if: failure()
       run: |
