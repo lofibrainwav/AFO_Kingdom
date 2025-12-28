@@ -37,9 +37,15 @@ def __getattr__(name):
 
         return api_server
     elif name == "chancellor_graph":
-        import importlib
+        # PH23: V2 Runner first, V1 deprecated fallback
+        try:
+            from api.chancellor_v2.graph import runner
 
-        return importlib.import_module("AFO.chancellor_graph")
+            return runner
+        except ImportError:
+            import importlib
+
+            return importlib.import_module("AFO.chancellor_graph")
     elif name == "kms":
         import kms
 
