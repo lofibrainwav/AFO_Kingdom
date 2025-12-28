@@ -30,6 +30,37 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
+    - name: Locate Compose file
+      id: compose
+      shell: bash
+      run: |
+        set -euo pipefail
+        for f in \
+          docker-compose.yml docker-compose.yaml compose.yml compose.yaml \
+          packages/afo-core/docker-compose.yml packages/afo-core/docker-compose.yaml \
+          packages/afo-core/compose.yml packages/afo-core/compose.yaml
+        do
+          if [ -f "$f" ]; then
+            echo "file=$f" >> "$GITHUB_OUTPUT"
+            echo "[info] compose file: $f"
+            exit 0
+          fi
+        done
+        echo "::error::compose file not found"
+        exit 1
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Bake (GHA cache on, mode=max)
+      uses: docker/bake-action@v6
+      with:
+        files: ${{ steps.compose.outputs.file }}
+        load: true
+        set: |
+          *.cache-from=type=gha
+          *.cache-to=type=gha,mode=max
+
     - name: Set up Docker
       run: |
         # Start Docker daemon
@@ -58,13 +89,9 @@ jobs:
         docker system prune -f
         rm -rf /tmp/* || true
 
-        # Start services in background (build without cache to save space)
-        if [[ "$COMPOSE_CMD" == "docker-compose" ]]; then
-          $COMPOSE_CMD -f packages/afo-core/docker-compose.yml up -d --build --no-cache
-        else
-          $COMPOSE_CMD -f packages/afo-core/docker-compose.yml build --no-cache
-          $COMPOSE_CMD -f packages/afo-core/docker-compose.yml up -d
-        fi
+        # Start services in background (Bake already built with cache, just run)
+        COMPOSE_FILE="${{ steps.compose.outputs.file }}"
+        $COMPOSE_CMD -f "$COMPOSE_FILE" up -d --no-build
 
         # Wait for services to be ready (max 120 seconds)
         echo "Waiting for services to start..."
@@ -77,7 +104,7 @@ jobs:
           fi
           if [[ $i -eq 120 ]]; then
             echo "Services failed to start within 120 seconds"
-            $COMPOSE_CMD -f packages/afo-core/docker-compose.yml logs
+            $COMPOSE_CMD -f "$COMPOSE_FILE" logs
             exit 1
           fi
           sleep 1
@@ -131,15 +158,15 @@ jobs:
         echo "[debug] docker-compose ps:"
         docker compose -f packages/afo-core/docker-compose.yml ps || true
         echo "[debug] docker-compose logs (tail):"
-        docker compose -f packages/afo-core/docker-compose.yml logs --tail=300 || true
+        docker compose -f "${{ steps.compose.outputs.file }}" logs --tail=300 || true
     - name: Show service logs on failure
       if: failure()
       run: |
         echo "=== Service Logs ==="
         if command -v docker-compose >/dev/null 2>&1; then
-          docker-compose -f packages/afo-core/docker-compose.yml logs --tail=50
+          docker-compose -f "${{ steps.compose.outputs.file }}" logs --tail=50
         else
-          docker compose -f packages/afo-core/docker-compose.yml logs --tail=50
+          docker compose -f "${{ steps.compose.outputs.file }}" logs --tail=50
         fi
 
     - name: Cleanup
@@ -147,7 +174,7 @@ jobs:
       run: |
         echo "=== Cleanup ==="
         if command -v docker-compose >/dev/null 2>&1; then
-          docker-compose -f packages/afo-core/docker-compose.yml down -v --remove-orphans || true
+          docker-compose -f "${{ steps.compose.outputs.file }}" down -v --remove-orphans || true
         else
-          docker compose -f packages/afo-core/docker-compose.yml down -v --remove-orphans || true
+          docker compose -f "${{ steps.compose.outputs.file }}" down -v --remove-orphans || true
         fi
