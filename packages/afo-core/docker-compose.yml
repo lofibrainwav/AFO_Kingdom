@@ -162,26 +162,6 @@ services:
       timeout: 10s
       retries: 3
 
-  llm-service:
-    build:
-      context: ./services/llm-service
-      dockerfile: Dockerfile
-    container_name: afo-llm-service
-    ports:
-      - "8002:8002"
-    environment:
-      - SERVICE_NAME=llm-service
-      - OLLAMA_BASE_URL=http://host.docker.internal:11434
-    depends_on:
-      - rag-service
-    volumes:
-      - ./afo_soul_engine:/app/afo_soul_engine
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8002/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
   input-service:
     build:
       context: .
