@@ -76,6 +76,19 @@ jobs:
         chmod +x scripts/ops_smoke.sh
         ./scripts/ops_smoke.sh
 
+
+    - name: Trinity Metrics Consistency Gate
+      run: |
+        echo "🏰 Trinity Metrics Consistency 검증"
+        chmod +x scripts/ci/check_trinity_metrics.sh
+        ./scripts/ci/check_trinity_metrics.sh
+      env:
+        AFO_BASE_URL: http://localhost:8010
+        AFO_TRINITY_METRIC_NAME: afo_trinity_score_total
+        TRINITY_EPSILON: "0.0001"
+        # 메트릭이 아직 /metrics에 안 뜨는 환경이면 0 유지(경고 후 PASS 가능)
+        # /metrics 노출이 보장되면 1로 올려서 "없으면 FAIL"로 강제
+        AFO_REQUIRE_TRINITY_METRIC: "0"
     - name: Show service logs on failure
       if: failure()
       run: |
