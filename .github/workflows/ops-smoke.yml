@@ -64,9 +64,9 @@ jobs:
             break
           fi
           if [[ $i -eq 120 ]]; then
-    echo "Services failed to start within 120 seconds"
-    $COMPOSE_CMD -f packages/afo-core/docker-compose.yml logs
-    exit 1
+            echo "Services failed to start within 120 seconds"
+            $COMPOSE_CMD -f packages/afo-core/docker-compose.yml logs
+            exit 1
           fi
           sleep 1
         done
@@ -123,19 +123,19 @@ jobs:
     - name: Show service logs on failure
       if: failure()
       run: |
-echo "=== Service Logs ==="
-if command -v docker-compose >/dev/null 2>&1; then
-  docker-compose -f packages/afo-core/docker-compose.yml logs --tail=50
-else
-  docker compose -f packages/afo-core/docker-compose.yml logs --tail=50
-fi
+        echo "=== Service Logs ==="
+        if command -v docker-compose >/dev/null 2>&1; then
+          docker-compose -f packages/afo-core/docker-compose.yml logs --tail=50
+        else
+          docker compose -f packages/afo-core/docker-compose.yml logs --tail=50
+        fi
 
     - name: Cleanup
       if: always()
       run: |
-echo "=== Cleanup ==="
-if command -v docker-compose >/dev/null 2>&1; then
-  docker-compose -f packages/afo-core/docker-compose.yml down -v --remove-orphans || true
-else
-  docker compose -f packages/afo-core/docker-compose.yml down -v --remove-orphans || true
-fi
+        echo "=== Cleanup ==="
+        if command -v docker-compose >/dev/null 2>&1; then
+          docker-compose -f packages/afo-core/docker-compose.yml down -v --remove-orphans || true
+        else
+          docker compose -f packages/afo-core/docker-compose.yml down -v --remove-orphans || true
+        fi
