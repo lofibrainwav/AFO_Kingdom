@@ -225,6 +225,8 @@ services:
       - QDRANT_HOST=afo-qdrant
       - QDRANT_PORT=6333
       - OLLAMA_HOST=afo-ollama
+      - WALLET_SERVICE_URL=http://afo-wallet-service:8011
+      - VAULT_ADDR=http://afo-vault:8200
       - OLLAMA_PORT=11434
       - POSTGRES_USER=afo
       - POSTGRES_PASSWORD=afo_secret_change_me
@@ -262,8 +264,59 @@ services:
       retries: 3
 
   # ═══════════════════════════════════════════════════════════════════════════════
-  # External Tools Integration
+  # API Services Integration (Phase 20: Wallet & Vault)
   # ═══════════════════════════════════════════════════════════════════════════════
+
+  wallet-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: afo-wallet-service
+    ports:
+      - "8011:8011"
+    environment:
+      - SERVICE_NAME=wallet-service
+      - API_SERVER_HOST=0.0.0.0
+      - API_WALLET_ENCRYPTION_KEY=${API_WALLET_ENCRYPTION_KEY:-default_key_change_me}
+      - DATABASE_URL=postgresql://afo:afo_secret_change_me@afo-postgres:5432/afo_memory
+      - REDIS_URL=redis://afo-redis:6379
+      - VAULT_ADDR=http://afo-vault:8200  # 보안 프로파일 시 사용
+    depends_on:
+      - postgres
+      - redis
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8011/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    command: ["python", "wallet_server.py"]
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # Security Services (Optional - Security Profile)
+  # ═══════════════════════════════════════════════════════════════════════════════
+
+  vault:
+    image: hashicorp/vault:latest
+    container_name: afo-vault
+    profiles: ["security"]  # 보안 프로파일에서만 활성화
+    ports:
+      - "8200:8200"
+    environment:
+      - VAULT_DEV_ROOT_TOKEN_ID=root
+      - VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:8200
+    volumes:
+      - vault_data:/vault/file
+    cap_add:
+      - IPC_LOCK
+    healthcheck:
+      test: ["CMD", "vault", "status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ═══════════════════════════════════════════════════════════════════════════════════════════════
+  # External Tools Integration
+  # ═══════════════════════════════════════════════════════════════════════════════════════════════
   langflow:
     image: langflowai/langflow:latest
     container_name: afo-langflow
@@ -372,3 +425,4 @@ volumes:
   openwebui_data:
   ollama_data:
   redisinsight:
+  vault_data:
