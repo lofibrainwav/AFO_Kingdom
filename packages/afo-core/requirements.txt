@@ -87,3 +87,4 @@ pyyaml>=6.0.1
 
 # MCP Support
 mcp>=1.24.0
+hvac>=2.1.0
