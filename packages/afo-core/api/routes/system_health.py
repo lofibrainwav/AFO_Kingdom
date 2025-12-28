@@ -16,6 +16,7 @@ if TYPE_CHECKING:
 import psutil
 import redis
 from fastapi import APIRouter, Request
+from fastapi.responses import RedirectResponse
 
 # Optional SSE import
 try:
@@ -438,43 +439,16 @@ async def stream_logs_ssot(request: Request, limit: int = 0) -> EventSourceRespo
 
 # Cursor Compatibility Path: /api/stream/logs
 @sse_ssot_router.get("/stream/logs")
-async def stream_logs_cursor_compat(request: Request, limit: int = 0) -> EventSourceResponse:
-    """[Alias] Cursor compatibility path for /api/stream/logs"""
-    return EventSourceResponse(_sse_log_generator())
+async def stream_logs_cursor_compat(request: Request, limit: int = 0) -> RedirectResponse:
+    """[Alias] Cursor compatibility path for /api/stream/logs (Redirects to SSOT)"""
+    return RedirectResponse("/api/logs/stream", status_code=308)
 
 
 # Original Path (retained for existing integrations): /api/system/logs/stream
 @router.get("/logs/stream")
-async def stream_logs(request: Request, limit: int = 0) -> EventSourceResponse:
+async def stream_logs(request: Request, limit: int = 0) -> RedirectResponse:
     """
     [Serenity: 孝] Simple Test Log Stream
-
-    Basic SSE implementation for testing.
+    Redirects to canonical SSOT path
     """
-
-    async def log_generator():
-        # Very simple test stream - just send a few messages
-        messages = [
-            "🔌 SSE Stream Connected",
-            "💓 Heartbeat #1",
-            "💓 Heartbeat #2",
-            "✅ Stream Test Complete",
-        ]
-
-        for i, message in enumerate(messages):
-            yield {
-                "data": json.dumps(
-                    {
-                        "timestamp": "2025-12-28T06:20:00.000Z",
-                        "message": message,
-                        "level": "INFO",
-                        "counter": i + 1,
-                    }
-                )
-            }
-
-            # Short delay between messages
-            if i < len(messages) - 1:  # Don't sleep after last message
-                await asyncio.sleep(0.5)
-
-    return EventSourceResponse(log_generator())
+    return RedirectResponse("/api/logs/stream", status_code=308)
