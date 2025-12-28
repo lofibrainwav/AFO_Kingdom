@@ -69,11 +69,15 @@ jobs:
           if-no-files-found: warn
 
       - name: Push CI Quality Metrics (SSOT)
+        continue-on-error: true
         env:
           PUSHGATEWAY_URL: ${{ secrets.PUSHGATEWAY_URL }}
           PUSHGATEWAY_BASIC_AUTH: ${{ secrets.PUSHGATEWAY_BASIC_AUTH }}
           AFO_WORKFLOW: ${{ github.workflow }}
           AFO_REPO: ${{ github.repository }}
         run: |
-          cd packages/afo-core
-          python ../scripts/collect_ci_quality_metrics.py
+          if [ -f scripts/collect_ci_quality_metrics.py ]; then
+            python scripts/collect_ci_quality_metrics.py
+          else
+            echo "Metrics script not found, skipping"
+          fi
