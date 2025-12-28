@@ -8,6 +8,7 @@ on:
       - 'packages/dashboard/**'
       - 'docker-compose.yml'
       - 'compose.yml'
+  workflow_dispatch:
       - '.env.afo'
   pull_request:
     branches: [ main, feature/** ]
