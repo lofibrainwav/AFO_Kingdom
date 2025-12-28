@@ -222,6 +222,10 @@ services:
       - DATABASE_URL=postgresql://afo:afo_secret_change_me@afo-postgres:5432/afo_memory
       - POSTGRES_HOST=afo-postgres
       - POSTGRES_PORT=5432
+      - QDRANT_HOST=afo-qdrant
+      - QDRANT_PORT=6333
+      - OLLAMA_HOST=afo-ollama
+      - OLLAMA_PORT=11434
       - POSTGRES_USER=afo
       - POSTGRES_PASSWORD=afo_secret_change_me
       - POSTGRES_DB=afo_memory
