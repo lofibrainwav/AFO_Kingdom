@@ -145,7 +145,7 @@ services:
       - SERVICE_NAME=rag-service
       - OLLAMA_BASE_URL=http://host.docker.internal:11434
       - PYTHONPATH=/AFO
-      - REDIS_URL=redis://redis:6379
+      - REDIS_URL=redis://afo-redis:6379
       - DATABASE_URL=postgresql://afo:afo@postgres:5432/afo
     command: ["python", "-m", "uvicorn", "api_server:app", "--host", "0.0.0.0", "--port", "8001"]
     depends_on:
@@ -216,12 +216,12 @@ services:
       - API_SERVER_HOST=0.0.0.0
       - OLLAMA_BASE_URL=http://host.docker.internal:11434
       - OLLAMA_MODEL=llama3.2:3b
-      - REDIS_URL=redis://host.docker.internal:6379
-      - REDIS_HOST=host.docker.internal
+      - REDIS_URL=redis://afo-redis:6379
+      - REDIS_HOST=afo-redis
       - REDIS_PORT=6379
-      - DATABASE_URL=postgresql://afo:afo_secret_change_me@host.docker.internal:15432/afo_memory
-      - POSTGRES_HOST=host.docker.internal
-      - POSTGRES_PORT=15432
+      - DATABASE_URL=postgresql://afo:afo_secret_change_me@afo-postgres:5432/afo_memory
+      - POSTGRES_HOST=afo-postgres
+      - POSTGRES_PORT=5432
       - POSTGRES_USER=afo
       - POSTGRES_PASSWORD=afo_secret_change_me
       - POSTGRES_DB=afo_memory
@@ -233,6 +233,25 @@ services:
       - ollama
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8010/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  dashboard:
+    build:
+      context: ../dashboard
+      dockerfile: Dockerfile
+    container_name: afo-dashboard
+    ports:
+      - "3000:3000"
+    environment:
+      - SERVICE_NAME=dashboard
+      - NEXT_TELEMETRY_DISABLED=1
+      - SOUL_ENGINE_URL=http://afo-soul-engine:8010
+    depends_on:
+      - soul-engine
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
       interval: 30s
       timeout: 10s
       retries: 3
