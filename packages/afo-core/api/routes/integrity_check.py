@@ -161,14 +161,20 @@ async def _check_goodness_pillar() -> dict[str, Any]:
         "cai_engine": False,
     }
 
-    # 1. AUTO_RUN 게이트 확인
+    # 1. AUTO_RUN 게이트 확인 (PH23: V2 Runner 우선)
     try:
-        from AFO.chancellor_graph import chancellor_graph
+        from api.chancellor_v2.graph.runner import run_v2
 
-        # Chancellor Graph가 존재하고 AUTO_RUN 로직이 있는지 확인
-        checks["auto_run_gate"] = chancellor_graph is not None
-    except Exception as e:
-        logger.warning(f"AUTO_RUN gate check failed: {e}")
+        # V2 Runner가 있으면 AUTO_RUN 게이트 통과
+        checks["auto_run_gate"] = run_v2 is not None
+    except ImportError:
+        # Fallback to deprecated V1
+        try:
+            from AFO.chancellor_graph import chancellor_graph
+
+            checks["auto_run_gate"] = chancellor_graph is not None
+        except ImportError:
+            logger.warning("AUTO_RUN gate check failed: Neither V2 nor V1 available")
 
     # 2. DRY_RUN 기본값 확인
     try:
