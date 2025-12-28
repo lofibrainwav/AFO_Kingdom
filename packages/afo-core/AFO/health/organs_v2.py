@@ -83,13 +83,34 @@ def _security_probe() -> OrganReport:
     from glob import glob
 
     base_dir = "/AFO/packages/afo-core/artifacts/ph19_security"
-    latest_scan = sorted(glob(os.path.join(base_dir, "*")))
-    if not latest_scan:
+    all_scans = sorted(glob(os.path.join(base_dir, "*")))
+    if not all_scans:
         return OrganReport("unknown", 50, "No security scans found", "security:scan", 0)
 
-    latest_dir = latest_scan[-1]
-    bandit_file = os.path.join(latest_dir, "bandit.json")
-    pip_audit_file = os.path.join(latest_dir, "pip_audit.json")
+    # Try directories from newest to oldest until we find valid scan results
+    for scan_dir in reversed(all_scans):
+        bandit_file = os.path.join(scan_dir, "bandit.json")
+        pip_audit_file = os.path.join(scan_dir, "pip_audit.json")
+
+        # Check if both files exist and are readable
+        if not (os.path.exists(bandit_file) and os.path.exists(pip_audit_file)):
+            continue
+
+        # Try to parse the files
+        try:
+            with open(bandit_file) as f:
+                json.load(f)
+            with open(pip_audit_file) as f:
+                json.load(f)
+            # If both files parse successfully, use this directory
+            latest_dir = scan_dir
+            break
+        except json.JSONDecodeError:
+            # Skip corrupted files
+            continue
+    else:
+        # No valid scan directory found
+        return OrganReport("unknown", 50, "No valid security scans found", "security:scan", 0)
 
     # Bandit score (Base 50, -5 per HIGH, -2 per MEDIUM)
     # Pip-Audit score (Base 50, -10 per VULN)
