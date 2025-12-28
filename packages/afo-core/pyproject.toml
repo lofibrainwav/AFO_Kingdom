@@ -299,3 +299,24 @@ ignore_errors = true
 [[tool.mypy.overrides]]
 module = ["services.langchain_openai_service"]
 ignore_errors = true
+
+[[tool.mypy.overrides]]
+# Optional/external dependencies (may not be installed)
+module = ["crewai", "crewai.*"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+# AFO Soul Engine optional routers
+module = ["AFO.afo_soul_engine.*", "afo_soul_engine.*"]
+ignore_missing_imports = true
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+# Agent fabric (crewai dependency)
+module = ["AFO.afo_agent_fabric", "AFO.afo_agent_fabric_v2"]
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+# API compat layer (legacy)
+module = ["AFO.api.compat"]
+ignore_errors = true
