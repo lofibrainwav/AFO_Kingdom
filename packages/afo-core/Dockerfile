@@ -21,9 +21,7 @@ RUN pip install --no-cache-dir -r requirements.txt || pip install --no-cache-dir
 RUN pip install --no-cache-dir "uvicorn[standard]>=0.31.1"
 RUN python -c "import uvicorn; print('uvicorn', uvicorn.__version__)"
 # Copy Application Code
-COPY AFO /app/AFO
-COPY afo_soul_engine /app/afo_soul_engine
-COPY scripts /app/scripts
+COPY . /app/
 
 # Set Environment
 ENV PYTHONPATH=/app
