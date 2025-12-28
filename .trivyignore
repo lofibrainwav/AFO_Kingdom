@@ -1,0 +1,3 @@
+# .trivyignore - AFO Kingdom Trivy Ignore Rules
+# Add specific false positives or acceptable vulnerabilities here
+# Example: CVE-XXXX-YYYY
