@@ -748,7 +748,7 @@ async function initializeChancellorStream() {
     
     // Try SSE connection
     try {
-        const eventSource = new EventSource('http://localhost:8010/api/system/logs/stream');
+        const eventSource = new EventSource('http://localhost:8010/api/logs/stream');
         
         eventSource.onmessage = (event) => {
             if (event.data) {
