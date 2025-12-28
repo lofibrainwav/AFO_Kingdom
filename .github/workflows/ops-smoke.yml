@@ -58,8 +58,13 @@ jobs:
         docker system prune -f
         rm -rf /tmp/* || true
 
-        # Start services in background (no cache to save space)
-        $COMPOSE_CMD -f packages/afo-core/docker-compose.yml up -d --build --no-cache
+        # Start services in background (build without cache to save space)
+        if [[ "$COMPOSE_CMD" == "docker-compose" ]]; then
+          $COMPOSE_CMD -f packages/afo-core/docker-compose.yml up -d --build --no-cache
+        else
+          $COMPOSE_CMD -f packages/afo-core/docker-compose.yml build --no-cache
+          $COMPOSE_CMD -f packages/afo-core/docker-compose.yml up -d
+        fi
 
         # Wait for services to be ready (max 120 seconds)
         echo "Waiting for services to start..."
