@@ -145,31 +145,11 @@ async def log_stream_generator(request: Request) -> Any:
         yield {"data": json.dumps({"message": f"Critical Stream Failure: {e}", "level": "ERROR"})}
 
 
-@router.get("/logs/stream")
-async def logs_stream_endpoint(request: Request) -> StreamingResponse:
-    """
-    Chancellor Stream SSE endpoint.
+# NOTE: /logs/stream endpoint moved to system_health.py to avoid route conflicts
+# This file previously contained duplicate /logs/stream implementation
+# Keeping this comment for historical reference and future disambiguation
 
-    Provides real-time log streaming via Server-Sent Events.
-    Connected clients receive live updates from Redis kingdom:logs:stream channel.
+from fastapi import APIRouter
 
-    Trinity Score: 美 (Beauty) - Clean, reliable real-time communication
-    """
-    logger.info(
-        f"Chancellor Stream connection from {request.client.host if request.client else 'unknown'}"
-    )
-
-    return cast(
-        "StreamingResponse",
-        EventSourceResponse(
-            log_stream_generator(request),
-            media_type="text/event-stream",
-            headers={
-                "Cache-Control": "no-cache",
-                "Connection": "keep-alive",
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "GET",
-                "Access-Control-Allow-Headers": "Cache-Control",
-            },
-        ),
-    )
+# Empty router to prevent import errors in router_manager.py
+router = APIRouter(prefix="/system/stream", tags=["System Stream"])
