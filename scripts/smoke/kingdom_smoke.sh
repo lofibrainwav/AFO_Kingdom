@@ -35,5 +35,27 @@ if [ "$RC" -ne 0 ] && [ "$RC" -ne 28 ]; then
   echo "[warn] sse curl rc=${RC} (ok if got lines)"
 fi
 
+# --- PH20-05: SSE SSOT Guardrail ---
+echo "[5/6] backend legacy redirect (need 308)"
+# Check Legacy Path 1: /api/stream/logs
+CODE=$(curl4 -o /dev/null -w "%{http_code}" "${SOUL_URL}/api/stream/logs")
+if [ "$CODE" -ne 308 ]; then
+  echo "[fail] backend /api/stream/logs code=${CODE} (expected 308)"
+  exit 1
+fi
+# Check Legacy Path 2: /api/system/logs/stream
+CODE=$(curl4 -o /dev/null -w "%{http_code}" "${SOUL_URL}/api/system/logs/stream")
+if [ "$CODE" -ne 308 ]; then
+  echo "[fail] backend /api/system/logs/stream code=${CODE} (expected 308)"
+  exit 1
+fi
+
+echo "[6/6] frontend legacy forwarding (need 200)"
+# Check Legacy Path 1: /api/stream/logs -> Should be 200 OK (Forwarding)
+CODE=$(curl4 -o /dev/null -w "%{http_code}" "${DASH_URL}/api/stream/logs")
+if [ "$CODE" -ne 200 ]; then
+  echo "[fail] frontend /api/stream/logs code=${CODE} (expected 200)"
+  exit 1
+fi
+
 echo "[ok] kingdom smoke passed"
-EOF && chmod +x scripts/smoke/kingdom_smoke.sh && echo "✅ 스크립트 생성 완료 - 실행 테스트:" && ./scripts/smoke/kingdom_smoke.sh
