@@ -142,6 +142,37 @@ jobs:
         # feature 브랜치는 경고만 (개발 편의성)
         AFO_REQUIRE_TRINITY_METRIC: ${{ github.ref == 'refs/heads/main' && '1' || '0' }}
 
+    - name: Trivy (gate: HIGH/CRITICAL)
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: fs
+        scan-ref: .
+        trivy-config: trivy.yaml
+        severity: CRITICAL,HIGH
+        exit-code: "1"
+        ignore-unfixed: true
+        cache: true
+
+    - name: Trivy (sarif report)
+      if: always()
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: fs
+        scan-ref: .
+        trivy-config: trivy.yaml
+        format: sarif
+        output: trivy-results.sarif
+        exit-code: "0"
+        severity: CRITICAL,HIGH,MEDIUM
+        limit-severities-for-sarif: true
+        cache: true
+
+    - name: Upload Trivy SARIF
+      if: always()
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: trivy-results.sarif
+
     - name: Debug dump /health (only if failed)
       if: ${{ failure() }}
       run: |
