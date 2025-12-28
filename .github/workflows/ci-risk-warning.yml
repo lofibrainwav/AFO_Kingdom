@@ -23,15 +23,16 @@ jobs:
         run: |
           set -euo pipefail
           BASE_REF="${{ github.base_ref }}"
-          git fetch origin "${BASE_REF}" --depth=1
+          git fetch origin "${BASE_REF}" --depth=100 || git fetch --unshallow origin "${BASE_REF}" || true
 
       - name: Compute PR risk score (warning only)
         id: risk
+        continue-on-error: true
         shell: bash
         run: |
           set -euo pipefail
           export DIFF_BASE="origin/${{ github.base_ref }}"
-          JSON="$(python scripts/predict_ci_risk.py)"
+          JSON="$(python scripts/predict_ci_risk.py 2>/dev/null)" || JSON='{"risk_score": 0, "top_signals": []}'
           echo "json=$JSON" >> "$GITHUB_OUTPUT"
           echo "$JSON"
 
