@@ -1,0 +1,96 @@
+import { NextApiRequest, NextApiResponse } from 'next'
+import http from 'http'
+import https from 'https'
+
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method !== 'GET') {
+    res.status(405).json({ error: 'Method not allowed' })
+    return
+  }
+
+  // Soul Engine URL
+  const soulEngineUrl = process.env.SOUL_ENGINE_URL || 'http://127.0.0.1:8010'
+  const targetUrl = `${soulEngineUrl}/api/system/logs/stream`
+
+  // Parse target URL
+  const url = new URL(targetUrl)
+  const isHttps = url.protocol === 'https:'
+
+  const options = {
+    hostname: url.hostname,
+    port: url.port || (isHttps ? 443 : 80),
+    path: url.pathname + url.search,
+    method: 'GET',
+    headers: {
+      'Accept': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      'User-Agent': req.headers['user-agent'] || 'Next.js Proxy',
+      ...req.headers,
+    },
+  }
+
+  // Remove hop-by-hop headers
+  delete options.headers['host']
+  delete options.headers['connection']
+  delete options.headers['keep-alive']
+  delete options.headers['proxy-authenticate']
+  delete options.headers['proxy-authorization']
+  delete options.headers['te']
+  delete options.headers['trailers']
+  delete options.headers['transfer-encoding']
+  delete options.headers['upgrade']
+
+  const client = isHttps ? https : http
+
+  const proxyReq = client.request(options, (proxyRes) => {
+    // Set SSE headers
+    res.writeHead(200, {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      'Connection': 'keep-alive',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET',
+      'Access-Control-Allow-Headers': 'Cache-Control',
+    })
+
+    // Pipe the response
+    proxyRes.pipe(res)
+
+    // Handle proxy response end
+    proxyRes.on('end', () => {
+      res.end()
+    })
+
+    // Handle proxy response errors
+    proxyRes.on('error', (err) => {
+      console.error('Proxy response error:', err)
+      if (!res.headersSent) {
+        res.status(500).json({ error: 'Proxy error' })
+      }
+      res.end()
+    })
+  })
+
+  // Handle proxy request errors
+  proxyReq.on('error', (err) => {
+    console.error('Proxy request error:', err)
+    if (!res.headersSent) {
+      res.status(500).json({ error: 'Failed to connect to backend' })
+    }
+    res.end()
+  })
+
+  // Handle client disconnect
+  req.on('close', () => {
+    proxyReq.destroy()
+  })
+
+  proxyReq.end()
+}
+
+// Disable body parsing for streaming
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+}
