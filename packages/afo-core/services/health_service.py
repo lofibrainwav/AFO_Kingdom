@@ -253,6 +253,15 @@ async def get_comprehensive_health() -> dict[str, Any]:
         except Exception as e:
             logger.warning(f"Failed to record Trinity Score metrics: {e}")
 
+    # Trinity Score 메트릭 기록 (안전한 방식: utils/metrics.py에서 정의된 메트릭 사용)
+    try:
+        from utils.metrics import trinity_score_total
+
+        trinity_score_total.set(float(trinity_metrics.trinity_score))
+        logger.debug(f"Trinity Score metric recorded: {trinity_metrics.trinity_score}")
+    except Exception as e:
+        logger.warning(f"Failed to record Trinity Score metric: {e}", exc_info=True)
+
     # Issue/Suggestion 생성
     issues = []
     suggestions = []
