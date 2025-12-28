@@ -1,0 +1,21 @@
+# trivy.yaml - AFO Kingdom Trivy Configuration
+scan:
+  scanners:
+    - vuln
+    - misconfig
+    - secret
+  skip-dirs:
+    - node_modules
+    - .next
+    - .git
+    - .venv
+    - dist
+    - build
+    - packages/*/node_modules
+    - packages/*/.next
+
+vulnerability:
+  ignore-unfixed: true
+
+report:
+  ignorefile: .trivyignore
