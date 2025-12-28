@@ -49,6 +49,16 @@ const nextConfig: NextConfig = {
         source: "/api/logs/stream",
         destination: `${soulEngineUrl}/api/logs/stream`,  // SSOT canonical path
       },
+      // Legacy Path 1 (Internal Forwarding)
+      {
+        source: "/api/stream/logs",
+        destination: `${soulEngineUrl}/api/logs/stream`,
+      },
+      // Legacy Path 2 (Internal Forwarding)
+      {
+        source: "/api/system/logs/stream",
+        destination: `${soulEngineUrl}/api/logs/stream`,
+      },
       // Generic proxy (after specific routes)
       {
         source: "/api/proxy/:path*",
