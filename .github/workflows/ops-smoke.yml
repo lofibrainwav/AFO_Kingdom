@@ -54,15 +54,15 @@ jobs:
 
     - name: Build with cache (GHA backend)
       run: |
-        COMPOSE_FILE="${{ steps.compose.outputs.file }}"
         export DOCKER_BUILDKIT=1
         export BUILDKIT_PROGRESS=plain
+        export COMPOSE_FILE="${{ steps.compose.outputs.file }}"
 
         # Build with GHA cache
-        if [[ "$COMPOSE_CMD" == "docker-compose" ]]; then
-          $COMPOSE_CMD -f "$COMPOSE_FILE" build --parallel
+        if command -v docker-compose >/dev/null 2>&1; then
+          docker-compose build --parallel
         else
-          $COMPOSE_CMD -f "$COMPOSE_FILE" build --parallel
+          docker compose build --parallel
         fi
 
     - name: Set up Docker
