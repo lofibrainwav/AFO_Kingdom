@@ -37,12 +37,37 @@ run_cmd() {
 echo "[1/3] pip-audit (deps vulnerabilities)"
 if python3 -c "import pip_audit" >/dev/null 2>&1; then
   set +e
+  TMP_PIPAUDIT="$(mktemp)"
   python3 -m pip_audit --format=json --progress-spinner=off . \
-    1>"$OUT_DIR/pip_audit.json" \
+    1>"$TMP_PIPAUDIT" \
     2>"$OUT_DIR/pip_audit.stderr.txt"
   PIPAUDIT_RC=$?
+
+  # Atomic Write & Validation (Enhanced)
+  if [ $PIPAUDIT_RC -eq 0 ]; then
+    if python3 -c "import json,sys; json.load(open(sys.argv[1],'r',encoding='utf-8'))" "$TMP_PIPAUDIT" >/dev/null 2>&1; then
+      # Extra validation: check for shell script contamination
+      if grep -q 'EOF && echo\|heredoc\|#!/.*bash\|#!/.*sh' "$TMP_PIPAUDIT" 2>/dev/null; then
+        echo "Pip-audit output contaminated (shell script detected)" > "$OUT_DIR/pip_audit.stderr.txt"
+        PIPAUDIT_RC=98
+        echo "$PIPAUDIT_RC" > "$OUT_DIR/pip_audit.rc.txt"
+        rm -f "$TMP_PIPAUDIT"
+      else
+        mv "$TMP_PIPAUDIT" "$OUT_DIR/pip_audit.json"
+        echo "$PIPAUDIT_RC" > "$OUT_DIR/pip_audit.rc.txt"
+      fi
+    else
+      echo "Pip-audit output corrupted (invalid JSON)" > "$OUT_DIR/pip_audit.stderr.txt"
+      PIPAUDIT_RC=99
+      echo "$PIPAUDIT_RC" > "$OUT_DIR/pip_audit.rc.txt"
+      rm -f "$TMP_PIPAUDIT"
+    fi
+  else
+    echo "$PIPAUDIT_RC" > "$OUT_DIR/pip_audit.rc.txt"
+    rm -f "$TMP_PIPAUDIT"
+  fi
+
   set -e
-  echo "$PIPAUDIT_RC" > "$OUT_DIR/pip_audit.rc.txt"
 else
   PIPAUDIT_RC=127
   echo "$PIPAUDIT_RC" > "$OUT_DIR/pip_audit.rc.txt"
@@ -73,16 +98,41 @@ fi
 echo "[3/3] bandit (static security)"
 if python3 -c "import bandit" >/dev/null 2>&1; then
   set +e
+  TMP_BANDIT="$(mktemp)"
   python3 -m bandit \
     -c pyproject.toml \
     -r . \
     --severity-level medium \
     --confidence-level medium \
     -f json \
-    -o "$OUT_DIR/bandit.json"
+    -o "$TMP_BANDIT"
   BANDIT_RC=$?
+  
+  # Atomic Write & Validation (Enhanced)
+  if [ $BANDIT_RC -eq 0 ]; then
+    if python3 -c "import json,sys; json.load(open(sys.argv[1],'r',encoding='utf-8'))" "$TMP_BANDIT" >/dev/null 2>&1; then
+      # Extra validation: check for shell script contamination
+      if grep -q 'EOF && echo\|heredoc\|#!/.*bash\|#!/.*sh' "$TMP_BANDIT" 2>/dev/null; then
+        echo "Bandit output contaminated (shell script detected)" > "$OUT_DIR/bandit.stderr.txt"
+        BANDIT_RC=98
+        echo "$BANDIT_RC" > "$OUT_DIR/bandit.rc.txt"
+        rm -f "$TMP_BANDIT"
+      else
+        mv "$TMP_BANDIT" "$OUT_DIR/bandit.json"
+        echo "$BANDIT_RC" > "$OUT_DIR/bandit.rc.txt"
+      fi
+    else
+      echo "Bandit output corrupted (invalid JSON)" > "$OUT_DIR/bandit.stderr.txt"
+      BANDIT_RC=99
+      echo "$OUT_DIR/bandit.rc.txt"
+      rm -f "$TMP_BANDIT"
+    fi
+  else
+    echo "$BANDIT_RC" > "$OUT_DIR/bandit.rc.txt"
+    rm -f "$TMP_BANDIT"
+  fi
+  rm -f "$TMP_BANDIT"
   set -e
-  echo "$BANDIT_RC" > "$OUT_DIR/bandit.rc.txt"
 else
   BANDIT_RC=127
   echo "$BANDIT_RC" > "$OUT_DIR/bandit.rc.txt"
