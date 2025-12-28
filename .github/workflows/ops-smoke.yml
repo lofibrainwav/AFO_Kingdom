@@ -97,15 +97,29 @@ jobs:
       env:
         AFO_TRINITY_METRIC_NAME: afo_trinity_score_total
         TRINITY_EPSILON: "0.0001"
-        # 메트릭이 아직 /metrics에 안 뜨는 환경이면 0 유지(경고 후 PASS 가능)
-        # /metrics 노출이 보장되면 1로 올려서 "없으면 FAIL"로 강제
-        AFO_REQUIRE_TRINITY_METRIC: "0"
+        # 메인 브랜치에서만 엄격 모드 (메트릭 없으면 FAIL)
+        # feature 브랜치는 경고만 (개발 편의성)
+        AFO_REQUIRE_TRINITY_METRIC: ${{ github.ref == 'refs/heads/main' && '1' || '0' }}
+
+    - name: Debug dump /health (only if failed)
+      if: ${{ failure() }}
+      run: |
+        echo "[debug] /health (failure debug):"
+        curl -s "${{ env.AFO_BASE_URL }}/health" | head -c 2000 || echo "[error] curl failed"
 
     - name: Debug dump /metrics (only if failed)
       if: ${{ failure() }}
       run: |
         echo "[debug] /metrics head (failure debug):"
         curl -sf "${{ env.AFO_BASE_URL }}/metrics" | head -n 120 || echo "[error] curl failed"
+
+    - name: Debug dump docker logs (only if failed)
+      if: ${{ failure() }}
+      run: |
+        echo "[debug] docker-compose ps:"
+        docker compose ps || true
+        echo "[debug] docker-compose logs (tail):"
+        docker compose logs --tail=300 || true
     - name: Show service logs on failure
       if: failure()
       run: |
