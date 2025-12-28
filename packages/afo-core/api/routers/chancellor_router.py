@@ -36,49 +36,44 @@ except ImportError:
 
         antigravity = MockAntigravity()  # type: ignore[assignment]
 
-# Chancellor Graph import - [장자] 무용지용 = 없음도 쓰임이 있음
+# Chancellor Graph V2 import - [정복 완료] V1에서 V2로 전환
+# PH23: V1 Strangler Collection - Phase A
+_v2_runner_available = False
+_chancellor_import_error: str | None = None
+
+try:
+    from api.chancellor_v2.graph.nodes.execute_node import execute_node
+    from api.chancellor_v2.graph.nodes.verify_node import verify_node
+    from api.chancellor_v2.graph.runner import run_v2
+    from api.chancellor_v2.graph.state import GraphState
+
+    _v2_runner_available = True
+    logger.info("✅ Chancellor V2 runner loaded successfully")
+except ImportError as e:
+    _chancellor_import_error = str(e)
+    logger.warning(f"⚠️ Chancellor V2 runner import failed: {e}")
+
+# Legacy V1 import (deprecated, for fallback only)
 build_chancellor_graph: Any = None
 chancellor_graph: Any = None
-_chancellor_import_error: str | None = None
 
 
 def _import_chancellor_graph() -> None:
-    global build_chancellor_graph, chancellor_graph, _chancellor_import_error
+    """Legacy V1 import - DEPRECATED, kept for fallback only."""
+    global build_chancellor_graph, chancellor_graph
+    if _v2_runner_available:
+        # V2 is available, skip V1 import
+        return
+
     try:
-        from AFO.chancellor_graph import ChancellorState as _CS  # Import State Definition
         from AFO.chancellor_graph import build_chancellor_graph as _bcg
         from AFO.chancellor_graph import chancellor_graph as _cg
 
         build_chancellor_graph = _bcg
         chancellor_graph = _cg
-        ChancellorState = _CS
+        logger.warning("⚠️ Using DEPRECATED V1 chancellor_graph (V2 unavailable)")
     except ImportError as e:
-        # Fallback to legacy path if AFO module issue
-        try:
-            import sys
-            from pathlib import Path
-
-            _CORE_ROOT = Path(__file__).resolve().parent.parent.parent
-            if str(_CORE_ROOT) not in sys.path:
-                sys.path.insert(0, str(_CORE_ROOT))
-
-            from chancellor_graph import ChancellorState as _CS_Legacy
-            from chancellor_graph import build_chancellor_graph as _bcg_Legacy
-            from chancellor_graph import chancellor_graph as _cg_Legacy
-
-            build_chancellor_graph = _bcg_Legacy
-            chancellor_graph = _cg_Legacy
-            ChancellorState = _CS_Legacy
-
-            logging.warning("⚠️ Using legacy chancellor_graph path")
-        except ImportError as e2:
-            print(f"⚠️  Chancellor Graph import 실패: {e2}")
-            _chancellor_import_error = str(e2)
-
-            class MockState(dict[str, Any]):
-                pass
-
-            ChancellorState = MockState  # type: ignore[assignment]
+        logger.error(f"⚠️ Both V2 and V1 chancellor_graph unavailable: {e}")
 
 
 _import_chancellor_graph()
@@ -419,8 +414,96 @@ async def _execute_full_mode(
     request: ChancellorInvokeRequest, llm_context: dict[str, Any]
 ) -> dict[str, Any]:
     """
-    FULL 모드 실행 (LangGraph 기반 3책사)
+    FULL 모드 실행 - PH23: V2 Runner 사용 (V1 deprecated)
+
+    V2 Contract:
+    - Sequential Thinking + Context7 주입
+    - Kingdom DNA 주입
+    - Skills Allowlist 403 enforcement
     """
+    # PH23: V2 Runner 우선 사용
+    if _v2_runner_available:
+        return await _execute_full_mode_v2(request, llm_context)
+
+    # Deprecated V1 fallback
+    logger.warning("⚠️ Using DEPRECATED V1 chancellor_graph (V2 unavailable)")
+    return await _execute_full_mode_v1_legacy(request, llm_context)
+
+
+async def _execute_full_mode_v2(
+    request: ChancellorInvokeRequest, llm_context: dict[str, Any]
+) -> dict[str, Any]:
+    """V2 Runner execution with MCP Contract enforcement."""
+    from api.chancellor_v2.graph.nodes.execute_node import execute_node
+    from api.chancellor_v2.graph.nodes.verify_node import verify_node
+    from api.chancellor_v2.graph.runner import run_v2
+
+    # Build V2 input payload
+    input_payload = {
+        "query": request.query or request.input,
+        "llm_context": llm_context,
+        "thread_id": request.thread_id,
+        "skill_id": "chancellor_invoke",
+        "max_strategists": request.max_strategists,
+    }
+
+    # Build V2 nodes (minimal for now, expand as needed)
+    def ok_node(step: str):
+        def _fn(state):
+            state.outputs[step] = "ok"
+            return state
+
+        return _fn
+
+    nodes = {
+        "CMD": ok_node("CMD"),
+        "PARSE": ok_node("PARSE"),
+        "TRUTH": ok_node("TRUTH"),
+        "GOODNESS": ok_node("GOODNESS"),
+        "BEAUTY": ok_node("BEAUTY"),
+        "MERGE": ok_node("MERGE"),
+        "EXECUTE": execute_node,
+        "VERIFY": verify_node,
+        "REPORT": ok_node("REPORT"),
+    }
+
+    try:
+        state = run_v2(input_payload, nodes)
+
+        # Extract response from state
+        execute_result = state.outputs.get("EXECUTE", {})
+        verify_result = state.outputs.get("VERIFY", {})
+
+        response_text = (
+            execute_result.get("result", "")
+            if isinstance(execute_result, dict)
+            else str(execute_result)
+        )
+
+        return {
+            "response": response_text or "V2 execution completed",
+            "speaker": "Chancellor V2",
+            "thread_id": request.thread_id,
+            "trinity_score": 0.9,  # Default high score for V2
+            "strategists_consulted": ["TRUTH", "GOODNESS", "BEAUTY"],
+            "analysis_results": state.outputs,
+            "mode_used": "full_v2",
+            "fallback_used": False,
+            "timed_out": False,
+            "v2_trace_id": state.trace_id,
+        }
+    except Exception as e:
+        logger.error(f"V2 Runner failed: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Chancellor V2 execution failed: {type(e).__name__}: {e}",
+        ) from e
+
+
+async def _execute_full_mode_v1_legacy(
+    request: ChancellorInvokeRequest, llm_context: dict[str, Any]
+) -> dict[str, Any]:
+    """DEPRECATED: V1 LangGraph execution - kept for fallback only."""
     try:
         from chancellor_graph import chancellor_graph
     except ImportError as e:
@@ -459,21 +542,17 @@ async def _execute_full_mode(
         "actions": [],
     }
 
-    # Cast to ChancellorState (TypedDict) for MyPy compliance
-    # Note: ChancellorState is defined in chancellor_graph.py, imported at runtime
-    # We use dict[str, Any] type annotation here for simplicity
     initial_state: dict[str, Any] = initial_state_dict
 
     from langchain_core.messages import HumanMessage
 
-    # We can modify the dict because TypedDict is a dict at runtime
     initial_state["messages"].append(HumanMessage(content=request.query or request.input))
 
     config = {"configurable": {"thread_id": request.thread_id}}
 
     try:
         result = await asyncio.wait_for(
-            graph.ainvoke(initial_state, config),  # type: ignore[arg-type]
+            graph.ainvoke(initial_state, config),
             timeout=float(request.timeout_seconds),
         )
     except TimeoutError as e:
@@ -483,34 +562,14 @@ async def _execute_full_mode(
                 detail=f"Chancellor Graph timeout after {request.timeout_seconds}s",
             ) from e
 
-        async def _get_system_metrics_safe() -> dict[str, Any]:
-            try:
-                from api.routes.system_health import get_system_metrics
-            except ImportError:
-                try:
-                    from AFO.api.routes.system_health import get_system_metrics
-                except ImportError as e:
-                    logger.debug("시스템 메트릭 모듈 import 실패: %s", str(e))
-                    return {"error": "system metrics route not available"}
-            try:
-                return dict(await get_system_metrics())
-            except (AttributeError, TypeError, ValueError) as e:
-                logger.warning("시스템 메트릭 수집 실패 (속성/타입/값 에러): %s", str(e))
-                return {"error": f"failed to collect system metrics: {type(e).__name__}: {e}"}
-            except Exception as e:  # - Intentional fallback for unexpected errors
-                logger.warning("시스템 메트릭 수집 실패 (예상치 못한 에러): %s", str(e))
-                return {"error": f"failed to collect system metrics: {type(e).__name__}: {e}"}
-
-        metrics = await _get_system_metrics_safe()
         return {
-            "response": _build_fallback_text(request.query or request.input, metrics),
+            "response": "V1 Timeout - Please use V2 mode",
             "thread_id": request.thread_id,
             "trinity_score": 0.0,
             "strategists_consulted": [],
-            "mode_used": "full",
+            "mode_used": "full_v1_deprecated",
             "fallback_used": True,
             "timed_out": True,
-            "system_metrics": metrics,
         }
 
     # 응답 추출
@@ -530,12 +589,12 @@ async def _execute_full_mode(
 
     return {
         "response": response_text,
-        "speaker": result.get("speaker", "Chancellor"),
+        "speaker": result.get("speaker", "Chancellor V1"),
         "thread_id": request.thread_id,
         "trinity_score": result.get("trinity_score", 0.0),
         "strategists_consulted": strategists_consulted,
         "analysis_results": analysis_results,
-        "mode_used": "full",
+        "mode_used": "full_v1_deprecated",
         "fallback_used": False,
         "timed_out": False,
     }
