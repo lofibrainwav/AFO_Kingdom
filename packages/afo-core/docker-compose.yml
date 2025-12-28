@@ -233,6 +233,7 @@ services:
     working_dir: /AFO
     volumes:
       - .:/AFO
+      - ./artifacts:/AFO/packages/afo-core/artifacts:ro
     depends_on:
       - ollama
     healthcheck:
