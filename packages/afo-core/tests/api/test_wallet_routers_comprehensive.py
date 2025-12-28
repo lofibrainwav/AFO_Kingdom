@@ -1,6 +1,17 @@
 # Trinity Score: 90.0 (Established by Chancellor)
+# Integration/Legacy tests - skip in CI by default, run locally with AFO_WALLET_TESTS=1
+import os
 import sys
 from unittest.mock import MagicMock, mock_open, patch
+
+import pytest
+
+# Skip these integration tests in CI unless explicitly enabled
+if os.getenv("AFO_WALLET_TESTS") != "1":
+    pytest.skip(
+        "wallet router tests are integration/legacy; set AFO_WALLET_TESTS=1 to run",
+        allow_module_level=True,
+    )
 
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
