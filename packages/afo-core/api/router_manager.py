@@ -141,6 +141,14 @@ class AFORouterManager:
         # System health and monitoring
         self._safe_register_router(system_health_router, tags=["System Health"])
 
+        # SSE SSOT Router (canonical /api/logs/stream + aliases)
+        try:
+            from api.routes.system_health import sse_ssot_router
+
+            self._safe_register_router(sse_ssot_router, tags=["SSE SSOT"])
+        except ImportError:
+            logger.warning("SSE SSOT Router not available")
+
         # Multi-agent and AI systems
         self._safe_register_router(multi_agent_router)
         self._safe_register_router(got_router, prefix="/api/got", tags=["Graph of Thought"])
