@@ -128,7 +128,6 @@ services:
     depends_on:
       - rag-service
       - input-service
-      - monitoring-service
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
@@ -198,23 +197,6 @@ services:
       - ./afo_soul_engine:/app/afo_soul_engine
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8006/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
-  monitoring-service:
-    build:
-      context: ./services/monitoring-service
-      dockerfile: Dockerfile
-    container_name: afo-monitoring-service
-    ports:
-      - "8007:8007"
-    environment:
-      - SERVICE_NAME=monitoring-service
-    # prometheus: 프로파일 기반이므로 조건부 의존성 제거
-    # monitoring-service는 prometheus 없이도 작동 가능 (옵셔널)
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8007/health"]
       interval: 30s
       timeout: 10s
       retries: 3
