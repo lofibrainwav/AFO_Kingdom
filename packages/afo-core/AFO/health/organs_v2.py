@@ -82,7 +82,7 @@ def _security_probe() -> OrganReport:
     import os
     from glob import glob
 
-    base_dir = "/Users/brnestrm/AFO_Kingdom/packages/afo-core/artifacts/ph19_security"
+    base_dir = "/AFO/packages/afo-core/artifacts/ph19_security"
     latest_scan = sorted(glob(os.path.join(base_dir, "*")))
     if not latest_scan:
         return OrganReport("unknown", 50, "No security scans found", "security:scan", 0)
