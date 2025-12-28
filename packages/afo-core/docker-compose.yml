@@ -347,3 +347,16 @@ volumes:
   n8n_data:
   openwebui_data:
   ollama_data:
+  redisinsight:
+    image: redis/redisinsight:latest
+    container_name: afo-redisinsight
+    ports:
+      - "5540:5540"
+    volumes:
+      - redisinsight:/data
+    restart: unless-stopped
+    profiles:
+      - monitoring
+
+volumes:
+  redisinsight:
