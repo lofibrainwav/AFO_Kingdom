@@ -2,6 +2,10 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { Wifi, WifiOff, RefreshCw } from "lucide-react";
+
+// Connection status type
+type ConnectionStatus = "connected" | "reconnecting" | "offline";
 
 // Mock log generator if SSE is silent
 const _MOCK_LOGS = [
@@ -18,36 +22,70 @@ const _MOCK_LOGS = [
 
 export default function ChancellorStream() {
   const [logs, setLogs] = useState<string[]>([]);
+  const [status, setStatus] = useState<ConnectionStatus>("offline");
+  const [lastMessageAt, setLastMessageAt] = useState<Date | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8010";
+  const eventSourceRef = useRef<EventSource | null>(null);
+  const retryCountRef = useRef(0);
+  const retryTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Memoize log update handler
-  const handleLogMessage = useCallback((event: MessageEvent) => {
-    if (!event.data) return;
-    setLogs((prev) => {
-      // Keep last 50 logs to prevent memory overflow
-      const newLogs = [...prev, event.data];
-      if (newLogs.length > 50) return newLogs.slice(newLogs.length - 50);
-      return newLogs;
-    });
+  // Calculate backoff delay (1s -> 2s -> 4s -> 8s -> max 10s)
+  const getBackoffDelay = useCallback(() => {
+    const delay = Math.min(1000 * Math.pow(2, retryCountRef.current), 10000);
+    return delay;
   }, []);
 
-  // Memoize error handler
-  const handleError = useCallback((err: Event) => {
-    console.error("EventSource failed:", err);
-  }, []);
+  // Connect to SSE
+  const connect = useCallback(() => {
+    // Cleanup previous connection
+    if (eventSourceRef.current) {
+      eventSourceRef.current.close();
+    }
+
+    setStatus("reconnecting");
+    const eventSource = new EventSource("/api/logs/stream");
+    eventSourceRef.current = eventSource;
+
+    eventSource.onopen = () => {
+      setStatus("connected");
+      retryCountRef.current = 0; // Reset retry count on successful connection
+    };
+
+    eventSource.onmessage = (event) => {
+      if (!event.data) return;
+      setLastMessageAt(new Date());
+      setLogs((prev) => {
+        const newLogs = [...prev, event.data];
+        if (newLogs.length > 50) return newLogs.slice(newLogs.length - 50);
+        return newLogs;
+      });
+    };
+
+    eventSource.onerror = () => {
+      eventSource.close();
+      setStatus("offline");
+      
+      // Retry with exponential backoff
+      const delay = getBackoffDelay();
+      retryCountRef.current += 1;
+      
+      console.log(`[SSE] Reconnecting in ${delay}ms (attempt ${retryCountRef.current})`);
+      retryTimeoutRef.current = setTimeout(connect, delay);
+    };
+  }, [getBackoffDelay]);
 
   useEffect(() => {
-    // SSE Connection via Next.js proxy (CORS-safe)
-    const eventSource = new EventSource(`/api/logs/stream`);
-
-    eventSource.onmessage = handleLogMessage;
-    eventSource.onerror = handleError;
+    connect();
 
     return () => {
-      eventSource.close();
+      if (eventSourceRef.current) {
+        eventSourceRef.current.close();
+      }
+      if (retryTimeoutRef.current) {
+        clearTimeout(retryTimeoutRef.current);
+      }
     };
-  }, [API_BASE, handleLogMessage, handleError]);
+  }, [connect]);
 
   // Auto-scroll
   useEffect(() => {
@@ -74,6 +112,25 @@ export default function ChancellorStream() {
     []
   );
 
+  // Status badge component
+  const StatusBadge = () => {
+    const config = {
+      connected: { icon: Wifi, color: "bg-emerald-500", text: "Connected" },
+      reconnecting: { icon: RefreshCw, color: "bg-amber-500", text: "Reconnecting" },
+      offline: { icon: WifiOff, color: "bg-red-500", text: "Offline" },
+    }[status];
+
+    const Icon = config.icon;
+
+    return (
+      <div className="flex items-center gap-1.5">
+        <span className={`w-2 h-2 rounded-full ${config.color} ${status === "reconnecting" ? "animate-pulse" : ""}`} />
+        <Icon className={`w-3 h-3 text-slate-500 ${status === "reconnecting" ? "animate-spin" : ""}`} />
+        <span className="text-[10px] text-slate-400 font-mono">{config.text}</span>
+      </div>
+    );
+  };
+
   return (
     <motion.div
       className="neu-card h-96 relative overflow-hidden flex flex-col"
@@ -85,10 +142,10 @@ export default function ChancellorStream() {
     >
       <div className="absolute top-0 left-0 right-0 h-12 bg-gradient-to-b from-slate-200/90 to-transparent z-10 p-4 border-b border-white/20 backdrop-blur-sm flex justify-between items-center">
         <h3 className="text-slate-600 font-bold text-sm tracking-wider flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+          <span className={`w-2 h-2 rounded-full ${status === "connected" ? "bg-emerald-500 animate-pulse" : "bg-slate-400"}`} />
           CHANCELLOR NEURAL STREAM
         </h3>
-        <span className="text-[10px] text-slate-400 font-mono">LIVE FEED</span>
+        <StatusBadge />
       </div>
 
       <div
@@ -116,16 +173,23 @@ export default function ChancellorStream() {
         </AnimatePresence>
       </div>
 
-      {/* Footer / Input Placeholder for Human-in-the-loop */}
+      {/* Footer with last message time */}
       <div className="p-3 bg-white/30 border-t border-white/40">
+        <div className="flex justify-between items-center mb-1">
+          <p className="text-[10px] text-slate-400">
+            {lastMessageAt
+              ? `Last message: ${lastMessageAt.toLocaleTimeString()}`
+              : "Awaiting messages..."}
+          </p>
+          <p className="text-[10px] text-slate-400">{logs.length} logs</p>
+        </div>
         <div className="h-2 w-full bg-slate-200 rounded-full overflow-hidden">
           <motion.div
-            className="h-full bg-indigo-500"
-            animate={{ width: ["0%", "100%"] }}
-            transition={{ duration: 1.5, repeat: Infinity }}
+            className={`h-full ${status === "connected" ? "bg-indigo-500" : "bg-slate-400"}`}
+            animate={{ width: status === "connected" ? ["0%", "100%"] : "0%" }}
+            transition={{ duration: 1.5, repeat: status === "connected" ? Infinity : 0 }}
           />
         </div>
-        <p className="text-[10px] text-center text-slate-400 mt-1">PROCESSING THOUGHT GRAPH...</p>
       </div>
     </motion.div>
   );
