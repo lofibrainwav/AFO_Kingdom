@@ -24,7 +24,7 @@ jobs:
         python-version: '3.12'
 
     - name: Cache pip dependencies
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ~/.cache/pip
         key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements*.txt') }}
@@ -171,7 +171,7 @@ jobs:
         python scripts/collect_ci_quality_metrics.py
 
     - name: Upload SSOT Reports
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ssot-quality-reports
         path: |
