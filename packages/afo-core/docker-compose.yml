@@ -118,7 +118,7 @@ services:
   # ═══════════════════════════════════════════════════════════════════════════════
   api-gateway:
     build:
-      context: ./services/api-gateway
+      context: .
       dockerfile: Dockerfile
     container_name: afo-api-gateway
     ports:
