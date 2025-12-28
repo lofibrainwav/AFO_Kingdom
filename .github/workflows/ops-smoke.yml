@@ -172,6 +172,11 @@ jobs:
           cat /tmp/sse.txt || true
         fi
 
+    - name: Kingdom E2E Smoke Test
+      run: |
+        echo "🏰 Kingdom E2E Smoke Test (IPv4 SSOT)"
+        ./scripts/smoke/kingdom_smoke.sh
+
     - name: Trinity Metrics Consistency Gate
       run: |
         echo "🏰 Trinity Metrics Consistency 검증"
