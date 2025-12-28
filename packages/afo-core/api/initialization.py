@@ -7,7 +7,7 @@ Handles system component initialization during FastAPI lifespan startup.
 
 import asyncio
 import logging
-from typing import Any, cast
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -211,37 +211,25 @@ async def _initialize_strategy_engine() -> None:
     print("[지휘소 v6】 LangGraph 설계도를 컴파일하여 '두뇌'를 완성합니다...")
 
     try:
-        # Try Real Brain (Chancellor Graph)
-        # Use SSOT: AFO/chancellor_graph.py
+        # PH23: Use V2 Runner (V1 deprecated)
         try:
-            from AFO.chancellor_graph import chancellor_graph
+            from api.chancellor_v2.graph.runner import run_v2
+
+            strategy_app_runnable = run_v2  # V2 runner as callable
+            print("[지휘소 v6】 Chancellor V2 Runner 가동 준비 완료. (MCP Contract Enforced)")
         except ImportError:
-            # Fallback to legacy path for backward compatibility
-            import sys
-            from pathlib import Path
+            # Fallback to legacy V1 (deprecated)
+            try:
+                from AFO.chancellor_graph import chancellor_graph
 
-            _CORE_ROOT = Path(__file__).resolve().parent.parent
-            if str(_CORE_ROOT) not in sys.path:
-                sys.path.insert(0, str(_CORE_ROOT))
-            from chancellor_graph import chancellor_graph
-
-        strategy_app_runnable = chancellor_graph
-        print("[지휘소 v6】 '진정한 두뇌' (Chancellor Graph) 가동 준비 완료. (True Intelligence)")
-    except ImportError:
-        # Fallback to Workflow Mock Compilation
-        try:
-            from strategy_engine import memory_context as _mc
-            from strategy_engine import workflow as _wf
-
-            if _wf and _mc:
-                strategy_app_runnable = cast("Any", _wf).compile(checkpointer=_mc)
-                print("[지휘소 v6】 '두뇌' (Mock) 가동 준비 완료.")
-            else:
+                strategy_app_runnable = chancellor_graph
+                print("⚠️ [지휘소 v6】 Using DEPRECATED V1 Chancellor Graph")
+            except ImportError:
                 strategy_app_runnable = None
-                print("⚠️ Strategy workflow 또는 memory_context 없음 - LangGraph 컴파일 건너뜀")
-        except (ImportError, AttributeError):
-            strategy_app_runnable = None
-            print("⚠️ LangGraph compilation failed - running in degraded mode")
+                print("⚠️ LangGraph compilation failed - running in degraded mode")
+    except Exception as e:
+        logger.error(f"Strategy engine initialization failed: {e}")
+        strategy_app_runnable = None
 
 
 async def _initialize_databases() -> None:
