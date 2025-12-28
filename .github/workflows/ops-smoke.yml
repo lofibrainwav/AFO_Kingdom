@@ -51,8 +51,14 @@ jobs:
           COMPOSE_CMD="docker compose"
         fi
 
-        # Start services in background
-        $COMPOSE_CMD -f packages/afo-core/docker-compose.yml up -d --build
+        # Clean up disk space before build
+        echo "Cleaning up disk space..."
+        df -h
+        docker system prune -f
+        rm -rf /tmp/* || true
+
+        # Start services in background (no cache to save space)
+        $COMPOSE_CMD -f packages/afo-core/docker-compose.yml up -d --build --no-cache
 
         # Wait for services to be ready (max 120 seconds)
         echo "Waiting for services to start..."
