@@ -22,6 +22,9 @@ jobs:
   smoke-test:
     runs-on: ubuntu-latest
 
+    env:
+      AFO_BASE_URL: http://localhost:8010
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -78,7 +81,7 @@ jobs:
 
     - name: Warm up /health (register + set trinity metric)
       run: |
-        curl -sf http://localhost:8010/health >/dev/null
+        curl -sf ${{ env.AFO_BASE_URL }}/health >/dev/null
 
     - name: Trinity Metrics Consistency Gate
       run: |
@@ -86,7 +89,6 @@ jobs:
         chmod +x scripts/ci/check_trinity_metrics.sh
         ./scripts/ci/check_trinity_metrics.sh
       env:
-        AFO_BASE_URL: http://localhost:8010
         AFO_TRINITY_METRIC_NAME: afo_trinity_score_total
         TRINITY_EPSILON: "0.0001"
         # 메트릭이 아직 /metrics에 안 뜨는 환경이면 0 유지(경고 후 PASS 가능)
