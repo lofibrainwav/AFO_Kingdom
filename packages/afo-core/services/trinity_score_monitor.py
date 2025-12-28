@@ -7,7 +7,6 @@ Prometheus 메트릭 기반 모니터링
 import logging
 import time
 from dataclasses import dataclass
-from typing import List
 
 from AFO.domain.metrics.trinity import TrinityMetrics
 
@@ -21,6 +20,7 @@ try:
         trinity_score,
         trinity_score_total,
     )
+
     METRICS_AVAILABLE = PROMETHEUS_AVAILABLE
     logger.info("Using existing metrics system for Trinity Score monitoring")
 except ImportError:
@@ -31,6 +31,7 @@ except ImportError:
 @dataclass
 class TrinityScoreSample:
     """Trinity Score 샘플 데이터"""
+
     timestamp: float
     trinity_score: float
     truth: float = 0.0
@@ -46,20 +47,21 @@ class TrinityScoreMonitor:
 
     def __init__(self, max_history: int = 100):
         self.max_history = max_history
-        self.samples: List[TrinityScoreSample] = []
+        self.samples: list[TrinityScoreSample] = []
 
         # 기존 메트릭 시스템 사용
         if METRICS_AVAILABLE:
             # 기존 메트릭에서 가져오기 또는 생성
             try:
                 from prometheus_client import Histogram
+
                 from utils.metrics import get_or_create_metric
 
                 self.trinity_score_histogram = get_or_create_metric(
                     Histogram,
-                    'afo_trinity_score_change',
-                    'Trinity Score change rate',
-                    buckets=[-1.0, -0.5, -0.2, -0.1, 0.0, 0.1, 0.2, 0.5, 1.0]
+                    "afo_trinity_score_change",
+                    "Trinity Score change rate",
+                    buckets=[-1.0, -0.5, -0.2, -0.1, 0.0, 0.1, 0.2, 0.5, 1.0],
                 )
 
                 logger.info("Trinity Score monitoring initialized with existing metrics")
@@ -91,7 +93,7 @@ class TrinityScoreMonitor:
 
         # 최대 히스토리 유지
         if len(self.samples) > self.max_history:
-            self.samples = self.samples[-self.max_history:]
+            self.samples = self.samples[-self.max_history :]
 
         # 기존 메트릭 시스템 사용
         if METRICS_AVAILABLE:
@@ -109,7 +111,9 @@ class TrinityScoreMonitor:
                 }
                 update_trinity_scores(scores)
 
-                logger.debug(f"Trinity Score metrics recorded via existing system: {sample.trinity_score:.3f}")
+                logger.debug(
+                    f"Trinity Score metrics recorded via existing system: {sample.trinity_score:.3f}"
+                )
 
             except Exception as e:
                 logger.error(f"Failed to record Trinity Score metrics: {e}")
@@ -146,10 +150,7 @@ class TrinityScoreMonitor:
         now = time.time()
         window_start = now - (window_minutes * 60)
 
-        recent_samples = [
-            s for s in self.samples
-            if s.timestamp >= window_start
-        ]
+        recent_samples = [s for s in self.samples if s.timestamp >= window_start]
 
         if len(recent_samples) < 2:
             return {"trend": "insufficient_data", "samples": len(recent_samples)}
@@ -170,7 +171,7 @@ class TrinityScoreMonitor:
             "total_change": total_change,
             "samples": len(recent_samples),
             "avg_score": sum(s.trinity_score for s in recent_samples) / len(recent_samples),
-            "time_range_minutes": window_minutes
+            "time_range_minutes": window_minutes,
         }
 
     def get_statistics(self) -> dict:
@@ -188,8 +189,8 @@ class TrinityScoreMonitor:
             "max_score": max(scores),
             "balance_distribution": {
                 status: sum(1 for s in self.samples if s.balance_status == status)
-                for status in set(s.balance_status for s in self.samples)
-            }
+                for status in {s.balance_status for s in self.samples}
+            },
         }
 
 
