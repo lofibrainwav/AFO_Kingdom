@@ -52,14 +52,18 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
 
-    - name: Bake (GHA cache on, mode=max)
-      uses: docker/bake-action@v6
-      with:
-        files: ${{ steps.compose.outputs.file }}
-        load: true
-        set: |
-          *.cache-from=type=gha
-          *.cache-to=type=gha,mode=max
+    - name: Build with cache (GHA backend)
+      run: |
+        COMPOSE_FILE="${{ steps.compose.outputs.file }}"
+        export DOCKER_BUILDKIT=1
+        export BUILDKIT_PROGRESS=plain
+
+        # Build with GHA cache
+        if [[ "$COMPOSE_CMD" == "docker-compose" ]]; then
+          $COMPOSE_CMD -f "$COMPOSE_FILE" build --parallel
+        else
+          $COMPOSE_CMD -f "$COMPOSE_FILE" build --parallel
+        fi
 
     - name: Set up Docker
       run: |
