@@ -1,1 +1,0 @@
-gitleaks MISSING. Install (macOS): brew install gitleaks
