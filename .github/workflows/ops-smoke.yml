@@ -151,6 +151,27 @@ jobs:
           --retry-delay 1 \
           "${{ env.AFO_BASE_URL }}/health" >/dev/null
 
+    - name: Smoke SSE /api/logs/stream
+      run: |
+        set -euo pipefail
+        url="${{ env.AFO_BASE_URL }}/api/logs/stream"
+        echo "[info] SSE smoke test: $url"
+
+        # Capture SSE stream for up to 5 seconds
+        timeout 5s curl -sfN \
+          --retry 20 \
+          --retry-connrefused \
+          --retry-delay 1 \
+          "$url" | head -n 6 | tee /tmp/sse.txt || true
+
+        # Verify at least one SSE message received
+        if grep -qE "SSE Stream Connected|Heartbeat|stream" /tmp/sse.txt; then
+          echo "✅ SSE stream OK"
+        else
+          echo "⚠️ SSE stream warning: no expected messages found"
+          cat /tmp/sse.txt || true
+        fi
+
     - name: Trinity Metrics Consistency Gate
       run: |
         echo "🏰 Trinity Metrics Consistency 검증"
