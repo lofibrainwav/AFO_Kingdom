@@ -182,25 +182,6 @@ services:
       timeout: 10s
       retries: 3
 
-  discord-bot-service:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: afo-discord-bot
-    ports:
-      - "8006:8006"
-    environment:
-      - SERVICE_NAME=discord-bot-service
-      - PYTHONPATH=/app
-    command: ["python", "-m", "uvicorn", "api_server:app", "--host", "0.0.0.0", "--port", "8006"]
-    volumes:
-      - ./afo_soul_engine:/app/afo_soul_engine
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8006/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
   # service-registry: 제거됨 (Docker DNS로 대체)
   # Docker Compose의 내장 DNS와 API Gateway의 ServiceDiscovery 클래스로 충분
   # 별도 서비스 레지스트리 컨테이너는 불필요한 중복이므로 제거
@@ -252,25 +233,6 @@ services:
       - ollama
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8010/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
-  browser-auth-service:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: afo-browser-auth
-    ports:
-      - "9100:9100"
-    environment:
-      - SERVICE_NAME=browser-auth-service
-      - PYTHONPATH=/app
-    command: ["python", "-m", "uvicorn", "api_server:app", "--host", "0.0.0.0", "--port", "9100"]
-    volumes:
-      - ./afo_soul_engine:/app/afo_soul_engine
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9100/health"]
       interval: 30s
       timeout: 10s
       retries: 3
