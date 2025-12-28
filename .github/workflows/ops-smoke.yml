@@ -76,6 +76,9 @@ jobs:
         chmod +x scripts/ops_smoke.sh
         ./scripts/ops_smoke.sh
 
+    - name: Warm up /health (register + set trinity metric)
+      run: |
+        curl -sf http://localhost:8010/health >/dev/null
 
     - name: Trinity Metrics Consistency Gate
       run: |
