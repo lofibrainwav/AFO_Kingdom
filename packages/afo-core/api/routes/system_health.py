@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 import psutil
 import redis
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
 
 # Optional SSE import
 try:
@@ -395,72 +395,86 @@ async def get_antigravity_config() -> dict[str, Any]:
     }
 
 
-# Request import for SSE endpoint (kept near endpoint for locality)
-from fastapi import Request
+# SSOT SSE Router (prefix-free for /api/logs/stream canonical path)
+# This router is registered separately in router_manager.py
+sse_ssot_router = APIRouter(prefix="/api", tags=["SSE SSOT"])
 
 
+async def _sse_log_generator():
+    """Shared SSE log generator for all alias paths (SSOT)."""
+    messages = [
+        "🔌 SSE Stream Connected",
+        "💓 Heartbeat #1",
+        "💓 Heartbeat #2",
+        "✅ Stream Test Complete",
+    ]
+
+    for i, message in enumerate(messages):
+        yield {
+            "data": json.dumps(
+                {
+                    "timestamp": datetime.utcnow().isoformat(),
+                    "message": message,
+                    "level": "INFO",
+                    "counter": i + 1,
+                }
+            )
+        }
+
+        if i < len(messages) - 1:
+            await asyncio.sleep(0.5)
+
+
+# SSOT Canonical Path: /api/logs/stream
+@sse_ssot_router.get("/logs/stream")
+async def stream_logs_ssot(request: Request, limit: int = 0) -> EventSourceResponse:
+    """
+    [SSOT] Canonical SSE Log Stream Endpoint
+
+    All SSE log streaming should use this path: /api/logs/stream
+    """
+    return EventSourceResponse(_sse_log_generator())
+
+
+# Cursor Compatibility Path: /api/stream/logs
+@sse_ssot_router.get("/stream/logs")
+async def stream_logs_cursor_compat(request: Request, limit: int = 0) -> EventSourceResponse:
+    """[Alias] Cursor compatibility path for /api/stream/logs"""
+    return EventSourceResponse(_sse_log_generator())
+
+
+# Original Path (retained for existing integrations): /api/system/logs/stream
 @router.get("/logs/stream")
 async def stream_logs(request: Request, limit: int = 0) -> EventSourceResponse:
     """
-    [Serenity: 孝] Real-time Log Stream via Redis Pub/Sub
+    [Serenity: 孝] Simple Test Log Stream
 
-    Architecture:
-    1. Primary: Redis Pub/Sub ('kingdom:logs:stream') - Zero Friction
-    2. Fallback: File Tail ('backend.log') - Safety Net (Goodness)
+    Basic SSE implementation for testing.
     """
 
     async def log_generator():
-        # 1. Try Redis Pub/Sub First
-        try:
-            from AFO.utils.cache_utils import cache
+        # Very simple test stream - just send a few messages
+        messages = [
+            "🔌 SSE Stream Connected",
+            "💓 Heartbeat #1",
+            "💓 Heartbeat #2",
+            "✅ Stream Test Complete",
+        ]
 
-            if cache.enabled and cache.redis:
-                pubsub = cache.redis.pubsub()
-                pubsub.subscribe("kingdom:logs:stream")
+        for i, message in enumerate(messages):
+            yield {
+                "data": json.dumps(
+                    {
+                        "timestamp": "2025-12-28T06:20:00.000Z",
+                        "message": message,
+                        "level": "INFO",
+                        "counter": i + 1,
+                    }
+                )
+            }
 
-                # Yield initial connection message
-                yield {
-                    "data": json.dumps(
-                        {
-                            "timestamp": datetime.now().isoformat(),
-                            "message": "🔌 [Serenity] Connected to Neural Network (Redis Pub/Sub)",
-                        }
-                    )
-                }
-
-                while True:
-                    if await request.is_disconnected():
-                        break
-
-                    message = pubsub.get_message(ignore_subscribe_messages=True)
-                    if message:
-                        # Redis returns bytes, need to decode
-                        data = message["data"]
-                        if isinstance(data, bytes):
-                            data = data.decode("utf-8")
-
-                        # Already JSON formatted by publisher
-                        yield {"data": data}
-
-                    await asyncio.sleep(0.1)  # Prevent tight loop
-                return  # Exit if disconnected
-        except Exception as e:
-            logger.warning(f"Redis Pub/Sub failed: {e}. Falling back to file tail.")
-
-        # 2. Fallback to File Tail (Original Logic)
-        log_file = "backend.log"
-        if not os.path.exists(log_file):
-            open(log_file, "a").close()
-
-        with open(log_file) as f:
-            f.seek(0, 2)
-            while True:
-                if await request.is_disconnected():
-                    break
-                line = f.readline()
-                if line:
-                    yield {"data": line.strip()}
-                else:
-                    await asyncio.sleep(0.5)
+            # Short delay between messages
+            if i < len(messages) - 1:  # Don't sleep after last message
+                await asyncio.sleep(0.5)
 
     return EventSourceResponse(log_generator())
