@@ -7,7 +7,7 @@ import { Loader2, AlertTriangle } from "lucide-react";
 
 export default function SandboxPreviewPage() {
   const params = useParams();
-  const componentName = params.componentName as string;
+  const componentName = params?.componentName as string;
 
   // Dynamic lookup in registry
   const Component = (GenUIRegistry as any)[componentName];
