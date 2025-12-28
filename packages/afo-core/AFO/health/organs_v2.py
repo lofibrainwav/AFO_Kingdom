@@ -138,31 +138,44 @@ def _security_probe() -> OrganReport:
 
 def build_organs_v2(
     *,
-    host_local: str = "127.0.0.1",
+    redis_host: str | None = None,
     redis_port: int = 6379,
+    postgres_host: str | None = None,
     postgres_port: int = 5432,
+    qdrant_host: str | None = None,
     qdrant_port: int = 6333,
+    ollama_host: str | None = None,
     ollama_port: int = 11434,
-    dashboard_port: int = 3000,
+    api_host: str = "127.0.0.1",
     api_port: int = 8010,
     timeout_tcp_s: float = 0.35,
-    timeout_http_s: float = 0.6,
+    timeout_http_s: float = 2.0,
 ) -> dict[str, Any]:
+    import os
+
+    # Read hosts from environment (container service names) or fallback to service names defaults
+    # This ensures containers can find each other even if ENV is missing.
+    # For local non-container dev, set these ENVs to '127.0.0.1' or 'localhost'.
+    redis_host = redis_host or os.getenv("REDIS_HOST", "afo-redis")
+    postgres_host = postgres_host or os.getenv("POSTGRES_HOST", "afo-postgres")
+    qdrant_host = qdrant_host or os.getenv("QDRANT_HOST", "afo-qdrant")
+    ollama_host = ollama_host or os.getenv("OLLAMA_HOST", "afo-ollama")
+
     organs: dict[str, OrganReport] = {}
 
-    ok, ms, t = _tcp_probe(host_local, redis_port, timeout_tcp_s)
+    ok, ms, t = _tcp_probe(redis_host, redis_port, timeout_tcp_s)
     organs["心_Redis"] = _mk(ok, ms, t, "tcp", 98, 40, "Connected", "Disconnected")
 
-    ok, ms, t = _tcp_probe(host_local, postgres_port, timeout_tcp_s)
+    ok, ms, t = _tcp_probe(postgres_host, postgres_port, timeout_tcp_s)
     organs["肝_PostgreSQL"] = _mk(ok, ms, t, "tcp", 99, 30, "Connected", "Disconnected")
 
-    ok, ms, t = _http_probe(f"http://{host_local}:{api_port}/health", timeout_http_s)
+    ok, ms, t = _http_probe(f"http://{api_host}:{api_port}/health", timeout_http_s)
     organs["肺_API_Server"] = _mk(ok, ms, t, "http", 100, 0, "HTTP OK", "No Signal")
 
-    ok, ms, t = _tcp_probe(host_local, ollama_port, timeout_tcp_s)
+    ok, ms, t = _tcp_probe(ollama_host, ollama_port, timeout_tcp_s)
     organs["脾_Ollama"] = _mk(ok, ms, t, "tcp", 95, 20, "Connected", "Disconnected")
 
-    ok, ms, t = _tcp_probe(host_local, qdrant_port, timeout_tcp_s)
+    ok, ms, t = _tcp_probe(qdrant_host, qdrant_port, timeout_tcp_s)
     organs["腎_Qdrant"] = _mk(ok, ms, t, "tcp", 94, 20, "Connected", "Disconnected")
 
     # Static / Semi-static Organs
