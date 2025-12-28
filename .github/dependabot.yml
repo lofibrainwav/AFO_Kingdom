@@ -1,82 +1,51 @@
-# Dependabot configuration for AFO Kingdom
-# 眞善美孝永 철학: 善 (보안), 永 (장기 유지보수), 孝 (자동화)
-
 version: 2
 updates:
-  # Python pip 의존성
-  - package-ecosystem: "pip"
-    directory: "/"
-    schedule:
-      interval: "daily"
-      time: "09:00"
-      timezone: "Asia/Seoul"
-    open-pull-requests-limit: 15
-    pull-request-branch-name:
-      separator: "-"
-    commit-message:
-      prefix: "deps"
-      prefix-development: "chore(deps)"
-      include: "scope"
-    labels:
-      - "dependencies"
-      - "automated"
-      - "python"
-    # 메이저 업데이트는 무시 (호환성 보호)
-    ignore:
-      - dependency-name: "fastapi"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "uvicorn"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "pydantic"
-        update-types: ["version-update:semver-major"]
-    # PR 그룹화 (PR 폭발 방지)
-    groups:
-      production-dependencies:
-        patterns:
-          - "*"
-        exclude-patterns:
-          - "pytest*"
-          - "mypy"
-          - "ruff"
-      development-dependencies:
-        patterns:
-          - "pytest*"
-          - "mypy"
-          - "ruff"
-          - "black"
-    rebase-strategy: "auto"
-
-  # GitHub Actions 워크플로
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
-      day: "monday"
-      time: "09:00"
-      timezone: "Asia/Seoul"
+    open-pull-requests-limit: 5
+    rebase-strategy: "auto"
     groups:
-      actions-updates:
-        patterns: ["*"]
-    labels:
-      - "ci"
-      - "dependencies"
-    commit-message:
-      prefix: "chore(actions)"
+      gha-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
 
-  # npm (trinity-dashboard)
   - package-ecosystem: "npm"
-    directory: "/trinity-dashboard"
+    directory: "/"
     schedule:
       interval: "weekly"
-      day: "monday"
-      time: "09:00"
-      timezone: "Asia/Seoul"
     open-pull-requests-limit: 5
-    labels:
-      - "dependencies"
-      - "frontend"
-    commit-message:
-      prefix: "chore(npm)"
+    rebase-strategy: "auto"
     groups:
-      npm-updates:
-        patterns: ["*"]
+      npm-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
+
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    rebase-strategy: "auto"
+    groups:
+      py-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
