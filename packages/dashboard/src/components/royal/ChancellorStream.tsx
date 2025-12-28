@@ -38,8 +38,8 @@ export default function ChancellorStream() {
   }, []);
 
   useEffect(() => {
-    // SSE Connection to Backend Log Stream
-    const eventSource = new EventSource(`${API_BASE}/logs/stream`);
+    // SSE Connection via Next.js proxy (CORS-safe)
+    const eventSource = new EventSource(`/api/logs/stream`);
 
     eventSource.onmessage = handleLogMessage;
     eventSource.onerror = handleError;
