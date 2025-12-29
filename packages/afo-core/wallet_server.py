@@ -5,12 +5,14 @@ Phase 20: API Wallet & Vault 흡수
 """
 
 import os
-import uvicorn
 from contextlib import asynccontextmanager
+
+import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from AFO.api.routes.wallet import wallet_router
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

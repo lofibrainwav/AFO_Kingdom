@@ -37,7 +37,9 @@ class Context7MCP:
                 os.path.join(base_path, "docs/AFO_CHANCELLOR_GRAPH_SPEC.md"),
                 os.path.join(base_path, "docs/AFO_EVOLUTION_LOG.md"),
                 os.path.join(base_path, "docs/AFO_FRONTEND_ARCH.md"),
-                os.path.join(base_path, "docs/CURSOR_MCP_SETUP.md")
+                os.path.join(base_path, "docs/CURSOR_MCP_SETUP.md"),
+                os.path.join(base_path, "docs/MCP_TOOLS_COMPLETE_DEFINITION.md"),
+                os.path.join(base_path, "docs/SKILLS_REGISTRY_REFERENCE.md")
             ]
 
             loaded_count = 0
@@ -110,15 +112,38 @@ class Context7MCP:
             {
                 "id": "skills_registry",
                 "type": "technical",
-                "title": "Skills Registry 시스템",
+                "title": "Skills Registry 시스템 (19개 스킬 체계)",
                 "content": """
-                AFO Skills Registry:
-                - 31개 지능적 기능 제공
-                - Trinity Score 기반 실행
-                - DRY_RUN 모드 지원
-                - 실시간 상태 모니터링
+                AFO Skills Registry 상세 사양:
+                - 총 19개 스킬, 9개 카테고리로 분류
+                - Strategic Command: skill_005_strategy_engine, skill_010_family_persona
+                - RAG Systems: skill_002_ultimate_rag, skill_013_obsidian_librarian
+                - Workflow Automation: 3개 스킬 (task_breakdown, orchestrator, expand_loop)
+                - Health Monitoring: 3개 스킬 (system_health, trinity_monitor, error_detector)
+                - Memory Management: skill_009_memory_optimizer
+                - Analysis Evaluation: 4개 스킬 (code_quality, security_scan, performance_eval, user_experience)
+                - Integration: 3개 스킬 (api_integration, data_pipeline, notification_system)
+                - Metacognition: skill_019_self_learning
+                - 각 스킬별 Trinity Score 평가 (眞善美孝永)
+                - 실행 모드: SYNC, ASYNC, STREAMING, BACKGROUND
+                - DRY_RUN 모드 및 안전 게이트 지원
                 """,
-                "keywords": ["skills", "registry", "trinity", "dry_run", "실행"]
+                "keywords": ["skills", "registry", "trinity", "dry_run", "실행", "19개", "카테고리", "strategic", "rag", "workflow", "monitoring", "memory", "analysis", "integration", "metacognition"]
+            },
+            {
+                "id": "mcp_protocol",
+                "type": "technical",
+                "title": "MCP Protocol (Model Context Protocol)",
+                "content": """
+                Model Context Protocol (MCP) 사양:
+                - JSON-RPC 2.0 over STDIO 기반 통신 프로토콜
+                - AI 모델과 도구 사이의 표준화된 인터페이스
+                - 도구 호출, 결과 반환, 에러 처리 표준화
+                - 안전한 샌드박스 환경에서 도구 실행
+                - Cursor IDE, Claude Desktop 등 지원
+                - AFO 왕국: 14개 핵심 도구 + 확장 가능성
+                """,
+                "keywords": ["mcp", "protocol", "json-rpc", "stdio", "cursor", "model context protocol", "도구", "tools", "interface"]
             },
             {
                 "id": "sequential_thinking",

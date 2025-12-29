@@ -6,7 +6,14 @@ import time
 from pathlib import Path
 
 # Enhance Path for Sibling Imports
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+# Add packages directory and trinity-os to PYTHONPATH for proper module resolution
+current_dir = os.path.dirname(os.path.abspath(__file__))
+trinity_os_dir = os.path.dirname(current_dir)  # packages/trinity-os
+packages_dir = os.path.dirname(trinity_os_dir)  # packages
+
+sys.path.insert(0, packages_dir)
+sys.path.insert(0, trinity_os_dir)
+sys.path.append(current_dir)
 
 # Import Sibling Modules (The Fragments)
 # Import individually so optional deps (e.g., playwright) don't disable the entire server.
