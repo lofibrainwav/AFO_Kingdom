@@ -49,6 +49,7 @@ from AFO.api.compat import (
     wallet_router,
 )
 
+
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
@@ -257,7 +258,7 @@ class AFORouterManager:
                 f"Skills API registered successfully ({routes_after - routes_before} routes)"
             )
         except Exception as e:
-            logger.error(f"Skills router registration failed: {e}")
+            logger.error("Skills router registration failed: %s", e)
 
     def _register_comprehensive_health(self) -> None:
         """Register comprehensive health check router."""
@@ -284,7 +285,7 @@ class AFORouterManager:
                 router = module.router
                 self._safe_register_router(router, tags=[name])
             except (ImportError, AttributeError) as e:
-                logger.warning(f"{name} router not available: {e}")
+                logger.warning("%s router not available: %s", name, e)
 
     def _register_compatibility_routers(self) -> None:
         """Register compatibility and legacy routers."""
@@ -292,7 +293,7 @@ class AFORouterManager:
         try:
             from AFO.afo_soul_engine.routers.intake import router as intake_router
 
-            self._safe_register_router(intake_router, tags=["Intake"])
+            self._safe_register_router(intake_router, prefix="/api/intake", tags=["Intake"])
         except ImportError:
             logger.warning("Intake API router not available")
 
@@ -301,8 +302,9 @@ class AFORouterManager:
             from AFO.api.routers.gen_ui import router as gen_ui_router
 
             self._safe_register_router(gen_ui_router, tags=["GenUI"])
-        except ImportError:
-            logger.warning("GenUI Engine not available")
+        except ImportError as e:
+            logger.error("GenUI Engine not available: %s", e, exc_info=True)
+            # logger.warning("GenUI Engine not available")
 
         # Family Hub
         try:
@@ -361,7 +363,7 @@ class AFORouterManager:
             self.registered_routers += routes_after - routes_before
 
         except Exception as e:
-            logger.error(f"Router registration failed: {e}")
+            logger.error("Router registration failed: %s", e)
 
 
 # Global function for backward compatibility

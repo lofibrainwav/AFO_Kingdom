@@ -29,6 +29,7 @@ from AFO.services.health_service import get_comprehensive_health
 from AFO.utils.automation_tools import AutomationTools
 from AFO.utils.path_utils import add_to_sys_path, get_trinity_os_path
 
+
 router = APIRouter(prefix="/api/health", tags=["Comprehensive Health"])
 
 # 캐시 헤더는 미들웨어에서 처리됨
@@ -56,7 +57,7 @@ async def trinity_monitor_stats() -> dict[str, Any]:
             "error": "Trinity Score monitoring not available",
         }
     except Exception as e:
-        logger.error(f"Trinity monitor stats error: {e}")
+        logger.error("Trinity monitor stats error: %s", e)
         return {
             "status": "error",
             "error": str(e),
@@ -82,7 +83,7 @@ async def trinity_monitor_trend(window_minutes: int = 60) -> dict[str, Any]:
             "error": "Trinity Score monitoring not available",
         }
     except Exception as e:
-        logger.error(f"Trinity monitor trend error: {e}")
+        logger.error("Trinity monitor trend error: %s", e)
         return {
             "status": "error",
             "error": str(e),
@@ -142,6 +143,9 @@ async def comprehensive_health_check() -> dict[str, Any]:
             ),
             "timestamp": datetime.now().isoformat(),
             "organs": health_data.get("organs", {}),
+            "organs_v2": health_data.get("organs_v2"),
+            "contract_v2": health_data.get("contract_v2"),
+            "ts_v2": health_data.get("ts_v2"),
             "trinity_score": trinity_score,
             "health_percentage": round(trinity_score * 100, 2),
             "trinity_breakdown": trinity_info if isinstance(trinity_info, dict) else {},
@@ -167,7 +171,7 @@ async def comprehensive_health_check() -> dict[str, Any]:
         return response_data
 
     except Exception as e:
-        logger.error(f"Comprehensive health check failed: {e}")
+        logger.error("Comprehensive health check failed: %s", e)
         return {
             "status": "error",
             "timestamp": datetime.now().isoformat(),
@@ -230,7 +234,7 @@ async def _check_skills_registry() -> dict[str, Any]:
             ),
         }
     except Exception as e:
-        logger.warning(f"Skills registry check failed: {e}")
+        logger.warning("Skills registry check failed: %s", e)
         return {
             "status": "error",
             "error": str(e),
@@ -328,7 +332,7 @@ async def _check_sequential_thinking() -> dict[str, Any]:
             "available": True,
         }
     except Exception as e:
-        logger.warning(f"Sequential Thinking check failed: {e}")
+        logger.warning("Sequential Thinking check failed: %s", e)
         return {
             "status": "error",
             "error": str(e),

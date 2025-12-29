@@ -131,7 +131,7 @@ class RedisCacheService:
         try:
             self.redis_client.ping()
             return True
-        except:
+        except Exception:
             return False
 
     async def set(

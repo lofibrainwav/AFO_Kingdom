@@ -10,7 +10,7 @@ import json
 import logging
 import time
 from datetime import datetime
-from typing import TYPE_CHECKING, Any, Optional, cast
+from typing import TYPE_CHECKING, Any, cast
 
 import httpx
 import redis.asyncio as redis
@@ -20,6 +20,7 @@ from AFO.config.settings import get_settings
 from AFO.domain.metrics.trinity import calculate_trinity
 from AFO.services.database import get_db_connection
 from AFO.utils.redis_connection import get_redis_url
+
 
 if TYPE_CHECKING:
     from AFO.domain.metrics.trinity import TrinityMetrics
@@ -114,8 +115,7 @@ async def check_mcp() -> dict[str, Any]:
                 "healthy": True,
                 "output": f"MCP servers configured: {len(health_check_config.MCP_SERVERS)} servers",
             }
-        else:
-            return {"healthy": False, "output": "No MCP servers configured"}
+        return {"healthy": False, "output": "No MCP servers configured"}
     except Exception as e:
         return {"healthy": False, "output": f"MCP check failed: {str(e)[:50]}"}
 
@@ -205,15 +205,13 @@ async def get_comprehensive_health() -> dict[str, Any]:
         else:
             status_data = cast("dict[str, Any]", res)
 
-        organs.append(
-            {
-                "organ": name,
-                "healthy": status_data["healthy"],
-                "status": "healthy" if status_data["healthy"] else "unhealthy",
-                "output": status_data["output"],
-                "timestamp": current_time,
-            }
-        )
+        organs.append({
+            "organ": name,
+            "healthy": status_data["healthy"],
+            "status": "healthy" if status_data["healthy"] else "unhealthy",
+            "output": status_data["output"],
+            "timestamp": current_time,
+        })
 
     # Trinity 계산 (5기둥 SSOT 가중 합)
     healthy_count = sum(1 for o in organs if o["healthy"])
@@ -251,7 +249,7 @@ async def get_comprehensive_health() -> dict[str, Any]:
         try:
             record_trinity_score_metrics(trinity_metrics)
         except Exception as e:
-            logger.warning(f"Failed to record Trinity Score metrics: {e}")
+            logger.warning("Failed to record Trinity Score metrics: %s", e)
 
     # Trinity Score 메트릭 기록 (안전한 방식: utils/metrics.py에서 정의된 메트릭 사용)
     try:
@@ -260,7 +258,7 @@ async def get_comprehensive_health() -> dict[str, Any]:
         trinity_score_total.set(float(trinity_metrics.trinity_score))
         logger.debug(f"Trinity Score metric recorded: {trinity_metrics.trinity_score}")
     except Exception as e:
-        logger.warning(f"Failed to record Trinity Score metric: {e}", exc_info=True)
+        logger.warning("Failed to record Trinity Score metric: %s", e, exc_info=True)
 
     # Issue/Suggestion 생성
     issues = []
@@ -305,7 +303,8 @@ async def get_comprehensive_health() -> dict[str, Any]:
             "ts_v2": v2_data["ts"],
         }
     except Exception as e:
-        logger.warning(f"organs_v2 generation failed: {e}")
+        logger.warning("organs_v2 generation failed: %s", e)
+
         response_v2 = {
             "organs_v2": None,
             "contract_v2": {"version": "organs/v2", "error": str(e)},
@@ -330,8 +329,8 @@ async def get_comprehensive_health() -> dict[str, Any]:
         "trinity": trinity_metrics.to_dict() if trinity_metrics else {},
         "decision": decision,
         "decision_message": decision_message,
-        "issues": issues if issues else None,
-        "suggestions": suggestions if suggestions else None,
+        "issues": issues or None,
+        "suggestions": suggestions or None,
         "organs": {
             o["organ"]: {
                 "status": o["status"],
@@ -355,6 +354,6 @@ async def get_comprehensive_health() -> dict[str, Any]:
         await r.close()
         logger.debug("Health check result cached")
     except Exception as e:
-        logger.warning(f"Failed to cache health check result: {e}")
+        logger.warning("Failed to cache health check result: %s", e)
 
     return response

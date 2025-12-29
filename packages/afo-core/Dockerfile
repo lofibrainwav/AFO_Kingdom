@@ -18,7 +18,8 @@ RUN pip install --no-cache-dir -r requirements.txt || pip install --no-cache-dir
 
 
 # Explicit uvicorn installation (RAG service fix)
-RUN pip install --no-cache-dir "uvicorn[standard]>=0.31.1"
+RUN pip install --no-cache-dir "uvicorn[standard]>=0.31.1" playwright
+RUN playwright install --with-deps chromium
 RUN python -c "import uvicorn; print('uvicorn', uvicorn.__version__)"
 # Copy Application Code
 COPY . /app/
