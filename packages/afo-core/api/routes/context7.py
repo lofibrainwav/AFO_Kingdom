@@ -17,6 +17,7 @@ from typing import Any
 
 from fastapi import APIRouter, HTTPException, Query
 
+
 # Configure logging
 logger = logging.getLogger(__name__)
 
@@ -65,14 +66,12 @@ async def search_context7(
 
         for item in raw_results[:limit]:
             if isinstance(item, dict):
-                formatted_results.append(
-                    {
-                        "id": item.get("id", f"item_{len(formatted_results)}"),
-                        "content": item.get("content", ""),
-                        "metadata": item.get("metadata", {}),
-                        "score": item.get("score", 0.0),
-                    }
-                )
+                formatted_results.append({
+                    "id": item.get("id", f"item_{len(formatted_results)}"),
+                    "content": item.get("content", ""),
+                    "metadata": item.get("metadata", {}),
+                    "score": item.get("score", 0.0),
+                })
 
         return {
             "query": q,
@@ -82,7 +81,7 @@ async def search_context7(
         }
 
     except Exception as e:
-        logger.error(f"Context7 search failed: {e}")
+        logger.error("Context7 search failed: %s", e)
         raise HTTPException(status_code=500, detail=f"Context7 search failed: {e!s}") from e
 
 
@@ -117,7 +116,7 @@ async def context7_health() -> dict[str, Any]:
         }
 
     except Exception as e:
-        logger.error(f"Context7 health check failed: {e}")
+        logger.error("Context7 health check failed: %s", e)
         return {
             "status": "error",
             "error": str(e),
@@ -125,3 +124,38 @@ async def context7_health() -> dict[str, Any]:
             "knowledge_base_accessible": False,
             "retrieval_works": False,
         }
+
+
+@router.get("/list")
+async def list_context7_items() -> dict[str, Any]:
+    """
+    List all items in Context7 knowledge base.
+
+    Trinity Score: 眞 (Truth) - 전체 지식 목록 투명성 제공
+    """
+    try:
+        # Import Context7MCP
+        import os
+        import sys
+
+        trinity_os_path = os.path.abspath(
+            os.path.join(os.path.dirname(__file__), "..", "..", "..", "trinity-os")
+        )
+        if trinity_os_path not in sys.path:
+            sys.path.insert(0, trinity_os_path)
+
+        from trinity_os.servers.context7_mcp import Context7MCP
+
+        # Create instance
+        context7 = Context7MCP()
+
+        # Return knowledge base directly
+        return {
+            "status": "success",
+            "total": len(context7.knowledge_base),
+            "items": context7.knowledge_base,
+        }
+
+    except Exception as e:
+        logger.error("Context7 list failed: %s", e)
+        return {"status": "error", "error": str(e), "items": []}
