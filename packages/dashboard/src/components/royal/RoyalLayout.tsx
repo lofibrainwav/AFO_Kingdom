@@ -17,6 +17,7 @@ import RoyalFinanceWidget from "./widgets/RoyalFinanceWidget";
 import { SystemStatusWidget } from "./widgets/SystemStatusWidget";
 import { RoyalCommandHierarchyCard } from "../../widgets/royal/RoyalCommandHierarchyCard";
 import { FieldManualLawCard } from "../../widgets/royal/FieldManualLawCard";
+import SSEHealthWidget from "../genui/SSEHealthWidget";
 
 import { ROYAL_CONSTANTS } from "../../config/royal_constants";
 import { TrinityEvidenceWidget } from "../genui/TrinityEvidenceWidget";
@@ -98,10 +99,11 @@ export default function RoyalLayout() {
           {/* 3. Neural Stream & Skills (Unified Royal Ops Center) */}
           <section className="space-y-8">
             {/* Genesis Widgets Row 1: Quick Status (neu-card style, equal sizes) */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               <SystemStatusWidget />
               <GitWidget />
               <TrinityEvidenceWidget />
+              <SSEHealthWidget />
             </div>
 
             {/* Use the Unified Royal Ops Center */}
