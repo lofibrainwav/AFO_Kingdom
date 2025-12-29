@@ -30,7 +30,7 @@ for i in $(seq 1 60); do
 done
 
 echo "--- verify health payload keys ---"
-curl -sf "http://127.0.0.1:${AFO_PORT}/api/health/comprehensive" | python3 - <<'PY'
+curl -sfL --retry 5 --retry-delay 2 --max-time 20 "http://127.0.0.1:${AFO_PORT}/api/health/comprehensive" | python3 - <<'PY'
 import json,sys
 d=json.load(sys.stdin)
 keys=set(d.keys())
