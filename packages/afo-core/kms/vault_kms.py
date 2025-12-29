@@ -16,15 +16,36 @@ class VaultKMS:
     def __init__(self):
         self.url = os.getenv("VAULT_ADDR")
         self.token = os.getenv("VAULT_TOKEN")
+        self.auth_method = os.getenv("VAULT_AUTH_METHOD", "token")
+        self.role_id = os.getenv("VAULT_ROLE_ID")
+        self.secret_id = os.getenv("VAULT_SECRET_ID")
         self.mount_point = os.getenv("VAULT_MOUNT_POINT", "secret")
-        self.secret_path = os.getenv("VAULT_SECRET_PATH", "api_wallet/keys")
+        self.secret_path = os.getenv("VAULT_SECRET_PATH", "api_wallet")
         self.client = None
 
-        if hvac and self.url and self.token:
+        if hvac and self.url:
             try:
-                self.client = hvac.Client(url=self.url, token=self.token)
+                self.client = hvac.Client(url=self.url)
+
+                # Authenticate based on method
+                if self.auth_method == "approle" and self.role_id and self.secret_id:
+                    # AppRole authentication
+                    auth_response = self.client.auth.approle.login(
+                        role_id=self.role_id,
+                        secret_id=self.secret_id
+                    )
+                    self.client.token = auth_response['auth']['client_token']
+                    print("✅ Vault AppRole authentication successful")  # TICKET W3: Debug logging
+                elif self.token:
+                    # Token authentication (legacy)
+                    self.client.token = self.token
+                    print("✅ Vault token authentication successful")
+                else:
+                    print("⚠️ No valid Vault authentication method configured")
+
             except Exception as e:
                 logging.warning(f"Failed to initialize Vault client: {e}")
+                self.client = None
 
     def is_available(self) -> bool:
         """Check if Vault is available and authenticated."""
