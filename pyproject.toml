@@ -36,7 +36,7 @@ python-frontmatter = "^1.1.0"
 hcloud = "^2.13.0"
 kafka-python = "^2.3.0"
 sentence-transformers = "^5.2.0"
-sqlmodel = "^0.0.30"
+sqlmodel = "^0.0.31"
 sunoai = "^1.0.7"
 neo4j = "^6.0.3"
 
