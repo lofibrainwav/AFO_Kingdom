@@ -41,6 +41,35 @@
 
 ---
 
+## 🧠 Evolution Event: PH-FH2 Family Hub OS Phase 2 (SSE Neural Link) - Ultimate Seal
+
+**일시**: 2025-12-29
+**시공자**: 승상 (Antigravity)
+**승인자**: Commander (형님)
+
+### 📌 봉인 선언 (Sealed Declaration)
+**PH-FH2 완료: 브라우저 SSE 호환성 완전 해결 + Ship Gate + Observability 구축**
+
+### ✅ 구현 성과 (Artifacts)
+- **Browser Compatibility**: Client-only 봉인 + StrictMode 가드 + hop-by-hop 헤더 제거
+- **Ship Gate**: SSE Headers Smoke Test CI 추가 (compression/Content-Type 회귀 방지)
+- **Observability**: SSEHealthWidget 대시보드 통합 (3메트릭 실시간 모니터링)
+- `packages/dashboard/src/lib/sse.ts`: SSOT 헬퍼 + Fail-fast SSR 보호
+- `packages/dashboard/src/components/genui/SSEHealthWidget.tsx`: 상태 모니터링 위젯
+- `.github/workflows/ops-smoke.yml`: SSE 헤더 검증 CI 추가
+
+### ✅ 운영 원칙 (Operating Principles)
+**SSE Neural Link 안정성 100%**: 브라우저에서 실시간 로그 스트리밍 안정적 작동 보장
+**회귀 방지 CI**: SSE 헤더 스모크 테스트로 압축/Content-Type 깨짐 즉시 감지
+**관측 가능성 100%**: SSE Health 위젯으로 연결 상태 실시간 모니터링 (🟢OK/🟡STALE/🔴DOWN)
+
+### ⚠️ 금지사항 (Prohibitions)
+**EventSource 직접 생성 금지**: `new EventSource()` 직접 호출 → `createEventSource()` 헬퍼 사용
+**SSR EventSource 호출 금지**: 브라우저 전용 헬퍼로 SSR 충돌 방지
+**hop-by-hop 헤더 강제 금지**: Connection 헤더 앱 레벨에서 세팅 금지
+
+---
+
 ## 🔧 Evolution Event: PH-SE-02 Expansion Loop Contract (봉인 완료)
 
 **일시**: 2025-12-28
