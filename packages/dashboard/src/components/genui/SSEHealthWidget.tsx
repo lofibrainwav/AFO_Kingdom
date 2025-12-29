@@ -105,13 +105,16 @@ const SSEHealthWidget = () => {
   useEffect(() => {
     updateMetrics();
 
-    // Report metrics to backend for Prometheus alerting
+    // Report metrics to backend for Prometheus alerting (with internal auth)
     const reportMetrics = async () => {
       try {
+        const internalApiKey = process.env.NEXT_PUBLIC_AFO_INTERNAL_API_KEY || 'afo_internal_default_key';
+
         const response = await fetch('/api/system/sse/health', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${internalApiKey}`,
           },
           body: JSON.stringify({
             open_connections: metrics.openConnections,
