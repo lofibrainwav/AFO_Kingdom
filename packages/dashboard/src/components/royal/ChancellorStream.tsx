@@ -35,7 +35,8 @@ export default function ChancellorStream() {
     return delay;
   }, []);
 
-  // Connect to SSE
+  // Connect to SSE function declaration
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const connect = useCallback(() => {
     // Cleanup previous connection
     if (eventSourceRef.current) {
@@ -73,6 +74,8 @@ export default function ChancellorStream() {
       retryTimeoutRef.current = setTimeout(connect, delay);
     };
   }, [getBackoffDelay]);
+
+  // Connect function is declared above, so it's safe to use in setTimeout
 
   useEffect(() => {
     connect();

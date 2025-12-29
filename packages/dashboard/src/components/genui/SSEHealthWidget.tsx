@@ -33,7 +33,7 @@ const SSEHealthWidget = () => {
 
   const [isConnected, setIsConnected] = useState(false);
   const eventSourceRef = useRef<EventSource | null>(null);
-  const lastEventRef = useRef<number>(Date.now());
+  const lastEventRef = useRef<number>(0);
   const reconnectCountRef = useRef<number>(0);
 
   // Update last event timestamp
