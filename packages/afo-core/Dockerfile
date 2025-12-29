@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Install python dependencies globally
-COPY requirements.txt requirements_minimal.txt* ./
+COPY packages/afo-core/requirements.txt packages/afo-core/requirements_minimal.txt* ./
 RUN pip install --no-cache-dir -r requirements.txt || pip install --no-cache-dir -r requirements_minimal.txt
 
 
@@ -21,8 +21,9 @@ RUN pip install --no-cache-dir -r requirements.txt || pip install --no-cache-dir
 RUN pip install --no-cache-dir "uvicorn[standard]>=0.31.1" playwright
 RUN playwright install --with-deps chromium
 RUN python -c "import uvicorn; print('uvicorn', uvicorn.__version__)"
-# Copy Application Code
-COPY . /app/
+# Copy Application Code (Monorepo Support)
+COPY packages/afo-core /app/
+COPY packages/trinity-os/trinity_os /app/trinity_os/
 
 # Set Environment
 ENV PYTHONPATH=/app
