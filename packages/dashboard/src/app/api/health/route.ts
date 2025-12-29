@@ -6,7 +6,10 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function GET(request: NextRequest) {
   try {
     // 백엔드 API 직접 호출 (서버 사이드 - CORS 문제 해결)
-    const backendUrl = 'http://127.0.0.1:8010/api/health/comprehensive';
+    // 컨테이너 환경에서는 SOUL_ENGINE_URL 환경변수 사용
+    const backendUrl = process.env.SOUL_ENGINE_URL
+      ? `${process.env.SOUL_ENGINE_URL}/api/health/comprehensive`
+      : 'http://127.0.0.1:8010/api/health/comprehensive';
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 5000); // 5초 타임아웃
 

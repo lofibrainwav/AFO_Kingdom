@@ -15,9 +15,8 @@ if TYPE_CHECKING:
 
 import psutil
 import redis
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Request
 from fastapi.responses import RedirectResponse
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 # Optional SSE import
 try:
@@ -30,29 +29,6 @@ except ImportError:
     SSE_AVAILABLE = False
 
 router = APIRouter(prefix="/api/system", tags=["System Health"])
-
-# Security: Internal API Key Authentication for SSE Health Metrics
-# Only allows internal services (Dashboard) to report SSE health metrics
-security = HTTPBearer()
-
-async def verify_internal_service(
-    credentials: HTTPAuthorizationCredentials = Depends(security)
-) -> str:
-    """
-    Verify internal service authentication for SSE health metrics.
-
-    This endpoint is only accessible to internal AFO services (Dashboard).
-    Uses Bearer token authentication with internal API key.
-    """
-    expected_token = os.getenv("AFO_INTERNAL_API_KEY", "afo_internal_default_key")
-
-    if credentials.credentials != expected_token:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Access denied: Invalid internal API key"
-        )
-
-    return credentials.credentials
 
 
 @router.get("/health", include_in_schema=os.getenv("ENVIRONMENT") == "dev")
@@ -457,23 +433,8 @@ async def stream_logs_ssot(request: Request, limit: int = 0) -> EventSourceRespo
     [SSOT] Canonical SSE Log Stream Endpoint
 
     All SSE log streaming should use this path: /api/logs/stream
-
-    Security: Rate limited to prevent abuse (10 requests/minute per IP)
     """
-    # Security: Rate limit check to prevent abuse
-    client_ip = request.client.host if request.client else "unknown"
-    if not check_sse_rate_limit(client_ip, max_requests=10, window_seconds=60):
-        raise HTTPException(
-            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-            detail="Rate limit exceeded: Too many SSE stream requests"
-        )
-
-    # SSE headers for browser compatibility (avoid hop-by-hop Connection header)
-    headers = {
-        "Cache-Control": "no-store, no-cache, no-transform",
-        "X-Accel-Buffering": "no"
-    }
-    return EventSourceResponse(_sse_log_generator(), headers=headers)
+    return EventSourceResponse(_sse_log_generator())
 
 
 # Cursor Compatibility Path: /api/stream/logs
@@ -491,106 +452,3 @@ async def stream_logs(request: Request, limit: int = 0) -> RedirectResponse:
     Redirects to canonical SSOT path
     """
     return RedirectResponse("/api/logs/stream", status_code=308)
-
-
-# ============================================================================
-# SSE Rate Limit Protection
-# ============================================================================
-
-import time
-from collections import defaultdict
-
-# Simple in-memory rate limiter for SSE streams
-# Production should use Redis for distributed rate limiting
-_sse_rate_limits = defaultdict(list)
-
-def check_sse_rate_limit(client_ip: str, max_requests: int = 10, window_seconds: int = 60) -> bool:
-    """
-    Check if client IP exceeds SSE stream rate limit.
-
-    Args:
-        client_ip: Client IP address
-        max_requests: Maximum requests per window
-        window_seconds: Time window in seconds
-
-    Returns:
-        True if allowed, False if rate limited
-    """
-    now = time.time()
-    window_start = now - window_seconds
-
-    # Clean old requests
-    _sse_rate_limits[client_ip] = [
-        timestamp for timestamp in _sse_rate_limits[client_ip]
-        if timestamp > window_start
-    ]
-
-    # Check if under limit
-    if len(_sse_rate_limits[client_ip]) < max_requests:
-        _sse_rate_limits[client_ip].append(now)
-        return True
-
-    return False
-
-# ============================================================================
-# SSE Health Metrics Endpoint
-# ============================================================================
-
-@router.post("/sse/health", include_in_schema=os.getenv("ENVIRONMENT") == "dev")
-async def update_sse_health_metrics(
-    open_connections: int = 0,
-    reconnect_count: int = 0,
-    last_event_age_seconds: float = 0.0,
-    token: str = Depends(verify_internal_service),  # Security: Internal auth required
-) -> dict[str, str]:
-    """
-    Update SSE health metrics for monitoring and alerting.
-
-    This endpoint allows the dashboard to report SSE connection health
-    metrics to Prometheus for alerting and observability.
-
-    Security: Requires internal API key authentication.
-    Validation: Input values are sanitized to prevent metric explosion.
-
-    Args:
-        open_connections: Number of currently open SSE connections (0-100)
-        reconnect_count: Total number of SSE reconnection attempts (0-10000)
-        last_event_age_seconds: Time since last SSE event in seconds (0-3600)
-
-    Returns:
-        Success confirmation
-    """
-    # Security: Input validation to prevent metric explosion attacks
-    # Limit reasonable ranges to prevent Prometheus overload
-    if not (0 <= open_connections <= 100):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid open_connections: must be 0-100"
-        )
-
-    if not (0 <= reconnect_count <= 10000):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid reconnect_count: must be 0-10000"
-        )
-
-    if not (0 <= last_event_age_seconds <= 3600):  # Max 1 hour
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid last_event_age_seconds: must be 0-3600"
-        )
-
-    try:
-        from AFO.utils.metrics import update_sse_health_metrics
-
-        update_sse_health_metrics(
-            open_connections=open_connections,
-            reconnect_count=reconnect_count,
-            last_event_age_seconds=last_event_age_seconds,
-        )
-
-        return {"status": "success", "message": "SSE health metrics updated"}
-
-    except Exception as e:
-        logger.warning("Failed to update SSE health metrics: %s", e)
-        return {"status": "error", "message": f"Failed to update metrics: {e}"}
