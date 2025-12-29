@@ -45,12 +45,12 @@ jobs:
 
     steps:
       - name: "레포지토리 체크아웃 (지형 익히기)"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
       - name: "Python 설정 (Python 3.12 철학의 완성)"
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.12'
 
@@ -87,10 +87,10 @@ jobs:
 
     steps:
       - name: "레포지토리 체크아웃"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: "Node.js 설정 (React 철학 구현)"
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: '20'
           cache: 'npm'
@@ -109,7 +109,7 @@ jobs:
         run: npx eslint src/components/royal/PhilosophicalCopilotDashboard.tsx
 
       - name: "Python 설정 (FastAPI 철학 구현)"
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.12'
 
@@ -145,10 +145,10 @@ jobs:
 
     steps:
       - name: "레포지토리 체크아웃"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: "Python 설정"
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.12'
 
@@ -212,7 +212,7 @@ jobs:
 
     steps:
       - name: "레포지토리 체크아웃"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: "철학적 배포 검증"
         run: |
@@ -244,7 +244,7 @@ jobs:
 
     steps:
       - name: "레포지토리 체크아웃"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: "철학적 CI/CD 보고서 생성"
         run: |
@@ -304,7 +304,7 @@ jobs:
           EOF
 
       - name: "보고서 업로드"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: philosophical-copilot-report
           path: philosophical_copilot_report.md

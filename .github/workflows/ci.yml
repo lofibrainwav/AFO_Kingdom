@@ -11,12 +11,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.12'
           cache: 'pip'
@@ -45,13 +45,13 @@ jobs:
           cd packages/afo-core && pytest --cov=AFO --cov-report=xml
 
       - name: Upload Coverage
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           file: ./packages/afo-core/coverage.xml
 
       - name: Upload Trinity Evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: trinity-evidence-${{ github.run_id }}-${{ github.run_attempt }}
           path: artifacts/trinity/**
@@ -59,7 +59,7 @@ jobs:
 
       - name: Upload Royal Build Evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: royal-build-evidence-${{ github.run_id }}-${{ github.run_attempt }}
           path: artifacts/royal_build/**

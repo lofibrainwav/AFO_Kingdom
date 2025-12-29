@@ -14,12 +14,12 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         fetch-depth: 0
 
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v6
       with:
         python-version: '3.12'
 
@@ -29,7 +29,7 @@ jobs:
         echo "GRAFANA_URL=https://afo-grafana.brnestrm.com" >> $GITHUB_ENV
 
     - name: Cache pip dependencies
-      uses: actions/cache@v3
+      uses: actions/cache@v5
       with:
         path: ~/.cache/pip
         key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements*.txt') }}
@@ -79,7 +79,7 @@ jobs:
         echo "🚀 Auto-run Eligible: $AUTO_RUN_ELIGIBLE"
 
     - name: Upload Trinity Report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v6
       with:
         name: trinity-quality-report
         path: trinity_report.json
@@ -141,7 +141,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     - name: Run tests (only for excellent quality)
       run: |
