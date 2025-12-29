@@ -103,7 +103,7 @@ function AutomatedDebuggingStreamWidgetContent() {
 
   useEffect(() => {
     // Connect to the Automated Debugging System Stream
-    const eventSource = new EventSource("/api/debugging/stream");
+    const eventSource = new EventSource(`${window.location.origin}/api/debugging/stream`);
 
     eventSource.onopen = () => {
       setConnected(true);

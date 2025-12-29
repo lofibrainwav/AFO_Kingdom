@@ -16,7 +16,7 @@ export default function FamilyPage() {
 
   // SSE: Matrix Thought Stream
   useEffect(() => {
-    const eventSource = new EventSource("/api/mcp/thoughts");
+    const eventSource = new EventSource(`${window.location.origin}/api/mcp/thoughts`);
     eventSource.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);

@@ -88,7 +88,7 @@ function AgentLearningTimelineContent() {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    const eventSource = new EventSource("/api/learning-log/stream");
+    const eventSource = new EventSource(`${window.location.origin}/api/learning-log/stream`);
 
     eventSource.onopen = () => setIsConnected(true);
     eventSource.onerror = () => setIsConnected(false);

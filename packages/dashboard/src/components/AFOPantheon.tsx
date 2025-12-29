@@ -96,7 +96,7 @@ export function AFOPantheon() {
   const statusColorClass = useMemo(() => getStatusColorClass(), [getStatusColorClass]);
 
   useEffect(() => {
-    const eventSource = new EventSource("/api/mcp/thoughts/sse");
+    const eventSource = new EventSource(`${window.location.origin}/api/mcp/thoughts/sse`);
 
     eventSource.onmessage = (event) => {
       try {

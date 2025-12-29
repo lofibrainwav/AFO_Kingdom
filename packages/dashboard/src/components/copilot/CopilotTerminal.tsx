@@ -19,7 +19,9 @@ const CopilotTerminal: React.FC = () => {
   useEffect(() => {
     // Determine API Base URL (Use constants)
     const apiBase = API_BASE_URL;
-    const streamUrl = `${apiBase}/api/stream/mcp/thoughts`;
+    const streamUrl = apiBase.startsWith('http')
+      ? `${apiBase}/api/stream/mcp/thoughts`
+      : `${window.location.origin}${apiBase}/api/stream/mcp/thoughts`;
 
     logInfo(`[Matrix] Connecting to Neural Stream: ${streamUrl}`);
     const eventSource = new EventSource(streamUrl);

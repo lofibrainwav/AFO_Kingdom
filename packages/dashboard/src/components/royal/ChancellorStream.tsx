@@ -43,7 +43,7 @@ export default function ChancellorStream() {
     }
 
     setStatus("reconnecting");
-    const eventSource = new EventSource("/api/logs/stream");
+    const eventSource = new EventSource(`${window.location.origin}/api/logs/stream`);
     eventSourceRef.current = eventSource;
 
     eventSource.onopen = () => {

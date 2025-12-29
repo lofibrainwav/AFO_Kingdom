@@ -22,7 +22,7 @@ export function TrinityMirrorStatus() {
 
   useEffect(() => {
     // Matrix Stream(SSE)에서 Mirror 관련 생각만 필터링하여 수신
-    const eventSource = new EventSource("/api/mcp/thoughts/sse");
+    const eventSource = new EventSource(`${window.location.origin}/api/mcp/thoughts/sse`);
 
     eventSource.onmessage = (event) => {
       try {
