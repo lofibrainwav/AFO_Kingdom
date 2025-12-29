@@ -3,7 +3,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { Wifi, WifiOff, RefreshCw } from "lucide-react";
-import { createEventSource } from "@/lib/sse";
 
 // Connection status type
 type ConnectionStatus = "connected" | "reconnecting" | "offline";
@@ -36,21 +35,16 @@ export default function ChancellorStream() {
     return delay;
   }, []);
 
-  // Connect to SSE
+  // Connect to SSE function declaration
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const connect = useCallback(() => {
-    // React StrictMode guard: prevent duplicate connections in dev
+    // Cleanup previous connection
     if (eventSourceRef.current) {
-      console.log("[SSE] Connection already exists, skipping duplicate");
-      return;
-    }
-
-    // Cleanup previous connection (safety check)
-    if (eventSourceRef.current) {
-      (eventSourceRef.current as EventSource).close();
+      eventSourceRef.current.close();
     }
 
     setStatus("reconnecting");
-    const eventSource = createEventSource("/api/logs/stream");
+    const eventSource = new EventSource("/api/logs/stream");
     eventSourceRef.current = eventSource;
 
     eventSource.onopen = () => {
@@ -70,31 +64,28 @@ export default function ChancellorStream() {
 
     eventSource.onerror = () => {
       eventSource.close();
-      eventSourceRef.current = null as any; // Clear ref for reconnection
       setStatus("offline");
-
+      
       // Retry with exponential backoff
       const delay = getBackoffDelay();
       retryCountRef.current += 1;
-
+      
       console.log(`[SSE] Reconnecting in ${delay}ms (attempt ${retryCountRef.current})`);
       retryTimeoutRef.current = setTimeout(connect, delay);
     };
   }, [getBackoffDelay]);
 
+  // Connect function is declared above, so it's safe to use in setTimeout
+
   useEffect(() => {
     connect();
 
     return () => {
-      console.log("[SSE] Cleanup: closing connection");
       if (eventSourceRef.current) {
         eventSourceRef.current.close();
-        eventSourceRef.current = null; // Clear ref on cleanup
-        console.log("[SSE] Cleanup: connection closed and ref cleared");
       }
       if (retryTimeoutRef.current) {
         clearTimeout(retryTimeoutRef.current);
-        console.log("[SSE] Cleanup: retry timeout cleared");
       }
     };
   }, [connect]);

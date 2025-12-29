@@ -7,17 +7,24 @@
 'use client';
 
 /**
- * Build absolute SSE stream URL using current origin
+ * Build absolute SSE stream URL using current origin or environment URL
  * Handles SSR/proxy/tunnel environment differences
- * Fail-fast approach: throws error if called in SSR context
+ * Supports both client and server environments with environment variable fallback
  */
 export function buildSseUrl(path: string): string {
   // Remove leading slash if present
   const cleanPath = path.startsWith('/') ? path : `/${path}`;
 
-  // Build absolute URL using current origin (fail-fast for SSR safety)
+  // Check for environment variable (Docker/container environment)
+  const soulEngineUrl = process.env.SOUL_ENGINE_URL;
+  if (soulEngineUrl) {
+    // Use environment variable URL for container environments
+    return `${soulEngineUrl}${cleanPath}`;
+  }
+
+  // Fallback to current origin for client/browser environments
   if (typeof window === 'undefined') {
-    throw new Error('SSE URL must be built in the browser (client-only). Use createEventSource() in useEffect.');
+    throw new Error('SSE URL must be built in the browser or with SOUL_ENGINE_URL env var. Use createEventSource() in useEffect.');
   }
 
   return `${window.location.origin}${cleanPath}`;
@@ -38,7 +45,7 @@ export function createEventSource(path: string, options?: EventSourceInit): Even
 export const SSE_ENDPOINTS = {
   LOGS: '/api/logs/stream',
   MCP_THOUGHTS: '/api/mcp/thoughts',
-  MCP_THOUGHTS_SSE: '/api/mcp/thoughts/sse',
+  MCP_THOUGHTS_SSE: '/api/stream/mcp/thoughts',
   GROK_STREAM: '/api/grok/stream',
   LEARNING_LOG: '/api/learning-log/stream',
   DEBUGGING: '/api/debugging/stream',

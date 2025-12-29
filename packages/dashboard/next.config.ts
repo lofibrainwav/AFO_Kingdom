@@ -44,6 +44,11 @@ const nextConfig: NextConfig = {
   
   async rewrites() {
     return [
+      // Health check proxy for smoke tests
+      {
+        source: "/api/health",
+        destination: `${soulEngineUrl}/api/health`,
+      },
       // SSE Stream Proxy - SSOT: /api/logs/stream
       {
         source: "/api/logs/stream",

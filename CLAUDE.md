@@ -32,32 +32,33 @@ poetry install                   # Alternative: Poetry
 
 # Quality gates (run from repo root)
 make lint                        # Ruff lint (packages/afo-core)
-make type-check                  # MyPy type check
+make type-check                  # MyPy type check (requires MYPYPATH)
 make test                        # Unit tests (excludes integration/external)
-make test-integration            # Integration tests (needs PostgreSQL, Redis)
-make check                       # Lint + test combined
+make check                       # Lint + type-check + test combined
 
 # Run server
 cd packages/afo-core && uvicorn api.api_server:app --reload --port 8010
 ```
 
-### Frontend (Next.js Dashboard)
+### Frontend (Next.js 16 Dashboard)
 
 ```bash
 cd packages/dashboard
 pnpm install                     # Install deps
-pnpm dev                         # Dev server (port 3000)
-pnpm build                       # Production build
+pnpm dev                         # Dev server (port 3000, auto-runs predev)
+pnpm dev:full                    # Backend + Frontend concurrent dev
+pnpm build                       # Production build (auto-runs prebuild)
 pnpm lint                        # ESLint
 pnpm type-check                  # TypeScript check
 pnpm lint:fix                    # Auto-fix lint issues
 ```
 
+Note: `predev`/`prebuild` scripts auto-generate widgets and fragments from HTML templates.
+
 ### Pre-push Validation
 
 ```bash
-make pre-push                    # Full validation: lint + type-check + test + scorecard
-make ci-local                    # Above + security scan
+make pre-push                    # Full validation: lint + type-check + test
 ```
 
 ### Single Test
@@ -94,10 +95,62 @@ cd packages/afo-core && pytest tests/test_file.py::test_function -v
 
 ### TypeScript/React
 
-- Next.js 16 App Router
-- React 19 with Server Components
-- Tailwind CSS + Glassmorphism design
+- Next.js 16.0.10 App Router
+- React 19.2.1 with Server Components
+- Tailwind CSS 4 + Glassmorphism design
 - SWR for data fetching
+
+## Key Configuration Files
+
+- `pyproject.toml` - Ruff/MyPy config, Python dependencies, tool settings
+- `Makefile` - Quality gate commands (lint, test, type-check, pre-push)
+- `AGENTS.md` - Agent governance, Trinity Score, 10-second protocol
+- `packages/dashboard/package.json` - Frontend scripts and dependencies
+
+## Infrastructure Quick Reference
+
+**Core Services** (docker-compose in `packages/afo-core/`):
+
+| Service | Port | Role |
+|---------|------|------|
+| Dashboard | 3000 | Next.js UI |
+| Soul Engine | 8010 | Main FastAPI API |
+| PostgreSQL | 15432 | Brain (persistent DB) |
+| Redis | 6379 | Heart (cache/session) |
+| Qdrant | 6333 | Lungs (vector search) |
+| Ollama | 11435 | Local LLM |
+| LangFlow | 7860 | Visual workflow |
+| n8n | 5678 | Automation |
+
+**Start minimal dev stack**:
+```bash
+cd packages/afo-core && docker-compose up -d postgres redis qdrant
+```
+
+**Profiles**: `--profile monitoring` (Prometheus/Grafana), `--profile security` (Vault)
+
+## Philosophy Components
+
+**Trinity Score** formula: 眞35% + 善35% + 美20% + 孝8% + 永2% = 100
+
+**3 Strategists** (Chancellor Graph decision makers):
+- Zhuge Liang (諸葛亮) - 眞 Truth strategist
+- Sima Yi (司馬懿) - 善 Goodness strategist
+- Zhou Yu (周瑜) - 美 Beauty strategist
+
+**19 Skills**: `packages/trinity-os/afo_skills_registry.py` (001-030)
+**9 MCP Servers**: `packages/trinity-os/afo_ultimate_mcp_server.py`
+
+## Data Flow
+
+```text
+User → Dashboard (SSE/REST) → Soul Engine (port 8010)
+  → Chancellor Graph → Trinity Score Routing
+  → Strategist Selection → Skill Execution → Response
+```
+
+**SSE Endpoints**: `/api/sse/*` for real-time streaming
+**REST Endpoints**: `/api/*` for standard requests
 
 ## Boundaries (Do Not Touch Without Explicit Approval)
 
