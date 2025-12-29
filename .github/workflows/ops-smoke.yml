@@ -141,6 +141,39 @@ jobs:
         chmod +x scripts/ops_smoke.sh
         ./scripts/ops_smoke.sh
 
+    - name: SSE Headers Smoke Test
+      run: |
+        echo "🏰 SSE Headers Smoke Test - 회귀 방지"
+
+        # Test SSE endpoint headers (catch compression/Content-Type issues)
+        echo "Testing SSE headers..."
+
+        # Check content-type contains event-stream
+        if curl -s http://localhost:3000/api/logs/stream | head -1 | grep -q "data:"; then
+          echo "✅ SSE stream data detected"
+        else
+          echo "❌ SSE stream data not found"
+          exit 1
+        fi
+
+        # Check no Content-Encoding (no compression)
+        if curl -I http://localhost:3000/api/logs/stream | grep -i "content-encoding" >/dev/null 2>&1; then
+          echo "❌ Unexpected Content-Encoding header found"
+          exit 1
+        else
+          echo "✅ No Content-Encoding (compression) header"
+        fi
+
+        # Check Cache-Control no-store
+        if curl -I http://localhost:3000/api/logs/stream | grep -i "cache-control.*no-store" >/dev/null 2>&1; then
+          echo "✅ Cache-Control: no-store present"
+        else
+          echo "❌ Cache-Control: no-store missing"
+          exit 1
+        fi
+
+        echo "🎯 SSE Headers Smoke Test PASSED"
+
     - name: Warm up /health (register + set trinity metric)
       run: |
         set -euo pipefail
