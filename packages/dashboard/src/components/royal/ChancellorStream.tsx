@@ -46,7 +46,7 @@ export default function ChancellorStream() {
 
     // Cleanup previous connection (safety check)
     if (eventSourceRef.current) {
-      eventSourceRef.current.close();
+      (eventSourceRef.current as EventSource).close();
     }
 
     setStatus("reconnecting");
@@ -70,7 +70,7 @@ export default function ChancellorStream() {
 
     eventSource.onerror = () => {
       eventSource.close();
-      eventSourceRef.current = null; // Clear ref for reconnection
+      eventSourceRef.current = null as any; // Clear ref for reconnection
       setStatus("offline");
 
       // Retry with exponential backoff
