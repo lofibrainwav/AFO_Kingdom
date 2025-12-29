@@ -86,12 +86,15 @@ export default function ChancellorStream() {
     connect();
 
     return () => {
+      console.log("[SSE] Cleanup: closing connection");
       if (eventSourceRef.current) {
         eventSourceRef.current.close();
         eventSourceRef.current = null; // Clear ref on cleanup
+        console.log("[SSE] Cleanup: connection closed and ref cleared");
       }
       if (retryTimeoutRef.current) {
         clearTimeout(retryTimeoutRef.current);
+        console.log("[SSE] Cleanup: retry timeout cleared");
       }
     };
   }, [connect]);
