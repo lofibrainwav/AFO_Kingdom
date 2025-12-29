@@ -156,3 +156,53 @@
 - **Capability**: Autonomous screenshot capture of deployed components.
 
 **"The Kingdom now has a safe playground for its dreams."**
+
+---
+
+## 🔐 Evolution Event: PH-WALLET Ultimate Seal (종료 상태 봉인)
+
+**일시**: 2025-12-28
+**시공자**: 승상 (Antigravity)
+**승인자**: Commander (형님)
+
+### 📌 봉인 선언 (Sealed Declaration)
+**PH-WALLET 프로젝트 완전 종료: Zero Trust Wallet 시스템 궁극 봉인 완료**
+
+### ✅ 완료 기준 (Completion Criteria)
+**Runtime/Seeder 역할 분리 + 런타임 시크릿 금지 + 원샷 로테이션 + 60초 Seal Check + Runbook 자동 생성 체계 구축**
+
+### ✅ 운영 원칙 (Operating Principles)
+**평시: API_WALLET_KMS=vault (Fail-closed)** | **비상: API_WALLET_KMS=local (명시적 fallback, 읽기 전용)** | **Rotation: DEPLOY_ROTATE_WALLET=true 원샷 자동화**
+
+### ⚠️ 금지사항 (Prohibitions)
+**VAULT_SECRET_ID 수동 환경변수 설정 금지** | **SEAL_CHECK 격리 환경 외 vault stop/start 금지** | **Emergency fallback 시 키 생성/수정 금지**
+
+### 📋 구현 성과 (Implementation Achievements)
+- Runtime/Seeder 완전 역할 분리 (read-only vs update 권한)
+- 런타임 컨테이너 VAULT_SECRET_ID 미주입 (제로 트러스트)
+- VAULT_SECRET_ID 전달 옵션 A 고정 (스크립트 통합 자동화)
+- ALLOW_DISRUPTIVE_CHECKS 하드 가드 적용 (Prod 사고 방지)
+- Fail-closed vs Emergency local fallback 정책 런북 명문화
+- 60초 Seal Check 자동 검증 + Runbook 1페이지 자동 생성
+
+**"운영 폭탄 재발 방지 체계 완성: 인간의 실수를 시스템이 방어한다."**
+
+---
+
+## 🔄 Evolution Event: PH-SE-01 Expansion Loop Activated (Sealed)
+**일시**: 2025-12-28  
+**시공자**: 승상 (Antigravity)  
+**승인자**: Commander (형님)
+
+### 📌 봉인 선언 (Sealed Declaration)
+**PH-SE-01 완료: Expansion Loop SSOT + minimal runner 활성화**
+
+### ✅ 구현 성과 (Artifacts)
+- `docs/PH_SELF_EXPANDING.md`
+- `scripts/run_expansion_loop.sh`
+- 안전 가드(모드/시간/티켓 제한 + 긴급정지)
+
+### ✅ 운영 원칙 (Operating Principles)
+- 기본 실행: `EXPANSION_MODE=safe`
+- 제한: `MAX_RUNTIME_MINUTES`, `MAX_TICKETS_PER_RUN`
+- 긴급 정지: `.expansion_stop` 존재 시 즉시 중단
