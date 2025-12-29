@@ -11,6 +11,7 @@
 "use client";
 
 import { useEffect, useState, useMemo, useCallback } from "react";
+import { createEventSource } from "@/lib/sse";
 import { Bug, Activity, CheckCircle, XCircle, AlertCircle } from "lucide-react";
 import { logError } from "@/lib/logger";
 import ErrorBoundary from "@/components/common/ErrorBoundary";
@@ -103,7 +104,7 @@ function AutomatedDebuggingStreamWidgetContent() {
 
   useEffect(() => {
     // Connect to the Automated Debugging System Stream
-    const eventSource = new EventSource(`${window.location.origin}/api/debugging/stream`);
+    const eventSource = createEventSource("/api/debugging/stream");
 
     eventSource.onopen = () => {
       setConnected(true);

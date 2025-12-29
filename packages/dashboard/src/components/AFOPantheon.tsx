@@ -7,6 +7,7 @@ import { VoiceReactivePanel } from "./VoiceReactivePanel";
 
 import { logWarn } from "@/lib/logger";
 import { useSpatialAudio } from "../hooks/useSpatialAudio";
+import { createEventSource } from "@/lib/sse";
 import { KingdomMessageBoard } from "./genui";
 import AutomatedDebuggingStreamWidget from "./genui/AutomatedDebuggingStreamWidget";
 import { SSOTMonitor } from "./genui/SSOTMonitor";
@@ -96,7 +97,7 @@ export function AFOPantheon() {
   const statusColorClass = useMemo(() => getStatusColorClass(), [getStatusColorClass]);
 
   useEffect(() => {
-    const eventSource = new EventSource(`${window.location.origin}/api/mcp/thoughts/sse`);
+    const eventSource = createEventSource("/api/mcp/thoughts/sse");
 
     eventSource.onmessage = (event) => {
       try {

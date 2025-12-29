@@ -11,6 +11,7 @@
 "use client";
 
 import { useEffect, useState, memo, useMemo, useCallback } from "react";
+import { createEventSource } from "@/lib/sse";
 import { Bot, Swords, Palette, Search, X, Sparkles } from "lucide-react";
 import { logError } from "@/lib/logger";
 import ErrorBoundary from "@/components/common/ErrorBoundary";
@@ -88,7 +89,7 @@ function AgentLearningTimelineContent() {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    const eventSource = new EventSource(`${window.location.origin}/api/learning-log/stream`);
+    const eventSource = createEventSource("/api/learning-log/stream");
 
     eventSource.onopen = () => setIsConnected(true);
     eventSource.onerror = () => setIsConnected(false);

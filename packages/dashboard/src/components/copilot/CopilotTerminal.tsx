@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
+import { createEventSource } from "@/lib/sse";
 import { Terminal, Cpu, Shield, Activity } from "lucide-react";
 import { API_BASE_URL } from "@/lib/constants";
 import { logInfo, logError } from "@/lib/logger";
@@ -17,14 +18,9 @@ const CopilotTerminal: React.FC = () => {
 
   // SSE Connection for Matrix Stream
   useEffect(() => {
-    // Determine API Base URL (Use constants)
-    const apiBase = API_BASE_URL;
-    const streamUrl = apiBase.startsWith('http')
-      ? `${apiBase}/api/stream/mcp/thoughts`
-      : `${window.location.origin}${apiBase}/api/stream/mcp/thoughts`;
-
-    logInfo(`[Matrix] Connecting to Neural Stream: ${streamUrl}`);
-    const eventSource = new EventSource(streamUrl);
+    // Use SSE helper for consistent URL construction
+    logInfo(`[Matrix] Connecting to Neural Stream`);
+    const eventSource = createEventSource("/api/stream/mcp/thoughts");
 
     eventSource.onmessage = (event) => {
       try {

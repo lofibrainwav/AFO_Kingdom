@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ROYAL_CONSTANTS } from "../../config/royal_constants";
+import { createEventSource } from "@/lib/sse";
 
 interface RoyalOpsCenterProps {
   trinityScore: number;
@@ -65,11 +66,9 @@ export default function RoyalOpsCenter({ trinityScore, healthData }: RoyalOpsCen
   useEffect(() => {
     // Use Next.js proxy for SSE to avoid CORS issues
     // The proxy is configured in next.config.ts: /api/logs/stream -> backend/logs/stream
-    const ssePath = `${window.location.origin}/api/logs/stream`;
+    console.log("[Chancellor Stream] Connecting to SSE via proxy");
 
-    console.log("[Chancellor Stream] Connecting to SSE via proxy:", ssePath);
-
-    const eventSource = new EventSource(ssePath);
+    const eventSource = createEventSource("/api/logs/stream");
 
     eventSource.onopen = () => {
       console.log("[Chancellor Stream] SSE opened");

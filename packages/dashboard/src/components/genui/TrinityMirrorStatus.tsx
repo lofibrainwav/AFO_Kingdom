@@ -8,6 +8,7 @@
 
 import { Eye } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { createEventSource } from "@/lib/sse";
 
 interface MirrorThought {
   content: string;
@@ -22,7 +23,7 @@ export function TrinityMirrorStatus() {
 
   useEffect(() => {
     // Matrix Stream(SSE)에서 Mirror 관련 생각만 필터링하여 수신
-    const eventSource = new EventSource(`${window.location.origin}/api/mcp/thoughts/sse`);
+    const eventSource = createEventSource("/api/mcp/thoughts/sse");
 
     eventSource.onmessage = (event) => {
       try {

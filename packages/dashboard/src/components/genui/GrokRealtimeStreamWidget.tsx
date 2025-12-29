@@ -14,6 +14,7 @@ import { useEffect, useState, useMemo, useCallback } from "react";
 import { Zap, Activity } from "lucide-react";
 import { logError } from "@/lib/logger";
 import ErrorBoundary from "@/components/common/ErrorBoundary";
+import { createEventSource } from "@/lib/sse";
 
 interface StreamMessage {
   id: number;
@@ -47,7 +48,7 @@ function GrokRealtimeStreamWidgetContent() {
 
   useEffect(() => {
     // Connect to the Heartbeat of the Kingdom
-    const eventSource = new EventSource(`${window.location.origin}/api/grok/stream`);
+    const eventSource = createEventSource("/api/grok/stream");
 
     eventSource.onopen = () => setConnected(true);
     eventSource.onerror = () => setConnected(false);
