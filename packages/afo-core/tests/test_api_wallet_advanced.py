@@ -28,12 +28,14 @@ def test_wallet_init_vault_failure_fallback():
     mock_vault = MagicMock()
     mock_vault.is_available.return_value = False  # Vault enabled but not reachable
 
-    with patch("AFO.api_wallet.VaultKMS", return_value=mock_vault):
-        with patch.dict(os.environ, {"VAULT_ENABLED": "true"}):
-            # Should disable vault use and fallback to env/default
-            wallet = APIWallet(use_vault=True)
-            assert wallet.use_vault is False
-            assert len(wallet.encryption_key) > 0
+    # Test vault fallback in local KMS mode (not fail-closed vault mode)
+    with patch.dict(os.environ, {"API_WALLET_KMS": "local"}):
+        with patch("AFO.api_wallet.VaultKMS", return_value=mock_vault):
+            with patch.dict(os.environ, {"VAULT_ENABLED": "true"}):
+                # Should disable vault use and fallback to env/default
+                wallet = APIWallet(use_vault=True)
+                assert wallet.use_vault is False
+                assert len(wallet.encryption_key) > 0
 
 
 # 3. Cryptography Missing (MockFernet)
@@ -43,40 +45,42 @@ def test_mock_fernet_fallback():
     # OR we use the reload technique.
     # Since we are in the same process, reloading is safer.
 
-    with patch.dict(sys.modules):
-        # Remove it so we can re-import
-        if "AFO.api_wallet" in sys.modules:
-            del sys.modules["AFO.api_wallet"]
-        if "api_wallet" in sys.modules:
-            del sys.modules["api_wallet"]
+    # Use local KMS mode to avoid vault fail-closed policy
+    with patch.dict(os.environ, {"API_WALLET_KMS": "local"}):
+        with patch.dict(sys.modules):
+            # Remove it so we can re-import
+            if "AFO.api_wallet" in sys.modules:
+                del sys.modules["AFO.api_wallet"]
+            if "api_wallet" in sys.modules:
+                del sys.modules["api_wallet"]
 
-        # We also need to ensure Fernet doesn't import properly or we force disable it
-        # The code checks: try: from cryptography.fernet import Fernet ... except ImportError: ...
+            # We also need to ensure Fernet doesn't import properly or we force disable it
+            # The code checks: try: from cryptography.fernet import Fernet ... except ImportError: ...
 
-        # Let's force ImportError for cryptography
-        sys.modules["cryptography"] = None  # type: ignore[assignment]
-        sys.modules["cryptography.fernet"] = None  # type: ignore[assignment]
+            # Let's force ImportError for cryptography
+            sys.modules["cryptography"] = None  # type: ignore[assignment]
+            sys.modules["cryptography.fernet"] = None  # type: ignore[assignment]
 
-        # Now import
-        # Use import_module to ensure it loads freshly and registers in sys.modules
-        api_wallet = importlib.import_module("AFO.api_wallet")
+            # Now import
+            # Use import_module to ensure it loads freshly and registers in sys.modules
+            api_wallet = importlib.import_module("AFO.api_wallet")
 
-        assert api_wallet.CRYPTO_AVAILABLE is False
-        assert api_wallet.Fernet.__name__ == "MockFernet"
+            assert api_wallet.CRYPTO_AVAILABLE is False
+            assert api_wallet.Fernet.__name__ == "MockFernet"
 
-        # Now test the MockFernet class logic
-        wallet = api_wallet.APIWallet(encryption_key="x" * 44)
-        enc = wallet.cipher.encrypt(b"test")
-        # MockFernet returns base64 string of data
-        # Wait, the MockFernet implementation in api_wallet.py:
-        # return base64.urlsafe_b64encode(data)
-        import base64
+            # Now test the MockFernet class logic
+            wallet = api_wallet.APIWallet(encryption_key="x" * 44)
+            enc = wallet.cipher.encrypt(b"test")
+            # MockFernet returns base64 string of data
+            # Wait, the MockFernet implementation in api_wallet.py:
+            # return base64.urlsafe_b64encode(data)
+            import base64
 
-        expected = base64.urlsafe_b64encode(b"test")
-        assert enc == expected
+            expected = base64.urlsafe_b64encode(b"test")
+            assert enc == expected
 
-        dec = wallet.cipher.decrypt(enc)
-        assert dec == b"test"
+            dec = wallet.cipher.decrypt(enc)
+            assert dec == b"test"
 
 
 # 3. CLI Tests using main()
@@ -120,8 +124,10 @@ def test_cli_execution():
 
 # 4. DB Method Tests (Directly calling them to ensure SQL construction works)
 def test_db_methods_sql_construction():
-    mock_db = MagicMock()
-    wallet = APIWallet(db_connection=mock_db)
+    # Use local KMS mode to avoid vault fail-closed policy
+    with patch.dict(os.environ, {"API_WALLET_KMS": "local"}):
+        mock_db = MagicMock()
+        wallet = APIWallet(db_connection=mock_db)
     # Patch PSYCOPG2_AVAILABLE to True for this instance logic (it uses self.use_db)
 
     # We set db_connection, so self.use_db depends on PSYCOPG2_AVAILABLE global
