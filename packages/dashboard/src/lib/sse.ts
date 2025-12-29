@@ -1,7 +1,10 @@
 /**
  * SSE (Server-Sent Events) utilities for AFO Dashboard
  * Provides consistent URL construction and SSR-safe EventSource creation
+ *
+ * Client-only: Must only be imported in client components
  */
+'use client';
 
 /**
  * Build absolute SSE stream URL using current origin
