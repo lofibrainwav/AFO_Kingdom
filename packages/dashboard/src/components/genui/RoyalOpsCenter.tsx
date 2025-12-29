@@ -65,8 +65,8 @@ export default function RoyalOpsCenter({ trinityScore, healthData }: RoyalOpsCen
   useEffect(() => {
     // Use Next.js proxy for SSE to avoid CORS issues
     // The proxy is configured in next.config.ts: /api/logs/stream -> backend/logs/stream
-    const ssePath = "/api/logs/stream";
-    
+    const ssePath = `${window.location.origin}/api/logs/stream`;
+
     console.log("[Chancellor Stream] Connecting to SSE via proxy:", ssePath);
 
     const eventSource = new EventSource(ssePath);

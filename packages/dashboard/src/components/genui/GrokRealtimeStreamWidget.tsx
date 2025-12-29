@@ -47,7 +47,7 @@ function GrokRealtimeStreamWidgetContent() {
 
   useEffect(() => {
     // Connect to the Heartbeat of the Kingdom
-    const eventSource = new EventSource("/api/grok/stream");
+    const eventSource = new EventSource(`${window.location.origin}/api/grok/stream`);
 
     eventSource.onopen = () => setConnected(true);
     eventSource.onerror = () => setConnected(false);
