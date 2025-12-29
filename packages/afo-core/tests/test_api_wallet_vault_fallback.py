@@ -4,6 +4,7 @@ Test APIWallet Vault fallback scenarios.
 Uses direct mocking for deterministic behavior.
 """
 
+import pytest
 from unittest.mock import MagicMock, patch
 
 import pytest
