@@ -362,6 +362,79 @@ def update_memory_metrics(short_term: int, long_term: int) -> None:
 
 
 # ============================================================================
+# SSE Health Metrics
+# ============================================================================
+
+if PROMETHEUS_AVAILABLE:
+    # SSE connection metrics
+    sse_open_connections = get_or_create_metric(
+        Gauge,
+        "afo_sse_open_connections",
+        "Number of currently open SSE connections",
+    )
+
+    sse_reconnect_count = get_or_create_metric(
+        Counter,
+        "afo_sse_reconnect_count_total",
+        "Total number of SSE reconnection attempts",
+    )
+
+    sse_last_event_age_seconds = get_or_create_metric(
+        Gauge,
+        "afo_sse_last_event_age_seconds",
+        "Time in seconds since the last SSE event was received",
+    )
+
+    sse_connection_status = get_or_create_metric(
+        Gauge,
+        "afo_sse_connection_status",
+        "SSE connection status (0=down, 1=stale, 2=healthy)",
+        labelnames=("status",),
+    )
+
+
+def update_sse_health_metrics(
+    open_connections: int = 0,
+    reconnect_count: int = 0,
+    last_event_age_seconds: float = 0.0,
+) -> None:
+    """
+    Update SSE health metrics.
+
+    Args:
+        open_connections: Number of currently open SSE connections
+        reconnect_count: Total number of SSE reconnection attempts
+        last_event_age_seconds: Time since last SSE event in seconds
+    """
+    if not PROMETHEUS_AVAILABLE:
+        return
+
+    # Update gauge metrics
+    sse_open_connections.set(open_connections)
+    sse_last_event_age_seconds.set(last_event_age_seconds)
+
+    # Update counter metric (increment by the difference)
+    # Note: This assumes reconnect_count is cumulative
+    current_value = sse_reconnect_count._value
+    if reconnect_count > current_value:
+        sse_reconnect_count.inc(reconnect_count - current_value)
+
+    # Update status gauge based on age
+    if last_event_age_seconds > 60:  # Down
+        sse_connection_status.labels(status="down").set(1)
+        sse_connection_status.labels(status="stale").set(0)
+        sse_connection_status.labels(status="healthy").set(0)
+    elif last_event_age_seconds > 30:  # Stale
+        sse_connection_status.labels(status="down").set(0)
+        sse_connection_status.labels(status="stale").set(1)
+        sse_connection_status.labels(status="healthy").set(0)
+    else:  # Healthy
+        sse_connection_status.labels(status="down").set(0)
+        sse_connection_status.labels(status="stale").set(0)
+        sse_connection_status.labels(status="healthy").set(1)
+
+
+# ============================================================================
 # Metrics Endpoint Handler
 # ============================================================================
 
