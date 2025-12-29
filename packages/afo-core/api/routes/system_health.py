@@ -434,7 +434,13 @@ async def stream_logs_ssot(request: Request, limit: int = 0) -> EventSourceRespo
 
     All SSE log streaming should use this path: /api/logs/stream
     """
-    return EventSourceResponse(_sse_log_generator())
+    # Fix Connection header conflict for browser compatibility
+    headers = {
+        "Connection": "keep-alive",
+        "Cache-Control": "no-store, no-cache, no-transform",
+        "X-Accel-Buffering": "no"
+    }
+    return EventSourceResponse(_sse_log_generator(), headers=headers)
 
 
 # Cursor Compatibility Path: /api/stream/logs
