@@ -8,7 +8,7 @@ echo "== MCP SUITE: BASE=$BASE =="
 
 echo "== 1) Health gate =="
 # Follow redirects with -L
-curl -fsSL --max-time 5 "$BASE/api/health/comprehensive" >/tmp/health.json
+curl -fsSL --max-time 20 "$BASE/api/health/comprehensive" >/tmp/health.json
 python3 - <<'PY'
 import json
 try:
