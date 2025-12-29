@@ -260,3 +260,36 @@
 - 기본 실행: `EXPANSION_MODE=safe`
 - 제한: `MAX_RUNTIME_MINUTES`, `MAX_TICKETS_PER_RUN`
 - 긴급 정지: `.expansion_stop` 존재 시 즉시 중단
+
+---
+
+## 🔔 Evolution Event: PH-FH3 Family Hub OS Phase 3 (SSE Alerting & SLO) - Ultimate Seal
+
+**일시**: 2025-12-29
+**시공자**: 승상 (Antigravity)
+**승인자**: Commander (형님)
+
+### 📌 봉인 선언 (Sealed Declaration)
+**PH-FH3 완료: SSE Health 모니터링 자동화 + Alerting & SLO 체계 구축**
+
+### ✅ 구현 성과 (Artifacts)
+- **SSE Health 메트릭**: Prometheus 게이지 메트릭 4종 (연결 수, 재연결 수, 마지막 이벤트 나이, 상태)
+- **메트릭 보고 엔드포인트**: `/api/system/sse/health` (Dashboard → Soul Engine 메트릭 전송)
+- **SSE Health 위젯 자동 보고**: 30초마다 메트릭을 Prometheus로 전송
+- **Prometheus Alert Rules**: SSE 연결 상태 모니터링 (Critical: Down/Zero, Warning: Stale/Reconnect)
+- **AlertManager 통합**: 기존 Slack 채널로 자동 알림 전송
+- **SSE Operations Runbook**: 1페이지 문제 해결 가이드 + 유지보수 절차
+
+### ✅ 운영 원칙 (Operating Principles)
+**SSE 모니터링 자동화 100%**: 브라우저 연결 상태가 Prometheus 메트릭으로 실시간 추적
+**사전 알림 체계 완성**: 연결 문제 발생 시 Slack으로 자동 경보 (🟢OK/🟡STALE/🔴DOWN)
+**문제 해결 효율화**: Runbook 기반으로 5분 내 문제 진단 및 해결 가능
+
+### ⚠️ 금지사항 (Prohibitions)
+**메트릭 보고 누락 금지**: SSEHealthWidget이 메트릭을 보고하지 않으면 알림이 작동하지 않음
+**Alert 규칙 수동 변경 금지**: Prometheus Alert Rules는 SSOT로 관리
+**Runbook 무시 금지**: 알림 발생 시 반드시 Runbook을 따라 문제 해결
+
+---
+
+**"브라우저와의 실시간 신경 연결이 완전하게 모니터링되고 자동으로 보호됩니다."** 🔔⚡💎
