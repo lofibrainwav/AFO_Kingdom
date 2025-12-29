@@ -278,9 +278,12 @@ services:
       - SERVICE_NAME=wallet-service
       - API_SERVER_HOST=0.0.0.0
       - API_WALLET_ENCRYPTION_KEY=${API_WALLET_ENCRYPTION_KEY:-default_key_change_me}
+      - API_WALLET_KMS=${API_WALLET_KMS:-local}  # TICKET W1: KMS 선택 스위치
       - DATABASE_URL=postgresql://afo:afo_secret_change_me@afo-postgres:5432/afo_memory
       - REDIS_URL=redis://afo-redis:6379
       - VAULT_ADDR=http://afo-vault:8200  # 보안 프로파일 시 사용
+      - VAULT_AUTH_METHOD=approle  # TICKET W3: AppRole authentication
+      - VAULT_ROLE_ID=${VAULT_ROLE_ID}  # Runtime 역할만 (Seeder는 별도 경로)
     depends_on:
       - postgres
       - redis
@@ -302,6 +305,7 @@ services:
     ports:
       - "8200:8200"
     environment:
+      - VAULT_ADDR=http://0.0.0.0:8200
       - VAULT_DEV_ROOT_TOKEN_ID=root
       - VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:8200
     volumes:
