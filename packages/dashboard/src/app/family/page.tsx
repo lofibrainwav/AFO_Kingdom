@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { createEventSource } from "@/lib/sse";
 import FamilyMemberCard from "@/components/family/FamilyMemberCard";
 import HappinessChart from "@/components/family/HappinessChart";
 import FamilyTimeline from "@/components/family/FamilyTimeline";
@@ -16,7 +17,7 @@ export default function FamilyPage() {
 
   // SSE: Matrix Thought Stream
   useEffect(() => {
-    const eventSource = new EventSource(`${window.location.origin}/api/mcp/thoughts`);
+    const eventSource = createEventSource("/api/mcp/thoughts");
     eventSource.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);

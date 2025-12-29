@@ -6,19 +6,18 @@
 /**
  * Build absolute SSE stream URL using current origin
  * Handles SSR/proxy/tunnel environment differences
+ * Fail-fast approach: throws error if called in SSR context
  */
 export function buildSseUrl(path: string): string {
   // Remove leading slash if present
   const cleanPath = path.startsWith('/') ? path : `/${path}`;
 
-  // Build absolute URL using current origin (SSR-safe)
-  if (typeof window !== 'undefined') {
-    return `${window.location.origin}${cleanPath}`;
+  // Build absolute URL using current origin (fail-fast for SSR safety)
+  if (typeof window === 'undefined') {
+    throw new Error('SSE URL must be built in the browser (client-only). Use createEventSource() in useEffect.');
   }
 
-  // Fallback for SSR (should not happen in client components)
-  console.warn('[SSE] buildSseUrl called in SSR context, using fallback');
-  return cleanPath;
+  return `${window.location.origin}${cleanPath}`;
 }
 
 /**
