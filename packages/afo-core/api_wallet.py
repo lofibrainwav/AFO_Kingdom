@@ -130,7 +130,6 @@ class APIWallet:
             # 기타 값: 기존 로직 유지 (settings 우선)
             try:
                 from AFO.config.settings import get_settings
-
                 settings = get_settings()
                 vault_enabled_default = settings.VAULT_ENABLED
             except ImportError:
@@ -148,16 +147,14 @@ class APIWallet:
                 else:
                     # TICKET W3: Fail-closed for vault mode
                     if self.kms_type == "vault":
-                        raise RuntimeError(
-                            "Vault KMS required but unavailable (토큰 또는 주소 없음)"
-                        )
+                        raise RuntimeError("Vault KMS required but unavailable (토큰 또는 주소 없음)")
                     else:
                         print("⚠️  Vault KMS 사용 불가 (토큰 또는 주소 없음)")
                         self.use_vault = False
             except Exception as e:
                 # TICKET W3: Fail-closed for vault mode - do not silently fallback
                 if self.kms_type == "vault":
-                    raise RuntimeError(f"Vault KMS required but failed to initialize: {e}") from e
+                    raise RuntimeError(f"Vault KMS required but failed to initialize: {e}")
                 else:
                     print(f"⚠️  Vault KMS 초기화 실패 (local 모드로 fallback): {e}")
                     self.use_vault = False
