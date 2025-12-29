@@ -171,6 +171,110 @@ AFO_Kingdom/
 
 ---
 
+## CLAUDE.md 기반 개발 지침 (Cursor IDE 적용)
+
+### 프로젝트 개요
+AFO Kingdom은 眞善美孝永 철학에 기반한 자율형 AI OS로, Python/TypeScript 모노레포 구조를 가집니다.
+
+**핵심 문서**: `AGENTS.md`, `docs/AFO_ROYAL_LIBRARY.md`
+
+### 모노레포 구조
+```
+packages/
+├── afo-core/       # FastAPI 백엔드, LLM 라우터, Chancellor Graph
+│   ├── AFO/        # 핵심 도메인 로직 (aicpa, chancellor, julie_cpa, serenity)
+│   ├── api/        # FastAPI 라우트 및 미들웨어
+│   └── tests/      # Python 테스트
+├── dashboard/      # Next.js 16 + React 19 프론트엔드
+├── trinity-os/     # 철학 엔진, RAG 파이프라인
+└── sixXon/         # SixXon 모듈
+```
+
+### 개발 명령어
+
+#### 백엔드 (Python)
+```bash
+# 설치
+pip install -e ".[dev]"
+poetry install
+
+# 품질 게이트
+make lint                        # Ruff 린트
+make type-check                  # MyPy 타입 체크
+make test                        # 단위 테스트
+make check                       # 린트 + 타입체크 + 테스트
+
+# 서버 실행
+cd packages/afo-core && uvicorn api.api_server:app --reload --port 8010
+```
+
+#### 프론트엔드 (Next.js 16)
+```bash
+cd packages/dashboard
+pnpm install                     # 의존성 설치
+pnpm dev                         # 개발 서버 (포트 3000)
+pnpm dev:full                    # 백엔드 + 프론트엔드 동시
+pnpm build                       # 프로덕션 빌드
+pnpm lint                        # ESLint
+pnpm type-check                  # TypeScript 체크
+```
+
+### 아키텍처
+**4계층 아키텍처**: Presentation → Application → Domain → Infrastructure
+
+**백엔드 컴포넌트**:
+- `AFO/chancellor/` - Trinity Score 라우팅이 있는 의사결정 그래프
+- `AFO/julie_cpa/` - CPA 도메인 로직
+- `AFO/serenity/` - 생성 루프를 가진 시각 에이전트
+- `api/routers/` - FastAPI 라우트 핸들러
+- `api/middleware/` - 속도 제한, 인증
+
+**인프라**: PostgreSQL, Redis, Qdrant, Ollama
+
+### 주요 패턴
+
+#### Python
+- Pydantic 모델 검증
+- FastAPI 의존성 주입
+- LangGraph (Chancellor 워크플로)
+- Ruff 린팅 (Python 3.12+, 라인 길이 100)
+
+#### TypeScript/React
+- Next.js 16 App Router
+- React 19 Server Components
+- Tailwind CSS 4 + Glassmorphism
+- SWR 데이터 fetching
+
+### 경계선 (Boundaries)
+명시적 승인 없이는 다음 건드리지 말기:
+- **시크릿/키/토큰** - 절대 노출 금지
+- **Auth/Payment 로직**
+- **프로덕션 인프라** - GitHub Actions, Docker 시크릿
+- `vendor/`, `dist/`, `build/` 디렉토리
+- lockfile (`poetry.lock`, `pnpm-lock.yaml`)
+
+### 품질 요구사항
+변경 전 반드시 실행:
+1. 관련 품질 게이트 (린트/타입체크/테스트)
+2. 변경사항 최소화
+3. "드라이브 바이" 리팩터링 금지
+4. 근거 요구 (파일 경로, 테스트 결과, 기존 패턴)
+
+### 인프라 퀵 레퍼런스
+| 서비스 | 포트 | 역할 |
+|--------|------|------|
+| Dashboard | 3000 | Next.js UI |
+| Soul Engine | 8010 | FastAPI API |
+| PostgreSQL | 15432 | Brain (DB) |
+| Redis | 6379 | Heart (캐시) |
+| Qdrant | 6333 | Lungs (벡터) |
+| Ollama | 11435 | 로컬 LLM |
+
+### Trinity Score
+眞35% + 善35% + 美20% + 孝8% + 永2% 가중치 기반 철학 점수
+
+---
+
 ## 종합 응답 형식
 
 답변할 때 3책사의 관점을 내재화하여:
@@ -178,7 +282,7 @@ AFO_Kingdom/
 ```
 [승상 종합]
 • 제갈량(眞): {기술적 분석}
-• 사마의(善): {리스크/안정성 검토}  
+• 사마의(善): {리스크/안정성 검토}
 • 주유(美): {UX/서사 관점}
 → 결론: {종합 제안}
 ```
