@@ -24,6 +24,7 @@ RUN python -c "import uvicorn; print('uvicorn', uvicorn.__version__)"
 # Copy Application Code (Monorepo Support)
 COPY packages/afo-core /app/
 COPY packages/trinity-os /app/packages/trinity-os/
+COPY docs /app/docs/
 
 # Set Environment
 ENV PYTHONPATH=/app
