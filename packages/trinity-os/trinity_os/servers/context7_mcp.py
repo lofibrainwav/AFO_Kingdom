@@ -91,6 +91,12 @@ class Context7MCP:
                             "content": content,
                             "title": title,
                             "keywords": self._extract_keywords(content),
+                            "metadata": {
+                                "category": meta.category if meta else None,
+                                "tags": meta.tags if meta else [],
+                                "description": meta.description if meta else None,
+                                "keywords": meta.keywords if meta else [],
+                            },
                         })
                         loaded_count += 1
                     except Exception as e:
