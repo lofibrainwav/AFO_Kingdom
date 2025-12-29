@@ -118,16 +118,25 @@ class APIWallet:
             print("   Install cryptography for production: pip install cryptography")
 
         # Phase 8.3.3: Vault KMS 초기화
-        # Phase 2-4: settings 사용
-        try:
-            from AFO.config.settings import get_settings
-
-            settings = get_settings()
-            vault_enabled_default = settings.VAULT_ENABLED
-        except ImportError:
-            vault_enabled_default = os.getenv("VAULT_ENABLED", "false").lower() == "true"
+        # Phase 2-4: settings 사용 + TICKET W1: API_WALLET_KMS 환경변수 지원
+        kms_type = os.getenv("API_WALLET_KMS", "local").strip().lower()
+        if kms_type == "vault":
+            # vault 모드: vault 강제 활성화
+            vault_enabled_default = True
+        elif kms_type == "local":
+            # local 모드: vault 비활성화
+            vault_enabled_default = False
+        else:
+            # 기타 값: 기존 로직 유지 (settings 우선)
+            try:
+                from AFO.config.settings import get_settings
+                settings = get_settings()
+                vault_enabled_default = settings.VAULT_ENABLED
+            except ImportError:
+                vault_enabled_default = os.getenv("VAULT_ENABLED", "false").lower() == "true"
 
         self.use_vault = use_vault if use_vault is not None else vault_enabled_default
+        self.kms_type = kms_type  # TICKET W3.4: kms_type 저장 for fail-closed
         self.vault_kms = None
 
         if self.use_vault and VAULT_AVAILABLE:
@@ -136,11 +145,19 @@ class APIWallet:
                 if self.vault_kms.is_available():
                     print("✅ Vault KMS 활성화됨")
                 else:
-                    print("⚠️  Vault KMS 사용 불가 (토큰 또는 주소 없음)")
-                    self.use_vault = False
+                    # TICKET W3: Fail-closed for vault mode
+                    if self.kms_type == "vault":
+                        raise RuntimeError("Vault KMS required but unavailable (토큰 또는 주소 없음)")
+                    else:
+                        print("⚠️  Vault KMS 사용 불가 (토큰 또는 주소 없음)")
+                        self.use_vault = False
             except Exception as e:
-                print(f"⚠️  Vault KMS 초기화 실패: {e}")
-                self.use_vault = False
+                # TICKET W3: Fail-closed for vault mode - do not silently fallback
+                if self.kms_type == "vault":
+                    raise RuntimeError(f"Vault KMS required but failed to initialize: {e}")
+                else:
+                    print(f"⚠️  Vault KMS 초기화 실패 (local 모드로 fallback): {e}")
+                    self.use_vault = False
 
         # Get encryption key (Vault 우선, 환경 변수, 기본값 순)
         if encryption_key:
