@@ -12,7 +12,37 @@ class Context7Meta:
     category: str = "Uncategorized"
     description: str = ""
     tags: tuple[str, ...] = ()
+    keywords: tuple[str, ...] = ()
     type: str = "document"  # default; may be overridden or inferred
+
+# ... (omitted parts of file) ...
+
+        category = str(m.get("category", "Uncategorized")).strip() or "Uncategorized"
+        description = str(m.get("description", "")).strip()
+        tags_raw = m.get("tags", [])
+        tags: tuple[str, ...]
+        if isinstance(tags_raw, list):
+            tags = tuple(str(t).strip() for t in tags_raw if str(t).strip())
+        else:
+            tags = tuple(x for x in (str(tags_raw).strip(),) if x)
+
+        keywords_raw = m.get("keywords", [])
+        keywords: tuple[str, ...]
+        if isinstance(keywords_raw, list):
+            keywords = tuple(str(t).strip() for t in keywords_raw if str(t).strip())
+        else:
+            keywords = tuple(x for x in (str(keywords_raw).strip(),) if x)
+
+        typ = str(m.get("type", "")).strip() or _infer_type(rel)
+
+        out[rel] = Context7Meta(
+            path=rel,
+            category=category,
+            description=description,
+            tags=tags,
+            keywords=keywords,
+            type=typ,
+        )
 
 
 def _iter_meta_objects(obj: Any) -> Iterable[dict[str, Any]]:
@@ -110,6 +140,7 @@ def load_context7_metadata(repo_root: Path) -> dict[str, Context7Meta]:
             category=category,
             description=description,
             tags=tags,
+            keywords=keywords,
             type=typ,
         )
 
