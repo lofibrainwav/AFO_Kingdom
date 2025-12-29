@@ -415,9 +415,8 @@ def update_sse_health_metrics(
 
     # Update counter metric (increment by the difference)
     # Note: This assumes reconnect_count is cumulative
-    current_value = sse_reconnect_count._value
-    if reconnect_count > current_value:
-        sse_reconnect_count.inc(reconnect_count - current_value)
+    # Counter metrics don't have a simple _value access, just increment
+    sse_reconnect_count.inc(reconnect_count)
 
     # Update status gauge based on age
     if last_event_age_seconds > 60:  # Down
