@@ -39,6 +39,7 @@ sentence-transformers = "^5.2.0"
 sqlmodel = "^0.0.30"
 sunoai = "^1.0.7"
 neo4j = "^6.0.3"
+playwright = "^1.40.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^9.0"

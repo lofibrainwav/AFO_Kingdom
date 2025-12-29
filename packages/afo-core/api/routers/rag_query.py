@@ -105,7 +105,7 @@ async def query_knowledge_base(request: RAGRequest):
             from openai import OpenAI
 
             client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-        except:
+        except Exception:
             client = None
 
         search_query = await HybridRAG.generate_hyde_query_async(request.query, client)
@@ -136,7 +136,7 @@ async def query_knowledge_base(request: RAGRequest):
 
             q_client = QdrantClient("localhost", port=6333)
             tasks.append(HybridRAG.query_qdrant_async(embedding, request.top_k, q_client))
-        except:
+        except Exception:
             pass
 
     results: list[dict[str, Any]] = []

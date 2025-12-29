@@ -1,5 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 """
 AFO Trinity Metrics Calculator
 
@@ -22,7 +22,7 @@ from typing import Any, Literal
 from AFO.domain.metrics.trinity_ssot import TrinityWeights
 
 
-@dataclass
+@dataclass(frozen=True)
 class TrinityInputs:
     """
     眞善美孝 4기둥 입력값 (0.0 ~ 1.0)
@@ -34,26 +34,25 @@ class TrinityInputs:
         filial_serenity: 孝 (Filial Serenity) - 평온 수호, 연속성
     """
 
-    truth: float  # 0.0 ~ 1.0
-    goodness: float  # 0.0 ~ 1.0
-    beauty: float  # 0.0 ~ 1.0
-    filial_serenity: float  # 0.0 ~ 1.0 (孝: continuity / preservation)
+    truth: float
+    goodness: float
+    beauty: float
+    filial_serenity: float
 
-    def clamp(self) -> TrinityInputs:
-        """값을 0.0 ~ 1.0 범위로 제한"""
+    def __post_init__(self):
+        """Validate an auto-clamp values to 0.0-1.0 range (Serenity Logic)"""
+        # Since frozen=True, we must use object.__setattr__
+        object.__setattr__(self, "truth", self._clamp(self.truth))
+        object.__setattr__(self, "goodness", self._clamp(self.goodness))
+        object.__setattr__(self, "beauty", self._clamp(self.beauty))
+        object.__setattr__(self, "filial_serenity", self._clamp(self.filial_serenity))
+
+    @staticmethod
+    def _clamp(value: Any) -> float:
         try:
-
-            def c(x: float) -> float:
-                return max(0.0, min(1.0, x))
-
-            return TrinityInputs(
-                truth=c(self.truth),
-                goodness=c(self.goodness),
-                beauty=c(self.beauty),
-                filial_serenity=c(self.filial_serenity),
-            )
-        except Exception:
-            return TrinityInputs(0.0, 0.0, 0.0, 0.0)
+            return max(0.0, min(1.0, float(value)))
+        except (TypeError, ValueError):
+            return 0.0
 
     def to_100_scale(self) -> TrinityInputs:
         """100점 스케일로 변환 (0~100)"""
@@ -65,6 +64,7 @@ class TrinityInputs:
                 filial_serenity=self.filial_serenity * 100,
             )
         except Exception:
+            return TrinityInputs(0, 0, 0, 0)
             return TrinityInputs(0, 0, 0, 0)
 
     @classmethod
@@ -115,13 +115,13 @@ class TrinityMetrics:
     serenity_core: float  # S = geometric mean of T, G, B
     trinity_score: float  # weighted sum
     balance_delta: float  # max - min
-    balance_status: Literal["balanced", "warning", "imbalanced"]
+    balance_status: Literal[balanced, warning, imbalanced]
 
     @classmethod
     def from_inputs(cls, inputs: TrinityInputs, eternity: float = 1.0) -> TrinityMetrics:
         """입력값으로부터 Trinity 메트릭 계산 (5기둥 SSOT 가중치)"""
         try:
-            x = inputs.clamp()
+            x = inputs
             e = max(0.0, min(1.0, eternity))  # clamp eternity
 
             t = x.truth
@@ -154,7 +154,7 @@ class TrinityMetrics:
 
             # Balance status (SSOT threshold: 0.30)
             if balance_delta < 0.3:
-                balance_status: Literal["balanced", "warning", "imbalanced"] = "balanced"
+                balance_status: Literal[balanced, warning, imbalanced] = "balanced"
             elif balance_delta < 0.5:
                 balance_status = "warning"
             else:
@@ -248,7 +248,12 @@ def calculate_trinity(
             inputs = TrinityInputs.from_100_scale(truth, goodness, beauty, filial_serenity)
             eternity_normalized = eternity / 100.0
         else:
-            inputs = TrinityInputs(truth, goodness, beauty, filial_serenity)
+            inputs = TrinityInputs(
+                truth=truth,
+                goodness=goodness,
+                beauty=beauty,
+                filial_serenity=filial_serenity,
+            )
             eternity_normalized = eternity
 
         return TrinityMetrics.from_inputs(inputs, eternity=eternity_normalized)

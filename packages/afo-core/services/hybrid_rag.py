@@ -32,7 +32,7 @@ try:
     from pgvector.psycopg2 import register_vector
     from psycopg2.extras import RealDictCursor
 except ImportError:
-    RealDictCursor = None
+    RealDictCursor = None  # type: ignore[assignment, misc]
     register_vector = None
 
 # Suppress Pydantic warnings locally
@@ -130,7 +130,7 @@ def query_pgvector(embedding: list[float], top_k: int, pg_pool: Any) -> list[dic
         if register_vector:
             register_vector(conn)
 
-        cursor_factory = RealDictCursor if RealDictCursor else None
+        cursor_factory = RealDictCursor if RealDictCursor is not None else None
         with conn.cursor(cursor_factory=cursor_factory) as cur:
             cur.execute(
                 """

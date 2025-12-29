@@ -121,9 +121,7 @@ class EvidenceIndexGenerator:
         trend = {
             "direction": "stable",
             "avg_daily_change": round(statistics.mean(changes), 3) if changes else 0.0,
-            "volatility": (
-                round(statistics.stdev(changes), 3) if len(changes) > 1 else 0.0
-            ),
+            "volatility": (round(statistics.stdev(changes), 3) if len(changes) > 1 else 0.0),
             "consistency_score": round(
                 1.0 - (statistics.stdev(changes) if len(changes) > 1 else 0), 3
             ),
@@ -143,9 +141,7 @@ class EvidenceIndexGenerator:
 
     def identify_failure_patterns(self, all_evidence: list[dict]) -> dict[str, Any]:
         """Analyze failure patterns and root causes"""
-        failures = [
-            ev for ev in all_evidence if ev and ev["calculation"]["gate"] != "AUTO_RUN"
-        ]
+        failures = [ev for ev in all_evidence if ev and ev["calculation"]["gate"] != "AUTO_RUN"]
 
         if not failures:
             return {
@@ -165,7 +161,7 @@ class EvidenceIndexGenerator:
                 try:
                     dt = datetime.fromisoformat(ev["metadata"]["generated_at"])
                     failure_dates.append(dt.date().isoformat())
-                except:
+                except (ValueError, TypeError):
                     pass
             failure_scores.append(ev["calculation"]["total"])
 
@@ -266,17 +262,17 @@ def main():
     if success:
         print("\n📊 Evidence Index 생성 완료!")
         print(f"📁 파일 위치: {generator.index_file}")
-        print(f"📈 분석된 증거: {index["summary"]["valid_evidences"]}개")
+        print(f"📈 분석된 증거: {index['summary']['valid_evidences']}개")
         print(
-            f"📅 날짜 범위: {index["summary"]["date_range"]["start"]} ~ {index["summary"]["date_range"]["end"]}"
+            f"📅 날짜 범위: {index['summary']['date_range']['start']} ~ {index['summary']['date_range']['end']}"
         )
 
         # Print key statistics
         stats = index["statistics"]
         if stats:
             print("🏆 Trinity Score 통계:")
-            print(f"   평균 점수: {stats["overall"]["mean"]:.3f}")
-            print(f"   AUTO_RUN 비율: {stats["gates"]["auto_run_ratio"]:.1%}")
+            print(f"   평균 점수: {stats['overall']['mean']:.3f}")
+            print(f"   AUTO_RUN 비율: {stats['gates']['auto_run_ratio']:.1%}")
     else:
         print("❌ Evidence Index 생성 실패")
         return 1

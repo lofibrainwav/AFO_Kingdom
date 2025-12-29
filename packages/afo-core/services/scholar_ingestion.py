@@ -62,7 +62,7 @@ class ScholarIngestionService:
         try:
             with open(file_path, encoding="utf-8") as f:
                 content = f.read()
-        except:
+        except Exception:
             return
 
         filename = os.path.basename(file_path)

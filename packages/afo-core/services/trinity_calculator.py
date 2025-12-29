@@ -13,6 +13,7 @@ from typing import Any
 
 import numpy as np
 
+
 try:
     from AFO.utils.trinity_type_validator import validate_with_trinity
 except ImportError:
@@ -38,18 +39,18 @@ except ImportError:
 logger = logging.getLogger(__name__)
 
 # 🏛️ SSOT Trinity Weights (眞善美孝永) - Single Source of Truth
+from AFO.domain.metrics.trinity import TrinityInputs
 from AFO.observability.rule_constants import WEIGHTS
 
+
 # SSOT 가중치 변환 (dict -> numpy array for calculation)
-SSOT_WEIGHTS = np.array(
-    [
-        WEIGHTS["truth"],  # 眞: 제갈량 (Technical Certainty)
-        WEIGHTS["goodness"],  # 善: 사마의 (Ethical Safety)
-        WEIGHTS["beauty"],  # 美: 주유 (UX/Aesthetics)
-        WEIGHTS["serenity"],  # 孝: 승상 (Friction Reduction)
-        WEIGHTS["eternity"],  # 永: 승상 (Persistence/Legacy)
-    ]
-)
+SSOT_WEIGHTS = np.array([
+    WEIGHTS["truth"],  # 眞: 제갈량 (Technical Certainty)
+    WEIGHTS["goodness"],  # 善: 사마의 (Ethical Safety)
+    WEIGHTS["beauty"],  # 美: 주유 (UX/Aesthetics)
+    WEIGHTS["serenity"],  # 孝: 승상 (Friction Reduction)
+    WEIGHTS["eternity"],  # 永: 승상 (Persistence/Legacy)
+])
 
 
 class TrinityCalculator:
@@ -95,7 +96,18 @@ class TrinityCalculator:
         eternity = 1.0
         # Placeholder
 
-        return [truth, goodness, beauty, serenity, eternity]
+        # Phase 5 Validation: Use TrinityInputs Schema
+        validated = TrinityInputs(
+            truth=truth, goodness=goodness, beauty=beauty, filial_serenity=serenity
+        )
+
+        return [
+            validated.truth,
+            validated.goodness,
+            validated.beauty,
+            validated.filial_serenity,
+            eternity,
+        ]
 
     def calculate_trinity_score(
         self, raw_scores: list[float], static_score: float | None = None

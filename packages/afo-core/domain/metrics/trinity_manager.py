@@ -27,7 +27,9 @@ class TrinityManager:
 
     def __init__(self) -> None:
         # Initial State: Perfect Harmony
-        self.base_inputs = TrinityInputs(1.0, 1.0, 1.0, 1.0)  # 100%
+        self.base_inputs = TrinityInputs(
+            truth=1.0, goodness=1.0, beauty=1.0, filial_serenity=1.0
+        )  # 100%
         self.eternity = 1.0
 
         # Accumulators for Deltas (reset periodically or decay?)
@@ -56,7 +58,6 @@ class TrinityManager:
 
     def get_current_metrics(self) -> TrinityMetrics:
         """Calculate current metrics with clamping."""
-
         # Apply Deltas to Base (100 scale logic mapped to 0-1)
         # Delta of 10 points = 0.1
 
