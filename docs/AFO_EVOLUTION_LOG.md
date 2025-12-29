@@ -41,6 +41,31 @@
 
 ---
 
+## 🔧 Evolution Event: PH-SE-02 Expansion Loop Contract (봉인 완료)
+
+**일시**: 2025-12-28
+**시공자**: 승상 (Antigravity)
+**승인자**: Commander (형님)
+
+### 📌 봉인 선언 (Sealed Declaration)
+**PH-SE-02 완료: Expansion Loop Contract + Ticket Format SSOT 구축**
+
+### ✅ Contract 구현 성과 (Artifacts)
+- 티켓 ID 규칙: `PH-SE-02-001` 형태 (충돌 방지)
+- 산출물 구조: `artifacts/expansion/<date>/tickets/<id>.md`
+- 실행 결과: `artifacts/expansion/<date>/run.json`
+- 필수 섹션: 실행/검증/회고 (없으면 FAIL)
+- DRY_RUN 모드: 티켓 생성만 수행 가능
+
+### ✅ 운영 원칙 (Operating Principles)
+**표준화된 확장 루프**: 모든 티켓이 동일 Contract 준수
+**재현성 100%**: 산출물 구조 및 포맷 고정
+**감사 가능성 100%**: run.json으로 모든 실행 결과 추적
+
+**"엔진의 규격이 고정되었습니다. 이제 왕국의 자율적 확장이 체계적으로 작동합니다."**
+
+---
+
 ## 🔧 Evolution Event: IDE MCP Sync (Codex CLI ↔ Cursor)
 
 **일시**: 2025-12-25
