@@ -38,7 +38,13 @@ export default function ChancellorStream() {
 
   // Connect to SSE
   const connect = useCallback(() => {
-    // Cleanup previous connection
+    // React StrictMode guard: prevent duplicate connections in dev
+    if (eventSourceRef.current) {
+      console.log("[SSE] Connection already exists, skipping duplicate");
+      return;
+    }
+
+    // Cleanup previous connection (safety check)
     if (eventSourceRef.current) {
       eventSourceRef.current.close();
     }
@@ -64,12 +70,13 @@ export default function ChancellorStream() {
 
     eventSource.onerror = () => {
       eventSource.close();
+      eventSourceRef.current = null; // Clear ref for reconnection
       setStatus("offline");
-      
+
       // Retry with exponential backoff
       const delay = getBackoffDelay();
       retryCountRef.current += 1;
-      
+
       console.log(`[SSE] Reconnecting in ${delay}ms (attempt ${retryCountRef.current})`);
       retryTimeoutRef.current = setTimeout(connect, delay);
     };
@@ -81,6 +88,7 @@ export default function ChancellorStream() {
     return () => {
       if (eventSourceRef.current) {
         eventSourceRef.current.close();
+        eventSourceRef.current = null; // Clear ref on cleanup
       }
       if (retryTimeoutRef.current) {
         clearTimeout(retryTimeoutRef.current);
