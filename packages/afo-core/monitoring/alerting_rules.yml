@@ -228,3 +228,52 @@ groups:
         annotations:
           summary: "🧠 메모리 시스템 사용량 높음"
           description: "단기 메모리에 {{ $value }}개 항목이 있습니다. 정리가 필요할 수 있습니다."
+
+  # ============================================================
+  # SSE Health Alerts (PH-FH3)
+  # ============================================================
+  - name: sse-health-alerts
+    interval: 30s
+    rules:
+      - alert: SSEConnectionDown
+        expr: afo_sse_connection_status{status="down"} == 1
+        for: 2m
+        labels:
+          severity: critical
+          service: sse
+        annotations:
+          summary: "🚨 SSE 연결 끊김 - 실시간 모니터링 중단"
+          description: "SSE 스트림이 60초 이상 이벤트가 없습니다. 브라우저 연결을 확인하세요."
+          runbook_url: "https://docs.afo-kingdom.local/runbooks/sse-connection"
+
+      - alert: SSEConnectionStale
+        expr: afo_sse_connection_status{status="stale"} == 1
+        for: 1m
+        labels:
+          severity: warning
+          service: sse
+        annotations:
+          summary: "⚠️ SSE 연결 지연 - 모니터링 성능 저하"
+          description: "SSE 스트림이 30초 이상 이벤트가 없습니다. 네트워크나 서버 상태를 확인하세요."
+
+      - alert: SSEHighReconnectRate
+        expr: |
+          rate(afo_sse_reconnect_count_total[5m]) > 0.5
+        for: 3m
+        labels:
+          severity: warning
+          service: sse
+        annotations:
+          summary: "🔄 SSE 재연결 빈도 높음"
+          description: "최근 5분간 SSE 재연결 횟수가 {{ $value }}회입니다. 네트워크 불안정 가능성."
+
+      - alert: SSEZeroConnections
+        expr: afo_sse_open_connections == 0
+        for: 5m
+        labels:
+          severity: critical
+          service: sse
+        annotations:
+          summary: "🚨 SSE 연결 없음 - 모니터링 완전 중단"
+          description: "활성화된 SSE 연결이 없습니다. 대시보드가 제대로 작동하는지 확인하세요."
+          runbook_url: "https://docs.afo-kingdom.local/runbooks/sse-zero-connections"

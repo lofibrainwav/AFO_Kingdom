@@ -457,3 +457,43 @@ async def stream_logs(request: Request, limit: int = 0) -> RedirectResponse:
     Redirects to canonical SSOT path
     """
     return RedirectResponse("/api/logs/stream", status_code=308)
+
+
+# ============================================================================
+# SSE Health Metrics Endpoint
+# ============================================================================
+
+@router.post("/sse/health", include_in_schema=os.getenv("ENVIRONMENT") == "dev")
+async def update_sse_health_metrics(
+    open_connections: int = 0,
+    reconnect_count: int = 0,
+    last_event_age_seconds: float = 0.0,
+) -> dict[str, str]:
+    """
+    Update SSE health metrics for monitoring and alerting.
+
+    This endpoint allows the dashboard to report SSE connection health
+    metrics to Prometheus for alerting and observability.
+
+    Args:
+        open_connections: Number of currently open SSE connections
+        reconnect_count: Total number of SSE reconnection attempts
+        last_event_age_seconds: Time since last SSE event in seconds
+
+    Returns:
+        Success confirmation
+    """
+    try:
+        from AFO.utils.metrics import update_sse_health_metrics
+
+        update_sse_health_metrics(
+            open_connections=open_connections,
+            reconnect_count=reconnect_count,
+            last_event_age_seconds=last_event_age_seconds,
+        )
+
+        return {"status": "success", "message": "SSE health metrics updated"}
+
+    except Exception as e:
+        logger.warning("Failed to update SSE health metrics: %s", e)
+        return {"status": "error", "message": f"Failed to update metrics: {e}"}

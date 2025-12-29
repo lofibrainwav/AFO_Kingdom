@@ -101,10 +101,43 @@ const SSEHealthWidget = () => {
     };
   }, []);
 
-  // Update metrics on state changes
+  // Update metrics on state changes and report to backend
   useEffect(() => {
     updateMetrics();
-  }, [isConnected]);
+
+    // Report metrics to backend for Prometheus alerting
+    const reportMetrics = async () => {
+      try {
+        const response = await fetch('/api/system/sse/health', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            open_connections: metrics.openConnections,
+            reconnect_count: reconnectCountRef.current,
+            last_event_age_seconds: metrics.lastEventAgeSeconds,
+          }),
+        });
+
+        if (!response.ok) {
+          console.warn('[SSEHealth] Failed to report metrics to backend');
+        }
+      } catch (error) {
+        console.warn('[SSEHealth] Error reporting metrics:', error);
+      }
+    };
+
+    // Report metrics every 30 seconds
+    const reportInterval = setInterval(reportMetrics, 30000);
+
+    // Initial report
+    reportMetrics();
+
+    return () => {
+      clearInterval(reportInterval);
+    };
+  }, [isConnected, metrics]);
 
   const getStatusIcon = () => {
     switch (metrics.status) {
