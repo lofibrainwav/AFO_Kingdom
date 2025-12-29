@@ -5,8 +5,9 @@ import sys
 import time
 from pathlib import Path
 
-# Enhance Path for Sibling Imports
+# Enhance Path for Sibling Imports (Conditional)
 # Add packages directory and trinity-os to PYTHONPATH for proper module resolution
+# This is a graceful fallback for development environments where editable install is not available
 current_dir = os.path.dirname(os.path.abspath(__file__))
 trinity_os_dir = os.path.dirname(current_dir)  # packages/trinity-os
 packages_dir = os.path.dirname(trinity_os_dir)  # packages
