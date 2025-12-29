@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { Wifi, WifiOff, RefreshCw } from "lucide-react";
+import { createEventSource } from "@/lib/sse";
 
 // Connection status type
 type ConnectionStatus = "connected" | "reconnecting" | "offline";
@@ -43,7 +44,7 @@ export default function ChancellorStream() {
     }
 
     setStatus("reconnecting");
-    const eventSource = new EventSource(`${window.location.origin}/api/logs/stream`);
+    const eventSource = createEventSource("/api/logs/stream");
     eventSourceRef.current = eventSource;
 
     eventSource.onopen = () => {
