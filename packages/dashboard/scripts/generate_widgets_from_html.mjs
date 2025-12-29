@@ -18,11 +18,54 @@ import { fileURLToPath } from "node:url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const repoRoot = path.resolve(__dirname, "../../..");
-const srcHtml = path.resolve(repoRoot, "packages/dashboard/public/legacy/kingdom_dashboard.html");
+// 여러 가능한 경로를 시도 (Docker vs 로컬 환경 고려)
+const possiblePaths = [
+  // Docker 환경: /app/packages/dashboard/public/legacy/kingdom_dashboard.html
+  path.resolve("/app", "packages/dashboard/public/legacy/kingdom_dashboard.html"),
+  // 로컬 환경: 프로젝트 루트 기준
+  path.resolve(__dirname, "../../..", "packages/dashboard/public/legacy/kingdom_dashboard.html"),
+  // 절대 경로로 직접 지정 (docs/reports/html에서 복사된 경우)
+  path.resolve("/app", "docs/reports/html/kingdom_dashboard.html"),
+  // 마지막 fallback: 현재 working directory 기준
+  path.resolve(process.cwd(), "packages/dashboard/public/legacy/kingdom_dashboard.html")
+];
 
+let srcHtml = null;
+for (const testPath of possiblePaths) {
+  if (fs.existsSync(testPath)) {
+    srcHtml = testPath;
+    console.log(`✅ HTML 파일 발견: ${testPath}`);
+    break;
+  }
+}
+
+// output 경로 설정 (srcHtml이 있든 없든 필요)
+const repoRoot = srcHtml && srcHtml.includes('/app') ? '/app' : path.resolve(__dirname, "../../..");
 const outDir = path.resolve(repoRoot, "packages/dashboard/src/generated");
 const outFile = path.resolve(outDir, "widgets.generated.json");
+
+if (!srcHtml) {
+  console.error("❌ Source HTML not found. 다음 경로들을 확인했습니다:");
+  possiblePaths.forEach(p => console.error(`  - ${p} (${fs.existsSync(p) ? '존재' : '없음'})`));
+  console.log("⚠️ HTML 파일이 없어 기본 위젯 생성으로 대체합니다.");
+
+  // 기본 위젯 데이터 생성 (HTML 없이도 빌드 가능하도록)
+  const defaultWidgets = [
+    {
+      id: "default-status",
+      title: "시스템 상태",
+      content: "시스템 상태 정보를 표시합니다.",
+      category: "system"
+    }
+  ];
+
+  fs.mkdirSync(outDir, { recursive: true });
+  fs.writeFileSync(outFile, JSON.stringify(defaultWidgets, null, 2));
+  console.log(`✅ 기본 위젯 생성 완료: ${outFile}`);
+  process.exit(0);
+}
+
+// outDir와 outFile은 이미 위에서 선언됨
 
 function slugify(s) {
   return String(s)

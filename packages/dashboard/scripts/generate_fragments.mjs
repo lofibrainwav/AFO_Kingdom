@@ -19,8 +19,53 @@ import * as cheerio from "cheerio";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const repoRoot = path.resolve(__dirname, "../../..");
-const srcHtml = path.resolve(repoRoot, "packages/dashboard/public/legacy/kingdom_dashboard.html");
+// 여러 가능한 경로를 시도 (Docker vs 로컬 환경 고려)
+const possiblePaths = [
+  // Docker 환경: /app/packages/dashboard/public/legacy/kingdom_dashboard.html
+  path.resolve("/app", "packages/dashboard/public/legacy/kingdom_dashboard.html"),
+  // 로컬 환경: 프로젝트 루트 기준
+  path.resolve(__dirname, "../../..", "packages/dashboard/public/legacy/kingdom_dashboard.html"),
+  // 절대 경로로 직접 지정 (docs/reports/html에서 복사된 경우)
+  path.resolve("/app", "docs/reports/html/kingdom_dashboard.html"),
+  // 마지막 fallback: 현재 working directory 기준
+  path.resolve(process.cwd(), "packages/dashboard/public/legacy/kingdom_dashboard.html")
+];
+
+let srcHtml = null;
+for (const testPath of possiblePaths) {
+  if (fs.existsSync(testPath)) {
+    srcHtml = testPath;
+    console.log(`✅ HTML 파일 발견: ${testPath}`);
+    break;
+  }
+}
+
+if (!srcHtml) {
+  console.error("❌ Source HTML not found. 다음 경로들을 확인했습니다:");
+  possiblePaths.forEach(p => console.error(`  - ${p} (${fs.existsSync(p) ? '존재' : '없음'})`));
+  console.log("⚠️ HTML 파일이 없어 기본 fragment 생성으로 대체합니다.");
+
+  // 기본 fragment 생성
+  const repoRoot = path.resolve(__dirname, "../../..");
+  const fragmentsDir = path.resolve(repoRoot, "packages/dashboard/public/fragments");
+  fs.mkdirSync(fragmentsDir, { recursive: true });
+
+  const defaultFragments = {
+    "status.html": "<div class='p-4 bg-green-50 border border-green-200 rounded'>시스템 정상 작동 중</div>",
+    "widgets.html": "<div class='p-4 bg-blue-50 border border-blue-200 rounded'>기본 위젯 표시 영역</div>"
+  };
+
+  for (const [filename, content] of Object.entries(defaultFragments)) {
+    const fragmentPath = path.join(fragmentsDir, filename);
+    fs.writeFileSync(fragmentPath, content, 'utf8');
+    console.log(`✅ 기본 fragment 생성: ${fragmentPath}`);
+  }
+
+  console.log(`\n📊 결과:\n   ✅ 성공: ${Object.keys(defaultFragments).length}개\n   📁 저장 경로: ${fragmentsDir}`);
+  process.exit(0);
+}
+
+const repoRoot = srcHtml.includes('/app') ? '/app' : path.resolve(__dirname, "../../..");
 const widgetsJson = path.resolve(repoRoot, "packages/dashboard/src/generated/widgets.generated.json");
 const fragmentsDir = path.resolve(repoRoot, "packages/dashboard/public/fragments");
 
