@@ -11,6 +11,8 @@ approved_skills:
   - beauty_optimize
   - serenity_deploy
   - eternity_log
+  # Test skill for Chancellor Graph validation
+  - skill_test
 
 blocked_skills:
   - skill_999_experimental
