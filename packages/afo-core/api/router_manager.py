@@ -49,7 +49,6 @@ from AFO.api.compat import (
     wallet_router,
 )
 
-
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
@@ -208,12 +207,13 @@ class AFORouterManager:
 
         # Chancellor and streaming systems
         self._safe_register_router(chancellor_router, tags=["LangGraph Optimized"])
-        try:
-            from AFO.api.routes.system_stream import router as system_stream_router
-
-            self._safe_register_router(system_stream_router, tags=["SSE 스트리밍"])
-        except ImportError:
-            logger.warning("System Stream Router not available")
+        # NOTE: system_stream router is deprecated. SSE is now consolidated in sse_ssot_router (system_health.py)
+        # Keeping import as fallback but not registering to prevent route conflicts.
+        # try:
+        #     from AFO.api.routes.system_stream import router as system_stream_router
+        #     self._safe_register_router(system_stream_router, tags=["SSE 스트리밍"])
+        # except ImportError:
+        #     logger.warning("System Stream Router not available")
 
         # Additional systems
         self._safe_register_router(finance_router)
@@ -271,12 +271,13 @@ class AFORouterManager:
 
     def _register_management_apis(self) -> None:
         """Register management and utility APIs."""
-        # MCP Tools, Integrity Check, Git Status, Context7
+        # MCP Tools, Integrity Check, Git Status, Context7, A2A
         management_routers = [
             ("AFO.api.routes.mcp_tools", "MCP Tools"),
             ("AFO.api.routes.integrity_check", "Integrity Check"),
             ("AFO.api.routes.git_status", "Git Status"),
             ("AFO.api.routes.context7", "Context7 Knowledge Base"),
+            ("api.routes.a2a_agent_card", "A2A Protocol"),
         ]
 
         for module_path, name in management_routers:
