@@ -4,6 +4,7 @@ import { HealthWidget } from "@/components/widgets/HealthWidget";
 import { SkillsWidget } from "@/components/widgets/SkillsWidget";
 import { Context7Widget } from "@/components/widgets/Context7Widget";
 import { SyncWidget } from "@/components/widgets/SyncWidget";
+import { SystemFingerprintFooter } from "@/components/widgets/SystemFingerprintFooter";
 
 export default function RoyalPage() {
   return (
@@ -27,6 +28,8 @@ export default function RoyalPage() {
         <RoyalCommandHierarchyCard />
         <FieldManualLawCard />
       </div>
+
+      <SystemFingerprintFooter />
     </main>
   );
 }

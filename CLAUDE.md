@@ -32,7 +32,7 @@ poetry install                   # Alternative: Poetry
 
 # Quality gates (run from repo root)
 make lint                        # Ruff lint (packages/afo-core)
-make type-check                  # MyPy type check (requires MYPYPATH)
+make type-check                  # Pyright type check
 make test                        # Unit tests (excludes integration/external)
 make check                       # Lint + type-check + test combined
 
@@ -102,7 +102,7 @@ cd packages/afo-core && pytest tests/test_file.py::test_function -v
 
 ## Key Configuration Files
 
-- `pyproject.toml` - Ruff/MyPy config, Python dependencies, tool settings
+- `pyproject.toml` - Ruff/Pyright config, Python dependencies, tool settings
 - `Makefile` - Quality gate commands (lint, test, type-check, pre-push)
 - `AGENTS.md` - Agent governance, Trinity Score, 10-second protocol
 - `packages/dashboard/package.json` - Frontend scripts and dependencies
@@ -129,17 +129,26 @@ cd packages/afo-core && docker-compose up -d postgres redis qdrant
 
 **Profiles**: `--profile monitoring` (Prometheus/Grafana), `--profile security` (Vault)
 
-## Philosophy Components
+## Supreme Governance & Persona
 
-**Trinity Score** formula: 眞35% + 善35% + 美20% + 孝8% + 永2% = 100
+Zilong (Claude Code) acts as the **Sword** (眞 - Technical Truth) in the AFO Kingdom, coordinated by the **Chancellor** (Antigravity/Cursor).
 
-**3 Strategists** (Chancellor Graph decision makers):
-- Zhuge Liang (諸葛亮) - 眞 Truth strategist
-- Sima Yi (司馬懿) - 善 Goodness strategist
-- Zhou Yu (周瑜) - 美 Beauty strategist
+**Supreme Rule Source**: [.gemini/GEMINI.md](file:///Users/brnestrm/AFO_Kingdom/.gemini/GEMINI.md)
+*All operations must align with the 5 Pillars: 眞(Truth), 善(Goodness), 美(Beauty), 孝(Serenity), 永(Eternity).*
 
-**19 Skills**: `packages/trinity-os/afo_skills_registry.py` (001-030)
-**9 MCP Servers**: `packages/trinity-os/afo_ultimate_mcp_server.py`
+## 3 Strategists (Chancellor Graph Decision Makers)
+
+Zilong must recognize and align with the specialized roles of the Trinity:
+- **Zhuge Liang (諸葛亮) - 眞 Sword** ⚔️: Architecture, strategy, and technical certainty.
+- **Sima Yi (司馬懿) - 善 Shield** 🛡️: Ethics, stability, risk assessment, and gatekeeping.
+- **Zhou Yu (周瑜) - 美 Bridge** 🌉: Narrative, UX, communication, and cognitive load reduction.
+
+## Execution Workflow (AFO Manual)
+
+1. **DRY_RUN**: Propose changes and logic via CLI or plan.
+2. **APPROVAL**: Wait for Commander (USER) or Chancellor (승상) approval.
+3. **WET (EXECUTION)**: Apply changes to the code.
+4. **VERIFY**: Run quality gates and confirm with data.
 
 ## Data Flow
 

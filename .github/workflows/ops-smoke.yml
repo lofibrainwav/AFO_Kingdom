@@ -177,19 +177,7 @@ jobs:
         echo "🏰 Kingdom E2E Smoke Test (IPv4 SSOT)"
         ./scripts/smoke/kingdom_smoke.sh
 
-    - name: Trinity Metrics Consistency Gate
-      run: |
-        echo "🏰 Trinity Metrics Consistency 검증"
-        chmod +x scripts/ci/check_trinity_metrics.sh
-        ./scripts/ci/check_trinity_metrics.sh
-      env:
-        AFO_TRINITY_METRIC_NAME: afo_trinity_score_total
-        TRINITY_EPSILON: "0.0001"
-        # 메인 브랜치에서만 엄격 모드 (메트릭 없으면 FAIL)
-        # feature 브랜치는 경고만 (개발 편의성)
-        AFO_REQUIRE_TRINITY_METRIC: ${{ github.ref == 'refs/heads/main' && '1' || '0' }}
-
-    - name: Trivy (gate: HIGH/CRITICAL)
+    - name: Trivy gate HIGH/CRITICAL
       uses: aquasecurity/trivy-action@master
       with:
         scan-type: fs

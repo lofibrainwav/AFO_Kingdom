@@ -12,8 +12,8 @@ import tempfile
 from pathlib import Path
 from typing import Any
 
-from services.vision_service import get_vision_service
 from services.audio_service import get_audio_service
+from services.vision_service import get_vision_service
 
 logger = logging.getLogger(__name__)
 
@@ -52,12 +52,24 @@ class VideoRAGService:
             else:
                 audio_path = path.parent / f"{path.stem}_audio.wav"
 
-            subprocess.run([
-                "ffmpeg", "-y", "-i", str(path),
-                "-vn", "-acodec", "pcm_s16le",
-                "-ar", "16000", "-ac", "1",
-                str(audio_path)
-            ], capture_output=True, check=True)
+            subprocess.run(
+                [
+                    "ffmpeg",
+                    "-y",
+                    "-i",
+                    str(path),
+                    "-vn",
+                    "-acodec",
+                    "pcm_s16le",
+                    "-ar",
+                    "16000",
+                    "-ac",
+                    "1",
+                    str(audio_path),
+                ],
+                capture_output=True,
+                check=True,
+            )
 
             logger.info(f"Audio extracted: {audio_path}")
             return str(audio_path)
@@ -67,10 +79,7 @@ class VideoRAGService:
             return None
 
     def extract_keyframes(
-        self,
-        video_path: str,
-        num_frames: int = 5,
-        output_dir: str | None = None
+        self, video_path: str, num_frames: int = 5, output_dir: str | None = None
     ) -> list[str]:
         """Extract keyframes from video"""
         if not self._ffmpeg_available:
@@ -79,18 +88,23 @@ class VideoRAGService:
 
         try:
             path = Path(video_path)
-            if output_dir:
-                out_dir = Path(output_dir)
-            else:
-                out_dir = Path(tempfile.mkdtemp())
+            out_dir = Path(output_dir) if output_dir else Path(tempfile.mkdtemp())
 
             # Get video duration
-            result = subprocess.run([
-                "ffprobe", "-v", "quiet",
-                "-show_entries", "format=duration",
-                "-of", "default=noprint_wrappers=1:nokey=1",
-                str(path)
-            ], capture_output=True, text=True)
+            result = subprocess.run(
+                [
+                    "ffprobe",
+                    "-v",
+                    "quiet",
+                    "-show_entries",
+                    "format=duration",
+                    "-of",
+                    "default=noprint_wrappers=1:nokey=1",
+                    str(path),
+                ],
+                capture_output=True,
+                text=True,
+            )
 
             duration = float(result.stdout.strip())
             interval = duration / (num_frames + 1)
@@ -100,11 +114,23 @@ class VideoRAGService:
                 timestamp = i * interval
                 frame_path = out_dir / f"frame_{i:03d}.jpg"
 
-                subprocess.run([
-                    "ffmpeg", "-y", "-ss", str(timestamp),
-                    "-i", str(path), "-vframes", "1",
-                    "-q:v", "2", str(frame_path)
-                ], capture_output=True, check=True)
+                subprocess.run(
+                    [
+                        "ffmpeg",
+                        "-y",
+                        "-ss",
+                        str(timestamp),
+                        "-i",
+                        str(path),
+                        "-vframes",
+                        "1",
+                        "-q:v",
+                        "2",
+                        str(frame_path),
+                    ],
+                    capture_output=True,
+                    check=True,
+                )
 
                 frames.append(str(frame_path))
 
@@ -116,21 +142,17 @@ class VideoRAGService:
             return []
 
     def process_video(
-        self,
-        video_path: str,
-        num_frames: int = 5,
-        transcribe: bool = True,
-        language: str = "ko"
+        self, video_path: str, num_frames: int = 5, transcribe: bool = True, language: str = "ko"
     ) -> dict[str, Any]:
         """
         Full video processing pipeline.
-        
+
         Args:
             video_path: Path to video file
             num_frames: Number of keyframes to extract
             transcribe: Whether to transcribe audio
             language: Response language for descriptions
-        
+
         Returns:
             dict with frame analysis, transcript, and combined text
         """
@@ -139,7 +161,7 @@ class VideoRAGService:
             "frames": [],
             "transcript": None,
             "combined_text": "",
-            "success": True
+            "success": True,
         }
 
         # 1. Extract and analyze keyframes
@@ -147,15 +169,18 @@ class VideoRAGService:
         for i, frame_path in enumerate(keyframes):
             analysis = self.vision.analyze_image(
                 frame_path,
-                prompt=f"프레임 {i+1}: 이 장면을 설명하세요." if language == "ko" 
-                       else f"Frame {i+1}: Describe this scene.",
-                language=language
+                prompt=f"프레임 {i + 1}: 이 장면을 설명하세요."
+                if language == "ko"
+                else f"Frame {i + 1}: Describe this scene.",
+                language=language,
             )
-            results["frames"].append({
-                "frame_number": i + 1,
-                "path": frame_path,
-                "description": analysis.get("description", "")
-            })
+            results["frames"].append(
+                {
+                    "frame_number": i + 1,
+                    "path": frame_path,
+                    "description": analysis.get("description", ""),
+                }
+            )
 
         # 2. Extract and transcribe audio
         if transcribe:
@@ -166,18 +191,18 @@ class VideoRAGService:
 
         # 3. Combine for RAG
         combined_parts = []
-        
+
         # Add frame descriptions
         for frame in results["frames"]:
             if frame.get("description"):
                 combined_parts.append(f"[Frame {frame['frame_number']}] {frame['description']}")
-        
+
         # Add transcript
         if results["transcript"] and results["transcript"].get("text"):
             combined_parts.append(f"[Audio Transcript] {results['transcript']['text']}")
 
         results["combined_text"] = "\n\n".join(combined_parts)
-        
+
         logger.info(f"Video processed: {video_path}")
         return results
 

@@ -127,7 +127,7 @@ class AntiGravitySettings(BaseSettings):
                     changes.append(f"{key}: {old_value} -> {value}")
 
             if changes:
-                log_msg = f"[孝: 자동 동기화] 설정 업데이트 완료: {", ".join(changes)}"
+                log_msg = f"[孝: 자동 동기화] 설정 업데이트 완료: {', '.join(changes)}"
                 logger.info(log_msg)
                 return log_msg
             else:

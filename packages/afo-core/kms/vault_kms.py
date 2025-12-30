@@ -31,10 +31,9 @@ class VaultKMS:
                 if self.auth_method == "approle" and self.role_id and self.secret_id:
                     # AppRole authentication
                     auth_response = self.client.auth.approle.login(
-                        role_id=self.role_id,
-                        secret_id=self.secret_id
+                        role_id=self.role_id, secret_id=self.secret_id
                     )
-                    self.client.token = auth_response['auth']['client_token']
+                    self.client.token = auth_response["auth"]["client_token"]
                     print("✅ Vault AppRole authentication successful")  # TICKET W3: Debug logging
                 elif self.token:
                     # Token authentication (legacy)

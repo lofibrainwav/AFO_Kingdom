@@ -1,0 +1,76 @@
+
+            <h2 class="section-title">시스템 전체 지도</h2>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">AFO Kingdom 구조</h3>
+                </div>
+                <div class="mermaid">
+graph TB
+    Commander[👑 사령관 Commander]
+    Commander --&gt; Chancellor[승상 Chancellor<br>Cursor/Antigravity]
+    Chancellor --&gt; ZhugeLiang[제갈량 眞 35%]
+    Chancellor --&gt; SimaYi[사마의 善 35%]
+    Chancellor --&gt; ZhouYu[주유 美 20%]
+    Chancellor --&gt; APIWallet[API Wallet]
+    APIWallet --&gt; Bangtong[방통 Codex]
+    APIWallet --&gt; Jaryong[자룡 Claude]
+    APIWallet --&gt; Yukson[육손 Gemini]
+    APIWallet --&gt; Yeongdeok[영덕 Ollama]
+    Chancellor --&gt; TrinityOS[Trinity-OS]
+    Chancellor --&gt; SixXon[SixXon CLI]
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">포트 맵</h3>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>서비스</th>
+                            <th>포트</th>
+                            <th>설명</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Soul Engine</td>
+                            <td>8010</td>
+                            <td>FastAPI 백엔드</td>
+                        </tr>
+                        <tr>
+                            <td>Dashboard</td>
+                            <td>3000</td>
+                            <td>Next.js 프론트엔드</td>
+                        </tr>
+                        <tr>
+                            <td>Ollama</td>
+                            <td>11435</td>
+                            <td>LLM (영덕)</td>
+                        </tr>
+                        <tr>
+                            <td>Redis</td>
+                            <td>6379</td>
+                            <td>캐시/세션</td>
+                        </tr>
+                        <tr>
+                            <td>PostgreSQL</td>
+                            <td>15432</td>
+                            <td>데이터베이스</td>
+                        </tr>
+                        <tr>
+                            <td>Grafana</td>
+                            <td>3100</td>
+                            <td>모니터링</td>
+                        </tr>
+                        <tr>
+                            <td>Prometheus</td>
+                            <td>9090</td>
+                            <td>메트릭</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        

@@ -73,11 +73,11 @@
   "afo-skills-registry-mcp": {
     "command": "python3",
     "args": [
-      "${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}/packages/trinity-os/trinity_os/servers/afo_skills_registry_mcp.py"
+      "${WORKSPACE_ROOT:-<LOCAL_WORKSPACE>/AFO_Kingdom}/packages/trinity-os/trinity_os/servers/afo_skills_registry_mcp.py"
     ],
     "env": {
-      "WORKSPACE_ROOT": "${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}",
-      "PYTHONPATH": "${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}/packages/afo-core:${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}/packages/trinity-os"
+      "WORKSPACE_ROOT": "${WORKSPACE_ROOT:-<LOCAL_WORKSPACE>/AFO_Kingdom}",
+      "PYTHONPATH": "${WORKSPACE_ROOT:-<LOCAL_WORKSPACE>/AFO_Kingdom}/packages/afo-core:${WORKSPACE_ROOT:-<LOCAL_WORKSPACE>/AFO_Kingdom}/packages/trinity-os"
     },
     "description": "AFO Skills Registry MCP Server - 19개 스킬을 MCP 도구로 제공 (眞善美孝永 Trinity Score 포함)"
   }

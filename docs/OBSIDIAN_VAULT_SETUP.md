@@ -1,7 +1,7 @@
 # 옵시디언 Vault 설정 가이드
 
 **설정일**: 2025-01-27  
-**Vault 위치**: `/Users/brnestrm/AFO_Kingdom/docs`  
+**Vault 위치**: `<LOCAL_WORKSPACE>/AFO_Kingdom/docs`  
 **담당**: 승상 (丞相) - AFO Kingdom
 
 ---
@@ -9,7 +9,7 @@
 ## 📋 Vault 구조
 
 ### 메인 Vault
-- **경로**: `/Users/brnestrm/AFO_Kingdom/docs`
+- **경로**: `<LOCAL_WORKSPACE>/AFO_Kingdom/docs`
 - **메인 파일**: `AFO_KINGDOM_MAIN.md`
 - **설정 디렉토리**: `.obsidian/`
 
@@ -36,7 +36,7 @@ AFO_Kingdom/
 
 1. **옵시디언 앱 실행**
 2. **"Open folder as vault"** 선택
-3. **`/Users/brnestrm/AFO_Kingdom/docs`** 선택
+3. **`<LOCAL_WORKSPACE>/AFO_Kingdom/docs`** 선택
 4. **"Open"** 클릭
 
 ### 2. 설정 확인

@@ -1,0 +1,1 @@
+../../../../packages/trinity-os/TRINITY_CONSTITUTION.md

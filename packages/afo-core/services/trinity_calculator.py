@@ -13,7 +13,6 @@ from typing import Any
 
 import numpy as np
 
-
 try:
     from AFO.utils.trinity_type_validator import validate_with_trinity
 except ImportError:
@@ -42,15 +41,16 @@ logger = logging.getLogger(__name__)
 from AFO.domain.metrics.trinity import TrinityInputs
 from AFO.observability.rule_constants import WEIGHTS
 
-
 # SSOT 가중치 변환 (dict -> numpy array for calculation)
-SSOT_WEIGHTS = np.array([
-    WEIGHTS["truth"],  # 眞: 제갈량 (Technical Certainty)
-    WEIGHTS["goodness"],  # 善: 사마의 (Ethical Safety)
-    WEIGHTS["beauty"],  # 美: 주유 (UX/Aesthetics)
-    WEIGHTS["serenity"],  # 孝: 승상 (Friction Reduction)
-    WEIGHTS["eternity"],  # 永: 승상 (Persistence/Legacy)
-])
+SSOT_WEIGHTS = np.array(
+    [
+        WEIGHTS["truth"],  # 眞: 제갈량 (Technical Certainty)
+        WEIGHTS["goodness"],  # 善: 사마의 (Ethical Safety)
+        WEIGHTS["beauty"],  # 美: 주유 (UX/Aesthetics)
+        WEIGHTS["serenity"],  # 孝: 승상 (Friction Reduction)
+        WEIGHTS["eternity"],  # 永: 승상 (Persistence/Legacy)
+    ]
+)
 
 
 class TrinityCalculator:

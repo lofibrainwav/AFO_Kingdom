@@ -14,6 +14,10 @@ from __future__ import annotations
 
 import json
 import logging
+import socket
+import time
+from dataclasses import asdict, dataclass
+from datetime import UTC, datetime
 from typing import Annotated, Any, cast
 
 from fastapi import APIRouter, Body, Depends, HTTPException, Query
@@ -25,7 +29,6 @@ from AFO.afo_skills_registry import (
     SkillRegistry,
     register_core_skills,
 )
-
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -50,7 +53,7 @@ def get_registry() -> SkillRegistry:
 async def execute_skill(
     registry: Annotated[SkillRegistry, Depends(get_registry)],
     skill_id: Annotated[str, Body(..., embed=True)],
-    parameters: Annotated[dict[str, Any], Body(embed=True)] = {},
+    parameters: Annotated[dict[str, Any] | None, Body(embed=True)] = None,
     dry_run: Annotated[bool, Body(embed=True)] = False,
 ) -> SkillExecutionResult:
     """
@@ -89,7 +92,10 @@ async def execute_skill(
             )
         except Exception as e:
             logger.exception("Health check failed")
-            raise HTTPException(status_code=500, detail=str(e)) from e
+            raise HTTPException(
+                status_code=500,
+                detail="Agent Card unavailable. Kingdom stability maintained (孝 100%).",
+            ) from e
 
     return SkillExecutionResult(
         skill_id=skill_id,

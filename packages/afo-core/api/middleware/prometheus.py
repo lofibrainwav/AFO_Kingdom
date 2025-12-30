@@ -181,6 +181,7 @@ async def metrics_endpoint():
     """Prometheus metrics endpoint"""
     # Use the same registry as utils/metrics.py for consistency
     from AFO.utils.metrics import get_metrics_response
+
     return await get_metrics_response()
 
 

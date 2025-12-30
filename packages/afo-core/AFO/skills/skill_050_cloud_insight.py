@@ -1,5 +1,5 @@
 import subprocess
-from typing import Any, Dict
+from typing import Any
 
 
 def cloud_insight_skill() -> dict[str, Any]:

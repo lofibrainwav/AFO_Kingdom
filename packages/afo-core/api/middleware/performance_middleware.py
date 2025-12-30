@@ -13,11 +13,9 @@ import logging
 import time
 from typing import TYPE_CHECKING, Any
 
-
 if TYPE_CHECKING:
     from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware
-
 
 logger = logging.getLogger(__name__)
 
@@ -99,7 +97,7 @@ class PerformanceMiddleware(BaseHTTPMiddleware):
         is_comprehensive = "/comprehensive" in path
         threshold_critical = 5000 if is_comprehensive else PERFORMANCE_THRESHOLDS["critical_ms"]
         threshold_warning = 3000 if is_comprehensive else PERFORMANCE_THRESHOLDS["warning_ms"]
-        
+
         if elapsed_ms >= threshold_critical:
             logger.warning(
                 f"🚨 CRITICAL: Slow endpoint detected - {request.method} {path} "
@@ -167,11 +165,13 @@ class PerformanceMiddleware(BaseHTTPMiddleware):
             if times:
                 avg_time = sum(times) / len(times)
                 if avg_time >= PERFORMANCE_THRESHOLDS["p95_target_ms"]:
-                    slow_endpoints.append({
-                        "endpoint": endpoint,
-                        "average_ms": round(avg_time, 2),
-                        "count": len(times),
-                    })
+                    slow_endpoints.append(
+                        {
+                            "endpoint": endpoint,
+                            "average_ms": round(avg_time, 2),
+                            "count": len(times),
+                        }
+                    )
 
         return {
             "total_requests": total,

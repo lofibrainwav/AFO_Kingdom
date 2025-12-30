@@ -29,6 +29,7 @@ class VisionService:
         """Check if Ollama is available"""
         try:
             import ollama
+
             ollama.list()
             return True
         except Exception as e:
@@ -40,37 +41,30 @@ class VisionService:
         path = Path(image_path)
         if not path.exists():
             raise FileNotFoundError(f"Image not found: {image_path}")
-        
+
         with open(path, "rb") as f:
             return base64.b64encode(f.read()).decode("utf-8")
 
     def analyze_image(
-        self,
-        image_path: str,
-        prompt: str = "Describe this image in detail.",
-        language: str = "ko"
+        self, image_path: str, prompt: str = "Describe this image in detail.", language: str = "ko"
     ) -> dict[str, Any]:
         """
         Analyze an image using Ollama VLM.
-        
+
         Args:
             image_path: Path to the image file
             prompt: Question or instruction about the image
             language: Response language (ko, en, etc.)
-        
+
         Returns:
             dict with description and metadata
         """
         if not self._ollama_available:
-            return {
-                "error": "Ollama not available",
-                "description": None,
-                "model": self.model
-            }
+            return {"error": "Ollama not available", "description": None, "model": self.model}
 
         try:
             import ollama
-            
+
             # Adjust prompt for language
             if language == "ko":
                 system_prompt = "당신은 이미지를 분석하는 AI입니다. 한국어로 상세히 설명하세요."
@@ -81,33 +75,24 @@ class VisionService:
                 model=self.model,
                 messages=[
                     {"role": "system", "content": system_prompt},
-                    {
-                        "role": "user",
-                        "content": prompt,
-                        "images": [image_path]
-                    }
-                ]
+                    {"role": "user", "content": prompt, "images": [image_path]},
+                ],
             )
 
             description = response["message"]["content"]
-            
+
             logger.info(f"Image analyzed: {image_path}")
             return {
                 "description": description,
                 "model": self.model,
                 "image_path": image_path,
                 "prompt": prompt,
-                "success": True
+                "success": True,
             }
 
         except Exception as e:
             logger.error(f"Image analysis failed: {e}")
-            return {
-                "error": str(e),
-                "description": None,
-                "model": self.model,
-                "success": False
-            }
+            return {"error": str(e), "description": None, "model": self.model, "success": False}
 
     def detect_objects(self, image_path: str) -> dict[str, Any]:
         """Detect and list objects in an image"""

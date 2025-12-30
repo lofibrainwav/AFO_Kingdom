@@ -1,0 +1,27 @@
+name: docs-ssot-audit
+
+on:
+  push:
+    paths:
+      - "docs/**"
+      - "scripts/audit_docs_ssot.py"
+      - ".github/workflows/docs_ssot_audit.yml"
+  pull_request:
+    paths:
+      - "docs/**"
+      - "scripts/audit_docs_ssot.py"
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run SSOT docs audit (Core Only)
+        run: |
+          python scripts/audit_docs_ssot.py --core-only
+      - name: Run Visual SSOT Sync Check
+        run: |
+          python scripts/verify_visual_sync.py docs

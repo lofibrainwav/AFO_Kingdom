@@ -16,8 +16,8 @@ echo "✅ 린트 완료"
 echo ""
 
 # 2. 타입 검사
-echo "📝 [2/5] MyPy 타입 검사..."
-mypy packages/afo-core --ignore-missing-imports 2>/dev/null || echo "MyPy 경고 있음 (계속 진행)"
+echo "📝 [2/5] Pyright 타입 검사..."
+python3 -m pyright packages/afo-core || echo "Pyright 경고 있음 (계속 진행)"
 echo "✅ 타입 검사 완료"
 echo ""
 

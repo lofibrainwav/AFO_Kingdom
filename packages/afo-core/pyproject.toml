@@ -8,14 +8,25 @@ version = "1.0.0"
 description = "AFO Ultimate General Command Post"
 readme = "README.md"
 requires-python = ">=3.12,<4.0"
-dependencies = ["psutil (>=7.1.3,<8.0.0)", "slowapi>=0.1.9"]
+dependencies = [
+    "psutil (>=7.1.3,<8.0.0)", 
+    "slowapi>=0.1.9",
+    "opentelemetry-api>=1.22.0",
+    "opentelemetry-sdk>=1.22.0",
+    "opentelemetry-exporter-otlp>=1.22.0",
+    "opentelemetry-instrumentation-fastapi>=0.43b0",
+    "structlog>=24.1.0",
+]
 
 [project.optional-dependencies]
 dev = [
-    "ruff>=0.1.0",
-    "pytest>=7.4.0",
-    "pytest-asyncio>=0.21.0",
-    "mypy>=1.5.0",
+    "ruff==0.14.10",
+    "pytest==7.4.3",
+    "pytest-asyncio==0.21.1",
+    "pyright==1.1.391",
+    "anyio==4.7.0",
+    "trio==0.23.2",
+    "sentry-sdk[fastapi]>=2.15.0",
     "types-redis>=4.6.0",
     "types-requests>=2.31.0",
     "types-psycopg2>=2.9.0",
@@ -57,31 +68,87 @@ select = [
     "TCH", # flake8-type-checking
     "PTH", # flake8-use-pathlib
     "RUF", # Ruff-specific rules
-    "S",   # flake8-bandit (Security)
+    "S",     # flake8-bandit (Security)
+    "ANN",   # flake8-annotations
+    "DTZ",   # flake8-datetimez
+    "ASYNC", # flake8-async
+    "PL",    # Pylint
+    "TRY",   # tryceratops
 ]
 ignore = [
-    "E501",  # line too long (handled by formatter)
-    "B008",  # do not perform function calls in argument defaults
-    "ARG001", # unused function argument
-    "ARG002", # unused method argument
-    "T201",  # print statements (allowed in scripts)
-    "RUF001", # ambiguous unicode (allow 眞善美孝)
-    "RUF002", # ambiguous unicode
-    "RUF003", # ambiguous unicode
-    "PTH",    # allow os.path for now (stability)
-    "S101",   # assert (vetted)
-    "S102",   # exec detected (vetted)
-    "S105",   # hardcoded password (vetted)
-    "S108",   # hardcoded temp file (vetted)
-    "S110",   # try-except-pass (vetted)
-    "S112",   # try-except-continue (vetted)
-    "S303",   # md5/sha1 (vetted for legacy/admin scripts)
-    "S310",   # urlopen (vetted)
-    "S311",   # random (vetted)
-    "S324",   # md5 (vetted via bandit)
-    "S603",   # subprocess without shell (vetted)
-    "S607",   # process partial path (vetted)
-    "S608",   # hardcoded sql (vetted)
+    "E501",   # line too long (handled by formatter)
+    "B008",   # do not perform function calls in argument defaults
+    "ARG001",  # unused function argument
+    "ARG002",  # unused method argument
+    "T201",   # print statements (allowed in scripts)
+    "RUF001",  # ambiguous unicode (allow 眞善美孝)
+    "RUF002",  # ambiguous unicode
+    "RUF003",  # ambiguous unicode
+    "S101",    # assert (vetted)
+    "ANN102",  # missing-type-cls (not needed)
+    "ANN401",  # any-type (allowed for now)
+    "PLR2004", # magic-value-comparison
+    "PLC0415", # import-outside-top-level (allow for now)
+    "ANN201",  # missing-return-type (allow for now)
+    "DTZ005",  # datetime-now-without-tz (allow for now in legacy)
+    "ANN002",  # missing-type-args
+    "ANN003",  # missing-type-kwargs
+    "ANN202",  # missing-return-type-private
+    "ANN204",  # missing-return-type-special
+    "TRY003",  # long-exception-message
+    "TRY201",  # raise-without-exception-name
+    "TRY300",  # move-to-else-block
+    "TRY301",  # abstract-raise
+    "PLR0911", # too-many-return-statements
+    "S110",    # try-except-pass (allow for now)
+    "ANN001",  # missing-type-args (allow for now)
+    "BLE001",  # blind-except (allow for now)
+    "PLW0603", # global-statement (allow for now)
+    "PLR0913", # too-many-arguments
+    "PLR0912", # too-many-branches
+    "PLR0915", # too-many-statements
+    "TRY400",  # logging-error-instead-of-exception
+    "DTZ003",  # unittest-utcnow
+    "S102",    # exec-used
+    "S311",    # random-used
+    "S608",    # sql-injection-warning
+    "PLR2004", # magic-value-comparison
+    "PLW0602", # global-variable-not-assigned
+    "SIM115",  # open-file-without-context-handler
+    "SIM105",  # try-except-pass
+    "RUF012",  # mutable-class-default
+    "RUF006",  # asyncio-dangling-task (older)
+    "UP038",   # non-pep604-isinstance
+    "B008",    # function-call-in-default-argument
+    "B904",    # raise-without-from
+    "S607",    # partial-executable-path
+    "PLR1730", # if-stmt-min-max
+    "SIM117",  # multiple-with-statements
+    "ISC001",  # implicit-str-concat
+    "UP032",   # f-string
+    "PERF401", # list-comprehension-transform
+    "PTH",     # allow-os-path-for-legacy
+    "S603",    # subprocess-without-shell-equals-true
+    "PLW1510", # subprocess-run-without-check
+    "S108",    # temp-file-usage
+    "DTZ001",  # datetime-without-tzinfo
+    "DTZ006",  # datetime-fromtimestamp-without-tz
+    "TRY002",  # raise-vanilla-exception
+    "PLC0414", # useless-import-alias
+    "PLR1714", # repeated-equality-comparison
+    "PLR5501", # else-if-used-instead-of-elif
+    "PLW2901", # loop-variable-overwritten
+    "S303",    # insecure-hash-sha1
+    "S310",    # url-open-permitted-schemes
+    "S324",    # insecure-hash-md5
+    "S112",    # try-except-continue
+    "ASYNC109", # async-function-with-timeout
+    "ASYNC230", # blocking-open-call-in-async
+    "TRY401",  # redundant-exception-in-logging
+    "ANN101",  # missing-type-self
+    "ANN205",  # missing-return-type-staticmethod
+    "ASYNC221", # async-process-run-blocking
+    "PLC0206", # dict-index-iteration
 ]
 
 [tool.bandit]
@@ -223,6 +290,7 @@ module = [
     "ragas.*",
     "autogen.*",
     "autogen_agentchat.*",
+    "opentelemetry.*",
 ]
 ignore_missing_imports = true
 
@@ -321,3 +389,30 @@ ignore_errors = true
 # API compat layer (legacy)
 module = ["AFO.api.compat"]
 ignore_errors = true
+# ============================================================================
+# Pyright Configuration
+# ============================================================================
+[tool.pyright]
+include = ["packages/afo-core"]
+exclude = [
+    "**/__pycache__",
+    "**/node_modules",
+    "**/venv",
+    "**/.venv",
+    "**/build",
+    "**/dist",
+    "**/legacy"
+]
+venvPath = "."
+venv = "venv"
+pythonVersion = "3.12"
+pythonPlatform = "Darwin"
+typeCheckingMode = "standard"
+reportMissingTypeStubs = false
+reportUnknownArgumentType = false
+reportUnknownMemberType = false
+reportPrivateUsage = false
+
+executionEnvironments = [
+  { root = "packages/afo-core" }
+]

@@ -22,7 +22,7 @@ from AFO.services.trinity_calculator import TrinityCalculator
 # 로깅 설정 (손자병법: 지피지기)
 logger = logging.getLogger(__name__)
 
-router = APIRouter(prefix="/api", tags=["philosophical-copilot"])
+router = APIRouter(prefix="/api/copilot", tags=["philosophical-copilot"])
 
 
 def require_internal_secret(
@@ -30,9 +30,13 @@ def require_internal_secret(
 ) -> None:
     expected = os.getenv("AFO_INTERNAL_SECRET")
     if not expected:
-        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="internal secret not configured")
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="internal secret not configured"
+        )
     if x_internal_secret != expected:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="unauthorized")
+
+
 # 의존성 주입
 settings = Settings()
 
@@ -125,7 +129,7 @@ async def get_system_health():
         )
 
     except Exception as e:
-        logger.error(f"건강 체크 실패: {e}")
+        logger.error("건강 체크 실패: %s", e)
         raise HTTPException(status_code=500, detail="왕국의 맥박을 측정할 수 없습니다") from e
 
 
@@ -194,11 +198,15 @@ async def calculate_trinity_score(request: TrinityScoreRequest):
         )
 
     except Exception as e:
-        logger.error(f"Trinity Score 계산 실패: {e}")
+        logger.error("Trinity Score 계산 실패: %s", e)
         raise HTTPException(status_code=500, detail="철학적 조화를 계산할 수 없습니다") from e
 
 
-@router.get("/revalidate/status", response_model=RevalidateStatusResponse, dependencies=[Depends(require_internal_secret)])
+@router.get(
+    "/revalidate/status",
+    response_model=RevalidateStatusResponse,
+    dependencies=[Depends(require_internal_secret)],
+)
 async def get_revalidate_status():
     """
     Revalidate 상태 확인 (제갈량의 전략적 판단)
@@ -232,7 +240,7 @@ async def get_revalidate_status():
         )
 
     except Exception as e:
-        logger.error(f"Revalidate 상태 확인 실패: {e}")
+        logger.error("Revalidate 상태 확인 실패: %s", e)
         raise HTTPException(status_code=500, detail="재검증 상태를 확인할 수 없습니다") from e
 
 
@@ -254,5 +262,5 @@ async def get_philosophical_insights():
         }
 
     except Exception as e:
-        logger.error(f"철학적 통찰 제공 실패: {e}")
+        logger.error("철학적 통찰 제공 실패: %s", e)
         raise HTTPException(status_code=500, detail="철학적 통찰을 얻을 수 없습니다") from e

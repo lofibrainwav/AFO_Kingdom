@@ -83,7 +83,7 @@
 ### 3.3 Repo health / preflight
 - `./scripts/enforce_500_line_rule.py` (500줄 법칙 검사)
 - `make lint` / `make type-check` / `make test` (루트 Makefile)
-- `poetry run mypy .` / `ruff check .` (Python)
+- `python3 -m pyright .` / `ruff check .` (Python)
 - `pnpm lint` / `pnpm type-check` (TS)
 
 ---
@@ -95,7 +95,7 @@
 - TypeScript: `pnpm lint` → `pnpm format`
 
 ### 4.2 Type-check
-- Python: `make type-check` 또는 `poetry run mypy packages/afo-core/AFO`
+- Python: `make type-check` 또는 `python3 -m pyright packages/afo-core`
 - TypeScript: `pnpm type-check`
 
 ### 4.3 Tests

@@ -44,9 +44,9 @@ PR 코멘트 메시지 톤/형식 통일 + 템플릿/가이드 링크 자동 첨
 - [파일명]
 
 ### 🔗 참고 자료
-- [보고서 템플릿](링크)
-- [SSOT 가이드](링크)
-- [주간 메트릭](링크)
+- [보고서 템플릿](./CONTEXT7_SEQUENTIAL_THINKING_SKILLS_MASTER_INDEX.md)
+- [SSOT 가이드](./CHANCELLOR_GRAPH_V2_COMPLETE_GUIDE.md)
+- [주간 메트릭](./OPERATIONAL_METRICS.md)
 
 ### 💡 수정 방법
 1. 템플릿 형식 준수
@@ -64,8 +64,8 @@ PR 코멘트 메시지 톤/형식 통일 + 템플릿/가이드 링크 자동 첨
 - [파일명] (영어 비율: XX%)
 
 ### 🔗 참고 자료
-- [보고 규칙](링크)
-- [보고서 템플릿](링크)
+- [보고 규칙](./SSOT_IMPORT_PATHS.md)
+- [보고서 템플릿](./CONTEXT7_SEQUENTIAL_THINKING_SKILLS_MASTER_INDEX.md)
 
 ### 💡 개선 팁
 - 핵심 개념은 영어로 설명하되

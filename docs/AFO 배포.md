@@ -65,7 +65,7 @@ poetry show --outdated
 Bash
 
 ```
-cd /Users/brnestrm/AFO_Kingdom
+cd <LOCAL_WORKSPACE>/AFO_Kingdom
 source .venv/bin/activate
 pip check
 poetry run pip-audit
@@ -76,7 +76,7 @@ poetry run pip-audit
 Bash
 
 ```
-cd /Users/brnestrm/AFO_Kingdom
+cd <LOCAL_WORKSPACE>/AFO_Kingdom
 poetry update --dry-run
 poetry update
 poetry run pip-audit

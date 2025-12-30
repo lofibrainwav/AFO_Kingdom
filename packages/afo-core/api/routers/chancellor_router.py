@@ -7,10 +7,10 @@ LangGraph 기반 3책사 (Zhuge Liang/Sima Yi/Zhou Yu) 시스템
 
 from __future__ import annotations
 
-import asyncio
 import logging
 from typing import Any, Literal, cast
 
+import anyio
 from fastapi import APIRouter, HTTPException
 
 # 로깅 설정
@@ -314,10 +314,8 @@ async def _execute_with_fallback(
 
         timed_out = False
         try:
-            result = await asyncio.wait_for(
-                _router.execute_with_routing(query, context=context),
-                timeout=max(0.5, budget_seconds),
-            )
+            with anyio.fail_after(max(0.5, budget_seconds)):
+                result = await _router.execute_with_routing(query, context=context)
             return result.get("response", ""), result.get("routing"), timed_out
         except TimeoutError:
             timed_out = True
@@ -551,10 +549,8 @@ async def _execute_full_mode_v1_legacy(
     config = {"configurable": {"thread_id": request.thread_id}}
 
     try:
-        result = await asyncio.wait_for(
-            graph.ainvoke(initial_state, config),
-            timeout=float(request.timeout_seconds),
-        )
+        with anyio.fail_after(float(request.timeout_seconds)):
+            result = await graph.ainvoke(initial_state, config)
     except TimeoutError as e:
         if not request.fallback_on_timeout:
             raise HTTPException(

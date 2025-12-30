@@ -73,32 +73,32 @@
 - **파일**: `packages/trinity-os/trinity_os/servers/afo_ultimate_mcp_server.py`
 - **command**: `python3`
 - **환경 변수**:
-  - `WORKSPACE_ROOT`: `${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}`
-  - `PYTHONPATH`: `${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}/packages/afo-core:${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}/packages/trinity-os`
+  - `WORKSPACE_ROOT`: `${WORKSPACE_ROOT:-<LOCAL_WORKSPACE>/AFO_Kingdom}`
+  - `PYTHONPATH`: `${WORKSPACE_ROOT:-<LOCAL_WORKSPACE>/AFO_Kingdom}/packages/afo-core:${WORKSPACE_ROOT:-<LOCAL_WORKSPACE>/AFO_Kingdom}/packages/trinity-os`
 - **도구**: shell_execute, read_file, write_file, kingdom_health, calculate_trinity_score, verify_fact, cupy_weighted_sum
 
 ### afo-skills-mcp
 - **파일**: `packages/trinity-os/trinity_os/servers/afo_skills_mcp.py`
 - **command**: `python3`
 - **환경 변수**:
-  - `WORKSPACE_ROOT`: `${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}`
-  - `PYTHONPATH`: `${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}/packages/afo-core:${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}/packages/trinity-os`
+  - `WORKSPACE_ROOT`: `${WORKSPACE_ROOT:-<LOCAL_WORKSPACE>/AFO_Kingdom}`
+  - `PYTHONPATH`: `${WORKSPACE_ROOT:-<LOCAL_WORKSPACE>/AFO_Kingdom}/packages/afo-core:${WORKSPACE_ROOT:-<LOCAL_WORKSPACE>/AFO_Kingdom}/packages/trinity-os`
 - **도구**: cupy_weighted_sum, verify_fact
 
 ### trinity-score-mcp
 - **파일**: `packages/trinity-os/trinity_os/servers/trinity_score_mcp.py`
 - **command**: `python3`
 - **환경 변수**:
-  - `WORKSPACE_ROOT`: `${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}`
-  - `PYTHONPATH**: `${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}/packages/afo-core:${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}/packages/trinity-os`
+  - `WORKSPACE_ROOT`: `${WORKSPACE_ROOT:-<LOCAL_WORKSPACE>/AFO_Kingdom}`
+  - `PYTHONPATH**: `${WORKSPACE_ROOT:-<LOCAL_WORKSPACE>/AFO_Kingdom}/packages/afo-core:${WORKSPACE_ROOT:-<LOCAL_WORKSPACE>/AFO_Kingdom}/packages/trinity-os`
 - **도구**: calculate_trinity_score
 
 ### afo-skills-registry-mcp
 - **파일**: `packages/trinity-os/trinity_os/servers/afo_skills_registry_mcp.py`
 - **command**: `python3`
 - **환경 변수**:
-  - `WORKSPACE_ROOT**: `${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}`
-  - `PYTHONPATH**: `${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}/packages/afo-core:${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}/packages/trinity-os`
+  - `WORKSPACE_ROOT**: `${WORKSPACE_ROOT:-<LOCAL_WORKSPACE>/AFO_Kingdom}`
+  - `PYTHONPATH**: `${WORKSPACE_ROOT:-<LOCAL_WORKSPACE>/AFO_Kingdom}/packages/afo-core:${WORKSPACE_ROOT:-<LOCAL_WORKSPACE>/AFO_Kingdom}/packages/trinity-os`
 - **도구**: 19개 스킬 (skill_001 ~ skill_019)
 
 ---

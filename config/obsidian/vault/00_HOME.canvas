@@ -1,0 +1,31 @@
+{
+	"nodes": [
+		{
+			"id": "node1",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400,
+			"type": "file",
+			"file": "00_HOME.md"
+		},
+		{
+			"id": "node2",
+			"x": 500,
+			"y": 0,
+			"width": 400,
+			"height": 200,
+			"type": "text",
+			"text": "# AFO Kingdom Visual Entry\n\nDrag Phase Nodes here to expand."
+		}
+	],
+	"edges": [
+        {
+            "id": "edge1",
+            "fromNode": "node2",
+            "fromSide": "left",
+            "toNode": "node1",
+            "toSide": "right"
+        }
+    ]
+}

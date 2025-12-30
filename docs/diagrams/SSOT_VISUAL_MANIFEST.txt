@@ -1,0 +1,5 @@
+# SSOT Visual Manifest
+# List of diagrams that MUST pass SHA256 synchronization check.
+
+# [Onboarding]
+test_diagram.excalidraw

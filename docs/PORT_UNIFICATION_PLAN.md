@@ -242,7 +242,7 @@
 ### Phase 1 실행
 ```bash
 # Git 트리 재분석
-cd /Users/brnestrm/AFO_Kingdom
+cd <LOCAL_WORKSPACE>/AFO_Kingdom
 git log --format="%H|%ai|%an|%s" --all > /tmp/git_full_log.txt
 # 문서 업데이트 (자동화)
 ```

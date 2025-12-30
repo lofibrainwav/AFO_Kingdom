@@ -17,7 +17,7 @@ AFO Kingdom의 모든 MCP (Model Context Protocol) 서버가 Cursor IDE에 등�
 
 #### filesystem
 - **설명**: File system access for AFO Kingdom
-- **명령어**: `npx -y @modelcontextprotocol/server-filesystem /Users/brnestrm/AFO_Kingdom`
+- **명령어**: `npx -y @modelcontextprotocol/server-filesystem <LOCAL_WORKSPACE>/AFO_Kingdom`
 - **기능**: 파일 시스템 접근
 
 #### sequential-thinking
@@ -42,7 +42,7 @@ AFO Kingdom의 모든 MCP (Model Context Protocol) 서버가 Cursor IDE에 등�
 
 #### afo-ultimate-mcp
 - **설명**: AFO Ultimate MCP Server - Universal connector with Trinity Score evaluation (眞善美孝永)
-- **경로**: `/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/servers/afo_ultimate_mcp_server.py`
+- **경로**: `<LOCAL_WORKSPACE>/AFO_Kingdom/packages/trinity-os/trinity_os/servers/afo_ultimate_mcp_server.py`
 - **도구**:
   - `shell_execute`: Shell 명령어 실행
   - `read_file`: 파일 읽기
@@ -52,7 +52,7 @@ AFO Kingdom의 모든 MCP (Model Context Protocol) 서버가 Cursor IDE에 등�
 
 #### afo-skills-mcp
 - **설명**: AFO Skills MCP Server - CuPy acceleration & core skills with Trinity Score evaluation
-- **경로**: `/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/servers/afo_skills_mcp.py`
+- **경로**: `<LOCAL_WORKSPACE>/AFO_Kingdom/packages/trinity-os/trinity_os/servers/afo_skills_mcp.py`
 - **도구**:
   - `cupy_weighted_sum`: GPU 가속 가중 합 계산
   - `read_file`: 파일 읽기
@@ -61,12 +61,12 @@ AFO Kingdom의 모든 MCP (Model Context Protocol) 서버가 Cursor IDE에 등�
 
 #### trinity-score-mcp
 - **설명**: Trinity Score MCP Server - Calculate 眞善美孝永 5-pillar scores with GPU acceleration (CuPy)
-- **경로**: `/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/servers/trinity_score_mcp.py`
+- **경로**: `<LOCAL_WORKSPACE>/AFO_Kingdom/packages/trinity-os/trinity_os/servers/trinity_score_mcp.py`
 - **기능**: 眞善美孝永 5기둥 점수 계산 (GPU 가속 지원)
 
 #### afo-obsidian-mcp
 - **설명**: AFO Obsidian MCP Server - 옵시디언 템플릿 시스템 및 Context7 통합
-- **경로**: `/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/servers/obsidian_mcp.py`
+- **경로**: `<LOCAL_WORKSPACE>/AFO_Kingdom/packages/trinity-os/trinity_os/servers/obsidian_mcp.py`
 - **도구**:
   - `read_note`: 옵시디언 노트 읽기
   - `write_note`: 옵시디언 노트 쓰기 (Context7 자동 등록)
@@ -107,10 +107,10 @@ AFO Kingdom의 모든 MCP (Model Context Protocol) 서버가 Cursor IDE에 등�
     "afo-ultimate-mcp": {
       "command": "python3",
       "args": [
-        "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/servers/afo_ultimate_mcp_server.py"
+        "<LOCAL_WORKSPACE>/AFO_Kingdom/packages/trinity-os/trinity_os/servers/afo_ultimate_mcp_server.py"
       ],
       "env": {
-        "WORKSPACE_ROOT": "/Users/brnestrm/AFO_Kingdom"
+        "WORKSPACE_ROOT": "<LOCAL_WORKSPACE>/AFO_Kingdom"
       }
     },
     ...

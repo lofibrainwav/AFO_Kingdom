@@ -15,7 +15,6 @@ from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import JSONResponse, Response
 
-
 # 중앙 설정 및 유틸리티
 
 logger = logging.getLogger(__name__)
@@ -41,10 +40,10 @@ class CacheMiddleware(BaseHTTPMiddleware):
         """Initialize Redis cache with retry logic (善: Graceful degradation)"""
         if self._initialized:
             return
-        
+
         max_retries = 3
         retry_delay = 0.5  # seconds
-        
+
         for attempt in range(max_retries):
             try:
                 from AFO.utils.redis_connection import get_redis_client
@@ -59,11 +58,14 @@ class CacheMiddleware(BaseHTTPMiddleware):
             except Exception as e:
                 if attempt < max_retries - 1:
                     import time
+
                     time.sleep(retry_delay * (attempt + 1))
-                    logger.warning("⚠️ Redis 연결 재시도 중... (attempt %d/%d)", attempt + 1, max_retries)
+                    logger.warning(
+                        "⚠️ Redis 연결 재시도 중... (attempt %d/%d)", attempt + 1, max_retries
+                    )
                 else:
                     logger.warning("⚠️ API Cache 비활성화 (Redis 없이 정상 작동): %s", e)
-        
+
         # Graceful fallback - cache disabled but app continues
         self.redis_client = None
         self._initialized = False

@@ -27,11 +27,14 @@ interface RoyalOpsCenterProps {
  * Integrates Kingdom Health, Chancellor Stream, and Grok Insights with high-fidelity motion.
  */
 export default function RoyalOpsCenter({ trinityScore, healthData }: RoyalOpsCenterProps) {
+  // API_BASE is not used in SSE connection (proxy is used), but kept for future API calls
+  const API_BASE = process.env.NEXT_PUBLIC_API_BASE || ROYAL_CONSTANTS.LINKS.API_DEFAULT;
+
   const [logs, setLogs] = useState<string[]>([]);
   const [currentTime, setCurrentTime] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
   
-  const API_BASE = process.env.NEXT_PUBLIC_API_BASE || ROYAL_CONSTANTS.LINKS.API_DEFAULT;
+  // API_BASE is not used in SSE connection (proxy is used), but kept for future API calls
 
   // Real-time Clock
   useEffect(() => {
@@ -64,15 +67,15 @@ export default function RoyalOpsCenter({ trinityScore, healthData }: RoyalOpsCen
   }, []);
 
   useEffect(() => {
-    // Use Next.js proxy for SSE to avoid CORS issues
-    // The proxy is configured in next.config.ts: /api/logs/stream -> backend/logs/stream
-    console.log("[Chancellor Stream] Connecting to SSE via proxy");
+    // SSOT: Use Next.js proxy for SSE to avoid CORS issues
+    // Canonical path: /api/logs/stream (AGENTS.md SSOT)
+    console.log("[Chancellor Stream] Connecting to Chancellor Stream via SSOT proxy");
 
     const eventSource = createEventSource("/api/logs/stream");
 
     eventSource.onopen = () => {
-      console.log("[Chancellor Stream] SSE opened");
-      setLogs(prev => [...prev, "✨ Chancellor Stream Connected"]);
+      console.log("[Chancellor Stream] Chancellor Stream Connected");
+      setLogs(prev => [...prev, "🏰 [Chancellor] Stream Connected - Real-time Thoughts Active"]);
     };
 
     eventSource.onmessage = (event) => {
@@ -82,20 +85,20 @@ export default function RoyalOpsCenter({ trinityScore, healthData }: RoyalOpsCen
     eventSource.onerror = (err) => {
       // Don't log full error object to avoid "{}" in console
       console.error("[Chancellor Stream] Connection error. Reconnecting...");
-      // Optional: setLogs(prev => [...prev, "⚠️ Connection Lost - Retrying..."]);
+      setLogs(prev => [...prev, "⚠️ [Chancellor] Connection Lost - Attempting Reconnect"]);
     };
 
     // Send initial connection test
     setTimeout(() => {
-      console.log("[Chancellor Stream] Testing connection...");
-      setLogs(prev => [...prev, "[SSE] Chancellor Stream 초기화 완료"]);
+      console.log("[Chancellor Stream] Chancellor Stream initialized");
+      setLogs(prev => [...prev, "🔄 [Chancellor] Real-time Thought Stream Active"]);
     }, 1000);
 
     return () => {
-      console.log("[Chancellor Stream] Closing SSE connection");
+      console.log("[Chancellor Stream] Closing Chancellor Stream connection");
       eventSource.close();
     };
-  }, [API_BASE, handleLogMessage]);
+  }, [handleLogMessage]);
 
   const handleHeal = async () => {
     try {

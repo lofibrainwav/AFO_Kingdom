@@ -161,8 +161,8 @@ curl -s http://localhost:9090/api/v1/query?query=rate\(afo_sse_reconnect_count_t
 
 - [AFO Kingdom Architecture](../AFO_CHANCELLOR_GRAPH_SPEC.md)
 - [Dashboard Frontend Guide](../AFO_FRONTEND_ARCH.md)
-- [Monitoring Setup](../monitoring/README.md)
-- [Alerting Rules](../monitoring/alerting_rules.yml)
+- [Monitoring Setup](../monitoring/STAGE3_MONITORING_SSOT.md)
+- [Alerting Rules](../monitoring/STAGE3_MONITORING_SSOT.md#알람-정책-설정)
 
 ---
 

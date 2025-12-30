@@ -51,20 +51,22 @@ graph TB
         DR[DRY_RUN 모드]
     end
 
-    subgraph MCP["🔧 MCP 서버 (9개)"]
+    subgraph MCP["🔧 MCP 서버 (11개)"]
         UM[AFO Ultimate MCP]
         SM[AFO Skills MCP]
         TM[Trinity Score MCP]
         RM[Skills Registry MCP]
-        CM[Context7 MCP]
-        MM[Memory MCP]
+        OM[Obsidian MCP]
+        DM[Docker MCP]
+        MLM[Memory MCP]
         FM[Filesystem MCP]
         SeqM[Sequential Thinking MCP]
         BM[Brave Search MCP]
+        CM[Context7 MCP]
     end
 
     subgraph Skills["🎯 Skills Registry"]
-        S[19개 스킬]
+        S[30개 스킬]
     end
 
     subgraph Context7["📚 Context7"]
@@ -120,14 +122,14 @@ sequenceDiagram
 ```mermaid
 %%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#ffc107', 'primaryTextColor':'#000', 'primaryBorderColor':'#e0a800', 'lineColor':'#ffc107', 'secondaryColor':'#f8f9fa', 'tertiaryColor':'#fff'}}}%%
 graph LR
-    subgraph Skills["🎯 Skills Registry (19개)"]
+    subgraph Skills["🎯 Skills Registry (30개)"]
         S1[skill_001<br/>YouTube Spec Gen]
         S2[skill_002<br/>Ultimate RAG]
         S3[skill_003<br/>Health Monitor]
         S4[skill_004<br/>Ragas Evaluator]
         S5[skill_005<br/>Strategy Engine]
         S13[skill_013<br/>Obsidian Librarian]
-        S19[skill_019<br/>...]
+        S30[skill_030<br/>...]
     end
 
     RegistryMCP[🔧 Skills Registry MCP]
@@ -279,19 +281,20 @@ graph LR
 > - `ENVIRONMENT`: 환경 설정 (dev)
 
 > [!example] 3. MCP 서버
-> **총 9개 서버** 등록됨
+> **총 11개 서버** 등록됨
 > 
-> **AFO Kingdom 전용** (4개):
+> **AFO Kingdom 전용** (5개):
 > - `afo-ultimate-mcp`: Universal connector
 > - `afo-skills-mcp`: CuPy acceleration
 > - `trinity-score-mcp`: Trinity Score 계산
-> - `afo-skills-registry-mcp`: 19개 스킬 제공
+> - `afo-skills-registry-mcp`: 30개 스킬 제공
+> - `afo-obsidian-mcp`: Obsidian 템플릿 & Context7 통합
 > 
 > **외부 서버** (5개):
 > - `memory`, `filesystem`, `sequential-thinking`, `brave-search`, `context7`
 
 > [!check] 4. Skills Registry
-> **총 19개 스킬** 등록됨
+> **총 30개 스킬** 등록됨
 > - 모든 스킬이 MCP 도구로 변환됨 ✅
 > - Trinity Score 자동 계산 통합 ✅
 
@@ -358,8 +361,8 @@ graph LR
 > 
 > | 항목 | 수량 | 상태 |
 > |------|------|------|
-> | 🔧 MCP 서버 | **9개** | ✅ |
-> | 🎯 Skills | **19개** | ✅ |
+> | 🔧 MCP 서버 | **11개** | ✅ |
+> | 🎯 Skills | **30개** | ✅ |
 > | 📚 Context7 항목 | **12개** | ✅ |
 > | 🌐 API 엔드포인트 | **49개** | ✅ |
 > | 📋 옵시디언 템플릿 | **8개** | ✅ |
@@ -387,7 +390,7 @@ graph LR
 > **담당**: 승상 (丞相) - AFO Kingdom  
 > **상태**: 🟢 Operational (Harmony)  
 > **버전**: 1.0.0  
-> **Vault 위치**: `/Users/brnestrm/AFO_Kingdom/docs`  
+> **Vault 위치**: `<LOCAL_WORKSPACE>/AFO_Kingdom/docs`  
 > **검증**: [옵시디언 도서관 완벽 검증 보고서](./OBSIDIAN_LIBRARY_COMPLETE_VERIFICATION.md) ✅  
 > **Vault 설정**: [옵시디언 Vault 설정 가이드](./OBSIDIAN_VAULT_SETUP.md) ✅  
 > **확장 작업**: [옵시디언 확장 작업 상태](./OBSIDIAN_EXTENSION_STATUS.md) ✅  

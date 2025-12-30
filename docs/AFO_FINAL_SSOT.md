@@ -4,7 +4,7 @@
 
 ## 🏛️ 핵심 헌법 & 철학 (Constitution & Philosophy)
 
-- **최고 헌법**: [TRINITY_CONSTITUTION_SUPREME.md](file:///Users/brnestrm/AFO_Kingdom/packages/trinity-os/TRINITY_CONSTITUTION.md)
+- **최고 헌법**: [TRINITY_CONSTITUTION_SUPREME.md](file://<LOCAL_WORKSPACE>/AFO_Kingdom/packages/trinity-os/TRINITY_CONSTITUTION.md)
 - **5대 기둥 (眞善美孝永)**:
   - **眞 (Truth 35%)**: 기술적 확실성 & 아키텍처 ([Zhuge Liang])
   - **善 (Goodness 35%)**: 윤리·안정성 & 리스크 게이트 ([Sima Yi])
@@ -30,9 +30,24 @@
 
 ## 🛠️ 운영 매뉴얼 (Operations)
 
-- **[야전교범]**: [AFO_ROYAL_LIBRARY.md](file:///Users/brnestrm/AFO_Kingdom/docs/AFO_ROYAL_LIBRARY.md)
-- **[시스템 상태]**: [AFO_KINGDOM_MAIN.md](file:///Users/brnestrm/AFO_Kingdom/docs/AFO_KINGDOM_MAIN.md)
+- **[야전교범]**: [AFO_ROYAL_LIBRARY.md](file://<LOCAL_WORKSPACE>/AFO_Kingdom/docs/AFO_ROYAL_LIBRARY.md)
+- **[시스템 상태]**: [AFO_KINGDOM_MAIN.md](file://<LOCAL_WORKSPACE>/AFO_Kingdom/docs/AFO_KINGDOM_MAIN.md)
 - **[복구 매뉴얼]**: `scripts/reboot_kingdom.sh`
+
+
+### 3. CI/CD LOCK Protocol (Truth/Beauty)
+- **Single Entry**: `bash scripts/ci_lock_protocol.sh` is the ONLY allowed entry point for verification.
+- **Ruff Version**: **0.14.10** (Strict SSOT). `ruff --version` in CI must match this exactly.
+- **Rules**:
+    - **Truth**: `pyright` (Strict Type Checking)
+    - **Beauty**: `ruff` (Linting & Formatting - `ANN`, `DTZ`, `PL`, `ASYNC` enabled)
+    - **Goodness**: `pytest` (Logic Verification)
+
+## 📜 제국 무결성 원칙 (Integrity Rules)
+
+- **CI Single Entry:** CI는 `scripts/ci_lock_protocol.sh`만 실행한다.
+- **Regression Rule:** baseline은 허용 목록이 아니라 *격리벽*이며, 신규 오류는 0개만 허용한다.
+- **Observability Rule:** VERIFY 실패 시 원인/증거를 남기고(로그/아티팩트), 필요하면 체크포인트 기반 롤백을 우선한다.
 
 ---
 

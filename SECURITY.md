@@ -41,7 +41,7 @@
 
 ### Code Quality
 
-- **MyPy --strict**: 타입 안전성
+- **Pyright --standard**: 타입 안전성
 - **Ruff**: 코드 품질 린팅
 - **pytest-cov**: 테스트 커버리지
 
