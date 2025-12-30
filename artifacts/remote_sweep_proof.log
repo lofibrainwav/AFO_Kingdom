@@ -1,0 +1,1 @@
+scripts/remote_pull_run_verify.sh: line 4: AFO_IMAGE_REF: AFO_IMAGE_REF is required (e.g., ghcr.io/<owner>/afo-core-soul-engine:<tag>)

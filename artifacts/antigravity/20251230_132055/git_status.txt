@@ -1,0 +1,23 @@
+## main...origin/main
+ M .cursorrules
+ M packages/afo-core/api/chancellor_v2/context7.py
+ M packages/afo-core/api/chancellor_v2/graph/nodes/__init__.py
+ M packages/afo-core/api/chancellor_v2/thinking.py
+ M packages/afo-core/api_server.py
+ M packages/afo-core/docker-compose.yml
+ M packages/afo-core/services/mcp_stdio_client.py
+ M packages/afo-core/services/vision_service.py
+?? .venv/
+?? packages/afo-core/AFO/chancellor_graph.py
+?? packages/afo-core/api/chancellor_v2/graph/decision_result.py
+?? packages/afo-core/api/chancellor_v2/graph/nodes/beauty_node.py
+?? packages/afo-core/api/chancellor_v2/graph/nodes/cmd_node.py
+?? packages/afo-core/api/chancellor_v2/graph/nodes/goodness_node.py
+?? packages/afo-core/api/chancellor_v2/graph/nodes/merge_node.py
+?? packages/afo-core/api/chancellor_v2/graph/nodes/parse_node.py
+?? packages/afo-core/api/chancellor_v2/graph/nodes/report_node.py
+?? packages/afo-core/api/chancellor_v2/graph/nodes/truth_node.py
+?? packages/afo-core/api/routers/multimodal.py
+?? scripts/check_obsidian_health.sh
+?? seal_antigravity.sh
+?? test_chancellor_debug.py

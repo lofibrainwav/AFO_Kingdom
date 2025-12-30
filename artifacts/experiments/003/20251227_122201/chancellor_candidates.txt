@@ -1,0 +1,5 @@
+/api/health/trinity-monitor/stats
+/api/health/trinity-monitor/trend
+/api/personas/{persona_id}/trinity-score
+/chancellor/engines
+/chancellor/health

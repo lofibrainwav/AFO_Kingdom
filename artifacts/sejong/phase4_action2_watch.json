@@ -1,0 +1,10 @@
+{
+  "as_of_sec": 3703,
+  "target_url": "http://localhost:18010",
+  "health_status_code": 200,
+  "skills_status_code": 200,
+  "health_ok": true,
+  "skills_complete": true,
+  "skills_count": 31,
+  "timestamp": 1767005096.766925
+}

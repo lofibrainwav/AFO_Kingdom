@@ -1,0 +1,13 @@
+================================================================================
+🏰 AFO Kingdom - SBOM (Software Bill of Materials) 생성 (CLI Mode)
+================================================================================
+
+✅ SBOM (JSON) generated: artifacts/sbom/afo-core_requirements_sbom.json
+✅ SBOM (XML) generated: artifacts/sbom/afo-core_requirements_sbom.xml
+✅ SBOM (JSON) generated: artifacts/sbom/trinity-os_requirements_sbom.json
+✅ SBOM (XML) generated: artifacts/sbom/trinity-os_requirements_sbom.xml
+✅ Environment SBOM (JSON) generated: artifacts/sbom/environment_sbom.json
+
+================================================================================
+✅ SBOM 생성 완료: 3개 세트
+   출력 디렉토리: /Users/brnestrm/AFO_Kingdom/artifacts/sbom

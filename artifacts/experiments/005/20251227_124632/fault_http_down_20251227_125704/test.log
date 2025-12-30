@@ -1,0 +1,17 @@
+== Fault Injection: HTTP Down (8010) ==
+time_start: 2025-12-27T12:57:04-08:00
+url: http://localhost:8010/api/health
+
+baseline_http_code: 200
+mode: local
+local_pid: 21768
+action: kill -2 21768 (SIGINT)
+time_after_stop: 2025-12-27T12:57:04-08:00
+
+down_detected_at_s: 2
+repo_root: /Users/brnestrm/AFO_Kingdom
+action: restart via nohup (background)
+time_after_restart: 2025-12-27T12:57:15-08:00
+
+up_restored_at_s: 3
+ALERT HTTP_DOWN detected_at=2s restored_at=3s time=2025-12-27T12:57:17-08:00

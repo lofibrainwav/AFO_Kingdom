@@ -1,0 +1,201 @@
+== (4) vault 흔적(코드/ENV/의존성) ==
+./verification_log.txt:73: M packages/afo-core/scripts/rag/sync_obsidian_vault.py
+./packages/sixXon/docs/SIXXON_AUTH_MIGRATION_GUIDE.md:177:import hvac
+./packages/sixXon/docs/SIXXON_AUTH_MIGRATION_GUIDE.md:179:def save_to_vault(provider: str, token_data: dict):
+./packages/sixXon/docs/SIXXON_AUTH_MIGRATION_GUIDE.md:181:    client = hvac.Client(url=os.getenv("VAULT_URL"))
+./packages/sixXon/docs/SIXXON_AUTH_MIGRATION_GUIDE.md:182:    client.token = os.getenv("VAULT_TOKEN")
+./packages/sixXon/docs/SIXXON_AUTH_BROKER_SPEC.md:117:   - 환경 변수: `SIXXON_VAULT_URL`
+./kingdom_dashboard.css:69:    transition: all 0.3s ease;
+./kingdom_dashboard.css:84:    transition: color 0.3s ease;
+./kingdom_dashboard.css:107:    transition: all 0.3s ease;
+./kingdom_dashboard.css:124:    transition: all 0.3s ease;
+./kingdom_dashboard.css:145:    transition: all 0.3s ease;
+./kingdom_dashboard.css:261:    transition: all 0.3s ease;
+./kingdom_dashboard.css:428:    transition: width 0.5s ease;
+./kingdom_dashboard.css:481:    transition: width 0.5s ease;
+./kingdom_dashboard.css:583:.transition-all {
+./kingdom_dashboard.css:584:    transition: all 0.3s;
+./kingdom_dashboard.css:596:    transition: all 0.3s;
+./kingdom_dashboard.css:739:    transition: all 0.2s;
+./kingdom_dashboard.css:836:    transition: all 0.3s ease;
+./kingdom_dashboard.css:867:    transition: all 0.3s ease;
+./kingdom_dashboard.css:921:    transition: width 1s ease;
+./kingdom_dashboard.css:1025:    transition: background 0.2s;
+./kingdom_dashboard.css:1125:            transition: all 0.3s ease;
+./kingdom_dashboard.css:1147:    transition: opacity 0.3s;
+./kingdom_dashboard.css:1223:    transition: all 0.2s;
+./kingdom_dashboard.css:1252:    transition: opacity 0.3s;
+./kingdom_dashboard.css:1295:            transition: all 0.3s;
+./kingdom_dashboard.css:1386:    transition: transform 0.2s, box-shadow 0.2s;
+./kingdom_dashboard.css:1424:    transition: transform 0.2s, box-shadow 0.2s;
+./kingdom_dashboard.css:1505:    transition: transform 0.2s, box-shadow 0.2s;
+./kingdom_dashboard.css:1637:    transition: transform 0.2s;
+./kingdom_dashboard.css:1747:    transition: all 0.2s;
+./kingdom_dashboard.css:1840:    transition: all 0.2s;
+./kingdom_dashboard.css:1975:    transition: all 0.2s ease;
+./current_mypy_errors.txt:138:packages/afo-core/scripts/rag/obsidian_loader.py:194: error: Module "config" has no attribute "OBSIDIAN_VAULT_PATH"  [attr-defined]
+./settings.py:170:    VAULT_ENABLED: bool = Field(default=False, description="Vault KMS 사용 여부")
+./settings.py:175:    VAULT_URL: str = Field(
+./settings.py:178:    VAULT_TOKEN: str | None = Field(default=None, description="Vault 액세스 토큰")
+./poetry.lock:5751:azure-key-vault = ["azure-identity (>=1.16.0)", "azure-keyvault-secrets (>=4.8.0)"]
+./packages/dashboard/src/components/demos/SkillsDashboard.tsx:57:          className="p-3 bg-white/5 rounded-lg border border-white/10 hover:border-gold/50 transition-colors"
+./packages/dashboard/src/components/demos/SkillsDashboard.tsx:121:          className="w-full py-2 px-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition-all active:scale-95 font-medium shadow-lg shadow-indigo-500/20"
+./conftest.py:20:    "packages/afo-core/tests/test_api_wallet_vault_fallback.py",
+./packages/dashboard/src/components/royal/widgets/RoyalFinanceWidget.tsx:125:            className={`h-full transition-all duration-1000 ${
+./packages/dashboard/src/components/royal/widgets/RoyalFinanceWidget.tsx:163:          <div key={tx.id} className="group flex items-center justify-between bg-white/5 hover:bg-white/10 p-2 rounded-md border border-white/5 transition-all">
+./packages/dashboard/src/components/royal/widgets/RoyalFinanceWidget.tsx:165:              <div className="bg-gray-800 p-1.5 rounded-full text-gray-300 group-hover:bg-emerald-900 group-hover:text-emerald-300 transition-colors">
+./packages/dashboard/src/components/royal/widgets/RoyalFinanceWidget.tsx:178:                className="p-1.5 rounded-full hover:bg-emerald-500/20 text-gray-400 hover:text-emerald-400 transition-all disabled:opacity-50"
+./packages/dashboard/src/components/royal/widgets/SystemStatusWidget.tsx:43:              className="h-full bg-blue-500 rounded-full transition-all duration-1000"
+./packages/dashboard/src/components/royal/widgets/SystemStatusWidget.tsx:59:              className="h-full bg-purple-500 rounded-full transition-all duration-1000"
+./packages/dashboard/src/components/royal/widgets/SystemStatusWidget.tsx:75:              className="h-full bg-slate-400 rounded-full transition-all duration-1000"
+./packages/dashboard/src/components/royal/OrgansMonitor.tsx:33:          transition={{
+./packages/dashboard/src/components/royal/OrgansMonitor.tsx:63:              transition={{ duration: 1.5, repeat: Infinity, delay: index * 0.2 }}
+./packages/dashboard/src/components/royal/OrgansMonitor.tsx:83:              transition={{ duration: 1 }}
+./packages/dashboard/src/components/royal/TrinityGlow.tsx:83:          "fixed inset-0 pointer-events-none -z-10 bg-gradient-to-br transition-colors duration-1000",
+./packages/dashboard/src/components/royal/TrinityGlow.tsx:90:        transition={{
+./packages/dashboard/src/components/royal/SkillDeck.tsx:61:          transition={{
+./packages/dashboard/src/components/royal/SkillDeck.tsx:72:              "absolute top-0 left-0 right-0 h-16 opacity-20 transition-opacity group-hover:opacity-40",
+./packages/dashboard/src/components/royal/SkillDeck.tsx:98:                "w-full py-2 rounded-lg text-xs font-bold transition-all shadow-md border border-white/50",
+./packages/dashboard/src/components/royal/SkillDeck.tsx:116:          <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+./AICPA/Aicpa 애이전트 펌 군단.md:1004:              className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
+./AICPA/Aicpa 애이전트 펌 군단.md:1012:            className={`mt-6 px-8 py-3 rounded-xl font-bold text-white shadow-lg transition-all flex items-center gap-2
+./AICPA/Aicpa 애이전트 펌 군단.md:1097:    <div className="flex items-center justify-between bg-white/5 hover:bg-white/10 p-3 rounded-lg transition-colors group cursor-pointer border border-white/5 hover:border-white/20">
+./AICPA/Aicpa 애이전트 펌 군단.md:1105:      <span className="text-xs font-bold px-2 py-1 rounded bg-white/10 text-gray-300 group-hover:bg-white/20 transition-colors">
+./AICPA/Aicpa 애이전트 펌 군단.md:1174:      <div className={`absolute top-0 right-0 w-24 h-24 bg-purple-500/20 blur-3xl rounded-full transition-all duration-1000
+./AICPA/Aicpa 애이전트 펌 군단.md:1226:        className={`z-10 mt-3 w-full py-2 rounded-lg text-xs font-bold text-white transition-all flex justify-center items-center gap-2
+./AICPA/Aicpa 애이전트 펌 군단.md:1404:               className="w-full h-full object-cover opacity-80 hover:scale-105 transition-transform duration-700"
+./AICPA/Aicpa 애이전트 펌 군단.md:1646:          className={`h-full rounded-full ${bar} transition-all duration-1000`}
+./AICPA/Aicpa 애이전트 펌 군단.md:1665:    <button className={`py-3 rounded-xl bg-gradient-to-r ${color} text-white font-bold text-sm shadow-lg hover:brightness-110 active:scale-95 transition-all flex flex-col items-center justify-center`}>
+./AICPA/Aicpa 애이전트 펌 군단.md:1847:    <div className={`w-full h-full backdrop-blur-xl border rounded-3xl p-6 flex flex-col gap-6 relative overflow-hidden transition-colors duration-500
+./AICPA/Aicpa 애이전트 펌 군단.md:1971:&lt;div className={`w-full h-full backdrop-blur-xl border-2 rounded-3xl p-6 flex flex-col gap-6 relative overflow-hidden transition-all duration-500 shadow-2xl       ${isOnline ? 'bg-black/80 border-green-500/30 shadow-green-900/20' : 'bg-red-950/80 border-red-500/30 shadow-red-900/20'}`}&gt;
+./AICPA/Aicpa 애이전트 펌 군단.md:2059:className="bg-white/5 rounded-2xl p-3 border border-white/10 relative overflow-hidden group transition-all"
+./AICPA/Aicpa 애이전트 펌 군단.md:2062:&lt;div className={`absolute -right-4 -top-4 w-16 h-16 bg-gradient-to-br ${p.color} opacity-20 blur-xl rounded-full group-hover:opacity-30 transition-all`} /&gt;
+./AICPA/Aicpa 애이전트 펌 군단.md:2218:        className="h-full bg-gradient-to-r from-yellow-400 to-orange-500 transition-all duration-1000"
+./AICPA/Aicpa 애이전트 펌 군단.md:2236:className={`relative p-4 rounded-2xl border transition-all cursor-pointer group         ${quest.completed            ? 'bg-blue-500/10 border-blue-500/0 opacity-50 grayscale'            : 'bg-white/10 border-white/10 hover:bg-white/20 hover:border-yellow-400/50 hover:shadow-lg hover:shadow-yellow-400/10'         }`}
+./AICPA/Aicpa 애이전트 펌 군단.md:2241:&lt;div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors             ${quest.completed ? 'bg-green-500 border-green-500' : 'border-gray-400 group-hover:border-yellow-400'}`}&gt;
+./AICPA/Aicpa 애이전트 펌 군단.md:2251:      &lt;div className="bg-yellow-500/20 text-yellow-300 px-3 py-1 rounded-lg text-xs font-black flex items-center gap-1 group-hover:bg-yellow-400 group-hover:text-black transition-colors"&gt;
+./AICPA/Aicpa 애이전트 펌 군단.md:2485:className={`flex-1 py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-2 transition-all         ${active ? 'bg-white text-black shadow-lg' : 'text-gray-400 hover:text-white'}`}
+./AICPA/Aicpa 애이전트 펌 군단.md:2496:className={`p-4 rounded-2xl border flex justify-between items-center transition-all cursor-pointer group         ${quest.completed            ? 'bg-black/20 border-white/5 opacity-50 grayscale'            : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-yellow-400/50'}`}
+./AICPA/Aicpa 애이전트 펌 군단.md:2515:className={`p-4 rounded-2xl border flex flex-col items-center justify-center gap-2 transition-all relative overflow-hidden group         ${canAfford            ? 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/30 hover:shadow-lg cursor-pointer'            : 'bg-black/20 border-white/5 opacity-50 cursor-not-allowed'}`}
+./AICPA/Aicpa 애이전트 펌 군단.md:2517:&lt;div className="text-4xl group-hover:scale-110 transition-transform"&gt;{reward.icon}&lt;/div&gt;
+./AICPA/Aicpa 애이전트 펌 군단.md:2707:    className="bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold py-2 px-4 rounded-lg transition-colors flex items-center gap-2"
+./AICPA/Aicpa 애이전트 펌 군단.md:2873:className={`p-4 rounded-2xl border flex justify-between items-center transition-all cursor-pointer group relative overflow-hidden         ${quest.completed            ? 'bg-black/20 border-white/5 opacity-50 grayscale'            : quest.source === 'google'             ? 'bg-blue-900/30 border-blue-400/30 hover:bg-blue-800/40 hover:border-blue-300' // 구글 숙제는 파란색 테마             : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-yellow-400/50'}`}
+./packages/dashboard/src/components/royal/RoyalLayout.tsx:60:              transition={{ delay: 0.5 }}
+./packages/dashboard/src/components/royal/RoyalLayout.tsx:162:        className="fixed bottom-8 right-8 z-[100] w-16 h-16 bg-gradient-to-br from-indigo-600 to-purple-700 rounded-full shadow-2xl flex items-center justify-center border-2 border-white/20 hover:shadow-indigo-500/50 transition-all cursor-pointer"
+./packages/dashboard/src/components/royal/RoyalLayout.tsx:189:                className="absolute -top-12 right-0 w-10 h-10 bg-white/10 rounded-full flex items-center justify-center text-white hover:bg-red-500/20 transition-colors shadow-lg backdrop-blur-sm"
+./packages/dashboard/src/components/royal/PillarModal.tsx:87:                className="p-2 hover:bg-slate-200 rounded-full transition-colors"
+./packages/dashboard/src/components/royal/RoyalLibrary.tsx:295:                  className="p-4 bg-white rounded-xl border border-slate-100 hover:border-slate-300 transition-colors"
+./packages/dashboard/src/components/royal/RoyalPhilosophy.tsx:45:            className={`p-6 rounded-2xl bg-white/70 backdrop-blur-md border ${p.border} shadow-sm cursor-pointer hover:shadow-md transition-all relative overflow-hidden group`}
+./packages/dashboard/src/components/royal/RoyalPhilosophy.tsx:57:              className={`absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity ${p.color}`}
+./packages/dashboard/src/components/royal/ChancellorStream.tsx:106:  const transitionConfig = useMemo(
+./packages/dashboard/src/components/royal/ChancellorStream.tsx:138:      transition={transitionConfig}
+./packages/dashboard/src/components/royal/ChancellorStream.tsx:165:              className="border-l-2 border-slate-300 pl-3 py-1 hover:bg-white/30 rounded transition-colors"
+./packages/dashboard/src/components/royal/ChancellorStream.tsx:190:            transition={{ duration: 1.5, repeat: status === "connected" ? Infinity : 0 }}
+./packages/dashboard/src/components/antigravity/StatusIndicator.tsx:65:            className={`p-1 rounded transition-colors ${
+./packages/dashboard/src/components/antigravity/StatusIndicator.tsx:138:              className="px-2 py-1 bg-blue-500/10 border border-blue-500/20 rounded text-xs text-blue-400 cursor-pointer hover:bg-blue-500/20 transition-colors"
+./packages/dashboard/src/components/antigravity/VerdictLogModal.tsx:136:              className="text-gray-400 hover:text-white transition-colors"
+./packages/dashboard/src/components/antigravity/VerdictLogModal.tsx:244:              className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+./packages/dashboard/src/components/antigravity/TrinityDashboard.tsx:220:          className="flex items-center space-x-2 bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg transition-colors"
+./packages/dashboard/src/components/antigravity/TrinityDashboard.tsx:245:                className="bg-gray-700/50 p-2 rounded-lg border border-gray-600 hover:bg-gray-600/50 transition-colors"
+./packages/dashboard/src/components/AFOPantheon.tsx:208:              className={`p-6 bg-black/60 rounded-2xl flex flex-col items-center justify-center transition-all duration-300 hover:bg-white/5 border ${statusColorClass}`}
+./packages/dashboard/src/components/AFOPantheon.tsx:226:            <div className="p-6 bg-black/60 rounded-2xl border border-white/10 flex flex-col hover:border-white/30 transition-colors">
+./packages/dashboard/src/components/AFOPantheon.tsx:267:              className="lg:col-span-2 p-6 bg-black/80 rounded-2xl transition-all duration-300"
+./packages/dashboard/src/components/AFOPantheon.tsx:354:        <section className="flex justify-center pb-20 pt-10 opacity-80 hover:opacity-100 transition-opacity">
+./skills/obsidian-librarian/SKILL.md:13:  vault_path: "~/Documents/Obsidian/AFO_Vault"
+./skills/obsidian-librarian/SKILL.md:36:| `search_notes` | Full-text search across vault |
+./docs/CONTEXT7_LEGACY_INTEGRATION_COMPLETE.md:68:- **한국어**: 옵시디언, 사서, vault
+./AICPA/aicpa-core/components/LoginScreen.tsx:100:                <div className="absolute -top-2 -right-2 bg-gradient-to-br from-amber-300 to-amber-500 rounded-full p-2 shadow-lg border-2 border-slate-900 group-hover:scale-110 transition-transform">
+./AICPA/aicpa-core/components/LoginScreen.tsx:129:                        <div className="absolute left-4 top-4 text-slate-400 group-focus-within:text-emerald-600 transition-colors">
+./AICPA/aicpa-core/components/LoginScreen.tsx:137:                            className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all outline-none font-bold text-slate-800 placeholder:text-slate-400 text-sm"
+./AICPA/aicpa-core/components/LoginScreen.tsx:160:                            <div className="absolute left-4 top-4 text-slate-400 group-focus-within:text-purple-500 transition-colors">
+./AICPA/aicpa-core/components/LoginScreen.tsx:168:                                className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 transition-all outline-none font-mono text-xs text-slate-900 placeholder:text-slate-400"
+./AICPA/aicpa-core/components/LoginScreen.tsx:178:                    className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 px-4 rounded-2xl transition-all active:scale-[0.98] shadow-xl shadow-emerald-600/20 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2.5 mt-4 group relative overflow-hidden"
+./AICPA/aicpa-core/components/LoginScreen.tsx:181:                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+./AICPA/aicpa-core/components/LoginScreen.tsx:191:                            <Zap size={18} className="text-amber-200 group-hover:text-white transition-colors" />
+./AICPA/aicpa-core/components/LoginScreen.tsx:206:                    className="w-full bg-white border border-slate-200 hover:bg-amber-50 hover:border-amber-200 hover:text-amber-700 text-slate-600 font-bold py-3.5 px-4 rounded-2xl transition-all flex items-center justify-center gap-2 text-xs group"
+./AICPA/aicpa-core/components/LoginScreen.tsx:208:                    <PlayCircle size={16} className="text-slate-400 group-hover:text-amber-500 transition-colors" />
+./packages/dashboard/src/components/skills/SkillsRegistry.tsx:162:          className="mt-3 px-4 py-2 bg-red-500/20 border border-red-500/30 rounded-lg text-red-400 hover:bg-red-500/30 transition-colors text-sm"
+./packages/dashboard/src/components/skills/SkillsRegistry.tsx:209:              className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:border-blue-500/50 focus:outline-none transition-colors"
+./packages/dashboard/src/components/skills/SkillsRegistry.tsx:221:              className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-blue-500/50 focus:outline-none transition-colors"
+./packages/dashboard/src/components/skills/SkillsRegistry.tsx:240:              className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-blue-500/50 focus:outline-none transition-colors"
+./packages/dashboard/src/components/skills/SkillsRegistry.tsx:261:            className="px-4 py-2 bg-gray-500/20 border border-gray-500/30 rounded-lg text-gray-400 hover:bg-gray-500/30 hover:border-gray-500/50 transition-colors text-sm"
+./packages/dashboard/src/components/skills/SkillsRegistry.tsx:302:            className="px-6 py-3 bg-blue-500/20 border border-blue-500/30 rounded-lg text-blue-400 hover:bg-blue-500/30 hover:border-blue-500/50 transition-colors"
+./docs/DEPENDENCIES_VERIFICATION.md:48:- PyJWT, passlib, cryptography, hvac
+./packages/dashboard/src/components/skills/SkillCard.tsx:55:      transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl
+./packages/dashboard/src/components/skills/SkillCard.tsx:60:      <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+./packages/dashboard/src/components/skills/SkillCard.tsx:66:            <h3 className="text-lg font-semibold text-white mb-1 group-hover:text-blue-300 transition-colors">
+./packages/dashboard/src/components/skills/SkillCard.tsx:155:              className="px-2 py-1 bg-white/5 border border-white/10 rounded-md text-xs text-gray-300 hover:bg-white/10 transition-colors"
+./packages/dashboard/src/components/skills/SkillCard.tsx:174:            className="flex-1 px-4 py-2 bg-blue-500/20 border border-blue-500/30 rounded-lg text-blue-400 hover:bg-blue-500/30 hover:border-blue-500/50 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
+./packages/dashboard/src/components/skills/SkillCard.tsx:181:            className="flex-1 px-4 py-2 bg-green-500/20 border border-green-500/30 rounded-lg text-green-400 hover:bg-green-500/30 hover:border-green-500/50 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
+./packages/dashboard/src/components/skills/SkillCard.tsx:216:      <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-green-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+./packages/dashboard/src/components/VoiceReactivePanel.tsx:147:                    className="h-full transition-all duration-100"
+./packages/dashboard/src/components/VoiceReactivePanel.tsx:177:        className={`w-full py-3.5 mt-4 rounded-xl text-white font-bold text-sm cursor-pointer border-none transition-all duration-300 ${buttonStyles}`}
+./packages/dashboard/src/components/wallet/BrowserAuthModal.tsx:163:                  <div className="border-t border-gray-800 pt-3 opacity-80 hover:opacity-100 transition-opacity">
+./AICPA/aicpa-core/components/FrameworkExplainer.tsx:24:      className={`border rounded-[1.5rem] transition-all duration-300 overflow-hidden ${isOpen ? `shadow-lg ring-1 ring-offset-2 ring-offset-slate-50 ${borderColor}` : 'border-slate-200 hover:border-slate-300 bg-white'}`}
+./AICPA/aicpa-core/components/FrameworkExplainer.tsx:31:          <div className={`flex-shrink-0 w-12 h-12 rounded-2xl flex items-center justify-center transition-colors ${isOpen ? color + ' text-white shadow-md' : 'bg-slate-100 text-slate-500'}`}>
+./AICPA/aicpa-core/components/FrameworkExplainer.tsx:35:            <h3 className={`text-lg font-bold transition-colors ${isOpen ? 'text-slate-900' : 'text-slate-600'}`}>{title}</h3>
+./AICPA/aicpa-core/components/FrameworkExplainer.tsx:39:        <div className={`transform transition-transform duration-300 ${isOpen ? 'rotate-180 text-emerald-600' : 'text-slate-400'}`}>
+./AICPA/aicpa-core/components/FrameworkExplainer.tsx:45:        className={`transition-[max-height,opacity] duration-300 ease-in-out ${isOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'}`}
+./docs/AFO 121825 checklist-1.md:900:  def test_vault_auth_failure():
+./docs/AFO 121825 checklist-1.md:902:      with patch("config.vault_manager.VaultManager.get_secret", side_effect=PermissionError):
+./packages/dashboard/src/components/common/ErrorBoundary.tsx:143:              className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-white text-sm font-medium flex items-center gap-2 transition-colors mx-auto"
+./AICPA/aicpa-core/components/Button.tsx:16:  const baseStyle = "inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed";
+./packages/dashboard/src/components/common/ErrorMessage.tsx:25:              className="mt-4 px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-white text-sm font-medium flex items-center gap-2 transition-colors"
+./packages/dashboard/src/components/genui/TreeOfThoughts.tsx:209:    show: { opacity: 1, transition: { staggerChildren: 0.1 } }
+./packages/dashboard/src/components/genui/TreeOfThoughts.tsx:217:        transition: { 
+./packages/dashboard/src/components/genui/TreeOfThoughts.tsx:268:        className={`absolute w-64 p-4 rounded-xl backdrop-blur-md border cursor-pointer transition-transform duration-200
+./packages/dashboard/src/components/genui/TreeOfThoughts.tsx:395:            <button className="p-2 hover:bg-white/10 rounded-lg transition-colors text-white/50 hover:text-white">
+./AICPA/aicpa-core/components/SimulationWizard.tsx:114:        <button onClick={onCancel} className="text-slate-400 hover:text-slate-600 flex items-center gap-1 text-sm font-medium transition-colors">
+./AICPA/aicpa-core/components/SimulationWizard.tsx:122:                className="h-full bg-gradient-to-r from-emerald-500 via-emerald-400 to-amber-400 transition-all duration-500 ease-out"
+./AICPA/aicpa-core/components/SimulationWizard.tsx:143:        <div className="bg-white border border-slate-200 shadow-xl shadow-emerald-900/5 rounded-[2rem] p-10 mb-8 w-full relative group transition-all hover:shadow-2xl hover:shadow-emerald-900/10 hover:-translate-y-1">
+./AICPA/aicpa-core/components/SimulationWizard.tsx:171:                className="w-full bg-slate-50 border-2 border-slate-200 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 rounded-[1.5rem] p-6 text-lg text-slate-900 placeholder:text-slate-400 resize-none shadow-inner transition-all min-h-[120px]"
+./AICPA/aicpa-core/components/SimulationWizard.tsx:180:                    className={`p-3 rounded-xl transition-all ${
+./packages/dashboard/src/components/genui/TrinityMirrorStatus.tsx:72:    <div className={`p-4 rounded-2xl border bg-black/40 backdrop-blur-md transition-all duration-500 ${statusColor}`}>
+./packages/dashboard/src/components/genui/TrinityMirrorStatus.tsx:93:              className={`text-[10px] p-2 rounded-lg border leading-tight transition-all ${
+./AICPA/aicpa-core/App.tsx:87:            <button onClick={closeNotification} className="ml-2 hover:bg-white/20 rounded-full p-1 transition-colors"><X size={14}/></button>
+./AICPA/aicpa-core/App.tsx:105:        <div className={`hidden lg:flex items-center gap-3 px-4 py-2 rounded-xl text-xs font-mono shadow-sm border transition-colors ${isDark ? 'bg-slate-800/50 border-slate-700 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-600'}`}>
+./AICPA/aicpa-core/App.tsx:202:      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b h-18 sm:h-20 ${isHero ? 'bg-slate-900/80 border-slate-700/50 backdrop-blur-md' : 'bg-white/90 border-slate-200/60 backdrop-blur-md'}`}>
+./AICPA/aicpa-core/App.tsx:207:                className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity group" 
+./AICPA/aicpa-core/App.tsx:210:                <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-700 flex items-center justify-center shadow-lg shadow-emerald-900/20 group-hover:scale-105 transition-transform border border-emerald-500/30">
+./AICPA/aicpa-core/App.tsx:217:                    <span className="text-[10px] text-slate-500 font-medium tracking-wider group-hover:text-emerald-500 transition-colors">INTELLIGENCE SUITE</span>
+./AICPA/aicpa-core/App.tsx:227:                        className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all ${
+./AICPA/aicpa-core/App.tsx:259:                    className={`hidden sm:flex items-center gap-2 px-3 py-2 rounded-xl border transition-all ${
+./AICPA/aicpa-core/App.tsx:304:                         className={`w-full flex items-center gap-4 p-4 rounded-2xl transition-all ${
+./AICPA/aicpa-core/App.tsx:319:                    <button onClick={resetApp} className="flex items-center gap-3 text-slate-500 hover:bg-white w-full p-4 rounded-2xl transition-all font-medium text-sm border border-transparent hover:border-slate-200 hover:shadow-sm">
+./AICPA/aicpa-core/App.tsx:322:                    <button onClick={() => setUser(null)} className="flex items-center gap-3 text-red-600 hover:bg-red-50 w-full p-4 rounded-2xl transition-all font-medium text-sm border border-transparent hover:border-red-100">
+./packages/dashboard/src/components/genui/RoyalAnalyticsWidget.tsx:57:      transition={{ duration: 0.8 }}
+./packages/dashboard/src/components/genui/GrokRealtimeStreamWidget.tsx:78:        className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl transition-opacity duration-1000 ${connected ? "opacity-100 animate-pulse" : "opacity-0"}`}
+./packages/dashboard/src/components/genui/GrokRealtimeStreamWidget.tsx:127:                className={`p-4 rounded-xl border backdrop-blur-sm transition-all duration-500 ${
+./docs/Julie_CPA_Plan.md:35:    - Uses `vault_manager` for keys.
+./AICPA/aicpa-core/components/HeroSection.tsx:21:        <div className={`bg-slate-800/40 backdrop-blur-md border ${borderColor} rounded-[2rem] p-6 hover:bg-slate-800/60 hover:border-amber-500/50 transition-all flex flex-col h-full group shadow-lg duration-300 relative overflow-hidden`}>
+./AICPA/aicpa-core/components/HeroSection.tsx:26:                <div className={`p-1.5 rounded-lg ${iconBg} backdrop-blur-sm transition-colors`}>
+./AICPA/aicpa-core/components/HeroSection.tsx:33:                  <div key={i} className="group/item relative pl-4 border-l-2 border-slate-600 hover:border-amber-400 transition-colors">
+./AICPA/aicpa-core/components/HeroSection.tsx:34:                      <a href={item.url} target="_blank" rel="noreferrer" className="text-sm text-slate-300 font-medium group-hover/item:text-white line-clamp-2 leading-relaxed block mb-1.5 transition-colors">
+./AICPA/aicpa-core/components/HeroSection.tsx:37:                      <div className="flex gap-3 opacity-0 group-hover/item:opacity-100 transition-opacity translate-y-1 group-hover/item:translate-y-0 duration-200">
+./AICPA/aicpa-core/components/HeroSection.tsx:180:                    <button onClick={toggleLanguage} className="h-10 px-4 bg-slate-800/50 hover:bg-slate-700/50 border border-slate-600 rounded-full text-xs font-bold text-white transition-all flex items-center gap-2 shadow-lg backdrop-blur-md">
+./AICPA/aicpa-core/components/HeroSection.tsx:183:                    <button onClick={() => fetchBriefing(location, language)} className="h-10 w-10 bg-slate-800/50 hover:bg-slate-700/50 border border-slate-600 rounded-full text-white transition-all flex items-center justify-center shadow-lg group backdrop-blur-md">
+./AICPA/aicpa-core/components/HeroSection.tsx:184:                        <RefreshCw size={16} className={`group-hover:rotate-180 transition-transform duration-500 text-amber-400 ${loading ? "animate-spin" : ""}`} />
+./AICPA/aicpa-core/components/HeroSection.tsx:209:                className="md:col-span-2 bg-gradient-to-br from-emerald-800 to-slate-900 rounded-[2rem] p-8 text-white relative overflow-hidden group cursor-pointer shadow-2xl hover:shadow-[0_0_30px_rgba(16,185,129,0.3)] transition-all duration-500 animate-slide-down border border-emerald-500/30 ring-1 ring-white/5"
+./AICPA/aicpa-core/components/HeroSection.tsx:215:                <div className="absolute -top-10 -right-10 p-10 opacity-10 group-hover:opacity-20 group-hover:scale-110 transition-all duration-700 rotate-12">
+./AICPA/aicpa-core/components/HeroSection.tsx:230:                    <div className="flex items-center gap-2 font-bold text-sm mt-8 group-hover:translate-x-2 transition-transform bg-white/10 w-fit px-5 py-3 rounded-xl backdrop-blur-md hover:bg-amber-500 hover:text-white border border-white/10 hover:border-amber-400 hover:shadow-lg text-amber-100">
+./AICPA/aicpa-core/components/HeroSection.tsx:238:                className={`md:col-span-1 md:row-span-2 border rounded-[2rem] p-6 text-white group transition-all animate-slide-down shadow-lg flex flex-col relative overflow-hidden backdrop-blur-sm ${isGoogleConnected ? 'bg-slate-800/60 border-slate-600/50' : 'bg-slate-800/40 border-slate-700/50'}`}
+./AICPA/aicpa-core/components/HeroSection.tsx:254:                            className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 text-white py-3.5 rounded-xl text-sm font-bold shadow-lg hover:shadow-emerald-500/30 transition-all flex items-center justify-center gap-2 border border-emerald-500/50"
+./AICPA/aicpa-core/components/HeroSection.tsx:264:                     <div className="h-8 w-8 bg-indigo-500/20 rounded-lg flex items-center justify-center text-indigo-300 cursor-pointer hover:bg-indigo-500/30 transition-colors border border-indigo-500/20" onClick={openGoogleCalendar} title="Open Google Calendar">
+./AICPA/aicpa-core/components/HeroSection.tsx:267:                    <button onClick={openGoogleCalendar} className="text-[10px] font-bold bg-slate-700/50 hover:bg-slate-600/50 text-slate-300 px-2 py-1 rounded transition-colors flex items-center gap-1 border border-slate-600">
+./AICPA/aicpa-core/components/HeroSection.tsx:286:                                className={`block relative pl-4 border-l-2 transition-all hover:pl-5 group/evt mb-3 ${evt.status === 'active' ? 'border-amber-500' : 'border-slate-600'}`}
+./AICPA/aicpa-core/components/HeroSection.tsx:310:                            className="flex-1 bg-slate-900/50 border border-slate-600 rounded-lg text-xs px-3 py-2 text-white placeholder:text-slate-600 focus:border-emerald-500 outline-none transition-colors"
+./AICPA/aicpa-core/components/HeroSection.tsx:312:                        <button type="submit" disabled={!newTaskText.trim()} className="bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg px-2 disabled:opacity-50 transition-colors">
+./AICPA/aicpa-core/components/HeroSection.tsx:321:                            <div key={task.id} className="flex items-center justify-between group/task hover:bg-slate-700/50 rounded-lg px-2 py-1.5 transition-colors">
+./AICPA/aicpa-core/components/HeroSection.tsx:327:                                    <span className={`text-xs truncate transition-colors ${task.completed ? 'text-slate-500 line-through decoration-slate-600' : 'text-slate-300 group-hover/task:text-white'}`}>{task.text}</span>
+./AICPA/aicpa-core/components/HeroSection.tsx:329:                                <button onClick={() => deleteTodo(task.id)} className="text-slate-600 hover:text-red-400 opacity-0 group-hover/task:opacity-100 transition-opacity p-1">
+./AICPA/aicpa-core/components/HeroSection.tsx:377:                className="md:col-span-1 bg-slate-800/40 backdrop-blur-md rounded-[2rem] p-6 text-white relative overflow-hidden group cursor-pointer shadow-lg hover:shadow-xl hover:bg-slate-800/60 transition-all border border-slate-600/50 hover:border-amber-500/30 animate-slide-down"
+./AICPA/aicpa-core/components/HeroSection.tsx:380:                <div className="absolute -bottom-8 -right-8 text-slate-700 opacity-50 group-hover:scale-110 transition-transform duration-500">
+./AICPA/aicpa-core/components/HeroSection.tsx:388:                        <h3 className="text-xl font-bold mb-2 text-amber-100 group-hover:text-amber-300 transition-colors">R.C.A.T.E.</h3>
+./AICPA/aicpa-core/components/HeroSection.tsx:393:                    <div className="mt-6 flex items-center gap-1 text-xs font-bold text-amber-400 group-hover:text-amber-300 transition-colors">
+./AICPA/aicpa-core/components/GroupChatRoom.tsx:110:            <button key={room.id} onClick={() => setActiveRoomId(room.id)} className={`w-full flex items-start gap-3 p-4 border-b border-slate-100 transition-all hover:bg-white ${activeRoomId === room.id ? 'bg-white border-l-4 border-l-emerald-500 shadow-sm' : 'bg-transparent border-l-4 border-l-transparent'}`}>
+./AICPA/aicpa-core/components/GroupChatRoom.tsx:163:                <div className="flex items-end gap-2 bg-slate-50 border border-slate-200 rounded-[1.2rem] p-2 focus-within:ring-2 focus-within:ring-emerald-100 focus-within:border-emerald-400 transition-all">
+./AICPA/aicpa-core/components/GroupChatRoom.tsx:172:                    <button onClick={handleSendMessage} disabled={!input.trim() || aiTypingRole !== null} className={`p-2.5 rounded-xl transition-all ${input.trim() && !aiTypingRole ? 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm' : 'bg-slate-200 text-slate-400'}`}>
+./packages/dashboard/src/components/genui/AICPAJulieWidget.tsx:124:            className="bg-white/5 rounded-xl p-4 border border-white/5 hover:border-white/10 transition-colors"
+./packages/dashboard/src/components/genui/AICPAJulieWidget.tsx:136:            className="bg-white/5 rounded-xl p-4 border border-white/5 hover:border-white/10 transition-colors"
+./packages/dashboard/src/components/genui/AICPAJulieWidget.tsx:184:                className="flex justify-between items-center p-3 bg-white/5 rounded-lg border border-white/5 hover:bg-white/10 transition-colors group"
+./packages/dashboard/src/components/genui/AICPAJulieWidget.tsx:190:                    className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-white/40 group-hover:text-white/80 transition-colors"

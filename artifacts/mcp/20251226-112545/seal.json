@@ -1,0 +1,30 @@
+{
+  "ticket": "MCP",
+  "outdir": "/Users/brnestrm/AFO_Kingdom/artifacts/MCP/20251226-112545",
+  "files": {
+    "dashboard_headers.txt": {
+      "bytes": 582,
+      "sha256": "4b8f9be6dedf1dcd79051b97da04b7eed9afaf4814ddce36662a93a83d4a9d60"
+    },
+    "mcp_smoke.txt": {
+      "bytes": 55,
+      "sha256": "0ab51059be484176110aedcfe4a198e9f37fecda0c766a2aa5eb5190dd9e26a4"
+    },
+    "meta.txt": {
+      "bytes": 255,
+      "sha256": "290412db4c234cd20ae147ef92183f66e3a74474b3cf9d1c8f68733f9892ae92"
+    },
+    "port_3000.txt": {
+      "bytes": 157,
+      "sha256": "45ac7dd5d89a9c3163bdb38e1231de7f8e468fed7b17b1edccc3f4860b105d81"
+    },
+    "port_8010.txt": {
+      "bytes": 349,
+      "sha256": "913e3bd678fd246955d7ada77bcd8d2c6b370c49004ca3a7237804bbd1b69426"
+    },
+    "afo_api_headers.txt": {
+      "bytes": 236,
+      "sha256": "d210c04ad683401fb712c87669839fc589ff657030d66784e3de38584e9e8cee"
+    }
+  }
+}

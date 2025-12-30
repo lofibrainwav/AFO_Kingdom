@@ -1,0 +1,4 @@
+method	path
+GET	/api/wallet/keys
+GET	/api/auth/health
+GET	/api/revalidate/status

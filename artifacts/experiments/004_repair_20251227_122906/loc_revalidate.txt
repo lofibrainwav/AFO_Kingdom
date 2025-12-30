@@ -1,0 +1,47 @@
+packages/afo-core/api/compat.py:603:# Edge Revalidate Router (Phase 6)
+packages/afo-core/api/compat.py:604:edge_revalidate_router: APIRouter | None
+packages/afo-core/api/compat.py:606:    from api.routes.edge_revalidate import router as edge_revalidate_router
+packages/afo-core/api/compat.py:608:    edge_revalidate_router = None
+packages/afo-core/api/cache_headers.py:16:    "dynamic": "private, max-age=0, no-cache, stale-while-revalidate=60",  # 동적 (SWR Short)
+packages/afo-core/api/cache_headers.py:17:    "realtime": "private, max-age=60, stale-while-revalidate=300",  # 실시간 Data (SWR Long)
+packages/afo-core/api/routes/philosophical_copilot.py:60:class RevalidateStatusResponse(BaseModel):
+packages/afo-core/api/routes/philosophical_copilot.py:61:    """Revalidate 상태 응답 (제갈량의 전략적 판단)"""
+packages/afo-core/api/routes/philosophical_copilot.py:191:@router.get("/revalidate/status", response_model=RevalidateStatusResponse)
+packages/afo-core/api/routes/philosophical_copilot.py:192:async def get_revalidate_status():
+packages/afo-core/api/routes/philosophical_copilot.py:194:    Revalidate 상태 확인 (제갈량의 전략적 판단)
+packages/afo-core/api/routes/philosophical_copilot.py:216:        return RevalidateStatusResponse(
+packages/afo-core/api/routes/philosophical_copilot.py:220:            last_result="성공: 모든 fragments가 정상적으로 revalidate되었습니다",
+packages/afo-core/api/routes/philosophical_copilot.py:225:        logger.error(f"Revalidate 상태 확인 실패: {e}")
+packages/afo-core/cache/swr_cache.py:3:# (Stale-While-Revalidate 구현 - PDF 성능 최적화 기반)
+packages/afo-core/cache/swr_cache.py:27:async def background_revalidate(key: str, fetch_func: Callable[[], Any], ttl: int, swr_grace: int):
+packages/afo-core/cache/swr_cache.py:50:    Stale-While-Revalidate: stale 허용 + 백그라운드 갱신 (PDF 캐싱 최적화)
+packages/afo-core/cache/swr_cache.py:85:                    loop.create_task(background_revalidate(key, fetch_func, max_age, swr))
+packages/afo-core/api/routes/edge_revalidate.py:35:class RevalidateRequest(BaseModel):
+packages/afo-core/api/routes/edge_revalidate.py:38:    fragment_key: str = Field(..., description="Fragment key to revalidate")
+packages/afo-core/api/routes/edge_revalidate.py:39:    path: str | None = Field(None, description="Optional path to revalidate")
+packages/afo-core/api/routes/edge_revalidate.py:42:class RevalidateResponse(BaseModel):
+packages/afo-core/api/routes/edge_revalidate.py:47:    revalidated_at: datetime
+packages/afo-core/api/routes/edge_revalidate.py:52:class RevalidateStatusResponse(BaseModel):
+packages/afo-core/api/routes/edge_revalidate.py:56:    revalidate_url: str | None = None
+packages/afo-core/api/routes/edge_revalidate.py:66:async def trigger_vercel_revalidate(
+packages/afo-core/api/routes/edge_revalidate.py:74:    revalidate_url = os.getenv("REVALIDATE_URL")
+packages/afo-core/api/routes/edge_revalidate.py:75:    revalidate_secret = os.getenv("REVALIDATE_SECRET")
+packages/afo-core/api/routes/edge_revalidate.py:77:    if not revalidate_url or not revalidate_secret:
+packages/afo-core/api/routes/edge_revalidate.py:78:        return False, 0, "REVALIDATE_URL or REVALIDATE_SECRET not configured"
+packages/afo-core/api/routes/edge_revalidate.py:83:                f"{revalidate_url.rstrip('/')}/api/revalidate",
+packages/afo-core/api/routes/edge_revalidate.py:85:                    "x-revalidate-secret": revalidate_secret,
+packages/afo-core/api/routes/edge_revalidate.py:115:@router.post("/revalidate", response_model=RevalidateResponse)
+packages/afo-core/api/routes/edge_revalidate.py:117:    request: RevalidateRequest,
+packages/afo-core/api/routes/edge_revalidate.py:128:    success, status_code, message = await trigger_vercel_revalidate(
+packages/afo-core/api/routes/edge_revalidate.py:133:    return RevalidateResponse(
+packages/afo-core/api/routes/edge_revalidate.py:136:        revalidated_at=datetime.now(),
+packages/afo-core/api/routes/edge_revalidate.py:142:@router.get("/revalidate/status", response_model=RevalidateStatusResponse)
+packages/afo-core/api/routes/edge_revalidate.py:147:    revalidate_url = os.getenv("REVALIDATE_URL")
+packages/afo-core/api/routes/edge_revalidate.py:148:    revalidate_secret = os.getenv("REVALIDATE_SECRET")
+packages/afo-core/api/routes/edge_revalidate.py:150:    configured = bool(revalidate_url and revalidate_secret)
+packages/afo-core/api/routes/edge_revalidate.py:152:    return RevalidateStatusResponse(
+packages/afo-core/api/routes/edge_revalidate.py:154:        revalidate_url=revalidate_url if configured else None,
+packages/afo-core/api/routes/edge_revalidate.py:160:@router.post("/revalidate/batch")
+packages/afo-core/api/routes/edge_revalidate.py:161:async def batch_revalidate(
+packages/afo-core/api/routes/edge_revalidate.py:173:        success, status_code, message = await trigger_vercel_revalidate(key)
+packages/afo-core/monitoring/alerting_rules.yml:171:          rate(afo_edge_revalidate_failures_total[5m]) > 0.1

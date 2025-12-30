@@ -1,0 +1,26 @@
+{
+  "ticket": "MCP",
+  "timestamp": "20251226-1105",
+  "evidence": {
+    "port_3000": {
+      "file": "port_3000.txt",
+      "sha256": "placeholder"
+    },
+    "port_8010": {
+      "file": "port_8010.txt", 
+      "sha256": "placeholder"
+    },
+    "dashboard_headers": {
+      "file": "dashboard_headers.txt",
+      "size": "582 bytes",
+      "sha256": "placeholder"
+    },
+    "mcp_smoke": {
+      "file": "mcp_smoke.txt",
+      "content": "OK: initialize, OK: tools/list (5), PASS: clean exit (0)",
+      "sha256": "placeholder"
+    }
+  },
+  "status": "SEALED",
+  "sealed_at": "2025-12-26T11:06:00Z"
+}

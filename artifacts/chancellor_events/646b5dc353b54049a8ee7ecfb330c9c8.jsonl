@@ -1,0 +1,15 @@
+{"ts": 1767113434.253273, "trace_id": "646b5dc353b54049a8ee7ecfb330c9c8", "step": "INIT", "event": "kingdom_dna_start", "ok": true}
+{"ts": 1767113434.253449, "trace_id": "646b5dc353b54049a8ee7ecfb330c9c8", "step": "INIT", "event": "kingdom_dna_complete", "ok": true}
+{"ts": 1767113434.2535071, "trace_id": "646b5dc353b54049a8ee7ecfb330c9c8", "step": "CMD", "event": "enter", "ok": true}
+{"ts": 1767113435.9786692, "trace_id": "646b5dc353b54049a8ee7ecfb330c9c8", "step": "CMD", "event": "exit", "ok": true}
+{"ts": 1767113435.979274, "trace_id": "646b5dc353b54049a8ee7ecfb330c9c8", "step": "PARSE", "event": "enter", "ok": true}
+{"ts": 1767113437.297546, "trace_id": "646b5dc353b54049a8ee7ecfb330c9c8", "step": "PARSE", "event": "exit", "ok": true}
+{"ts": 1767113437.298047, "trace_id": "646b5dc353b54049a8ee7ecfb330c9c8", "step": "TRUTH", "event": "enter", "ok": true}
+{"ts": 1767113438.471085, "trace_id": "646b5dc353b54049a8ee7ecfb330c9c8", "step": "TRUTH", "event": "exit", "ok": true}
+{"ts": 1767113438.47168, "trace_id": "646b5dc353b54049a8ee7ecfb330c9c8", "step": "GOODNESS", "event": "enter", "ok": true}
+{"ts": 1767113439.843883, "trace_id": "646b5dc353b54049a8ee7ecfb330c9c8", "step": "GOODNESS", "event": "exit", "ok": true}
+{"ts": 1767113439.844477, "trace_id": "646b5dc353b54049a8ee7ecfb330c9c8", "step": "BEAUTY", "event": "enter", "ok": true}
+{"ts": 1767113441.021027, "trace_id": "646b5dc353b54049a8ee7ecfb330c9c8", "step": "BEAUTY", "event": "exit", "ok": true}
+{"ts": 1767113441.0216162, "trace_id": "646b5dc353b54049a8ee7ecfb330c9c8", "step": "MERGE", "event": "enter", "ok": true}
+{"ts": 1767113442.1875541, "trace_id": "646b5dc353b54049a8ee7ecfb330c9c8", "step": "MERGE", "event": "exit", "ok": true}
+{"ts": 1767113442.1881201, "trace_id": "646b5dc353b54049a8ee7ecfb330c9c8", "step": "EXECUTE", "event": "enter", "ok": true}

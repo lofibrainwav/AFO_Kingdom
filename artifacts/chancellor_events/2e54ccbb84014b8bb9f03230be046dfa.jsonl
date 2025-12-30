@@ -1,0 +1,15 @@
+{"ts": 1767113636.7097821, "trace_id": "2e54ccbb84014b8bb9f03230be046dfa", "step": "INIT", "event": "kingdom_dna_start", "ok": true}
+{"ts": 1767113636.7099898, "trace_id": "2e54ccbb84014b8bb9f03230be046dfa", "step": "INIT", "event": "kingdom_dna_complete", "ok": true}
+{"ts": 1767113636.710048, "trace_id": "2e54ccbb84014b8bb9f03230be046dfa", "step": "CMD", "event": "enter", "ok": true}
+{"ts": 1767113638.324857, "trace_id": "2e54ccbb84014b8bb9f03230be046dfa", "step": "CMD", "event": "exit", "ok": true}
+{"ts": 1767113638.325383, "trace_id": "2e54ccbb84014b8bb9f03230be046dfa", "step": "PARSE", "event": "enter", "ok": true}
+{"ts": 1767113639.637974, "trace_id": "2e54ccbb84014b8bb9f03230be046dfa", "step": "PARSE", "event": "exit", "ok": true}
+{"ts": 1767113639.638434, "trace_id": "2e54ccbb84014b8bb9f03230be046dfa", "step": "TRUTH", "event": "enter", "ok": true}
+{"ts": 1767113640.8922298, "trace_id": "2e54ccbb84014b8bb9f03230be046dfa", "step": "TRUTH", "event": "exit", "ok": true}
+{"ts": 1767113640.892782, "trace_id": "2e54ccbb84014b8bb9f03230be046dfa", "step": "GOODNESS", "event": "enter", "ok": true}
+{"ts": 1767113642.1491818, "trace_id": "2e54ccbb84014b8bb9f03230be046dfa", "step": "GOODNESS", "event": "exit", "ok": true}
+{"ts": 1767113642.149954, "trace_id": "2e54ccbb84014b8bb9f03230be046dfa", "step": "BEAUTY", "event": "enter", "ok": true}
+{"ts": 1767113643.376698, "trace_id": "2e54ccbb84014b8bb9f03230be046dfa", "step": "BEAUTY", "event": "exit", "ok": true}
+{"ts": 1767113643.3773582, "trace_id": "2e54ccbb84014b8bb9f03230be046dfa", "step": "MERGE", "event": "enter", "ok": true}
+{"ts": 1767113644.578408, "trace_id": "2e54ccbb84014b8bb9f03230be046dfa", "step": "MERGE", "event": "exit", "ok": true}
+{"ts": 1767113644.5790029, "trace_id": "2e54ccbb84014b8bb9f03230be046dfa", "step": "EXECUTE", "event": "enter", "ok": true}

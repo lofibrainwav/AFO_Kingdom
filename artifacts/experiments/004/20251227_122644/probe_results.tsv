@@ -1,0 +1,4 @@
+method	path	head_code	get_code	content_type
+GET	/api/wallet/keys	405	200	application/json
+GET	/api/auth/health	405	200	application/json
+GET	/api/revalidate/status	405	200	application/json

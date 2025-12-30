@@ -1,0 +1,1 @@
+{"status":"healthy","strategists":[{"name":"제갈량","pillar":"眞","model":"gemini-2.0-flash"},{"name":"사마의","pillar":"善","model":"claude-3.5-sonnet"},{"name":"주유","pillar":"美","model":"gpt-4o"}],"consensus_threshold":0.66}

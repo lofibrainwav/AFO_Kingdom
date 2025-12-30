@@ -1,0 +1,90 @@
+{
+  "metadata": {
+    "generated_at": "2025-12-24T18:06:44.425309+00:00Z",
+    "kingdom": "AFO Kingdom",
+    "version": "1.0.0",
+    "description": "Comprehensive index of Trinity evidence for operational analytics"
+  },
+  "summary": {
+    "total_days": 2,
+    "valid_evidences": 1,
+    "date_range": {
+      "start": "2025-12-24",
+      "end": "2026-01-08"
+    }
+  },
+  "statistics": {
+    "overall": {
+      "mean": 1.0,
+      "median": 1.0,
+      "std": 0,
+      "min": 1.0,
+      "max": 1.0
+    },
+    "pillars": {
+      "truth": {
+        "mean": 1.0,
+        "median": 1.0,
+        "std": 0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "goodness": {
+        "mean": 1.0,
+        "median": 1.0,
+        "std": 0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "beauty": {
+        "mean": 1.0,
+        "median": 1.0,
+        "std": 0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "serenity": {
+        "mean": 1.0,
+        "median": 1.0,
+        "std": 0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "eternity": {
+        "mean": 1.0,
+        "median": 1.0,
+        "std": 0,
+        "min": 1.0,
+        "max": 1.0
+      }
+    },
+    "gates": {
+      "distribution": {
+        "AUTO_RUN": 1
+      },
+      "auto_run_ratio": 1.0,
+      "total_evaluations": 1
+    }
+  },
+  "trends": {
+    "insufficient_data": true,
+    "message": "Need at least 2 data points for trend analysis"
+  },
+  "failures": {
+    "no_failures": true,
+    "message": "All evaluations passed AUTO_RUN threshold"
+  },
+  "daily_breakdown": {
+    "2025-12-24": {
+      "score": 1.0,
+      "gate": "AUTO_RUN",
+      "pillars": {
+        "truth": 1.0,
+        "goodness": 1.0,
+        "beauty": 1.0,
+        "serenity": 1.0,
+        "eternity": 1.0
+      }
+    }
+  }
+}

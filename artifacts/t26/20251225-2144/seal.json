@@ -1,0 +1,93 @@
+{
+  "ticket": "T26",
+  "slug": "ROYAL_FINANCE",
+  "timestamp": "20251225-2144",
+  "evidence_dir": "artifacts/t26/20251225-2144",
+  "status": "UNVERIFIED",
+  "missing_files": [
+    "julie_dashboard_headers.txt",
+    "julie_dashboard_body.json",
+    "approve_options_headers.txt"
+  ],
+  "json_parse_ok": {
+    "julie_dashboard_body.json": false
+  },
+  "bandit_exitcode": null,
+  "files": [
+    {
+      "name": "approve_options_3000_body.txt",
+      "bytes": 20397,
+      "sha256": "48a76a776c1c9f8646f455a00b5b479392c0a64907ad713bfc5c850fa7f7dd4e"
+    },
+    {
+      "name": "approve_options_3000_headers.txt",
+      "bytes": 347,
+      "sha256": "5cbc3b70e56d0fc1bcfabbb22161245c4bb54f963b48a433f531e5bd6bccc0cb"
+    },
+    {
+      "name": "approve_options_8010_body.txt",
+      "bytes": 31,
+      "sha256": "83c09ba9a8daedb136f90b17a294caa90ad471a016e430df6e229acb5a81e100"
+    },
+    {
+      "name": "approve_options_8010_headers.txt",
+      "bytes": 209,
+      "sha256": "c1d06ac30d48fe8058fc29ee45c58578da4edd1ea60128b50b4f44595da7ef3f"
+    },
+    {
+      "name": "bytes.txt",
+      "bytes": 885,
+      "sha256": "41e997f56073c642462f9dd4f95c4f96a50b3f158ddd096a09a5b858ff59547f"
+    },
+    {
+      "name": "dashboard_headers.txt",
+      "bytes": 582,
+      "sha256": "8f625eafa337b1351cbb38015f625c446d0a8400a084026740de21dcbf642e70"
+    },
+    {
+      "name": "docker_ps.txt",
+      "bytes": 1157,
+      "sha256": "8b3715df7f899c302c5d3d19b5b65ceafb52a1d2ca3de0a30cf03220ba53eef7"
+    },
+    {
+      "name": "git_files_changed.txt",
+      "bytes": 253,
+      "sha256": "2c2ad798e21e2ec86849cd6b2dae04d4caf84fbf4b77b7505bd854b7f153b0d7"
+    },
+    {
+      "name": "git_status.txt",
+      "bytes": 525,
+      "sha256": "ce2ee3f7b3a4ed744a91a90be91593dc3f366bf63dd416dcafa04c88f047dfbb"
+    },
+    {
+      "name": "json_parse.txt",
+      "bytes": 150,
+      "sha256": "3e9e5bd5feda33e98c4e0c076c448698b61bea5570890f6d1bb07e72f6f4ed6b"
+    },
+    {
+      "name": "julie_dashboard_3000_body.json",
+      "bytes": 20390,
+      "sha256": "5bb098215f8280e2bae96487712ed9ae3457da467e39ea8a29dc7df886dfa041"
+    },
+    {
+      "name": "julie_dashboard_3000_headers.txt",
+      "bytes": 347,
+      "sha256": "cae53f427e20c4d4818fc5486ad57d712358dd5659140d0b3c786e3b97e43e41"
+    },
+    {
+      "name": "julie_dashboard_8010_body.json",
+      "bytes": 1515,
+      "sha256": "597abd12bc4e7d8f3a33fda39eee455f3df0bd4cf8e4c405c154beff4bf4ecf7"
+    },
+    {
+      "name": "julie_dashboard_8010_headers.txt",
+      "bytes": 259,
+      "sha256": "20456e8e255c0305dafcc472757b6ca3bdd8bd42b252d38881bb10aef8eac121"
+    },
+    {
+      "name": "ls_la.txt",
+      "bytes": 1183,
+      "sha256": "105ee075e6d9f97c843e925f45f1735194e0f69d605f803e6a83bcbcfe841aa3"
+    }
+  ]
+}

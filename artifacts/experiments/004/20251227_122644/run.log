@@ -1,0 +1,10 @@
+== [EXP_004] start: artifacts/experiments/004/20251227_122644 ==
+== protected_candidates ==
+method	path
+GET	/api/wallet/keys
+GET	/api/auth/health
+GET	/api/revalidate/status== DONE ==
+Evidence:
+ - artifacts/experiments/004/20251227_122644/protected_candidates.tsv
+ - artifacts/experiments/004/20251227_122644/probe_results.tsv
+ - artifacts/experiments/004/20251227_122644/body_*.txt

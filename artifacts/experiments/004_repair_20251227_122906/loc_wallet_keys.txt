@@ -1,0 +1,10 @@
+packages/afo-core/api/rate_limit_policy.py:35:        "/api/wallet/keys",  # API Key management
+packages/afo-core/kms/vault_kms.py:20:        self.secret_path = os.getenv("VAULT_SECRET_PATH", "api_wallet/keys")
+packages/afo-core/tests/api/test_api_wallet_routes.py:33:        """GET /api/wallet/keys 테스트"""
+packages/afo-core/tests/api/test_api_wallet_routes.py:38:            response = client.get("/api/wallet/keys")
+packages/afo-core/tests/api/test_api_wallet_routes.py:42:        """POST /api/wallet/keys 검증 테스트"""
+packages/afo-core/tests/api/test_api_wallet_routes.py:45:            "/api/wallet/keys",
+packages/afo-core/docs/afo/ARCHITECTURE_100_PERCENT.md:262:- `GET /api/wallet/keys` - 키 조회
+packages/afo-core/docs/afo/ARCHITECTURE_100_PERCENT.md:263:- `POST /api/wallet/keys` - 키 추가
+packages/afo-core/docs/afo/HYBRID_STRATEGY_COMPLETE.md:187:- **API**: `http://localhost:8010/api/wallet/keys`
+packages/afo-core/docs/afo/WORKFLOW_SYNC_GUIDE.md:78:curl http://localhost:8010/api/wallet/keys | python3 -m json.tool

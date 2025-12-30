@@ -1,0 +1,5 @@
+time: 2025-12-27T13:02:36-08:00
+url:  http://localhost:8010/api/revalidate/status
+mode: local
+local_pid: 23409
+server_up_at_s: 12

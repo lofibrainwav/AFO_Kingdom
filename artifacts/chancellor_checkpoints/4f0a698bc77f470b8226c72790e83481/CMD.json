@@ -1,0 +1,53 @@
+{
+  "trace_id": "4f0a698bc77f470b8226c72790e83481",
+  "request_id": "3f85bb6b1589414d82944b2e3eb457fb",
+  "step": "CMD",
+  "input": {
+    "command": "test"
+  },
+  "plan": {
+    "_kingdom_dna": "Context7 Fallback Content for state management checkpoint workflow agent patterns:\n\nThis is fallback documentation content for library /langchain-ai/langgraphjs.\nTopic: state management checkpoint workflow agent patterns\n\nIn a real implementation, this would contain actual documentation\nfrom the specified library about the requested topic.\n\nFallback generated for system stability when MCP servers are unavailable.",
+    "command": "test",
+    "received_at": 1767129387.3572228
+  },
+  "outputs": {
+    "context7": {
+      "KINGDOM_DNA": {
+        "library_id": "/langchain-ai/langgraphjs",
+        "topic": "state management checkpoint workflow agent patterns",
+        "context": "Context7 Fallback Content for state management checkpoint workflow agent patterns:\n\nThis is fallback documentation content for library /langchain-ai/langgraphjs.\nTopic: state management checkpoint workflow agent patterns\n\nIn a real implementation, this would contain actual documentation\nfrom the specified library about the requested topic.\n\nFallback generated for system stability when MCP servers are unavailable.",
+        "injected": true,
+        "length": 416,
+        "allowlisted": true
+      },
+      "CMD": {
+        "library_id": "/langchain-ai/langchainjs",
+        "topic": "general",
+        "context": "Context7 Fallback Content for general:\n\nThis is fallback documentation content for library /langchain-ai/langchainjs.\nTopic: general\n\nIn a real implementation, this would contain actual documentation\nfrom the specified library about the requested topic.\n\nFallback generated for system stability when MCP servers are unavailable.",
+        "length": 328
+      }
+    },
+    "_meta": {
+      "thinking_enforced": true,
+      "context7_enforced": true,
+      "kingdom_dna_injected": true
+    },
+    "sequential_thinking": {
+      "CMD": {
+        "thought": "[Step CMD] Processing: {\"command\": \"test\"}",
+        "processed": true,
+        "fallback": true,
+        "thought_processed": "Processed: [Step CMD] Processing: {\"command\": \"test\"}...",
+        "step": "1/1",
+        "progress": 1.0,
+        "metadata": {
+          "truth_impact": 0.8,
+          "serenity_impact": 0.9
+        }
+      }
+    }
+  },
+  "errors": [],
+  "started_at": 1767129387.3572228,
+  "updated_at": 1767129387.3575559
+}

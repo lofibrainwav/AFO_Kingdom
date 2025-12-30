@@ -1,0 +1,115 @@
+packages/afo-core/AFO/api/chancellor_v2/graph/runner.py: note: In function "run_v2":
+packages/afo-core/AFO/api/chancellor_v2/graph/runner.py:102: error: Argument 1 to "inject_kingdom_dna" has incompatible type "AFO.api.chancellor_v2.graph.state.GraphState"; expected "api.chancellor_v2.graph.state.GraphState"  [arg-type]
+packages/afo-core/AFO/api/chancellor_v2/graph/runner.py:102: error: Incompatible types in assignment (expression has type "api.chancellor_v2.graph.state.GraphState", variable has type "AFO.api.chancellor_v2.graph.state.GraphState")  [assignment]
+packages/afo-core/AFO/api/chancellor_v2/graph/runner.py:117: error: Argument 1 to "apply_sequential_thinking" has incompatible type "AFO.api.chancellor_v2.graph.state.GraphState"; expected "api.chancellor_v2.graph.state.GraphState"  [arg-type]
+packages/afo-core/AFO/api/chancellor_v2/graph/runner.py:117: error: Incompatible types in assignment (expression has type "api.chancellor_v2.graph.state.GraphState", variable has type "AFO.api.chancellor_v2.graph.state.GraphState")  [assignment]
+packages/afo-core/AFO/api/chancellor_v2/graph/runner.py:120: error: Argument 1 to "inject_context" has incompatible type "AFO.api.chancellor_v2.graph.state.GraphState"; expected "api.chancellor_v2.graph.state.GraphState"  [arg-type]
+packages/afo-core/AFO/api/chancellor_v2/graph/runner.py:120: error: Incompatible types in assignment (expression has type "api.chancellor_v2.graph.state.GraphState", variable has type "AFO.api.chancellor_v2.graph.state.GraphState")  [assignment]
+packages/afo-core/AFO/api/chancellor_v2/graph/store.py: note: In function "load_checkpoint":
+packages/afo-core/AFO/api/chancellor_v2/graph/store.py:67: error: Returning Any from function declared to return "dict[str, Any] | None"  [no-any-return]
+packages/afo-core/AFO/api/chancellor_v2/metrics.py:74: error: Incompatible types in assignment (expression has type "_StubCounter", variable has type "Counter")  [assignment]
+packages/afo-core/AFO/api/chancellor_v2/metrics.py:75: error: Incompatible types in assignment (expression has type "_StubCounter", variable has type "Counter")  [assignment]
+packages/afo-core/AFO/api/chancellor_v2/metrics.py:76: error: Incompatible types in assignment (expression has type "_StubCounter", variable has type "Counter")  [assignment]
+packages/afo-core/AFO/api/chancellor_v2/metrics.py:77: error: Incompatible types in assignment (expression has type "_StubCounter", variable has type "Counter")  [assignment]
+packages/afo-core/AFO/api/chancellor_v2/metrics.py:78: error: Incompatible types in assignment (expression has type "_StubCounter", variable has type "Counter")  [assignment]
+packages/afo-core/AFO/api/chancellor_v2/metrics.py:79: error: Incompatible types in assignment (expression has type "_StubCounter", variable has type "Counter")  [assignment]
+packages/afo-core/AFO/api/chancellor_v2/metrics.py:80: error: Incompatible types in assignment (expression has type "_StubGauge", variable has type "Gauge")  [assignment]
+packages/afo-core/AFO/api/chancellor_v2/metrics.py:81: error: Incompatible types in assignment (expression has type "_StubGauge", variable has type "Gauge")  [assignment]
+packages/afo-core/AFO/api/chancellor_v2/thinking.py: note: In function "_call_sequential_thinking":
+packages/afo-core/AFO/api/chancellor_v2/thinking.py:47: error: Returning Any from function declared to return "dict[str, Any]"  [no-any-return]
+packages/afo-core/AFO/api/guards/skills_allowlist_guard.py: note: In function "get_fallback_action":
+packages/afo-core/AFO/api/guards/skills_allowlist_guard.py:27: error: Library stubs not installed for "yaml"  [import-untyped]
+packages/afo-core/AFO/api/guards/skills_allowlist_guard.py:27: note: (or run "mypy --install-types" to install all missing stub packages)
+packages/afo-core/AFO/api/guards/skills_allowlist_guard.py:27: note: Hint: "python3 -m pip install types-PyYAML"
+packages/afo-core/AFO/api/guards/skills_allowlist_guard.py:27: note: See https://mypy.readthedocs.io/en/stable/running_mypy.html#missing-imports
+packages/afo-core/AFO/api/guards/skills_allowlist_guard.py:67: error: Returning Any from function declared to return "str"  [no-any-return]
+packages/afo-core/AFO/api/initialization.py:248: error: Library stubs not installed for "psycopg2.pool"  [import-untyped]
+packages/afo-core/AFO/api/initialization.py:248: note: Hint: "python3 -m pip install types-psycopg2"
+packages/afo-core/AFO/api/middleware/cache_middleware.py: note: In member "__init__" of class "CacheMiddleware":
+packages/afo-core/AFO/api/middleware/cache_middleware.py:33: note: By default the bodies of untyped functions are not checked, consider using --check-untyped-defs  [annotation-unchecked]
+packages/afo-core/AFO/api/routes/comprehensive_health.py: note: In function "trinity_monitor_stats":
+packages/afo-core/AFO/api/routes/comprehensive_health.py: note: In function "trinity_monitor_trend":
+packages/afo-core/AFO/api/routes/comprehensive_health.py:46: error: "TrinityScoreMonitor" has no attribute "get_recent_samples"  [attr-defined]
+packages/afo-core/AFO/api/routes/comprehensive_health.py:72: error: "TrinityScoreMonitor" has no attribute "get_trend_analysis"  [attr-defined]
+packages/afo-core/AFO/api/routes/context7.py:48: error: Skipping analyzing "trinity_os.servers.context7_mcp": module is installed, but missing library stubs or py.typed marker  [import-untyped]
+packages/afo-core/AFO/api/routes/debugging.py:17: error: Skipping analyzing "AFO.services.automated_debugging_system": module is installed, but missing library stubs or py.typed marker  [import-untyped]
+packages/afo-core/AFO/api_wallet.py:39: error: Library stubs not installed for "psycopg2"  [import-untyped]
+packages/afo-core/AFO/api_wallet.py:40: error: Library stubs not installed for "psycopg2.extras"  [import-untyped]
+packages/afo-core/AFO/chancellor/learning_engine.py: note: In member "__init__" of class "LearningEngine":
+packages/afo-core/AFO/chancellor/learning_engine.py:164: note: By default the bodies of untyped functions are not checked, consider using --check-untyped-defs  [annotation-unchecked]
+packages/afo-core/AFO/chancellor/learning_engine.py:165: note: By default the bodies of untyped functions are not checked, consider using --check-untyped-defs  [annotation-unchecked]
+packages/afo-core/AFO/chancellor/learning_engine.py:167: note: By default the bodies of untyped functions are not checked, consider using --check-untyped-defs  [annotation-unchecked]
+packages/afo-core/AFO/chancellor/persona_graphs.py: note: In member "__init__" of class "MultiPersonaChancellor":
+packages/afo-core/AFO/chancellor/persona_graphs.py:224: note: By default the bodies of untyped functions are not checked, consider using --check-untyped-defs  [annotation-unchecked]
+packages/afo-core/AFO/domain/metrics/trinity.py: note: In class "TrinityMetrics":
+packages/afo-core/AFO/domain/metrics/trinity.py: note: In member "from_inputs" of class "TrinityMetrics":
+packages/afo-core/AFO/domain/metrics/trinity.py: note: In member "to_100_scale" of class "TrinityInputs":
+packages/afo-core/AFO/domain/metrics/trinity.py:118: error: Name "balanced" is not defined  [name-defined]
+packages/afo-core/AFO/domain/metrics/trinity.py:157: error: Name "balanced" is not defined  [name-defined]
+packages/afo-core/AFO/domain/metrics/trinity.py:68: error: Statement is unreachable  [unreachable]
+packages/afo-core/AFO/health/organs_truth.py: note: In function "build_organs_final":
+packages/afo-core/AFO/health/organs_truth.py:109: error: Argument 1 to "_tcp_probe" has incompatible type "str | None"; expected "str"  [arg-type]
+packages/afo-core/AFO/health/organs_truth.py:112: error: Argument 1 to "_tcp_probe" has incompatible type "str | None"; expected "str"  [arg-type]
+packages/afo-core/AFO/health/organs_truth.py:94: error: Argument 1 to "_tcp_probe" has incompatible type "str | None"; expected "str"  [arg-type]
+packages/afo-core/AFO/health/organs_truth.py:97: error: Argument 1 to "_tcp_probe" has incompatible type "str | None"; expected "str"  [arg-type]
+packages/afo-core/AFO/julie_cpa/hybrid_engine.py:20: error: Library stubs not installed for "pandas"  [import-untyped]
+packages/afo-core/AFO/julie_cpa/hybrid_engine.py:20: note: Hint: "python3 -m pip install pandas-stubs"
+packages/afo-core/AFO/julie_cpa/hybrid_engine.py:26: error: Cannot find implementation or library stub for module named "prophet"  [import-not-found]
+packages/afo-core/AFO/julie_cpa/hybrid_engine.py:35: error: Cannot find implementation or library stub for module named "pmdarima"  [import-not-found]
+packages/afo-core/AFO/julie_cpa/prophet_engine.py:19: error: Library stubs not installed for "pandas"  [import-untyped]
+packages/afo-core/AFO/julie_cpa/prophet_engine.py:226: error: Skipping analyzing "sklearn.linear_model": module is installed, but missing library stubs or py.typed marker  [import-untyped]
+packages/afo-core/AFO/julie_cpa/prophet_engine.py:25: error: Cannot find implementation or library stub for module named "prophet"  [import-not-found]
+packages/afo-core/AFO/models/learning_log.py:9: error: Cannot find implementation or library stub for module named "sqlmodel"  [import-not-found]
+packages/afo-core/AFO/services/antigravity/ml/predictor.py: note: In member "__init__" of class "QualityPredictor":
+packages/afo-core/AFO/services/antigravity/ml/predictor.py:23: note: By default the bodies of untyped functions are not checked, consider using --check-untyped-defs  [annotation-unchecked]
+packages/afo-core/AFO/services/audio_service.py: note: In member "transcribe" of class "AudioService":
+packages/afo-core/AFO/services/audio_service.py:38: error: Cannot find implementation or library stub for module named "whisper"  [import-not-found]
+packages/afo-core/AFO/services/audio_service.py:77: error: "None" has no attribute "transcribe"  [attr-defined]
+packages/afo-core/AFO/services/context7_service.py:29: error: Skipping analyzing "trinity_os.servers.context7_mcp": module is installed, but missing library stubs or py.typed marker  [import-untyped]
+packages/afo-core/AFO/services/debugging_skill.py:14: error: Skipping analyzing "AFO.services.automated_debugging_system": module is installed, but missing library stubs or py.typed marker  [import-untyped]
+packages/afo-core/AFO/services/health_service.py: note: In function "get_comprehensive_health":
+packages/afo-core/AFO/services/health_service.py:127: error: Skipping analyzing "AFO.health.organs_v2": module is installed, but missing library stubs or py.typed marker  [import-untyped]
+packages/afo-core/AFO/services/health_service.py:299: error: Need type annotation for "suggestions" (hint: "suggestions: list[<type>] = ...")  [var-annotated]
+packages/afo-core/AFO/services/hybrid_rag.py:33: error: Library stubs not installed for "psycopg2.extras"  [import-untyped]
+packages/afo-core/AFO/services/hybrid_rag.py:35: error: Unused "type: ignore[assignment, misc]" comment  [unused-ignore]
+packages/afo-core/AFO/services/langchain_openai_service.py: note: In function "_call_openai":
+packages/afo-core/AFO/services/langchain_openai_service.py: note: In member "__init__" of class "LangChainOpenAIService":
+packages/afo-core/AFO/services/langchain_openai_service.py: note: In member "__init__" of class "PromptTemplateManager":
+packages/afo-core/AFO/services/langchain_openai_service.py: note: In member "_call_openai" of class "LangChainOpenAIService":
+packages/afo-core/AFO/services/langchain_openai_service.py: note: In member "process_request" of class "LangChainOpenAIService":
+packages/afo-core/AFO/services/langchain_openai_service.py:167: note: By default the bodies of untyped functions are not checked, consider using --check-untyped-defs  [annotation-unchecked]
+packages/afo-core/AFO/services/langchain_openai_service.py:25: error: Name "BaseMessage" already defined (possibly by an import)  [no-redef]
+packages/afo-core/AFO/services/langchain_openai_service.py:25: error: Name "HumanMessage" already defined (possibly by an import)  [no-redef]
+packages/afo-core/AFO/services/langchain_openai_service.py:25: error: Name "SystemMessage" already defined (possibly by an import)  [no-redef]
+packages/afo-core/AFO/services/langchain_openai_service.py:261: error: Dict entry 0 has incompatible type "str": "float"; expected "str": "int"  [dict-item]
+packages/afo-core/AFO/services/langchain_openai_service.py:433: note: By default the bodies of untyped functions are not checked, consider using --check-untyped-defs  [annotation-unchecked]
+packages/afo-core/AFO/services/langchain_openai_service.py:452: note: By default the bodies of untyped functions are not checked, consider using --check-untyped-defs  [annotation-unchecked]
+packages/afo-core/AFO/services/langchain_openai_service.py:464: error: Returning Any from function declared to return "str | None"  [no-any-return]
+packages/afo-core/AFO/services/langchain_openai_service.py:74: note: By default the bodies of untyped functions are not checked, consider using --check-untyped-defs  [annotation-unchecked]
+packages/afo-core/AFO/services/redis_cache_service.py: note: In member "__init__" of class "RedisCacheService":
+packages/afo-core/AFO/services/redis_cache_service.py:75: note: By default the bodies of untyped functions are not checked, consider using --check-untyped-defs  [annotation-unchecked]
+packages/afo-core/AFO/services/system_monitoring_dashboard.py: note: In member "__init__" of class "SystemMonitoringDashboard":
+packages/afo-core/AFO/services/system_monitoring_dashboard.py:120: note: By default the bodies of untyped functions are not checked, consider using --check-untyped-defs  [annotation-unchecked]
+packages/afo-core/AFO/services/system_monitoring_dashboard.py:123: note: By default the bodies of untyped functions are not checked, consider using --check-untyped-defs  [annotation-unchecked]
+packages/afo-core/AFO/services/system_monitoring_dashboard.py:124: note: By default the bodies of untyped functions are not checked, consider using --check-untyped-defs  [annotation-unchecked]
+packages/afo-core/AFO/services/system_monitoring_dashboard.py:125: note: By default the bodies of untyped functions are not checked, consider using --check-untyped-defs  [annotation-unchecked]
+packages/afo-core/AFO/services/system_monitoring_dashboard.py:128: note: By default the bodies of untyped functions are not checked, consider using --check-untyped-defs  [annotation-unchecked]
+packages/afo-core/AFO/services/system_monitoring_dashboard.py:129: note: By default the bodies of untyped functions are not checked, consider using --check-untyped-defs  [annotation-unchecked]
+packages/afo-core/AFO/services/video_rag_service.py: note: In member "process_video" of class "VideoRAGService":
+packages/afo-core/AFO/services/video_rag_service.py:137: error: Need type annotation for "results"  [var-annotated]
+packages/afo-core/AFO/services/video_rag_service.py:154: error: Item "None" of "bool | list[Any] | str | None" has no attribute "append"  [union-attr]
+packages/afo-core/AFO/services/video_rag_service.py:154: error: Item "bool" of "bool | list[Any] | str | None" has no attribute "append"  [union-attr]
+packages/afo-core/AFO/services/video_rag_service.py:154: error: Item "str" of "bool | list[Any] | str | None" has no attribute "append"  [union-attr]
+packages/afo-core/AFO/services/video_rag_service.py:171: error: Item "None" of "bool | list[Any] | str | None" has no attribute "__iter__" (not iterable)  [union-attr]
+packages/afo-core/AFO/services/video_rag_service.py:171: error: Item "bool" of "bool | list[Any] | str | None" has no attribute "__iter__" (not iterable)  [union-attr]
+packages/afo-core/AFO/services/video_rag_service.py:172: error: Item "str" of "Any | str" has no attribute "get"  [union-attr]
+packages/afo-core/AFO/services/video_rag_service.py:173: error: Invalid index type "str" for "str"; expected type "SupportsIndex | slice[Any, Any, Any]"  [index]
+packages/afo-core/AFO/services/video_rag_service.py:176: error: Item "bool" of "Literal[True] | list[Any] | str" has no attribute "get"  [union-attr]
+packages/afo-core/AFO/services/video_rag_service.py:176: error: Item "list[Any]" of "Literal[True] | list[Any] | str" has no attribute "get"  [union-attr]
+packages/afo-core/AFO/services/video_rag_service.py:176: error: Item "str" of "Literal[True] | list[Any] | str" has no attribute "get"  [union-attr]
+packages/afo-core/AFO/services/video_rag_service.py:177: error: Invalid index type "str" for "str"; expected type "SupportsIndex | slice[Any, Any, Any]"  [index]
+packages/afo-core/AFO/services/video_rag_service.py:177: error: No overload variant of "__getitem__" of "list" matches argument type "str"  [call-overload]
+packages/afo-core/AFO/services/video_rag_service.py:177: error: Value of type "Literal[True] | list[Any] | str" is not indexable  [index]
+packages/afo-core/AFO/services/video_rag_service.py:177: note:     def __getitem__(self, SupportsIndex, /) -> Any
+packages/afo-core/AFO/services/video_rag_service.py:177: note:     def __getitem__(self, slice[Any, Any, Any], /) -> list[Any]
+packages/afo-core/AFO/services/video_rag_service.py:177: note: Possible overload variants:

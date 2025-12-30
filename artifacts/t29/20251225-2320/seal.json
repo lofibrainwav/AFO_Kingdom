@@ -1,0 +1,39 @@
+{
+  "ticket": "T29",
+  "timestamp": "20251225-2320",
+  "report": "docs/reports/T29_GENUI_CREATOR_SSOT.md",
+  "evidence_dir": "artifacts/t29/20251225-2320",
+  "created_at_utc": 1766734574,
+  "files": [
+    {
+      "path": "commit_23bef8e_files.txt",
+      "bytes": 192,
+      "sha256": "cd49867210d70c1f89c8eed637848f926d29e1e41ebf5b8e5a913ea6d3812b38"
+    },
+    {
+      "path": "dashboard_headers.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "git_branch.txt",
+      "bytes": 18,
+      "sha256": "28849071e4d407e01654fe8b73bd6eb8b2e8d8839a6e0bf4409f945f6cb583ac"
+    },
+    {
+      "path": "git_files_changed.txt",
+      "bytes": 726,
+      "sha256": "3622e366d6d9f397995f93aa8b5535162603d06394031ccbb39fbc5c37cc552f"
+    },
+    {
+      "path": "git_status.txt",
+      "bytes": 2104,
+      "sha256": "e3d10910fdef7c40147e9d8fa3065ea707bbf9678b71401910d21d6fc80812fb"
+    },
+    {
+      "path": "pr1_summary.txt",
+      "bytes": 1203,
+      "sha256": "2d709a36c8dd0d6ec2b4fb16e110e5914263418dcfd4a847845b590334f13cdf"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "run_id": "20251228_190056",
+  "phase": "PH-SE-02",
+  "tickets_generated": 2,
+  "tickets_executed": 2,
+  "success_count": 2,
+  "failure_count": 0,
+  "total_runtime_seconds": 4,
+  "tickets": [{"id":"PH-SE-02-001","status":"completed","runtime_seconds":0,"result":"success"},{"id":"PH-SE-02-002","status":"completed","runtime_seconds":0,"result":"success"}]
+}

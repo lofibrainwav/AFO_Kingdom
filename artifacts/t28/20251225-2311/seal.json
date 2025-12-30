@@ -1,0 +1,24 @@
+{
+  "ticket": "T28",
+  "timestamp": "20251225-2311",
+  "report": "docs/reports/T28_WORKFLOW_DESIGNER_SSOT.md",
+  "evidence_dir": "artifacts/t28/20251225-2311",
+  "created_at_utc": 1766733358,
+  "files": [
+    {
+      "path": "component_lines.txt",
+      "bytes": 128,
+      "sha256": "9e833f15ecdd22b0d9874920ef1cd466374d319ee37c0b6b2dd9474d39411376"
+    },
+    {
+      "path": "docker_ps.txt",
+      "bytes": 469,
+      "sha256": "529b97c9412b53c6410db120085890d41aca2de7355663098ed6f868c0b218cc"
+    },
+    {
+      "path": "git_status.txt",
+      "bytes": 2081,
+      "sha256": "244203c49889a89fbea8291916a32fc5abb4210feaa58fed775dfd9e5e6cfd53"
+    }
+  ]
+}

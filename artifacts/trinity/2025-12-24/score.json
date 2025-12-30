@@ -1,0 +1,37 @@
+{
+  "as_of": "2025-12-24T18:19:55.486155Z",
+  "philosophy": "眞善美孝永",
+  "truth": 0.986,
+  "goodness": 0.167,
+  "beauty": 1.0,
+  "serenity": 1.0,
+  "eternity": 1.0,
+  "total": 0.703,
+  "gate": "ASK_COMMANDER",
+  "weights_applied": {
+    "truth": 0.35,
+    "goodness": 0.35,
+    "beauty": 0.2,
+    "serenity": 0.08,
+    "eternity": 0.02
+  },
+  "calculation_method": "weighted_sum",
+  "evidence_basis": "2025-12-24T18:19:55.485277Z",
+  "evidence_sources": {
+    "pytest_report": {
+      "exists": true,
+      "path": "artifacts/logs/pytest_report.json",
+      "last_modified": 1766600372.122952
+    },
+    "ruff_report": {
+      "exists": true,
+      "path": "artifacts/logs/ruff_report.json",
+      "last_modified": 1766600382.9229424
+    },
+    "red_team_report": {
+      "exists": true,
+      "path": "artifacts/logs/red_team_report.json",
+      "last_modified": 1766600390.1738424
+    }
+  }
+}

@@ -1,0 +1,26 @@
+4:packages/dashboard/src/lib/api.ts:48:  const response = await fetch("/api/health", {
+5:packages/dashboard/src/lib/api.ts:74:    const response = await fetch("/api/chancellor", {
+22:packages/dashboard/src/components/SystemStatusCard.tsx:21:    '/api/health',
+37:packages/dashboard/build_report.txt:30:├ ƒ /api/chancellor
+40:packages/dashboard/build_report.txt:33:├ ƒ /api/health
+48:packages/dashboard/src/components/royal/PhilosophicalCopilotDashboard.tsx:75:        const health = await apiClient.get('/api/health');
+49:packages/dashboard/src/components/royal/PhilosophicalCopilotDashboard.tsx:85:        const score = await apiClient.post('/api/trinity/calculate', {
+88:packages/dashboard/public/legacy/kingdom_dashboard.js:1527:                const healthResponse = await fetch('http://localhost:8010/api/health/comprehensive');
+96:packages/dashboard/public/legacy/kingdom_dashboard.js:2212:        const response = await fetch('http://localhost:8010/api/health/comprehensive');
+100:packages/dashboard/public/legacy/kingdom_dashboard.js:2291:            const response = await fetch('http://localhost:8010/api/health/comprehensive');
+102:packages/dashboard/public/legacy/kingdom_dashboard.js:2344:            const response = await fetch('http://localhost:8010/api/health/comprehensive');
+103:packages/dashboard/public/legacy/kingdom_dashboard.js:2356:            const response = await fetch('http://localhost:8010/api/health/comprehensive');
+105:packages/dashboard/public/legacy/kingdom_dashboard.js:2407:            const response = await fetch('http://localhost:8010/api/health/comprehensive');
+106:packages/dashboard/public/legacy/kingdom_dashboard.js:2416:            const response = await fetch('http://localhost:8010/api/health/comprehensive');
+107:packages/dashboard/public/legacy/kingdom_dashboard.js:2427:            const response = await fetch('http://localhost:8010/api/health/comprehensive');
+109:packages/dashboard/public/legacy/kingdom_dashboard.js:2472:            const response = await fetch('http://localhost:8010/api/health/comprehensive');
+110:packages/dashboard/public/legacy/kingdom_dashboard.js:2480:            const response = await fetch('http://localhost:8010/api/health/comprehensive');
+112:packages/dashboard/public/legacy/kingdom_dashboard.js:3146:- packages/afo-core/api/routes/system_health.py
+137:packages/dashboard/src/components/genui/TrinityEvidenceWidget.tsx:37:      const response = await fetch('/api/trinity-evidence');
+157:packages/dashboard/src/app/docs/chancellor/page.tsx:6:const fetcher = (url: string) => fetch(url).then((r) => r.json());
+158:packages/dashboard/src/app/docs/chancellor/page.tsx:9:  const { data, error, isLoading } = useSWR("/api/ops/revalidate-canary", fetcher, {
+160:packages/dashboard/src/app/api/health/route.ts:9:    const backendUrl = 'http://127.0.0.1:8010/api/health/comprehensive';
+161:packages/dashboard/src/app/api/health/route.ts:13:    const response = await fetch(backendUrl, {
+162:packages/dashboard/src/app/api/ssot-status/route.ts:7:    const coreRes = await fetch("http://localhost:8010/health", { cache: "no-store" });
+167:packages/dashboard/src/app/api/kingdom-status/route.ts:77:    const healthRes = await fetch(`${backendUrl}/health`);
+168:packages/dashboard/src/app/api/chancellor/route.ts:18:    const response = await fetch(`${backendUrl}/chancellor/invoke`, {

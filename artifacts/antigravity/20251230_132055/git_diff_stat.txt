@@ -1,0 +1,9 @@
+ .cursorrules                                       | 16 ++++
+ packages/afo-core/api/chancellor_v2/context7.py    | 85 +++++++---------------
+ .../api/chancellor_v2/graph/nodes/__init__.py      | 28 +++++++
+ packages/afo-core/api/chancellor_v2/thinking.py    | 35 ++++-----
+ packages/afo-core/api_server.py                    |  9 +++
+ packages/afo-core/docker-compose.yml               |  2 +-
+ packages/afo-core/services/mcp_stdio_client.py     | 15 ++++
+ packages/afo-core/services/vision_service.py       | 17 ++++-
+ 8 files changed, 125 insertions(+), 82 deletions(-)
