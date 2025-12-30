@@ -117,7 +117,7 @@ services:
     profiles: ["monitoring", "production"]
     user: "472:472"                  # 善: grafana user
     ports:
-      - "3000:3000"
+      - "3001:3000"                  # 善: 3000 양보 → Next.js Dashboard
     environment:
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-admin}
     volumes:
@@ -207,6 +207,7 @@ services:
     working_dir: /AFO
     volumes:
       - .:/AFO:ro                    # 善: read-only mount
+      - afo_data:/data               # 永: Persistence for RAG (mirrors soul-engine)
     tmpfs:
       - /tmp:noexec,nosuid,size=200m
     healthcheck:
