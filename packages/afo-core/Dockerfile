@@ -15,6 +15,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY requirements.txt requirements_minimal.txt* ./
 RUN pip install --no-cache-dir -r requirements.txt || pip install --no-cache-dir -r requirements_minimal.txt
 
+# Install Playwright browsers (chromium only for size efficiency)
+RUN playwright install --with-deps chromium
+
 
 
 # Explicit uvicorn installation (RAG service fix)
@@ -30,6 +33,13 @@ ENV PYTHONUNBUFFERED=1
 ENV HOME=/tmp
 ENV PIP_CACHE_DIR=/tmp/pip-cache
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1
+
+# Inject Build Fingerprint
+ARG BUILD_VERSION=unknown
+ENV BUILD_VERSION=${BUILD_VERSION}
+ARG GIT_SHA=unknown
+ENV GIT_SHA=${GIT_SHA}
+
 RUN python -m pip install -U pip && python -m pip install --no-cache-dir crewai 'crewai[tools]' autogen-agentchat
 
 # Expose Ports

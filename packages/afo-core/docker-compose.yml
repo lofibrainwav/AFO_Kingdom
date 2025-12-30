@@ -206,8 +206,11 @@ services:
 
   soul-engine:
     build:
-      context: .
+      context: /Users/brnestrm/AFO_Kingdom/packages/afo-core
       dockerfile: Dockerfile
+      args:
+        BUILD_VERSION: ${BUILD_VERSION:-unknown}
+        GIT_SHA: ${GIT_SHA:-unknown}
     container_name: afo-soul-engine
     ports:
       - "8010:8010"
@@ -231,11 +234,14 @@ services:
       - POSTGRES_USER=afo
       - POSTGRES_PASSWORD=afo_secret_change_me
       - POSTGRES_DB=afo_memory
-      - PYTHONPATH=/AFO
-    working_dir: /AFO
+      - PYTHONPATH=/app
+      - BUILD_VERSION=${BUILD_VERSION:-unknown}
+      - GIT_SHA=${GIT_SHA:-unknown}
+    working_dir: /app
     volumes:
-      - .:/AFO
+      - .:/app
       - ./artifacts:/AFO/packages/afo-core/artifacts:ro
+      - ../trinity-os:/app/trinity-os:ro  # Context7 integration
     depends_on:
       - ollama
     healthcheck:
@@ -244,17 +250,19 @@ services:
       timeout: 10s
       retries: 3
 
+
   dashboard:
     build:
       context: ../dashboard
       dockerfile: Dockerfile
     container_name: afo-dashboard
     ports:
-      - "3000:3000"
+      - "3100:3000"  # External 3100 to avoid conflict with local dev (3000)
     environment:
       - SERVICE_NAME=dashboard
       - NEXT_TELEMETRY_DISABLED=1
       - SOUL_ENGINE_URL=http://afo-soul-engine:8010
+      - NEXT_PUBLIC_SOUL_ENGINE_URL=http://afo-soul-engine:8010
     depends_on:
       - soul-engine
     healthcheck:

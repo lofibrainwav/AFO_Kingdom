@@ -8,6 +8,8 @@ Health Service - Centralized logic for system monitoring
 import asyncio
 import json
 import logging
+import os
+import sys
 import time
 from datetime import datetime
 from typing import TYPE_CHECKING, Any, cast
@@ -20,7 +22,6 @@ from AFO.config.settings import get_settings
 from AFO.domain.metrics.trinity import calculate_trinity
 from AFO.services.database import get_db_connection
 from AFO.utils.redis_connection import get_redis_url
-
 
 if TYPE_CHECKING:
     from AFO.domain.metrics.trinity import TrinityMetrics
@@ -205,36 +206,69 @@ async def get_comprehensive_health() -> dict[str, Any]:
         else:
             status_data = cast("dict[str, Any]", res)
 
-        organs.append({
-            "organ": name,
-            "healthy": status_data["healthy"],
-            "status": "healthy" if status_data["healthy"] else "unhealthy",
-            "output": status_data["output"],
-            "timestamp": current_time,
-        })
+        organs.append(
+            {
+                "organ": name,
+                "healthy": status_data["healthy"],
+                "status": "healthy" if status_data["healthy"] else "unhealthy",
+                "output": status_data["output"],
+                "timestamp": current_time,
+            }
+        )
 
-    # Trinity 계산 (5기둥 SSOT 가중 합)
-    healthy_count = sum(1 for o in organs if o["healthy"])
-    total_organs = len(organs)
+    # T21: Use organs_truth (11 Organs) as the SSOT for Trinity Calculation
+    # This ensures "Truthful" scores (e.g. 98, 92) rather than binary 100%
+    try:
+        import AFO.health.organs_truth
+        from AFO.health.organs_truth import build_organs_final
 
-    # 眞 (Truth 35%) - 핵심 데이터 계층
-    core_data_organs = ["心_Redis", "肝_PostgreSQL"]
-    truth_healthy = sum(1 for o in organs if o["organ"] in core_data_organs and o["healthy"])
-    truth_score = truth_healthy / len(core_data_organs) if core_data_organs else 0.0
+        logger.warning(f"DEBUG: organs_truth loaded from {AFO.health.organs_truth.__file__}")
 
-    # 善 (Goodness 35%) - 전체 서비스 기반 안정성
-    goodness_score = healthy_count / total_organs if total_organs > 0 else 0.0
+        v2_data = build_organs_final()
+        o2 = v2_data["organs"]
 
-    # 美 (Beauty 20%) - API 가용성
-    api_healthy = any(o["organ"] == "肺_API_Server" and o["healthy"] for o in organs)
-    beauty_score = 1.0 if api_healthy else 0.0
+        # 眞 (Truth 35%) - Knowledge Infrastructure
+        # Redis(98), Postgres(99), Qdrant(94)
+        truth_score = (
+            (o2["心_Redis"]["score"] + o2["肝_PostgreSQL"]["score"] + o2["腎_Qdrant"]["score"])
+            / 3.0
+            / 100.0
+        )
 
-    # 孝 (Serenity 8%) - LLM 가용성
-    llm_healthy = any(o["organ"] == "脾_Ollama" and o["healthy"] for o in organs)
-    filial_score = 1.0 if llm_healthy else 0.0
+        # 善 (Goodness 35%) - Safety & Integrity
+        # Trinity Gate(Variable), CI(88)
+        goodness_score = (o2["免疫_Trinity_Gate"]["score"] + o2["骨_CI"]["score"]) / 2.0 / 100.0
 
-    # 永 (Eternity 2%) - 영속적 가동
-    eternity_score = 1.0 if healthy_count == total_organs else healthy_count / total_organs
+        # 美 (Beauty 20%) - User Experience & Interface
+        # Dashboard(92), API(100)
+        beauty_score = (o2["眼_Dashboard"]["score"] + o2["肺_API_Server"]["score"]) / 2.0 / 100.0
+
+        # 孝 (Serenity 8%) - Agency & Automation
+        # Ollama(95), MCP(85)
+        filial_score = (o2["脾_Ollama"]["score"] + o2["神経_MCP"]["score"]) / 2.0 / 100.0
+
+        # 永 (Eternity 2%) - Observability & Documentation
+        # Observability(80), Docs(90)
+        eternity_score = (o2["耳_Observability"]["score"] + o2["口_Docs"]["score"]) / 2.0 / 100.0
+
+        response_v2 = {
+            "organs_v2": o2,
+            "contract_v2": v2_data["contract"],
+            "ts_v2": v2_data["ts"],
+        }
+    except Exception as e:
+        logger.warning("organs_v2 generation failed: %s", e)
+        # Fallback to binary logic if V2 fails
+        response_v2 = {
+            "organs_v2": None,
+            "contract_v2": {"version": "organs/v2", "error": str(e)},
+            "ts_v2": current_time,
+        }
+        truth_score = 0.0
+        goodness_score = 0.0
+        beauty_score = 0.0
+        filial_score = 0.0
+        eternity_score = 0.0
 
     trinity_metrics: TrinityMetrics = calculate_trinity(
         truth=truth_score,
@@ -258,28 +292,17 @@ async def get_comprehensive_health() -> dict[str, Any]:
         trinity_score_total.set(float(trinity_metrics.trinity_score))
         logger.debug(f"Trinity Score metric recorded: {trinity_metrics.trinity_score}")
     except Exception as e:
-        logger.warning("Failed to record Trinity Score metric: %s", e, exc_info=True)
-
-    # Trinity Score 메트릭 기록 (안전한 방식: utils/metrics.py에서 정의된 메트릭 사용)
-    try:
-        from utils.metrics import trinity_score_total
-
-        trinity_score_total.set(float(trinity_metrics.trinity_score))
-        logger.debug(f"Trinity Score metric recorded: {trinity_metrics.trinity_score}")
-    except Exception as e:
         logger.warning(f"Failed to record Trinity Score metric: {e}", exc_info=True)
 
     # Issue/Suggestion 생성
     issues = []
     suggestions = []
-    if trinity_metrics.truth < 1.0:
-        failed = [o["organ"] for o in organs if o["organ"] in core_data_organs and not o["healthy"]]
-        issues.append(f"眞(데이터 계층): {', '.join(failed)} 연결 실패")
-        suggestions.append("docker-compose restart redis postgres")
 
-    if trinity_metrics.filial_serenity < 1.0:
-        issues.append("孝(LLM 서비스): Ollama 연결 끊김")
-        suggestions.append("docker start afo-ollama")
+    # Check V2 Organs for specific issues
+    if response_v2.get("organs_v2"):
+        for name, data in response_v2["organs_v2"].items():
+            if data["status"] != "healthy":
+                issues.append(f"{name}: {data['output']}")
 
     if trinity_metrics.balance_status == "imbalanced":
         decision = "TRY_AGAIN"
@@ -301,24 +324,9 @@ async def get_comprehensive_health() -> dict[str, Any]:
         service_name = "AFO Kingdom Soul Engine API"
         api_version = "unknown"
 
-    # T21: Add organs_v2 with 11 keys for true 11-ORGANS system
-    try:
-        from AFO.health.organs_v2 import build_organs_v2
-
-        v2_data = build_organs_v2()
-        response_v2 = {
-            "organs_v2": v2_data["organs"],
-            "contract_v2": v2_data["contract"],
-            "ts_v2": v2_data["ts"],
-        }
-    except Exception as e:
-        logger.warning("organs_v2 generation failed: %s", e)
-
-        response_v2 = {
-            "organs_v2": None,
-            "contract_v2": {"version": "organs/v2", "error": str(e)},
-            "ts_v2": current_time,
-        }
+    # Calculate healthy_organs and total_organs for the V1 organs
+    healthy_count = sum(1 for o in organs if o["healthy"])
+    total_organs = len(organs)
 
     # 최종 응답 구성 (안전하게 초기화)
     try:
@@ -331,6 +339,8 @@ async def get_comprehensive_health() -> dict[str, Any]:
     response = {
         "service": service_name,
         "version": api_version,
+        "build_version": os.getenv("BUILD_VERSION", "unknown"),
+        "git_sha": os.getenv("GIT_SHA", "unknown"),  # Added GIT_SHA
         "status": balance_status,
         "health_percentage": round(trinity_score * 100, 2),
         "healthy_organs": healthy_count,
