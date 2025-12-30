@@ -275,7 +275,7 @@ services:
       - POSTGRES_PORT=5432
       - QDRANT_HOST=afo-qdrant
       - QDRANT_PORT=6333
-      - OLLAMA_HOST=afo-ollama
+      - OLLAMA_HOST=http://host.docker.internal:11434
       - WALLET_SERVICE_URL=http://afo-wallet-service:8011
       - VAULT_ADDR=http://afo-vault:8200
       - OLLAMA_PORT=11434

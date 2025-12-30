@@ -224,6 +224,15 @@ class AFOServer:
         except Exception as e:
             logger.warning(f"Chancellor Router registration failed: {e}")
 
+        # Multimodal Router 등록 (Vision, Audio, Video)
+        try:
+            from api.routers.multimodal import router as multimodal_router
+
+            app.include_router(multimodal_router)
+            logger.info("Multimodal Router registered successfully")
+        except Exception as e:
+            logger.warning(f"Multimodal Router registration failed: {e}")
+
         return app
 
     def _create_limiter(self) -> Limiter:

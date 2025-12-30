@@ -4,36 +4,45 @@ Vision Service for AFO Kingdom (눈/Eyes)
 Uses Ollama qwen3-vl for image understanding and visual analysis.
 
 2025 Best Practice: Local VLM for privacy and speed.
+Uses LOCAL Ollama (host.docker.internal:11434) for GPU acceleration.
 """
 
 import base64
 import logging
+import os
 from pathlib import Path
 from typing import Any
 
 logger = logging.getLogger(__name__)
+
+# Local Ollama endpoint (accessible from Docker via host.docker.internal)
+OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://host.docker.internal:11434")
 
 
 class VisionService:
     """
     Vision Service using Ollama Vision Language Models.
     Gives agents the ability to "see" and understand images.
+    Uses LOCAL Ollama for GPU acceleration.
     """
 
     def __init__(self, model: str = "qwen3-vl:8b"):
         self.model = model
         self._ollama_available = self._check_ollama()
-        logger.info(f"VisionService initialized with model: {model}")
+        logger.info(f"VisionService initialized with model: {model} (host: {OLLAMA_HOST})")
 
     def _check_ollama(self) -> bool:
-        """Check if Ollama is available"""
+        """Check if Ollama is available (uses LOCAL Ollama via OLLAMA_HOST)"""
         try:
+            # Set OLLAMA_HOST env var for the ollama library
+            os.environ["OLLAMA_HOST"] = OLLAMA_HOST
             import ollama
 
-            ollama.list()
+            models = ollama.list()
+            logger.info(f"Connected to Ollama at {OLLAMA_HOST}, models: {len(models.get('models', []))}")
             return True
         except Exception as e:
-            logger.warning(f"Ollama not available: {e}")
+            logger.warning(f"Ollama not available at {OLLAMA_HOST}: {e}")
             return False
 
     def _encode_image(self, image_path: str) -> str:
