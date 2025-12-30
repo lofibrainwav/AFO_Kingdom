@@ -15,6 +15,7 @@ from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import JSONResponse, Response
 
+
 # 중앙 설정 및 유틸리티
 
 logger = logging.getLogger(__name__)
@@ -37,21 +38,35 @@ class CacheMiddleware(BaseHTTPMiddleware):
         self._initialize_cache()
 
     def _initialize_cache(self) -> None:
+        """Initialize Redis cache with retry logic (善: Graceful degradation)"""
         if self._initialized:
             return
-        try:
-            from AFO.utils.redis_connection import get_redis_client
+        
+        max_retries = 3
+        retry_delay = 0.5  # seconds
+        
+        for attempt in range(max_retries):
+            try:
+                from AFO.utils.redis_connection import get_redis_client
 
-            client = get_redis_client()
-            if client is not None:
-                client.ping()
-                self.redis_client = client
-                self._initialized = True
-                logger.debug("✅ API Cache Middleware 초기화 완료")
-        except Exception as e:
-            logger.error(f"❌ API Cache Middleware 초기화 실패: {e}")
-            self.redis_client = None
-            self._initialized = False
+                client = get_redis_client()
+                if client is not None:
+                    client.ping()
+                    self.redis_client = client
+                    self._initialized = True
+                    logger.debug("✅ API Cache Middleware 초기화 완료 (attempt %d)", attempt + 1)
+                    return
+            except Exception as e:
+                if attempt < max_retries - 1:
+                    import time
+                    time.sleep(retry_delay * (attempt + 1))
+                    logger.warning("⚠️ Redis 연결 재시도 중... (attempt %d/%d)", attempt + 1, max_retries)
+                else:
+                    logger.warning("⚠️ API Cache 비활성화 (Redis 없이 정상 작동): %s", e)
+        
+        # Graceful fallback - cache disabled but app continues
+        self.redis_client = None
+        self._initialized = False
 
     def _generate_cache_key(self, request: Request) -> str:
         path = request.url.path
@@ -67,6 +82,10 @@ class CacheMiddleware(BaseHTTPMiddleware):
 
         url_path = str(request.url.path)
         if "/health" in url_path and "/comprehensive" not in url_path:
+            return await call_next(request)
+
+        # SSE Stream Bypass (Critical: Do not buffer infinite streams)
+        if "stream" in url_path or "logs" in url_path:
             return await call_next(request)
 
         cache_key = self._generate_cache_key(request)
