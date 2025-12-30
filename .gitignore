@@ -73,4 +73,11 @@ terraform/*.tfvars
 # AFO build/test artifacts
 artifacts/
 packages/**/artifacts/
+*.report.*.json
+queue_report.*.md
+
+# Julie CPA / Local Data (PII SEALED)
+inbox/fin/
+artifacts/fin/
+scripts/_local_quarantine/
 !.env.afo.example/packages/afo-core/artifacts/ph19_security/
