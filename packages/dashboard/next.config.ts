@@ -1,7 +1,9 @@
 import type { NextConfig } from "next";
 
-// Get backend URL from environment variable with fallback
-const soulEngineUrl = process.env.SOUL_ENGINE_URL || "http://127.0.0.1:8010";
+// Environment-aware Soul Engine URL
+// - Local dev: Use localhost (Next.js process runs on host machine)
+// - Docker build: Use container DNS (SOUL_ENGINE_URL env var or Docker name)
+const soulEngineUrl = process.env.SOUL_ENGINE_URL || "http://localhost:8010";
 
 const nextConfig: NextConfig = {
   /* config options here */
@@ -21,11 +23,12 @@ const nextConfig: NextConfig = {
   },
   
   // Turbopack 설정 (Next.js 16 기본 활성화, webpack과 충돌 방지)
-  turbopack: {},
+  // turbopack: {}, // Removed due to workspace root ambiguity in Turbopack
   
   // 번들 최적화
+  /* 
   webpack: (config, { isServer }) => {
-    // Tree-shaking 최적화
+    // Tree-shaking 최적화 (Next.js 16 기본 최적화와 충돌 가능성으로 주석 처리)
     config.optimization = {
       ...config.optimization,
       usedExports: true,
@@ -34,6 +37,7 @@ const nextConfig: NextConfig = {
     
     return config;
   },
+  */
   
   // 이미지 최적화
   images: {
