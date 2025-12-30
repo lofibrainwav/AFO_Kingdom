@@ -1,5 +1,6 @@
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import Optional
+
 
 @dataclass
 class FinancialRecord:
@@ -8,16 +9,17 @@ class FinancialRecord:
     amount: float
     category: str
     risk_score: int  # 0-100 (Sima Yi Filter)
-    status: str      # 'PENDING', 'APPROVED', 'REJECTED'
+    status: str  # 'PENDING', 'APPROVED', 'REJECTED'
+
 
 class JulieService:
     """
     Julie CPA Service (Financial Autonomous Driving)
     Strategy: Input -> Labeling -> Queue
     """
-    
+
     def __init__(self):
-        self.queue: List[FinancialRecord] = []
+        self.queue: list[FinancialRecord] = []
 
     async def ingest_record(self, description: str, amount: float) -> FinancialRecord:
         """Step 1: Input (Data Collection)"""
@@ -28,7 +30,7 @@ class JulieService:
             amount=amount,
             category="UNCATEGORIZED",
             risk_score=0,
-            status="PENDING"
+            status="PENDING",
         )
         return await self.assess_risk(record)
 
@@ -39,12 +41,11 @@ class JulieService:
             record.risk_score = 80
         else:
             record.risk_score = 10
-            
+
         record.category = "Auto-Classified"
         self.queue.append(record)
         return record
 
-    async def get_approval_queue(self) -> List[FinancialRecord]:
+    async def get_approval_queue(self) -> list[FinancialRecord]:
         """Step 3: Queue (Approval Mechanism)"""
         return [r for r in self.queue if r.status == "PENDING"]
-
