@@ -158,8 +158,9 @@ services:
       - "8010:8010"
     environment:
       - SERVICE_NAME=soul-engine
+      - OLLAMA_HOST=http://host.docker.internal:11434
       - OLLAMA_BASE_URL=http://host.docker.internal:11434
-      - OLLAMA_MODEL=llama3.2:3b
+      - OLLAMA_MODEL=qwen3-vl:8b
       - REDIS_URL=redis://redis:6379
       - DATABASE_URL=postgresql://afo:${POSTGRES_PASSWORD}@postgres:5432/afo_memory
       - PYTHONPATH=/AFO
@@ -196,6 +197,7 @@ services:
       - "8001:8001"
     environment:
       - SERVICE_NAME=rag-service
+      - OLLAMA_HOST=http://host.docker.internal:11434
       - OLLAMA_BASE_URL=http://host.docker.internal:11434
       - PYTHONPATH=/AFO
       - REDIS_URL=redis://redis:6379
