@@ -1,0 +1,463 @@
+packages/dashboard/package.json:2:  "name": "trinity-dashboard",
+packages/dashboard/src/config/royal_constants.ts:215:  { title: "4. Trinity Gate", desc: "Score ≥ 90 & Risk ≤ 10 → AUTO_RUN", highlight: true },
+packages/dashboard/src/widgets/royal/FieldManualLawCard.tsx:20:          <div className="text-sm font-medium">AUTO_RUN 조건</div>
+packages/dashboard/lint_report_v2.txt:2:> trinity-dashboard@0.1.0 lint
+packages/dashboard/lint_report_v2.txt:36:  171:6  warning  React Hook useEffect has a missing dependency: 'health.trinity'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+packages/dashboard/src/hooks/useSpatialAudio.ts:7:  trinityUp?: boolean; // Bright chime from above
+packages/dashboard/lint_report.txt:2:> trinity-dashboard@0.1.0 lint
+packages/dashboard/lint_report.txt:39:  171:6  warning  React Hook useEffect has a missing dependency: 'health.trinity'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+packages/dashboard/lint_report_v4.txt:2:> trinity-dashboard@0.1.0 lint
+packages/dashboard/lint_report_v4.txt:22:  171:6  warning  React Hook useEffect has a missing dependency: 'health.trinity'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+packages/dashboard/lint_report_v3.txt:2:> trinity-dashboard@0.1.0 lint
+packages/dashboard/lint_report_v3.txt:43:  171:6  warning  React Hook useEffect has a missing dependency: 'health.trinity'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+packages/dashboard/src/hooks/useNotifications.ts:127:    const { decision, trinity_score, veto_triggered, rule_id } = verdict;
+packages/dashboard/src/hooks/useNotifications.ts:129:    if (decision === 'AUTO_RUN' && settings.autoRunAlerts) {
+packages/dashboard/src/hooks/useNotifications.ts:131:        '🚀 AUTO_RUN 승인',
+packages/dashboard/src/hooks/useNotifications.ts:132:        `Trinity Score ${trinity_score}/100 - 자동 실행됩니다`,
+packages/dashboard/src/hooks/useNotifications.ts:141:    } else if (decision === 'ASK' && settings.vetoAlerts) {
+packages/dashboard/src/hooks/useNotifications.ts:144:        `Trinity Score ${trinity_score}/100 - 형님의 승인이 필요합니다`,
+packages/dashboard/src/types/verdict.ts:8:export type Decision = "AUTO_RUN" | "ASK";
+packages/dashboard/src/types/verdict.ts:26:  decision: Decision;
+packages/dashboard/src/types/verdict.ts:28:  trinity_score: number;
+packages/dashboard/src/types/verdict.ts:66:  [RULE_IDS.DRY_RUN_OVERRIDE]: "Global DRY_RUN flag overrides all decisions",
+packages/dashboard/src/types/verdict.ts:68:  [RULE_IDS.VETO_LOW_PILLARS]: "Any pillar score below minimum threshold vetoes AUTO_RUN",
+packages/dashboard/src/types/verdict.ts:69:  [RULE_IDS.AUTORUN_THRESHOLD]: "Trinity Score >= 90 AND Risk Score <= 10 enables AUTO_RUN",
+packages/dashboard/src/lib/useVerdictStream.ts:97:          decision: data.decision || "ASK",
+packages/dashboard/src/lib/useVerdictStream.ts:99:          trinity_score: data.trinity || 0,
+packages/dashboard/src/lib/useVerdictStream.ts:153:      acc[e.decision] = (acc[e.decision] || 0) + 1;
+packages/dashboard/src/lib/useVerdictStream.ts:157:      ? events.reduce((sum, e) => sum + (e.trinity_score || 0), 0) / events.length
+packages/dashboard/CLAUDE.md:135:  "decision": "AUTO_RUN | ASK_COMMANDER | BLOCK",
+packages/dashboard/CLAUDE.md:137:  "trinity_score": 0,
+packages/dashboard/build_report.txt:2:> trinity-dashboard@0.1.0 build
+packages/dashboard/src/hooks/useVoiceReaction.ts:114:    if (!metrics.isActive) return { trinityDelta: 0, riskDelta: 0 };
+packages/dashboard/src/hooks/useVoiceReaction.ts:123:    const trinityDelta = pitchDeviation < 0.3 ? 0.05 : -0.02;
+packages/dashboard/src/hooks/useVoiceReaction.ts:125:    return { trinityDelta, riskDelta };
+packages/dashboard/src/lib/api.ts:20:  trinity_score: number;
+packages/dashboard/src/lib/api.ts:34:  decision: string;
+packages/dashboard/src/lib/api.ts:35:  decision_message: string;
+packages/dashboard/src/lib/api.ts:36:  trinity: TrinityStatus;
+packages/dashboard/src/lib/api.ts:65:  trinityScore?: number,
+packages/dashboard/src/lib/api.ts:81:        trinity_score: trinityScore ?? 0.9, // Use passed value or default
+packages/dashboard/src/lib/api.ts:120:  average_trinity_score: number;
+packages/dashboard/AGENTS.md:99:  "decision": "AUTO_RUN | ASK_COMMANDER | BLOCK",
+packages/dashboard/AGENTS.md:101:  "trinity_score": 0,
+packages/dashboard/src/app/kingdom-status/page.tsx:15:  trinity: {
+packages/dashboard/src/app/kingdom-status/page.tsx:79:        <div className="text-[5rem] font-bold text-[#FFD700]">{status.trinity.total}</div>
+packages/dashboard/src/app/kingdom-status/page.tsx:83:            <div className="text-2xl">眞 {status.trinity.truth}</div>
+packages/dashboard/src/app/kingdom-status/page.tsx:87:            <div className="text-2xl">善 {status.trinity.goodness}</div>
+packages/dashboard/src/app/kingdom-status/page.tsx:91:            <div className="text-2xl">美 {status.trinity.beauty}</div>
+packages/dashboard/src/app/kingdom-status/page.tsx:95:            <div className="text-2xl">孝 {status.trinity.serenity}</div>
+packages/dashboard/src/app/kingdom-status/page.tsx:99:            <div className="text-2xl">永 {status.trinity.eternity}</div>
+packages/dashboard/public/legacy/trinity_type_system_verification_report.html:99:        .trinity-score {
+packages/dashboard/public/legacy/trinity_type_system_verification_report.html:218:                <div class="trinity-score">97.2</div>
+packages/dashboard/src/components/royal/PhilosophicalCopilotDashboard.tsx:35:    governance: "민위천",
+packages/dashboard/src/components/royal/PhilosophicalCopilotDashboard.tsx:65:  const [trinityScore, setTrinityScore] = useState<any>(null);
+packages/dashboard/src/components/royal/PhilosophicalCopilotDashboard.tsx:85:        const score = await apiClient.post('/api/trinity/calculate', {
+packages/dashboard/src/components/royal/PhilosophicalCopilotDashboard.tsx:130:      PHILOSOPHICAL_CONSTANTS.mencius.governance
+packages/dashboard/src/components/royal/PhilosophicalCopilotDashboard.tsx:179:        <Tabs defaultValue="trinity" className="space-y-4">
+packages/dashboard/src/components/royal/PhilosophicalCopilotDashboard.tsx:181:            <TabsTrigger value="trinity">삼위일체 조화</TabsTrigger>
+packages/dashboard/src/components/royal/PhilosophicalCopilotDashboard.tsx:188:          <TabsContent value="trinity" className="space-y-4">
+packages/dashboard/src/components/royal/PhilosophicalCopilotDashboard.tsx:190:              {trinityScore && Object.entries(trinityScore.pillars).map(([pillar, data]: [string, any]) => {
+packages/dashboard/src/components/royal/PhilosophicalCopilotDashboard.tsx:231:                    {trinityScore?.total || 0}%
+packages/dashboard/src/components/royal/PhilosophicalCopilotDashboard.tsx:233:                  <Progress value={trinityScore?.total || 0} className="h-4 mb-4" />
+packages/dashboard/src/components/royal/PhilosophicalCopilotDashboard.tsx:235:                    "왕국의 철학적 조화가 {trinityScore?.total >= 95 ? '완벽한 균형을 이루고 있습니다' :
+packages/dashboard/src/components/royal/PhilosophicalCopilotDashboard.tsx:236:                      trinityScore?.total >= 85 ? '안정적인 발전을 이어가고 있습니다' :
+packages/dashboard/src/components/royal/PhilosophicalCopilotDashboard.tsx:386:                  {trinityScore && trinityScore.total < 95 && (
+packages/dashboard/src/components/royal/PhilosophicalCopilotDashboard.tsx:393:                        왕국의 철학적 조화가 {100 - trinityScore.total}% 부족합니다.
+packages/dashboard/src/components/royal/PhilosophicalCopilotDashboard.tsx:424:                  {trinityScore && trinityScore.total >= 95 && systemHealth && systemHealth.api && revalidateStatus && revalidateStatus.successRate >= 95 && (
+packages/dashboard/src/components/royal/PhilosophicalCopilotDashboard.tsx:478:                    const status = verdict.decision === 'AUTO_RUN' ? 'default' : 'secondary';
+packages/dashboard/src/components/royal/PhilosophicalCopilotDashboard.tsx:479:                    const message = `[${verdict.rule_id}] ${verdict.decision} (Trinity: ${verdict.trinity_score.toFixed(2)})`;
+packages/dashboard/src/components/royal/PhilosophicalCopilotDashboard.tsx:483:                        {verdict.decision}
+packages/dashboard/src/app/docs/realtime-status/page.tsx:26:            <RoyalOpsCenter trinityScore={98.5} healthData={{}} />
+packages/dashboard/src/app/api/trinity-evidence/route.ts:25:    const artifactsDir = process.env.TRINITY_ARTIFACTS_DIR ?? path.join(repoRoot, 'artifacts', 'trinity');
+packages/dashboard/src/app/api/trinity-evidence/route.ts:69:      const trinityInputsPath = path.join(evidenceDir, 'trinity_inputs.json');
+packages/dashboard/src/app/api/trinity-evidence/route.ts:70:      const trinityScorePath = path.join(evidenceDir, 'trinity_score.json');
+packages/dashboard/src/app/api/trinity-evidence/route.ts:74:      } else if (fs.existsSync(trinityInputsPath)) {
+packages/dashboard/src/app/api/trinity-evidence/route.ts:75:        evidenceData.inputs = JSON.parse(fs.readFileSync(trinityInputsPath, 'utf-8'));
+packages/dashboard/src/app/api/trinity-evidence/route.ts:80:      } else if (fs.existsSync(trinityScorePath)) {
+packages/dashboard/src/app/api/trinity-evidence/route.ts:81:        evidenceData.score = JSON.parse(fs.readFileSync(trinityScorePath, 'utf-8'));
+packages/dashboard/src/app/api/trinity-evidence/route.ts:88:      path.join(evidenceDir, 'trinity_verdict.md')
+packages/dashboard/src/app/docs/philosophy/page.tsx:107:              AUTO_RUN 조건: Trinity Score ≥ 90 AND Risk Score ≤ 10
+packages/dashboard/src/app/docs/project-structure/page.tsx:17:    id: "trinity-os",
+packages/dashboard/src/app/docs/project-structure/page.tsx:18:    name: "trinity-os",
+packages/dashboard/src/app/docs/project-structure/page.tsx:145:│   ├── trinity-os/        # 오케스트레이션
+packages/dashboard/src/app/docs/project-structure/page.tsx:146:│   │   └── trinity_os/    # MCP 서버
+packages/dashboard/public/fragments/project-structure.html:46:    subgraph Trinity["packages/trinity-os/"]
+packages/dashboard/public/fragments/project-structure.html:81:                        <strong>packages/trinity-os/</strong> - Trinity OS
+packages/dashboard/public/legacy/kingdom_dashboard.html:120:                <p class="trinity-formula">
+packages/dashboard/public/legacy/kingdom_dashboard.html:124:                    AUTO_RUN 조건: Trinity Score ≥ 90 AND Risk Score ≤ 10
+packages/dashboard/public/legacy/kingdom_dashboard.html:382:    Decision -->|Score≥90 & Risk≤10| AutoRun[AUTO_RUN]
+packages/dashboard/public/legacy/kingdom_dashboard.html:448:    DecisionGate --> TigersNode: AUTO_RUN
+packages/dashboard/public/legacy/kingdom_dashboard.html:560:    Gate -->|Trinity ≥ 90<br/>AND<br/>Risk ≤ 10| AutoRun[AUTO_RUN<br/>자율 실행]
+packages/dashboard/public/legacy/kingdom_dashboard.html:578:                                <strong>Trinity Score ≥ 90</strong> 및 <strong>Risk Score ≤ 10</strong> 조건을 충족해야만 AUTO_RUN이 발동
+packages/dashboard/public/legacy/kingdom_dashboard.html:656:            <div class="card architecture-card trinity-gradient">
+packages/dashboard/public/legacy/kingdom_dashboard.html:1081:                                <strong>자율 실행 게이트:</strong> Trinity Score ≥ 90 AND Risk Score ≤ 10 조건에서만 AUTO_RUN
+packages/dashboard/public/legacy/kingdom_dashboard.html:1312:                    <h3 class="card-title">AUTO_RUN 조건</h3>
+packages/dashboard/public/legacy/kingdom_dashboard.html:1319:                        현재 DRY_RUN_DEFAULT=True이므로 AUTO_RUN은 비활성화됩니다.
+packages/dashboard/public/legacy/kingdom_dashboard.html:1419:                                    <li><strong>AUTO_RUN</strong>: Trinity Score ≥ 90 <strong>AND</strong> Risk Score ≤ 10인 경우에만 자율 실행</li>
+packages/dashboard/public/legacy/kingdom_dashboard.html:1596:                        AUTO_RUN Gate: 충분한 근거 없이 자동화 권하지 않음
+packages/dashboard/public/legacy/kingdom_dashboard.html:1819:                                    <strong>AUTO_RUN</strong>: <strong>Trinity Score ≥ 90</strong> 이고 <strong>Risk Score ≤ 10</strong>인 경우에만 자율 실행합니다.<br>
+packages/dashboard/public/legacy/kingdom_dashboard.html:1958:                                <code>./packages/trinity-os/CLAUDE.md</code>
+packages/dashboard/public/legacy/kingdom_dashboard.html:2359:                                        <div style="font-size: 0.9rem; color: var(--text-secondary);">calculate_trinity_score, verify_fact</div>
+packages/dashboard/public/legacy/kingdom_dashboard.html:2560:                            <div class="module-card unified" data-module="trinity">
+packages/dashboard/public/legacy/kingdom_dashboard.html:2567:                                    <div class="tool-item">📊 calculate_trinity_score</div>
+packages/dashboard/public/legacy/kingdom_dashboard.html:2673:                            <div class="module-card separated" data-module="trinity">
+packages/dashboard/public/legacy/kingdom_dashboard.html:3588:                            <div style="font-size: 2rem; font-weight: 700;" id="check-trinity-score">-</div>
+packages/dashboard/public/legacy/kingdom_dashboard.html:3590:                            <div style="font-size: 0.75rem; opacity: 0.8; margin-top: 0.25rem;" id="check-trinity-status">확인 중...</div>
+packages/dashboard/public/legacy/kingdom_dashboard.html:3654:                                <br><small style="color: var(--text-secondary);">조건 충족 시 AUTO_RUN, 미충족 시 ASK</small>
+packages/dashboard/public/legacy/kingdom_dashboard.html:3985:    subgraph Trinity["packages/trinity-os/"]
+packages/dashboard/public/legacy/kingdom_dashboard.html:4020:                        <strong>packages/trinity-os/</strong> - Trinity OS
+packages/dashboard/public/legacy/kingdom_dashboard.html:4187:    subgraph Trinity["packages/trinity-os/"]
+packages/dashboard/public/legacy/kingdom_dashboard.html:4222:                        <strong>packages/trinity-os/</strong> - Trinity OS
+packages/dashboard/public/legacy/kingdom_dashboard.css:787:.trinity-score-display {
+packages/dashboard/public/legacy/kingdom_dashboard.css:791:.trinity-score-label {
+packages/dashboard/public/legacy/kingdom_dashboard.css:798:.trinity-score-value {
+packages/dashboard/public/legacy/kingdom_dashboard.css:804:.trinity-score-max {
+packages/dashboard/public/legacy/kingdom_dashboard.css:1667:.trinity-formula {
+packages/dashboard/src/components/royal/RoyalLayout.tsx:37:  // Memoize trinity score
+packages/dashboard/src/components/royal/RoyalLayout.tsx:38:  const trinityScore = useMemo(() => data?.trinity_score || 85, [data?.trinity_score]);
+packages/dashboard/src/components/royal/RoyalLayout.tsx:43:      <TrinityGlow score={trinityScore} />
+packages/dashboard/src/components/royal/RoyalLayout.tsx:82:                {data?.trinity_score || "..."}
+packages/dashboard/src/components/royal/RoyalLayout.tsx:108:            <RoyalOpsCenter trinityScore={trinityScore} healthData={data} />
+packages/dashboard/src/app/docs/mcp-tools/page.tsx:44:    name: "calculate_trinity_score",
+packages/dashboard/src/app/docs/mcp-tools/page.tsx:218:              code={`위치: packages/trinity-os/trinity_os/servers/afo_ultimate_mcp_server.py
+packages/dashboard/public/legacy/git_tree_phase_analysis.html:150:                    <span style="margin-left: 10px;">fix: ensure AFO directory exists for symlinks and update trinity score</span>
+packages/dashboard/public/legacy/git_tree_phase_analysis.html:174:                    <span style="margin-left: 10px;">fix: Correct indentation in trinity_score_mcp.py lazy imports</span>
+packages/dashboard/public/fragments/integrity-widget.html:56:                                <strong>자율 실행 게이트:</strong> Trinity Score ≥ 90 AND Risk Score ≤ 10 조건에서만 AUTO_RUN
+packages/dashboard/public/fragments/philosophy-widget.html:57:                <p class="trinity-formula">
+packages/dashboard/public/fragments/philosophy-widget.html:61:                    AUTO_RUN 조건: Trinity Score ≥ 90 AND Risk Score ≤ 10
+packages/dashboard/src/app/docs/manual/page.tsx:24:            AUTO_RUN = (Trinity Score ≥ 90) AND (Risk Score ≤ 10)
+packages/dashboard/src/app/api/git-tree/route.ts:39:  if (["awakening", "phase 1", "trinity", "philosophy", "v1.0"].some((kw) => msg.includes(kw))) {
+packages/dashboard/public/legacy/kingdom_dashboard.js:33:            documentation: '善은 윤리적 안정성과 리스크 관리를 의미합니다. AUTO_RUN 게이트, DRY_RUN 기본값, CAI 엔진이 핵심입니다.'
+packages/dashboard/public/legacy/kingdom_dashboard.js:206:            { path: 'packages/trinity-os/TRINITY_OS_PERSONAS.yaml', title: 'TRINITY_OS_PERSONAS.yaml' }
+packages/dashboard/public/legacy/kingdom_dashboard.js:233:                path: 'packages/trinity-os/docs/philosophy/TRINITY_PHILOSOPHY.md'
+packages/dashboard/public/legacy/kingdom_dashboard.js:238:                path: 'packages/trinity-os/TRINITY_OS_PERSONAS.yaml'
+packages/dashboard/public/legacy/kingdom_dashboard.js:894:    const scoreElement = document.getElementById('trinity-score-value');
+packages/dashboard/public/legacy/kingdom_dashboard.js:907:            if (data.trinity_score !== undefined) {
+packages/dashboard/public/legacy/kingdom_dashboard.js:908:                scoreElement.innerHTML = `${data.trinity_score}<span class="trinity-score-max">/100</span>`;
+packages/dashboard/public/legacy/kingdom_dashboard.js:1352:        args: ['-u', '/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/servers/afo_ultimate_mcp_server.py'],
+packages/dashboard/public/legacy/kingdom_dashboard.js:1362:        args: ['-u', '/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/servers/afo_skills_mcp.py'],
+packages/dashboard/public/legacy/kingdom_dashboard.js:1372:        args: ['-u', '/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/servers/obsidian_mcp.py'],
+packages/dashboard/public/legacy/kingdom_dashboard.js:2215:            const score = Math.round((data.trinity_score || 0) * 100);
+packages/dashboard/public/legacy/kingdom_dashboard.js:2216:            document.getElementById('check-trinity-score').textContent = score;
+packages/dashboard/public/legacy/kingdom_dashboard.js:2217:            document.getElementById('check-trinity-status').textContent = score >= 90 ? '✅ 우수' : score >= 70 ? '⚠️ 양호' : '❌ 개선 필요';
+packages/dashboard/public/legacy/kingdom_dashboard.js:2218:            document.getElementById('check-trinity-status').style.color = score >= 90 ? '#16a34a' : score >= 70 ? '#f97316' : '#dc2626';
+packages/dashboard/public/legacy/kingdom_dashboard.js:2221:        document.getElementById('check-trinity-score').textContent = '?';
+packages/dashboard/public/legacy/kingdom_dashboard.js:2222:        document.getElementById('check-trinity-status').textContent = '❌ 확인 실패';
+packages/dashboard/public/legacy/kingdom_dashboard.js:2359:                const score = (data.trinity_score || 0) * 100;
+packages/dashboard/public/legacy/kingdom_dashboard.js:2419:                const score = (data.trinity_score || 0) * 100;
+packages/dashboard/public/legacy/kingdom_dashboard.js:2483:                const score = (data.trinity_score || 0) * 100;
+packages/dashboard/public/legacy/kingdom_dashboard.js:2805:1) \`decision\`: AUTO_RUN / ASK_COMMANDER / BLOCK  
+packages/dashboard/public/legacy/kingdom_dashboard.js:2898:  "decision": "AUTO_RUN | ASK_COMMANDER | BLOCK",
+packages/dashboard/public/legacy/kingdom_dashboard.js:2899:  "trinity_score": 0,
+packages/dashboard/public/legacy/kingdom_dashboard.js:2930:* SSOT(Ⅱ)를 읽고, 해당 변경이 속한 도메인(backend/frontend/trinity-os)을 파악한다.
+packages/dashboard/public/legacy/kingdom_dashboard.js:2936:* **AUTO_RUN**: Trinity Score ≥ 90 AND Risk Score ≤ 10
+packages/dashboard/public/legacy/kingdom_dashboard.js:2961:  2. \`docs/decisions/\` 또는 \`docs/logs/\`
+packages/dashboard/public/legacy/kingdom_dashboard.js:2967:* 포함: 배경 / 결정(decision) / 근거(evidence) / 실행 커맨드 / 결과 / 롤백
+packages/dashboard/public/legacy/kingdom_dashboard.js:3198:* **지식의 도서관 (Trinity OS)**: \`./packages/trinity-os/AGENTS.md\`
+packages/dashboard/public/legacy/kingdom_dashboard.js:3382:1) \`decision\`: AUTO_RUN / ASK_COMMANDER / BLOCK  
+packages/dashboard/public/legacy/kingdom_dashboard.js:3416:  - Trinity OS / MCP: \`packages/trinity-os/\`
+packages/dashboard/public/legacy/kingdom_dashboard.js:3471:- Use Trinity Score in decision comments.
+packages/dashboard/public/legacy/kingdom_dashboard.js:3488:- Branch naming: \`feat/<short>\`, \`fix/<short>\`, \`chore/<trinity>\`
+packages/dashboard/public/legacy/kingdom_dashboard.js:3544:* SSOT(Ⅱ)를 읽고, 해당 변경이 속한 도메인(backend/frontend/trinity-os)을 파악한다.
+packages/dashboard/public/legacy/kingdom_dashboard.js:3548:* **AUTO_RUN**: Trinity Score ≥ 90 AND Risk Score ≤ 10
+packages/dashboard/public/legacy/kingdom_dashboard.js:3567:  2. \`docs/decisions/\` 또는 \`docs/logs/\`
+packages/dashboard/public/legacy/kingdom_dashboard.js:3572:* 포함: 배경 / 결정(decision) / 근거(evidence) / 실행 커맨드 / 결과 / 롤백
+packages/dashboard/public/legacy/kingdom_dashboard.js:3597:- \`packages/trinity-os/CLAUDE.md\` — MCP/Context7 rules
+packages/dashboard/public/legacy/kingdom_dashboard.js:3605:- **AUTO_RUN**: Trinity Score >= 90 AND Risk Score <= 10
+packages/dashboard/public/legacy/kingdom_dashboard.js:3723:1) \`decision\`: AUTO_RUN / ASK_COMMANDER / BLOCK  
+packages/dashboard/public/legacy/kingdom_dashboard.js:3757:  - Trinity OS / MCP: \`packages/trinity-os/\`
+packages/dashboard/public/legacy/kingdom_dashboard.js:3812:- Use Trinity Score in decision comments.
+packages/dashboard/public/legacy/kingdom_dashboard.js:3828:- Branch naming: \`feat/<short>\`, \`fix/<short>\`, \`chore/<trinity>\`
+packages/dashboard/public/legacy/kingdom_dashboard.js:3883:* SSOT(Ⅱ)를 읽고, 해당 변경이 속한 도메인(backend/frontend/trinity-os)을 파악한다.
+packages/dashboard/public/legacy/kingdom_dashboard.js:3887:* **AUTO_RUN**: Trinity Score ≥ 90 AND Risk Score ≤ 10
+packages/dashboard/public/legacy/kingdom_dashboard.js:3906:  2. \`docs/decisions/\` 또는 \`docs/logs/\`
+packages/dashboard/public/legacy/kingdom_dashboard.js:3911:* 포함: 배경 / 결정(decision) / 근거(evidence) / 실행 커맨드 / 결과 / 롤백
+packages/dashboard/public/legacy/kingdom_dashboard.js:3936:- \`packages/trinity-os/CODEX.md\` — MCP/Context7 rules
+packages/dashboard/public/legacy/kingdom_dashboard.js:3944:- **AUTO_RUN**: Trinity Score >= 90 AND Risk Score <= 10
+packages/dashboard/public/legacy/kingdom_dashboard.js:4057:7. [Trinity Score 평가 시스템](#Ⅶ-trinity-score-평가-시스템)
+packages/dashboard/public/legacy/kingdom_dashboard.js:4067:**위치**: \`packages/trinity-os/trinity_os/servers/afo_ultimate_mcp_server.py\`
+packages/dashboard/public/legacy/kingdom_dashboard.js:4072:- ✅ \`TrinityScoreEngineHybrid\` (trinity_score_mcp.py)
+packages/dashboard/public/legacy/kingdom_dashboard.js:4088:5. \`calculate_trinity_score\` - 眞善美孝永 5기둥 점수 계산
+packages/dashboard/public/legacy/kingdom_dashboard.js:4125:- **경로**: \`packages/trinity-os/trinity_os/servers/afo_skills_mcp.py\`
+packages/dashboard/public/legacy/kingdom_dashboard.js:4128:#### trinity-score-mcp
+packages/dashboard/public/legacy/kingdom_dashboard.js:4129:- **경로**: \`packages/trinity-os/trinity_os/servers/trinity_score_mcp.py\`
+packages/dashboard/public/legacy/kingdom_dashboard.js:4133:- **경로**: \`packages/trinity-os/trinity_os/servers/obsidian_mcp.py\`
+packages/dashboard/public/legacy/kingdom_dashboard.js:4270:- **Antigravity 자동 연동**: 중앙 제어 시스템인 Antigravity 설정이 Unified Server를 통해 Chancellor 시스템에 즉시 투영되어, \`AUTO_RUN\`과 \`ASK\` 모드 결정의 정합성을 확보
+packages/dashboard/public/legacy/kingdom_dashboard.js:4396:#### calculate_trinity_score
+packages/dashboard/public/legacy/kingdom_dashboard.js:4483:  "trinity_score": {
+packages/dashboard/public/legacy/kingdom_dashboard.js:4489:    "trinity_score": 0.92,
+packages/dashboard/public/legacy/kingdom_dashboard.js:4513:**원칙**: **Trinity Score ≥ 90** 및 **Risk Score ≤ 10** 조건이 증명된 경우에만 \`AUTO_RUN\`
+packages/dashboard/public/legacy/kingdom_dashboard.js:4571:print(result["trinity_score"])
+packages/dashboard/public/legacy/kingdom_dashboard.js:4573:#   "trinity_score": 0.92,
+packages/dashboard/public/legacy/kingdom_dashboard.js:4651:1) \`decision\`: AUTO_RUN / ASK_COMMANDER / BLOCK  
+packages/dashboard/public/legacy/kingdom_dashboard.js:4743:- Use Trinity Score in decision comments.
+packages/dashboard/public/legacy/kingdom_dashboard.js:4759:- Branch naming: \`feat/<short>\`, \`fix/<short>\`, \`chore/<trinity>\`
+packages/dashboard/public/legacy/kingdom_dashboard.js:4814:* SSOT(Ⅱ)를 읽고, 해당 변경이 속한 도메인(backend/frontend/trinity-os)을 파악한다.
+packages/dashboard/public/legacy/kingdom_dashboard.js:4818:* **AUTO_RUN**: Trinity Score ≥ 90 AND Risk Score ≤ 10
+packages/dashboard/public/legacy/kingdom_dashboard.js:4837:  2. \`docs/decisions/\` 또는 \`docs/logs/\`
+packages/dashboard/public/legacy/kingdom_dashboard.js:4842:* 포함: 배경 / 결정(decision) / 근거(evidence) / 실행 커맨드 / 결과 / 롤백
+packages/dashboard/public/legacy/kingdom_dashboard.js:4867:- \`packages/trinity-os/CURSOR.md\` — MCP/Context7 rules
+packages/dashboard/public/legacy/kingdom_dashboard.js:4875:- **AUTO_RUN**: Trinity Score >= 90 AND Risk Score <= 10
+packages/dashboard/public/legacy/kingdom_dashboard.js:4994:1) \`decision\`: AUTO_RUN / ASK_COMMANDER / BLOCK  
+packages/dashboard/public/legacy/kingdom_dashboard.js:5087:- Use Trinity Score in decision comments.
+packages/dashboard/public/legacy/kingdom_dashboard.js:5103:- Branch naming: \`feat/<short>\`, \`fix/<short>\`, \`chore/<trinity>\`
+packages/dashboard/public/legacy/kingdom_dashboard.js:5160:* SSOT(Ⅱ)를 읽고, 해당 변경이 속한 도메인(backend/frontend/trinity-os)을 파악한다.
+packages/dashboard/public/legacy/kingdom_dashboard.js:5165:* **AUTO_RUN**: Trinity Score ≥ 90 AND Risk Score ≤ 10
+packages/dashboard/public/legacy/kingdom_dashboard.js:5184:  2. \`docs/decisions/\` 또는 \`docs/logs/\`
+packages/dashboard/public/legacy/kingdom_dashboard.js:5189:* 포함: 배경 / 결정(decision) / 근거(evidence) / 실행 커맨드 / 결과 / 롤백
+packages/dashboard/public/legacy/kingdom_dashboard.js:5214:- \`packages/trinity-os/GROK.md\` — MCP/Context7 rules
+packages/dashboard/public/legacy/kingdom_dashboard.js:5222:- **AUTO_RUN**: Trinity Score >= 90 AND Risk Score <= 10
+packages/dashboard/src/components/royal/RoyalPhilosophy.tsx:73:        <div className="text-xs text-slate-400 mt-2">AUTO_RUN Rule: {AUTORUN_RULE}</div>
+packages/dashboard/public/fragments/chancellor-widget.html:17:    Decision --&gt;|Score≥90 &amp; Risk≤10| AutoRun[AUTO_RUN]
+packages/dashboard/public/fragments/chancellor-widget.html:83:    DecisionGate --&gt; TigersNode: AUTO_RUN
+packages/dashboard/public/fragments/mcp-skill-mastery-widget.html:46:                                        <div style="font-size: 0.9rem; color: var(--text-secondary);">calculate_trinity_score, verify_fact</div>
+packages/dashboard/src/app/api/kingdom-status/route.ts:30:  let trinityScore = {
+packages/dashboard/src/app/api/kingdom-status/route.ts:39:    const trinityPath = path.join(repoRoot, "trinity_score.json");
+packages/dashboard/src/app/api/kingdom-status/route.ts:40:    if (fs.existsSync(trinityPath)) {
+packages/dashboard/src/app/api/kingdom-status/route.ts:41:      const data = JSON.parse(fs.readFileSync(trinityPath, "utf-8"));
+packages/dashboard/src/app/api/kingdom-status/route.ts:42:      const scores = data?.trinity?.scores || {};
+packages/dashboard/src/app/api/kingdom-status/route.ts:43:      trinityScore = {
+packages/dashboard/src/app/api/kingdom-status/route.ts:44:        total: Math.round((data?.trinity?.total || 1) * 100 * 10) / 10,
+packages/dashboard/src/app/api/kingdom-status/route.ts:53:    // Failed to read trinity score, using defaults
+packages/dashboard/src/app/api/kingdom-status/route.ts:151:    trinity: trinityScore,
+packages/dashboard/public/fragments/daily-check-widget.html:14:                            <div style="font-size: 2rem; font-weight: 700;" id="check-trinity-score">-</div>
+packages/dashboard/public/fragments/daily-check-widget.html:16:                            <div style="font-size: 0.75rem; opacity: 0.8; margin-top: 0.25rem;" id="check-trinity-status">확인 중...</div>
+packages/dashboard/public/fragments/daily-check-widget.html:80:                                <br><small style="color: var(--text-secondary);">조건 충족 시 AUTO_RUN, 미충족 시 ASK</small>
+packages/dashboard/public/fragments/unified-server-structure-widget.html:48:                            <div class="module-card unified" data-module="trinity">
+packages/dashboard/public/fragments/unified-server-structure-widget.html:55:                                    <div class="tool-item">📊 calculate_trinity_score</div>
+packages/dashboard/public/fragments/unified-server-structure-widget.html:161:                            <div class="module-card separated" data-module="trinity">
+packages/dashboard/public/fragments/agents-md-widget.html:209:                                    <strong>AUTO_RUN</strong>: <strong>Trinity Score ≥ 90</strong> 이고 <strong>Risk Score ≤ 10</strong>인 경우에만 자율 실행합니다.<br>
+packages/dashboard/public/fragments/architecture-detail-widget.html:103:    Gate --&gt;|Trinity ≥ 90<br>AND<br>Risk ≤ 10| AutoRun[AUTO_RUN<br>자율 실행]
+packages/dashboard/public/fragments/architecture-detail-widget.html:121:                                <strong>Trinity Score ≥ 90</strong> 및 <strong>Risk Score ≤ 10</strong> 조건을 충족해야만 AUTO_RUN이 발동
+packages/dashboard/public/fragments/architecture-detail-widget.html:199:            <div class="card architecture-card trinity-gradient">
+packages/dashboard/public/fragments/field-manual-widget.html:93:                                    <li><strong>AUTO_RUN</strong>: Trinity Score ≥ 90 <strong>AND</strong> Risk Score ≤ 10인 경우에만 자율 실행</li>
+packages/dashboard/public/fragments/field-manual-widget.html:270:                        AUTO_RUN Gate: 충분한 근거 없이 자동화 권하지 않음
+packages/dashboard/public/fragments/status.html:38:                    <h3 class="card-title">AUTO_RUN 조건</h3>
+packages/dashboard/public/fragments/status.html:45:                        현재 DRY_RUN_DEFAULT=True이므로 AUTO_RUN은 비활성화됩니다.
+packages/dashboard/public/legacy/kingdom_dashboard.html.bak:120:                <p class="trinity-formula">
+packages/dashboard/public/legacy/kingdom_dashboard.html.bak:124:                    AUTO_RUN 조건: Trinity Score ≥ 90 AND Risk Score ≤ 10
+packages/dashboard/public/legacy/kingdom_dashboard.html.bak:382:    Decision -->|Score≥90 & Risk≤10| AutoRun[AUTO_RUN]
+packages/dashboard/public/legacy/kingdom_dashboard.html.bak:448:    DecisionGate --> TigersNode: AUTO_RUN
+packages/dashboard/public/legacy/kingdom_dashboard.html.bak:560:    Gate -->|Trinity ≥ 90<br/>AND<br/>Risk ≤ 10| AutoRun[AUTO_RUN<br/>자율 실행]
+packages/dashboard/public/legacy/kingdom_dashboard.html.bak:578:                                <strong>Trinity Score ≥ 90</strong> 및 <strong>Risk Score ≤ 10</strong> 조건을 충족해야만 AUTO_RUN이 발동
+packages/dashboard/public/legacy/kingdom_dashboard.html.bak:656:            <div class="card architecture-card trinity-gradient">
+packages/dashboard/public/legacy/kingdom_dashboard.html.bak:1081:                                <strong>자율 실행 게이트:</strong> Trinity Score ≥ 90 AND Risk Score ≤ 10 조건에서만 AUTO_RUN
+packages/dashboard/public/legacy/kingdom_dashboard.html.bak:1312:                    <h3 class="card-title">AUTO_RUN 조건</h3>
+packages/dashboard/public/legacy/kingdom_dashboard.html.bak:1319:                        현재 DRY_RUN_DEFAULT=True이므로 AUTO_RUN은 비활성화됩니다.
+packages/dashboard/public/legacy/kingdom_dashboard.html.bak:1419:                                    <li><strong>AUTO_RUN</strong>: Trinity Score ≥ 90 <strong>AND</strong> Risk Score ≤ 10인 경우에만 자율 실행</li>
+packages/dashboard/public/legacy/kingdom_dashboard.html.bak:1596:                        AUTO_RUN Gate: 충분한 근거 없이 자동화 권하지 않음
+packages/dashboard/public/legacy/kingdom_dashboard.html.bak:1819:                                    <strong>AUTO_RUN</strong>: <strong>Trinity Score ≥ 90</strong> 이고 <strong>Risk Score ≤ 10</strong>인 경우에만 자율 실행합니다.<br>
+packages/dashboard/public/legacy/kingdom_dashboard.html.bak:1958:                                <code>./packages/trinity-os/CLAUDE.md</code>
+packages/dashboard/public/legacy/kingdom_dashboard.html.bak:2359:                                        <div style="font-size: 0.9rem; color: var(--text-secondary);">calculate_trinity_score, verify_fact</div>
+packages/dashboard/public/legacy/kingdom_dashboard.html.bak:2560:                            <div class="module-card unified" data-module="trinity">
+packages/dashboard/public/legacy/kingdom_dashboard.html.bak:2567:                                    <div class="tool-item">📊 calculate_trinity_score</div>
+packages/dashboard/public/legacy/kingdom_dashboard.html.bak:2673:                            <div class="module-card separated" data-module="trinity">
+packages/dashboard/public/legacy/kingdom_dashboard.html.bak:3588:                            <div style="font-size: 2rem; font-weight: 700;" id="check-trinity-score">-</div>
+packages/dashboard/public/legacy/kingdom_dashboard.html.bak:3590:                            <div style="font-size: 0.75rem; opacity: 0.8; margin-top: 0.25rem;" id="check-trinity-status">확인 중...</div>
+packages/dashboard/public/legacy/kingdom_dashboard.html.bak:3654:                                <br><small style="color: var(--text-secondary);">조건 충족 시 AUTO_RUN, 미충족 시 ASK</small>
+packages/dashboard/public/legacy/kingdom_dashboard.html.bak:3985:    subgraph Trinity["packages/trinity-os/"]
+packages/dashboard/public/legacy/kingdom_dashboard.html.bak:4020:                        <strong>packages/trinity-os/</strong> - Trinity OS
+packages/dashboard/public/legacy/kingdom_dashboard.html.bak:4187:    subgraph Trinity["packages/trinity-os/"]
+packages/dashboard/public/legacy/kingdom_dashboard.html.bak:4222:                        <strong>packages/trinity-os/</strong> - Trinity OS
+packages/dashboard/src/components/antigravity/StatusIndicator.tsx:34:  const getVerdictColor = (decision?: string) => {
+packages/dashboard/src/components/antigravity/StatusIndicator.tsx:35:    if (!decision) return 'text-gray-400';
+packages/dashboard/src/components/antigravity/StatusIndicator.tsx:36:    if (decision === 'AUTO_RUN') return 'text-green-400';
+packages/dashboard/src/components/antigravity/StatusIndicator.tsx:37:    if (decision === 'VETO') return 'text-red-400';
+packages/dashboard/src/components/antigravity/StatusIndicator.tsx:41:  const getVerdictIcon = (decision?: string) => {
+packages/dashboard/src/components/antigravity/StatusIndicator.tsx:42:    if (!decision) return <Activity className="w-3 h-3" />;
+packages/dashboard/src/components/antigravity/StatusIndicator.tsx:43:    if (decision === 'AUTO_RUN') return '🚀';
+packages/dashboard/src/components/antigravity/StatusIndicator.tsx:44:    if (decision === 'VETO') return '🚫';
+packages/dashboard/src/components/antigravity/StatusIndicator.tsx:100:                <span className="text-sm">{getVerdictIcon(latestVerdict.decision)}</span>
+packages/dashboard/src/components/antigravity/StatusIndicator.tsx:102:                  <div className={`text-xs font-medium truncate ${getVerdictColor(latestVerdict.decision)}`}>
+packages/dashboard/src/components/antigravity/StatusIndicator.tsx:103:                    {latestVerdict.decision || 'UNKNOWN'}
+packages/dashboard/src/components/antigravity/StatusIndicator.tsx:106:                    Score: {latestVerdict.trinity_score}/100
+packages/dashboard/src/app/api/health/route.ts:33:      trinity_score: data.trinity_score,
+packages/dashboard/public/fragments/project-structure-widget.html:46:    subgraph Trinity["packages/trinity-os/"]
+packages/dashboard/public/fragments/project-structure-widget.html:81:                        <strong>packages/trinity-os/</strong> - Trinity OS
+packages/dashboard/public/fragments/claude-md-widget.html:43:                                <code>./packages/trinity-os/CLAUDE.md</code>
+packages/dashboard/src/app/api/ssot-status/route.ts:10:      const trinity = coreData.trinity || {};
+packages/dashboard/src/app/api/ssot-status/route.ts:15:        trinity: {
+packages/dashboard/src/app/api/ssot-status/route.ts:16:          truth: trinity.truth ?? 1.0,
+packages/dashboard/src/app/api/ssot-status/route.ts:17:          goodness: trinity.goodness ?? 1.0,
+packages/dashboard/src/app/api/ssot-status/route.ts:18:          beauty: trinity.beauty ?? 1.0,
+packages/dashboard/src/app/api/ssot-status/route.ts:19:          serenity: trinity.serenity_core ?? 1.0,
+packages/dashboard/src/app/api/ssot-status/route.ts:20:          eternity: trinity.eternity ?? 1.0,
+packages/dashboard/src/app/api/ssot-status/route.ts:21:          total: trinity.trinity_score ?? 1.0,
+packages/dashboard/src/app/api/ssot-status/route.ts:23:        risk: Math.round((1 - (trinity.trinity_score ?? 1.0)) * 100) / 100,
+packages/dashboard/src/app/api/ssot-status/route.ts:39:  const trinity = { truth: 1.0, goodness: 1.0, beauty: 1.0, serenity: 1.0, eternity: 1.0 };
+packages/dashboard/src/app/api/ssot-status/route.ts:42:    trinity.truth * weights.truth +
+packages/dashboard/src/app/api/ssot-status/route.ts:43:    trinity.goodness * weights.goodness +
+packages/dashboard/src/app/api/ssot-status/route.ts:44:    trinity.beauty * weights.beauty +
+packages/dashboard/src/app/api/ssot-status/route.ts:45:    trinity.serenity * weights.serenity +
+packages/dashboard/src/app/api/ssot-status/route.ts:46:    trinity.eternity * weights.eternity;
+packages/dashboard/src/app/api/ssot-status/route.ts:51:    trinity: { ...trinity, total: Math.round(totalScore * 100) / 100 },
+packages/dashboard/src/components/antigravity/VerdictLogModal.tsx:76:    if (event.decision?.toLowerCase().includes(pillar.toLowerCase())) {
+packages/dashboard/src/components/antigravity/VerdictLogModal.tsx:102:  const getDecisionColor = (decision?: string) => {
+packages/dashboard/src/components/antigravity/VerdictLogModal.tsx:103:    if (!decision) return 'text-gray-400';
+packages/dashboard/src/components/antigravity/VerdictLogModal.tsx:104:    if (decision.includes('AUTO_RUN')) return 'text-green-400';
+packages/dashboard/src/components/antigravity/VerdictLogModal.tsx:105:    if (decision.includes('VETO')) return 'text-red-400';
+packages/dashboard/src/components/antigravity/VerdictLogModal.tsx:106:    if (decision.includes('MANUAL')) return 'text-yellow-400';
+packages/dashboard/src/components/antigravity/VerdictLogModal.tsx:110:  const getDecisionIcon = (decision?: string) => {
+packages/dashboard/src/components/antigravity/VerdictLogModal.tsx:111:    if (!decision) return <Clock className="w-4 h-4" />;
+packages/dashboard/src/components/antigravity/VerdictLogModal.tsx:112:    if (decision.includes('AUTO_RUN')) return <Shield className="w-4 h-4" />;
+packages/dashboard/src/components/antigravity/VerdictLogModal.tsx:113:    if (decision.includes('VETO')) return <AlertTriangle className="w-4 h-4" />;
+packages/dashboard/src/components/antigravity/VerdictLogModal.tsx:173:                      {getDecisionIcon(event.decision)}
+packages/dashboard/src/components/antigravity/VerdictLogModal.tsx:175:                        <div className={`font-semibold ${getDecisionColor(event.decision)}`}>
+packages/dashboard/src/components/antigravity/VerdictLogModal.tsx:176:                          {event.decision || 'PENDING'}
+packages/dashboard/src/components/antigravity/VerdictLogModal.tsx:202:                        {event.trinity_score}
+packages/dashboard/src/components/SerenityMonitor.tsx:11:  trinityScore: number;
+packages/dashboard/src/components/SerenityMonitor.tsx:40:    trinityScore: 0.85,
+packages/dashboard/src/components/SerenityMonitor.tsx:51:    if (progress.trinityScore > prevScore + 0.05) {
+packages/dashboard/src/components/SerenityMonitor.tsx:56:    setPrevScore(progress.trinityScore);
+packages/dashboard/src/components/SerenityMonitor.tsx:57:  }, [progress.trinityScore, progress.riskScore, prevScore, playTrinityUp, playRiskUp]);
+packages/dashboard/src/components/SerenityMonitor.tsx:81:        trinityScore: result.trinity_score,
+packages/dashboard/src/components/SerenityMonitor.tsx:161:      <TrinityGlowCard trinityScore={progress.trinityScore} riskScore={progress.riskScore}>
+packages/dashboard/src/app/api/visual-agent/route.ts:33:    const trinityScore = 95; // 실제로는 Trinity Calculator에서 가져와야 함
+packages/dashboard/src/app/api/visual-agent/route.ts:36:    if (trinityScore < 90 || riskScore > 10) {
+packages/dashboard/src/app/api/visual-agent/route.ts:39:        trinityScore,
+packages/dashboard/src/components/SystemStatusCard.tsx:11:  trinity_score?: number;
+packages/dashboard/src/components/SystemStatusCard.tsx:101:              Trinity Score: {data?.trinity_score || 'N/A'}
+packages/dashboard/src/components/TrinityGlowCard.tsx:15:  trinityScore: number | null; // 0.0 - 1.0, null = loading
+packages/dashboard/src/components/TrinityGlowCard.tsx:31:  trinityScore,
+packages/dashboard/src/components/TrinityGlowCard.tsx:48:    if (trinityScore === null) return "#6b7280"; // Gray for loading
+packages/dashboard/src/components/TrinityGlowCard.tsx:49:    if (trinityScore >= 0.9) return "#22c55e"; // Green
+packages/dashboard/src/components/TrinityGlowCard.tsx:50:    if (trinityScore >= 0.7) return "#eab308"; // Yellow
+packages/dashboard/src/components/TrinityGlowCard.tsx:52:  }, [trinityScore]);
+packages/dashboard/src/components/TrinityGlowCard.tsx:57:    () => (trinityScore !== null ? Math.round(trinityScore * 30) : 5),
+packages/dashboard/src/components/TrinityGlowCard.tsx:58:    [trinityScore]
+packages/dashboard/src/components/TrinityGlowCard.tsx:73:      aria-label={`Trinity Score: ${trinityScore !== null ? `${(trinityScore * 100).toFixed(0)}%` : "Loading"}, Risk Score: ${riskScore !== null ? `${(riskScore * 100).toFixed(0)}%` : "Loading"}`}
+packages/dashboard/src/components/TrinityGlowCard.tsx:122:            ⚖️ {trinityScore !== null ? `${(trinityScore * 100).toFixed(0)}%` : "Loading..."}
+packages/dashboard/src/components/antigravity/TrinityDashboard.tsx:41:    trinity_score: TrinityScore;
+packages/dashboard/src/components/antigravity/TrinityDashboard.tsx:74:            trinity_score: {
+packages/dashboard/src/components/antigravity/TrinityDashboard.tsx:75:              ...prevReport.verification.trinity_score,
+packages/dashboard/src/components/antigravity/TrinityDashboard.tsx:76:              truth_score: latestEvent.risk_score || prevReport.verification.trinity_score.truth_score,
+packages/dashboard/src/components/antigravity/TrinityDashboard.tsx:77:              goodness_score: latestEvent.trinity_score || prevReport.verification.trinity_score.goodness_score,
+packages/dashboard/src/components/antigravity/TrinityDashboard.tsx:126:          trinity_score: {
+packages/dashboard/src/components/antigravity/TrinityDashboard.tsx:203:  const trinityScore = verification.trinity_score;
+packages/dashboard/src/components/antigravity/TrinityDashboard.tsx:236:              { key: 'truth', label: '眞', score: trinityScore.truth_score, color: 'text-blue-400' },
+packages/dashboard/src/components/antigravity/TrinityDashboard.tsx:237:              { key: 'goodness', label: '善', score: trinityScore.goodness_score, color: 'text-green-400' },
+packages/dashboard/src/components/antigravity/TrinityDashboard.tsx:238:              { key: 'beauty', label: '美', score: trinityScore.beauty_score, color: 'text-purple-400' },
+packages/dashboard/src/components/antigravity/TrinityDashboard.tsx:239:              { key: 'serenity', label: '孝', score: trinityScore.serenity_score, color: 'text-pink-400' },
+packages/dashboard/src/components/antigravity/TrinityDashboard.tsx:240:              { key: 'eternity', label: '永', score: trinityScore.eternity_score, color: 'text-cyan-400' },
+packages/dashboard/src/components/antigravity/TrinityDashboard.tsx:256:            truthScore={trinityScore.truth_score}
+packages/dashboard/src/components/antigravity/TrinityDashboard.tsx:257:            goodnessScore={trinityScore.goodness_score}
+packages/dashboard/src/components/antigravity/TrinityDashboard.tsx:258:            beautyScore={trinityScore.beauty_score}
+packages/dashboard/src/components/antigravity/TrinityDashboard.tsx:259:            serenityScore={trinityScore.serenity_score}
+packages/dashboard/src/components/antigravity/TrinityDashboard.tsx:260:            eternityScore={trinityScore.eternity_score}
+packages/dashboard/src/components/antigravity/TrinityDashboard.tsx:261:            vetoTriggered={!trinityScore.auto_run_eligible}
+packages/dashboard/src/components/antigravity/TrinityDashboard.tsx:269:      <div className={`p-6 rounded-lg border ${getScoreBgColor(trinityScore.overall_score)}`}>
+packages/dashboard/src/components/antigravity/TrinityDashboard.tsx:272:            {getStatusIcon(trinityScore.overall_score)}
+packages/dashboard/src/components/antigravity/TrinityDashboard.tsx:279:            <div className={`text-3xl font-bold ${getScoreColor(trinityScore.overall_score)}`}>
+packages/dashboard/src/components/antigravity/TrinityDashboard.tsx:280:              {trinityScore.overall_score}/100
+packages/dashboard/src/components/antigravity/TrinityDashboard.tsx:283:              <div className={`w-2 h-2 rounded-full ${trinityScore.auto_run_eligible ? 'bg-emerald-400' : 'bg-yellow-400'}`}></div>
+packages/dashboard/src/components/antigravity/TrinityDashboard.tsx:285:                {trinityScore.auto_run_eligible ? 'Auto-run Eligible' : 'Manual Review Required'}
+packages/dashboard/src/components/antigravity/TrinityDashboard.tsx:299:          <div className={`text-2xl font-bold ${getScoreColor(trinityScore.truth_score)}`}>
+packages/dashboard/src/components/antigravity/TrinityDashboard.tsx:300:            {trinityScore.truth_score}
+packages/dashboard/src/components/antigravity/TrinityDashboard.tsx:310:          <div className={`text-2xl font-bold ${getScoreColor(trinityScore.goodness_score)}`}>
+packages/dashboard/src/components/antigravity/TrinityDashboard.tsx:311:            {trinityScore.goodness_score}
+packages/dashboard/src/components/antigravity/TrinityDashboard.tsx:321:          <div className={`text-2xl font-bold ${getScoreColor(trinityScore.beauty_score)}`}>
+packages/dashboard/src/components/antigravity/TrinityDashboard.tsx:322:            {trinityScore.beauty_score}
+packages/dashboard/src/components/antigravity/TrinityDashboard.tsx:332:          <div className={`text-2xl font-bold ${getScoreColor(trinityScore.serenity_score)}`}>
+packages/dashboard/src/components/antigravity/TrinityDashboard.tsx:333:            {trinityScore.serenity_score}
+packages/dashboard/src/components/antigravity/TrinityDashboard.tsx:343:          <div className={`text-2xl font-bold ${getScoreColor(trinityScore.eternity_score)}`}>
+packages/dashboard/src/components/antigravity/TrinityDashboard.tsx:344:            {trinityScore.eternity_score}
+packages/dashboard/src/components/antigravity/TrinityDashboard.tsx:416:      <div className={`p-4 rounded-lg border ${trinityScore.auto_run_eligible ? 'bg-emerald-500/10 border-emerald-500/50' : 'bg-yellow-500/10 border-yellow-500/50'}`}>
+packages/dashboard/src/components/antigravity/TrinityDashboard.tsx:418:          <div className={`w-3 h-3 rounded-full ${trinityScore.auto_run_eligible ? 'bg-emerald-400' : 'bg-yellow-400'}`}></div>
+packages/dashboard/src/components/antigravity/TrinityDashboard.tsx:421:              {trinityScore.auto_run_eligible ? '🚀 자동 승인 가능' : '⏳ 수동 검토 필요'}
+packages/dashboard/src/components/antigravity/TrinityDashboard.tsx:424:              {trinityScore.eligibility_reason}
+packages/dashboard/src/components/VoiceReactivePanel.tsx:34:  const [trinityScore, setTrinityScore] = useState(baseTrinityScore);
+packages/dashboard/src/components/VoiceReactivePanel.tsx:43:    if (!isListening) return { trinityDelta: 0, riskDelta: 0 };
+packages/dashboard/src/components/VoiceReactivePanel.tsx:73:    const { trinityDelta, riskDelta } = scoreAdjustments;
+packages/dashboard/src/components/VoiceReactivePanel.tsx:78:        const newScore = Math.min(1.0, Math.max(0.0, prev + trinityDelta));
+packages/dashboard/src/components/VoiceReactivePanel.tsx:113:      <TrinityGlowCard trinityScore={trinityScore} riskScore={riskScore}>
+packages/dashboard/src/components/genui/TreeOfThoughts.tsx:174:            ? `Transaction: ${event.extra?.merchant} (${event.decision})`
+packages/dashboard/src/components/genui/TreeOfThoughts.tsx:175:            : `${agentName}: ${event.decision} (Rule: ${event.rule_id})`,
+packages/dashboard/src/components/genui/TreeOfThoughts.tsx:177:        score: event.trinity_score,
+packages/dashboard/src/components/genui/GrandFestivalWidget.tsx:68:      trinityScore: 100,
+packages/dashboard/src/components/genui/GrandFestivalWidget.tsx:187:          aria-label={`Trinity Score: ${stats.trinityScore}`}
+packages/dashboard/src/components/genui/GrandFestivalWidget.tsx:189:          <p className="text-3xl font-black text-emerald-400">{stats.trinityScore}</p>
+packages/dashboard/src/components/ChancellorView.tsx:59:  AUTO_RUN: "text-green-500",
+packages/dashboard/src/components/ChancellorView.tsx:127:      // Use real trinity score from health API
+packages/dashboard/src/components/ChancellorView.tsx:128:      const trinityScore = health?.trinity?.trinity_score ?? 0.9;
+packages/dashboard/src/components/ChancellorView.tsx:129:      const res = await invokeChancellor(input, trinityScore);
+packages/dashboard/src/components/ChancellorView.tsx:159:    if (!health?.trinity) return "shadow-[0_0_15px_rgba(0,0,0,0.5)]";
+packages/dashboard/src/components/ChancellorView.tsx:160:    const score = health.trinity.trinity_score || 0;
+packages/dashboard/src/components/ChancellorView.tsx:174:    if (!health?.trinity) return;
+packages/dashboard/src/components/ChancellorView.tsx:175:    const score = health.trinity.trinity_score || 0;
+packages/dashboard/src/components/ChancellorView.tsx:180:  }, [health?.trinity]);
+packages/dashboard/src/components/ChancellorView.tsx:196:              className={`font-mono text-sm ${DECISION_COLORS[health.decision] || "text-gray-400"}`}
+packages/dashboard/src/components/ChancellorView.tsx:198:              {health.decision}
+packages/dashboard/src/components/ChancellorView.tsx:206:            <div className="text-cyan-400 text-lg">{formatPercent(health?.trinity?.truth)}</div>
+packages/dashboard/src/components/ChancellorView.tsx:210:            <div className="text-amber-400 text-lg">{formatPercent(health?.trinity?.goodness)}</div>
+packages/dashboard/src/components/ChancellorView.tsx:214:            <div className="text-pink-400 text-lg">{formatPercent(health?.trinity?.beauty)}</div>
+packages/dashboard/src/components/ChancellorView.tsx:230:              {formatPercent(health?.trinity?.filial_serenity)}
+packages/dashboard/src/components/ChancellorView.tsx:236:              {formatPercent(health?.trinity?.eternity)}
+packages/dashboard/src/components/ChancellorView.tsx:369:            {health?.decision_message && (
+packages/dashboard/src/components/ChancellorView.tsx:370:              <p className="text-sm text-gray-600 mt-2">{health.decision_message}</p>
+packages/dashboard/src/components/skills/SkillCard.tsx:14:  const trinityScore = getTrinityScore(skill.philosophy_scores);
+packages/dashboard/src/components/skills/SkillCard.tsx:85:                trinityScore >= 90 ? 'text-yellow-400' :
+packages/dashboard/src/components/skills/SkillCard.tsx:86:                trinityScore >= 80 ? 'text-green-400' :
+packages/dashboard/src/components/skills/SkillCard.tsx:87:                trinityScore >= 70 ? 'text-blue-400' : 'text-gray-400'
+packages/dashboard/src/components/skills/SkillCard.tsx:89:                {trinityScore.toFixed(1)}
+packages/dashboard/src/components/AFOPantheon.tsx:43:  trinityScore: number | null;
+packages/dashboard/src/components/AFOPantheon.tsx:60:    trinityScore: null,
+packages/dashboard/src/components/AFOPantheon.tsx:140:          trinityScore: data.trinity?.total ?? prev.trinityScore,
+packages/dashboard/src/components/AFOPantheon.tsx:146:            truth: data.trinity?.truth ?? null,
+packages/dashboard/src/components/AFOPantheon.tsx:147:            goodness: data.trinity?.goodness ?? null,
+packages/dashboard/src/components/AFOPantheon.tsx:148:            beauty: data.trinity?.beauty ?? null,
+packages/dashboard/src/components/AFOPantheon.tsx:149:            filial_serenity: data.trinity?.serenity ?? null,
+packages/dashboard/src/components/AFOPantheon.tsx:150:            eternity: data.trinity?.eternity ?? null,
+packages/dashboard/src/components/AFOPantheon.tsx:182:              trinityScore={state.trinityScore}
+packages/dashboard/src/components/AFOPantheon.tsx:191:                    state.trinityScore === null
+packages/dashboard/src/components/AFOPantheon.tsx:193:                      : state.trinityScore >= 0.9
+packages/dashboard/src/components/AFOPantheon.tsx:195:                        : state.trinityScore >= 0.7
+packages/dashboard/src/components/AFOPantheon.tsx:200:                  {state.trinityScore !== null
+packages/dashboard/src/components/AFOPantheon.tsx:201:                    ? `${(state.trinityScore * 100).toFixed(0)}%`
+packages/dashboard/src/components/AFOPantheon.tsx:362:            baseTrinityScore={state.trinityScore ?? undefined}
+packages/dashboard/src/components/genui/SandboxCanvas.tsx:23:  trinity_threshold: number;
+packages/dashboard/src/components/genui/SandboxCanvas.tsx:31:  trinity_score: {
+packages/dashboard/src/components/genui/SandboxCanvas.tsx:62:          trinity_threshold: 0.8,
+packages/dashboard/src/components/genui/SandboxCanvas.tsx:87:        trinity_score: { total_score: 0, truth: 0, goodness: 0, beauty: 0 },
+packages/dashboard/src/components/genui/SandboxCanvas.tsx:208:              aria-label={`Component generation ${response.status}, Trinity score: ${response.trinity_score.total_score}`}
+packages/dashboard/src/components/genui/SandboxCanvas.tsx:212:                <span className="text-xl font-bold">{response.trinity_score.total_score}</span>
+packages/dashboard/src/components/genui/SSOTMonitor.tsx:22:  trinity: {
+packages/dashboard/src/components/genui/SSOTMonitor.tsx:45:      眞: ssot.trinity.truth,
+packages/dashboard/src/components/genui/SSOTMonitor.tsx:46:      善: ssot.trinity.goodness,
+packages/dashboard/src/components/genui/SSOTMonitor.tsx:47:      美: ssot.trinity.beauty,
+packages/dashboard/src/components/genui/SSOTMonitor.tsx:48:      孝: ssot.trinity.serenity,
+packages/dashboard/src/components/genui/SSOTMonitor.tsx:49:      永: ssot.trinity.eternity,
+packages/dashboard/src/components/genui/SSOTMonitor.tsx:57:      totalScore: (ssot.trinity.total * 100).toFixed(1),
+packages/dashboard/src/components/genui/GenesisWidget.tsx:30:  trinity_score: number;
+packages/dashboard/src/components/genui/GenesisWidget.tsx:122:      trinityScore: (result.trinity_score * 100).toFixed(1),
+packages/dashboard/src/components/genui/GenesisWidget.tsx:219:              aria-label={`Trinity Score: ${formattedScores?.trinityScore}%`}
+packages/dashboard/src/components/genui/GenesisWidget.tsx:225:                {formattedScores?.trinityScore}%
+packages/dashboard/src/components/aicpa/PillarsDetailedWidget.tsx:15:  trinity_score: number;
+packages/dashboard/src/components/aicpa/TrinityScoreWidget.tsx:6:  trinity_score: number;
+packages/dashboard/src/components/aicpa/TrinityScoreWidget.tsx:18:      if (!res.ok) throw new Error("Failed to fetch trinity score");
+packages/dashboard/src/components/aicpa/TrinityScoreWidget.tsx:22:      logError("Failed to fetch trinity score", {
+packages/dashboard/src/components/aicpa/TrinityScoreWidget.tsx:37:    return data.trinity_score >= 95
+packages/dashboard/src/components/aicpa/TrinityScoreWidget.tsx:48:      aria-label={`Trinity Score: ${data.trinity_score.toFixed(2)} out of 100`}
+packages/dashboard/src/components/aicpa/TrinityScoreWidget.tsx:72:            {data.trinity_score.toFixed(2)}
+packages/dashboard/src/components/genui/SerenityCanvas.tsx:9:  trinity_score: number;
+packages/dashboard/src/components/genui/SerenityCanvas.tsx:101:                            Trinity Score: <span className="text-emerald-400 font-mono">{result.trinity_score}%</span>
+packages/dashboard/src/components/genui/TrinityEvidenceWidget.tsx:37:      const response = await fetch('/api/trinity-evidence');
+packages/dashboard/src/components/genui/TrinityEvidenceWidget.tsx:59:      case 'AUTO_RUN':
+packages/dashboard/src/components/genui/TrinityEvidenceWidget.tsx:70:      case 'AUTO_RUN':
+packages/dashboard/src/components/genui/AutomatedDebuggingStreamWidget.tsx:34:    trinity_score?: any;
+packages/dashboard/src/components/genui/AutomatedDebuggingStreamWidget.tsx:47:    trinityScore: 0,
+packages/dashboard/src/components/genui/AutomatedDebuggingStreamWidget.tsx:100:      trinityScore: stats.trinityScore.toFixed(1),
+packages/dashboard/src/components/genui/AutomatedDebuggingStreamWidget.tsx:102:  }, [stats.trinityScore]);
+packages/dashboard/src/components/genui/AutomatedDebuggingStreamWidget.tsx:144:            trinityScore:
+packages/dashboard/src/components/genui/AutomatedDebuggingStreamWidget.tsx:145:              typeof debuggingEvent.data.trinity_score === "object"
+packages/dashboard/src/components/genui/AutomatedDebuggingStreamWidget.tsx:146:                ? debuggingEvent.data.trinity_score.overall || 0
+packages/dashboard/src/components/genui/AutomatedDebuggingStreamWidget.tsx:147:                : debuggingEvent.data.trinity_score || 0,
+packages/dashboard/src/components/genui/AutomatedDebuggingStreamWidget.tsx:251:            aria-label={`Trinity Score: ${formattedStats.trinityScore}`}
+packages/dashboard/src/components/genui/AutomatedDebuggingStreamWidget.tsx:254:            <div className="text-lg font-bold text-purple-300">{formattedStats.trinityScore}</div>
+packages/dashboard/src/components/genui/SelfImprovementWidget.tsx:30:  average_trinity_score: number;
+packages/dashboard/src/components/genui/SelfImprovementWidget.tsx:73:      averageTrinity: report.average_trinity_score.toFixed(1),
+packages/dashboard/src/components/genui/RoyalOpsCenter.tsx:19:  trinityScore: number;
+packages/dashboard/src/components/genui/RoyalOpsCenter.tsx:28:export default function RoyalOpsCenter({ trinityScore, healthData }: RoyalOpsCenterProps) {
+packages/dashboard/src/components/genui/RoyalOpsCenter.tsx:133:  const breakdown = healthData?.trinity_breakdown || {};
+packages/dashboard/src/components/genui/RoyalOpsCenter.tsx:215:                        <circle cx="64" cy="64" r="60" stroke="currentColor" strokeWidth="6" fill="transparent" className="text-indigo-500" strokeDasharray={377} strokeDashoffset={377 - (377 * trinityScore) / 100} strokeLinecap="round" />
+packages/dashboard/src/components/genui/RoyalOpsCenter.tsx:218:                        <span className="text-3xl font-bold text-white tracking-tighter">{trinityScore}</span>

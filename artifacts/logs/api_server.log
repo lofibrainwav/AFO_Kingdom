@@ -1,0 +1,646 @@
+✅ AFO 설정 로드 완료: dev 환경 (AFOSettingsDev)
+[TRINITY-OS] 페르소나 전환 → 불굴의 사령관 (활성화)
+[SSE] 2025-12-24T19:26:02.421347 - ✅ [Eternity] AsyncRedisSaver Active - Memories are Eternal.
+Traceback (most recent call last):
+  File "/Users/brnestrm/AFO_Kingdom/packages/afo-core/AFO/api/middleware.py", line 77, in _setup_phase2_hardening_middleware
+    redis_limiter = create_redis_limiter()
+                    ^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/brnestrm/AFO_Kingdom/packages/afo-core/AFO/api/middleware/rate_limit_redis.py", line 52, in create_redis_limiter
+    limiter = Limiter(
+              ^^^^^^^^
+  File "/opt/homebrew/lib/python3.12/site-packages/slowapi/extension.py", line 248, in __init__
+    raise ConfigurationError("Invalid rate limiting strategy %s" % strategy)
+limits.errors.ConfigurationError: Invalid rate limiting strategy fixed-window-elastic-expiry
+INFO:     Started server process [76966]
+INFO:     Waiting for application startup.
+✅ 5기둥 API Router loaded successfully
+   - GET /api/5pillars/current (현재 5기둥 점수 조회)
+   - POST /api/5pillars/live (LangFlow 실시간 평가 - Phase 23-D)
+   - GET /api/5pillars/family/hub (가족 허브 전체 상태 - Phase 23-E)
+   - POST /api/5pillars/family/hub/member/update (가족 구성원 데이터 업데이트)
+   - GET /api/5pillars/family/hub/data (실시간 가족 허브 데이터)
+✅ API Cache Middleware 활성화
+✅ Performance Monitoring Middleware 활성화
+🛡️ Vault Manager Active (Mode: env)
+🛡️ Audit Middleware Active (Logging POST/PUT/DELETE)
+⚠️ Phase 2 Hardening Middleware 설정 실패: Invalid rate limiting strategy fixed-window-elastic-expiry
+✅ Prometheus Metrics Middleware 활성화
+✅ Prometheus Metrics Endpoint 추가 (/metrics)
+✅ Root 라우터 등록 완료
+✅ Health 라우터 등록 완료
+✅ Multi-Agent 라우터 등록 완료
+✅ Trinity Policy API 라우터 등록 완료
+✅ Trinity SBT API 라우터 등록 완료
+✅ Users API 라우터 등록 완료 (肝 시스템 - 사용자 관리)
+✅ Auth API 라우터 등록 완료 (心 시스템 - 인증)
+✅ Chat API 라우터 등록 완료
+✅ GraphRAG API 라우터 등록 완료 (Brain Organ)
+✅ Personas API 라우터 등록 완료 (Phase 2: Family Hub OS - TRINITY-OS 페르소나 통합)
+✅ Budget Router 등록 완료 (Phase 12 확장)
+✅ AICPA Router 등록 완료 (Phase 13: 에이전트 군단)
+✅ Learning Log Router 등록 완료 (Phase 16-4: 자율 학습 루프)
+✅ Grok Stream Router 등록 완료 (Phase 18: 왕국의 맥박)
+🎙️ Voice Router 등록 완료 (Phase 24: Commander's Voice)
+🧠 Council Router 등록 완료 (Phase 23: 지혜의 의회)
+🧠 Learning Pipeline Router 등록 완료 (Phase 26: 사마휘 자율 학습)
+🎨 Serenity Router 등록 완료 (Phase 27: 프로젝트 제네시스)
+⚠️ 철학적 Copilot Router 등록 실패: cannot import name 'Settings' from 'AFO.config.settings' (/Users/brnestrm/AFO_Kingdom/packages/afo-core/AFO/config/settings.py)
+✅ 승상 API 라우터 등록 완료 (LangGraph Optimized: Chancellor + 3 Strategists)
+✅ System Stream Router 등록 완료 (왕국의 신경계 SSE 스트리밍)
+⚠️ Julie Royal Router 등록 실패: No module named 'AFO.julie_cpa.config'
+🔍 Routes before Skills registration: 73
+🔍 Skills router object: <fastapi.routing.APIRouter object at 0x120356c60>
+🔍 Skills router is None: False
+🔍 Skills router has 5 internal routes
+   - Internal route: /list
+   - Internal route: /detail/{skill_id}
+   - Internal route: /execute
+   - Internal route: /health
+   - Internal route: /execute/{skill_id}/dry-run
+✅ Skills API 라우터 등록 완료 (손발 연결)
+🔍 Total routes after Skills registration: 78
+🔍 Skills routes found: 5
+🔍 Total API routes: 68
+   - API route: /api/stream/mcp/thoughts ['GET']
+   - API route: /api/matrix-stream ['GET']
+   - API route: /api/matrix-stream/emit ['POST']
+   - API route: /api/5pillars/current ['GET']
+   - API route: /api/5pillars/live ['POST']
+   - API route: /api/5pillars/family/hub ['GET']
+   - API route: /api/5pillars/family/hub/member/update ['POST']
+   - API route: /api/5pillars/family/hub/data ['GET']
+   - API route: /api/system/metrics ['GET']
+   - API route: /api/system/kingdom-status ['GET']
+   - API route: /api/system/antigravity/config ['GET']
+   - API route: /api/system/logs/stream ['GET']
+   - API route: /api/wallet/keys ['GET']
+   - API route: /api/wallet/keys ['POST']
+   - API route: /api/wallet/keys/{name} ['DELETE']
+   - API route: /api/wallet/browser/save-token ['POST']
+   - API route: /api/wallet/browser/extraction-script ['GET']
+   - API route: /api/users/health ['GET']
+   - API route: /api/users ['POST']
+   - API route: /api/users/{user_id} ['GET']
+   - API route: /api/users/{user_id} ['PUT']
+   - API route: /api/users/{user_id} ['DELETE']
+   - API route: /api/auth/login ['POST']
+   - API route: /api/auth/verify ['POST']
+   - API route: /api/auth/health ['GET']
+   - API route: /api/chat/message ['POST']
+   - API route: /api/chat/providers ['GET']
+   - API route: /api/chat/stats ['GET']
+   - API route: /api/chat/health ['GET']
+   - API route: /api/query ['POST']
+   - API route: /api/personas/health ['GET']
+   - API route: /api/personas/current ['GET']
+   - API route: /api/personas ['GET']
+   - API route: /api/personas/{persona_id} ['GET']
+   - API route: /api/personas/switch ['POST']
+   - API route: /api/personas/{persona_id}/trinity-score ['GET']
+   - API route: /api/julie/budget ['GET']
+   - API route: /api/julie/budget/category/{category_name} ['GET']
+   - API route: /api/julie/budget/spend ['POST']
+   - API route: /api/julie/budget/risk-alert ['GET']
+   - API route: /api/julie/budget/suggestions ['GET']
+   - API route: /api/julie/budget/prediction ['GET']
+   - API route: /api/julie/budget/forecast ['GET']
+   - API route: /api/julie/budget/forecast-hybrid ['GET']
+   - API route: /api/julie/budget/consult-grok ['GET']
+   - API route: /api/aicpa/execute ['POST']
+   - API route: /api/aicpa/tax-simulate ['POST']
+   - API route: /api/aicpa/roth-ladder ['POST']
+   - API route: /api/aicpa/generate-report ['POST']
+   - API route: /api/aicpa/client/{client_name} ['GET']
+   - API route: /api/aicpa/status ['GET']
+   - API route: /api/grok/stream ['GET']
+   - API route: /api/voice/command ['POST']
+   - API route: /api/voice/health ['GET']
+   - API route: /api/council/deliberate ['POST']
+   - API route: /api/council/health ['GET']
+   - API route: /api/learning/report ['GET']
+   - API route: /api/learning/log-action ['POST']
+   - API route: /api/learning/health ['GET']
+   - API route: /api/serenity/create ['POST']
+   - API route: /api/serenity/status ['GET']
+   - API route: /api/query ['POST']
+   - API route: /api/ssot-status ['GET']
+   - API route: /api/skills/list ['GET']
+   - API route: /api/skills/detail/{skill_id} ['GET']
+   - API route: /api/skills/execute ['POST']
+   - API route: /api/skills/health ['GET']
+   - API route: /api/skills/execute/{skill_id}/dry-run ['POST']
+   ✅ Skills route: /api/skills/list ['GET']
+   ✅ Skills route: /api/skills/detail/{skill_id} ['GET']
+   ✅ Skills route: /api/skills/execute ['POST']
+   ✅ Skills route: /api/skills/health ['GET']
+   ✅ Skills route: /api/skills/execute/{skill_id}/dry-run ['POST']
+✅ Comprehensive Health Check 라우터 등록 완료 (조기 등록)
+✅ MCP Tools Management 라우터 등록 완료
+✅ Integrity Check 라우터 등록 완료
+✅ Git Status 라우터 등록 완료
+✅ Intake API 라우터 등록 완료 (조기 등록)
+🔥 [DEBUG] AFO.services.gen_ui is being loaded!
+✅ GenUI Engine activated (Phase 9: Serenity)
+✅ Family Hub API 라우터 등록 완료 (Phase 2: Family Hub OS - 美: 모듈화 + 일관 네이밍) - /family and /api/family
+⚠️ Cache Metrics Router 등록 실패: No module named 'config.settings'; 'config' is not a package
+🚀 Starting AFO Kingdom API Server on 0.0.0.0:8010
+[지휘소 v6 - 최종】 API 서버 가동 준비 (완전 비동기)...
+[Query Expander] WordNet + ChromaDB 하이브리드 확장 준비 완료
+🚀 [AntiGravity] 활성화: dev 환경 자동 배포 준비 완료 (孝)
+🛡️ [AntiGravity] DRY_RUN 모드 활성화 - 모든 위험 동작 시뮬레이션 (善)
+[RAG 엔진] 멀티-LLM 지원 준비 완료.
+[RAG 엔진] 지원 LLM: claude, gemini, codex, ollama, lmstudio
+[Multimodal RAG] 멀티모달 RAG 엔진 준비 완료 (텍스트+이미지 통합 검색)
+⚠️ Multimodal RAG Cache 건너뜀 (Redis 또는 캐시 모듈 없음)
+ℹ️ [INFO] 20 Skills loaded in simulation mode
+[영덕] 영덕 완전체 준비 완료 - 뇌/눈/귀/팔 모두 연결됨
+[지휘소 v6】 LangGraph 설계도를 컴파일하여 '두뇌'를 완성합니다...
+[지휘소 v6】 '진정한 두뇌' (Chancellor Graph) 가동 준비 완료. (True Intelligence)
+⚠️ PostgreSQL 연결 실패: connection to server at "localhost" (::1), port 15432 failed: Connection refused
+	Is the server running on that host and accepting TCP/IP connections?
+connection to server at "localhost" (127.0.0.1), port 15432 failed: Connection refused
+	Is the server running on that host and accepting TCP/IP connections?
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8010 (Press CTRL+C to quit)
+
+✅ Redis 연결 성공 (localhost:6379)
+ℹ️ Anthropic library unavailable
+[지휘소 v6】 '진정한 두뇌' (Chancellor Graph) 가동 준비 완료. (True Intelligence)
+INFO:     127.0.0.1:60252 - "GET / HTTP/1.1" 200 OK
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+INFO:     127.0.0.1:60256 - "POST /api/query HTTP/1.1" 200 OK
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+INFO:     127.0.0.1:60256 - "POST /api/query HTTP/1.1" 200 OK
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+INFO:     127.0.0.1:60256 - "POST /api/query HTTP/1.1" 200 OK
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+INFO:     127.0.0.1:60256 - "POST /api/query HTTP/1.1" 200 OK
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+INFO:     127.0.0.1:60256 - "POST /api/query HTTP/1.1" 200 OK
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+INFO:     127.0.0.1:60279 - "POST /api/query HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60280 - "POST /api/query HTTP/1.1" 200 OK
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+INFO:     127.0.0.1:60281 - "POST /api/query HTTP/1.1" 200 OK
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+INFO:     127.0.0.1:60286 - "POST /api/query HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60287 - "POST /api/query HTTP/1.1" 200 OK
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+INFO:     127.0.0.1:60288 - "POST /api/query HTTP/1.1" 200 OK
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+INFO:     127.0.0.1:60292 - "POST /api/query HTTP/1.1" 200 OK
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+INFO:     127.0.0.1:60293 - "POST /api/query HTTP/1.1" 200 OK
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+INFO:     127.0.0.1:60294 - "POST /api/query HTTP/1.1" 200 OK
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+INFO:     127.0.0.1:60295 - "POST /api/query HTTP/1.1" 200 OK
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+INFO:     127.0.0.1:60299 - "POST /api/query HTTP/1.1" 200 OK
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+INFO:     127.0.0.1:60300 - "POST /api/query HTTP/1.1" 200 OK
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+INFO:     127.0.0.1:60301 - "POST /api/query HTTP/1.1" 200 OK
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+INFO:     127.0.0.1:60305 - "POST /api/query HTTP/1.1" 200 OK
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+INFO:     127.0.0.1:60306 - "POST /api/query HTTP/1.1" 200 OK
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+INFO:     127.0.0.1:60307 - "POST /api/query HTTP/1.1" 200 OK
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+INFO:     127.0.0.1:60311 - "POST /api/query HTTP/1.1" 200 OK
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+INFO:     127.0.0.1:60313 - "POST /api/query HTTP/1.1" 200 OK
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+INFO:     127.0.0.1:60314 - "POST /api/query HTTP/1.1" 200 OK
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+INFO:     127.0.0.1:60317 - "POST /api/query HTTP/1.1" 200 OK
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+INFO:     127.0.0.1:60318 - "POST /api/query HTTP/1.1" 200 OK
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+INFO:     127.0.0.1:60320 - "POST /api/query HTTP/1.1" 200 OK
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+INFO:     127.0.0.1:60321 - "POST /api/query HTTP/1.1" 200 OK
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+INFO:     127.0.0.1:60326 - "POST /api/query HTTP/1.1" 200 OK
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+INFO:     127.0.0.1:60328 - "POST /api/query HTTP/1.1" 200 OK
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+INFO:     127.0.0.1:60329 - "POST /api/query HTTP/1.1" 200 OK
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+INFO:     127.0.0.1:60332 - "POST /api/query HTTP/1.1" 200 OK
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+INFO:     127.0.0.1:60333 - "POST /api/query HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60335 - "POST /api/query HTTP/1.1" 200 OK
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+INFO:     127.0.0.1:60339 - "POST /api/query HTTP/1.1" 200 OK
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+INFO:     127.0.0.1:60340 - "POST /api/query HTTP/1.1" 200 OK
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+INFO:     127.0.0.1:60343 - "POST /api/query HTTP/1.1" 200 OK
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+INFO:     127.0.0.1:60345 - "POST /api/query HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60346 - "POST /api/query HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60347 - "POST /api/query HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60350 - "POST /api/query HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60352 - "POST /api/query HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60353 - "POST /api/query HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60357 - "POST /api/query HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60358 - "POST /api/query HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60361 - "POST /api/query HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60365 - "POST /api/query HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60366 - "POST /api/query HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60367 - "POST /api/query HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60370 - "POST /api/query HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60371 - "POST /api/query HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60372 - "POST /api/query HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60373 - "POST /api/query HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60374 - "POST /api/query HTTP/1.1" 200 OK
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+INFO:     127.0.0.1:60339 - "POST /api/query HTTP/1.1" 200 OK
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+INFO:     127.0.0.1:60339 - "POST /api/query HTTP/1.1" 200 OK
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+INFO:     127.0.0.1:60339 - "POST /api/query HTTP/1.1" 200 OK
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+INFO:     127.0.0.1:60339 - "POST /api/query HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60339 - "GET /api/files?file_path=..%2F..%2F..%2Fetc%2Fpasswd HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:60339 - "GET /api/files?file_path=..%5C..%5C..%5Cwindows%5Csystem32%5Cconfig%5Csam HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:60339 - "GET /api/files?file_path=%2Fetc%2Fshadow HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:60339 - "GET /api/files?file_path=..%2F..%2F..%2F..%2Froot%2F.ssh%2Fid_rsa HTTP/1.1" 404 Not Found
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+INFO:     127.0.0.1:60339 - "POST /api/query HTTP/1.1" 200 OK
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+INFO:     127.0.0.1:60339 - "POST /api/query HTTP/1.1" 200 OK
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+INFO:     127.0.0.1:60339 - "POST /api/query HTTP/1.1" 200 OK
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+INFO:     127.0.0.1:60339 - "POST /api/query HTTP/1.1" 200 OK
+[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): 'QdrantClient' object has no attribute 'search'
+[GraphRAG] Neo4j query failed: Couldn't connect to localhost:7687 (resolved to ('[::1]:7687', '127.0.0.1:7687')):
+Failed to establish connection to ResolvedIPv6Address(('::1', 7687, 0, 0)) (reason [Errno 61] Connection refused)
+Failed to establish connection to ResolvedIPv4Address(('127.0.0.1', 7687)) (reason [Errno 61] Connection refused)
+INFO:     127.0.0.1:60339 - "POST /api/query HTTP/1.1" 200 OK
+WARNING:AFO.api.middleware.security:🚨 Potential SQL Injection blocked: q=SELECT
+INFO:     127.0.0.1:60720 - "GET /?q=SELECT HTTP/1.1" 403 Forbidden
+❌ PostgreSQL 연결 실패: [Errno 61] Connection refused
+INFO:     127.0.0.1:61057 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61348 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61354 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61359 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61365 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61372 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61379 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61389 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61395 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61407 - "GET /metrics HTTP/1.1" 200 OK
+❌ PostgreSQL 연결 실패: [Errno 61] Connection refused
+INFO:     127.0.0.1:61414 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61420 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61429 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61432 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61446 - "GET /metrics HTTP/1.1" 200 OK
+❌ PostgreSQL 연결 실패: [Errno 61] Connection refused
+INFO:     127.0.0.1:61448 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61454 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61459 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61461 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61464 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61470 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61476 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61480 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61487 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61495 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61499 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61508 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61511 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61517 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61523 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61528 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61529 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61533 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61535 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61538 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61541 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61542 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61543 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61548 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61551 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61555 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61558 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61560 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61565 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61569 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61572 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61574 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61581 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61589 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61593 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61608 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61631 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61708 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61775 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61819 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61887 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61952 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61999 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62056 - "GET /api/system/health HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:62092 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62154 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62162 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62167 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62176 - "GET /api/system/health HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:62182 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62196 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62207 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62226 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62271 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62283 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62300 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62322 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62331 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62539 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62555 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62560 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62562 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62568 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62575 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62585 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62586 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62588 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62592 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62595 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62597 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62601 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62602 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62605 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62608 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62610 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62612 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62614 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62616 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62618 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62621 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62625 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62627 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62629 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62635 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62639 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62644 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62647 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62651 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62654 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62656 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62658 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62662 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62663 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62667 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62675 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62681 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62687 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62693 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62694 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62696 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62700 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62705 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62707 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62709 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62710 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62713 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62715 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62717 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62719 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62723 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62724 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62726 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62728 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62730 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62732 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62734 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62735 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62739 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62741 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62748 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62750 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62759 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62763 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62768 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62772 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62779 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62784 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62788 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62789 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62793 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62800 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62803 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62807 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+WARNING:AFO.api.cleanup:Yeongdeok cleanup failed: 'YeongdeokComplete' object has no attribute 'close_eyes'
+INFO:     Application shutdown complete.
+INFO:     Finished server process [76966]

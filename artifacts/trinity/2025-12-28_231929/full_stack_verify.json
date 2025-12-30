@@ -1,0 +1,33 @@
+{
+  "asof": "2025-12-28_231929",
+  "backend": {
+    "url": "http://127.0.0.1:8010",
+    "health_http_head": "HTTP/1.1 405 Method Not Allowed\ndate: Mon, 29 Dec 2025 07:19:29 GMT\nserver: uvicorn\nallow: GET\ncontent-length: 31",
+    "organs_keys": [],
+    "organs_keys_length": null
+  },
+  "frontend": {
+    "url": "http://127.0.0.1:3000",
+    "kingdom_status_http_head": "HTTP/1.1 200 OK\nvary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch\ncontent-type: application/json\nDate: Mon, 29 Dec 2025 07:19:32 GMT\nConnection: close",
+    "organs_len": 11,
+    "organs_names": [
+      "心_Redis",
+      "肝_PostgreSQL",
+      "肺_API_Server",
+      "脾_Ollama",
+      "腎_Qdrant",
+      "眼_Dashboard",
+      "神経_MCP",
+      "耳_Observability",
+      "口_Docs",
+      "骨_CI",
+      "免疫_Trinity_Gate"
+    ]
+  },
+  "t20_ssot_checks": {
+    "backend_organs_4": false,
+    "frontend_organs_5": false,
+    "frontend_has_eyes": false,
+    "route_try_catch_return": true
+  }
+}

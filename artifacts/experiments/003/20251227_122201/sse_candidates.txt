@@ -1,0 +1,6 @@
+/api/education/sse
+/api/grok/stream
+/api/matrix-stream
+/api/stream/mcp/thoughts
+/api/system/logs/stream
+/logs/stream

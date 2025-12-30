@@ -1,0 +1,10 @@
+SSE_PATH=/api/thoughts/sse
+BASE_URL=http://localhost:8010
+== 1) Restart 8010 (best-effort autodetect) ==
+No docker container/compose/local PID detected. Please restart 8010 manually.
+== 2) Wait for health 200 ==
+Health OK at 1s
+== 3) SSE bytes capture (10s) ==
+bytes_10s=22
+== 4) Verdict ==
+✅ PASS: SSE not silent (bytes > 0). Heartbeat is working.

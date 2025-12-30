@@ -1,0 +1,1 @@
+{'royal': True, 'governance': True, 'trinity': True, 'auto_run': True}

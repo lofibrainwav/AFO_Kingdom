@@ -1,0 +1,51 @@
+{
+  "timestamp": 1766604368.994787,
+  "total_attacks": 6,
+  "attacks_blocked": 5,
+  "attacks_succeeded": 1,
+  "success_rate": 0.8333333333333334,
+  "results": [
+    {
+      "attack": "sql_injection",
+      "payloads_tested": 4,
+      "blocked": 1,
+      "status": "VULNERABLE"
+    },
+    {
+      "attack": "rate_limiting",
+      "requests_sent": 50,
+      "responses_received": 50,
+      "rate_limited": 0,
+      "errors": 0,
+      "blocked": false,
+      "status": "VULNERABLE"
+    },
+    {
+      "attack": "prompt_injection",
+      "payloads_tested": 4,
+      "blocked": 3,
+      "status": "VULNERABLE"
+    },
+    {
+      "attack": "path_traversal",
+      "payloads_tested": 4,
+      "blocked": 4,
+      "status": "BLOCKED"
+    },
+    {
+      "attack": "xss_payloads",
+      "payloads_tested": 4,
+      "blocked": 4,
+      "status": "BLOCKED"
+    },
+    {
+      "attack": "large_payload",
+      "payload_size_kb": 97.65625,
+      "response_time_seconds": 0.016624,
+      "status_code": 200,
+      "blocked": true,
+      "status": "BLOCKED"
+    }
+  ],
+  "assessment": "good"
+}

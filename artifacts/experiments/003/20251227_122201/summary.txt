@@ -1,0 +1,7 @@
+BEST_PATH: /api/education/sse
+PRE  pre_api_education_sse.log: bytes=0 data=no
+PRE  pre_api_grok_stream.log: bytes=0 data=no
+PRE  pre_api_matrix-stream.log: bytes=0 data=no
+PRE  pre_api_stream_mcp_thoughts.log: bytes=0 data=no
+PRE  pre_api_system_logs_stream.log: bytes=0 data=no
+POST post_api_education_sse.log: bytes=0 data=no

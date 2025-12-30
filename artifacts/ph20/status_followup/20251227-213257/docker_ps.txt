@@ -1,0 +1,10 @@
+NAMES                 IMAGE                             STATUS                  PORTS
+unruffled_ramanujan   e8cbb5c3ae86                      Up 7 minutes            
+nervous_cerf          a9f146c6e7cc                      Up 7 minutes            
+unruffled_black       e8cbb5c3ae86                      Up 7 minutes            
+heuristic_boyd        a9f146c6e7cc                      Up 7 minutes            
+afo-grafana           grafana/grafana:latest            Up 11 hours             0.0.0.0:3100->3000/tcp, [::]:3100->3000/tcp
+afo-redis-exporter    oliver006/redis_exporter:latest   Up 11 hours             0.0.0.0:9121->9121/tcp, [::]:9121->9121/tcp
+afo-prometheus        prom/prometheus:latest            Up 11 hours             0.0.0.0:9090->9090/tcp, [::]:9090->9090/tcp
+afo-cadvisor          gcr.io/cadvisor/cadvisor:latest   Up 11 hours (healthy)   0.0.0.0:8080->8080/tcp, [::]:8080->8080/tcp
+afo-node-exporter     prom/node-exporter:latest         Up 11 hours             0.0.0.0:9100->9100/tcp, [::]:9100->9100/tcp

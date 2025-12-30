@@ -1,0 +1,11 @@
+DEBUG: Using endpoint /api/context7/list
+=== CONTEXT7 REMOTE METADATA VERIFY (STRICT) ===
+BASE: http://127.0.0.1:8010
+endpoint: /api/context7/list
+items_loaded: 5
+expected_items_in_json: 9
+overlap_with_expected: 0
+❌ FAIL: remote returned fewer items than JSON SSOT expects
+hint: remote likely loaded only core knowledge (JSON/docs not loaded)
+expected_sample: ['docs/API_ENDPOINTS_REFERENCE.md', 'docs/TROUBLESHOOTING.md', 'docs/SYSTEM_DOCUMENTATION_COMPLETE.md', 'docs/DEPLOYMENT_GUIDE.md', 'docs/SKILLS_REGISTRY_REFERENCE.md']
+loaded_sample: ['mcp_ecosystem', 'mcp_protocol', 'sequential_thinking', 'skills_registry', 'trinity_philosophy']

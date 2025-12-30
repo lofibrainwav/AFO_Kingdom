@@ -1,0 +1,808 @@
+<?xml version="1.0" ?>
+<bom xmlns="http://cyclonedx.org/schema/bom/1.6" serialNumber="urn:uuid:a27241d8-ef65-4291-a012-168e8ad896bc" version="1">
+  <metadata>
+    <timestamp>2025-12-30T05:29:32.831886+00:00</timestamp>
+    <tools>
+      <components>
+        <component type="application">
+          <group>CycloneDX</group>
+          <name>cyclonedx-py</name>
+          <version>7.2.1</version>
+          <description>CycloneDX Software Bill of Materials (SBOM) generator for Python projects and environments</description>
+          <licenses>
+            <license acknowledgement="declared">
+              <id>Apache-2.0</id>
+            </license>
+          </licenses>
+          <externalReferences>
+            <reference type="build-system">
+              <url>https://github.com/CycloneDX/cyclonedx-python/actions</url>
+            </reference>
+            <reference type="distribution">
+              <url>https://pypi.org/project/cyclonedx-bom/</url>
+            </reference>
+            <reference type="documentation">
+              <url>https://cyclonedx-bom-tool.readthedocs.io/</url>
+            </reference>
+            <reference type="issue-tracker">
+              <url>https://github.com/CycloneDX/cyclonedx-python/issues</url>
+            </reference>
+            <reference type="license">
+              <url>https://github.com/CycloneDX/cyclonedx-python/blob/main/LICENSE</url>
+            </reference>
+            <reference type="release-notes">
+              <url>https://github.com/CycloneDX/cyclonedx-python/blob/main/CHANGELOG.md</url>
+            </reference>
+            <reference type="vcs">
+              <url>https://github.com/CycloneDX/cyclonedx-python/</url>
+            </reference>
+            <reference type="website">
+              <url>https://github.com/CycloneDX/cyclonedx-python/#readme</url>
+            </reference>
+          </externalReferences>
+        </component>
+        <component type="library">
+          <group>CycloneDX</group>
+          <name>cyclonedx-python-lib</name>
+          <version>11.6.0</version>
+          <description>Python library for CycloneDX</description>
+          <licenses>
+            <license acknowledgement="declared">
+              <id>Apache-2.0</id>
+            </license>
+          </licenses>
+          <externalReferences>
+            <reference type="build-system">
+              <url>https://github.com/CycloneDX/cyclonedx-python-lib/actions</url>
+            </reference>
+            <reference type="distribution">
+              <url>https://pypi.org/project/cyclonedx-python-lib/</url>
+            </reference>
+            <reference type="documentation">
+              <url>https://cyclonedx-python-library.readthedocs.io/</url>
+            </reference>
+            <reference type="issue-tracker">
+              <url>https://github.com/CycloneDX/cyclonedx-python-lib/issues</url>
+            </reference>
+            <reference type="license">
+              <url>https://github.com/CycloneDX/cyclonedx-python-lib/blob/main/LICENSE</url>
+            </reference>
+            <reference type="release-notes">
+              <url>https://github.com/CycloneDX/cyclonedx-python-lib/blob/main/CHANGELOG.md</url>
+            </reference>
+            <reference type="vcs">
+              <url>https://github.com/CycloneDX/cyclonedx-python-lib</url>
+            </reference>
+            <reference type="website">
+              <url>https://github.com/CycloneDX/cyclonedx-python-lib/#readme</url>
+            </reference>
+          </externalReferences>
+        </component>
+      </components>
+    </tools>
+  </metadata>
+  <components>
+    <component type="library" bom-ref="requirements-L42">
+      <name>PyMuPDF</name>
+      <description>requirements line 42: PyMuPDF&gt;=1.23.7</description>
+      <purl>pkg:pypi/pymupdf</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/PyMuPDF/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L13">
+      <name>aiofiles</name>
+      <description>requirements line 13: aiofiles&gt;=23.2.1</description>
+      <purl>pkg:pypi/aiofiles</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/aiofiles/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L23">
+      <name>alembic</name>
+      <description>requirements line 23: alembic&gt;=1.13.1</description>
+      <purl>pkg:pypi/alembic</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/alembic/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L32">
+      <name>anthropic</name>
+      <description>requirements line 32: anthropic&gt;=0.18.0</description>
+      <purl>pkg:pypi/anthropic</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/anthropic/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L15">
+      <name>anyio</name>
+      <version>4.7.0</version>
+      <description>requirements line 15: anyio==4.7.0</description>
+      <purl>pkg:pypi/anyio@4.7.0</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/anyio/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L20">
+      <name>asyncpg</name>
+      <description>requirements line 20: asyncpg&gt;=0.31.0</description>
+      <purl>pkg:pypi/asyncpg</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/asyncpg/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L56">
+      <name>bcrypt</name>
+      <description>requirements line 56: bcrypt&gt;=4.1.2</description>
+      <purl>pkg:pypi/bcrypt</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/bcrypt/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L37">
+      <name>chromadb</name>
+      <description>requirements line 37: chromadb&gt;=0.4.18</description>
+      <purl>pkg:pypi/chromadb</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/chromadb/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L52">
+      <name>click</name>
+      <description>requirements line 52: click&gt;=8.1.7</description>
+      <purl>pkg:pypi/click</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/click/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L57">
+      <name>cryptography</name>
+      <description>requirements line 57: cryptography&gt;=44.0.0</description>
+      <purl>pkg:pypi/cryptography</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/cryptography/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L39">
+      <name>faiss-cpu</name>
+      <description>requirements line 39: faiss-cpu&gt;=1.8.0</description>
+      <purl>pkg:pypi/faiss-cpu</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/faiss-cpu/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L6">
+      <name>fastapi</name>
+      <description>requirements line 6: fastapi&gt;=0.123.0</description>
+      <purl>pkg:pypi/fastapi</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/fastapi/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L33">
+      <name>google-generativeai</name>
+      <description>requirements line 33: google-generativeai&gt;=0.3.2</description>
+      <purl>pkg:pypi/google-generativeai</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/google-generativeai/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L12">
+      <name>httpx</name>
+      <description>requirements line 12: httpx&gt;=0.28.0</description>
+      <purl>pkg:pypi/httpx</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/httpx/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L91">
+      <name>hvac</name>
+      <description>requirements line 91: hvac&gt;=2.1.0</description>
+      <purl>pkg:pypi/hvac</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/hvac/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L75">
+      <name>ipykernel</name>
+      <description>requirements line 75: ipykernel&gt;=6.27.1</description>
+      <purl>pkg:pypi/ipykernel</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/ipykernel/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L51">
+      <name>jinja2</name>
+      <description>requirements line 51: jinja2&gt;=3.1.5</description>
+      <purl>pkg:pypi/jinja2</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/jinja2/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L27">
+      <name>langchain</name>
+      <description>requirements line 27: langchain&gt;=0.2.0</description>
+      <purl>pkg:pypi/langchain</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/langchain/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L29">
+      <name>langchain-community</name>
+      <description>requirements line 29: langchain-community&gt;=0.2.0</description>
+      <purl>pkg:pypi/langchain-community</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/langchain-community/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L30">
+      <name>langchain-core</name>
+      <description>requirements line 30: langchain-core&gt;=1.2.0</description>
+      <purl>pkg:pypi/langchain-core</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/langchain-core/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L28">
+      <name>langchain-openai</name>
+      <description>requirements line 28: langchain-openai&gt;=0.1.0</description>
+      <purl>pkg:pypi/langchain-openai</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/langchain-openai/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L86">
+      <name>loguru</name>
+      <description>requirements line 86: loguru&gt;=0.7.2</description>
+      <purl>pkg:pypi/loguru</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/loguru/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L90">
+      <name>mcp</name>
+      <description>requirements line 90: mcp&gt;=1.24.0</description>
+      <purl>pkg:pypi/mcp</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/mcp/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L78">
+      <name>mkdocs</name>
+      <description>requirements line 78: mkdocs&gt;=1.5.3</description>
+      <purl>pkg:pypi/mkdocs</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/mkdocs/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L79">
+      <name>mkdocs-material</name>
+      <description>requirements line 79: mkdocs-material&gt;=9.4.8</description>
+      <purl>pkg:pypi/mkdocs-material</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/mkdocs-material/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L69">
+      <name>mypy</name>
+      <version>1.7.1</version>
+      <description>requirements line 69: mypy==1.7.1</description>
+      <purl>pkg:pypi/mypy@1.7.1</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/mypy/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L82">
+      <name>numpy</name>
+      <description>requirements line 82: numpy&gt;=1.26.2</description>
+      <purl>pkg:pypi/numpy</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/numpy/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L31">
+      <name>openai</name>
+      <description>requirements line 31: openai&gt;=1.10.0</description>
+      <purl>pkg:pypi/openai</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/openai/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L46">
+      <name>openpyxl</name>
+      <description>requirements line 46: openpyxl&gt;=3.1.2</description>
+      <purl>pkg:pypi/openpyxl</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/openpyxl/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L45">
+      <name>pandas</name>
+      <description>requirements line 45: pandas&gt;=2.1.4</description>
+      <purl>pkg:pypi/pandas</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/pandas/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L58">
+      <name>passlib</name>
+      <description>requirements line 58: passlib&gt;=1.7.4</description>
+      <purl>pkg:pypi/passlib</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/passlib/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L94">
+      <name>playwright</name>
+      <description>requirements line 94: playwright&gt;=1.49.0</description>
+      <purl>pkg:pypi/playwright</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/playwright/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L62">
+      <name>prometheus-client</name>
+      <description>requirements line 62: prometheus-client&gt;=0.19.0</description>
+      <purl>pkg:pypi/prometheus-client</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/prometheus-client/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L19">
+      <name>psycopg2-binary</name>
+      <description>requirements line 19: psycopg2-binary&gt;=2.9.9</description>
+      <purl>pkg:pypi/psycopg2-binary</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/psycopg2-binary/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L8">
+      <name>pydantic</name>
+      <description>requirements line 8: pydantic&gt;=2.12.0</description>
+      <purl>pkg:pypi/pydantic</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/pydantic/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L9">
+      <name>pydantic-settings</name>
+      <description>requirements line 9: pydantic-settings&gt;=2.5.2</description>
+      <purl>pkg:pypi/pydantic-settings</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/pydantic-settings/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L71">
+      <name>pyright</name>
+      <description>requirements line 71: pyright&gt;=1.1.391</description>
+      <purl>pkg:pypi/pyright</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/pyright/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L66">
+      <name>pytest</name>
+      <version>7.4.3</version>
+      <description>requirements line 66: pytest==7.4.3</description>
+      <purl>pkg:pypi/pytest@7.4.3</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/pytest/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L67">
+      <name>pytest-asyncio</name>
+      <version>0.21.1</version>
+      <description>requirements line 67: pytest-asyncio==0.21.1</description>
+      <purl>pkg:pypi/pytest-asyncio@0.21.1</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/pytest-asyncio/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L68">
+      <name>pytest-cov</name>
+      <version>4.1.0</version>
+      <description>requirements line 68: pytest-cov==4.1.0</description>
+      <purl>pkg:pypi/pytest-cov@4.1.0</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/pytest-cov/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L43">
+      <name>python-docx</name>
+      <description>requirements line 43: python-docx&gt;=1.1.0</description>
+      <purl>pkg:pypi/python-docx</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/python-docx/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L49">
+      <name>python-dotenv</name>
+      <description>requirements line 49: python-dotenv&gt;=1.0.0</description>
+      <purl>pkg:pypi/python-dotenv</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/python-dotenv/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L50">
+      <name>python-multipart</name>
+      <description>requirements line 50: python-multipart&gt;=0.0.9</description>
+      <purl>pkg:pypi/python-multipart</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/python-multipart/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L44">
+      <name>python-pptx</name>
+      <description>requirements line 44: python-pptx&gt;=0.6.23</description>
+      <purl>pkg:pypi/python-pptx</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/python-pptx/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L87">
+      <name>pyyaml</name>
+      <description>requirements line 87: pyyaml&gt;=6.0.1</description>
+      <purl>pkg:pypi/pyyaml</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/pyyaml/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L38">
+      <name>qdrant-client</name>
+      <description>requirements line 38: qdrant-client&gt;=1.15.1</description>
+      <purl>pkg:pypi/qdrant-client</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/qdrant-client/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L21">
+      <name>redis</name>
+      <description>requirements line 21: redis&gt;=5.2.1</description>
+      <purl>pkg:pypi/redis</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/redis/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L53">
+      <name>rich</name>
+      <description>requirements line 53: rich&gt;=13.7.0</description>
+      <purl>pkg:pypi/rich</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/rich/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L70">
+      <name>ruff</name>
+      <version>0.14.10</version>
+      <description>requirements line 70: ruff==0.14.10</description>
+      <purl>pkg:pypi/ruff@0.14.10</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/ruff/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L83">
+      <name>scipy</name>
+      <description>requirements line 83: scipy&gt;=1.11.4</description>
+      <purl>pkg:pypi/scipy</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/scipy/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L34">
+      <name>sentence-transformers</name>
+      <description>requirements line 34: sentence-transformers&gt;=2.2.2</description>
+      <purl>pkg:pypi/sentence-transformers</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/sentence-transformers/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L16">
+      <name>sentry-sdk</name>
+      <description>requirements line 16: sentry-sdk[fastapi]&gt;=2.15.0</description>
+      <purl>pkg:pypi/sentry-sdk</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/sentry-sdk/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+      <properties>
+        <property name="cdx:python:package:required-extra">fastapi</property>
+      </properties>
+    </component>
+    <component type="library" bom-ref="requirements-L63">
+      <name>sentry-sdk</name>
+      <description>requirements line 63: sentry-sdk&gt;=1.38.0</description>
+      <purl>pkg:pypi/sentry-sdk</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/sentry-sdk/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L59">
+      <name>slowapi</name>
+      <description>requirements line 59: slowapi&gt;=0.1.9</description>
+      <purl>pkg:pypi/slowapi</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/slowapi/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L22">
+      <name>sqlalchemy</name>
+      <description>requirements line 22: sqlalchemy&gt;=2.0.23</description>
+      <purl>pkg:pypi/sqlalchemy</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/sqlalchemy/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L14">
+      <name>sse-starlette</name>
+      <description>requirements line 14: sse-starlette&gt;=1.8.2</description>
+      <purl>pkg:pypi/sse-starlette</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/sse-starlette/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L24">
+      <name>types-redis</name>
+      <description>requirements line 24: types-redis&gt;=4.6.0</description>
+      <purl>pkg:pypi/types-redis</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/types-redis/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+    <component type="library" bom-ref="requirements-L7">
+      <name>uvicorn</name>
+      <description>requirements line 7: uvicorn[standard]&gt;=0.31.1</description>
+      <purl>pkg:pypi/uvicorn</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/uvicorn/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+      <properties>
+        <property name="cdx:python:package:required-extra">standard</property>
+      </properties>
+    </component>
+    <component type="library" bom-ref="requirements-L74">
+      <name>watchdog</name>
+      <description>requirements line 74: watchdog&gt;=3.0.0</description>
+      <purl>pkg:pypi/watchdog</purl>
+      <externalReferences>
+        <reference type="distribution">
+          <url>https://pypi.org/simple/watchdog/</url>
+          <comment>implicit dist url</comment>
+        </reference>
+      </externalReferences>
+    </component>
+  </components>
+  <dependencies>
+    <dependency ref="requirements-L12"/>
+    <dependency ref="requirements-L13"/>
+    <dependency ref="requirements-L14"/>
+    <dependency ref="requirements-L15"/>
+    <dependency ref="requirements-L16"/>
+    <dependency ref="requirements-L19"/>
+    <dependency ref="requirements-L20"/>
+    <dependency ref="requirements-L21"/>
+    <dependency ref="requirements-L22"/>
+    <dependency ref="requirements-L23"/>
+    <dependency ref="requirements-L24"/>
+    <dependency ref="requirements-L27"/>
+    <dependency ref="requirements-L28"/>
+    <dependency ref="requirements-L29"/>
+    <dependency ref="requirements-L30"/>
+    <dependency ref="requirements-L31"/>
+    <dependency ref="requirements-L32"/>
+    <dependency ref="requirements-L33"/>
+    <dependency ref="requirements-L34"/>
+    <dependency ref="requirements-L37"/>
+    <dependency ref="requirements-L38"/>
+    <dependency ref="requirements-L39"/>
+    <dependency ref="requirements-L42"/>
+    <dependency ref="requirements-L43"/>
+    <dependency ref="requirements-L44"/>
+    <dependency ref="requirements-L45"/>
+    <dependency ref="requirements-L46"/>
+    <dependency ref="requirements-L49"/>
+    <dependency ref="requirements-L50"/>
+    <dependency ref="requirements-L51"/>
+    <dependency ref="requirements-L52"/>
+    <dependency ref="requirements-L53"/>
+    <dependency ref="requirements-L56"/>
+    <dependency ref="requirements-L57"/>
+    <dependency ref="requirements-L58"/>
+    <dependency ref="requirements-L59"/>
+    <dependency ref="requirements-L6"/>
+    <dependency ref="requirements-L62"/>
+    <dependency ref="requirements-L63"/>
+    <dependency ref="requirements-L66"/>
+    <dependency ref="requirements-L67"/>
+    <dependency ref="requirements-L68"/>
+    <dependency ref="requirements-L69"/>
+    <dependency ref="requirements-L7"/>
+    <dependency ref="requirements-L70"/>
+    <dependency ref="requirements-L71"/>
+    <dependency ref="requirements-L74"/>
+    <dependency ref="requirements-L75"/>
+    <dependency ref="requirements-L78"/>
+    <dependency ref="requirements-L79"/>
+    <dependency ref="requirements-L8"/>
+    <dependency ref="requirements-L82"/>
+    <dependency ref="requirements-L83"/>
+    <dependency ref="requirements-L86"/>
+    <dependency ref="requirements-L87"/>
+    <dependency ref="requirements-L9"/>
+    <dependency ref="requirements-L90"/>
+    <dependency ref="requirements-L91"/>
+    <dependency ref="requirements-L94"/>
+  </dependencies>
+</bom>

@@ -1,0 +1,64 @@
+{
+  "ticket": "T26",
+  "timestamp": "20251225-2145",
+  "report": "docs/reports/T26_ROYAL_FINANCE_SSOT.md",
+  "evidence_dir": "artifacts/t26/20251225-2145",
+  "created_at_utc": 1766728337,
+  "files": [
+    {
+      "path": "approve_options_body.txt",
+      "bytes": 31,
+      "sha256": "83c09ba9a8daedb136f90b17a294caa90ad471a016e430df6e229acb5a81e100"
+    },
+    {
+      "path": "approve_options_headers.txt",
+      "bytes": 209,
+      "sha256": "4194aa1da31b34f7e89ba8aec50d4b3f257dc90618c422b5f9d1dbc7d38f9f5c"
+    },
+    {
+      "path": "bytes.txt",
+      "bytes": 590,
+      "sha256": "c354714732865ed80c075532633250c46b1ad277dcb2f0a8eff562794afd2ae0"
+    },
+    {
+      "path": "dashboard_headers.txt",
+      "bytes": 582,
+      "sha256": "727c5d6e6d97529ffaa1534e96e8a2bda7edc030fcbbc74f65e8613b1e4fe483"
+    },
+    {
+      "path": "docker_ps.txt",
+      "bytes": 1164,
+      "sha256": "6aabb60d85e91c641a39391448d3df0c6ef75354274bd9f3834b84099a8f1894"
+    },
+    {
+      "path": "git_files_changed.txt",
+      "bytes": 253,
+      "sha256": "2c2ad798e21e2ec86849cd6b2dae04d4caf84fbf4b77b7505bd854b7f153b0d7"
+    },
+    {
+      "path": "git_status.txt",
+      "bytes": 557,
+      "sha256": "a66b950a2d4ae5403e1676ed4f52f20a12110fe90aca883ef30dcc4136c5dc3f"
+    },
+    {
+      "path": "json_parse.txt",
+      "bytes": 41,
+      "sha256": "069a013b0e87719caab68fa3643859be146371379a4bba539fc59860dff85fa6"
+    },
+    {
+      "path": "julie_dashboard_body.json",
+      "bytes": 1515,
+      "sha256": "597abd12bc4e7d8f3a33fda39eee455f3df0bd4cf8e4c405c154beff4bf4ecf7"
+    },
+    {
+      "path": "julie_dashboard_headers.txt",
+      "bytes": 254,
+      "sha256": "fa35b8d72b3bc9348f16144132285dbc1f8e8fd35635959b3f95c2892a81005f"
+    },
+    {
+      "path": "ls_la.txt",
+      "bytes": 819,
+      "sha256": "55544a4550b14f1d5f2f9d86fb22d8fcf772a8ad3a43eec1da889d6b236de8ac"
+    }
+  ]
+}

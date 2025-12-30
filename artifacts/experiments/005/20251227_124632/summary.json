@@ -1,0 +1,15 @@
+{
+  "http": {
+    "8010_api_health": "200",
+    "8001_health": "200",
+    "3000_root": "200"
+  },
+  "security": {
+    "revalidate_unauth_status": "401",
+    "revalidate_auth_status": null
+  },
+  "sse": {
+    "best_path": "/api/education/sse",
+    "bytes_10s": "0"
+  }
+}

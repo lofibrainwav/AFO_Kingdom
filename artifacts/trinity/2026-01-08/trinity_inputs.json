@@ -1,0 +1,36 @@
+{
+  "as_of": "2026-01-08T09:45:28Z",
+  "version": "1.0.0",
+  "sources": {
+    "canary": {
+      "fragment_status": 200,
+      "revalidate_status": 200,
+      "last_check": "2026-01-08T09:40:27Z"
+    },
+    "ci_status": {
+      "last_run": "2026-01-08T08:30:00Z",
+      "success_rate": 96.7,
+      "failed_checks": 0
+    },
+    "ssot_compliance": {
+      "facts_count": 15,
+      "notes_count": 8,
+      "proposals_count": 3,
+      "evidence_links": 12
+    },
+    "system_health": {
+      "api_status": "healthy",
+      "db_status": "healthy",
+      "mcp_status": "healthy"
+    },
+    "user_feedback": {
+      "friction_reports": 0,
+      "satisfaction_score": 4.8
+    }
+  },
+  "metadata": {
+    "generated_by": "Trinity Score Evidence Generator v1.0",
+    "environment": "development",
+    "commit_hash": "819a153d0741c23a082b3453a77da2751d5bab8a"
+  }
+}

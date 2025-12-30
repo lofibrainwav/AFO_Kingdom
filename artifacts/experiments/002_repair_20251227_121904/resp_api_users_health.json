@@ -1,0 +1,1 @@
+{"status":"healthy","message":"사용자 관리 시스템 정상 작동 중","features":{"create_user":"available","get_user":"available","update_user":"available","delete_user":"available","database":"available","password_hashing":"available"}}

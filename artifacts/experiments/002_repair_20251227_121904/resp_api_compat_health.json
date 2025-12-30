@@ -1,0 +1,1 @@
+{"status":"healthy","service":"strangler-fig-compat","pattern":"HTML → React Migration","endpoints":["/api/compat/personas","/api/compat/ports","/api/compat/royal-rules","/api/compat/philosophy","/api/compat/architecture","/api/compat/stats"]}

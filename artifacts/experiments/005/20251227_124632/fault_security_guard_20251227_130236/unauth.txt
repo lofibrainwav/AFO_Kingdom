@@ -1,0 +1,9 @@
+HTTP/1.1 401 Unauthorized
+date: Sat, 27 Dec 2025 21:02:48 GMT
+server: uvicorn
+content-length: 25
+content-type: application/json
+x-response-time: 1.43ms
+x-trace-id: trc_14130f71473c
+
+{"detail":"unauthorized"}

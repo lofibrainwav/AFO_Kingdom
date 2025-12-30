@@ -1,0 +1,49 @@
+{
+  "ticket": "T24",
+  "timestamp": "20251225-2251",
+  "report": "docs/reports/T24_Skills Manager Widget_SSOT.md",
+  "evidence_dir": "artifacts/t24/20251225-2251",
+  "created_at_utc": 1766732210,
+  "files": [
+    {
+      "path": "component_lines.txt",
+      "bytes": 251,
+      "sha256": "a30ab6e7526259dc76cbff172c27d6a923ef61cf7f6d2f13fde911c00c707b0e"
+    },
+    {
+      "path": "docker_ps.txt",
+      "bytes": 1164,
+      "sha256": "933a46614e8eab03b12a0146cee4bac3f95cdc6247b0869753e94aba27a4c6e2"
+    },
+    {
+      "path": "evidence_summary.txt",
+      "bytes": 825,
+      "sha256": "a61771c4d528ca9e45dddb154be0d5ad0fa5c9254c507d32ded2fba730ff5b55"
+    },
+    {
+      "path": "git_files_changed.txt",
+      "bytes": 742,
+      "sha256": "33a9c2ea31aad5c8013af629fe88b67c68919b38ecf91ea5d171636069682472"
+    },
+    {
+      "path": "git_status.txt",
+      "bytes": 1599,
+      "sha256": "e8e3b008c031fcb1ba4156a61f92031eb4975fcd8458d8505e0f9147ba8c6de7"
+    },
+    {
+      "path": "skills_body.json",
+      "bytes": 27323,
+      "sha256": "55d193d5aad5db415e7fcf3b68f5f716089cdf94aee99658d005810e03d24d62"
+    },
+    {
+      "path": "skills_headers.txt",
+      "bytes": 226,
+      "sha256": "72fd8c7acf25c93d5badc3526247c7f7ad6e073f1deece3770952cd72fde7611"
+    },
+    {
+      "path": "skills_headers_fixed.txt",
+      "bytes": 252,
+      "sha256": "12ee8c694645b66fc09ceb40043e0f308dee0f0a585af8a5f55c6fa3627764fa"
+    }
+  ]
+}

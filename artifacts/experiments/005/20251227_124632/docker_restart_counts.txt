@@ -1,0 +1,9 @@
+/afo-rag-service 0
+/afo-redis 0
+/afo-qdrant 0
+/afo-postgres 0
+/afo-grafana 0
+/afo-redis-exporter 0
+/afo-prometheus 0
+/afo-cadvisor 0
+/afo-node-exporter 0

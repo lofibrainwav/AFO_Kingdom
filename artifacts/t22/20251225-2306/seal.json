@@ -1,0 +1,29 @@
+{
+  "ticket": "T22",
+  "timestamp": "20251225-2306",
+  "report": "docs/reports/T22_GRAPHRAG_BRAIN_INTERFACE_SSOT.md",
+  "evidence_dir": "artifacts/t22/20251225-2306",
+  "created_at_utc": 1766732993,
+  "files": [
+    {
+      "path": "docker_ps.txt",
+      "bytes": 462,
+      "sha256": "633a4f3938a1d41829f22f93e98ff415dc27b7fed27d0b52819d65fb10b5388e"
+    },
+    {
+      "path": "git_status.txt",
+      "bytes": 1711,
+      "sha256": "3299a4a215e53f99db550961adc09402edae7565ed8a6c86f31a3f0100ff3b30"
+    },
+    {
+      "path": "graphrag_tsx_lines.txt",
+      "bytes": 61,
+      "sha256": "99ca9ffa20e9a6baca783042d1ee957c324296bb9fc383345c9b613f24ecd0e8"
+    },
+    {
+      "path": "rag_query_lines.txt",
+      "bytes": 52,
+      "sha256": "4398cd8e2ae15104756f82927069aab0622993ee905802576dbe7cb06844498c"
+    }
+  ]
+}

@@ -1,0 +1,2 @@
+ts=20251227-213054
+pwd=/Users/brnestrm/AFO_Kingdom

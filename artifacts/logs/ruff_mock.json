@@ -1,0 +1,14 @@
+[
+  {
+    "code": "F401",
+    "filename": "mock.py",
+    "line": 1,
+    "message": "Module imported but unused"
+  },
+  {
+    "code": "E501",
+    "filename": "mock.py",
+    "line": 10,
+    "message": "Line too long"
+  }
+]

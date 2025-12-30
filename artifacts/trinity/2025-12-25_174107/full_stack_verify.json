@@ -1,0 +1,26 @@
+{
+  "asof": "2025-12-25_174107",
+  "backend": {
+    "url": "http://127.0.0.1:8010",
+    "health_http_head": "HTTP/1.1 200 OK\ndate: Fri, 26 Dec 2025 01:41:07 GMT\nserver: uvicorn\ncontent-length: 2298\ncontent-type: application/json",
+    "organs_keys": [
+      "心_Redis",
+      "肝_PostgreSQL",
+      "肺_API_Server",
+      "脾_Ollama"
+    ],
+    "organs_keys_length": 4
+  },
+  "frontend": {
+    "url": "http://127.0.0.1:3000",
+    "kingdom_status_http_head": "",
+    "organs_len": 0,
+    "organs_names": []
+  },
+  "t20_ssot_checks": {
+    "backend_organs_4": true,
+    "frontend_organs_5": false,
+    "frontend_has_eyes": false,
+    "route_try_catch_return": true
+  }
+}

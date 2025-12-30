@@ -1,0 +1,10 @@
+=== CONTEXT7 REMOTE METADATA VERIFY ===
+BASE: http://127.0.0.1:8010
+endpoint: /api/context7/list
+items_loaded: 6
+expected_items_in_json: 0
+matched_items: 0
+missing_metadata_on_expected_items: 0
+mismatches: 0
+WARN: did not observe category 'API Reference' in returned items
+✅ PASS: metadata aligned with JSON SSOT

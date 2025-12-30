@@ -1,0 +1,3 @@
+== (2) wallet_server.py 자동 탐지 + 라우트 덤프 ==
+wallet_server=1356:packages/afo-core/wallet_server.py
+NO_WALLET_SERVER_PATH

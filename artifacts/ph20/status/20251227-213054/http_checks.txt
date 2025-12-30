@@ -1,0 +1,10 @@
+--- http://localhost:9090/-/healthy
+200
+--- http://localhost:3100/api/health
+200
+--- http://localhost:8080/healthz
+200
+--- http://localhost:9100/metrics
+200
+--- http://localhost:9121/metrics
+200

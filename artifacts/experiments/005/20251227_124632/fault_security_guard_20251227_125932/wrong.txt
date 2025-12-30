@@ -1,0 +1,9 @@
+HTTP/1.1 503 Service Unavailable
+date: Sat, 27 Dec 2025 20:59:32 GMT
+server: uvicorn
+content-length: 43
+content-type: application/json
+x-response-time: 2.94ms
+x-trace-id: trc_51c7659a05ff
+
+{"detail":"internal secret not configured"}

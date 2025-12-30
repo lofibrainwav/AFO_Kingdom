@@ -1,0 +1,21 @@
+--- docker info ---
+--- pull image ---
+b56621c4ceb4c2f86e371ee331e8983a9be8b3c6: Pulling from lofibrainwav/afo-core-soul-engine
+Digest: sha256:f44a9abb41021619ef7ec8ae5bb3559b8c460ae1bfcdc36963a5c358578c341b
+Status: Image is up to date for ghcr.io/lofibrainwav/afo-core-soul-engine:b56621c4ceb4c2f86e371ee331e8983a9be8b3c6
+ghcr.io/lofibrainwav/afo-core-soul-engine:b56621c4ceb4c2f86e371ee331e8983a9be8b3c6
+--- stop/remove old container (if exists) ---
+--- run ---
+--- wait health (api/health/comprehensive) ---
+--- verify health payload keys ---
+Traceback (most recent call last):
+  File "<stdin>", line 2, in <module>
+  File "/usr/lib/python3.10/json/__init__.py", line 293, in load
+    return loads(fp.read(),
+  File "/usr/lib/python3.10/json/__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+  File "/usr/lib/python3.10/json/decoder.py", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+  File "/usr/lib/python3.10/json/decoder.py", line 355, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)

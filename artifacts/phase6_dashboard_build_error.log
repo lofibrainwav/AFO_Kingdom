@@ -1,0 +1,155 @@
+
+> trinity-dashboard@0.1.0 prebuild
+> pnpm gen:widgets && pnpm gen:fragments
+
+
+> trinity-dashboard@0.1.0 gen:widgets /Users/brnestrm/AFO_Kingdom/packages/dashboard
+> node scripts/generate_widgets_from_html.mjs
+
+📐 HTML 파서 → generated JSON 생성 시작...
+
+1. HTML 파일 읽기: /Users/brnestrm/AFO_Kingdom/packages/dashboard/public/legacy/kingdom_dashboard.html
+   ✅ 파일 크기: 256231 bytes
+
+2. 섹션 파싱 중...
+   ✅ 35개 위젯 발견
+
+3. JSON 파일 생성...
+   ✅ 생성 완료: /Users/brnestrm/AFO_Kingdom/packages/dashboard/src/generated/widgets.generated.json
+   ✅ 위젯 개수: 35
+
+✅ HTML 파서 → generated JSON 생성 완료!
+
+
+> trinity-dashboard@0.1.0 gen:fragments /Users/brnestrm/AFO_Kingdom/packages/dashboard
+> node scripts/generate_fragments.mjs
+
+📐 HTML Fragment 생성 시작...
+
+✅ philosophy-widget.html 생성 완료
+✅ realtime-status-widget.html 생성 완료
+✅ table-of-contents-widget.html 생성 완료
+✅ architecture-widget.html 생성 완료
+✅ chancellor-widget.html 생성 완료
+✅ architecture-detail-widget.html 생성 완료
+✅ organs-map-widget.html 생성 완료
+✅ ssot-widget.html 생성 완료
+✅ lock-widget.html 생성 완료
+✅ organs-widget.html 생성 완료
+✅ integrity-widget.html 생성 완료
+✅ field-manual-widget.html 생성 완료
+✅ agents-md-widget.html 생성 완료
+✅ claude-md-widget.html 생성 완료
+✅ mcp-tools-widget.html 생성 완료
+✅ cursor-md-widget.html 생성 완료
+✅ grok-md-widget.html 생성 완료
+✅ agent-brotherhood-widget.html 생성 완료
+✅ knowledge-learning-widget.html 생성 완료
+✅ mcp-skill-mastery-widget.html 생성 완료
+✅ mcp-definition-widget.html 생성 완료
+✅ unified-server-structure-widget.html 생성 완료
+✅ tools-widget.html 생성 완료
+✅ git-widget.html 생성 완료
+✅ technical-debt-widget.html 생성 완료
+✅ daily-check-widget.html 생성 완료
+✅ git-tree-widget.html 생성 완료
+✅ project-structure-widget.html 생성 완료
+✅ status.html 생성 완료
+✅ library.html 생성 완료
+✅ scholars.html 생성 완료
+✅ widget-ideas.html 생성 완료
+✅ git-tree-analysis.html 생성 완료
+✅ project-structure.html 생성 완료
+✅ graphrag.html 생성 완료
+
+📊 결과:
+   ✅ 성공: 35개
+   📁 저장 경로: /Users/brnestrm/AFO_Kingdom/packages/dashboard/public/fragments
+
+✅ HTML Fragment 생성 완료!
+
+> trinity-dashboard@0.1.0 build
+> next build
+
+ ⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of /Users/brnestrm/AFO_Kingdom/package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * /Users/brnestrm/AFO_Kingdom/packages/dashboard/pnpm-lock.yaml
+
+   ▲ Next.js 16.0.10 (Turbopack)
+   - Environments: .env.local
+   - Experiments (use with caution):
+     · optimizePackageImports
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 5.4s
+   Running TypeScript ...
+   Collecting page data using 13 workers ...
+ ⚠ Using edge runtime on a page currently disables static generation for that page
+   Generating static pages using 13 workers (0/76) ...
+   Generating static pages using 13 workers (19/76) 
+   Generating static pages using 13 workers (38/76) 
+   Generating static pages using 13 workers (57/76) 
+ ✓ Generating static pages using 13 workers (76/76) in 362.9ms
+   Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ○ /aicpa_julie
+├ ƒ /api/chancellor
+├ ƒ /api/docs/[filename]
+├ ƒ /api/family
+├ ƒ /api/git-tree
+├ ƒ /api/health
+├ ƒ /api/kingdom-status
+├ ƒ /api/mcp/thoughts/sse
+├ ƒ /api/ops/revalidate-canary
+├ ƒ /api/revalidate
+├ ƒ /api/serenity/create
+├ ƒ /api/skills
+├ ƒ /api/ssot-status
+├ ƒ /api/trinity-evidence
+├ ƒ /api/visual-agent
+├ ○ /docs
+├ ƒ /docs/[slug]
+├ ● /docs/[slug]
+│ └ /docs/project-structure
+├ ƒ /docs/[slug]/live
+├ ○ /docs/agents-md
+├ ○ /docs/architecture
+├ ○ /docs/chancellor
+├ ○ /docs/claude-md
+├ ○ /docs/codex-md
+├ ○ /docs/cursor-md
+├ ○ /docs/git-tree
+├ ○ /docs/grok-md
+├ ○ /docs/manual
+├ ○ /docs/mcp-tools
+├ ○ /docs/organs-map
+├ ○ /docs/philosophical-copilot
+├ ○ /docs/philosophy
+├ ○ /docs/project-structure
+├ ○ /docs/realtime-status
+├ ○ /docs/ssot
+├ ○ /docs/tools
+├ ○ /family
+├ ○ /genui/test_allowed
+├ ○ /genui/test_calc_v1
+├ ○ /genui/test_vision_block
+├ ○ /genui/verification_genui_v1
+├ ○ /git-tree
+├ ○ /kingdom-status
+├ ○ /royal
+├ ƒ /sandbox/[componentName]
+├ ○ /serenity
+├ ○ /skills
+└ ○ /wallet
+
+
+○  (Static)   prerendered as static content
+●  (SSG)      prerendered as static HTML (uses generateStaticParams)
+ƒ  (Dynamic)  server-rendered on demand
+

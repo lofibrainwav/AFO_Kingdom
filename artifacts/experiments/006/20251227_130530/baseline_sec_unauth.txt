@@ -1,0 +1,11 @@
+HTTP/1.1 200 OK
+date: Sat, 27 Dec 2025 21:05:30 GMT
+server: uvicorn
+content-length: 265
+content-type: application/json
+x-cache: HIT
+x-cache-key: afo:api:cache:GET:/api/revalidate/status:d41d8cd9
+x-response-time: 0.79ms
+x-trace-id: trc_da061e3ef750
+
+{"last_run":"2025-12-27T12:02:50.377981","next_run":"2025-12-27T14:02:50.377981","success_rate":96.7,"last_result":"성공: 모든 fragments가 정상적으로 revalidate되었습니다","philosophical_guidance":"완벽한 실행입니다 - 계속 유지하세요"}

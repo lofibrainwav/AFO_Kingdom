@@ -1,0 +1,10 @@
+== (4) vault HTTP 사실 확인 ==
+--- http://127.0.0.1:8200/v1/sys/health
+HTTP/1.1 200 OK
+Cache-Control: no-store
+Content-Type: application/json
+Strict-Transport-Security: max-age=31536000; includeSubDomains
+Date: Mon, 29 Dec 2025 01:06:59 GMT
+Content-Length: 391
+
+{"initialized":true,"sealed":false,"standby":false,"performance_standby":false,"replication_performance_mode":"disabled","replication_dr_mode":"disabled","server_time_utc":1766970419,"version":"1.21.1","enterprise":false,"cluster_name":"vault-cluster-99094a3c","cluster_id":"5af86058-bdcc-a5c6-c62d-b3ab0836fcd7","echo_duration_ms":0,"clock_skew_ms":0,"replication_primary_canary_age_ms":0}

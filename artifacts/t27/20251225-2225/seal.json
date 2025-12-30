@@ -1,0 +1,49 @@
+{
+  "ticket": "T27",
+  "timestamp": "20251225-2225",
+  "report": "docs/reports/T27_KINGDOM_HISTORY_SSOT.md",
+  "evidence_dir": "artifacts/t27/20251225-2225",
+  "created_at_utc": 1766730478,
+  "files": [
+    {
+      "path": "KingdomHistoryWidget.tsx",
+      "bytes": 3790,
+      "sha256": "5c8c41fdf3f2500c3314774fce6fe5f59602bc8c00df0ba173bfa089d518c3cb"
+    },
+    {
+      "path": "api_body.json",
+      "bytes": 1057,
+      "sha256": "1d6ac7830b81dc95f0151a7e2282e904883e910b7e6fba83d36aacf2a4fa90f4"
+    },
+    {
+      "path": "api_headers.txt",
+      "bytes": 254,
+      "sha256": "c75f3a0c13556c8430f83e9de569a9de46f4ee528a7c1ca87a7a35c7b4988b99"
+    },
+    {
+      "path": "bandit_exitcode.txt",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "bandit_report.json",
+      "bytes": 143245,
+      "sha256": "9bbe6294ecfb6799691f5b2aae1bc4f95df4972d40232e2d93c27fbbef48bf2c"
+    },
+    {
+      "path": "git_files_changed.txt",
+      "bytes": 617,
+      "sha256": "106c9ad8e19af9b1adfb9cbabd136d0d419fa447f8e9c995814a5e0397ab8886"
+    },
+    {
+      "path": "git_status.py",
+      "bytes": 7266,
+      "sha256": "5548de9883795bc061dc0504ceab9103102bbee0ff93197b28917c128bc3c0db"
+    },
+    {
+      "path": "git_status.txt",
+      "bytes": 1139,
+      "sha256": "d1b24a2026a6be64ef2043dcac7ef1637edb882fa59ee9c334b1980183e5cf7e"
+    }
+  ]
+}

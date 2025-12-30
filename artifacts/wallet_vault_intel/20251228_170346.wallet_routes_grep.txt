@@ -1,0 +1,201 @@
+== (3) wallet 라우터/경로 문자열 증거 ==
+packages/afo-core/services/database_migrations.py:42:-- 사용자 세션 테이블 (Wallet 연동)
+packages/afo-core/services/database_migrations.py:55:-- API 키 사용량 추적 (Wallet 연동)
+packages/afo-core/CLAUDE.md:117:- `packages/afo-core/AFO/api_wallet.py` 핵심 로직 변경 금지
+packages/afo-core/afo_skills_registry.py:943:        description="Manages blockchain interactions, wallet monitoring, and smart contract execution for the Kingdom's assets.",
+packages/afo-core/afo_skills_registry.py:945:        tags=["web3", "blockchain", "crypto", "wallet", "smart-contract"],
+packages/afo-core/wallet_server.py:3:AFO Wallet Service - API Wallet을 위한 독립 서비스
+packages/afo-core/wallet_server.py:4:Phase 20: API Wallet & Vault 흡수
+packages/afo-core/wallet_server.py:11:from AFO.api.routes.wallet import wallet_router
+packages/afo-core/wallet_server.py:14:    title="AFO Wallet Service",
+packages/afo-core/wallet_server.py:15:    description="API Wallet 서비스 - 키 관리 및 보안",
+packages/afo-core/wallet_server.py:31:    return {"status": "healthy", "service": "wallet-service"}
+packages/afo-core/wallet_server.py:33:# Wallet routes
+packages/afo-core/wallet_server.py:34:app.include_router(wallet_router)
+packages/afo-core/wallet_server.py:38:        "wallet_server:app",
+packages/afo-core/get_browser_token.js:38:console.log("\n💡 위의 토큰 중 하나를 복사하여 API Wallet에 저장하세요.");
+packages/afo-core/kms/vault_kms.py:13:    HashiCorp Vault KMS implementation for API Wallet.
+packages/afo-core/kms/vault_kms.py:20:        self.secret_path = os.getenv("VAULT_SECRET_PATH", "api_wallet/keys")
+packages/afo-core/services/security/rate_limit_policy.py:44:                    "/auth,/billing,/wallet,/admin",
+packages/afo-core/config/settings_dev.py:35:    API_WALLET_URL: str = "http://localhost:8000"
+packages/afo-core/config/settings_test.py:36:    API_WALLET_URL: str = "http://localhost:8001"  # 테스트용 포트
+packages/afo-core/input_server.py:9:역할: API 키 및 설정 입력을 받아 API Wallet에 저장
+packages/afo-core/input_server.py:12:2. API Wallet으로 전송
+packages/afo-core/input_server.py:50:# API Wallet 서버 URL (중앙 설정 사용 - Phase 1 리팩토링)
+packages/afo-core/input_server.py:55:    API_WALLET_URL = settings.API_WALLET_URL
+packages/afo-core/input_server.py:57:    API_WALLET_URL = os.getenv("API_WALLET_URL", "http://localhost:8000")
+packages/afo-core/input_server.py:130:            response = await client.get(f"{API_WALLET_URL}/api/wallet/list")
+packages/afo-core/input_server.py:135:        print(f"⚠️  API Wallet 조회 실패: {e}")
+packages/afo-core/input_server.py:428:    API 키 추가 (API Wallet으로 전송 + PostgreSQL 저장)
+packages/afo-core/input_server.py:437:        # 1. API Wallet으로 전송 (암호화 저장)
+packages/afo-core/input_server.py:440:                f"{API_WALLET_URL}/api/wallet/add",
+packages/afo-core/input_server.py:485:        print(f"❌ API Wallet 서버 연결 실패 ({API_WALLET_URL})")
+packages/afo-core/input_server.py:487:            url="/?error=API Wallet 서버에 연결할 수 없습니다. 서버가 실행 중인지 확인하세요.",
+packages/afo-core/input_server.py:503:    # API Wallet 연결 확인
+packages/afo-core/input_server.py:504:    api_wallet_connected = False
+packages/afo-core/input_server.py:507:            response = await client.get(f"{API_WALLET_URL}/health")
+packages/afo-core/input_server.py:508:            api_wallet_connected = response.status_code == 200
+packages/afo-core/input_server.py:529:        "api_wallet_url": API_WALLET_URL,
+packages/afo-core/input_server.py:530:        "api_wallet_connected": api_wallet_connected,
+packages/afo-core/input_server.py:538:    """API Wallet 서버 가용성 확인"""
+packages/afo-core/input_server.py:548:    name: str, value: str, service: str, wallet: Any, api_server_url: str | None
+packages/afo-core/input_server.py:551:    # 1. API Wallet 직접 저장 시도
+packages/afo-core/input_server.py:552:    if wallet:
+packages/afo-core/input_server.py:554:            if wallet.get(name, decrypt=False):
+packages/afo-core/input_server.py:556:            wallet.add(
+packages/afo-core/input_server.py:570:    # 2. API Wallet 서버 저장 시도 (Fallback)
+packages/afo-core/input_server.py:575:                chk = await client.get(f"{api_server_url}/api/wallet/get/{name}", timeout=2.0)
+packages/afo-core/input_server.py:581:                    f"{api_server_url}/api/wallet/add",
+packages/afo-core/input_server.py:601:    return "API Wallet unavailable"
+packages/afo-core/input_server.py:612:        # Wallet 인스턴스 준비
+packages/afo-core/input_server.py:613:        wallet = None
+packages/afo-core/input_server.py:615:            from api_wallet import APIWallet
+packages/afo-core/input_server.py:617:            wallet = APIWallet()
+packages/afo-core/input_server.py:621:        server_url = API_WALLET_URL if await _is_api_server_available(API_WALLET_URL) else None
+packages/afo-core/input_server.py:627:            res = await _import_single_key(name, value, service, wallet, server_url)
+packages/afo-core/input_server.py:701:    print(f"API Wallet URL: {API_WALLET_URL}")
+packages/afo-core/browser_auth/stealth_login.py:21:    from AFO.api_wallet import APIWallet
+packages/afo-core/browser_auth/stealth_login.py:23:    print("✅ APIWallet module loaded successfully.")
+packages/afo-core/browser_auth/stealth_login.py:25:    print(f"⚠️ APIWallet import failed: {e}")
+packages/afo-core/browser_auth/stealth_login.py:29:        from api_wallet import APIWallet
+packages/afo-core/browser_auth/stealth_login.py:31:        print("✅ APIWallet loaded via fallback.")
+packages/afo-core/browser_auth/stealth_login.py:33:        print("❌ APIWallet NOT found. Tokens will NOT be saved.")
+packages/afo-core/browser_auth/stealth_login.py:34:        APIWallet = None
+packages/afo-core/browser_auth/stealth_login.py:168:        # Save to Wallet
+packages/afo-core/browser_auth/stealth_login.py:169:        if APIWallet:
+packages/afo-core/browser_auth/stealth_login.py:170:            wallet = APIWallet()
+packages/afo-core/browser_auth/stealth_login.py:172:            wallet.add(
+packages/afo-core/browser_auth/stealth_login.py:180:            print(f"💾 Securely saved to Wallet as '{key_name}'", flush=True)
+packages/afo-core/config/settings.py:93:    # API Wallet Settings
+packages/afo-core/config/settings.py:95:    API_WALLET_URL: str = Field(default="http://localhost:8000", description="API Wallet 서버 URL")
+packages/afo-core/config/settings.py:142:    API_WALLET_ENCRYPTION_KEY: str | None = Field(
+packages/afo-core/config/settings.py:143:        default=None, description="API Wallet 암호화 키 (Fernet, 44자)"
+packages/afo-core/pyproject.toml:107:"api_wallet.py" = ["F401"]
+packages/afo-core/api_wallet.py:4:API Wallet - 모든 API 키를 안전하게 보관
+packages/afo-core/api_wallet.py:89:class APIWallet:
+packages/afo-core/api_wallet.py:91:    API Wallet - 암호화 키 관리 시스템
+packages/afo-core/api_wallet.py:107:        Initialize API Wallet
+packages/afo-core/api_wallet.py:158:                    or os.getenv("API_WALLET_ENCRYPTION_KEY", self._generate_default_key())
+packages/afo-core/api_wallet.py:168:                or os.getenv("API_WALLET_ENCRYPTION_KEY", self._generate_default_key())
+packages/afo-core/api_wallet.py:198:            self.storage_path = base_dir / "api_wallet_storage.json"
+packages/afo-core/api_wallet.py:204:        self.audit_log_path = base_dir / "api_wallet_audit.log"
+packages/afo-core/api_wallet.py:211:            return get_settings().API_WALLET_ENCRYPTION_KEY
+packages/afo-core/api_wallet.py:227:                        if line.strip().startswith("API_WALLET_ENCRYPTION_KEY="):
+packages/afo-core/api_wallet.py:267:            raise OSError(f"Failed to persist wallet data: {e}") from e
+packages/afo-core/api_wallet.py:295:        Add a new API key to wallet
+packages/afo-core/api_wallet.py:419:        List all keys in wallet
+packages/afo-core/api_wallet.py:462:        Delete a key from wallet
+packages/afo-core/api_wallet.py:553:            # Use the same key format as Monitoring Service: wallet:usage:{provider}
+packages/afo-core/api_wallet.py:556:            redis_key = f"wallet:usage:{provider}"
+packages/afo-core/api_wallet.py:563:            # Fail silently for Redis sync to avoid breaking the wallet if Redis is down
+packages/afo-core/api_wallet.py:564:            print(f"⚠️  Failed to sync wallet usage to Redis: {e}")
+packages/afo-core/api_wallet.py:586:            redis_key = f"wallet:usage:{provider}"
+packages/afo-core/api_wallet.py:593:        """Get wallet summary"""
+packages/afo-core/api_wallet.py:626:    def save_wallet(self) -> None:
+packages/afo-core/api_wallet.py:627:        """Save wallet (no-op since auto-save is implemented)"""
+packages/afo-core/api_wallet.py:818:def create_wallet(encryption_key: str | None = None) -> APIWallet:
+packages/afo-core/api_wallet.py:819:    """Create a new API Wallet instance"""
+packages/afo-core/api_wallet.py:820:    return APIWallet(encryption_key=encryption_key)
+packages/afo-core/api_wallet.py:827:    wallet = create_wallet()
+packages/afo-core/api_wallet.py:830:        print("API Wallet CLI")
+packages/afo-core/api_wallet.py:832:        print("  python api_wallet.py add <name> <key> [service]")
+packages/afo-core/api_wallet.py:833:        print("  python api_wallet.py get <name>")
+packages/afo-core/api_wallet.py:834:        print("  python api_wallet.py list")
+packages/afo-core/api_wallet.py:835:        print("  python api_wallet.py delete <name>")
+packages/afo-core/api_wallet.py:843:                print("Usage: python api_wallet.py add <name> <key> [service]")
+packages/afo-core/api_wallet.py:850:            key_id = wallet.add(name, key, service=service)
+packages/afo-core/api_wallet.py:855:                print("Usage: python api_wallet.py get <name>")
+packages/afo-core/api_wallet.py:859:            key = wallet.get(name) or ""
+packages/afo-core/api_wallet.py:866:            keys = wallet.list_keys()
+packages/afo-core/api_wallet.py:867:            print(f"📋 Wallet Keys ({len(keys)}):")
+packages/afo-core/api_wallet.py:873:                print("Usage: python api_wallet.py delete <name>")
+packages/afo-core/api_wallet.py:877:            if wallet.delete(name):
+packages/afo-core/tests/conftest_wallet.py:4:Conftest for API Wallet tests.
+packages/afo-core/tests/conftest_wallet.py:17:def isolate_api_wallet_module() -> None:
+packages/afo-core/tests/conftest_wallet.py:19:    Autouse fixture that cleans up api_wallet module state before and after each test.
+packages/afo-core/tests/conftest_wallet.py:24:        "AFO.api_wallet",
+packages/afo-core/tests/conftest_wallet.py:25:        "api_wallet",
+packages/afo-core/tests/test_utils.py:99:    def test_detect_api_wallet_path(self) -> None:
+packages/afo-core/tests/test_utils.py:100:        """API Wallet 경로 감지 테스트"""
+packages/afo-core/tests/test_utils.py:106:            path = detector.detect_api_wallet_path()
+packages/afo-core/tests/test_utils.py:110:        assert detector.detect_api_wallet_path() == path
+packages/afo-core/tests/test_utils.py:112:    def test_detect_api_wallet_path_env(self) -> None:
+packages/afo-core/tests/test_utils.py:123:                    path = detector.detect_api_wallet_path()
+packages/afo-core/docs/reports/PH18_PH19_ABSOLUTE_CODE_PERFECTION.md:20:- Wallet Session mapping typing aligned via explicit casting / TypedDict
+packages/afo-core/tests/SKIP_TEST_ANALYSIS.md:23:### 1️⃣ test_api_wallet_imports.py:13
+packages/afo-core/tests/SKIP_TEST_ANALYSIS.md:29:- **목적**: `.env` 파일에서 `API_WALLET_ENCRYPTION_KEY` 읽기 검증
+packages/afo-core/tests/SKIP_TEST_ANALYSIS.md:32:  - `api_wallet.py:209-232`에서 `_generate_default_key()` 구현됨
+packages/afo-core/tests/SKIP_TEST_ANALYSIS.md:45:### 2️⃣ test_api_wallet_imports.py:37
+packages/afo-core/tests/SKIP_TEST_ANALYSIS.md:54:  - `api_wallet.py:209-232` 확인 결과, **읽기만 구현됨, 쓰기는 없음**
+packages/afo-core/tests/SKIP_TEST_ANALYSIS.md:164:  - API Wallet 통합됨
+packages/afo-core/tests/SKIP_TEST_ANALYSIS.md:176:**테스트**: `test_claude_init_wallet_fallback()`  
+packages/afo-core/tests/SKIP_TEST_ANALYSIS.md:177:**스킵 이유**: Module caching makes wallet mock unreliable  
+packages/afo-core/tests/SKIP_TEST_ANALYSIS.md:181:- **목적**: API Wallet fallback을 통한 Claude 초기화 검증
+packages/afo-core/tests/SKIP_TEST_ANALYSIS.md:184:  - `llms/claude_api.py`: API Wallet 통합 구현됨
+packages/afo-core/tests/SKIP_TEST_ANALYSIS.md:185:  - `api_wallet.py`: 완전한 Wallet 구현됨
+packages/afo-core/tests/SKIP_TEST_ANALYSIS.md:186:  - 환경 변수 → API Wallet fallback 순서
+packages/afo-core/tests/SKIP_TEST_ANALYSIS.md:201:| 1 | test_api_wallet_imports.py:13 | C (Flaky) | **삭제** | 기능 구현됨, flaky 불필요 |
+packages/afo-core/tests/SKIP_TEST_ANALYSIS.md:202:| 2 | test_api_wallet_imports.py:37 | C (미구현) | **삭제** | 의도적으로 구현 안 함 (보안), Vault KMS가 더 나음 |
+packages/afo-core/tests/SKIP_TEST_ANALYSIS.md:235:   - `test_api_wallet_imports.py:13` - `.env` 읽기 (flaky)
+packages/afo-core/tests/SKIP_TEST_ANALYSIS.md:236:   - `test_api_wallet_imports.py:37` - `.env` 쓰기 (의도적 미구현)
+packages/afo-core/tests/SKIP_TEST_ANALYSIS.md:238:   - `test_llm_implementations.py:20` - Claude Wallet fallback (flaky)
+packages/afo-core/tests/llm/test_llm_implementations.py:21:# DELETED: test_claude_init_wallet_fallback()
+packages/afo-core/tests/llm/test_llm_implementations.py:23:# API Wallet fallback은 llms/claude_api.py에서 이미 검증됨
+packages/afo-core/utils/container_detector.py:101:    def detect_api_wallet_path(self) -> str:
+packages/afo-core/utils/container_detector.py:102:        """API Wallet 파일 경로 자동 감지"""
+packages/afo-core/utils/container_detector.py:103:        if "api_wallet_path" in self._cache:
+packages/afo-core/utils/container_detector.py:104:            return str(self._cache["api_wallet_path"])
+packages/afo-core/utils/container_detector.py:120:                Path(afo_home) / "afo_soul_engine" / "api_wallet_storage.json"
+packages/afo-core/utils/container_detector.py:125:                Path(afo_soul_engine_home) / "api_wallet_storage.json"
+packages/afo-core/utils/container_detector.py:129:            Path.home() / "AFO" / "afo_soul_engine" / "api_wallet_storage.json",
+packages/afo-core/utils/container_detector.py:130:            Path("/Users/brnestrm/AFO/afo_soul_engine/api_wallet_storage.json"),
+packages/afo-core/utils/container_detector.py:131:            Path("/home/user/AFO/afo_soul_engine/api_wallet_storage.json"),
+packages/afo-core/utils/container_detector.py:132:            Path(__file__).parent.parent / "api_wallet_storage.json",  # 상대 경로
+packages/afo-core/utils/container_detector.py:137:                self._cache["api_wallet_path"] = str(path)
+packages/afo-core/utils/container_detector.py:141:        default = str(Path(__file__).parent.parent / "api_wallet_storage.json")
+packages/afo-core/utils/container_detector.py:142:        self._cache["api_wallet_path"] = default
+packages/afo-core/utils/container_detector.py:171:def get_api_wallet_path() -> str:
+packages/afo-core/utils/container_detector.py:172:    """API Wallet 파일 경로 반환 (편의 함수)"""
+packages/afo-core/utils/container_detector.py:173:    return _default_detector.detect_api_wallet_path()
+packages/afo-core/tests/test_input_server_advanced.py:9:# We intentionally want api_wallet import to FAIL to test the HTTP fallback
+packages/afo-core/tests/test_input_server_advanced.py:20:    # We need to simulate imported module state where 'api_wallet' is NOT available
+packages/afo-core/tests/test_input_server_advanced.py:23:    # Easier: patch 'AFO.input_server.APIWallet' to raise ImportError?
+packages/afo-core/tests/test_input_server_advanced.py:24:    # The code does `from api_wallet import APIWallet`.
+packages/afo-core/tests/test_input_server_advanced.py:29:        sys.modules, {"api_wallet": None}
+packages/afo-core/tests/test_input_server_advanced.py:35:        # Let's look at input_server.py again. It does `from api_wallet import APIWallet` inside `bulk_import`.
+packages/afo-core/tests/test_input_server_advanced.py:55:    Test bulk_import when direct APIWallet access fails, forcing HTTP API usage.
+packages/afo-core/tests/test_input_server_advanced.py:57:    # 1. Mock APIWallet usage to FAIL
+packages/afo-core/tests/test_input_server_advanced.py:60:    #     from api_wallet import APIWallet
+packages/afo-core/tests/test_input_server_advanced.py:61:    #     wallet = APIWallet()
+packages/afo-core/tests/test_input_server_advanced.py:62:    # except Exception: wallet = None
+packages/afo-core/tests/test_input_server_advanced.py:64:    # We can mock `api_wallet.APIWallet` to raise an exception upon instantiation
+packages/afo-core/tests/test_input_server_advanced.py:65:    # This assumes `api_wallet` module IS importable (mocked or real)
+packages/afo-core/tests/test_input_server_advanced.py:67:    mock_wallet_module = MagicMock()
+packages/afo-core/tests/test_input_server_advanced.py:68:    mock_wallet_class = MagicMock()
+packages/afo-core/tests/test_input_server_advanced.py:69:    mock_wallet_class.side_effect = Exception("Direct Access Denied")  # Force failure
+packages/afo-core/tests/test_input_server_advanced.py:70:    mock_wallet_module.APIWallet = mock_wallet_class
+packages/afo-core/tests/test_input_server_advanced.py:98:    # Patch sys.modules to provide our 'api_wallet' that fails instantiation
+packages/afo-core/tests/test_input_server_advanced.py:99:    with patch.dict(sys.modules, {"api_wallet": mock_wallet_module}):
+packages/afo-core/tests/test_api_wallet.py:3:Tests for api_wallet.py
+packages/afo-core/tests/test_api_wallet.py:4:API Wallet 테스트 - Phase 4
+packages/afo-core/tests/test_api_wallet.py:10:class TestAPIWalletConfig:
+packages/afo-core/tests/test_api_wallet.py:11:    """API Wallet 설정 테스트"""
+packages/afo-core/tests/test_api_wallet.py:19:    def test_wallet_storage_path(self) -> None:
+packages/afo-core/tests/test_api_wallet.py:20:        """Wallet 저장 경로 테스트"""
+packages/afo-core/tests/test_api_wallet.py:21:        path = "data/api_wallet.json"
+packages/afo-core/tests/test_api_wallet.py:31:class TestAPIWalletKeyManagement:
+packages/afo-core/tests/test_api_wallet.py:32:    """API Wallet 키 관리 테스트"""
+packages/afo-core/tests/test_api_wallet.py:55:class TestAPIWalletSecurity:
+packages/afo-core/tests/test_api_wallet.py:56:    """API Wallet 보안 테스트"""
+packages/afo-core/tests/test_api_wallet.py:75:class TestAPIWalletOperations:
+packages/afo-core/tests/test_api_wallet.py:76:    """API Wallet 오퍼레이션 테스트"""
+packages/afo-core/tests/test_api_wallet.py:80:        wallet = {}
+packages/afo-core/tests/test_api_wallet.py:81:        wallet["test_key"] = "value"
+packages/afo-core/tests/test_api_wallet.py:82:        assert "test_key" in wallet
+packages/afo-core/tests/test_api_wallet.py:86:        wallet = {"test_key": "value"}
+packages/afo-core/tests/test_api_wallet.py:87:        del wallet["test_key"]
+packages/afo-core/tests/test_api_wallet.py:88:        assert "test_key" not in wallet
+packages/afo-core/tests/test_api_wallet.py:92:        wallet = {"key1": "v1", "key2": "v2"}
+packages/afo-core/tests/test_api_wallet.py:93:        keys = list(wallet.keys())
+packages/afo-core/tests/test_api_wallet.py:103:class TestAPIWalletFallback:
+packages/afo-core/tests/test_api_wallet.py:104:    """API Wallet 폴백 테스트"""

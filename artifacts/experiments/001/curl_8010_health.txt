@@ -1,0 +1,9 @@
+HTTP/1.1 200 OK
+date: Sat, 27 Dec 2025 20:13:22 GMT
+server: uvicorn
+content-length: 148
+content-type: application/json
+x-response-time: 1.40ms
+x-trace-id: trc_d419a6b8356b
+
+{"api":true,"database":true,"mcp":true,"overall_status":"번영","last_checked":"2025-12-27T12:13:22.299144","philosophical_insight":"인정지심"}

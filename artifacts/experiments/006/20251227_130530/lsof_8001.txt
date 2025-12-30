@@ -1,0 +1,2 @@
+COMMAND    PID     USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME
+com.docke 1392 brnestrm  223u  IPv6 0x18ceb01d06abc3e1      0t0  TCP *:8001 (LISTEN)

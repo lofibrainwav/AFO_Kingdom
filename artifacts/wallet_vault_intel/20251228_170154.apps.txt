@@ -1,0 +1,6 @@
+== (2) FastAPI app 후보 파일 ==
+packages/afo-core/input_server.py:44:app = FastAPI(
+packages/afo-core/wallet_server.py:13:app = FastAPI(
+packages/afo-core/api/config.py:118:            app = FastAPI(
+packages/afo-core/tests/test_api_server_lifespan.py:20:    app = FastAPI()
+packages/afo-core/tests/api/test_wallet_routers_comprehensive.py:25:app = FastAPI()

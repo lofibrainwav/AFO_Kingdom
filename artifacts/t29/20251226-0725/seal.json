@@ -1,0 +1,24 @@
+{
+  "ticket": "T29",
+  "timestamp": "20251226-0725",
+  "report": "docs/reports/T29_GENUI_CREATOR_SSOT.md",
+  "evidence_dir": "artifacts/t29/20251226-0725",
+  "created_at_utc": 1766762713,
+  "files": [
+    {
+      "path": "dashboard_headers.txt",
+      "bytes": 582,
+      "sha256": "0ff7895a97a932af47d472497ca4b349b596b12a81a9aef5b3269fcb88a156e5"
+    },
+    {
+      "path": "git_files_changed.txt",
+      "bytes": 822,
+      "sha256": "c2d12aeb62a2ce6fe1ac8c35824b1fdfc925f81368bcfa36f0e0febecc00c4d4"
+    },
+    {
+      "path": "git_status.txt",
+      "bytes": 2206,
+      "sha256": "de60adab447555a5da33d77af34b9f97c97d5d2b982c1a4eeada7c0f832ed72f"
+    }
+  ]
+}

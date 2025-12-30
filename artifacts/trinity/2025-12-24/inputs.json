@@ -1,0 +1,39 @@
+{
+  "as_of": "2025-12-24T18:19:55.485277Z",
+  "version": "1.0.0",
+  "philosophy": "眞善美孝永",
+  "sources": {
+    "system_health": {
+      "api_status": "healthy",
+      "database_status": "healthy",
+      "mcp_servers": 9,
+      "skills_count": 19,
+      "context7_entries": 12,
+      "overall_score": 100.0
+    },
+    "ci_status": {
+      "provider": "github_actions",
+      "last_run": "2025-12-24T08:30:00Z",
+      "conclusion": "success",
+      "success_rate": 96.7
+    },
+    "ssot_compliance": {
+      "facts_count": 15,
+      "notes_count": 8,
+      "proposals_count": 3,
+      "evidence_links": 12,
+      "compliance_score": 98.0
+    },
+    "user_feedback": {
+      "friction_reports": 0,
+      "satisfaction_score": 4.8,
+      "feedback_summary": "완벽한 철학적 운영 만족"
+    },
+    "daily_judgment": "왕국 모든 시스템이 철학적 조화를 이루며 완벽하게 운영 중입니다."
+  },
+  "metadata": {
+    "kingdom": "AFO",
+    "motto": "지피지기면 백전불패",
+    "evidence_retention": 365
+  }
+}
