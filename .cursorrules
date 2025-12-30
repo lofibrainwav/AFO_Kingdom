@@ -108,6 +108,22 @@ Trinity Score = 0.35×眞 + 0.35×善 + 0.20×美 + 0.08×孝 + 0.02×永
 - 목업/하드코딩으로 "그럴듯한 성공" 만들기
 - 3책사 중 하나만 편향적으로 따르기 (균형 필수)
 
+## Cursor IDE 터미널 타임아웃 설정 (안티그라비티 복구용)
+
+### 터미널 타임아웃 제거 설정
+```json
+{
+  "terminal.integrated.shellArgs": [],
+  "terminal.integrated.commandsToSkipShell": ["python3", "python", "pip", "npx"],
+  "terminal.integrated.enablePersistentSessions": false,
+  "terminal.integrated.shell.linux": "/bin/bash"
+}
+```
+
+### Python 명령어 타임아웃 우회
+- Python 실행 명령어들은 터미널 제한을 받지 않도록 설정
+- MCP 서버 실행(npx)도 타임아웃 제한에서 제외
+
 ## Cline/Cursor 도구 사용 규칙
 
 ### 파일 수정 시 필수 파라미터

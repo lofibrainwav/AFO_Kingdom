@@ -32,6 +32,17 @@ Chancellor Graph는 쿼리 실행 전 **Trinity Score**와 **Risk Score**를 평
 
 ## Ⅲ. Trinity Score 산출 공식 (The Formula)
 
+### ⚠️ **SSOT 고정: 게이트 판정 Trinity Score는 35:35:20만 사용**
+
+**게이트 판정용 Trinity Score**: `(truth × 0.35 + goodness × 0.35 + beauty × 0.20) × 100`
+- DecisionResult.mode 판정에 사용
+- AUTO_RUN 조건: Trinity ≥ 90 AND Risk ≤ 10
+- **SSOT**: Chancellor Graph V2 merge_node.py에서 구현
+
+**종합 평가용 5기둥 Score**: `(truth × 0.35 + goodness × 0.35 + beauty × 0.20 + serenity × 0.08 + eternity × 0.02) × 100`
+- 시스템 상태 평가 및 보고에 사용
+- 게이트 판정과 무관
+
 ### 1. 점수 결합 비율 (7:3 Rule)
 
 각 MCP 도구/스킬 실행 시 점수는 다음 비율로 결합됩니다.

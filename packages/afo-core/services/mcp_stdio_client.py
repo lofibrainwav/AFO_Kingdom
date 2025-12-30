@@ -23,6 +23,21 @@ class MCPServerConfig:
     env: dict[str, str] | None = None
 
 
+@dataclass
+class MCPProcessSession:
+    """MCP server process session with connection reuse."""
+    config: MCPServerConfig
+    process: subprocess.Popen | None = None
+    initialized: bool = False
+    last_used: float = 0.0
+    request_id: int = 1
+    lock: threading.Lock = None
+
+    def __post_init__(self):
+        if self.lock is None:
+            self.lock = threading.Lock()
+
+
 _DEFAULT_PATTERN = re.compile(r"\$\{([A-Z0-9_]+):-([^}]+)\}")
 
 
