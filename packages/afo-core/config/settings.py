@@ -255,13 +255,13 @@ def get_settings(env: str | None = None) -> AFOSettings:
 
         if trinity_os_path and os.path.exists(trinity_os_path) and trinity_os_path not in sys.path:
             sys.path.insert(0, trinity_os_path)
-            print(f"✅ Context7 trinity-os 경로 추가: {trinity_os_path}")
+            print(f"✅ Context7 trinity-os 경로 추가: {trinity_os_path}", file=sys.stderr)
         elif not os.path.exists(trinity_os_path):
-            print(f"⚠️ Context7 trinity-os 경로 없음: {trinity_os_path}")
+            print(f"⚠️ Context7 trinity-os 경로 없음: {trinity_os_path}", file=sys.stderr)
         else:
-            print(f"✅ Context7 trinity-os 경로 이미 추가됨: {trinity_os_path}")
+            print(f"✅ Context7 trinity-os 경로 이미 추가됨: {trinity_os_path}", file=sys.stderr)
 
-        print(f"✅ AFO 설정 로드 완료: {env} 환경 ({settings_class.__name__})")
+        print(f"✅ AFO 설정 로드 완료: {env} 환경 ({settings_class.__name__})", file=sys.stderr)
 
     return _settings
 
