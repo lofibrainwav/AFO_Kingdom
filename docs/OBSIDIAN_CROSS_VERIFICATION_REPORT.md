@@ -191,7 +191,7 @@
 ### 주기적 검증
 ```bash
 # 매주 시스템 검증 실행
-cd /Users/brnestrm/AFO_Kingdom
+cd <LOCAL_WORKSPACE>/AFO_Kingdom
 python scripts/verify_obsidian_templates.py
 ```
 

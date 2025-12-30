@@ -1,0 +1,70 @@
+
+            <h2 class="section-title">🫀 오장육부(11-Organ System) 기술 매핑</h2>
+            
+            <div class="card architecture-card beauty-serenity">
+                <div class="card-header">
+                    <h3 class="card-title">시스템 컴포넌트를 인간의 장기에 비유한 생체 균형 관리</h3>
+                </div>
+                <div class="architecture-content">
+                    <p class="architecture-intro">
+                        시스템 컴포넌트를 <strong>인간의 장기에 비유</strong>하여 생체 균형을 관리하옵니다.
+                    </p>
+                    
+                    <div class="mermaid mermaid-container" style="min-height: 400px;">
+graph TB
+    subgraph Organs["🫀 오장육부 시스템 (11-Organ System)"]
+        Brain[🧠 뇌 Brain<br>PostgreSQL<br>장기 기억]
+        Heart[❤️ 심장 Heart<br>Trinity-OS &amp; Redis<br>실시간 캐시]
+        Lungs[🫁 폐 Lungs<br>Observability &amp; Qdrant<br>벡터 검색]
+        Digestive[🍽️ 소화기관 Digestive<br>Ollama<br>로컬 LLM]
+        Gallbladder[💪 담 Gallbladder<br>Testing Pytest<br>검증 시스템]
+    end
+    
+    Brain --&gt; Heart
+    Heart --&gt; Lungs
+    Lungs --&gt; Digestive
+    Digestive --&gt; Gallbladder
+    Gallbladder --&gt; Brain
+    
+    style Brain fill:#667eea,stroke:#333,stroke-width:3px,color:#fff
+    style Heart fill:#f093fb,stroke:#333,stroke-width:3px,color:#fff
+    style Lungs fill:#4facfe,stroke:#333,stroke-width:3px,color:#fff
+    style Digestive fill:#43e97b,stroke:#333,stroke-width:3px,color:#fff
+    style Gallbladder fill:#fa709a,stroke:#333,stroke-width:3px,color:#fff
+                    </div>
+                    
+                    <div class="architecture-grid xlarge">
+                        <div class="architecture-item">
+                            <div class="architecture-item-title">🧠 뇌 (Brain)</div>
+                            <div class="architecture-item-desc">
+                                <strong>PostgreSQL</strong> - 왕국의 모든 지혜와 API 키를 암호화하여 저장하는 장기 기억 장치
+                            </div>
+                        </div>
+                        <div class="architecture-item">
+                            <div class="architecture-item-title">❤️ 심장 (Heart)</div>
+                            <div class="architecture-item-desc">
+                                <strong>Trinity-OS &amp; Redis</strong> - 실시간 캐시와 대화 맥락을 보존하는 체크포인트를 관리하는 정신의 중심
+                            </div>
+                        </div>
+                        <div class="architecture-item">
+                            <div class="architecture-item-title">🫁 폐 (Lungs)</div>
+                            <div class="architecture-item-desc">
+                                <strong>Observability &amp; Qdrant</strong> - 시스템 메트릭 관찰과 벡터 검색을 통해 지능적 호흡을 담당
+                            </div>
+                        </div>
+                        <div class="architecture-item">
+                            <div class="architecture-item-title">🍽️ 소화기관 (Digestive)</div>
+                            <div class="architecture-item-desc">
+                                <strong>Ollama</strong> - 로컬 LLM을 통해 외부 통신 없이도 스스로 사고하는 내부 지력을 제공
+                            </div>
+                        </div>
+                        <div class="architecture-item">
+                            <div class="architecture-item-title">💪 담 (Gallbladder)</div>
+                            <div class="architecture-item-desc">
+                                <strong>Testing (Pytest)</strong> - 모든 기능을 엄격히 판정하고 결단을 내리는 검증 시스템
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        

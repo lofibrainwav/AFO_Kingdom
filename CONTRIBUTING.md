@@ -10,7 +10,7 @@
 
 ### 1. 眞 (Truth) - 진실된 코드
 
-- 타입 힌트 필수 (`mypy --strict` 통과)
+- 타입 힌트 필수 (`pyright` 통과)
 - Pydantic 모델로 데이터 검증
 - 테스트 커버리지 유지
 
@@ -44,7 +44,7 @@
 
 ```markdown
 - [ ] `ruff check .` 통과
-- [ ] `mypy AFO/ --strict` 통과
+- [ ] `pyright` 통과
 - [ ] `pytest --cov=AFO` 통과
 - [ ] Docstring 작성
 - [ ] 라이선스 호환성 확인

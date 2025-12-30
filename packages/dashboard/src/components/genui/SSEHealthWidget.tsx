@@ -101,13 +101,17 @@ const SSEHealthWidget = () => {
     };
   }, []);
 
-  // Update metrics on state changes and report to backend
+  // Update metrics when connection state changes
   useEffect(() => {
     updateMetrics();
+  }, [isConnected]);
 
-    // Report metrics to backend for Prometheus alerting (with internal auth)
+  // Report metrics to backend periodically
+  useEffect(() => {
     const reportMetrics = async () => {
       try {
+        const now = Date.now();
+        const ageSeconds = Math.floor((now - lastEventRef.current) / 1000);
         const internalApiKey = process.env.NEXT_PUBLIC_AFO_INTERNAL_API_KEY || 'afo_internal_default_key';
 
         const response = await fetch('/api/system/sse/health', {
@@ -117,9 +121,9 @@ const SSEHealthWidget = () => {
             'Authorization': `Bearer ${internalApiKey}`,
           },
           body: JSON.stringify({
-            open_connections: metrics.openConnections,
+            open_connections: isConnected ? 1 : 0,
             reconnect_count: reconnectCountRef.current,
-            last_event_age_seconds: metrics.lastEventAgeSeconds,
+            last_event_age_seconds: ageSeconds,
           }),
         });
 
@@ -140,7 +144,7 @@ const SSEHealthWidget = () => {
     return () => {
       clearInterval(reportInterval);
     };
-  }, [isConnected, metrics]);
+  }, []); // No dependencies - runs once on mount
 
   const getStatusIcon = () => {
     switch (metrics.status) {

@@ -14,6 +14,7 @@ logger = logging.getLogger(__name__)
 # AFO_SSE_HEARTBEAT: keep SSE connection alive even when upstream is silent
 _SSE_HEARTBEAT_PAYLOAD = "event: heartbeat\ndata: ping\n\n"
 
+
 async def with_heartbeat(source: AsyncIterator[Any], interval_s: float = 5.0) -> AsyncIterator[Any]:
     while True:
         try:
@@ -23,6 +24,7 @@ async def with_heartbeat(source: AsyncIterator[Any], interval_s: float = 5.0) ->
             yield _SSE_HEARTBEAT_PAYLOAD
         except StopAsyncIteration:
             return
+
 
 # Simple in-memory event bus for now (Redis Pub/Sub in production)
 _thought_queue: asyncio.Queue[dict[str, Any]] = asyncio.Queue()

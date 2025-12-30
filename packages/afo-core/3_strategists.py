@@ -4,10 +4,10 @@
 # but user code had `from typing import ..., float`.
 # To be safe and correct, standard python uses float directly.
 # However, I will strictly follow the logic provided but clean up imports.
-import asyncio
 from datetime import datetime
 from typing import Any
 
+import anyio
 from pydantic import BaseModel, Field, ValidationError
 
 # Assuming these exist or need mocking if they don't
@@ -105,15 +105,22 @@ class ThreeStrategists:
     @staticmethod
     async def parallel_strategist_thinking(query_data: dict[str, Any]) -> float:
         """3책사 병렬 사고 전체 과정 확장: 병렬 평가 → Trinity Score 산출 (다이어그램 병렬 노드 구현)"""
-        # 병렬 심의 상세 (asyncio 병렬 실행 + 로그)
+        # 병렬 심의 상세 (Anyio Task Group 병렬 실행 + 로그)
         start_time = datetime.now()
+        results = {}
 
-        # Using asyncio.to_thread for blocking/CPU bound tasks simulation
-        truth_task = asyncio.to_thread(ThreeStrategists.zhuge_liang_truth_evaluate, query_data)
-        goodness_task = asyncio.to_thread(ThreeStrategists.sima_yi_goodness_review, query_data)
-        beauty_task = asyncio.to_thread(ThreeStrategists.zhou_yu_beauty_optimize, query_data)
+        async def run_evaluate(name: str, func: Any):
+            # Using anyio.to_thread for blocking/CPU bound tasks
+            results[name] = await anyio.to_thread.run_sync(func, query_data)
 
-        truth, goodness, beauty = await asyncio.gather(truth_task, goodness_task, beauty_task)
+        async with anyio.create_task_group() as tg:
+            tg.start_soon(run_evaluate, "truth", ThreeStrategists.zhuge_liang_truth_evaluate)
+            tg.start_soon(run_evaluate, "goodness", ThreeStrategists.sima_yi_goodness_review)
+            tg.start_soon(run_evaluate, "beauty", ThreeStrategists.zhou_yu_beauty_optimize)
+
+        truth = results.get("truth", 0.0)
+        goodness = results.get("goodness", 0.0)
+        beauty = results.get("beauty", 0.0)
 
         # 孝·永 보조 상세 (오호대장군 연동 시뮬 + 로그)
         serenity = 1.0 if antigravity.AUTO_DEPLOY else 0.9
@@ -140,5 +147,9 @@ if __name__ == "__main__":
         "ethics_pass": True,
         "coherent": True,
     }
-    score = asyncio.run(strategists.parallel_strategist_thinking(test_query))
-    print(f"3책사 코드 예시 상세 Dry_Run: 100% 성공 - Trinity Score {score}")
+
+    async def run_test():
+        score = await strategists.parallel_strategist_thinking(test_query)
+        print(f"3책사 코드 예시 상세 Dry_Run: 100% 성공 - Trinity Score {score}")
+
+    anyio.run(run_test)

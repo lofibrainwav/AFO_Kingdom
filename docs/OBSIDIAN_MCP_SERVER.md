@@ -31,11 +31,11 @@ AFO Kingdom의 옵시디언 템플릿 시스템과 Context7 통합을 위한 전
     "afo-obsidian-mcp": {
       "command": "python3",
       "args": [
-        "${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}/packages/trinity-os/trinity_os/servers/obsidian_mcp.py"
+        "${WORKSPACE_ROOT:-<LOCAL_WORKSPACE>/AFO_Kingdom}/packages/trinity-os/trinity_os/servers/obsidian_mcp.py"
       ],
       "env": {
-        "WORKSPACE_ROOT": "${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}",
-        "PYTHONPATH": "${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}/packages/afo-core:${WORKSPACE_ROOT:-/Users/brnestrm/AFO_Kingdom}/packages/trinity-os"
+        "WORKSPACE_ROOT": "${WORKSPACE_ROOT:-<LOCAL_WORKSPACE>/AFO_Kingdom}",
+        "PYTHONPATH": "${WORKSPACE_ROOT:-<LOCAL_WORKSPACE>/AFO_Kingdom}/packages/afo-core:${WORKSPACE_ROOT:-<LOCAL_WORKSPACE>/AFO_Kingdom}/packages/trinity-os"
       },
       "description": "AFO Obsidian MCP Server - 옵시디언 템플릿 시스템 및 Context7 통합"
     }

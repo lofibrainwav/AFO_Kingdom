@@ -115,7 +115,7 @@ class TrinityMetrics:
     serenity_core: float  # S = geometric mean of T, G, B
     trinity_score: float  # weighted sum
     balance_delta: float  # max - min
-    balance_status: Literal[balanced, warning, imbalanced]
+    balance_status: Literal["balanced", "warning", "imbalanced"]
 
     @classmethod
     def from_inputs(cls, inputs: TrinityInputs, eternity: float = 1.0) -> TrinityMetrics:
@@ -154,7 +154,7 @@ class TrinityMetrics:
 
             # Balance status (SSOT threshold: 0.30)
             if balance_delta < 0.3:
-                balance_status: Literal[balanced, warning, imbalanced] = "balanced"
+                balance_status: Literal["balanced", "warning", "imbalanced"] = "balanced"
             elif balance_delta < 0.5:
                 balance_status = "warning"
             else:

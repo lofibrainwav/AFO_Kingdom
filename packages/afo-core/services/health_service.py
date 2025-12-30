@@ -9,9 +9,11 @@ import asyncio
 import json
 import logging
 import os
+import platform
+import shutil
 import sys
 import time
-from datetime import datetime
+from datetime import UTC, datetime, timezone
 from typing import TYPE_CHECKING, Any, cast
 
 import httpx
@@ -134,7 +136,7 @@ async def check_security() -> dict[str, Any]:
 
 async def get_comprehensive_health() -> dict[str, Any]:
     """종합 건강 상태 진단 및 Trinity Score 계산 (캐시 적용)"""
-    current_time = datetime.now().isoformat()
+    current_time = datetime.now(UTC).isoformat()
     response: dict[str, Any] = {}  # 초기화
 
     # 캐시 확인 (글로벌 메모리 캐시 우선)

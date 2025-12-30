@@ -5,6 +5,7 @@ FastAPI 기반 AFO 왕국 Soul Engine API 서버
 
 이 파일은 AFO 왕국의 眞善美孝 철학을 구현합니다.
 Trinity Score 기반 품질 관리 및 아름다운 코드 원칙 준수.
+Debugging Super Agent (2026 Vision) Integrated (眞·永)
 
 Author: AFO Kingdom Development Team
 Date: 2025-12-24
@@ -13,15 +14,21 @@ Version: 1.0.0
 
 from __future__ import annotations
 
+import asyncio
 import importlib.util
 import logging
+import os  # Added for env check
 import sys
 from collections.abc import Awaitable, Callable
 from pathlib import Path
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, Any, cast
 
+from fastapi import Header, HTTPException  # Added for security
 from starlette.requests import Request
 from starlette.responses import Response
+
+# 2026 Debugging Super Agent
+from services.debugging_agent import HealingAgent
 
 ExceptionHandler = Callable[[Request, Exception], Response | Awaitable[Response]]
 
@@ -107,12 +114,87 @@ class AFOServer:
     def __init__(self) -> None:
         """Initialize AFO API Server with beautiful code principles."""
         self._setup_python_path()
+        self._setup_sentry()
+        self._setup_observability()  # Added: Observability Trinity
         self.app = self._create_app()
         self.limiter = self._create_limiter()
+        self.healing_agent = HealingAgent()  # Initialize Super Agent
+        self._background_tasks = set()  # Prevent GC of async tasks
         self._configure_app()
         self._setup_components()
 
         logger.info("AFO Kingdom API Server initialized with beautiful code principles")
+
+    def _setup_sentry(self) -> None:
+        """Initialize Sentry for error tracking and performance monitoring.
+
+        Trinity Score: 善 (Goodness) - 실시간 에러 포착 및 시스템 안정성 강화
+        """
+        try:
+            import sentry_sdk
+            from sentry_sdk.integrations.fastapi import FastApiIntegration
+            from sentry_sdk.integrations.logging import LoggingIntegration
+            from sentry_sdk.integrations.starlette import StarletteIntegration
+
+            # DSN should be configured via environment or config
+            # Using a placeholder for now as per user request
+            dsn = "https://your_sentry_dsn.ingest.sentry.io/1234567"
+
+            sentry_sdk.init(
+                dsn=dsn,
+                traces_sample_rate=1.0,
+                profiles_sample_rate=1.0,
+                environment="development",
+                release="afo-core@1.0.0",
+                integrations=[
+                    FastApiIntegration(transaction_style="endpoint"),
+                    StarletteIntegration(),
+                    LoggingIntegration(level=logging.ERROR, event_level=logging.CRITICAL),
+                ],
+                send_default_pii=False,
+            )
+            logger.info("✅ Sentry initialized successfully")
+        except ImportError:
+            logger.warning("⚠️ Sentry SDK not installed, skipping initialization")
+        except Exception:
+            logger.exception("❌ Sentry initialization failed")
+
+    def _setup_observability(self) -> None:
+        """Initialize OpenTelemetry (Traces, Logs, Metrics).
+
+        Trinity Score: 眞 (Truth) - 시스템의 투명한 관측 가능성 확보
+        """
+        try:
+            # Local imports to prevent ModuleNotFoundError if dependencies are missing
+            from opentelemetry import trace
+            from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+            from opentelemetry.instrumentation.logging import LoggingInstrumentor
+            from opentelemetry.sdk.resources import Resource
+            from opentelemetry.sdk.trace import TracerProvider
+            from opentelemetry.sdk.trace.export import BatchSpanProcessor
+
+            # 1. Configure Resource (Service Name)
+            resource = Resource.create(attributes={"service.name": "afo-soul-engine"})
+
+            # 2. Configure Tracer Provider
+            tracer_provider = TracerProvider(resource=resource)
+            trace.set_tracer_provider(tracer_provider)
+
+            # 3. Configure OTLP Exporter (gRPC)
+            # Default: http://localhost:4317 or env OTEL_EXPORTER_OTLP_ENDPOINT
+            otlp_endpoint = os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT", "http://localhost:4317")
+            otlp_exporter = OTLPSpanExporter(endpoint=otlp_endpoint, insecure=True)
+
+            # 4. Add Span Processor
+            span_processor = BatchSpanProcessor(otlp_exporter)
+            tracer_provider.add_span_processor(span_processor)
+
+            # 5. Instrument Logging (Inject TraceContext)
+            LoggingInstrumentor().instrument(set_logging_format=True)
+
+            logger.info(f"✅ OpenTelemetry initialized (Endpoint: {otlp_endpoint})")
+        except Exception as e:
+            logger.warning(f"⚠️ OpenTelemetry setup failed: {e}")
 
     def _setup_python_path(self) -> None:
         """Setup Python path for AFO imports.
@@ -136,6 +218,7 @@ class AFOServer:
         # Chancellor Router 직접 등록
         try:
             from AFO.api.routers.chancellor_router import router as chancellor_router
+
             app.include_router(chancellor_router)
             logger.info("Chancellor Router registered successfully")
         except Exception as e:
@@ -164,6 +247,42 @@ class AFOServer:
             RateLimitExceeded, cast("ExceptionHandler", _rate_limit_exceeded_handler)
         )
 
+        @self.app.on_event("startup")
+        async def start_super_agent() -> None:
+            """Start the Debugging Super Agent in the background."""
+            if os.getenv("AFO_DEBUG_AGENT_ENABLED") != "1":
+                logger.info("🛡️ Debugging Super Agent is DISABLED (Default Safe Mode).")
+                return
+
+            logger.info("🤖 Starting Debugging Super Agent (2026 Vision)...")
+            # Fire-and-forget the infinite loop of the agent (Strong Reference Held)
+            task = asyncio.create_task(self.healing_agent.start())
+            self._background_tasks.add(task)
+            task.add_done_callback(self._background_tasks.discard)
+
+        @self.app.post("/api/debug/agent/simulate", tags=["Debugging Agent"])
+        async def trigger_simulation(
+            error_code: str = "DTZ005",
+            x_afo_debug_secret: str | None = Header(None, alias="X-AFO-DEBUG-SECRET"),
+        ) -> dict[str, Any]:
+            """Trigger a self-healing simulation scenario (Protected)."""
+
+            # 1. Gate: Feature Flag Check
+            if os.getenv("AFO_DEBUG_AGENT_ENABLED") != "1":
+                raise HTTPException(status_code=403, detail="Debugging Agent is disabled.")
+
+            # 2. Gate: Secret Header Check (Simple protection for prototype)
+            required_secret = os.getenv("AFO_DEBUG_SECRET", "default-dev-secret")
+            if x_afo_debug_secret != required_secret:
+                raise HTTPException(status_code=401, detail="Invalid Debug Secret.")
+
+            await self.healing_agent.trigger_anomaly(error_code)
+            return {
+                "message": f"Anomaly {error_code} injected.",
+                "agent_name": self.healing_agent.name,
+                "current_entropy": self.healing_agent.state.entropy,
+            }
+
         logger.info("Application configured with security measures")
 
     def _setup_components(self) -> None:
@@ -178,8 +297,19 @@ class AFOServer:
             setup_routers(self.app)
             logger.info("Router setup completed")
 
-        except Exception as e:
-            logger.error(f"Component setup failed: {e}")
+            # Instrument FastAPI app with OpenTelemetry
+            try:
+                from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+
+                FastAPIInstrumentor.instrument_app(self.app)
+                logger.info("OpenTelemetry FastAPI instrumentation applied")
+            except ImportError:
+                pass  # Already logged in _setup_observability
+            except Exception as e:
+                logger.warning(f"Failed to instrument FastAPI: {e}")
+
+        except Exception:
+            logger.exception("Component setup failed")
             raise
 
     def run_server(self, host: str = "127.0.0.1", port: int = 8010) -> None:
@@ -203,6 +333,6 @@ if __name__ == "__main__":
     try:
         host, port = get_server_config()
         server.run_server(host=host, port=port)
-    except Exception as e:
-        logger.error(f"Failed to start server: {e}")
+    except Exception:
+        logger.exception("Failed to start server")
         sys.exit(1)

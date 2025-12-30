@@ -17,7 +17,6 @@ from typing import Any
 
 from fastapi import APIRouter, HTTPException, Query
 
-
 # Configure logging
 logger = logging.getLogger(__name__)
 
@@ -66,12 +65,14 @@ async def search_context7(
 
         for item in raw_results[:limit]:
             if isinstance(item, dict):
-                formatted_results.append({
-                    "id": item.get("id", f"item_{len(formatted_results)}"),
-                    "content": item.get("content", ""),
-                    "metadata": item.get("metadata", {}),
-                    "score": item.get("score", 0.0),
-                })
+                formatted_results.append(
+                    {
+                        "id": item.get("id", f"item_{len(formatted_results)}"),
+                        "content": item.get("content", ""),
+                        "metadata": item.get("metadata", {}),
+                        "score": item.get("score", 0.0),
+                    }
+                )
 
         return {
             "query": q,

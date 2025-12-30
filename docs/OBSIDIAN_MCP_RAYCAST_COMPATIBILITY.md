@@ -72,11 +72,11 @@ Raycast에서 옵시디언 MCP 서버를 사용하려면 다음 설정을 추가
       "command": "python3",
       "args": [
         "-u",
-        "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/servers/obsidian_mcp.py"
+        "<LOCAL_WORKSPACE>/AFO_Kingdom/packages/trinity-os/trinity_os/servers/obsidian_mcp.py"
       ],
       "env": {
-        "WORKSPACE_ROOT": "/Users/brnestrm/AFO_Kingdom",
-        "PYTHONPATH": "/Users/brnestrm/AFO_Kingdom/packages/afo-core:/Users/brnestrm/AFO_Kingdom/packages/trinity-os",
+        "WORKSPACE_ROOT": "<LOCAL_WORKSPACE>/AFO_Kingdom",
+        "PYTHONPATH": "<LOCAL_WORKSPACE>/AFO_Kingdom/packages/afo-core:<LOCAL_WORKSPACE>/AFO_Kingdom/packages/trinity-os",
         "PYTHONUNBUFFERED": "1"
       }
     }
@@ -90,7 +90,7 @@ Raycast에서 옵시디언 MCP 서버를 사용하려면 다음 설정을 추가
 2. **Unbuffered 출력**: `-u` 플래그 또는 `PYTHONUNBUFFERED=1`로 stdio 응답성 향상
 3. **명시적 Python 경로**: venv 사용 시 절대 경로 지정 권장
    ```json
-   "command": "/Users/brnestrm/.venv/bin/python3"
+   "command": "<LOCAL_WORKSPACE>/.venv/bin/python3"
    ```
 
 ### Virtual Environment 사용 시
@@ -101,14 +101,14 @@ venv를 사용하는 경우:
 {
   "mcpServers": {
     "afo-obsidian-mcp": {
-      "command": "/Users/brnestrm/.venv/bin/python3",
+      "command": "<LOCAL_WORKSPACE>/.venv/bin/python3",
       "args": [
         "-u",
-        "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/servers/obsidian_mcp.py"
+        "<LOCAL_WORKSPACE>/AFO_Kingdom/packages/trinity-os/trinity_os/servers/obsidian_mcp.py"
       ],
       "env": {
-        "WORKSPACE_ROOT": "/Users/brnestrm/AFO_Kingdom",
-        "PYTHONPATH": "/Users/brnestrm/AFO_Kingdom/packages/afo-core:/Users/brnestrm/AFO_Kingdom/packages/trinity-os",
+        "WORKSPACE_ROOT": "<LOCAL_WORKSPACE>/AFO_Kingdom",
+        "PYTHONPATH": "<LOCAL_WORKSPACE>/AFO_Kingdom/packages/afo-core:<LOCAL_WORKSPACE>/AFO_Kingdom/packages/trinity-os",
         "PYTHONUNBUFFERED": "1"
       }
     }
@@ -268,9 +268,9 @@ echo '{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}' | \
 
 ### 현재 환경
 
-- **사용자 홈**: `/Users/brnestrm`
-- **프로젝트 루트**: `/Users/brnestrm/AFO_Kingdom`
-- **옵시디언 Vault**: `/Users/brnestrm/AFO_Kingdom/docs`
+- **사용자 홈**: `<LOCAL_WORKSPACE>`
+- **프로젝트 루트**: `<LOCAL_WORKSPACE>/AFO_Kingdom`
+- **옵시디언 Vault**: `<LOCAL_WORKSPACE>/AFO_Kingdom/docs`
 - **Python 실행 파일**: `/opt/homebrew/opt/python@3.12/bin/python3.12` (시스템 Python)
 - **Virtual Environment**: 미사용
 

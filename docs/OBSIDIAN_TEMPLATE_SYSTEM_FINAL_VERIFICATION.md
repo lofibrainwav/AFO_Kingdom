@@ -150,7 +150,7 @@
 ### 정기 검증 프로세스
 ```bash
 # 매주 검증 실행
-cd /Users/brnestrm/AFO_Kingdom
+cd <LOCAL_WORKSPACE>/AFO_Kingdom
 python scripts/verify_obsidian_templates.py
 
 # CI/CD 파이프라인 통합 (예정)

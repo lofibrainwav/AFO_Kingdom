@@ -5,12 +5,14 @@ Phase 20: API Wallet & Vault 흡수
 """
 
 import os
-import uvicorn
 from contextlib import asynccontextmanager
+
+import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from AFO.api.routes.wallet import wallet_router
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -20,6 +22,7 @@ async def lifespan(app: FastAPI):
         if kms_type == "vault":
             print("🔍 Validating vault connectivity on startup...")
             from AFO.api_wallet import APIWallet
+
             test_wallet = APIWallet()
             if not test_wallet.use_vault:
                 raise RuntimeError("Vault mode required but vault initialization failed")
@@ -38,11 +41,12 @@ async def lifespan(app: FastAPI):
     # Shutdown
     pass
 
+
 app = FastAPI(
     title="AFO Wallet Service",
     description="API Wallet 서비스 - 키 관리 및 보안",
     version="1.0.0",
-    lifespan=lifespan
+    lifespan=lifespan,
 )
 
 # CORS 설정
@@ -54,18 +58,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 # Health check endpoint
 @app.get("/health")
 async def health_check():
     return {"status": "healthy", "service": "wallet-service"}
 
+
 # Wallet routes
 app.include_router(wallet_router)
 
 if __name__ == "__main__":
-    uvicorn.run(
-        "wallet_server:app",
-        host="0.0.0.0",
-        port=8011,
-        reload=False
-    )
+    uvicorn.run("wallet_server:app", host="127.0.0.1", port=8011, reload=False)

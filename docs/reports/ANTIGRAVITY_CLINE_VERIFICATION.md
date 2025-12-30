@@ -14,7 +14,7 @@
 - **AUTO_DEPLOY**: `True` ✅
 - **ENVIRONMENT**: `dev` ✅
 - **AGENTS.md 존재**: `True` ✅
-- **AGENTS.md 경로**: `/Users/brnestrm/AFO_Kingdom/AGENTS.md` ✅
+- **AGENTS.md 경로**: `<LOCAL_WORKSPACE>/AFO_Kingdom/AGENTS.md` ✅
 
 ### Cline/Cursor 통합 ✅
 - **.cursorrules 파일**: 존재 ✅

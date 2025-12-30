@@ -128,7 +128,7 @@ SELF_EXPANDING_MODE=true
 MCP_SERVER_URL=http://localhost:8010
 
 # 작업 공간 루트
-WORKSPACE_ROOT=/Users/brnestrm/AFO_Kingdom
+WORKSPACE_ROOT=<LOCAL_WORKSPACE>/AFO_Kingdom
 ```
 
 ---
@@ -182,7 +182,7 @@ DRY_RUN_DEFAULT=true
 
 # MCP
 MCP_SERVER_URL=http://localhost:8010
-WORKSPACE_ROOT=/Users/brnestrm/AFO_Kingdom
+WORKSPACE_ROOT=<LOCAL_WORKSPACE>/AFO_Kingdom
 
 # Soul Engine
 SOUL_ENGINE_URL=http://localhost:8010

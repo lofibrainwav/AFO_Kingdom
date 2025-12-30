@@ -29,7 +29,6 @@ from AFO.services.health_service import get_comprehensive_health
 from AFO.utils.automation_tools import AutomationTools
 from AFO.utils.path_utils import add_to_sys_path, get_trinity_os_path
 
-
 router = APIRouter(prefix="/api/health", tags=["Comprehensive Health"])
 
 # 캐시 헤더는 미들웨어에서 처리됨

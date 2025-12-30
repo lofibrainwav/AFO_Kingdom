@@ -26,6 +26,10 @@ jobs:
           cd packages/afo-core
           pip install -r requirements.txt
 
+      - name: Gate 1 - Pyright (Truth)
+        run: |
+          pyright --project packages/afo-core/pyproject.toml
+
       - name: Generate Evidence (Trinity Protocol)
         run: |
           mkdir -p artifacts/trinity artifacts/royal_build
@@ -33,19 +37,21 @@ jobs:
           echo "Royal Build Verified: $(date)" > artifacts/royal_build/build_status.txt
           echo "Commit SHA: ${{ github.sha }}" >> artifacts/royal_build/build_status.txt
 
-      - name: Lint (Makefile SSOT)
-        run: make lint
-
-      - name: Type Check (Makefile SSOT)
+      - name: 1. Type Check (眞 - Truth)
         continue-on-error: true
         run: |
-          make type-check || echo "MyPy completed with warnings (optional deps may be missing)"
+          make type-check || echo "MyPy completed with warnings"
 
-      - name: Test & Coverage (Makefile SSOT)
+      - name: 2. Lint (美 - Beauty)
+        run: make lint
+
+      - name: 3. Test & Coverage (善 - Goodness)
         run: |
           make test
-          # Coverage extension if needed, but sticking to Makefile Truth first
           cd packages/afo-core && pytest --cov=AFO --cov-report=xml
+
+      - name: 4. SBOM & Security (永 - Eternity)
+        run: make sbom
 
       - name: Upload Coverage
         uses: codecov/codecov-action@v4
@@ -57,7 +63,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: trinity-evidence-${{ github.run_id }}-${{ github.run_attempt }}
-          path: artifacts/trinity/**
+          path: |
+            artifacts/trinity/**
+            sbom/**
           if-no-files-found: warn
 
       - name: Upload Royal Build Evidence

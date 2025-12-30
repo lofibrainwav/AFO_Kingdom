@@ -7,7 +7,9 @@ Trinity Score 기반 지능형 코드 품질 관리
 import asyncio
 import json
 import logging
-from datetime import datetime, timedelta
+import statistics
+from collections import deque
+from datetime import UTC, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Optional
 
@@ -131,18 +133,18 @@ class AntigravityEngine:
 
         try:
             # 최근 히스토리 분석 (지난 30일)
-            recent_history = [
+            self.quality_history = [
                 h
                 for h in self.quality_history
-                if (datetime.now() - h["timestamp"]).days
+                if (datetime.now(UTC) - h["timestamp"]).days
                 <= self.dynamic_thresholds["history_window_days"]
             ]
 
-            if len(recent_history) < 5:
+            if len(self.quality_history) < 5:
                 return current_score
 
             # 간단한 추세 분석
-            scores = [h["trinity_score"] for h in recent_history[-10:]]  # 최근 10개
+            scores = [h["trinity_score"] for h in self.quality_history[-10:]]  # 최근 10개
             if len(scores) >= 2:
                 trend_result = np.polyfit(range(len(scores)), scores, 1)
                 trend = float(trend_result[0])  # 선형 추세, 명시적 float 변환
@@ -394,7 +396,7 @@ class AntigravityEngine:
         향후 예측 정확도 향상을 위한 데이터 축적
         """
         learning_data = {
-            "timestamp": datetime.now(),
+            "timestamp": datetime.now(UTC),
             "trinity_score": trinity_score,
             "risk_score": risk_score,
             "decision": decision,
@@ -636,6 +638,7 @@ class AntigravityEngine:
             if script_path.exists():
                 result = subprocess.run(
                     [sys.executable, str(script_path), temp_report],
+                    check=False,
                     capture_output=True,
                     text=True,
                     timeout=5,

@@ -26,32 +26,16 @@ export async function GET() {
   const status = await runCmd("git status --porcelain", repoRoot);
   const synced = !status;
 
-  // Trinity Score
+  // Trinity Score - will be populated from backend /health endpoint (real-time data)
+  // Static file fallback removed to ensure truth (眞)
   let trinityScore = {
-    total: 100,
-    truth: 1.0,
-    goodness: 1.0,
-    beauty: 1.0,
-    serenity: 1.0,
-    eternity: 1.0,
+    total: 0,
+    truth: 0,
+    goodness: 0,
+    beauty: 0,
+    serenity: 0,
+    eternity: 0,
   };
-  try {
-    const trinityPath = path.join(repoRoot, "trinity_score.json");
-    if (fs.existsSync(trinityPath)) {
-      const data = JSON.parse(fs.readFileSync(trinityPath, "utf-8"));
-      const scores = data?.trinity?.scores || {};
-      trinityScore = {
-        total: Math.round((data?.trinity?.total || 1) * 100 * 10) / 10,
-        truth: scores.truth || 1.0,
-        goodness: scores.goodness || 1.0,
-        beauty: scores.beauty || 1.0,
-        serenity: scores.serenity || 1.0,
-        eternity: scores.eternity || 1.0,
-      };
-    }
-  } catch {
-    // Failed to read trinity score, using defaults
-  }
 
   // Tracked files
   const trackedFiles = await runCmd("git ls-tree -r HEAD --name-only | wc -l", repoRoot);
@@ -72,11 +56,27 @@ export async function GET() {
     { name: "Eyes", score: 0, metric: "Offline" },
   ];
 
+  let buildVersion = "unknown";
+  let backendStatus = "unknown";
+
   try {
     const backendUrl = process.env.SOUL_ENGINE_URL || "http://127.0.0.1:8010";
-    const healthRes = await fetch(`${backendUrl}/health`);
+    const healthRes = await fetch(`${backendUrl}/health`, { cache: "no-store", next: { revalidate: 0 } });
     if (healthRes.ok) {
         const healthData = await healthRes.json();
+        buildVersion = healthData.build_version || "unknown";
+        backendStatus = healthData.status || "unstable";
+
+        // Extract REAL-TIME Trinity Score from backend (眞: Truth)
+        const backendTrinity = healthData.trinity || {};
+        trinityScore = {
+          total: Math.round((backendTrinity.trinity_score || 0) * 100 * 10) / 10,
+          truth: backendTrinity.truth || 0,
+          goodness: backendTrinity.goodness || 0,
+          beauty: backendTrinity.beauty || 0,
+          serenity: backendTrinity.filial_serenity || 0,
+          eternity: backendTrinity.eternity || 0,
+        };
 
         // T21: Check for organs_v2 (11 organs) first
         const v2 = healthData.organs_v2 || null;
@@ -105,7 +105,15 @@ export async function GET() {
           });
         } else {
           // T20: Legacy 4→5 mapping (fallback for compatibility)
-          const bOrgans = healthData.organs || {};
+          let bOrgans = healthData.organs || {};
+          
+          // Bugfix: Backend returns list, frontend expects dict/map
+          if (Array.isArray(bOrgans)) {
+              bOrgans = bOrgans.reduce((acc: any, curr: any) => {
+                  acc[curr.organ] = curr;
+                  return acc;
+              }, {});
+          }
 
           organs = [
               {
@@ -149,9 +157,21 @@ export async function GET() {
       synced,
     },
     trinity: trinityScore,
+    // Frontend compatibility: RoyalLayout expects trinity_score (number)
+    trinity_score: trinityScore.total,
+    // Frontend compatibility: RoyalOpsCenter expects trinity_breakdown (flat object)
+    trinity_breakdown: {
+      truth: trinityScore.truth,
+      goodness: trinityScore.goodness,
+      beauty: trinityScore.beauty,
+      filial_serenity: trinityScore.serenity,
+      eternity: trinityScore.eternity,
+    },
     organs,
     trackedFiles: parseInt(trackedFiles.trim()) || 0,
     timeline,
     generatedAt: new Date().toISOString(),
+    buildVersion: buildVersion || "unknown",
+    backendStatus: backendStatus || "unknown",
   });
 }

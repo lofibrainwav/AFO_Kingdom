@@ -27,7 +27,7 @@
 ```json
 {
   "env": {
-    "WORKSPACE_ROOT": "/Users/brnestrm/AFO_Kingdom"
+    "WORKSPACE_ROOT": "<LOCAL_WORKSPACE>/AFO_Kingdom"
   }
 }
 ```
@@ -36,8 +36,8 @@
 ```json
 {
   "env": {
-    "WORKSPACE_ROOT": "/Users/brnestrm/AFO_Kingdom",
-    "PYTHONPATH": "/Users/brnestrm/AFO_Kingdom/packages/afo-core:/Users/brnestrm/AFO_Kingdom/packages/trinity-os"
+    "WORKSPACE_ROOT": "<LOCAL_WORKSPACE>/AFO_Kingdom",
+    "PYTHONPATH": "<LOCAL_WORKSPACE>/AFO_Kingdom/packages/afo-core:<LOCAL_WORKSPACE>/AFO_Kingdom/packages/trinity-os"
   }
 }
 ```
@@ -86,7 +86,7 @@
 {
   "afo-ultimate-mcp": {
     "env": {
-      "WORKSPACE_ROOT": "/Users/brnestrm/AFO_Kingdom"
+      "WORKSPACE_ROOT": "<LOCAL_WORKSPACE>/AFO_Kingdom"
     }
   }
 }
@@ -97,8 +97,8 @@
 {
   "afo-ultimate-mcp": {
     "env": {
-      "WORKSPACE_ROOT": "/Users/brnestrm/AFO_Kingdom",
-      "PYTHONPATH": "/Users/brnestrm/AFO_Kingdom/packages/afo-core:/Users/brnestrm/AFO_Kingdom/packages/trinity-os"
+      "WORKSPACE_ROOT": "<LOCAL_WORKSPACE>/AFO_Kingdom",
+      "PYTHONPATH": "<LOCAL_WORKSPACE>/AFO_Kingdom/packages/afo-core:<LOCAL_WORKSPACE>/AFO_Kingdom/packages/trinity-os"
     },
     "description": "AFO Ultimate MCP Server - Universal connector with Trinity Score evaluation (眞善美孝永). Tools: shell_execute, read_file, write_file, kingdom_health, calculate_trinity_score, verify_fact, cupy_weighted_sum"
   }

@@ -23,7 +23,7 @@ class AudioService:
     def __init__(self, model: str = "base"):
         """
         Initialize AudioService.
-        
+
         Args:
             model: Whisper model size (tiny, base, small, medium, large, large-v3)
         """
@@ -36,6 +36,7 @@ class AudioService:
         """Check if Whisper is available"""
         try:
             import whisper
+
             self.model = whisper.load_model(self.model_name)
             return True
         except ImportError:
@@ -46,19 +47,16 @@ class AudioService:
             return False
 
     def transcribe(
-        self,
-        audio_path: str,
-        language: str | None = None,
-        task: str = "transcribe"
+        self, audio_path: str, language: str | None = None, task: str = "transcribe"
     ) -> dict[str, Any]:
         """
         Transcribe audio to text.
-        
+
         Args:
             audio_path: Path to audio file (mp3, wav, m4a, etc.)
             language: Source language (auto-detect if None)
             task: "transcribe" or "translate" (to English)
-        
+
         Returns:
             dict with transcription text and metadata
         """
@@ -82,16 +80,12 @@ class AudioService:
                 "language": result.get("language", "unknown"),
                 "segments": result.get("segments", []),
                 "model": self.model_name,
-                "success": True
+                "success": True,
             }
 
         except Exception as e:
             logger.error(f"Transcription failed: {e}")
-            return {
-                "error": str(e),
-                "text": None,
-                "success": False
-            }
+            return {"error": str(e), "text": None, "success": False}
 
     def _ffmpeg_fallback(self, audio_path: str) -> dict[str, Any]:
         """Fallback using ffmpeg for basic audio info"""
@@ -99,19 +93,19 @@ class AudioService:
             result = subprocess.run(
                 ["ffprobe", "-v", "quiet", "-print_format", "json", "-show_format", audio_path],
                 capture_output=True,
-                text=True
+                text=True,
             )
             return {
                 "error": "Whisper not installed - audio info only",
                 "audio_info": result.stdout,
                 "text": None,
-                "success": False
+                "success": False,
             }
         except Exception:
             return {
                 "error": "Whisper not installed. Run: pip install openai-whisper",
                 "text": None,
-                "success": False
+                "success": False,
             }
 
     def translate_to_english(self, audio_path: str) -> dict[str, Any]:
@@ -124,7 +118,7 @@ class AudioService:
         if result.get("success"):
             return {
                 "language": result.get("language"),
-                "confidence": "high" if result.get("language") else "low"
+                "confidence": "high" if result.get("language") else "low",
             }
         return {"error": result.get("error")}
 

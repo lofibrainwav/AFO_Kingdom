@@ -20,6 +20,7 @@ router = APIRouter(tags=["A2A Protocol"])
 
 class AgentSkill(BaseModel):
     """A2A Agent Skill definition"""
+
     id: str
     name: str
     description: str
@@ -27,6 +28,7 @@ class AgentSkill(BaseModel):
 
 class AgentCard(BaseModel):
     """A2A Agent Card (Google A2A Protocol 2025 spec)"""
+
     name: str = "AFO Kingdom Chancellor Agent"
     description: str = "眞善美孝永 철학 기반 중앙 의사결정 엔진 (AFO Kingdom Soul Engine)"
     version: str = "v2.5"
@@ -43,35 +45,30 @@ def _get_dynamic_skills() -> list[AgentSkill]:
         AgentSkill(
             id="chancellor_invoke",
             name="승상 호출",
-            description="Trinity Score 기반 라우팅 및 철학 평가"
+            description="Trinity Score 기반 라우팅 및 철학 평가",
         ),
         AgentSkill(
-            id="trinity_evaluate",
-            name="철학 평가",
-            description="眞善美孝永 5대 가치 점수 계산"
+            id="trinity_evaluate", name="철학 평가", description="眞善美孝永 5대 가치 점수 계산"
         ),
         AgentSkill(
-            id="health_check",
-            name="건강 체크",
-            description="시스템 상태 및 오장육부 모니터링"
+            id="health_check", name="건강 체크", description="시스템 상태 및 오장육부 모니터링"
         ),
         AgentSkill(
             id="multi_agent_orchestration",
             name="병렬 협업",
-            description="Claude/Codex/Ollama 멀티 에이전트 조율"
+            description="Claude/Codex/Ollama 멀티 에이전트 조율",
         ),
     ]
 
     # Try to load from Skills Registry
     try:
         from afo_skills_registry import register_core_skills
+
         registry = register_core_skills()
         for skill in registry.list_all():
-            core_skills.append(AgentSkill(
-                id=skill.skill_id,
-                name=skill.name,
-                description=skill.description
-            ))
+            core_skills.append(
+                AgentSkill(id=skill.skill_id, name=skill.name, description=skill.description)
+            )
     except ImportError:
         logger.warning("Skills Registry not available, using core skills only")
     except Exception as e:
@@ -84,14 +81,14 @@ def _get_dynamic_skills() -> list[AgentSkill]:
 async def get_agent_card() -> JSONResponse:
     """
     A2A Agent Card Endpoint
-    
+
     Returns Agent Card following Google A2A Protocol (2025) spec.
     Enables discovery and interoperability with external agents.
     """
     try:
         dynamic_skills = _get_dynamic_skills()
         card = AgentCard(skills=dynamic_skills)
-        
+
         logger.info(f"A2A Agent Card served | Skills: {len(dynamic_skills)}")
         return JSONResponse(content=card.model_dump())
 
@@ -99,8 +96,8 @@ async def get_agent_card() -> JSONResponse:
         logger.error(f"A2A Agent Card failed: {e}", exc_info=True)
         raise HTTPException(
             status_code=500,
-            detail="Agent Card unavailable. Kingdom stability maintained (孝 100%)."
-        )
+            detail="Agent Card unavailable. Kingdom stability maintained (孝 100%).",
+        ) from e
 
 
 @router.get("/api/a2a/status")
@@ -111,5 +108,5 @@ async def a2a_status() -> dict[str, Any]:
         "version": "2025-04",
         "status": "ready",
         "skills_count": len(_get_dynamic_skills()),
-        "capabilities": ["task_management", "streaming", "multi_turn"]
+        "capabilities": ["task_management", "streaming", "multi_turn"],
     }

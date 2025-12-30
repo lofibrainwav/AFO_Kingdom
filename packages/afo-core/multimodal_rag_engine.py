@@ -7,10 +7,11 @@ Strangler Fig: 메모리 관리 및 문서 제한 추가
 ENHANCED: Now uses VisionService (qwen3-vl) and AudioService (Whisper)
 - 눈 (Eyes): Vision analysis with Ollama
 - 귀 (Ears): Audio transcription with Whisper
-- 비디오: 프레임 추출 + 오디오 분석
+- 비디오: 프레임 추출 + 오디오
 """
 
-import contextlib
+from __future__ import annotations
+
 import logging
 import threading
 import time
@@ -18,10 +19,13 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+"""VERSION: FINAL_TRUTH_1"""
+
 # Import vision and audio services
 try:
-    from services.vision_service import VisionService, get_vision_service
-    from services.audio_service import AudioService, get_audio_service
+    from services.audio_service import get_audio_service
+    from services.vision_service import get_vision_service
+
     _SERVICES_AVAILABLE = True
 except ImportError:
     _SERVICES_AVAILABLE = False
@@ -287,7 +291,7 @@ class MultimodalRAGEngine:
                 vision_result = self.vision_service.analyze_image(
                     image_path=image_path,
                     prompt="Describe this image in detail for search and retrieval purposes.",
-                    language="ko"
+                    language="ko",
                 )
 
                 if vision_result.get("success"):
@@ -306,11 +310,15 @@ class MultimodalRAGEngine:
                     metadata = {
                         "path": image_path,
                         "vision_model": vision_result.get("model"),
-                        "analyzed": True
+                        "analyzed": True,
                     }
                 else:
                     content = description or f"Image: {image_path}"
-                    metadata = {"path": image_path, "analyzed": False, "error": vision_result.get("error")}
+                    metadata = {
+                        "path": image_path,
+                        "analyzed": False,
+                        "error": vision_result.get("error"),
+                    }
             else:
                 content = description or f"Image: {image_path}"
                 metadata = {"path": image_path, "analyzed": False}
@@ -354,11 +362,15 @@ class MultimodalRAGEngine:
                         "language": audio_result.get("language"),
                         "audio_model": audio_result.get("model"),
                         "transcribed": True,
-                        "segments_count": len(audio_result.get("segments", []))
+                        "segments_count": len(audio_result.get("segments", [])),
                     }
                 else:
                     content = description or f"Audio: {audio_path}"
-                    metadata = {"path": audio_path, "transcribed": False, "error": audio_result.get("error")}
+                    metadata = {
+                        "path": audio_path,
+                        "transcribed": False,
+                        "error": audio_result.get("error"),
+                    }
             else:
                 content = description or f"Audio: {audio_path}"
                 metadata = {"path": audio_path, "transcribed": False}

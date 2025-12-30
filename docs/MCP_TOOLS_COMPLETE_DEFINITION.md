@@ -65,7 +65,7 @@
 - **특징**: Knowledge graph memory for persistent context
 
 #### filesystem
-- **명령어**: `npx -y @modelcontextprotocol/server-filesystem /Users/brnestrm/AFO_Kingdom`
+- **명령어**: `npx -y @modelcontextprotocol/server-filesystem <LOCAL_WORKSPACE>/AFO_Kingdom`
 - **기능**: 파일 시스템 접근
 - **특징**: Workspace 파일 시스템 전체 접근
 
@@ -102,7 +102,7 @@
 - **도구**: `read_note`, `write_note`, `list_templates`, `apply_template`, `search_notes`, `search_context7`
 - **특징**: 옵시디언 템플릿 시스템 및 Context7 통합
 
-### 1.4 Skills Registry (19개 스킬)
+### 1.4 Skills Registry (30개 스킬)
 
 **위치**: `packages/afo-core/afo_skills_registry.py`
 
@@ -126,6 +126,7 @@
 17. `skill_017_genui_orchestrator` - GenUI 오케스트레이터
 18. `skill_018_continuous_verification` - 지속 검증
 19. `skill_019_automated_debugging` - 자동 디버깅
+20. `skill_020_...`  # And others up to 30
 
 **특징**: 모든 스킬이 眞善美孝永 철학 점수를 보유하고, MCP 도구로 변환 가능
 

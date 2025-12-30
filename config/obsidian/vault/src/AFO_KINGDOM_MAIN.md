@@ -1,0 +1,1 @@
+../../../../docs/AFO_KINGDOM_MAIN.md
