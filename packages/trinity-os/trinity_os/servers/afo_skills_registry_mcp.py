@@ -70,6 +70,10 @@ class AfoSkillsRegistryMCP:
                         },
                     }
 
+                elif method == "notifications/initialized" or method == "initialized":
+                    # 'initialized' 알림은 응답이 필요 없음 (notification)
+                    continue
+
                 elif method == "tools/list":
                     tools = []
                     for skill in all_skills:
