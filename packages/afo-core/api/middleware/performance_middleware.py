@@ -13,9 +13,11 @@ import logging
 import time
 from typing import TYPE_CHECKING, Any
 
+
 if TYPE_CHECKING:
     from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware
+
 
 logger = logging.getLogger(__name__)
 
@@ -42,7 +44,12 @@ class PerformanceMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next: Any) -> Any:
         """
         성능 측정 및 모니터링 (Sequential Thinking Phase 1)
+        SSE 스트림은 성능 측정에서 제외 (무한 스트림 blocking 방지)
         """
+        # SSE Stream 경로는 바이패스
+        if "stream" in request.url.path:
+            return await call_next(request)
+
         # 시작 시간 기록
         start_time = time.time()
 
@@ -87,15 +94,21 @@ class PerformanceMiddleware(BaseHTTPMiddleware):
         """
         느린 엔드포인트 감지 및 로깅
         """
-        if elapsed_ms >= PERFORMANCE_THRESHOLDS["critical_ms"]:
+        # comprehensive health check는 11개 오장육부 체크로 3-4초 정상
+        path = request.url.path
+        is_comprehensive = "/comprehensive" in path
+        threshold_critical = 5000 if is_comprehensive else PERFORMANCE_THRESHOLDS["critical_ms"]
+        threshold_warning = 3000 if is_comprehensive else PERFORMANCE_THRESHOLDS["warning_ms"]
+        
+        if elapsed_ms >= threshold_critical:
             logger.warning(
-                f"🚨 CRITICAL: Slow endpoint detected - {request.method} {request.url.path} "
-                f"took {elapsed_ms:.2f}ms (threshold: {PERFORMANCE_THRESHOLDS['critical_ms']}ms)"
+                f"🚨 CRITICAL: Slow endpoint detected - {request.method} {path} "
+                f"took {elapsed_ms:.2f}ms (threshold: {threshold_critical}ms)"
             )
-        elif elapsed_ms >= PERFORMANCE_THRESHOLDS["warning_ms"]:
+        elif elapsed_ms >= threshold_warning:
             logger.info(
-                f"⚠️ WARNING: Slow endpoint - {request.method} {request.url.path} "
-                f"took {elapsed_ms:.2f}ms (threshold: {PERFORMANCE_THRESHOLDS['warning_ms']}ms)"
+                f"⚠️ WARNING: Slow endpoint - {request.method} {path} "
+                f"took {elapsed_ms:.2f}ms (threshold: {threshold_warning}ms)"
             )
 
     def _update_prometheus_metrics(
@@ -124,7 +137,7 @@ class PerformanceMiddleware(BaseHTTPMiddleware):
 
         except (ImportError, Exception) as e:
             # Prometheus가 없으면 무시
-            logger.debug(f"Prometheus 메트릭 업데이트 실패 (무시): {e}")
+            logger.debug("Prometheus 메트릭 업데이트 실패 (무시): %s", e)
 
     def get_performance_stats(self) -> dict[str, Any]:
         """
@@ -154,13 +167,11 @@ class PerformanceMiddleware(BaseHTTPMiddleware):
             if times:
                 avg_time = sum(times) / len(times)
                 if avg_time >= PERFORMANCE_THRESHOLDS["p95_target_ms"]:
-                    slow_endpoints.append(
-                        {
-                            "endpoint": endpoint,
-                            "average_ms": round(avg_time, 2),
-                            "count": len(times),
-                        }
-                    )
+                    slow_endpoints.append({
+                        "endpoint": endpoint,
+                        "average_ms": round(avg_time, 2),
+                        "count": len(times),
+                    })
 
         return {
             "total_requests": total,
