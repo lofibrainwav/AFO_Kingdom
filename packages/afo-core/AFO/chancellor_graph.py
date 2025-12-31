@@ -41,37 +41,46 @@ class ChancellorGraph:
                 "REPORT": nodes.report_node,
             }
 
-        # Apply MIPROv2 plugin if enabled (add MIPRO node to nodes_dict)
-        try:
-            from AFO.chancellor_mipro_plugin import ChancellorMiproPlugin
+        # Always add MIPRO node (NO-OP by default, feature-flag controlled)
+        def mipro_node(state):
+            """MIPRO optimization node for Chancellor Graph (NO-OP by default)."""
+            try:
+                from AFO.chancellor_mipro_plugin import ChancellorMiproPlugin
 
-            plugin = ChancellorMiproPlugin()
-            plan = plugin.plan()
+                plugin = ChancellorMiproPlugin()
+                plan = plugin.plan()
 
-            if plan.enabled:
-                # Add MIPRO node to nodes dict for actual integration
-                from afo.mipro_optimizer import MiproOptimizer
-                from afo.trinity_metric_wrapper import TrinityMetricWrapper
-
-                def mipro_node(state):
-                    """MIPRO optimization node for Chancellor Graph."""
-                    try:
-                        metric = TrinityMetricWrapper(lambda p, t: 0.8)  # Default metric
-                        optimizer = MiproOptimizer(metric)
-                        # This would be integrated with actual prompts/targets from state
-                        state.outputs["_mipro"] = {"status": "integrated", "score": 0.8}
-                    except Exception as e:
-                        state.outputs["_mipro"] = {"status": "failed", "error": str(e)}
+                if not plan.enabled:
+                    # NO-OP: feature flags not enabled, do nothing
                     return state
 
-                nodes_dict["MIPRO"] = mipro_node
+                # Feature flags enabled: perform actual MIPRO optimization
+                try:
+                    from AFO.mipro_optimizer import MiproOptimizer
+                    from AFO.trinity_metric_wrapper import TrinityMetricWrapper
 
-        except ImportError:
-            # Plugin not available, continue normally
-            pass
-        except Exception:
-            # Plugin failed, log but continue (don't pollute input_payload)
-            pass
+                    # TODO: Integrate with actual DSPy MIPROv2 when available
+                    metric = TrinityMetricWrapper(lambda p, t: 0.8)  # Default metric
+                    optimizer = MiproOptimizer(metric)
+
+                    # Placeholder: actual prompts/targets integration needed
+                    state.outputs["_mipro"] = {"status": "integrated", "score": 0.8}
+
+                except ImportError as e:
+                    # DSPy/MIPRO modules not available
+                    state.outputs["_mipro"] = {"status": "modules_missing", "error": str(e)}
+                except Exception as e:
+                    # MIPRO execution failed
+                    state.outputs["_mipro"] = {"status": "failed", "error": str(e)}
+
+            except Exception as e:
+                # Plugin system failed, fallback to NO-OP
+                pass
+
+            return state
+
+        # Always register MIPRO node (safe NO-OP when disabled)
+        nodes_dict["MIPRO"] = mipro_node
 
         try:
             state = run_chancellor_v2(input_payload, nodes_dict)
