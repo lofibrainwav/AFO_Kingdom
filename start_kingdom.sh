@@ -1,48 +1,32 @@
 #!/bin/bash
+set -euo pipefail
 
-# 🏰 AFO Kingdom One-Click Startup Script
-# Starts the Chancellor Backend (Docker) and Trinity Dashboard (Next.js)
+RED='\033[0;31m'; GREEN='\033[0;32m'; NC='\033[0m'
+error() { echo -e "${RED}ERROR: $1${NC}" >&2; exit 1; }
+info()  { echo -e "${GREEN}$1${NC}"; }
 
-set -e # Exit immediately if a command exits with a non-zero status.
+[[ -d packages/afo-core ]]   || error "Missing packages/afo-core"
+[[ -d packages/dashboard ]]  || error "Missing packages/dashboard"
 
-BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+command -v docker >/dev/null         || error "Docker missing"
+command -v docker-compose >/dev/null || error "docker-compose missing"
+command -v node >/dev/null           || error "Node.js missing"
+command -v npm >/dev/null            || error "npm missing"
 
-echo "==================================================="
-echo "   🚀 INITIALIZING AFO KINGDOM STARTUP SEQUENCE    "
-echo "==================================================="
+FPID=0
+trap 'pushd packages/afo-core >/dev/null; docker-compose down >/dev/null 2>&1; popd >/dev/null; [[ $FPID -ne 0 ]] && kill $FPID 2>/dev/null || true' EXIT INT TERM
 
-# 1. Start Backend Services
-echo ""
-echo "🔌 [1/2] Booting Chancellor Backend Services..."
-cd "$BASE_DIR/AFO" || { echo "❌ Error: AFO directory not found at $BASE_DIR/AFO"; exit 1; }
+info "Starting backend..."
+pushd packages/afo-core >/dev/null
+docker-compose up --build -d
+popd >/dev/null
 
-# Ensure Docker is running
-if ! docker info > /dev/null 2>&1; then
-  echo "❌ Error: Docker is not running. Please start Docker Desktop."
-  exit 1
-fi
+info "Starting frontend..."
+pushd packages/dashboard >/dev/null
+[[ ! -d node_modules ]] && npm install
+npm run dev &
+FPID=$!
+info "Kingdom ready → http://localhost:3000 (Ctrl+C to stop)"
+popd >/dev/null
 
-echo "   -> Running 'docker-compose up -d'..."
-docker-compose up -d
-
-echo "✅ Backend Services Initiated."
-
-# 2. Start Frontend
-echo ""
-echo "🖥️  [2/2] Launching Trinity Dashboard..."
-cd "$BASE_DIR/trinity-dashboard" || { echo "❌ Error: trinity-dashboard directory not found at $BASE_DIR/trinity-dashboard"; exit 1; }
-
-# Check for node_modules
-if [ ! -d "node_modules" ]; then
-    echo "   -> 📦 First run detected. Installing dependencies..."
-    npm install
-fi
-
-echo "   -> Starting Next.js Development Server..."
-echo "   -> Dashboard will be available at: http://localhost:3000"
-echo "==================================================="
-echo "🟢 SYSTEM ONLINE. Press Ctrl+C to stop the dashboard."
-echo "==================================================="
-
-# Run npm run dev
-npm run dev
+wait $FPID

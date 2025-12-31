@@ -80,7 +80,7 @@ services:
     container_name: afo-grafana
     profiles: ["monitoring", "production"]  # 프로파일 기반 활성화
     ports:
-      - "3000:3000"
+      - "3001:3000"
     environment:
       GF_SECURITY_ADMIN_PASSWORD: admin
     volumes:
@@ -424,7 +424,7 @@ services:
     image: ghcr.io/open-webui/open-webui:main
     container_name: afo-open-webui
     ports:
-      - "3001:8080"
+      - "3002:8080"
     environment:
       - OLLAMA_BASE_URL=http://host.docker.internal:11434
       # 메모리 최적화 설정

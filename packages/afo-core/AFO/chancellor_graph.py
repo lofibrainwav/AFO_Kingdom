@@ -6,10 +6,15 @@ SSOT Contract: Sequential Thinking + Context7 are REQUIRED.
 
 from __future__ import annotations
 
+import logging
+
 from api.chancellor_v2.graph import nodes
 
 # Import Chancellor Graph V2 components
 from api.chancellor_v2.graph.runner import run_v2 as run_chancellor_v2
+
+# Configure logging
+logger = logging.getLogger(__name__)
 
 
 # Create unified chancellor_graph interface
@@ -73,13 +78,21 @@ class ChancellorGraph:
 
                     # SSOT: MIPRO output size limit - keep summary only to prevent Graph state pollution
                     # Raw traces/candidates go to artifacts, not state.outputs
-                    state.outputs["_mipro"] = {
+                    mipro_result = {
                         "status": "optimized",
                         "score": getattr(optimized_program, "_mipro_score", 0.8),
                         "trials": getattr(optimized_program, "_mipro_trials", 0),
                         "config": getattr(optimized_program, "_mipro_config", {}),
                         "optimized": getattr(optimized_program, "_mipro_optimized", False),
                     }
+                    state.outputs["_mipro"] = mipro_result
+
+                    # Log minimal execution metrics for monitoring
+                    logger.info(
+                        "mipro.enabled=1 mipro.trials=%d mipro.best_score=%.3f",
+                        mipro_result["trials"],
+                        mipro_result["score"],
+                    )
 
                 except ImportError as e:
                     # MIPRO modules not available

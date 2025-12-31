@@ -75,6 +75,13 @@ export async function GET(request: NextRequest) {
 
     if (res.ok) {
         const data = await res.json();
+        if (Array.isArray(data)) {
+            return NextResponse.json({
+                skills: data,
+                total: data.length,
+                source: "backend_proxy"
+            });
+        }
         return NextResponse.json(data);
     }
     console.warn("Backend skills fetch failed, falling back to mock data");

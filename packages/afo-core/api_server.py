@@ -137,8 +137,10 @@ class AFOServer:
             from sentry_sdk.integrations.starlette import StarletteIntegration
 
             # DSN should be configured via environment or config
-            # Using a placeholder for now as per user request
-            dsn = "https://your_sentry_dsn.ingest.sentry.io/1234567"
+            dsn = os.getenv("SENTRY_DSN", "").strip()
+            if not dsn or "ingest.sentry" not in dsn or "example" in dsn:
+                logger.info("Sentry DSN not configured, skipping Sentry initialization")
+                return
 
             sentry_sdk.init(
                 dsn=dsn,

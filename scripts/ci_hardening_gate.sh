@@ -9,11 +9,9 @@ echo "🛡️  Running Hardening Gate..."
 EXIT_CODE=0
 
 # 1. Check for Hardcoded Sentry DSN Placeholder
-SENTRY_PLACEHOLDER="https://your_sentry_dsn.ingest.sentry.io/1234567"
-TARGET_FILE="packages/afo-core/AFO/api_server.py"
-
-if grep -Fq "${SENTRY_PLACEHOLDER}" "${TARGET_FILE}"; then
-  echo "❌ [FAIL] Hardcoded Sentry DSN placeholder found in ${TARGET_FILE}"
+# Check for any remaining hardcoded DSN URL patterns that bypass environment variables
+if grep -r "ingest\.sentry" --include="*.py" packages/afo-core/ | grep -v "os\.getenv\|Field\|example"; then
+  echo "❌ [FAIL] Hardcoded Sentry DSN found in Python files"
   EXIT_CODE=1
 else
   echo "✅ [PASS] Sentry DSN placeholder check"

@@ -6,7 +6,7 @@ export const SyncWidget = () => {
   return (
     <GenericWidget 
       title="동기화 상태 (Sync)" 
-      endpoint="/api/health/comprehensive" 
+      endpoint="/api/health" 
       valueKey="status" 
       subText="Remote/Local Twin Truth"
       className="border-green-500/50"

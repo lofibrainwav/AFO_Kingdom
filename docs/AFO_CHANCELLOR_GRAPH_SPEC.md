@@ -170,6 +170,11 @@ Relationship:
 4) node_04_gate (step 4)
 5) node_04_verdict (step 41)
 6) node_05_exec (step 5)
+7) node_mipro (MIPRO optimization, conditional)
+   - condition: AFO_MIPRO_V2_ENABLED=1
+   - execution: BEAUTY → MIPRO → MERGE order
+   - output: `_mipro` summary (score, trials, config)
+   - logging: `mipro.enabled=1 mipro.trials=X mipro.best_score=Y`
 
 ### Checkpoint Key Schema (Redis)
 
