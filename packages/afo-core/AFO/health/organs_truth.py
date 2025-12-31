@@ -87,7 +87,18 @@ def build_organs_final(
     redis_host = redis_host or os.getenv("REDIS_HOST", "afo-redis")
     postgres_host = postgres_host or os.getenv("POSTGRES_HOST", "afo-postgres")
     qdrant_host = qdrant_host or os.getenv("QDRANT_HOST", "afo-qdrant")
-    ollama_host = ollama_host or os.getenv("OLLAMA_HOST", "afo-ollama")
+
+    # Parse OLLAMA_HOST which can be URL format (http://host:port) or hostname
+    raw_ollama = ollama_host or os.getenv("OLLAMA_HOST", "host.docker.internal")
+    if raw_ollama.startswith("http://") or raw_ollama.startswith("https://"):
+        from urllib.parse import urlparse
+
+        parsed = urlparse(raw_ollama)
+        ollama_host = parsed.hostname or "host.docker.internal"
+        if parsed.port:
+            ollama_port = parsed.port
+    else:
+        ollama_host = raw_ollama
 
     organs: dict[str, OrganReport] = {}
 
