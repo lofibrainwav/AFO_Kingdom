@@ -89,6 +89,19 @@ def build_organs_final(
     qdrant_host = qdrant_host or os.getenv("QDRANT_HOST", "afo-qdrant")
     ollama_host = ollama_host or os.getenv("OLLAMA_HOST", "afo-ollama")
 
+    # Robust Host Sanitization (Preventive Measure)
+    def _clean_host(h: str) -> str:
+        if "://" in h:
+            h = h.split("://")[1]
+        if ":" in h:
+            h = h.split(":")[0]
+        return h
+
+    redis_host = _clean_host(redis_host)
+    postgres_host = _clean_host(postgres_host)
+    qdrant_host = _clean_host(qdrant_host)
+    ollama_host = _clean_host(ollama_host)
+
     organs: dict[str, OrganReport] = {}
 
     ok, ms, t = _tcp_probe(redis_host, redis_port, timeout_tcp_s)

@@ -138,7 +138,8 @@ class AFOServer:
 
             # DSN should be configured via environment or config
             # Using a placeholder for now as per user request
-            dsn = "https://your_sentry_dsn.ingest.sentry.io/1234567"
+            # DSN should be configured via environment (SSOT)
+            dsn = os.getenv("SENTRY_DSN") or "https://placeholder@ingest.sentry.io/0"
 
             sentry_sdk.init(
                 dsn=dsn,
