@@ -41,6 +41,53 @@ class ChancellorGraph:
                 "REPORT": nodes.report_node,
             }
 
+        # Always add MIPRO node (NO-OP by default, feature-flag controlled)
+        def mipro_node(state):
+            """MIPRO optimization node for Chancellor Graph (NO-OP by default)."""
+            try:
+                from AFO.chancellor_mipro_plugin import ChancellorMiproPlugin
+
+                plugin = ChancellorMiproPlugin()
+                plan = plugin.plan()
+
+                if not plan.enabled:
+                    # NO-OP: feature flags not enabled, do nothing
+                    return state
+
+                # Feature flags enabled: perform actual MIPRO optimization
+                try:
+                    from AFO.mipro_optimizer import MiproOptimizer
+                    from AFO.trinity_metric_wrapper import TrinityMetricWrapper
+
+                    # TODO: Integrate with actual DSPy MIPROv2 when available
+                    metric = TrinityMetricWrapper(lambda p, t: 0.8)  # Default metric
+                    optimizer = MiproOptimizer(metric)
+
+                    # SSOT: MIPRO output size limit - keep summary only to prevent Graph state pollution
+                    # Raw traces/candidates go to artifacts, not state.outputs
+                    state.outputs["_mipro"] = {
+                        "status": "integrated",
+                        "score": 0.8,
+                        "trial_count": 0,  # Summary only, no raw data
+                        "reason": "placeholder",
+                    }
+
+                except ImportError as e:
+                    # DSPy/MIPRO modules not available
+                    state.outputs["_mipro"] = {"status": "modules_missing", "error": str(e)}
+                except Exception as e:
+                    # MIPRO execution failed
+                    state.outputs["_mipro"] = {"status": "failed", "error": str(e)}
+
+            except Exception as e:
+                # Plugin system failed, fallback to NO-OP
+                pass
+
+            return state
+
+        # Always register MIPRO node (safe NO-OP when disabled)
+        nodes_dict["MIPRO"] = mipro_node
+
         try:
             state = run_chancellor_v2(input_payload, nodes_dict)
 

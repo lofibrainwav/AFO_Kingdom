@@ -16,13 +16,16 @@ from .store import append_event, save_checkpoint
 
 NodeFn = Callable[[GraphState], GraphState]
 
-# Canonical node execution order
+# SSOT: Chancellor Graph V2 Execution Order
+# This is the SINGLE SOURCE OF TRUTH for Chancellor Graph node execution sequence
+# Any changes to execution order MUST be made here and reflected in documentation
 ORDER = [
     "CMD",
     "PARSE",
     "TRUTH",
     "GOODNESS",
     "BEAUTY",
+    "MIPRO",  # MIPRO optimization node (optional, feature-flag controlled)
     "MERGE",
     "EXECUTE",
     "VERIFY",
