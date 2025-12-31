@@ -41,6 +41,27 @@ class ChancellorGraph:
                 "REPORT": nodes.report_node,
             }
 
+        # Apply MIPROv2 plugin if enabled (NO-OP by default)
+        try:
+            from afo.chancellor_mipro_plugin import maybe_apply_mipro
+
+            # Create mock graph object for plugin compatibility
+            mock_graph = type(
+                "MockGraph",
+                (),
+                {
+                    "add_node": lambda self, *args, **kwargs: None,
+                    "add_edge": lambda self, *args, **kwargs: None,
+                },
+            )()
+            maybe_apply_mipro(mock_graph)
+        except ImportError:
+            # Plugin not available, continue normally
+            pass
+        except Exception as e:
+            # Plugin failed, log but continue
+            input_payload["_mipro_plugin_error"] = str(e)
+
         try:
             state = run_chancellor_v2(input_payload, nodes_dict)
 
