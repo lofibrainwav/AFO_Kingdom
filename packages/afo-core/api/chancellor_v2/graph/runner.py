@@ -23,6 +23,7 @@ ORDER = [
     "TRUTH",
     "GOODNESS",
     "BEAUTY",
+    "MIPRO",  # MIPRO optimization node (optional, feature-flag controlled)
     "MERGE",
     "EXECUTE",
     "VERIFY",
