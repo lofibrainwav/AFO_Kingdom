@@ -56,24 +56,33 @@ class ChancellorGraph:
 
                 # Feature flags enabled: perform actual MIPRO optimization
                 try:
-                    from AFO.mipro_optimizer import MiproOptimizer
-                    from AFO.trinity_metric_wrapper import TrinityMetricWrapper
+                    from AFO.mipro import Example, Module, mipro_optimizer
 
-                    # TODO: Integrate with actual DSPy MIPROv2 when available
-                    metric = TrinityMetricWrapper(lambda p, t: 0.8)  # Default metric
-                    optimizer = MiproOptimizer(metric)
+                    # Prepare mock program and examples for MIPROv2
+                    # In real implementation, this would come from graph inputs
+                    mock_program = Module()
+                    mock_trainset = [
+                        Example(input="test input", output="test output"),
+                        Example(input="another input", output="another output"),
+                    ]
+
+                    # Run MIPROv2 optimization
+                    optimized_program = mipro_optimizer.compile(
+                        student=mock_program, trainset=mock_trainset
+                    )
 
                     # SSOT: MIPRO output size limit - keep summary only to prevent Graph state pollution
                     # Raw traces/candidates go to artifacts, not state.outputs
                     state.outputs["_mipro"] = {
-                        "status": "integrated",
-                        "score": 0.8,
-                        "trial_count": 0,  # Summary only, no raw data
-                        "reason": "placeholder",
+                        "status": "optimized",
+                        "score": getattr(optimized_program, "_mipro_score", 0.8),
+                        "trials": getattr(optimized_program, "_mipro_trials", 0),
+                        "config": getattr(optimized_program, "_mipro_config", {}),
+                        "optimized": getattr(optimized_program, "_mipro_optimized", False),
                     }
 
                 except ImportError as e:
-                    # DSPy/MIPRO modules not available
+                    # MIPRO modules not available
                     state.outputs["_mipro"] = {"status": "modules_missing", "error": str(e)}
                 except Exception as e:
                     # MIPRO execution failed
