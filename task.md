@@ -76,6 +76,12 @@
 - [x] Refine `RagActiveAgent` for Context-Aware Retrieval
 - [x] **SEALED**: Kingdom 2026 Core Foundation is rock solid. (100% 眞·善·美)
 
+## TICKET-029 Friction Reduction (Start-up Hardening)
+
+- [x] Implement Dual Health Check (`/api/health` & `/health`) in `start_kingdom.sh`
+- [x] Implement Docker Compose V2 fallback support
+- [x] **SUPREME SEAL**: Tag `seal-2025-12-31-supreme` applied.
+
 ## TICKET-006 Module Expansion (Gold Farm Boost)
 
 - [x] Implement `FactCard` Module (Truth/Goodness)

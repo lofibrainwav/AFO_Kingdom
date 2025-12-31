@@ -9,7 +9,7 @@ info()  { echo -e "${GREEN}$1${NC}"; }
 [[ -d packages/dashboard ]]  || error "Missing packages/dashboard"
 
 command -v docker >/dev/null         || error "Docker missing"
-command -v docker-compose >/dev/null || error "docker-compose missing"
+(command -v docker-compose >/dev/null || docker compose version >/dev/null 2>&1) || error "docker-compose (v1 or v2) missing"
 command -v node >/dev/null           || error "Node.js missing"
 command -v npm >/dev/null            || error "npm missing"
 command -v python3 >/dev/null        || error "python3 missing"
@@ -22,13 +22,17 @@ trap 'pushd packages/afo-core >/dev/null; docker-compose down >/dev/null 2>&1; p
 
 info "Starting backend..."
 pushd packages/afo-core >/dev/null
-docker-compose up --build -d
+if command -v docker-compose >/dev/null; then
+    docker-compose up --build -d
+else
+    docker compose up --build -d
+fi
 popd >/dev/null
 
 info "Waiting for Soul Engine (8010) to initialize..."
 MAX_RETRIES=30
 COUNT=0
-while ! curl -s http://localhost:8010/api/health >/dev/null; do
+while ! (curl -s http://localhost:8010/api/health >/dev/null || curl -s http://localhost:8010/health >/dev/null); do
     sleep 1
     COUNT=$((COUNT+1))
     if [ $COUNT -ge $MAX_RETRIES ]; then
