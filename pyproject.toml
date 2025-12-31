@@ -75,6 +75,8 @@ kafka-python = "^2.3.0"
 sunoai = "^1.0.7"
 docker = "^7.1.0"
 gitpython = "^3.1.45"
+
+[tool.poetry.group.dspy.dependencies]
 dspy = "^3.0.4"
 
 [tool.ruff]
