@@ -63,8 +63,14 @@ class ChancellorGraph:
                     metric = TrinityMetricWrapper(lambda p, t: 0.8)  # Default metric
                     optimizer = MiproOptimizer(metric)
 
-                    # Placeholder: actual prompts/targets integration needed
-                    state.outputs["_mipro"] = {"status": "integrated", "score": 0.8}
+                    # SSOT: MIPRO output size limit - keep summary only to prevent Graph state pollution
+                    # Raw traces/candidates go to artifacts, not state.outputs
+                    state.outputs["_mipro"] = {
+                        "status": "integrated",
+                        "score": 0.8,
+                        "trial_count": 0,  # Summary only, no raw data
+                        "reason": "placeholder",
+                    }
 
                 except ImportError as e:
                     # DSPy/MIPRO modules not available
