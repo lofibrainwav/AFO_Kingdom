@@ -191,6 +191,8 @@ services:
     environment:
       - SERVICE_NAME=rag-service
       - OLLAMA_BASE_URL=http://host.docker.internal:11434
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
       - PYTHONPATH=/AFO
       - REDIS_URL=redis://afo-redis:6379
       - DATABASE_URL=postgresql://afo:afo@postgres:5432/afo
@@ -266,6 +268,8 @@ services:
       - API_SERVER_HOST=0.0.0.0
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
       - OLLAMA_BASE_URL=http://host.docker.internal:11434
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
       - OLLAMA_MODEL=llama3.2:3b
       - REDIS_URL=redis://afo-redis:6379
       - REDIS_HOST=afo-redis

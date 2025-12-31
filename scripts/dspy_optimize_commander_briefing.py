@@ -66,7 +66,6 @@ def main():
 
     if not lm_name:
         lm_name = "openai/gpt-4o-mini"  # Default fallback
-        # raise SystemExit("Set AFO_DSPY_LM (e.g. openai/..., anthropic/...)") # Relaxing strictly for dev/default
 
     # Configure DSPy with explicit key if available
     lm_kwargs = {"model": lm_name}
@@ -74,6 +73,14 @@ def main():
         lm_kwargs["api_key"] = api_key
 
     dspy.settings.configure(lm=dspy.LM(**lm_kwargs))
+
+    # Teacher Model for MIPROv2 (Stronger model for proposing instructions)
+    # Using the same key/provider for simplicity, but forcing a stronger model if possible
+    teacher_lm_name = "openai/gpt-4o"
+    teacher_kwargs = {"model": teacher_lm_name}
+    if api_key:
+        teacher_kwargs["api_key"] = api_key
+    teacher_lm = dspy.LM(**teacher_kwargs)
 
     gold_path = os.environ.get("AFO_DSPY_GOLD", "data/dspy/gold_commander_briefing.jsonl")
     if not os.path.exists(gold_path):
@@ -89,27 +96,57 @@ def main():
 
     if Opt is not None:
         try:
-            # MIPROv2/MIPRO usually require a metric and maybe other params like prompt_model/task_model
-            # For simplicity using metric only as starter
-            optimizer = Opt(metric=calculate_trinity_objective)
-            # MIPROv2 compile signature might differ slightly but generally consistent
-            compiled = optimizer.compile(program, trainset=trainset)
-            print(f"OK: optimizer={opt_name}")
+            print(f"🚀 Initializing {opt_name} Optimizer...")
+            # MIPROv2/MIPRO configuration
+            # - metric: The optimization objective (Trinity)
+            # - prompt_model: The teacher model improving the prompt (GPT-4o)
+            # - task_model: The student model (GPT-4o-mini) - implicitly dspy.settings.lm
+
+            optimizer_kwargs = {
+                "metric": calculate_trinity_objective,
+                "prompt_model": teacher_lm,
+                "teacher_settings": {"lm": teacher_lm},
+            }
+
+            # Handle different versions/signatures of MIPRO instantiation
+            # Some versions use prompt_model, others use teacher_settings. passing both is safer if kwargs handled.
+            # But strictly speaking, standard dspy MIPROv2 takes `metric`, `prompt_model`, `task_model`.
+
+            try:
+                optimizer = Opt(metric=calculate_trinity_objective, prompt_model=teacher_lm)
+            except TypeError:
+                # Fallback for older/newer signatures
+                optimizer = Opt(metric=calculate_trinity_objective)
+
+            print(f"🔥 Compiling with {opt_name} (Candidates=7, InitTemp=0.5)...")
+            # Compile with specific robust hyperparameters
+            compiled = optimizer.compile(
+                program,
+                trainset=trainset,
+                num_candidates=7,
+                init_temperature=0.5,
+                max_bootstrapped_demos=2,
+                max_labeled_demos=2,
+                requires_permission_to_run=False,  # Don't ask for console input
+            )
+            print(f"✅ Optimization successful with {opt_name}")
         except Exception as e:
-            print(f"WARN: {opt_name} failed, fallback to BootstrapFewShot: {e}", file=sys.stderr)
+            print(f"⚠️  {opt_name} failed, fallback to BootstrapFewShot: {e}", file=sys.stderr)
+            compiled = None  # Trigger fallback
 
     if compiled is None:
+        print("💡 Falling back to standard BootstrapFewShot...")
         optimizer = dspy.BootstrapFewShot(
             metric=calculate_trinity_objective, max_bootstrapped_demos=2, max_labeled_demos=2
         )
         compiled = optimizer.compile(program, trainset=trainset)
-        print("OK: optimizer=BootstrapFewShot")
+        print("✅ Optimization successful with BootstrapFewShot")
 
     out = compiled.dump_state()
     out_path = "data/dspy/compiled_commander_briefing.v2.json"
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=2)
-    print(f"OK: {out_path}")
+    print(f"💾 Optimized program saved to: {out_path}")
 
 
 if __name__ == "__main__":
