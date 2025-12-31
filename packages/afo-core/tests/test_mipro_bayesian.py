@@ -28,6 +28,43 @@ def test_mipro_selects_best():
     assert res.best_score == 1.0
 
 
+def test_mipro_enabled_calls_optimizer():
+    """Test that MIPRO optimizer is called when enabled."""
+    from AFO.mipro import Example, MiproConfig, MiproOptimizer, Module
+
+    # Create optimizer with config
+    config = MiproConfig(auto="light", num_trials=5)
+    optimizer = MiproOptimizer(config)
+
+    # Create test program and examples
+    program = Module()
+    trainset = [
+        Example(input="hello", output="world"),
+        Example(input="foo", output="bar"),
+    ]
+
+    # Enable MIPRO
+    import os
+
+    os.environ["AFO_MIPRO_V2_ENABLED"] = "1"
+
+    try:
+        # Run optimization
+        result = optimizer.compile(program, trainset)
+
+        # Verify optimization occurred
+        assert result is not program  # Should return new optimized program
+        assert hasattr(result, "_mipro_optimized")
+        assert getattr(result, "_mipro_optimized", False) == True
+        assert hasattr(result, "_mipro_score")
+        assert hasattr(result, "_mipro_trials")
+        assert getattr(result, "_mipro_trials", 0) == min(5, len(trainset))
+
+    finally:
+        # Clean up environment
+        os.environ.pop("AFO_MIPRO_V2_ENABLED", None)
+
+
 def test_mipro_node_noop_when_disabled():
     """Test that MIPRO node is truly NO-OP when flags are disabled."""
     from AFO.chancellor_mipro_plugin import ChancellorMiproPlugin
