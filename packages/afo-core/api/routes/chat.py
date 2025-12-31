@@ -94,41 +94,71 @@ async def send_chat_message(request: ChatMessageRequest) -> ChatMessageResponse:
     - Ollama 우선 사용 (무료, 빠름)
     - 불가 시 Gemini/Claude/OpenAI로 자동 Fallback
     """
-    if llm_router is None or route_and_execute is None:
-        raise HTTPException(status_code=503, detail="LLM Router not available")
 
     try:
-        # 시스템 프롬프트가 있으면 메시지에 추가
-        full_message = request.message
+        # AFO Active Agentic RAG (System 2 Thinking)
+        import os
+
+        import dspy
+
+        from AFO.dspy.rag_active_agent import RagActiveAgent
+
+        # Debug: Check API Key
+        api_key = os.environ.get("OPENAI_API_KEY")
+        # logger.info(f"Active RAG Init - API Key Present: {bool(api_key)}")
+
+        # Configure DSPy if not already configured
+        if not dspy.settings.lm:
+            if api_key:
+                lm = dspy.OpenAI(model="gpt-4o", api_key=api_key)
+                dspy.settings.configure(lm=lm)
+            else:
+                # If no key, we cannot run RagActiveAgent
+                raise ValueError("Missing OPENAI_API_KEY for Active RAG")
+
+        # Instantiate Agent
+
+        # Prepare Context
+        context_str = ""
         if request.system_prompt:
-            full_message = f"[System: {request.system_prompt}]\n\n{request.message}"
+            context_str += f"System Prompt: {request.system_prompt}\n"
 
-        # 컨텍스트 구성
-        context: dict[str, Any] = {
-            "provider": request.provider,
-            "quality_tier": request.quality_tier,
-            "max_tokens": request.max_tokens,
-            "temperature": request.temperature,
-        }
+        context_str += f"[Metadata] Provider: {request.provider}, Quality: {request.quality_tier}"
 
-        # LLM Router 호출
-        result = await route_and_execute(full_message, context)
+        # TICKET-026: Trinity Multi-Agent Orchestration (ZGL, SMY, ZYU)
+        from AFO.dspy.trinity_orchestrator import TrinityOrchestrator
 
+        agent = TrinityOrchestrator()
+        prediction = agent(question=request.message, context=context_str)
+
+        # Extract values from prediction
+        answer = getattr(prediction, "answer", "No answer generated.")
+        thought = getattr(prediction, "thought_process", "Thinking...")
+        strategist = getattr(prediction, "strategist", "AFO_COMMITTEE")
+        rationale = getattr(prediction, "rationale", "Standard routing.")
+
+        # Return response compatible with AFO Dashboard
         return ChatMessageResponse(
-            success=result.get("success", False),
-            response=result.get("response"),
-            error=result.get("error"),
-            routing=result.get("routing"),
+            success=True,
+            response=answer,
+            error=None,
+            routing={
+                "agent": "TrinityOrchestrator",
+                "thought_process": f"[{strategist}] {rationale}\n\n{thought}",
+                "search_query": getattr(prediction, "search_query", ""),
+                "strategist": strategist,
+                "version": "2.0.0-Elite",
+            },
             timestamp=datetime.now().isoformat(),
         )
 
     except Exception as e:
-        logger.error(f"Chat message error: {e}")
+        logger.exception(f"Active RAG Error: {e}")
         return ChatMessageResponse(
             success=False,
-            response=None,
+            response="Active RAG Failed (Fallback to Shadow Mode)",
             error=str(e),
-            routing=None,
+            routing={"agent": "RagActiveAgent", "status": "failed"},
             timestamp=datetime.now().isoformat(),
         )
 

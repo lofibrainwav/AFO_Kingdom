@@ -166,6 +166,10 @@ class AFOServer:
 
         Trinity Score: 眞 (Truth) - 시스템의 투명한 관측 가능성 확보
         """
+        if os.getenv("AFO_OTEL_DISABLED") == "1":
+            logger.info("OTEL Observability is explicitly DISABLED")
+            return
+
         try:
             # Local imports to prevent ModuleNotFoundError if dependencies are missing
             from opentelemetry import trace
@@ -183,7 +187,6 @@ class AFOServer:
             trace.set_tracer_provider(tracer_provider)
 
             # 3. Configure OTLP Exporter (gRPC)
-            # Default: http://localhost:4317 or env OTEL_EXPORTER_OTLP_ENDPOINT
             otlp_endpoint = os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT", "http://localhost:4317")
             otlp_exporter = OTLPSpanExporter(endpoint=otlp_endpoint, insecure=True)
 
@@ -195,8 +198,14 @@ class AFOServer:
             LoggingInstrumentor().instrument(set_logging_format=True)
 
             logger.info(f"✅ OpenTelemetry initialized (Endpoint: {otlp_endpoint})")
+        except ImportError as e:
+            logger.warning(
+                f"⚠️ OpenTelemetry dependencies missing: {e}. Run 'pip install opentelemetry-api opentelemetry-sdk opentelemetry-exporter-otlp opentelemetry-instrumentation-logging'"
+            )
         except Exception as e:
-            logger.warning(f"⚠️ OpenTelemetry setup failed: {e}")
+            logger.warning(
+                f"⚠️ OpenTelemetry setup failed (Service might only be partially observable): {e}"
+            )
 
     def _setup_python_path(self) -> None:
         """Setup Python path for AFO imports.

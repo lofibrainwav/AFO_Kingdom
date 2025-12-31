@@ -35,9 +35,14 @@ async def _cleanup_yeongdeok() -> None:
         # Import here to avoid circular imports during initialization
         from AFO.api.initialization import yeongdeok
 
-        if yeongdeok and hasattr(yeongdeok, "browser"):
-            await yeongdeok.close_eyes()
-            print("✅ Yeongdeok browser cleanup completed")
+        if yeongdeok:
+            if hasattr(yeongdeok, "close_eyes") and callable(yeongdeok.close_eyes):
+                await yeongdeok.close_eyes()
+                print("✅ Yeongdeok memory system closed gracefully (眞)")
+            elif hasattr(yeongdeok, "browser") and yeongdeok.browser:
+                print(
+                    "ℹ️ Yeongdeok has browser but no close_eyes - manual intervention might be needed"
+                )
     except Exception as e:
         logger.warning(f"Yeongdeok cleanup failed: {e}")
 
