@@ -16,13 +16,19 @@ dependencies = [
     "opentelemetry-exporter-otlp>=1.22.0",
     "opentelemetry-instrumentation-fastapi>=0.43b0",
     "structlog>=24.1.0",
+    "pytest-asyncio (>=0.23.8)",
+    "llama-index (>=0.14.12,<0.15.0)",
+    "llama-index-llms-ollama (>=0.9.1,<0.10.0)",
+    "llama-index-embeddings-ollama (>=0.8.5,<0.9.0)",
+    "llama-index-vector-stores-chroma (>=0.5.5,<0.6.0)",
+    "chromadb (>=1.4.0,<2.0.0)",
 ]
 
 [project.optional-dependencies]
 dev = [
     "ruff==0.14.10",
     "pytest==7.4.3",
-    "pytest-asyncio==0.21.1",
+    "pytest-asyncio>=0.23.8",
     "pyright==1.1.391",
     "anyio==4.7.0",
     "trio==0.23.2",
