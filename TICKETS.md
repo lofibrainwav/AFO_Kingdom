@@ -15,6 +15,7 @@
 | TICKET-003 | LlamaIndex RAG 파이프라인 구축 | MEDIUM | PENDING | 인프라팀 | TICKET-001 | 3시간 |
 | TICKET-004 | Trinity Score 메트릭 통합 | MEDIUM | PENDING | 품질팀 | TICKET-002, TICKET-003 | 2시간 |
 | TICKET-005 | Bayesian 최적화 알고리즘 구현 | LOW | PENDING | 연구팀 | TICKET-002 | 3시간 |
+| TICKET-006 | MD→티켓 자동 변환 시스템 구현 | MEDIUM | PENDING | 자동화팀 | 티켓 시스템 존재 | 6시간 |
 
 ## 🔒 SSOT 안전장치
 
