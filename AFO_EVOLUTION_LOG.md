@@ -275,6 +275,45 @@
   - **Skills**: 5 tools active (Health, Skills List/Detail/Execute, GenUI)
 - **System Status**: **READY** for high-level orchestration
 
+### Go Live 1% → 5%: RAG Production Rollout Complete (2025-12-31)
+
+- **Go Live 1% 완료**: 증거 봉인 루프 완전 구현
+- **5% 램프업 성공**: 안전한 점진적 확대 검증
+- **Security 강화**: bucket_seed 해시화 + server import CI gate
+- **CI 하드닝 LOCK**: TICKET-007~009 완전 마스터 시스템 구축
+- **Trinity Score 기반 운영**: Boot-Swap + RAG 우선순위 자동화
+- **System Status**: **PRODUCTION READY** (실제 사용자 응답에 RAG 적용)
+
+### RAG 최적화 기법 적용 완료 (2025-12-31)
+
+- **Cache 적용**: Redis/메모리 TTL 기반 쿼리 캐싱 (AFO_RAG_CACHE_ENABLED=1)
+- **Prompt SSOT**: MIPRO v2.2 최적화 타겟 템플릿 고정
+- **Chunking 준비**: 컨텍스트 효율화 모듈 구현 (AFO_RAG_CHUNK_ENABLED=0)
+- **Re-ranking 준비**: Cross-Encoder 기반 검색 결과 재정렬 (AFO_RAG_RERANK_ENABLED=0)
+- **안전가드**: 모든 최적화 fail-open 구조 + timeout 보호
+- **MIPRO 타겟**: 프롬프트 템플릿을 v2.2 최적화 대상으로 설정
+
+### 25% → 50%: Gradual Rollout Expansion (2025-12-31)
+
+- **25% → 50% 램프업 완료**: LOCK 절차 준수, 증거 봉인 루프 유지
+- **6가지 진실 포인트 개선**: 캐시 TTL SSOT, 캐시 키 버전화, 리랭크 lazy import, 리랭크 timeout 강화, Health 메트릭 확장
+- **안전한 점진적 확대**: 메트릭 악화 추세 없음, OK/NO-GO 판정 통과
+- **증거 기반 의사결정**: 봉인된 JSON 파일 비교로 검증
+
+### TICKET-014 Apple Silicon MLX 최적화 환경 구축 팩트 체크 적용 및 SSOT 증거 생성 (2025-12-31)
+
+- **DSPy BLOCKED + TorchAO BLOCKED 대안 전략**: Apple Silicon M4 전용 MLX 프레임워크 도입 검토
+- **MLX SSOT 팩트 체크**: Apple 공식 문서 기반으로 과장된 표현 모두 수정 (Neural Engine 100% → Metal GPU 가속)
+- **통합 메모리 지원**: unified memory 구조로 불필요한 메모리 이동 감소 (Apple Open Source 문서 확인)
+- **양자화 기술**: 4-bit/8-bit/DWQ PLANNED 상태 (mlx-lm 문서 기반, 구현 예정)
+- **지연 계산 지원**: lazy evaluation + graph optimization 지원 (MLX 핵심 특징)
+- **LoRA/QLoRA 지원**: mlx-lm 문서에 명시된 기능 (구현 예정)
+- **Transformers 통합**: tokenizer 검증 성공, 모델 로딩은 mlx-lm 루트로 진행
+- **Trinity Score 영향**: 眞+15, 善+20, 美+15, 孝+7, 永+8 (총 +65점 개선 목표)
+- **비용 효율**: 0원/일 (로컬 M4 자원 활용)
+- **SSOT 증거**: artifacts/mlx_ssot_verified_20251231.txt 생성 (실측 로그 기반 공식 문서 검증 완료)
+- **결론**: 공식 문서 기반 + 실측 로그 기반으로 TICKET-014 완전 SSOT 봉인 완료
+
 
 ### Phase 3: Soul Engine Resurrection & Docker Eternity (2025-12-28)
 
