@@ -60,7 +60,7 @@ jobs:
 
       - name: Upload Trinity Evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: trinity-evidence-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
@@ -70,7 +70,7 @@ jobs:
 
       - name: Upload Royal Build Evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: royal-build-evidence-${{ github.run_id }}-${{ github.run_attempt }}
           path: artifacts/royal_build/**
