@@ -10,7 +10,7 @@ import sys
 
 import mlx.core as mx
 from mlx.utils import tree_flatten
-from mlx_lm import load as load_lm, save as save_lm
+from mlx_lm import load as load_lm
 
 
 class LoRATuner:
@@ -75,39 +75,40 @@ class LoRATuner:
         return sample_data
 
     def train(self, train_data: list[dict], output_dir: str, num_epochs: int = 3):
-        """LoRA 튜닝 실행"""
+        """LoRA 튜닝 실행 (간소화된 버전)"""
         print(f"Starting LoRA training for {num_epochs} epochs")
+        print(f"Training data size: {len(train_data)}")
+        print(f"Output directory: {output_dir}")
 
-        # mlx-lm 튜너 사용 (실제 구현)
         try:
-            # LoRA 설정
-            lora_config = {
-                "rank": self.lora_config["rank"],
-                "alpha": self.lora_config["alpha"],
-                "dropout": self.lora_config["dropout"],
-                "target_modules": self.lora_config["target_modules"],
-            }
+            # 간소화된 LoRA 튜닝 시뮬레이션
+            # 실제 MLX LoRA 튜닝은 더 복잡한 구현이 필요하지만,
+            # 현재는 기본적인 파라미터 업데이트 시뮬레이션
 
-            # 학습 설정
-            training_args = {
-                "batch_size": 4,
-                "learning_rate": 2e-5,
-                "num_epochs": num_epochs,
-                "warmup_steps": 100,
-                "save_steps": 500,
-                "output_dir": output_dir,
-                "lora_config": lora_config,
-            }
+            import time
 
-            # 실제 튜닝 실행 (mlx-lm 사용)
-            # train_lm(
-            #     model=self.model,
-            #     tokenizer=self.tokenizer,
-            #     train_dataset=train_data,
-            #     training_args=training_args
-            # )
+            for epoch in range(num_epochs):
+                print(f"Epoch {epoch + 1}/{num_epochs}")
 
-            print(f"LoRA training completed. Model saved to: {output_dir}")
+                for i, item in enumerate(train_data):
+                    # 시뮬레이션: 실제로는 forward/backward pass
+                    text = item.get("text", "")
+                    response = item.get("response", "")
+
+                    # LoRA 파라미터 업데이트 시뮬레이션
+                    print(f"  Processing sample {i + 1}: {text[:50]}...")
+
+                    # 실제 구현에서는:
+                    # - 입력 토크나이즈
+                    # - 모델 forward
+                    # - LoRA 파라미터만 업데이트
+                    # - 옵티마이저 step
+
+                    time.sleep(0.1)  # 시뮬레이션 딜레이
+
+                print(f"  Epoch {epoch + 1} completed")
+
+            print(f"LoRA training simulation completed. Model 'saved' to: {output_dir}")
 
         except Exception as e:
             print(f"Training failed: {e}")
@@ -121,7 +122,29 @@ class LoRATuner:
             raise ValueError("Model not loaded")
 
         print(f"Saving LoRA model to: {output_dir}")
-        save_lm(self.model, self.tokenizer, output_dir)
+
+        # MLX 모델 저장 (mlx_lm.convert 사용 또는 safetensors)
+        import os
+
+        os.makedirs(output_dir, exist_ok=True)
+
+        # 모델 파라미터 저장
+        if hasattr(self.model, "save_pretrained"):
+            # 새로운 MLX 버전에서는 save_pretrained 사용
+            self.model.save_pretrained(output_dir)
+        else:
+            # 구버전에서는 safetensors로 저장
+            import safetensors.numpy
+
+            params_dict = {}
+            for name, param in tree_flatten(self.model.parameters()):
+                params_dict[name] = param
+            safetensors.numpy.save_file(params_dict, f"{output_dir}/model.safetensors")
+
+        # 토크나이저 저장
+        if self.tokenizer:
+            self.tokenizer.save_pretrained(output_dir)
+
         print("Model saved successfully")
 
 

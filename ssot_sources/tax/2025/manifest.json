@@ -1,0 +1,22 @@
+[
+  {
+    "file": "ssot_sources/tax/2025/edd_de4.pdf",
+    "sha256": "6d1e24c7081e4eab4d3380f197a87129b657f77bfb9be6a88784f536320e9e37",
+    "bytes": 637856
+  },
+  {
+    "file": "ssot_sources/tax/2025/ftb_2025_540_tax_rate_schedules.pdf",
+    "sha256": "ad70ee345aa7daf5788b64419e04280c76fbebd0c15856820ccea71f3534a8c6",
+    "bytes": 52676
+  },
+  {
+    "file": "ssot_sources/tax/2025/irs_pub17_2025.html",
+    "sha256": "10525331d668777262b345bbe5189e288313c83d4779e0b8bc1fbff729618be5",
+    "bytes": 2721430
+  },
+  {
+    "file": "ssot_sources/tax/2025/irs_rp_24_40.pdf",
+    "sha256": "4de9db6b6662b5c305a59100a027051628823b42fd5817ea4e383ad4c302af1f",
+    "bytes": 249076
+  }
+]

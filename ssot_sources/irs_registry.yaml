@@ -1,0 +1,255 @@
+# IRS 실시간 SSOT 동기화 레지스트리
+# 메타인지 기반 모니터링: OBBB FAQ 우선순위 + 멀티 소스 검증
+# TICKET-033: IRS 실시간 SSOT 동기화 시스템
+
+metadata:
+  version: "1.0.0"
+  created_at: "2026-01-01T00:51:00Z"
+  author: "승상 (AFO Kingdom Chancellor)"
+  purpose: "IRS 세법 변경 실시간 감지 및 SSOT 자동 동기화"
+  trinity_score_requirements:
+    truth: 1.0      # IRS 공식 자료 100% 정확성
+    goodness: 1.0   # Julie CPA 신뢰성 보장
+    beauty: 0.95    # 모듈식 아키텍처
+    serenity: 1.0   # 안정적 모니터링
+    eternity: 1.0   # 증거 영구 보존
+
+monitoring_rules:
+  # 우선순위: OBBB FAQ > Form Instructions > Newsroom > General Guidance
+  priority_hierarchy:
+    - "obbb_faq"        # One Big Beautiful Bill FAQ (최우선)
+    - "form_instructions"  # Official Form Instructions
+    - "newsroom"        # IRS Newsroom Articles
+    - "publications"    # IRS Publications
+    - "guidance"        # General Guidance
+
+  # 충돌 감지 규칙
+  conflict_detection:
+    min_sources_for_validation: 2  # 동일 주제 검증 최소 소스 수
+    auto_flag_threshold: "high"    # 자동 High 플래그 임계값
+    human_review_required: true    # 모든 변경사항 사람 검토 필수
+
+  # 영향도 평가 규칙
+  impact_assessment:
+    critical_keywords:
+      - "termination"
+      - "repeal"
+      - "end"
+      - "no longer"
+      - "discontinued"
+    high_keywords:
+      - "modification"
+      - "change"
+      - "amendment"
+      - "revision"
+      - "update"
+    medium_keywords:
+      - "clarification"
+      - "guidance"
+      - "faq"
+
+sources:
+  # ===== OBBB (One Big Beautiful Bill) - 최우선 모니터링 =====
+  - name: "OBBB Energy Credits FAQ"
+    id: "obbb_energy_credits"
+    url: "https://www.irs.gov/newsroom/faqs-for-modification-of-sections-25c-25d-25e-30c-30d-45l-45w-and-179d-under-public-law-119-21-139-stat-72-july-4-2025-commonly-known-as-the-one-big-beautiful-bill-obbb"
+    category: "energy_credits"
+    priority: "critical"
+    check_interval_hours: 6
+    content_type: "faq"
+    parser_config:
+      content_selector: ".field--name-body"
+      date_selector: ".field--name-field-news-date"
+    validation_rules:
+      - "must_contain: One Big Beautiful Bill"
+      - "must_contain: 2025"
+    related_sources:
+      - "energy_home_faq"
+      - "form_5695_instructions"
+
+  - name: "OBBB Vehicle Credits FAQ"
+    id: "obbb_vehicle_credits"
+    url: "https://www.irs.gov/newsroom/faqs-for-modification-of-sections-25c-25d-25e-30c-30d-45l-45w-and-179d-under-public-law-119-21-139-stat-72-july-4-2025-commonly-known-as-the-one-big-beautiful-bill-obbb"
+    category: "vehicle_credits"
+    priority: "critical"
+    check_interval_hours: 6
+    content_type: "faq"
+    parser_config:
+      content_selector: ".field--name-body"
+      date_selector: ".field--name-field-news-date"
+    validation_rules:
+      - "must_contain: electric vehicle"
+      - "must_contain: 2025"
+    related_sources:
+      - "ev_credit_general"
+
+  # ===== Form Instructions =====
+  - name: "Form 4562 Instructions (Bonus Depreciation)"
+    id: "form_4562_instructions"
+    url: "https://www.irs.gov/pub/irs-dft/i4562--dft.pdf"
+    category: "depreciation"
+    priority: "high"
+    check_interval_hours: 24
+    content_type: "pdf"
+    parser_config:
+      page_range: "1-5"
+      keyword_focus: "bonus depreciation"
+    validation_rules:
+      - "must_contain: 100%"
+      - "must_contain: 2025"
+    related_sources:
+      - "obbb_energy_credits"
+
+  - name: "Form 5695 Instructions (Energy Credits)"
+    id: "form_5695_instructions"
+    url: "https://www.irs.gov/instructions/i5695"
+    category: "energy_credits"
+    priority: "high"
+    check_interval_hours: 24
+    content_type: "html"
+    parser_config:
+      content_selector: ".instruction-content"
+      section_focus: "Qualified Improvements"
+    validation_rules:
+      - "must_contain: placed in service"
+    related_sources:
+      - "obbb_energy_credits"
+
+  # ===== Newsroom Articles =====
+  - name: "OBBB Tax Deductions Announcement"
+    id: "obbb_tax_deductions"
+    url: "https://www.irs.gov/newsroom/one-big-beautiful-bill-act-tax-deductions-for-working-americans-and-seniors"
+    category: "tax_deductions"
+    priority: "high"
+    check_interval_hours: 24
+    content_type: "news"
+    parser_config:
+      content_selector: ".field--name-body"
+      date_selector: ".field--name-field-news-date"
+    validation_rules:
+      - "must_contain: One Big Beautiful Bill"
+    related_sources:
+      - "obbb_energy_credits"
+
+  - name: "ERC Compliance FAQ"
+    id: "erc_compliance"
+    url: "https://www.irs.gov/newsroom/irs-frequently-asked-questions-faqs-address-employee-retention-credits-under-erc-compliance-provisions-of-the-one-big-beautiful-bill"
+    category: "business_credits"
+    priority: "high"
+    check_interval_hours: 24
+    content_type: "faq"
+    parser_config:
+      content_selector: ".field--name-body"
+    validation_rules:
+      - "must_contain: employee retention"
+      - "must_contain: 2024"
+    related_sources:
+      - "obbb_energy_credits"
+
+  # ===== General Guidance =====
+  - name: "Energy Efficient Home Improvements FAQ"
+    id: "energy_home_faq"
+    url: "https://www.irs.gov/credits-deductions/frequently-asked-questions-about-energy-efficient-home-improvements-and-residential-clean-energy-property-credits"
+    category: "energy_credits"
+    priority: "medium"
+    check_interval_hours: 48
+    content_type: "faq"
+    parser_config:
+      content_selector: ".field--name-body"
+      section_filter: "Home Electrification Credit"
+    validation_rules:
+      - "must_contain: energy"
+    related_sources:
+      - "obbb_energy_credits"
+      - "form_5695_instructions"
+
+  - name: "Electric Vehicle Credit General"
+    id: "ev_credit_general"
+    url: "https://www.irs.gov/credits-deductions/electric-vehicle-credit"
+    category: "vehicle_credits"
+    priority: "medium"
+    check_interval_hours: 48
+    content_type: "guidance"
+    parser_config:
+      content_selector: ".field--name-body"
+      section_filter: "Clean Vehicle Credit"
+    validation_rules:
+      - "must_contain: electric"
+    related_sources:
+      - "obbb_vehicle_credits"
+
+# 변경 감지 및 알림 설정
+notification_config:
+  channels:
+    - type: "jsonl_artifact"
+      path: "artifacts/ticket033_irs_updates_*.jsonl"
+      enabled: true
+    - type: "dashboard_alert"
+      endpoint: "/api/julie/irs-alerts"
+      enabled: true
+    - type: "slack_webhook"
+      url: "${SLACK_IRS_WEBHOOK_URL}"
+      enabled: false  # 환경변수로 활성화
+
+  alert_rules:
+    critical: "immediate"  # 즉시 알림
+    high: "daily_digest"   # 일간 요약
+    medium: "weekly_digest" # 주간 요약
+    low: "monthly_digest"   # 월간 요약
+
+# SSOT 동기화 매핑
+ssot_mapping:
+  energy_credits:
+    ssot_file: "artifacts/ticket031_tax_params_2025.json"
+    update_path: "$.energy_credits"
+    validation_tests: ["test_tax_engine_2025.py::test_energy_credits"]
+
+  vehicle_credits:
+    ssot_file: "artifacts/ticket031_tax_params_2025.json"
+    update_path: "$.vehicle_credits"
+    validation_tests: ["test_tax_engine_2025.py::test_vehicle_credits"]
+
+  depreciation:
+    ssot_file: "artifacts/ticket031_tax_params_2025.json"
+    update_path: "$.depreciation_rules"
+    validation_tests: ["test_tax_engine_2025.py::test_bonus_depreciation"]
+
+  business_credits:
+    ssot_file: "artifacts/ticket031_tax_params_2025.json"
+    update_path: "$.business_credits"
+    validation_tests: ["test_tax_engine_2025.py::test_erc_credits"]
+
+# Trinity Score 모니터링
+trinity_monitoring:
+  enabled: true
+  metrics:
+    truth_accuracy: 1.0      # IRS 공식 자료 100% 정확성
+    goodness_reliability: 1.0 # Julie CPA 신뢰성 보장
+    beauty_modularity: 0.95   # 모듈식 아키텍처
+    serenity_stability: 1.0   # 안정적 모니터링
+    eternity_preservation: 1.0 # 증거 영구 보존
+
+# 메타인지 설정 (할루시네이션 방지)
+metacognition:
+  hallucination_prevention:
+    enabled: true
+    rules:
+      - "reject_ira_references: 2033-2034 단계적 종료 언급 자동 거부"
+      - "require_obbb_confirmation: OBBB FAQ와 Form Instructions 2개 이상 일치 요구"
+      - "flag_ambiguous_terms: 'may', 'could', 'might' 등의 모호한 표현 플래그"
+      - "validate_date_consistency: 날짜 정보 내부 일관성 검증"
+
+  evidence_bundle_generation:
+    enabled: true
+    format: "jsonl"
+    fields:
+      - "evidence_bundle_id"
+      - "source_url"
+      - "fetched_at"
+      - "sha256_hash"
+      - "content_diff"
+      - "impact_level"
+      - "conflict_detected"
+      - "validation_sources"
+      - "trinity_score"
+      - "metacognition_insights"
