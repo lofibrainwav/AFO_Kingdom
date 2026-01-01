@@ -1,0 +1,88 @@
+name: SSOT Drift Monitor
+
+on:
+  schedule:
+    # 매일 UTC 12:00 (LA 새벽 4AM)
+    - cron: '0 12 * * *'
+  workflow_dispatch:  # 수동 실행 허용
+
+env:
+  EXPECTED_TRINITY_MIN: "0.90"
+  EXPECTED_ORGANS_MIN: "6"
+
+jobs:
+  drift-check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      
+      - name: Git Drift Check
+        id: git
+        run: |
+          git fetch origin main
+          AHEAD=$(git rev-list HEAD..origin/main --count)
+          BEHIND=$(git rev-list origin/main..HEAD --count)
+          echo "ahead=$AHEAD" >> $GITHUB_OUTPUT
+          echo "behind=$BEHIND" >> $GITHUB_OUTPUT
+          
+          if [[ "$AHEAD" == "0" && "$BEHIND" == "0" ]]; then
+            echo "status=OK" >> $GITHUB_OUTPUT
+          else
+            echo "status=DRIFT" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Create Drift Report
+        id: report
+        run: |
+          mkdir -p artifacts/drift_$(date +%Y%m%d)
+          
+          cat > artifacts/drift_$(date +%Y%m%d)/report.md << EOF
+          # SSOT Drift Report - $(date +%Y-%m-%d)
+          
+          ## Git Status
+          - Ahead: ${{ steps.git.outputs.ahead }}
+          - Behind: ${{ steps.git.outputs.behind }}
+          - Status: ${{ steps.git.outputs.status }}
+          
+          ## Timestamp
+          $(date -u +%Y-%m-%dT%H:%M:%SZ)
+          EOF
+          
+          echo "report=artifacts/drift_$(date +%Y%m%d)/report.md" >> $GITHUB_OUTPUT
+      
+      - name: Upload Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: drift-report-${{ github.run_id }}
+          path: artifacts/drift_*/
+          retention-days: 30
+      
+      - name: Alert on Drift
+        if: steps.git.outputs.status == 'DRIFT'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: '⚠️ SSOT Drift Detected - ' + new Date().toISOString().split('T')[0],
+              body: `## Drift Report
+              
+              - Git Ahead: ${{ steps.git.outputs.ahead }}
+              - Git Behind: ${{ steps.git.outputs.behind }}
+              
+              Please review and resolve.`,
+              labels: ['drift', 'ssot', 'automated']
+            });
