@@ -82,11 +82,17 @@ cmd_help() {
     echo "  ./afo trinity"
     echo "  ./afo status"
     echo "  ./afo alert warning 'Title' 'Message'"
+    echo "  ./afo release v1.0.0"
 }
 
 cmd_alert() {
     echo -e "${YELLOW}📢 Alert System${NC}"
     "$SCRIPTS_DIR/afo_alert.sh" "$@"
+}
+
+cmd_release() {
+    echo -e "${YELLOW}🚀 Release System${NC}"
+    "$SCRIPTS_DIR/afo_release_tag.sh" "$@"
 }
 
 # Main
@@ -114,6 +120,10 @@ case "${1:-help}" in
         shift || true
         cmd_alert "$@"
         ;;
+    release)
+        shift || true
+        cmd_release "$@"
+        ;;
     help|--help|-h)
         cmd_help
         ;;
@@ -123,3 +133,4 @@ case "${1:-help}" in
         exit 1
         ;;
 esac
+
