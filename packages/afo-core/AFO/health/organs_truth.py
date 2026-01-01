@@ -84,10 +84,29 @@ def build_organs_final(
 ) -> dict[str, Any]:
     import os
 
-    redis_host = redis_host or os.getenv("REDIS_HOST", "afo-redis")
-    postgres_host = postgres_host or os.getenv("POSTGRES_HOST", "afo-postgres")
-    qdrant_host = qdrant_host or os.getenv("QDRANT_HOST", "afo-qdrant")
-    ollama_host = ollama_host or os.getenv("OLLAMA_HOST", "afo-ollama")
+    # Use get_settings() as SSOT to avoid .env vs docker-compose.yml conflicts
+    try:
+        from config.settings import get_settings
+
+        settings = get_settings()
+        redis_host = redis_host or settings.REDIS_HOST or os.getenv("REDIS_HOST", "afo-redis")
+        postgres_host = (
+            postgres_host or settings.POSTGRES_HOST or os.getenv("POSTGRES_HOST", "afo-postgres")
+        )
+        qdrant_host = qdrant_host or os.getenv("QDRANT_HOST", "afo-qdrant")
+        # Extract hostname from OLLAMA_BASE_URL if available
+        ollama_base = settings.OLLAMA_BASE_URL
+        if ollama_base and "://" in ollama_base:
+            # Parse http://afo-ollama:11434 -> afo-ollama
+            ollama_host = ollama_host or ollama_base.split("://")[1].split(":")[0].split("/")[0]
+        else:
+            ollama_host = ollama_host or os.getenv("OLLAMA_HOST", "afo-ollama")
+    except ImportError:
+        # Fallback to os.getenv if settings not available
+        redis_host = redis_host or os.getenv("REDIS_HOST", "afo-redis")
+        postgres_host = postgres_host or os.getenv("POSTGRES_HOST", "afo-postgres")
+        qdrant_host = qdrant_host or os.getenv("QDRANT_HOST", "afo-qdrant")
+        ollama_host = ollama_host or os.getenv("OLLAMA_HOST", "afo-ollama")
 
     organs: dict[str, OrganReport] = {}
 

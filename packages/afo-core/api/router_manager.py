@@ -42,6 +42,7 @@ from AFO.api.compat import (
     ssot_router,
     streams_router,
     system_health_router,
+    tax_router,
     trinity_policy_router,
     trinity_sbt_router,
     users_router,
@@ -158,6 +159,7 @@ class AFORouterManager:
         self._safe_register_router(wallet_router, tags=["API Wallet"])
         self._safe_register_router(trinity_policy_router, tags=["trinity"])
         self._safe_register_router(trinity_sbt_router, prefix="/api", tags=["trinity"])
+        self._safe_register_router(tax_router, tags=["Tax Engine"])
 
         # User management systems
         self._safe_register_router(users_router, tags=["肝 시스템 - 사용자 관리"])
