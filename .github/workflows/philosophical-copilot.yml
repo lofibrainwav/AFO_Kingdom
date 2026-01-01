@@ -45,7 +45,7 @@ jobs:
 
     steps:
       - name: "레포지토리 체크아웃 (지형 익히기)"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -87,7 +87,7 @@ jobs:
 
     steps:
       - name: "레포지토리 체크아웃"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: "Node.js 설정 (React 철학 구현)"
         uses: actions/setup-node@v4
@@ -150,7 +150,7 @@ jobs:
 
     steps:
       - name: "레포지토리 체크아웃"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: "Python 설정"
         uses: actions/setup-python@v5
@@ -217,7 +217,7 @@ jobs:
 
     steps:
       - name: "레포지토리 체크아웃"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: "철학적 배포 검증"
         run: |
@@ -249,7 +249,7 @@ jobs:
 
     steps:
       - name: "레포지토리 체크아웃"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: "철학적 CI/CD 보고서 생성"
         run: |
