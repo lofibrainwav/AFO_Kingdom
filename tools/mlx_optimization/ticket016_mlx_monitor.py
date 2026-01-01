@@ -126,6 +126,17 @@ def main():
         "token_budget": None,
         "kv_cache_size": None,
         "model_fallback": None,
+        "measured": False,
+        "measurement_tool": "time",
+        "confidence_level": "medium",
+        "qwen_accuracy_before": None,
+        "qwen_accuracy_after": None,
+        "llama_quality_before": None,
+        "llama_quality_after": None,
+        "chain_accuracy_before": None,
+        "chain_accuracy_after": None,
+        "quality_metrics": None,
+        "improvement_percentage": None,
         "notes": "",
     }
 
