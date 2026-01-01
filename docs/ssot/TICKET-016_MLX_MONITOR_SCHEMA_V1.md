@@ -31,6 +31,19 @@
 - kv_cache_size: integer (KV 캐시 크기 bytes)
 - model_fallback: string (메모리 압박 시 폴백 모델)
 
+## 품질 측정 필드 (v3 LoRA 튜닝 추가)
+- measured: boolean (실측 데이터 여부)
+- measurement_tool: string (측정 도구: time/psutil/manual)
+- confidence_level: string (신뢰도: high/medium/low)
+- qwen_accuracy_before: number (Qwen3-VL 튜닝 전 정확도)
+- qwen_accuracy_after: number (Qwen3-VL 튜닝 후 정확도)
+- llama_quality_before: number (Llama 튜닝 전 품질 점수)
+- llama_quality_after: number (Llama 튜닝 후 품질 점수)
+- chain_accuracy_before: number (체인 튜닝 전 종단간 정확도)
+- chain_accuracy_after: number (체인 튜닝 후 종단간 정확도)
+- quality_metrics: object (상세 품질 메트릭)
+- improvement_percentage: number (개선율 %)
+
 ## mode=vlm_smoke 추가 필드
 - model_vlm: string
 - image: string
