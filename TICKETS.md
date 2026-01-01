@@ -3,24 +3,24 @@
 **프로젝트 목표**: AFO Kingdom 자율 운영 시스템 완성
 **최종 업데이트**: 2026-01-01
 **Trinity Score**: 93.2% ✅ (목표: 90%+)
-**HEAD**: `5168dd4b`
+**HEAD**: `9758c034`
 
 ## 📋 Phase 3-8 완료 티켓
 
 | ID | 제목 | Phase | Commit | Seal Tag | Evidence |
 |---|------|-------|--------|----------|----------|
-| TICKET-060 | SSOT Auto-Seal | 3 | `78199e99` | `ssot-phase3-*` | `artifacts/seal_*` |
-| TICKET-061 | Trinity Gate | 3 | `ddd236e7` | `ssot-phase3-*` | `.github/workflows/trinity-gate.yml` |
-| TICKET-062 | Release Rail | 3 | `38961df8` | `ssot-phase3-*` | `.github/workflows/release.yml` |
-| TICKET-063 | Branch Protection | 4-A | `fa428ab2` | `ssot-phase4-branch-*` | `scripts/enforce_branch_protection.sh` |
+| TICKET-060 | SSOT Auto-Seal | 3 | `78199e99` | `ssot-phase3-autonomy-*` | `scripts/ssot_seal.sh` |
+| TICKET-061 | Trinity Gate | 3 | `ddd236e7` | `ssot-phase3-autonomy-*` | `.github/workflows/trinity-gate.yml` |
+| TICKET-062 | Release Rail | 3 | `38961df8` | `ssot-phase3-autonomy-*` | `.github/workflows/release.yml` |
+| TICKET-063 | Branch Protection | 4-A | `fa428ab2` | `ssot-phase4-branch-protection-*` | `scripts/enforce_branch_protection.sh` |
 | TICKET-064 | Drift Monitor | 4-B | `28eca5dc` | `ssot-phase4-complete-*` | `scripts/ssot_drift_monitor.sh` |
 | TICKET-065 | Dependabot | 4-C | `bf63666a` | `ssot-phase4-complete-*` | `.github/dependabot.yml` |
-| TICKET-066 | Golden Path CLI | 5 | `caf138c0` | - | `afo` |
-| TICKET-067 | Fail-Fast | 6 | `2a895ea0` | - | `afo` (ERR trap) |
+| TICKET-066 | Golden Path CLI | 5 | `caf138c0` | `ssot-phase5-golden-path-*` | `afo` |
+| TICKET-067 | Fail-Fast | 6 | `2a895ea0` | `ssot-phase6-failfast-*` | `afo` (ERR trap) |
 | TICKET-068 | Alert Integration | 7-A | `c11f3f39` | `ssot-phase7A-alert-*` | `scripts/afo_alert.sh` |
 | TICKET-069 | Evidence Format | 7-B | `d8327067` | `ssot-phase7-complete-*` | `scripts/afo_manifest.sh` |
 | TICKET-070 | Shellcheck Gate | 7-C | `c8333672` | `ssot-phase7-complete-*` | `.github/workflows/shellcheck.yml` |
-| TICKET-071 | CI Failure Alert | 8-A | `99c62fc8` | - | `trinity-gate.yml` (failure step) |
+| TICKET-071 | CI Failure Alert | 8-A | `99c62fc8` | `ssot-phase8A-ci-alert-*` | `trinity-gate.yml` (failure step) |
 
 ## 🆕 다음 티켓
 
@@ -39,11 +39,15 @@
 
 ## 🔒 SSOT 봉인 태그
 
+- `ssot-phase0-6-audit-*`
 - `ssot-phase3-autonomy-*`
 - `ssot-phase4-branch-protection-*`
 - `ssot-phase4-complete-*`
+- `ssot-phase5-golden-path-*`
+- `ssot-phase6-failfast-*`
 - `ssot-phase7-complete-*`
 - `ssot-phase7A-alert-*`
+- `ssot-phase8A-ci-alert-*`
 
 ## ✅ Definition of Done (측정 가능)
 
