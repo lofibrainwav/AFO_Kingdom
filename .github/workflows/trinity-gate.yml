@@ -112,3 +112,23 @@ jobs:
               repo: context.repo.repo,
               body: body
             });
+      
+      - name: Alert on Failure
+        if: failure()
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          # Send alert via webhook if configured
+          MESSAGE="❌ Trinity Gate FAILED on PR #${{ github.event.pull_request.number }}"
+          if [[ -n "${SLACK_WEBHOOK_URL:-}" ]]; then
+            curl -sS -X POST -H 'Content-type: application/json' \
+              --data "{\"text\": \"$MESSAGE\"}" \
+              "$SLACK_WEBHOOK_URL" || true
+          fi
+          if [[ -n "${DISCORD_WEBHOOK_URL:-}" ]]; then
+            curl -sS -X POST -H 'Content-type: application/json' \
+              --data "{\"content\": \"$MESSAGE\"}" \
+              "$DISCORD_WEBHOOK_URL" || true
+          fi
+          echo "$MESSAGE"
