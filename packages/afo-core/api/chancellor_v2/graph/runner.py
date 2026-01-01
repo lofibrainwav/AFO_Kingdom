@@ -16,17 +16,19 @@ from .store import append_event, save_checkpoint
 
 NodeFn = Callable[[GraphState], GraphState]
 
-# SSOT: Chancellor Graph V2 Execution Order
+# SSOT: Chancellor Graph V2 Execution Order (5기둥 Trinity 완전 평가)
 # This is the SINGLE SOURCE OF TRUTH for Chancellor Graph node execution sequence
 # Any changes to execution order MUST be made here and reflected in documentation
 ORDER = [
     "CMD",
     "PARSE",
-    "TRUTH",
-    "GOODNESS",
-    "BEAUTY",
+    "TRUTH",  # 眞 (Truth) - 기술적 확실성
+    "GOODNESS",  # 善 (Goodness) - 윤리·안정성
+    "BEAUTY",  # 美 (Beauty) - 구조적 단순함
+    "SERENITY",  # 孝 (Serenity) - 자동화·연속성
+    "ETERNITY",  # 永 (Eternity) - 영속성·재현성
     "MIPRO",  # MIPRO optimization node (optional, feature-flag controlled)
-    "MERGE",
+    "MERGE",  # 5기둥 종합 평가
     "EXECUTE",
     "VERIFY",
     "REPORT",

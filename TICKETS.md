@@ -10,12 +10,18 @@
 
 | 티켓 ID | 제목 | 우선순위 | 상태 | 담당 | 의존성 | 예상 소요시간 |
 |---------|------|----------|------|------|--------|----------------|
-| TICKET-001 | DSPy 환경 설정 및 의존성 추가 | HIGH | PENDING | 개발팀 | 없음 | 2시간 |
-| TICKET-002 | MIPROv2 최적화 모듈 구현 | HIGH | PENDING | AI팀 | TICKET-001 | 4시간 |
+| TICKET-001 | DSPy 환경 설정 및 의존성 추가 | HIGH | IN_PROGRESS | 개발팀 | 없음 | 2시간 |
+| TICKET-002 | MIPROv2 최적화 모듈 구현 | HIGH | IN_PROGRESS | AI팀 | TICKET-001 | 4시간 |
 | TICKET-003 | LlamaIndex RAG 파이프라인 구축 | MEDIUM | PENDING | 인프라팀 | TICKET-001 | 3시간 |
 | TICKET-004 | Trinity Score 메트릭 통합 | MEDIUM | PENDING | 품질팀 | TICKET-002, TICKET-003 | 2시간 |
-| TICKET-005 | Bayesian 최적화 알고리즘 구현 | LOW | PENDING | 연구팀 | TICKET-002 | 3시간 |
-| TICKET-006 | MD→티켓 자동 변환 시스템 구현 | MEDIUM | PENDING | 자동화팀 | 티켓 시스템 존재 | 6시간 |
+| TICKET-005 | Bayesian 최적화 알고리즘 구현 | LOW | IN_PROGRESS | 연구팀 | TICKET-002 | 3시간 |
+| TICKET-006 | MD→티켓 자동 변환 시스템 구현 | MEDIUM | COMPLETED | 자동화팀 | 티켓 시스템 존재 | 6시간 |
+| TICKET-009 | MIPROv2 왕국 적용 상세 구현 | HIGH | PENDING | 승상 + AI팀 | TICKET-001, TICKET-002, TICKET-005 | 8시간 |
+| TICKET-010 | Optuna TPE + GP+EI 하이브리드 Bayesian 최적화 | HIGH | PENDING | 승상 + AI팀 | TICKET-005, TICKET-009 | 10시간 |
+| TICKET-011 | MIPROv2 메타인지 검증 확장 및 고급 기능 구현 | HIGH | BLOCKED | 승상 + AI팀 | TICKET-009, TICKET-010 | 12시간 |
+| TICKET-012 | Transformers v5 고급 기능 활용 및 TorchAO int8 최적화 | HIGH | BLOCKED(macOS) | 승상 + AI팀 | TICKET-011 | 10시간 |
+| TICKET-013 | vLLM TorchAO 고속 서빙 시스템 구축 | HIGH | PENDING | 승상 + AI팀 | TICKET-012 | 8시간 |
+| TICKET-014 | M4 MLX 최적화 환경 구축 | HIGH | PENDING | 승상 + AI팀 | TICKET-012 | 12시간 |
 
 ## 🔒 SSOT 안전장치
 
@@ -34,10 +40,11 @@
 
 ## 📊 진행 상황
 
-- **전체 티켓**: 5개
-- **완료**: 0개 (0%)
-- **진행 중**: 0개
-- **대기 중**: 5개
+- **전체 티켓**: 12개
+- **완료**: 1개 (8%)
+- **진행 중**: 3개 (25%)
+- **대기 중**: 6개 (50%)
+- **차단됨**: 2개 (17%)
 
 ## 🎯 다음 단계
 

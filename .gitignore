@@ -82,3 +82,6 @@ inbox/fin/
 artifacts/fin/
 scripts/_local_quarantine/
 !.env.afo.example/packages/afo-core/artifacts/ph19_security/
+
+# AFO runtime seals (local evidence only)
+artifacts/trinity_seals/

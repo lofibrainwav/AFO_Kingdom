@@ -31,6 +31,32 @@ else
   echo "✅ [PASS] Organs Truth hostname check"
 fi
 
+# 3. Server Import Gate (TICKET-009 - 추가 보안)
+echo "🔍 Checking Server Import Routes..."
+if python -c "import api_server; print('✅ Server import OK')" 2>/dev/null; then
+  echo "✅ [PASS] Server import check"
+else
+  echo "❌ [FAIL] Server import failed"
+  EXIT_CODE=1
+fi
+
+# 4. RAG Priority Rules Gate (TICKET-009)
+echo "🔍 Checking RAG Priority Rules..."
+if python -c "import afo; import afo.rag_flag; import afo.rag_shadow; print('imports: OK')" 2>/dev/null; then
+  echo "✅ [PASS] RAG modules import check"
+else
+  echo "❌ [FAIL] RAG modules import failed"
+  EXIT_CODE=1
+fi
+
+# Run RAG priority tests
+if pytest -q packages/afo-core/tests/test_rag_rollout_priority.py -q 2>/dev/null; then
+  echo "✅ [PASS] RAG priority rules tests"
+else
+  echo "❌ [FAIL] RAG priority rules tests failed"
+  EXIT_CODE=1
+fi
+
 if [ $EXIT_CODE -eq 0 ]; then
   echo "✨ All Hardening Gates Passed."
 else

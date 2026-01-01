@@ -1,7 +1,7 @@
 # 🎫 TICKET-002: MIPROv2 최적화 모듈 구현
 
 **우선순위**: HIGH
-**상태**: PENDING
+**상태**: IN_PROGRESS
 **담당**: AI팀
 **의존성**: TICKET-001
 **예상 소요시간**: 4시간
