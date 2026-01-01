@@ -58,3 +58,17 @@ jobs:
           
           echo ""
           echo "✅ All shell scripts passed Shellcheck!"
+      
+      - name: Alert on Failure
+        if: failure()
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          MESSAGE="❌ Shellcheck FAILED - Script quality issues detected"
+          if [[ -n "${SLACK_WEBHOOK_URL:-}" ]]; then
+            curl -sS -X POST -H 'Content-type: application/json' \
+              --data "{\"text\": \"$MESSAGE\"}" \
+              "$SLACK_WEBHOOK_URL" || true
+          fi
+          echo "$MESSAGE"
