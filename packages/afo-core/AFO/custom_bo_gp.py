@@ -112,7 +112,7 @@ def bayesian_optimize(
 
     gp = GaussianProcess()
 
-    for iteration in range(n_iterations):
+    for _iteration in range(n_iterations):
         # GP 학습
         gp.fit(X_samples, y_samples)
 

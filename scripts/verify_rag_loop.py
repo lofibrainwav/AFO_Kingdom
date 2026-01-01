@@ -10,7 +10,7 @@ sys.path.append(
     ).resolve()
 )
 
-from AFO.api.routers.rag_query import RAGQueryRequest, query_kingdom_memory
+from afo.api.routers.rag_query import RAGQueryRequest, query_kingdom_memory
 
 
 async def verify_rag_loop():

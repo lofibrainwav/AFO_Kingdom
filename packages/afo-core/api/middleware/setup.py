@@ -40,9 +40,9 @@ def setup_middleware(app: FastAPI) -> None:
 def _setup_security_middleware(app: FastAPI) -> None:
     """Setup security-related middleware."""
     try:
-        from AFO.api.middleware.audit import audit_middleware
-        from AFO.api.middleware.security import SecurityMiddleware
-        from AFO.security.vault_manager import vault
+        from afo.api.middleware.audit import audit_middleware
+        from afo.api.middleware.security import SecurityMiddleware
+        from afo.security.vault_manager import vault
 
         # Security Middleware (SQL Injection Check) - First Line of Defense
         app.add_middleware(SecurityMiddleware)
@@ -65,13 +65,13 @@ def _setup_phase2_hardening_middleware(app: FastAPI) -> None:
     """Setup Phase 2 Hardening security middleware stack."""
     try:
         # Import Phase 2 Hardening middleware
-        from AFO.api.middleware.rate_limit_redis import (
+        from afo.api.middleware.rate_limit_redis import (
             create_rate_limit_middleware,
             create_redis_limiter,
         )
-        from AFO.api.middleware.request_limits import RequestSizeLimitMiddleware
-        from AFO.api.middleware.sql_guard import SqlGuardMiddleware
-        from AFO.api.middleware.trace_id import TraceIdMiddleware
+        from afo.api.middleware.request_limits import RequestSizeLimitMiddleware
+        from afo.api.middleware.sql_guard import SqlGuardMiddleware
+        from afo.api.middleware.trace_id import TraceIdMiddleware
 
         # Add middleware in correct order (most permissive to most restrictive)
         app.add_middleware(TraceIdMiddleware)
@@ -102,7 +102,7 @@ def _setup_phase2_hardening_middleware(app: FastAPI) -> None:
 def _setup_cache_middleware(app: FastAPI) -> None:
     """Setup cache middleware for API responses."""
     try:
-        from AFO.api.middleware.cache_middleware import CacheMiddleware
+        from afo.api.middleware.cache_middleware import CacheMiddleware
 
         # Add cache middleware (before other middleware for optimal performance)
         app.add_middleware(CacheMiddleware)
@@ -118,7 +118,7 @@ def _setup_cache_middleware(app: FastAPI) -> None:
 def _setup_performance_middleware(app: FastAPI) -> None:
     """Setup performance monitoring middleware."""
     try:
-        from AFO.api.middleware.performance_middleware import PerformanceMiddleware
+        from afo.api.middleware.performance_middleware import PerformanceMiddleware
 
         # Add performance middleware
         app.add_middleware(PerformanceMiddleware)
@@ -134,7 +134,7 @@ def _setup_performance_middleware(app: FastAPI) -> None:
 def _setup_monitoring_middleware(app: FastAPI) -> None:
     """Setup monitoring and metrics middleware."""
     try:
-        from AFO.api.middleware.prometheus import PrometheusMiddleware
+        from afo.api.middleware.prometheus import PrometheusMiddleware
 
         # Add Prometheus middleware
         app.add_middleware(PrometheusMiddleware, service_name="afo-kingdom-api")
@@ -143,7 +143,7 @@ def _setup_monitoring_middleware(app: FastAPI) -> None:
         # Add metrics endpoint
         from fastapi.routing import APIRouter
 
-        from AFO.api.middleware.prometheus import metrics_endpoint
+        from afo.api.middleware.prometheus import metrics_endpoint
 
         metrics_router = APIRouter()
         metrics_router.get("/metrics")(metrics_endpoint)

@@ -1,7 +1,9 @@
-import json, os, time
+import json
+import os
+import time
 from pathlib import Path
+from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
-from urllib.error import URLError, HTTPError
 
 ROOT = Path(".").resolve()
 OUT_DIR = ROOT / "artifacts" / "ssot_roadmap_audit"

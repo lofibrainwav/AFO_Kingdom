@@ -7,7 +7,7 @@ from pathlib import Path
 root_dir = Path(__file__).parent.parent.parent
 sys.path.append(str(root_dir))
 
-from AFO.scholars.yeongdeok import yeongdeok
+from afo.scholars.yeongdeok import yeongdeok
 
 
 async def verify_yeongdeok():

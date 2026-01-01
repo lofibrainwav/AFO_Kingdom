@@ -2,7 +2,7 @@ import sys
 
 sys.path.append("/AFO")
 try:
-    print("Attempting to import AFO.api.routes.skills...")
+    print("Attempting to import afo.api.routes.skills...")
 
     print("Success!")
 except Exception as e:

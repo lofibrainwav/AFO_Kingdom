@@ -15,7 +15,7 @@ from typing import Any
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
-from AFO.config.health_check_config import health_check_config
+from afo.config.health_check_config import health_check_config
 
 router = APIRouter(prefix="/api/mcp", tags=["MCP Tools"])
 
@@ -202,7 +202,7 @@ async def test_mcp_connection(request: MCPTestRequest) -> dict[str, Any]:
 
         # Deep check for local stdio MCP servers where possible.
         try:
-            from AFO.services.mcp_stdio_client import list_tools as _list_tools
+            from afo.services.mcp_stdio_client import list_tools as _list_tools
 
             if request.server_name in {
                 "afo-ultimate-mcp",

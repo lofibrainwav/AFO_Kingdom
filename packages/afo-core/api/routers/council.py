@@ -12,7 +12,7 @@ from typing import Any
 from fastapi import APIRouter
 from pydantic import BaseModel
 
-logger = logging.getLogger("AFO.Council")
+logger = logging.getLogger("afo.Council")
 router = APIRouter(prefix="/council", tags=["Council of Minds"])
 
 

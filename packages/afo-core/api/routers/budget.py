@@ -13,7 +13,7 @@ from typing import Any, cast
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
-from AFO.julie_cpa.models.budget import MOCK_BUDGETS, BudgetSummary
+from afo.julie_cpa.models.budget import MOCK_BUDGETS, BudgetSummary
 
 router = APIRouter(prefix="/api/julie/budget", tags=["Julie CPA - Budget"])
 logger = logging.getLogger(__name__)
@@ -481,7 +481,7 @@ async def get_budget_forecast(periods: int = 3) -> dict[str, Any]:
         dict: 예측 결과 및 요약
     """
     try:
-        from AFO.julie_cpa.prophet_engine import get_kingdom_forecast
+        from afo.julie_cpa.prophet_engine import get_kingdom_forecast
 
         # 기간 제한 (1~12개월)
         periods = max(1, min(12, periods))
@@ -497,7 +497,7 @@ async def get_budget_forecast(periods: int = 3) -> dict[str, Any]:
         logger.warning(f"[Julie] Prophet 미설치, 폴백 사용: {e}")
 
         # 간단한 폴백 응답
-        from AFO.julie_cpa.prophet_engine import get_kingdom_forecast
+        from afo.julie_cpa.prophet_engine import get_kingdom_forecast
 
         return get_kingdom_forecast(periods=periods)
 
@@ -529,7 +529,7 @@ async def get_hybrid_budget_forecast(periods: int = 3) -> dict[str, Any]:
         dict: 하이브리드 예측 결과
     """
     try:
-        from AFO.julie_cpa.hybrid_engine import get_hybrid_forecast
+        from afo.julie_cpa.hybrid_engine import get_hybrid_forecast
 
         periods = max(1, min(12, periods))
         result = get_hybrid_forecast(periods=periods)
@@ -543,7 +543,7 @@ async def get_hybrid_budget_forecast(periods: int = 3) -> dict[str, Any]:
     except ImportError as e:
         logger.warning(f"[Julie] Hybrid 엔진 미설치: {e}")
         # Prophet 폴백
-        from AFO.julie_cpa.prophet_engine import get_kingdom_forecast
+        from afo.julie_cpa.prophet_engine import get_kingdom_forecast
 
         return get_kingdom_forecast(periods=periods)
 
@@ -572,8 +572,8 @@ async def consult_grok_advisor(periods: int = 3) -> dict[str, Any]:
         dict: Grok 분석 결과 및 예측 요약
     """
     try:
-        from AFO.julie_cpa.grok_engine import consult_grok
-        from AFO.julie_cpa.hybrid_engine import get_hybrid_forecast
+        from afo.julie_cpa.grok_engine import consult_grok
+        from afo.julie_cpa.hybrid_engine import get_hybrid_forecast
 
         # 1. 내부 예측 수행 (Hybrid Engine)
         logger.info("[Julie] Grok 자문을 위한 내부 예측 수행 중...")

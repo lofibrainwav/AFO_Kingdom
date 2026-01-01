@@ -37,12 +37,16 @@ async def system_health_alias():
     # Truth: Return full comprehensive health data including organs_v2
     # This ensures Dashboard receives the correct data for 11-Organ monitoring
     try:
-        from AFO.services.health_service import get_comprehensive_health
+        from afo.services.health_service import get_comprehensive_health
 
         return await get_comprehensive_health()
     except Exception as e:
         logger.warning("System health alias failed: %s", e)
-        return {"status": "unknown", "timestamp": datetime.now().isoformat(), "error": str(e)}
+        return {
+            "status": "unknown",
+            "timestamp": datetime.now().isoformat(),
+            "error": str(e),
+        }
 
 
 logger = logging.getLogger(__name__)
@@ -67,7 +71,7 @@ def _get_redis_client() -> redis.Redis | None:
     # Phase 2-4: settings 사용
     # Phase 2-4: settings 사용
     try:
-        from AFO.utils.redis_connection import get_redis_url
+        from afo.utils.redis_connection import get_redis_url
 
         redis_url = get_redis_url()
     except ImportError:
@@ -219,7 +223,7 @@ async def get_kingdom_status() -> dict[str, Any]:
     """
     import psutil
 
-    from AFO.services.health_service import get_comprehensive_health
+    from afo.services.health_service import get_comprehensive_health
 
     # 1. Get Truthful Health Data
     health_data = await get_comprehensive_health()
@@ -309,7 +313,7 @@ async def get_antigravity_config() -> dict[str, Any]:
     [TRUTH WIRING]
     Expose current AntiGravity settings for verification.
     """
-    from AFO.config.antigravity import antigravity
+    from afo.config.antigravity import antigravity
 
     return {
         "environment": antigravity.ENVIRONMENT,
@@ -335,7 +339,7 @@ async def _sse_log_generator(request: Request):
     pubsub = None
 
     try:
-        from AFO.config.settings import get_settings
+        from afo.config.settings import get_settings
 
         settings = get_settings()
         redis_url = settings.REDIS_URL
@@ -355,9 +359,9 @@ async def _sse_log_generator(request: Request):
         + (" (Redis)" if redis_available else " (Fallback: File)"),
         "level": "SUCCESS",
         "source": "Chancellor Stream",
-        "timestamp": datetime.now().isoformat()
-        if not redis_available
-        else asyncio.get_event_loop().time(),
+        "timestamp": (
+            datetime.now().isoformat() if not redis_available else asyncio.get_event_loop().time()
+        ),
     }
     yield f"data: {json.dumps(initial_msg)}\n\n"
 

@@ -48,7 +48,7 @@ jobs:
       - name: 3. Test & Coverage (善 - Goodness)
         run: |
           make test
-          cd packages/afo-core && pytest --cov=AFO --cov-report=xml
+          cd packages/afo-core && pytest --cov=afo --cov-report=xml
 
       - name: 4. SBOM & Security (永 - Eternity)
         run: make sbom

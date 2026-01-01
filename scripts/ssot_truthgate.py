@@ -1,4 +1,10 @@
-import argparse, hashlib, json, os, re, subprocess, sys
+import argparse
+import hashlib
+import json
+import os
+import re
+import subprocess
+import sys
 from pathlib import Path
 
 REQ = {
@@ -29,8 +35,10 @@ REQ = {
 AUTO_BEGIN = "<!--AUTO:BEGIN-->"
 AUTO_END = "<!--AUTO:END-->"
 
+
 def sh(*args: str) -> str:
     return subprocess.check_output(args, text=True).strip()
+
 
 def sha256_file(p: Path) -> str:
     h = hashlib.sha256()
@@ -39,15 +47,19 @@ def sha256_file(p: Path) -> str:
             h.update(chunk)
     return h.hexdigest()
 
+
 def parse_report(report: Path) -> dict:
     txt = report.read_text(encoding="utf-8")
+
     def get_line(prefix: str) -> str:
-        m = re.search(rf"^{re.escape(prefix)}\s*(.*)$", txt, flags=re.M)
-        return (m.group(1).strip() if m else "")
+        m = re.search(rf"^{re.escape(prefix)}\s*(.*)$", txt, flags=re.MULTILINE)
+        return m.group(1).strip() if m else ""
+
     status = get_line("Status:")
     ts = get_line("Capture Timestamp:")
     ev = get_line("Evidence Directory:")
     return {"status": status, "ts": ts, "evidence": ev, "text": txt}
+
 
 def write_report_header(report: Path, status: str, ts: str, evidence: str):
     lines = report.read_text(encoding="utf-8").splitlines()
@@ -63,14 +75,16 @@ def write_report_header(report: Path, status: str, ts: str, evidence: str):
             out.append(line)
     report.write_text("\n".join(out) + "\n", encoding="utf-8")
 
+
 def replace_auto(report: Path, auto: str):
     txt = report.read_text(encoding="utf-8")
     a = txt.find(AUTO_BEGIN)
     b = txt.find(AUTO_END)
     if a == -1 or b == -1 or b < a:
         return
-    new_txt = txt[:a+len(AUTO_BEGIN)] + "\n\n" + auto + "\n\n" + txt[b:]
+    new_txt = txt[: a + len(AUTO_BEGIN)] + "\n\n" + auto + "\n\n" + txt[b:]
     report.write_text(new_txt, encoding="utf-8")
+
 
 def seal(ticket: str, slug: str, ts: str):
     ticket = ticket.upper().strip()
@@ -82,7 +96,7 @@ def seal(ticket: str, slug: str, ts: str):
     if not report.exists():
         raise SystemExit(f"Missing report: {report}")
 
-    ev_dir = Path(f"artifacts/{ticket.lower().replace('t','t')}/{ts}")
+    ev_dir = Path(f"artifacts/{ticket.lower().replace('t', 't')}/{ts}")
     if not ev_dir.exists():
         raise SystemExit(f"Missing evidence dir: {ev_dir}")
 
@@ -113,13 +127,18 @@ def seal(ticket: str, slug: str, ts: str):
     status = "UNVERIFIED"
     if functional_green:
         status = "SEALED (Functional Green)"
-    if functional_green and ticket == "T25" and bandit_exit is not None and bandit_exit != 0:
+    if (
+        functional_green
+        and ticket == "T25"
+        and bandit_exit is not None
+        and bandit_exit != 0
+    ):
         status = "SEALED (Functional Green) / BLOCKED-SECURITY (Bandit exit != 0)"
 
     done = False
     if functional_green:
         if ticket == "T25":
-            done = (bandit_exit == 0)
+            done = bandit_exit == 0
         else:
             done = True
     if done:
@@ -128,11 +147,15 @@ def seal(ticket: str, slug: str, ts: str):
     files_meta = []
     for p in sorted(ev_dir.glob("*")):
         if p.is_file():
-            files_meta.append({
-                "name": p.name,
-                "bytes": p.stat().st_size,
-                "sha256": sha256_file(p) if p.stat().st_size <= 25_000_000 else None,
-            })
+            files_meta.append(
+                {
+                    "name": p.name,
+                    "bytes": p.stat().st_size,
+                    "sha256": (
+                        sha256_file(p) if p.stat().st_size <= 25_000_000 else None
+                    ),
+                }
+            )
 
     seal_json = {
         "ticket": ticket,
@@ -148,42 +171,55 @@ def seal(ticket: str, slug: str, ts: str):
 
     (ev_dir / "seal.json").write_text(json.dumps(seal_json, indent=2), encoding="utf-8")
 
-    auto = "\n".join([
-        "## AUTO Summary",
-        f"- Ticket: {ticket}",
-        f"- Slug: {slug}",
-        f"- Capture Timestamp: {ts}",
-        f"- Evidence Directory: {ev_dir.as_posix()}",
-        f"- Status: {status}",
-        "",
-        "### Missing files",
-        "- (none)" if not missing else "\n".join([f"- {m}" for m in missing]),
-        "",
-        "### JSON parse",
-        "\n".join([f"- {k}: {v}" for k, v in json_ok.items()]),
-        "",
-        "### Bandit",
-        f"- exitcode: {bandit_exit}" if bandit_exit is not None else "- not provided",
-        "",
-        "### Seal",
-        f"- seal.json: { (ev_dir / 'seal.json').as_posix() }",
-    ])
+    auto = "\n".join(
+        [
+            "## AUTO Summary",
+            f"- Ticket: {ticket}",
+            f"- Slug: {slug}",
+            f"- Capture Timestamp: {ts}",
+            f"- Evidence Directory: {ev_dir.as_posix()}",
+            f"- Status: {status}",
+            "",
+            "### Missing files",
+            "- (none)" if not missing else "\n".join([f"- {m}" for m in missing]),
+            "",
+            "### JSON parse",
+            "\n".join([f"- {k}: {v}" for k, v in json_ok.items()]),
+            "",
+            "### Bandit",
+            (
+                f"- exitcode: {bandit_exit}"
+                if bandit_exit is not None
+                else "- not provided"
+            ),
+            "",
+            "### Seal",
+            f"- seal.json: { (ev_dir / 'seal.json').as_posix() }",
+        ]
+    )
 
     replace_auto(report, auto)
     write_report_header(report, status=status, ts=ts, evidence=ev_dir.as_posix())
 
     print(f"SEALED_REPORT={report}")
     print(f"EVIDENCE_DIR={ev_dir}")
-    print(f"SEAL={ev_dir/'seal.json'}")
+    print(f"SEAL={ev_dir / 'seal.json'}")
     print(f"STATUS={status}")
+
 
 def gate():
     # 1) staged changed files
-    out = subprocess.check_output(["git", "diff", "--cached", "--name-only"], text=True).splitlines()
-    reports = [Path(p) for p in out if p.startswith("docs/reports/") and p.endswith("_SSOT.md")]
+    out = subprocess.check_output(
+        ["git", "diff", "--cached", "--name-only"], text=True
+    ).splitlines()
+    reports = [
+        Path(p) for p in out if p.startswith("docs/reports/") and p.endswith("_SSOT.md")
+    ]
 
     # 2) forbid docs outside docs/reports in staged additions
-    ns = subprocess.check_output(["git", "diff", "--cached", "--name-status"], text=True).splitlines()
+    ns = subprocess.check_output(
+        ["git", "diff", "--cached", "--name-status"], text=True
+    ).splitlines()
     for line in ns:
         parts = line.split()
         if len(parts) >= 2 and parts[0].startswith("A"):
@@ -227,6 +263,7 @@ def gate():
                 return 1
     return 0
 
+
 def main():
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -243,6 +280,7 @@ def main():
         seal(args.ticket, args.slug, args.ts)
     else:
         raise SystemExit(gate())
+
 
 if __name__ == "__main__":
     main()

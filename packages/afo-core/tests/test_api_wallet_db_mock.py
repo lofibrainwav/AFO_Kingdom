@@ -5,8 +5,8 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-import AFO.api_wallet as api_wallet_module
-from AFO.api_wallet import APIWallet
+import afo.api_wallet as api_wallet_module
+from afo.api_wallet import APIWallet
 
 
 @pytest.fixture
@@ -132,7 +132,7 @@ def test_update_access_stats_db(mock_db_conn):
 
             with patch.dict(
                 sys.modules,
-                {"redis": MagicMock(), "AFO.utils.redis_connection": MagicMock()},
+                {"redis": MagicMock(), "afo.utils.redis_connection": MagicMock()},
             ):
                 wallet._update_access_stats("k")
 

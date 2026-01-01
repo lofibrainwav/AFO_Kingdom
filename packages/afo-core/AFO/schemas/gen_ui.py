@@ -11,7 +11,7 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from AFO.api.models.persona import PersonaTrinityScore as TrinityScore
+from afo.api.models.persona import PersonaTrinityScore as TrinityScore
 
 
 class GenUIRequest(BaseModel):

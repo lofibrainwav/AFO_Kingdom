@@ -29,15 +29,15 @@ async def get_api_usage(api_id: str) -> dict[str, Any]:
     try:
         import sys
 
-        api_server_module = sys.modules.get("AFO.api_server")
+        api_server_module = sys.modules.get("afo.api_server")
         if api_server_module is None:
-            from AFO import api_server as api_server_module
+            from afo import api_server as api_server_module
 
         # 사용량 조회 로직 - Redis 기반 구현
         try:
             import redis
 
-            from AFO.config.settings import get_settings
+            from afo.config.settings import get_settings
 
             settings = get_settings()
             redis_client = redis.from_url(settings.get_redis_url(), decode_responses=True)
@@ -91,15 +91,15 @@ async def get_billing_summary() -> dict[str, Any]:
     try:
         import sys
 
-        api_server_module = sys.modules.get("AFO.api_server")
+        api_server_module = sys.modules.get("afo.api_server")
         if api_server_module is None:
-            from AFO import api_server as api_server_module
+            from afo import api_server as api_server_module
 
         # 청구 요약 로직 - Redis 기반 집계
         try:
             import redis
 
-            from AFO.config.settings import get_settings
+            from afo.config.settings import get_settings
 
             settings = get_settings()
             redis_client = redis.from_url(settings.get_redis_url(), decode_responses=True)

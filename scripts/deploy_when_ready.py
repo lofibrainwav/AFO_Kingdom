@@ -46,7 +46,9 @@ def deploy(host, image_ref):
 
     cmd = ["ssh", host, remote_cmd]
 
-    process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+    process = subprocess.Popen(
+        cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True
+    )
 
     for line in process.stdout:
         print(line, end="")
@@ -61,9 +63,14 @@ def main():
 
     # Get SHA from origin/main
     try:
-        subprocess.run(["git", "fetch", "origin", "main"], check=True, capture_output=True)
+        subprocess.run(
+            ["git", "fetch", "origin", "main"], check=True, capture_output=True
+        )
         sha_proc = subprocess.run(
-            ["git", "rev-parse", "origin/main"], check=True, capture_output=True, text=True
+            ["git", "rev-parse", "origin/main"],
+            check=True,
+            capture_output=True,
+            text=True,
         )
         sha = sha_proc.stdout.strip()
     except subprocess.CalledProcessError as e:

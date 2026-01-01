@@ -31,7 +31,7 @@ def debug_app_creation():
 
     try:
         print("1. Importing config module...")
-        from AFO.api.config import get_app_config, get_server_config
+        from afo.api.config import get_app_config, get_server_config
 
         print("2. Getting server config...")
         host, port = get_server_config()
@@ -63,7 +63,7 @@ def debug_router_setup(app):
 
     try:
         print("1. Importing router setup...")
-        from AFO.api.routers import setup_routers
+        from afo.api.routers import setup_routers
 
         print("2. Setting up routers...")
         setup_routers(app)
@@ -96,7 +96,7 @@ def debug_router_setup(app):
 
         # Check if skills router was imported
         try:
-            from AFO.api.compat import skills_router
+            from afo.api.compat import skills_router
 
             print(f"   Skills router in compat: {skills_router is not None}")
             if skills_router:
@@ -123,13 +123,13 @@ def debug_lifespan_execution():
 
     try:
         print("1. Testing lifespan manager...")
-        from AFO.api.config import get_lifespan_manager
+        from afo.api.config import get_lifespan_manager
 
         get_lifespan_manager()
         print("   Lifespan manager created")
 
         print("2. Testing initialization...")
-        from AFO.api.initialization import initialize_system
+        from afo.api.initialization import initialize_system
 
         # This will show us what happens during startup
         print("   Running initialize_system...")
@@ -137,7 +137,7 @@ def debug_lifespan_execution():
         print("   ✅ Initialization completed")
 
         print("3. Testing cleanup...")
-        from AFO.api.cleanup import cleanup_system
+        from afo.api.cleanup import cleanup_system
 
         asyncio.run(cleanup_system())
         print("   ✅ Cleanup completed")
@@ -273,7 +273,7 @@ def main():
         print("❌ Skills router registration is failing")
         print("\n🔧 NEXT STEPS:")
         print("1. Check compat.py load_routers() function")
-        print("2. Verify AFO.api.routers.skills import path")
+        print("2. Verify afo.api.routers.skills import path")
         print("3. Test router creation manually")
 
 

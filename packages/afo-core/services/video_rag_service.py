@@ -142,7 +142,11 @@ class VideoRAGService:
             return []
 
     def process_video(
-        self, video_path: str, num_frames: int = 5, transcribe: bool = True, language: str = "ko"
+        self,
+        video_path: str,
+        num_frames: int = 5,
+        transcribe: bool = True,
+        language: str = "ko",
     ) -> dict[str, Any]:
         """
         Full video processing pipeline.
@@ -169,9 +173,11 @@ class VideoRAGService:
         for i, frame_path in enumerate(keyframes):
             analysis = self.vision.analyze_image(
                 frame_path,
-                prompt=f"프레임 {i + 1}: 이 장면을 설명하세요."
-                if language == "ko"
-                else f"Frame {i + 1}: Describe this scene.",
+                prompt=(
+                    f"프레임 {i + 1}: 이 장면을 설명하세요."
+                    if language == "ko"
+                    else f"Frame {i + 1}: Describe this scene."
+                ),
                 language=language,
             )
             results["frames"].append(

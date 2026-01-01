@@ -6,7 +6,7 @@
 import logging
 from typing import Any
 
-from AFO.utils.trinity_type_validator import validate_with_trinity
+from afo.utils.trinity_type_validator import validate_with_trinity
 
 logger = logging.getLogger(__name__)
 

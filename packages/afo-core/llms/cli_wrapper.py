@@ -3,7 +3,7 @@ import asyncio
 import logging
 import shutil
 
-logger = logging.getLogger("AFO.LLMs.CLI")
+logger = logging.getLogger("afo.LLMs.CLI")
 
 
 class CLIWrapper:

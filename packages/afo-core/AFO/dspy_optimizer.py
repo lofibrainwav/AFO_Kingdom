@@ -3,7 +3,7 @@ DSPy MIPROv2 최적화 모듈 - AFO 왕국 Trinity Score 통합
 """
 
 try:
-    import dspy
+    import dspy  # noqa: F401 - used conditionally with DSPY_AVAILABLE flag
     from dspy.teleprompt import MIPROv2
 
     DSPY_AVAILABLE = True
@@ -27,7 +27,7 @@ class AFOMIPROv2(MIPROv2):
             self.trinity_score = trinity_score
             return
 
-        super().__init__(auto=auto)
+        super().__init__(metric=trinity_metric, auto=auto)
         self.trinity_score = trinity_score
 
     def compile(self, program, trainset=None, valset=None):

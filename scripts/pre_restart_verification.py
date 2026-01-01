@@ -58,9 +58,9 @@ def verify_code_changes():
 
     # 1. 라우터 prefix 확인
     try:
-        from AFO.api.routers.chancellor_router import router as cr
-        from AFO.api.routers.grok_stream import router as gsr
-        from AFO.api.routers.learning_log_router import router as llr
+        from afo.api.routers.chancellor_router import router as cr
+        from afo.api.routers.grok_stream import router as gsr
+        from afo.api.routers.learning_log_router import router as llr
 
         results["chancellor_prefix"] = getattr(cr, "prefix", "")
         results["learning_log_prefix"] = getattr(llr, "prefix", "")
@@ -92,7 +92,7 @@ def verify_code_changes():
 
     # 2. compat.py에서 라우터 로딩 확인
     try:
-        from AFO.api.compat import (chancellor_router, grok_stream_router,
+        from afo.api.compat import (chancellor_router, grok_stream_router,
                                     learning_log_router)
 
         results["compat_loading"] = {

@@ -1,10 +1,10 @@
 import json
 import sys
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any
 
 # Lazy import for performance: CuPy/NumPy are only imported when needed
-_GPU_AVAILABLE: Optional[bool] = None
+_GPU_AVAILABLE: bool | None = None
 _cp = None
 _np = None
 
@@ -63,14 +63,13 @@ class TrinityScoreEngineHybrid:
             s_gpu = _cp.array(scores)
             result = _cp.sum(w_gpu * s_gpu)
             return float(result.get())
-        elif gpu_available and n <= TrinityScoreEngineHybrid.THRESHOLD:
+        if gpu_available and n <= TrinityScoreEngineHybrid.THRESHOLD:
             # Small arrays: use NumPy even if CuPy is available (lower overhead)
             np = _get_numpy()
             return float(np.sum(np.array(weights) * np.array(scores)))
-        else:
-            # NumPy Fallback (CuPy not available)
-            np = _get_numpy()
-            return float(np.sum(np.array(weights) * np.array(scores)))
+        # NumPy Fallback (CuPy not available)
+        np = _get_numpy()
+        return float(np.sum(np.array(weights) * np.array(scores)))
 
     @classmethod
     def evaluate(cls, **metrics: int) -> dict[str, Any]:

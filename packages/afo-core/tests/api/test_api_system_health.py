@@ -32,8 +32,8 @@ class TestSystemHealthAPI:
     def test_system_health_metrics(self, client: TestClient) -> None:
         """GET /api/system/metrics 테스트"""
         with (
-            patch("AFO.api.routes.system_health.psutil") as mock_psutil,
-            patch("AFO.api.routes.system_health._get_redis_client", return_value=None),
+            patch("afo.api.routes.system_health.psutil") as mock_psutil,
+            patch("afo.api.routes.system_health._get_redis_client", return_value=None),
         ):
             # Mock psutil returns
             mock_psutil.virtual_memory.return_value.percent = 50.0
@@ -50,7 +50,7 @@ class TestSystemHealthAPI:
     def test_fallback_import_logic(self) -> None:
         """시스템 헬스 라우터 import 확인"""
         try:
-            from AFO.api.routes.system_health import router
+            from afo.api.routes.system_health import router
 
             assert router is not None
         except ImportError:

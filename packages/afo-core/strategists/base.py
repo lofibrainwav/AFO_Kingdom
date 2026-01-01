@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import Any, TypeVar
 
 try:
-    from AFO.utils.logging import log_sse
+    from afo.utils.logging import log_sse
 except ImportError:
     # Fallback if logging module not found (Graceful Degradation)
     def log_sse(message: str) -> None:

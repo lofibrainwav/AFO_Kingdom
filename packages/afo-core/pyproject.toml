@@ -195,7 +195,7 @@ skip-magic-trailing-comma = false
 line-ending = "auto"
 
 [tool.ruff.lint.isort]
-known-first-party = ["AFO"]
+known-first-party = ["afo"]
 
 # ============================================================================
 # Pytest Configuration

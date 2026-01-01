@@ -12,7 +12,7 @@ from datetime import datetime
 from typing import Any
 
 try:
-    from AFO.utils.trinity_type_validator import validate_with_trinity
+    from afo.utils.trinity_type_validator import validate_with_trinity
 except ImportError:
     # Fallback for import issues
     from collections.abc import Callable
@@ -21,7 +21,7 @@ except ImportError:
         return func
 
 
-from AFO.domain.persona import (
+from afo.domain.persona import (
     Persona,
     commander,
     creator,
@@ -103,7 +103,7 @@ class PersonaService:
             target.add_context(context)
 
         # 전역 변수 업데이트 (domain 모듈의 current_persona)
-        import AFO.domain.persona as persona_module
+        import afo.domain.persona as persona_module
 
         persona_module.current_persona = target
         self._current_persona = target
@@ -155,7 +155,7 @@ class PersonaService:
         """
         try:
             # DB 연결 가져오기 (Phase 2 확장)
-            from AFO.services.database import get_db_connection
+            from afo.services.database import get_db_connection
 
             conn = await get_db_connection()
             try:
@@ -211,7 +211,7 @@ class PersonaService:
         """
         try:
             # Trinity Calculator 서비스 사용
-            from AFO.services.trinity_calculator import trinity_calculator
+            from afo.services.trinity_calculator import trinity_calculator
 
             # 페르소나 기반 Trinity Score 계산
             scores = await trinity_calculator.calculate_persona_scores(
@@ -355,7 +355,7 @@ class PersonaService:
         """
         try:
             # TRINITY-OS MCP 클라이언트 호출
-            from AFO.api.compat import get_trinity_os_client
+            from afo.api.compat import get_trinity_os_client
 
             trinity_client = get_trinity_os_client()
             if trinity_client:
@@ -384,7 +384,7 @@ class PersonaService:
         """
         try:
             # 글로벌 이벤트 큐에 추가 (initialization.py에서 관리)
-            from AFO.api.initialization import neural_event_queue
+            from afo.api.initialization import neural_event_queue
 
             await neural_event_queue.put(
                 {

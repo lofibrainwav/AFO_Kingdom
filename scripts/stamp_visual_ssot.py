@@ -6,7 +6,6 @@ import re
 import sys
 from pathlib import Path
 
-
 MARK_PREFIX = "SSOT-SOURCE-SHA256:"
 
 

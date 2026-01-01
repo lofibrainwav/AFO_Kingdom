@@ -1,16 +1,18 @@
 import json
 import os
+import selectors
 import subprocess
 import sys
 import time
-import selectors
 
-SERVER_MODULE = os.environ.get("MCP_SERVER_MODULE", "AFO.mcp.afo_skills_mcp")
+SERVER_MODULE = os.environ.get("MCP_SERVER_MODULE", "afo.mcp.afo_skills_mcp")
 TIMEOUT_S = float(os.environ.get("MCP_SMOKE_TIMEOUT_S", "10"))
+
 
 def send(w, msg):
     w.write((json.dumps(msg) + "\n").encode("utf-8"))
     w.flush()
+
 
 def read_until(sel, want_id, timeout_s):
     deadline = time.monotonic() + timeout_s
@@ -27,6 +29,7 @@ def read_until(sel, want_id, timeout_s):
             if isinstance(obj, dict) and obj.get("id") == want_id:
                 return obj
     raise TimeoutError(f"timeout waiting for id={want_id}")
+
 
 def main():
     cmd = [sys.executable, "-m", SERVER_MODULE]
@@ -48,25 +51,34 @@ def main():
     tools_id = 2
     shutdown_id = 3
 
-    send(p.stdin, {
-        "jsonrpc": "2.0",
-        "id": init_id,
-        "method": "initialize",
-        "params": {
-            "protocolVersion": "2024-11-05",
-            "capabilities": {},
-            "clientInfo": {"name": "afo-smoke", "version": "2"},
+    send(
+        p.stdin,
+        {
+            "jsonrpc": "2.0",
+            "id": init_id,
+            "method": "initialize",
+            "params": {
+                "protocolVersion": "2024-11-05",
+                "capabilities": {},
+                "clientInfo": {"name": "afo-smoke", "version": "2"},
+            },
         },
-    })
+    )
     _ = read_until(sel, init_id, TIMEOUT_S)
     print("OK: initialize")
 
-    send(p.stdin, {"jsonrpc": "2.0", "id": tools_id, "method": "tools/list", "params": {}})
+    send(
+        p.stdin,
+        {"jsonrpc": "2.0", "id": tools_id, "method": "tools/list", "params": {}},
+    )
     tools_resp = read_until(sel, tools_id, TIMEOUT_S)
     tools = (tools_resp.get("result") or {}).get("tools") or []
     print(f"OK: tools/list ({len(tools)})")
 
-    send(p.stdin, {"jsonrpc": "2.0", "id": shutdown_id, "method": "shutdown", "params": {}})
+    send(
+        p.stdin,
+        {"jsonrpc": "2.0", "id": shutdown_id, "method": "shutdown", "params": {}},
+    )
     try:
         _ = read_until(sel, shutdown_id, TIMEOUT_S)
     except Exception:
@@ -100,6 +112,7 @@ def main():
     if err.strip():
         print(err.strip())
     return 1
+
 
 if __name__ == "__main__":
     raise SystemExit(main())

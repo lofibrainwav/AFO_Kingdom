@@ -3,12 +3,12 @@ import logging
 import os
 from typing import Any, cast
 
-from AFO.llm_router import LLMConfig
+from afo.llm_router import LLMConfig
 
 from .base import BaseLLMProvider
 
 try:
-    from AFO.llms.openai_api import openai_api
+    from afo.llms.openai_api import openai_api
 except ImportError:
     openai_api = None  # type: ignore[assignment]
 

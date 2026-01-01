@@ -16,15 +16,18 @@ from __future__ import annotations
 import asyncio
 import logging
 import time
-from collections.abc import AsyncGenerator
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from llama_index.core.llms import ChatMessage, MessageRole
 from llama_index.core.query_engine import RetrieverQueryEngine
 from llama_index.core.retrievers import VectorIndexRetriever
-from llama_index.core.schema import NodeWithScore
 
 from .llamaindex_rag import configure_settings, get_global_index
+
+if TYPE_CHECKING:
+    from collections.abc import AsyncGenerator
+
+    from llama_index.core.schema import NodeWithScore
 
 logger = logging.getLogger(__name__)
 
@@ -121,7 +124,7 @@ class StreamingRAGService:
                 "retrieval_time": round(retrieval_time, 3),
                 "context_length": len(context),
                 "nodes_retrieved": len(retrieved_nodes),
-                "top_similarity": round(retrieved_nodes[0].score, 4) if retrieved_nodes else 0,
+                "top_similarity": (round(retrieved_nodes[0].score, 4) if retrieved_nodes else 0),
             }
 
             # Stream response chunks
@@ -149,7 +152,7 @@ class StreamingRAGService:
                 "total_time": round(total_time, 3),
                 "total_tokens": total_tokens,
                 "chunks_sent": chunks_sent,
-                "tokens_per_second": round(total_tokens / total_time, 2) if total_time > 0 else 0,
+                "tokens_per_second": (round(total_tokens / total_time, 2) if total_time > 0 else 0),
                 "trinity_score_contribution": {
                     "beauty": 5,  # Real-time streaming UX
                     "serenity": 10,  # Reduced cognitive load

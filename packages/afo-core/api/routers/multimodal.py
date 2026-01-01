@@ -180,7 +180,10 @@ async def process_video(
 
         try:
             result = video.process_video(
-                tmp_path, num_frames=num_frames, transcribe=transcribe, language=language
+                tmp_path,
+                num_frames=num_frames,
+                transcribe=transcribe,
+                language=language,
             )
             return result
         finally:

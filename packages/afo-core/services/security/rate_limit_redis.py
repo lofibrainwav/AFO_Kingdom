@@ -14,8 +14,8 @@ from slowapi.util import get_remote_address
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import JSONResponse, Response
 
-from AFO.services.security.circuit_breaker import CircuitBreaker
-from AFO.services.security.rate_limit_policy import RedisDownPolicy
+from afo.services.security.circuit_breaker import CircuitBreaker
+from afo.services.security.rate_limit_policy import RedisDownPolicy
 
 if TYPE_CHECKING:
     from collections.abc import Callable

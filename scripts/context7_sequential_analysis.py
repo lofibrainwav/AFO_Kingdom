@@ -247,7 +247,7 @@ def identify_potential_issues():
     # 3. Import 에러 가능성 확인
     print("\n3. Import 에러 가능성 확인")
     try:
-        from AFO.api.routers.chancellor_router import router as cr
+        from afo.api.routers.chancellor_router import router as cr
 
         print(
             f"   ✅ Chancellor 라우터 import 성공 (prefix: {getattr(cr, "prefix", "N/A")})"

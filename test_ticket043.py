@@ -7,7 +7,6 @@ Big 4 AI 에이전트 군단 실행 테스트
 import os
 import sys
 
-
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "packages", "afo-core"))
 
 try:
@@ -16,11 +15,13 @@ try:
     print("✅ Import successful")
 
     orchestrator = JulieAgentOrchestrator()
-    result = orchestrator.process_tax_request({
-        "entity_type": "C_CORP",
-        "tax_year": 2025,
-        "purpose": "tax_optimization",
-    })
+    result = orchestrator.process_tax_request(
+        {
+            "entity_type": "C_CORP",
+            "tax_year": 2025,
+            "purpose": "tax_optimization",
+        }
+    )
     print("✅ Execution successful")
     print(f"Evidence ID: {result['orchestrator_id'][:8]}")
     print(f"Final Trinity Score: {result['trinity_score']['total']:.3f}")

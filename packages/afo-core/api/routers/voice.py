@@ -10,7 +10,7 @@ from typing import Any
 from fastapi import APIRouter
 from pydantic import BaseModel
 
-logger = logging.getLogger("AFO.Voice")
+logger = logging.getLogger("afo.Voice")
 router = APIRouter(prefix="/voice", tags=["voice"])
 
 

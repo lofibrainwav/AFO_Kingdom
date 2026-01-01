@@ -1,7 +1,7 @@
 # Trinity Score: 90.0 (Established by Chancellor)
 import logging
 
-from AFO.llm_router import LLMProvider
+from afo.llm_router import LLMProvider
 
 from .anthropic import AnthropicProvider
 from .base import BaseLLMProvider

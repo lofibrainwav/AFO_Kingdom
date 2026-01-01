@@ -206,7 +206,7 @@ class SkeletonIndexer:
                     line = line.strip()
                     if line.startswith("from ") or line.startswith("import "):
                         # 간단한 의존성 추출 (개선 가능)
-                        if "from afo" in line or "from AFO" in line:
+                        if "from afo" in line or "from afo" in line:
                             dependencies.append("internal")
                         elif "from packages" in line:
                             dependencies.append("package")

@@ -9,7 +9,7 @@ each with specialized decision-making capabilities.
 
 import asyncio
 import logging
-from typing import Any, Optional
+from typing import Any
 
 from ..cache.manager import cache_manager
 

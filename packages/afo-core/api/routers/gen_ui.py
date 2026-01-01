@@ -11,9 +11,9 @@ from typing import Any
 
 from fastapi import APIRouter, BackgroundTasks, HTTPException
 
-from AFO.schemas.gen_ui import GenUIRequest, GenUIResponse
-from AFO.services.gen_ui import gen_ui_service
-from AFO.services.vision_verifier import vision_verifier
+from afo.schemas.gen_ui import GenUIRequest, GenUIResponse
+from afo.services.gen_ui import gen_ui_service
+from afo.services.vision_verifier import vision_verifier
 
 router = APIRouter(prefix="/api/gen-ui", tags=["GenUI"])
 

@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 
 # 중앙 설정 사용
 # 중앙 설정 사용
-from AFO.config.settings import get_settings
+from afo.config.settings import get_settings
 
 # Lazy import asyncpg to avoid startup errors if not installed
 try:

@@ -32,7 +32,10 @@ class DoRAVeRAComparisonService:
         start_memory = psutil.Process().memory_info().rss / 1024 / 1024
 
         self.base_model = AutoModelForCausalLM.from_pretrained(
-            self.model_name, device_map="auto", trust_remote_code=True, torch_dtype=torch.float16
+            self.model_name,
+            device_map="auto",
+            trust_remote_code=True,
+            torch_dtype=torch.float16,
         )
 
         load_time = time.time() - start_time
@@ -191,9 +194,11 @@ class DoRAVeRAComparisonService:
                     "success": True,
                     "generation_time": gen_time,
                     "output_length": len(generated_text),
-                    "generated_text": generated_text[:100] + "..."
-                    if len(generated_text) > 100
-                    else generated_text,
+                    "generated_text": (
+                        generated_text[:100] + "..."
+                        if len(generated_text) > 100
+                        else generated_text
+                    ),
                 }
 
             except Exception as e:

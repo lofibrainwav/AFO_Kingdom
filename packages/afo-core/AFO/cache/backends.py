@@ -8,7 +8,7 @@ import logging
 import time
 from typing import Any
 
-from AFO.config.settings import get_settings
+from afo.config.settings import get_settings
 
 logger = logging.getLogger(__name__)
 settings = get_settings()

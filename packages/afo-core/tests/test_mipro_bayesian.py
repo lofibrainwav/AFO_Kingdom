@@ -2,9 +2,9 @@ import os
 
 import pytest
 
-# Import from AFO package
-from AFO.mipro_optimizer import MiproOptimizer
-from AFO.trinity_metric_wrapper import TrinityMetricWrapper
+# Import from afo package
+from afo.mipro_optimizer import MiproOptimizer
+from afo.trinity_metric_wrapper import TrinityMetricWrapper
 
 
 def test_mipro_disabled_returns_default():
@@ -30,7 +30,7 @@ def test_mipro_selects_best():
 
 def test_mipro_enabled_calls_optimizer():
     """Test that MIPRO optimizer is called when enabled."""
-    from AFO.mipro import Example, MiproConfig, MiproOptimizer, Module
+    from afo.mipro import Example, MiproConfig, MiproOptimizer, Module
 
     # Create optimizer with config
     config = MiproConfig(auto="light", num_trials=5)
@@ -67,7 +67,7 @@ def test_mipro_enabled_calls_optimizer():
 
 def test_mipro_node_noop_when_disabled():
     """Test that MIPRO node is truly NO-OP when flags are disabled."""
-    from AFO.chancellor_mipro_plugin import ChancellorMiproPlugin
+    from afo.chancellor_mipro_plugin import ChancellorMiproPlugin
 
     # Mock state to track changes
     class MockState:
@@ -89,7 +89,7 @@ def test_mipro_node_noop_when_disabled():
     def mipro_node(state):
         """MIPRO optimization node for Chancellor Graph (NO-OP by default)."""
         try:
-            from AFO.chancellor_mipro_plugin import ChancellorMiproPlugin
+            from afo.chancellor_mipro_plugin import ChancellorMiproPlugin
 
             plugin = ChancellorMiproPlugin()
             plan = plugin.plan()
@@ -100,8 +100,8 @@ def test_mipro_node_noop_when_disabled():
 
             # Feature flags enabled: perform actual MIPRO optimization
             try:
-                from AFO.mipro_optimizer import MiproOptimizer
-                from AFO.trinity_metric_wrapper import TrinityMetricWrapper
+                from afo.mipro_optimizer import MiproOptimizer
+                from afo.trinity_metric_wrapper import TrinityMetricWrapper
 
                 # TODO: Integrate with actual DSPy MIPROv2 when available
                 metric = TrinityMetricWrapper(lambda p, t: 0.8)  # Default metric

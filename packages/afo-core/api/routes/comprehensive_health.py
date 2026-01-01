@@ -24,10 +24,10 @@ from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import Response as StarletteResponse
 
-from AFO.config.health_check_config import health_check_config
-from AFO.services.health_service import get_comprehensive_health
-from AFO.utils.automation_tools import AutomationTools
-from AFO.utils.path_utils import add_to_sys_path, get_trinity_os_path
+from afo.config.health_check_config import health_check_config
+from afo.services.health_service import get_comprehensive_health
+from afo.utils.automation_tools import AutomationTools
+from afo.utils.path_utils import add_to_sys_path, get_trinity_os_path
 
 router = APIRouter(prefix="/api/health", tags=["Comprehensive Health"])
 
@@ -215,7 +215,7 @@ def _extract_services_status(health_data: dict[str, Any]) -> dict[str, bool]:
 async def _check_skills_registry() -> dict[str, Any]:
     """스킬 레지스트리 상태 확인"""
     try:
-        from AFO.afo_skills_registry import register_core_skills
+        from afo.afo_skills_registry import register_core_skills
 
         registry = register_core_skills()
         skills = registry.list_all()
@@ -292,7 +292,7 @@ async def _check_context7() -> dict[str, Any]:
     """Context7 지식 베이스 상태 확인 (최적화된 캐싱 서비스 사용)"""
     try:
         # 최적화된 Context7 서비스 사용 (캐싱 + 지연 로딩)
-        from AFO.services.context7_service import get_context7_health
+        from afo.services.context7_service import get_context7_health
 
         health_data = get_context7_health()
 
@@ -342,7 +342,7 @@ async def _check_automation_tools() -> dict[str, Any]:
     """자동화 도구 상태 확인 (최적화된 캐싱 서비스 사용)"""
     try:
         # 최적화된 Automation 서비스 사용 (캐싱 적용)
-        from AFO.services.automation_service import get_automation_health
+        from afo.services.automation_service import get_automation_health
 
         health_data = get_automation_health()
 

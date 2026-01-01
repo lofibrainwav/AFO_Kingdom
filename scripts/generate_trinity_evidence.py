@@ -23,7 +23,7 @@ TRINITY_WEIGHTS = {
 }
 
 PHILOSOPHICAL_CONSTANTS = {
-    "kingdom_name": "AFO",
+    "kingdom_name": "afo",
     "philosophy": "眞善美孝永",
     "motto": "지피지기면 백전불패",
     "evidence_retention_days": 365,

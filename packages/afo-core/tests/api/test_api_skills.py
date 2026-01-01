@@ -53,7 +53,7 @@ class TestSkillsRegistryLogic:
     def test_import_registry(self):
         """Registry 모듈 import 테스트"""
         try:
-            from AFO.api.routes.skills import router
+            from afo.api.routes.skills import router
 
             assert router is not None
         except ImportError:

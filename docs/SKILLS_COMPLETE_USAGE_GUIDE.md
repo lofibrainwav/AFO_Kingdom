@@ -401,7 +401,7 @@ if execute_result.get("status") == "success":
     print(f"✅ Skill 실행 성공: {execute_result['skill_id']}")
     print(f"Result: {execute_result['result']}")
 else:
-    print(f"❌ Skill 실행 실패: {execute_result.get('reason', 'Unknown')}")
+    print(f"❌ Skill 실행 실패: {execute_result.get('reason', 'skill_execution_error')}")
 ```
 
 ---
@@ -675,4 +675,3 @@ if dry_result.status == "dry_run_success":
 **작성일**: 2025-12-25  
 **버전**: 1.0.0  
 **Trinity Score**: 眞 90% | 善 85% | 美 90% | 孝 95% | 永 85%
-

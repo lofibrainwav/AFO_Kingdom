@@ -12,7 +12,7 @@ sys.path.append(
 
 import pathlib
 
-from AFO.agents.juyu_core import juyu
+from afo.agents.juyu_core import juyu
 
 
 async def main():

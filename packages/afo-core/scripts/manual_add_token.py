@@ -13,7 +13,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 try:
-    from AFO.api_wallet import APIWallet
+    from afo.api_wallet import APIWallet
 except ImportError:
     # Just in case run from inside scripts dir
     sys.path.insert(0, str(Path(__file__).parent.parent / "AFO"))

@@ -138,7 +138,7 @@ export function SamahwiGeneratedWidget() {{
         """
         try:
             # Import dynamically to avoid circular dependnecy issues during init
-            from AFO.api.routers.ssot import get_ssot_status
+            from afo.api.routers.ssot import get_ssot_status
 
             status = await get_ssot_status()
             return f"Current Trinity Score: {status.trinity_score}"

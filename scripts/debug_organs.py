@@ -2,13 +2,12 @@ import os
 import sys
 import traceback
 
-
 # Add package root to path
 sys.path.append(os.path.abspath("packages/afo-core"))
 
 try:
     print("Attempting to import build_organs_v2...")
-    from AFO.health.organs_v2 import build_organs_v2
+    from afo.health.organs_v2 import build_organs_v2
 
     print("Import successful.")
 

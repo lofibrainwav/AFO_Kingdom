@@ -72,7 +72,9 @@ async def rag_semaphore_context():
 
 
 async def execute_rag_with_flag(
-    query: str, request_headers: dict[str, str] | None = None, context: dict[str, Any] | None = None
+    query: str,
+    request_headers: dict[str, str] | None = None,
+    context: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """
     Flag 모드 기반 RAG 실행
@@ -105,7 +107,7 @@ async def execute_rag_with_flag(
     try:
         if flag_enabled:
             # Flag ON: 동기 실행 + timeout
-            timeout_seconds = config["timeout_ms"] / 1000.0
+            config["timeout_ms"] / 1000.0
 
             async with rag_semaphore_context():
                 try:
@@ -133,7 +135,7 @@ async def execute_rag_with_flag(
                     result["fallback_reason"] = f"error: {e!s}"
 
         # Shadow는 항상 실행 (응답 영향 없음)
-        shadow_task = asyncio.create_task(execute_rag_shadow(query, context))
+        asyncio.create_task(execute_rag_shadow(query, context))
         result["shadow_task_created"] = True
 
         # 결과 요약
@@ -249,7 +251,9 @@ def should_apply_gradual(seed: str, percent: int) -> bool:
 
 
 async def execute_rag_with_mode(
-    query: str, request_headers: dict[str, str] | None = None, context: dict[str, Any] | None = None
+    query: str,
+    request_headers: dict[str, str] | None = None,
+    context: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """
     통합 RAG 실행 (Shadow + Flag + Gradual) - TICKET-008 Phase 3
@@ -288,9 +292,9 @@ async def execute_rag_with_mode(
         result.update(
             {
                 "rollout_percent": mode_decision.get("rollout_percent", 0),
-                "bucket_id": hashlib.sha256(bucket_seed.encode()).hexdigest()[:8]
-                if bucket_seed
-                else "",
+                "bucket_id": (
+                    hashlib.sha256(bucket_seed.encode()).hexdigest()[:8] if bucket_seed else ""
+                ),
                 "bucket_seed_source": mode_decision.get("bucket_seed_source", ""),
             }
         )
@@ -298,7 +302,7 @@ async def execute_rag_with_mode(
     try:
         if mode_decision["applied"]:
             # RAG 적용: 동기 실행 + timeout
-            timeout_seconds = config["timeout_ms"] / 1000.0
+            config["timeout_ms"] / 1000.0
 
             async with rag_semaphore_context():
                 try:
@@ -327,7 +331,7 @@ async def execute_rag_with_mode(
                     result["applied"] = False  # fallback으로 변경
 
         # Shadow는 항상 실행 (응답 영향 없음)
-        shadow_task = asyncio.create_task(execute_rag_shadow(query, context))
+        asyncio.create_task(execute_rag_shadow(query, context))
         result["shadow_task_created"] = True
 
         # 결과 요약

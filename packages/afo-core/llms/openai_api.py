@@ -33,7 +33,7 @@ class OpenAIAPIWrapper:
             vault_client = v1
         except (ImportError, ValueError):
             try:
-                from AFO.security.vault_manager import vault as v2
+                from afo.security.vault_manager import vault as v2
 
                 vault_client = v2
             except ImportError:

@@ -11,7 +11,7 @@ from collections.abc import Awaitable, Callable
 from fastapi import Request
 from starlette.responses import Response
 
-logger = logging.getLogger("AFO.Audit")
+logger = logging.getLogger("afo.Audit")
 
 
 async def audit_middleware(

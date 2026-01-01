@@ -10,8 +10,8 @@ import pytest
 # Add project root to path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from AFO.domain.audit.trail import AuditTrail
-from AFO.utils.history import Historian
+from afo.domain.audit.trail import AuditTrail
+from afo.utils.history import Historian
 
 
 def is_postgres_available():

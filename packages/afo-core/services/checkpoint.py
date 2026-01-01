@@ -15,7 +15,7 @@ from typing import Any, TypeVar
 TF = TypeVar("TF", bound=Callable[..., Any])
 
 try:
-    from AFO.utils.trinity_type_validator import validate_with_trinity
+    from afo.utils.trinity_type_validator import validate_with_trinity
 except ImportError:
     # Fallback for import issues - matches original signature
     def validate_with_trinity(func: TF) -> TF:
@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 
 # Lazy import to avoid startup errors
 try:
-    from AFO.utils.redis_connection import get_redis_url
+    from afo.utils.redis_connection import get_redis_url
 
     REDIS_AVAILABLE = True
 except ImportError:
@@ -35,7 +35,7 @@ except ImportError:
     logger.warning("Redis not available - checkpoint will use in-memory storage")
 
 try:
-    from AFO.services.database import get_db_connection
+    from afo.services.database import get_db_connection
 
     DB_AVAILABLE = True
 except ImportError:

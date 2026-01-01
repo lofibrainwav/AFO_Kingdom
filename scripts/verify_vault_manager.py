@@ -9,7 +9,7 @@ sys.path.append(
     ).resolve()
 )
 
-from AFO.security.vault_manager import VaultManager, vault
+from afo.security.vault_manager import VaultManager, vault
 
 
 def verify_vault_manager():

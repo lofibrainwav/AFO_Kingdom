@@ -15,7 +15,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Any, cast
 
-from AFO.api.compat import (
+from afo.api.compat import (
     aicpa_router,
     auth_router,
     budget_router,
@@ -57,7 +57,7 @@ if TYPE_CHECKING:
 
 # Strangler Fig compatibility router
 try:
-    from AFO.api.routers.compat import router as compat_router
+    from afo.api.routers.compat import router as compat_router
 except ImportError:
     compat_router = None  # type: ignore[assignment]
 
@@ -201,7 +201,7 @@ class AFORouterManager:
 
         # Philosophical Copilot (眞善美孝永 철학 실시간 모니터링)
         try:
-            from AFO.api.routes.philosophical_copilot import router as philosophical_copilot_router
+            from afo.api.routes.philosophical_copilot import router as philosophical_copilot_router
 
             self._safe_register_router(philosophical_copilot_router, tags=["철학적 Copilot"])
         except ImportError:
@@ -212,7 +212,7 @@ class AFORouterManager:
         # NOTE: system_stream router is deprecated. SSE is now consolidated in sse_ssot_router (system_health.py)
         # Keeping import as fallback but not registering to prevent route conflicts.
         # try:
-        #     from AFO.api.routes.system_stream import router as system_stream_router
+        #     from afo.api.routes.system_stream import router as system_stream_router
         #     self._safe_register_router(system_stream_router, tags=["SSE 스트리밍"])
         # except ImportError:
         #     logger.warning("System Stream Router not available")
@@ -265,7 +265,7 @@ class AFORouterManager:
     def _register_comprehensive_health(self) -> None:
         """Register comprehensive health check router."""
         try:
-            from AFO.api.routes.comprehensive_health import router as comprehensive_health_router
+            from afo.api.routes.comprehensive_health import router as comprehensive_health_router
 
             self._safe_register_router(comprehensive_health_router, tags=["Health"])
         except ImportError:
@@ -275,10 +275,10 @@ class AFORouterManager:
         """Register management and utility APIs."""
         # MCP Tools, Integrity Check, Git Status, Context7, A2A
         management_routers = [
-            ("AFO.api.routes.mcp_tools", "MCP Tools"),
-            ("AFO.api.routes.integrity_check", "Integrity Check"),
-            ("AFO.api.routes.git_status", "Git Status"),
-            ("AFO.api.routes.context7", "Context7 Knowledge Base"),
+            ("afo.api.routes.mcp_tools", "MCP Tools"),
+            ("afo.api.routes.integrity_check", "Integrity Check"),
+            ("afo.api.routes.git_status", "Git Status"),
+            ("afo.api.routes.context7", "Context7 Knowledge Base"),
             ("api.routes.a2a_agent_card", "A2A Protocol"),
         ]
 
@@ -294,7 +294,7 @@ class AFORouterManager:
         """Register compatibility and legacy routers."""
         # Intake API
         try:
-            from AFO.afo_soul_engine.routers.intake import router as intake_router
+            from afo.afo_soul_engine.routers.intake import router as intake_router
 
             self._safe_register_router(intake_router, prefix="/api/intake", tags=["Intake"])
         except ImportError:
@@ -302,7 +302,7 @@ class AFORouterManager:
 
         # GenUI Engine
         try:
-            from AFO.api.routers.gen_ui import router as gen_ui_router
+            from afo.api.routers.gen_ui import router as gen_ui_router
 
             self._safe_register_router(gen_ui_router, tags=["GenUI"])
         except ImportError as e:
@@ -311,7 +311,7 @@ class AFORouterManager:
 
         # Family Hub
         try:
-            from AFO.api.routers.family import router as family_router
+            from afo.api.routers.family import router as family_router
 
             self._safe_register_router(family_router, tags=["Family Hub"])
             self._safe_register_router(family_router, prefix="/api", tags=["Family Hub"])
@@ -320,7 +320,7 @@ class AFORouterManager:
 
         # Cache Metrics
         try:
-            from AFO.api.routers.cache import router as cache_router
+            from afo.api.routers.cache import router as cache_router
 
             self._safe_register_router(cache_router, tags=["Cache Metrics"])
         except ImportError:
@@ -328,7 +328,7 @@ class AFORouterManager:
 
         # Julie Royal
         try:
-            from AFO.api.routers.julie_royal import router as julie_royal_router
+            from afo.api.routers.julie_royal import router as julie_royal_router
 
             self._safe_register_router(julie_royal_router, tags=["Julie Royal"])
         except ImportError:

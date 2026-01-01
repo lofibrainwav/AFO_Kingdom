@@ -17,7 +17,7 @@ from langgraph.checkpoint.base import (
 )
 from langgraph.checkpoint.serde.jsonplus import JsonPlusSerializer
 
-from AFO.utils.cache_utils import cache
+from afo.utils.cache_utils import cache
 
 
 class AsyncRedisSaver(BaseCheckpointSaver):
@@ -177,6 +177,6 @@ class AsyncRedisSaver(BaseCheckpointSaver):
 
 
 def get_redis_client():
-    from AFO.utils.cache_utils import cache
+    from afo.utils.cache_utils import cache
 
     return cache.redis

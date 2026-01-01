@@ -11,11 +11,13 @@ Alpha tuning for query-aware retrieval optimization.
 from __future__ import annotations
 
 import logging
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-from llama_index.core import VectorStoreIndex
 from llama_index.core.query_engine import SubQuestionQueryEngine
 from llama_index.core.tools import QueryEngineTool, ToolMetadata
+
+if TYPE_CHECKING:
+    from llama_index.core import VectorStoreIndex
 
 logger = logging.getLogger(__name__)
 
@@ -84,12 +86,29 @@ def get_alpha_for_query(query: str) -> float:
         return 0.85
 
     # Code/technical queries - balanced
-    code_keywords = ["코드", "함수", "클래스", "구현", "code", "function", "class", "implement"]
+    code_keywords = [
+        "코드",
+        "함수",
+        "클래스",
+        "구현",
+        "code",
+        "function",
+        "class",
+        "implement",
+    ]
     if any(kw in query_lower for kw in code_keywords):
         return 0.6
 
     # Factual/specific queries - more keyword
-    factual_keywords = ["정확히", "specifically", "exactly", "when", "where", "날짜", "버전"]
+    factual_keywords = [
+        "정확히",
+        "specifically",
+        "exactly",
+        "when",
+        "where",
+        "날짜",
+        "버전",
+    ]
     if any(kw in query_lower for kw in factual_keywords):
         return 0.4
 

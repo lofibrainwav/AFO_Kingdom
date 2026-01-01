@@ -10,7 +10,7 @@ sys.path.append(
     ).resolve()
 )
 
-from AFO.chancellor_graph import calculate_complexity, chancellor_graph
+from afo.chancellor_graph import calculate_complexity, chancellor_graph
 from langchain_core.messages import HumanMessage
 
 

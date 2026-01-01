@@ -1,7 +1,14 @@
-import argparse, json, os, platform, statistics, subprocess, sys, time
+import argparse
+import inspect
+import json
+import os
+import platform
+import statistics
+import subprocess
+import sys
+import time
 from datetime import datetime, timezone
 from pathlib import Path
-import inspect
 
 METHOD_CANDIDATES = ["calculate", "compute", "calc", "run", "__call__"]
 

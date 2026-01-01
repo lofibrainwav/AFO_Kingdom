@@ -15,7 +15,7 @@ from pathlib import Path
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root / "packages" / "afo-core"))
 
-from AFO.services.automated_debugging_system import AutomatedDebuggingSystem
+from afo.services.automated_debugging_system import AutomatedDebuggingSystem
 
 
 async def main():

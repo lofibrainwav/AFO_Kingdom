@@ -124,13 +124,17 @@ def _validate_federal_params(federal_params: dict[str, Any]) -> None:
     if not all(status in brackets for status in required_bracket_statuses):
         raise ValueError(f"브라켓 상태 누락: {required_bracket_statuses - set(brackets.keys())}")
 
-    for status, status_brackets in brackets.items():
+    for _status, status_brackets in brackets.items():
         _validate_bracket_structure(status_brackets)
 
     # 고령자 보너스 공제 검증 (선택 사항)
     senior_config = federal_params.get("senior_bonus_deduction")
     if senior_config:
-        required_senior_keys = {"amount_per_person", "phaseout_magi_single", "phaseout_magi_joint"}
+        required_senior_keys = {
+            "amount_per_person",
+            "phaseout_magi_single",
+            "phaseout_magi_joint",
+        }
         if not all(key in senior_config for key in required_senior_keys):
             raise ValueError(
                 f"고령자 보너스 공제 설정 불완전: {required_senior_keys - set(senior_config.keys())}"
@@ -169,7 +173,7 @@ def _validate_ca_params(ca_params: dict[str, Any]) -> None:
     if not all(status in brackets for status in required_bracket_statuses):
         raise ValueError(f"CA 브라켓 상태 누락: {required_bracket_statuses - set(brackets.keys())}")
 
-    for status, status_brackets in brackets.items():
+    for _status, status_brackets in brackets.items():
         _validate_bracket_structure(status_brackets)
 
 
@@ -230,7 +234,13 @@ def validate_tax_calculation_result(
         ValueError: 계산 결과가 일관되지 않은 경우
     """
     # 기본 구조 검증
-    required_keys = {"federal", "california", "total_tax", "effective_rate", "input_summary"}
+    required_keys = {
+        "federal",
+        "california",
+        "total_tax",
+        "effective_rate",
+        "input_summary",
+    }
     if not all(key in result for key in required_keys):
         raise ValueError(f"결과 구조 불완전: {required_keys - set(result.keys())}")
 

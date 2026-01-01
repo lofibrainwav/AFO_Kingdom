@@ -6,7 +6,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from AFO.llm_router import LLMConfig, LLMProvider, LLMRouter, QualityTier, RoutingDecision
+from afo.llm_router import LLMConfig, LLMProvider, LLMRouter, QualityTier, RoutingDecision
 
 # DELETED: test_router_initialization_env_vars()
 # 이유: Flaky 테스트 (모듈 캐싱), 기능은 이미 구현되어 있음 (llm_router.py:101-129)
@@ -104,7 +104,7 @@ async def test_execution_caching() -> None:
     # Force fallback to Memory Cache by mocking Redis service as None
     # This ensures the test relies on deterministic in-memory logic
     with patch(
-        "AFO.services.llm_cache_service.get_llm_cache_service", new_callable=AsyncMock
+        "afo.services.llm_cache_service.get_llm_cache_service", new_callable=AsyncMock
     ) as mock_get_cache:
         mock_get_cache.return_value = None
 
@@ -148,13 +148,13 @@ async def test_call_gemini_retry() -> None:
 
     # Patch the import in _query_google method
     # Also patch settings to avoid import errors
-    with patch("AFO.llms.gemini_api.gemini_api", mock_gemini_api):
+    with patch("afo.llms.gemini_api.gemini_api", mock_gemini_api):
         with patch.object(router, "_is_ollama_available", return_value=False):
             with patch.dict(
                 sys.modules,
                 {
                     "config.settings": mock_config_module,
-                    "AFO.config.settings": mock_config_module,
+                    "afo.config.settings": mock_config_module,
                 },
             ):
                 response = await router._query_google("query", config, None)
@@ -190,12 +190,12 @@ async def test_call_anthropic() -> None:
     decision = RoutingDecision(LLMProvider.ANTHROPIC, "claude-3", "reason", 1.0, 0.0, 100, [])
 
     # Mock claude_api wrapper
-    with patch("AFO.llm_router.claude_api") as mock_api:
+    with patch("afo.llm_router.claude_api") as mock_api:
         mock_api.is_available.return_value = True
         mock_api.generate = AsyncMock(return_value={"success": True, "content": "Claude Response"})
 
         # Mock API_WRAPPERS_AVAILABLE
-        with patch("AFO.llm_router.API_WRAPPERS_AVAILABLE", True):
+        with patch("afo.llm_router.API_WRAPPERS_AVAILABLE", True):
             response = await router._call_llm(decision, "hi", None)
             assert response == "Claude Response"
 

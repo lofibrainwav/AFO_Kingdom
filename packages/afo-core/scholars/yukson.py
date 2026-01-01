@@ -18,7 +18,7 @@ from __future__ import annotations
 
 import logging
 
-from AFO.llms.gemini_api import GeminiAPIWrapper, gemini_api
+from afo.llms.gemini_api import GeminiAPIWrapper, gemini_api
 
 logger = logging.getLogger(__name__)
 

@@ -13,14 +13,14 @@ Phase 5: Trinity Type Validator 적용 - 런타임 Trinity Score 검증
 
 import logging
 
-print("🔥 [DEBUG] AFO.services.gen_ui is being loaded!")
+print("🔥 [DEBUG] afo.services.gen_ui is being loaded!")
 import uuid
 from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
 try:
-    from AFO.utils.trinity_type_validator import validate_with_trinity
+    from afo.utils.trinity_type_validator import validate_with_trinity
 except ImportError:
     # Fallback for import issues - 시그니처를 실제 함수와 일치시킴
     def validate_with_trinity[TF: Callable[..., Any]](func: TF) -> TF:
@@ -28,8 +28,8 @@ except ImportError:
         return func
 
 
-from AFO.api.models.persona import PersonaTrinityScore as TrinityScore
-from AFO.schemas.gen_ui import GenUIRequest, GenUIResponse
+from afo.api.models.persona import PersonaTrinityScore as TrinityScore
+from afo.schemas.gen_ui import GenUIRequest, GenUIResponse
 
 # Logger setup
 logger = logging.getLogger("afo.services.gen_ui")
@@ -82,7 +82,7 @@ class GenUIService:
         # 2. Call Scholar (The Execution)
         # Using Yeongdeok's localized logic or direct LLM Router
         try:
-            from AFO.llm_router import LLMRouter
+            from afo.llm_router import LLMRouter
 
             router = LLMRouter()
 
@@ -127,8 +127,8 @@ class GenUIService:
         is_valid_syntax = self.validate_syntax(code)
 
         # Soft Fallback for Mock Mode if Syntax Check Fails
-        from AFO.config.antigravity import antigravity
-        from AFO.config.settings import settings
+        from afo.config.antigravity import antigravity
+        from afo.config.settings import settings
 
         if not is_valid_syntax and (settings.MOCK_MODE or antigravity.DRY_RUN_DEFAULT):
             logger.warning("⚠️ [GenUI] Syntax check failed on LLM output. Using Mock Component.")

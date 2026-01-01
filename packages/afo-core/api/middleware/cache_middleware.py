@@ -46,7 +46,7 @@ class CacheMiddleware(BaseHTTPMiddleware):
 
         for attempt in range(max_retries):
             try:
-                from AFO.utils.redis_connection import get_redis_client
+                from afo.utils.redis_connection import get_redis_client
 
                 client = get_redis_client()
                 if client is not None:
@@ -61,7 +61,9 @@ class CacheMiddleware(BaseHTTPMiddleware):
 
                     time.sleep(retry_delay * (attempt + 1))
                     logger.warning(
-                        "⚠️ Redis 연결 재시도 중... (attempt %d/%d)", attempt + 1, max_retries
+                        "⚠️ Redis 연결 재시도 중... (attempt %d/%d)",
+                        attempt + 1,
+                        max_retries,
                     )
                 else:
                     logger.warning("⚠️ API Cache 비활성화 (Redis 없이 정상 작동): %s", e)

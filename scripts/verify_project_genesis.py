@@ -8,7 +8,7 @@ sys.path.append("/Users/brnestrm/AFO_Kingdom/packages/afo-core")
 
 import pathlib
 
-from AFO.chancellor_graph import chancellor_graph
+from afo.chancellor_graph import chancellor_graph
 from langchain_core.messages import HumanMessage
 
 

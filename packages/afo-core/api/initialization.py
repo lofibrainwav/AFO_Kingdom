@@ -86,7 +86,7 @@ async def _initialize_query_expander() -> None:
 async def _initialize_antigravity() -> None:
     """Initialize AntiGravity system controls."""
     try:
-        from AFO.api.compat import get_antigravity_control
+        from afo.api.compat import get_antigravity_control
 
         antigravity = get_antigravity_control()
 
@@ -118,7 +118,7 @@ async def _initialize_multimodal_rag() -> None:
     global multimodal_rag_engine
 
     try:
-        from AFO.api.compat import get_settings_safe
+        from afo.api.compat import get_settings_safe
         from multimodal_rag_engine import MultimodalRAGEngine as _MRAE
 
         settings = get_settings_safe()
@@ -174,8 +174,8 @@ async def _initialize_yeongdeok() -> None:
     global yeongdeok
 
     try:
-        from AFO.api.compat import get_settings_safe
-        from AFO.memory_system.yeongdeok_complete import YeongdeokComplete as _YC
+        from afo.api.compat import get_settings_safe
+        from afo.memory_system.yeongdeok_complete import YeongdeokComplete as _YC
 
         settings = get_settings_safe()
         n8n_url = getattr(settings, "N8N_URL", "") if settings else ""
@@ -220,7 +220,7 @@ async def _initialize_strategy_engine() -> None:
         except ImportError:
             # Fallback to legacy V1 (deprecated)
             try:
-                from AFO.chancellor_graph import chancellor_graph
+                from afo.chancellor_graph import chancellor_graph
 
                 strategy_app_runnable = chancellor_graph
                 print("⚠️ [지휘소 v6】 Using DEPRECATED V1 Chancellor Graph")
@@ -236,7 +236,7 @@ async def _initialize_databases() -> None:
     """Initialize database connections."""
     global PG_POOL, REDIS_CLIENT
 
-    from AFO.api.compat import get_settings_safe
+    from afo.api.compat import get_settings_safe
 
     settings = get_settings_safe()
     if not settings:
@@ -293,7 +293,7 @@ async def _initialize_llm_clients() -> None:
     """Initialize LLM client connections."""
     global OPENAI_CLIENT, CLAUDE_CLIENT
 
-    from AFO.api.compat import ANTHROPIC_AVAILABLE, OPENAI_AVAILABLE, get_settings_safe
+    from afo.api.compat import ANTHROPIC_AVAILABLE, OPENAI_AVAILABLE, get_settings_safe
 
     settings = get_settings_safe()
 

@@ -3,10 +3,11 @@
 TRINITY-OS Setup Script
 """
 
+import pathlib
+
 from setuptools import find_packages, setup
 
-with open("README.md", encoding="utf-8") as fh:
-    long_description = fh.read()
+long_description = pathlib.Path("README.md").read_text(encoding="utf-8")
 
 with open("requirements.txt", encoding="utf-8") as fh:
     requirements = [

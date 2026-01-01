@@ -30,8 +30,7 @@ class AfoSkillsMCP:
         """High-performance weighted sum using CuPy if available."""
         if GPU_AVAILABLE:
             return float(cp.sum(cp.array(data) * cp.array(weights)))
-        else:
-            return float(np.sum(np.array(data) * np.array(weights)))
+        return float(np.sum(np.array(data) * np.array(weights)))
 
     @staticmethod
     def verify_fact(claim: str, context: str = "") -> dict[str, Any]:

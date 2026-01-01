@@ -4,10 +4,10 @@ from __future__ import annotations
 import hashlib
 import json
 from dataclasses import dataclass
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 from typing import TYPE_CHECKING, Any, Literal, TypedDict
 
-from AFO.constitution.constitution_v1_0 import TRINITY_WEIGHTS
+from afo.constitution.constitution_v1_0 import TRINITY_WEIGHTS
 
 # 🔐 SSOT 해시 스탬프: 변경 감지용 (SHA256 12자리)
 WEIGHTS_HASH = hashlib.sha256(str(sorted(TRINITY_WEIGHTS.items())).encode()).hexdigest()[:12]

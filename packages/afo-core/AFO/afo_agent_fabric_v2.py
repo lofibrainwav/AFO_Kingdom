@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from typing import TYPE_CHECKING, Any, Optional, TypedDict, cast
+from typing import TYPE_CHECKING, Any, TypedDict, cast
 
 from fastapi import APIRouter
 from pydantic import BaseModel
@@ -74,20 +74,14 @@ async def chancellor_ping_v2():
 async def chancellor_engines():
     installed = {}
     try:
-        import langgraph
-
         installed["langgraph"] = True
     except Exception:
         installed["langgraph"] = False
     try:
-        import crewai
-
         installed["crewai"] = True
     except Exception:
         installed["crewai"] = False
     try:
-        import autogen
-
         installed["autogen"] = True
     except Exception:
         installed["autogen"] = False

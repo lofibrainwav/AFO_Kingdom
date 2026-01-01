@@ -8,7 +8,7 @@ from unittest.mock import AsyncMock, MagicMock
 root_dir = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(root_dir))
 
-from AFO.utils.redis_optimized import OptimizedRedisCache
+from afo.utils.redis_optimized import OptimizedRedisCache
 
 
 class TestOptimizedRedis(unittest.IsolatedAsyncioTestCase):

@@ -5,7 +5,7 @@ from typing import Any
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 
-from AFO.julie_cpa.services.julie_service import JulieService
+from afo.julie_cpa.services.julie_service import JulieService
 
 router = APIRouter(prefix="/api/finance", tags=["finance"])
 logger = logging.getLogger(__name__)

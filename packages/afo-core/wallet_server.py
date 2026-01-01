@@ -11,7 +11,7 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from AFO.api.routes.wallet import wallet_router
+from afo.api.routes.wallet import wallet_router
 
 
 @asynccontextmanager
@@ -21,7 +21,7 @@ async def lifespan(app: FastAPI):
         kms_type = os.getenv("API_WALLET_KMS", "local").strip().lower()
         if kms_type == "vault":
             print("🔍 Validating vault connectivity on startup...")
-            from AFO.api_wallet import APIWallet
+            from afo.api_wallet import APIWallet
 
             test_wallet = APIWallet()
             if not test_wallet.use_vault:

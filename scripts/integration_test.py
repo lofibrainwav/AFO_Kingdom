@@ -27,8 +27,8 @@ def test_app_initialization():
     print("=" * 60)
 
     try:
-        from AFO.api.config import get_app_config
-        from AFO.api.metadata import get_api_metadata
+        from afo.api.config import get_app_config
+        from afo.api.metadata import get_api_metadata
 
         # Test metadata
         metadata = get_api_metadata()
@@ -60,7 +60,7 @@ def test_middleware_setup(app):
     print("=" * 60)
 
     try:
-        from AFO.api.middleware import setup_middleware
+        from afo.api.middleware import setup_middleware
 
         # Apply middleware
         setup_middleware(app)
@@ -92,7 +92,7 @@ def test_router_registration(app):
     print("=" * 60)
 
     try:
-        from AFO.api.routers import setup_routers
+        from afo.api.routers import setup_routers
 
         # Setup routers
         setup_routers(app)
@@ -155,13 +155,13 @@ def test_database_connectivity():
     print("=" * 60)
 
     try:
-        from AFO.api.initialization import _initialize_databases
+        from afo.api.initialization import _initialize_databases
 
         # Test database initialization
         asyncio.run(_initialize_databases())
 
         # Check if connections are established
-        from AFO.api.initialization import PG_POOL, REDIS_CLIENT
+        from afo.api.initialization import PG_POOL, REDIS_CLIENT
 
         db_status = {
             "postgresql": PG_POOL is not None,
@@ -188,13 +188,13 @@ def test_external_services():
     print("=" * 60)
 
     try:
-        from AFO.api.initialization import _initialize_llm_clients
+        from afo.api.initialization import _initialize_llm_clients
 
         # Test LLM client initialization
         asyncio.run(_initialize_llm_clients())
 
         # Check service availability
-        from AFO.api.compat import ANTHROPIC_AVAILABLE, OPENAI_AVAILABLE
+        from afo.api.compat import ANTHROPIC_AVAILABLE, OPENAI_AVAILABLE
 
         services = {
             "OpenAI": OPENAI_AVAILABLE,
@@ -221,8 +221,8 @@ def test_system_initialization():
     print("=" * 60)
 
     try:
-        from AFO.api.cleanup import cleanup_system
-        from AFO.api.initialization import initialize_system
+        from afo.api.cleanup import cleanup_system
+        from afo.api.initialization import initialize_system
 
         # Test initialization
         asyncio.run(initialize_system())

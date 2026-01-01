@@ -201,7 +201,7 @@ if __name__ == "__main__":
     # Add AFO to path to find api_wallet
     sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     try:
-        from AFO.api_wallet import APIWallet
+        from afo.api_wallet import APIWallet
     except ImportError:
         sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 

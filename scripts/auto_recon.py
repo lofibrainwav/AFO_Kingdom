@@ -8,7 +8,7 @@ from pathlib import Path
 # Add package root to path
 sys.path.append(os.path.join(Path.cwd(), "packages/afo-core"))
 
-from AFO.start.serenity.vision_verifier import VisionVerifier
+from afo.start.serenity.vision_verifier import VisionVerifier
 
 
 class AutoRecon:

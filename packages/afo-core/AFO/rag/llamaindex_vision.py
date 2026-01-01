@@ -14,10 +14,12 @@ import base64
 import logging
 import os
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import httpx
-from llama_index.core import VectorStoreIndex
+
+if TYPE_CHECKING:
+    from llama_index.core import VectorStoreIndex
 
 logger = logging.getLogger(__name__)
 

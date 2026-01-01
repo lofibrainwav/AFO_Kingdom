@@ -10,10 +10,10 @@ sys.path.append(
     ).resolve()
 )
 
-from AFO.config.settings import settings
-from AFO.schemas.gen_ui import GenUIRequest
-from AFO.services.gen_ui import gen_ui_service
-from AFO.services.matrix_stream import matrix_stream
+from afo.config.settings import settings
+from afo.schemas.gen_ui import GenUIRequest
+from afo.services.gen_ui import gen_ui_service
+from afo.services.matrix_stream import matrix_stream
 
 settings.MOCK_MODE = True
 

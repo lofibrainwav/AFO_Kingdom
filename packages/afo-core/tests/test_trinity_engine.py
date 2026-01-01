@@ -1,7 +1,7 @@
 import pytest
 from pydantic import ValidationError
 
-from AFO.domain.metrics.trinity import TrinityInputs, TrinityMetrics
+from afo.domain.metrics.trinity import TrinityInputs, TrinityMetrics
 from services.trinity_calculator import trinity_calculator
 
 

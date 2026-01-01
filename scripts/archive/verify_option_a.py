@@ -17,10 +17,10 @@ sys.path.append(
     ).resolve()
 )
 
-from AFO.services.trinity_calculator import trinity_calculator
-from AFO.utils.cache_utils import cache
-from AFO.utils.logging import _publisher
-from AFO.utils.redis_saver import AsyncRedisSaver
+from afo.services.trinity_calculator import trinity_calculator
+from afo.utils.cache_utils import cache
+from afo.utils.logging import _publisher
+from afo.utils.redis_saver import AsyncRedisSaver
 
 
 async def verify():

@@ -45,7 +45,12 @@ class QLoRAService:
         lora_config = LoraConfig(
             r=r,
             lora_alpha=alpha,
-            target_modules=["q_proj", "v_proj", "k_proj", "o_proj"],  # LLaMA attention layers
+            target_modules=[
+                "q_proj",
+                "v_proj",
+                "k_proj",
+                "o_proj",
+            ],  # LLaMA attention layers
             lora_dropout=dropout,
             bias="none",
             task_type="CAUSAL_LM",
@@ -69,7 +74,7 @@ class QLoRAService:
 
         total_params = sum(p.numel() for p in self.qlora_model.parameters())
         trainable_params = sum(p.numel() for p in self.qlora_model.parameters() if p.requires_grad)
-        percentage = 100 * trainable_params / total_params
+        100 * trainable_params / total_params
 
         return ".2f"
 

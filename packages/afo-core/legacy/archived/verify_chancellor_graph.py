@@ -22,7 +22,7 @@ sys.modules["langchain_anthropic"] = MagicMock()
 
 from langchain_core.messages import HumanMessage
 
-from AFO import chancellor_graph
+from afo import chancellor_graph
 
 
 # Mock the LLM Router used by the graph nodes

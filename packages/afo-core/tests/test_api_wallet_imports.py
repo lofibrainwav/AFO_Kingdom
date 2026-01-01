@@ -8,7 +8,7 @@ from unittest.mock import MagicMock, mock_open, patch
 
 import pytest
 
-from AFO.api_wallet import APIWallet
+from afo.api_wallet import APIWallet
 
 # DELETED: test_generate_default_key_reads_env()
 # 이유: Flaky 테스트, 기능은 이미 구현되어 있음 (api_wallet.py:209-232)
@@ -25,8 +25,8 @@ def test_vault_fallback_to_default_key() -> None:
     mock_vault.is_available.return_value = True
     mock_vault.get_encryption_key.return_value = None  # Key missing in vault
 
-    with patch("AFO.api_wallet.VAULT_AVAILABLE", True):
-        with patch("AFO.api_wallet.VaultKMS", return_value=mock_vault):
+    with patch("afo.api_wallet.VAULT_AVAILABLE", True):
+        with patch("afo.api_wallet.VaultKMS", return_value=mock_vault):
             # Should fall back to env/default key
             wallet = APIWallet(use_vault=True)
             assert wallet.encryption_key is not None
@@ -35,7 +35,7 @@ def test_vault_fallback_to_default_key() -> None:
 
 def test_crypto_mock_fernet() -> None:
     """Test that MockFernet works when cryptography unavailable."""
-    from AFO import api_wallet
+    from afo import api_wallet
 
     # Test MockFernet class directly without module reload
     if hasattr(api_wallet, "MockFernet"):

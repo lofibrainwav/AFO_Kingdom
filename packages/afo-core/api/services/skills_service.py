@@ -29,7 +29,7 @@ from afo_soul_engine.api.models.skills import (
 
 # Trinity Score Evaluator (동적 점수 계산)
 try:
-    from AFO.services.mcp_tool_trinity_evaluator import mcp_tool_trinity_evaluator
+    from afo.services.mcp_tool_trinity_evaluator import mcp_tool_trinity_evaluator
 
     TRINITY_EVALUATOR_AVAILABLE = True
 except ImportError:
@@ -38,7 +38,7 @@ except ImportError:
 
 # Import skill registry components for runtime
 try:
-    from AFO.afo_skills_registry import (
+    from afo.afo_skills_registry import (
         ExecutionMode,
         SkillCategory,
         SkillFilterParams,
@@ -46,7 +46,7 @@ try:
         SkillStatus,
         register_core_skills,
     )
-    from AFO.afo_skills_registry import PhilosophyScore as RegistryPhilosophyScores
+    from afo.afo_skills_registry import PhilosophyScore as RegistryPhilosophyScores
 
     SKILL_REGISTRY_AVAILABLE = True
 except ImportError:
@@ -61,11 +61,11 @@ except ImportError:
 
 # Import types for type checking only
 if TYPE_CHECKING:
-    from AFO.afo_skills_registry import AFOSkillCard, SkillRegistry
+    from afo.afo_skills_registry import AFOSkillCard, SkillRegistry
 else:
     # Runtime fallback
     try:
-        from AFO.afo_skills_registry import AFOSkillCard
+        from afo.afo_skills_registry import AFOSkillCard
     except ImportError:
         AFOSkillCard = None  # type: ignore
 
@@ -84,7 +84,7 @@ class SkillsService(BaseService):
         # 직접 스킬 레지스트리 초기화
         try:
             # 직접 스킬 레지스트리 초기화
-            from AFO.afo_skills_registry import register_core_skills
+            from afo.afo_skills_registry import register_core_skills
 
             self.skill_registry = register_core_skills()
             skill_count = (

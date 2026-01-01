@@ -328,9 +328,9 @@ def check_imports():
 
     results = {}
     routers_to_check = [
-        ("learning_log_router", "AFO.api.compat"),
-        ("grok_stream_router", "AFO.api.compat"),
-        ("chancellor_router", "AFO.api.compat"),
+        ("learning_log_router", "afo.api.compat"),
+        ("grok_stream_router", "afo.api.compat"),
+        ("chancellor_router", "afo.api.compat"),
     ]
 
     for router_name, module_name in routers_to_check:

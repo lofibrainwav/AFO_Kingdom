@@ -3,10 +3,13 @@
 Test the complete Video RAG pipeline.
 """
 import sys
-sys.path.insert(0, '/Users/brnestrm/AFO_Kingdom/packages/afo-core')
+
+sys.path.insert(0, "/Users/brnestrm/AFO_Kingdom/packages/afo-core")
+
+from multimodal_rag_engine import MultimodalRAGEngine
 
 from services.video_rag_service import get_video_rag_service
-from multimodal_rag_engine import MultimodalRAGEngine
+
 
 def test_video_rag():
     print("=" * 70)
@@ -16,21 +19,18 @@ def test_video_rag():
     # Initialize services
     print("\n1. Initializing Video RAG Service...")
     video_service = get_video_rag_service()
-    print(f"   ✅ Video RAG Service initialized")
+    print("   ✅ Video RAG Service initialized")
 
     # Process video
     video_path = "/Users/brnestrm/AFO_Kingdom/data/test_video/test_video.mp4"
     print(f"\n2. Processing video: {video_path}")
 
     result = video_service.process_video(
-        video_path=video_path,
-        num_frames=3,
-        transcribe=True,
-        language="ko"
+        video_path=video_path, num_frames=3, transcribe=True, language="ko"
     )
 
     if result.get("success"):
-        print(f"   ✅ Video processed successfully")
+        print("   ✅ Video processed successfully")
         print(f"   Keyframes extracted: {len(result['frames'])}")
 
         # Show frame descriptions
@@ -43,7 +43,7 @@ def test_video_rag():
                 desc_preview = desc[:200] if len(desc) > 200 else desc
                 print(f"   Description: {desc_preview}...")
             else:
-                print(f"   Description: (None - vision service may not be available)")
+                print("   Description: (None - vision service may not be available)")
 
         # Show transcript
         if result.get("transcript"):
@@ -58,7 +58,7 @@ def test_video_rag():
         print(f"   {combined}...")
 
     else:
-        print(f"   ❌ Video processing failed")
+        print("   ❌ Video processing failed")
 
     # Test integration with Multimodal RAG Engine
     print("\n3. Adding video to Multimodal RAG Engine...")
@@ -71,10 +71,10 @@ def test_video_rag():
         metadata={
             "path": video_path,
             "frames": len(result.get("frames", [])),
-            "has_transcript": result.get("transcript") is not None
-        }
+            "has_transcript": result.get("transcript") is not None,
+        },
     )
-    print(f"   ✅ Video added to RAG engine")
+    print("   ✅ Video added to RAG engine")
 
     # Test search
     print("\n4. Testing search on video content...")
@@ -95,6 +95,7 @@ def test_video_rag():
     print("\n" + "=" * 70)
     print("✅ Video RAG Pipeline Test Complete!")
     print("=" * 70)
+
 
 if __name__ == "__main__":
     test_video_rag()

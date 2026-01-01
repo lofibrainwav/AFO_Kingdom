@@ -8,11 +8,7 @@ Integrated with AGENTS.md (SSOT for Trinity Pillars)
 
 import logging
 from pathlib import Path
-from typing import (
-    Any,
-    Literal,
-    cast,
-)
+from typing import Any, Literal, cast
 
 from pydantic_settings import BaseSettings
 
@@ -56,7 +52,7 @@ class AntiGravitySettings(BaseSettings):
     AUTO_DEPLOY: bool = True  # 자동 배포 활성화 (孝: 운영 마찰 제거)
     DRY_RUN_DEFAULT: bool = True  # 기본 DRY_RUN (善: 안전 우선)
     CENTRAL_CONFIG_SYNC: bool = True  # 중앙 설정 동기화 (永: 영속성)
-    AUTO_SYNC: bool = True  # 자동 동기화 활성화 (孝: 설정 마찰 제거)
+    AUTO_SYNC: bool = False  # 자동 동기화 비활성화 (임시 복구용)
     SELF_EXPANDING_MODE: bool = True  # 자율 확장 모드 (永: 창조자 트랙 활성화)
 
     # [Phase A] 언어 정책 설정 (SSOT)
@@ -100,7 +96,7 @@ class AntiGravitySettings(BaseSettings):
         return "DEBUG" if self.ENVIRONMENT == "dev" else "INFO"
 
     class Config:
-        env_file = ".env.antigravity"  # 별도 env 파일로 마찰 최소화
+        env_file = str(Path(__file__).parent / ".env.antigravity")  # 절대 경로로 수정
         case_sensitive = False
         extra = "allow"
 

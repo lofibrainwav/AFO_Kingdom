@@ -6,7 +6,7 @@ import sys
 # Add package root to path
 sys.path.append(os.path.join(pathlib.Path.cwd(), "packages/afo-core"))
 
-from AFO.start.serenity.genui_orchestrator import GenUIOrchestrator
+from afo.start.serenity.genui_orchestrator import GenUIOrchestrator
 
 
 async def main():

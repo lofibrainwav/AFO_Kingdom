@@ -27,7 +27,7 @@ def apply_learning_profile(
     effective["applied_overrides"] = []
     effective["rejected_overrides"] = []  # 안전 완화 금지로 거부된 항목들
 
-    base_weights = base_config["weights"]
+    base_config["weights"]
     base_thresholds = base_config["thresholds"]
 
     # Safety 완화 금지 정책 (기본값) - 환경변수로 해제 가능

@@ -14,7 +14,7 @@ echo "🚀 AFO 왕국 개발 서버 시작 (최적화 모드)"
 # --reload-exclude: 재시작 트리거 제외 패턴
 # --reload-include: 재시작 트리거 포함 패턴
 uvicorn \
-    AFO.api_server:app \
+    afo.api_server:app \
     --reload \
     --reload-delay 1.0 \
     --reload-exclude "*.pyc" \

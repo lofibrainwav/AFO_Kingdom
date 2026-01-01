@@ -197,7 +197,9 @@ class MLXQuantizer:
 
         # 양자화된 가중치로 새 레이어 생성
         quantized_layer = nn.Linear(
-            input_dims=layer.input_dims, output_dims=layer.output_dims, bias=layer.bias is not None
+            input_dims=layer.input_dims,
+            output_dims=layer.output_dims,
+            bias=layer.bias is not None,
         )
 
         # 가중치 설정 (dequantize는 추론 시 수행)
@@ -275,7 +277,9 @@ class MLXQuantizer:
 
         # 새 레이어 생성
         dwq_layer = nn.Linear(
-            input_dims=layer.input_dims, output_dims=layer.output_dims, bias=layer.bias is not None
+            input_dims=layer.input_dims,
+            output_dims=layer.output_dims,
+            bias=layer.bias is not None,
         )
 
         dwq_layer.weight = quantized_weight
@@ -400,7 +404,9 @@ class MLXQuantizer:
 
         # 새 레이어 생성
         dequantized_layer = nn.Linear(
-            input_dims=layer.input_dims, output_dims=layer.output_dims, bias=layer.bias is not None
+            input_dims=layer.input_dims,
+            output_dims=layer.output_dims,
+            bias=layer.bias is not None,
         )
 
         dequantized_layer.weight = dequantized_weight
@@ -440,7 +446,9 @@ class MLXQuantizer:
 
         # 새 레이어 생성
         dequantized_layer = nn.Linear(
-            input_dims=layer.input_dims, output_dims=layer.output_dims, bias=layer.bias is not None
+            input_dims=layer.input_dims,
+            output_dims=layer.output_dims,
+            bias=layer.bias is not None,
         )
 
         dequantized_layer.weight = dequantized_weight

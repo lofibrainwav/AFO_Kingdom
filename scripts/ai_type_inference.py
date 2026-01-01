@@ -19,7 +19,7 @@ load_dotenv()
 # AFO Kingdom LLM Router 사용
 try:
     # AFO LLM 라우터 임포트 시도
-    from AFO.services.llm_router import LLMRouter
+    from afo.services.llm_router import LLMRouter
 
     llm_router = LLMRouter()
     USE_AFO_ROUTER = True

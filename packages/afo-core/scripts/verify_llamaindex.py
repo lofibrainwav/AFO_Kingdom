@@ -41,12 +41,12 @@ def verify_modules():
     print("\n=== Phase B-E: Module Verification ===")
 
     modules = [
-        ("AFO.rag.llamaindex_rag", "Core RAG"),
-        ("AFO.rag.llamaindex_vision", "Vision"),
-        ("AFO.rag.llamaindex_hybrid", "Hybrid Search"),
-        ("AFO.rag.llamaindex_reranker", "Reranker"),
-        ("AFO.rag.llamaindex_eval", "Evaluation"),
-        ("AFO.rag", "Package __init__"),
+        ("afo.rag.llamaindex_rag", "Core RAG"),
+        ("afo.rag.llamaindex_vision", "Vision"),
+        ("afo.rag.llamaindex_hybrid", "Hybrid Search"),
+        ("afo.rag.llamaindex_reranker", "Reranker"),
+        ("afo.rag.llamaindex_eval", "Evaluation"),
+        ("afo.rag", "Package __init__"),
     ]
 
     all_ok = True
@@ -90,7 +90,7 @@ def verify_settings():
     print("\n=== Settings Configuration Test ===")
 
     try:
-        from AFO.rag.llamaindex_rag import configure_settings
+        from afo.rag.llamaindex_rag import configure_settings
 
         configure_settings()
 

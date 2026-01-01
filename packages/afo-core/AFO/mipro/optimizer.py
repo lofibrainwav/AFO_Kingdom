@@ -4,13 +4,15 @@ from __future__ import annotations
 
 import os
 import time
-from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import Any, Optional
+from typing import TYPE_CHECKING, Any
 
-from AFO.trinity_metric_wrapper import TrinityMetricWrapper
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
-from .config import MiproConfig
+    from afo.trinity_metric_wrapper import TrinityMetricWrapper
+
+    from .config import MiproConfig
 
 
 # DSPy Module interface mocking
@@ -60,7 +62,7 @@ class MIPROv2Teleprompter:
             return student
 
         # Simulate MIPROv2 Bayesian optimization
-        start_time = time.time()
+        time.time()
 
         # Mock optimization trials
         num_trials = (
@@ -72,7 +74,7 @@ class MIPROv2Teleprompter:
         for trial in range(min(num_trials, len(trainset))):
             # Mock scoring with Trinity metric
             if trainset:
-                example = trainset[trial % len(trainset)]
+                trainset[trial % len(trainset)]
                 score_result = self.metric.score("mock prompt", "mock target")
                 current_score = score_result.score
 
@@ -109,7 +111,7 @@ class MiproOptimizer:
     def __init__(self, config: MiproConfig):
         self.config = config
         # Trinity metric wrapper for evaluation
-        from AFO.trinity_metric_wrapper import TrinityMetricWrapper
+        from afo.trinity_metric_wrapper import TrinityMetricWrapper
 
         self.metric = TrinityMetricWrapper(lambda prompt, target: 0.8)
 

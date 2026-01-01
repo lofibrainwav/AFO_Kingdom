@@ -8,7 +8,6 @@ import logging
 import time
 from collections import deque
 from dataclasses import dataclass
-from typing import Deque, List, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -16,6 +15,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class TrinityScoreSample:
     """Trinity Score 샘플 데이터"""
+
     timestamp: float
     trinity_score: float
     truth: float
@@ -45,7 +45,7 @@ class TrinityScoreMonitor:
         """
         self.max_samples = max_samples
         self.anomaly_threshold = anomaly_threshold
-        self.samples: Deque[TrinityScoreSample] = deque(maxlen=max_samples)
+        self.samples: deque[TrinityScoreSample] = deque(maxlen=max_samples)
 
         # Prometheus 메트릭 초기화 (선택적)
         self._init_prometheus_metrics()
@@ -56,15 +56,13 @@ class TrinityScoreMonitor:
             from prometheus_client import Gauge, Histogram
 
             self.trinity_score_gauge = Gauge(
-                'afo_trinity_score',
-                'Current Trinity Score (0.0-1.0)',
-                ['pillar']
+                "afo_trinity_score", "Current Trinity Score (0.0-1.0)", ["pillar"]
             )
 
             self.trinity_score_histogram = Histogram(
-                'afo_trinity_score_change',
-                'Trinity Score change rate',
-                buckets=[-1.0, -0.5, -0.2, -0.1, 0.0, 0.1, 0.2, 0.5, 1.0]
+                "afo_trinity_score_change",
+                "Trinity Score change rate",
+                buckets=[-1.0, -0.5, -0.2, -0.1, 0.0, 0.1, 0.2, 0.5, 1.0],
             )
 
         except ImportError:
@@ -78,12 +76,12 @@ class TrinityScoreMonitor:
 
         # Prometheus 메트릭 기록
         if self.trinity_score_gauge:
-            self.trinity_score_gauge.labels('overall').set(sample.trinity_score)
-            self.trinity_score_gauge.labels('truth').set(sample.truth)
-            self.trinity_score_gauge.labels('goodness').set(sample.goodness)
-            self.trinity_score_gauge.labels('beauty').set(sample.beauty)
-            self.trinity_score_gauge.labels('serenity').set(sample.filial_serenity)
-            self.trinity_score_gauge.labels('eternity').set(sample.eternity)
+            self.trinity_score_gauge.labels("overall").set(sample.trinity_score)
+            self.trinity_score_gauge.labels("truth").set(sample.truth)
+            self.trinity_score_gauge.labels("goodness").set(sample.goodness)
+            self.trinity_score_gauge.labels("beauty").set(sample.beauty)
+            self.trinity_score_gauge.labels("serenity").set(sample.filial_serenity)
+            self.trinity_score_gauge.labels("eternity").set(sample.eternity)
 
     def record_current_score(self, trinity_metrics):
         """현재 Trinity Score 기록"""
@@ -95,7 +93,7 @@ class TrinityScoreMonitor:
             beauty=trinity_metrics.beauty,
             filial_serenity=trinity_metrics.filial_serenity,
             eternity=trinity_metrics.eternity,
-            balance_status=trinity_metrics.balance_status
+            balance_status=trinity_metrics.balance_status,
         )
 
         self.record_sample(sample)
@@ -112,7 +110,9 @@ class TrinityScoreMonitor:
             if abs(change) > self.anomaly_threshold:
                 self._log_anomaly(sample, prev_sample, change)
 
-    def _log_anomaly(self, current: TrinityScoreSample, previous: TrinityScoreSample, change: float):
+    def _log_anomaly(
+        self, current: TrinityScoreSample, previous: TrinityScoreSample, change: float
+    ):
         """이상 상황 로깅"""
         logger.warning(
             f"Trinity Score anomaly detected: {change:.3f} change "
@@ -121,11 +121,11 @@ class TrinityScoreMonitor:
 
         # 상세 분석
         pillar_changes = {
-            'truth': current.truth - previous.truth,
-            'goodness': current.goodness - previous.goodness,
-            'beauty': current.beauty - previous.beauty,
-            'serenity': current.filial_serenity - previous.filial_serenity,
-            'eternity': current.eternity - previous.eternity,
+            "truth": current.truth - previous.truth,
+            "goodness": current.goodness - previous.goodness,
+            "beauty": current.beauty - previous.beauty,
+            "serenity": current.filial_serenity - previous.filial_serenity,
+            "eternity": current.eternity - previous.eternity,
         }
 
         significant_changes = [
@@ -156,7 +156,7 @@ class TrinityScoreMonitor:
 
         # 각 기둥별 추세
         pillar_trends = {}
-        pillars = ['truth', 'goodness', 'beauty', 'filial_serenity', 'eternity']
+        pillars = ["truth", "goodness", "beauty", "filial_serenity", "eternity"]
 
         for pillar in pillars:
             first_val = getattr(window_samples[0], pillar)
@@ -167,12 +167,18 @@ class TrinityScoreMonitor:
             "window_minutes": window_minutes,
             "sample_count": len(window_samples),
             "overall_trend": total_change,
-            "trend_direction": "improving" if total_change > 0.05 else "declining" if total_change < -0.05 else "stable",
+            "trend_direction": (
+                "improving"
+                if total_change > 0.05
+                else "declining" if total_change < -0.05 else "stable"
+            ),
             "pillar_trends": pillar_trends,
-            "balance_status_distribution": self._get_balance_distribution(window_samples)
+            "balance_status_distribution": self._get_balance_distribution(
+                window_samples
+            ),
         }
 
-    def _get_balance_distribution(self, samples: List[TrinityScoreSample]) -> dict:
+    def _get_balance_distribution(self, samples: list[TrinityScoreSample]) -> dict:
         """균형 상태 분포 분석"""
         status_counts = {}
         for sample in samples:
@@ -195,18 +201,20 @@ class TrinityScoreMonitor:
             "min_score": min(scores),
             "max_score": max(scores),
             "score_volatility": self._calculate_volatility(scores),
-            "balance_status_summary": self._get_balance_distribution(list(self.samples))
+            "balance_status_summary": self._get_balance_distribution(
+                list(self.samples)
+            ),
         }
 
-    def _calculate_volatility(self, scores: List[float]) -> float:
+    def _calculate_volatility(self, scores: list[float]) -> float:
         """점수 변동성 계산"""
         if len(scores) < 2:
             return 0.0
 
-        changes = [abs(scores[i] - scores[i-1]) for i in range(1, len(scores))]
+        changes = [abs(scores[i] - scores[i - 1]) for i in range(1, len(scores))]
         return sum(changes) / len(changes)
 
-    def get_recent_samples(self, limit: int = 10) -> List[dict]:
+    def get_recent_samples(self, limit: int = 10) -> list[dict]:
         """최근 샘플 조회"""
         recent = list(self.samples)[-limit:]
         return [
@@ -220,7 +228,7 @@ class TrinityScoreMonitor:
                     "beauty": s.beauty,
                     "serenity": s.filial_serenity,
                     "eternity": s.eternity,
-                }
+                },
             }
             for s in recent
         ]

@@ -96,7 +96,7 @@ def step2_check_learning_log_import():
     print("=" * 60)
 
     try:
-        from AFO.models.learning_log import LearningLog
+        from afo.models.learning_log import LearningLog
 
         print("✅ LearningLog 모델 import 성공")
         print(f"   모델 필드: {list(LearningLog.model_fields.keys())}")
@@ -137,7 +137,7 @@ def step3_check_learning_log_router_import():
     print("=" * 60)
 
     try:
-        from AFO.api.routers.learning_log_router import router
+        from afo.api.routers.learning_log_router import router
 
         prefix = getattr(router, "prefix", "N/A")
         print("✅ Learning Log Router import 성공")

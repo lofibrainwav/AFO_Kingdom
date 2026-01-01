@@ -25,24 +25,24 @@ except ImportError as e:
     print(f"Failed: from config import antigravity ({e})")
 
 try:
-    print("Attempting: import AFO")
-    import AFO
+    print("Attempting: import afo")
+    import afo
 
     print(f"Success: AFO ({AFO})")
 except ImportError as e:
-    print(f"Failed: import AFO ({e})")
+    print(f"Failed: import afo ({e})")
 
 try:
-    print("Attempting: from AFO.config import antigravity")
-    from AFO.config import antigravity as ag2
+    print("Attempting: from afo.config import antigravity")
+    from afo.config import antigravity as ag2
 
-    print(f"Success: from AFO.config import antigravity ({ag2})")
+    print(f"Success: from afo.config import antigravity ({ag2})")
 except ImportError as e:
-    print(f"Failed: from AFO.config import antigravity ({e})")
+    print(f"Failed: from afo.config import antigravity ({e})")
 
 try:
-    print("Attempting: from AFO.services.gen_ui import gen_ui_service")
-    from AFO.services.gen_ui import gen_ui_service
+    print("Attempting: from afo.services.gen_ui import gen_ui_service")
+    from afo.services.gen_ui import gen_ui_service
 
     print(f"Success: gen_ui_service ({gen_ui_service})")
 except ImportError as e:

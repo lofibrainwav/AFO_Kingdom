@@ -21,7 +21,7 @@ async def test_health_response_contains_fingerprint():
     Contract Test: Ensure the health report always exposes a BUILD_VERSION fingerprint.
     This prevents 'Ghost Code' by ensuring we can always identify the running code version.
     """
-    from AFO.services.health_service import get_comprehensive_health
+    from afo.services.health_service import get_comprehensive_health
 
     health = await get_comprehensive_health()
 
@@ -35,7 +35,7 @@ async def test_health_response_contains_trinity_score():
     """
     Contract Test: Ensure the health report always includes the Trinity score breakdown.
     """
-    from AFO.services.health_service import get_comprehensive_health
+    from afo.services.health_service import get_comprehensive_health
 
     health = await get_comprehensive_health()
 
@@ -59,7 +59,7 @@ async def test_health_response_contains_organs_v2():
     """
     Contract Test: Ensure the health report uses the v2 organs schema with 11 expected organs.
     """
-    from AFO.services.health_service import get_comprehensive_health
+    from afo.services.health_service import get_comprehensive_health
 
     health = await get_comprehensive_health()
 
@@ -83,12 +83,15 @@ async def test_health_response_decision_field():
     """
     Contract Test: Ensure the health report always includes a decision (AUTO_RUN or ASK).
     """
-    from AFO.services.health_service import get_comprehensive_health
+    from afo.services.health_service import get_comprehensive_health
 
     health = await get_comprehensive_health()
 
     # decision field must exist
     assert "decision" in health, "decision field missing from health report"
-    assert health["decision"] in ["AUTO_RUN", "ASK"], f"Invalid decision: {health['decision']}"
+    assert health["decision"] in [
+        "AUTO_RUN",
+        "ASK",
+    ], f"Invalid decision: {health['decision']}"
 
     print(f"Decision: {health['decision']}")

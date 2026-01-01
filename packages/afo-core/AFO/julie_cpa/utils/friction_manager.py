@@ -2,10 +2,10 @@
 import logging
 from typing import Any
 
-from AFO.julie_cpa.config import julie_config
+from afo.julie_cpa.config import julie_config
 
 # [The Prince #30: Cruelty Well Used (Kill processes)]
-logger = logging.getLogger("AFO.JulieCPA.FrictionManager")
+logger = logging.getLogger("afo.JulieCPA.FrictionManager")
 
 
 class FrictionManager:

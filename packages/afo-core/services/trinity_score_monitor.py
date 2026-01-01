@@ -8,7 +8,7 @@ import logging
 import time
 from dataclasses import dataclass
 
-from AFO.domain.metrics.trinity import TrinityMetrics
+from afo.domain.metrics.trinity import TrinityMetrics
 
 logger = logging.getLogger(__name__)
 

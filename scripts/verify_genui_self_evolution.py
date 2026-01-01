@@ -10,7 +10,7 @@ sys.path.append(
     ).resolve()
 )
 
-from AFO.utils.playwright_bridge import bridge
+from afo.utils.playwright_bridge import bridge
 
 
 async def verify_genui_self_evolution():

@@ -3,7 +3,7 @@
 AFO 왕국 헌법 v1.0 - 성스러운 봉인
 Sealed: 2025-12-22
 
-from AFO.config.trinity import Pillar, TrinityConfig
+from afo.config.trinity import Pillar, TrinityConfig
 
 
 이 파일은 AFO 왕국의 근본 법칙을 정의하며,
@@ -14,7 +14,7 @@ from __future__ import annotations
 
 from typing import Final, TypedDict
 
-from AFO.config.trinity import Pillar, TrinityConfig
+from afo.config.trinity import Pillar, TrinityConfig
 
 
 class TrinityWeights(TypedDict):

@@ -9,8 +9,8 @@ from datetime import datetime
 from fastapi import APIRouter
 from pydantic import BaseModel
 
-from AFO.domain.metrics.trinity_manager import trinity_manager
-from AFO.domain.metrics.trinity_ssot import TrinityWeights
+from afo.domain.metrics.trinity_manager import trinity_manager
+from afo.domain.metrics.trinity_ssot import TrinityWeights
 
 router = APIRouter(prefix="/api/ssot-status", tags=["SSOT"])
 

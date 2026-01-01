@@ -2,9 +2,9 @@
 import logging
 import os
 
-from AFO.guardians.critic_agent import CriticAgent
-from AFO.llm_router import LLMRouter
-from AFO.start.serenity.schemas import ComponentSchema
+from afo.guardians.critic_agent import CriticAgent
+from afo.llm_router import LLMRouter
+from afo.start.serenity.schemas import ComponentSchema
 
 logger = logging.getLogger(__name__)
 

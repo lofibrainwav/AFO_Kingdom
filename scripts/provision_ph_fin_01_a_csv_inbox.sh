@@ -266,7 +266,7 @@ cd "$ROOT"
 export AFO_FIN_ENABLED
 
 PYTHONPATH="$ROOT/packages/afo-core:${PYTHONPATH:-}" \
-python3 -m AFO.julie_cpa.csv_inbox_labeler "$@"
+python3 -m afo.julie_cpa.csv_inbox_labeler "$@"
 SH
 chmod +x scripts/run_ph_fin_01_csv_inbox.sh
 
@@ -288,7 +288,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from AFO.julie_cpa.csv_inbox_labeler import _load_rules, label_csv_file
+from afo.julie_cpa.csv_inbox_labeler import _load_rules, label_csv_file
 
 
 def test_labeler_basic(tmp_path: Path) -> None:

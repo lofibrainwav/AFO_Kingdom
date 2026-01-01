@@ -15,8 +15,8 @@ logger = logging.getLogger(__name__)
 
 # Persona service import
 try:
-    from AFO.services.persona_service import get_current_persona, persona_service
-    from AFO.services.persona_service import switch_persona as switch_persona_service
+    from afo.services.persona_service import get_current_persona, persona_service
+    from afo.services.persona_service import switch_persona as switch_persona_service
 
     PERSONA_SERVICE_AVAILABLE = True
 except ImportError as e:
@@ -25,7 +25,7 @@ except ImportError as e:
 
 # Persona models import
 try:
-    from AFO.api.models.persona import (
+    from afo.api.models.persona import (
         Persona,
         PersonaContext,
         PersonaResponse,
@@ -283,7 +283,7 @@ async def switch_persona(request: PersonaSwitchRequest) -> dict[str, Any]:
         # to avoid async complexity in this snippet if not strictly needed.
         # Actually, let's use the BackgroundTasks pattern properly if passed,
         # but since we are inside a function, we'll do a direct lightweight update.
-        from AFO.api.routers.family import (
+        from afo.api.routers.family import (
             calculate_happiness_impact,
             load_family_data,
             save_family_data,

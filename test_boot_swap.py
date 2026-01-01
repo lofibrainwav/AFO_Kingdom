@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Boot-Swap 기능 테스트 스크립트"""
 
+import json
 import os
 import sys
-import json
 from pathlib import Path
 
 # Add AFO packages to path

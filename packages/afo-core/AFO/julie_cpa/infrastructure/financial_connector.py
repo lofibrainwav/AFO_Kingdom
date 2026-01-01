@@ -3,7 +3,7 @@ import asyncio
 import random
 from typing import Any
 
-from AFO.julie_cpa.config import julie_config
+from afo.julie_cpa.config import julie_config
 
 
 class FinancialConnector:

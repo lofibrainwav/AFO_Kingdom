@@ -8,9 +8,9 @@ PDF 핵심 철학 구현 25/25: Constitutional AI 원칙 주입
 import logging
 import typing
 
-from AFO.julie_cpa.grok_engine import consult_grok
+from afo.julie_cpa.grok_engine import consult_grok
 
-logger = logging.getLogger("AFO.Constitution")
+logger = logging.getLogger("afo.Constitution")
 
 
 class AFOConstitution:

@@ -232,7 +232,7 @@ export default function LiveEditPoller({ fragmentKey }: Props) {
         setLoading(false);
       } catch (e: any) {
         if (stopped) return;
-        setError(e?.message ?? "Unknown error");
+        setError(e?.message ?? "live_edit_error");
         setFragmentContent(null);
         setSource(null);
         setLoading(false);

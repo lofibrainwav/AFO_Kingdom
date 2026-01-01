@@ -14,7 +14,7 @@ from typing import Any
 import numpy as np
 
 try:
-    from AFO.utils.trinity_type_validator import validate_with_trinity
+    from afo.utils.trinity_type_validator import validate_with_trinity
 except ImportError:
     # Fallback for import issues - 시그니처를 실제 함수와 일치시킴
     def validate_with_trinity[TF: Callable[..., Any]](func: TF) -> TF:
@@ -38,8 +38,8 @@ except ImportError:
 logger = logging.getLogger(__name__)
 
 # 🏛️ SSOT Trinity Weights (眞善美孝永) - Single Source of Truth
-from AFO.domain.metrics.trinity import TrinityInputs
-from AFO.observability.rule_constants import WEIGHTS
+from afo.domain.metrics.trinity import TrinityInputs
+from afo.observability.rule_constants import WEIGHTS
 
 # SSOT 가중치 변환 (dict -> numpy array for calculation)
 SSOT_WEIGHTS = np.array(
@@ -195,7 +195,7 @@ class TrinityCalculator:
 
         # Record Trinity scores as Prometheus metrics
         try:
-            from AFO.api.middleware.prometheus import record_trinity_score
+            from afo.api.middleware.prometheus import record_trinity_score
 
             record_trinity_score("truth", scores[0])
             record_trinity_score("goodness", scores[1])

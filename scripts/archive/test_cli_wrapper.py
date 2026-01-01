@@ -1,7 +1,7 @@
 import asyncio
 import logging
 
-from AFO.llms.cli_wrapper import CLIWrapper
+from afo.llms.cli_wrapper import CLIWrapper
 
 # Config Logging
 logging.basicConfig(level=logging.DEBUG)

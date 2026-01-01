@@ -7,7 +7,7 @@ AFO Kingdom Action Validator - Visual Agent Safety Guardian
 from dataclasses import dataclass
 from datetime import UTC
 from enum import Enum
-from typing import Any, Optional, cast
+from typing import Any, cast
 
 
 class SafetyLevel(Enum):
@@ -280,7 +280,7 @@ class ActionValidator:
 
     def _get_timestamp(self) -> str:
         """현재 타임스탬프"""
-        from datetime import datetime, timezone
+        from datetime import datetime
 
         return datetime.now(UTC).isoformat()
 

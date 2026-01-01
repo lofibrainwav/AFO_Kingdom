@@ -69,7 +69,8 @@ class AFOSettings(BaseSettings):
     # ============================================================================
     REDIS_URL: str = Field(default="redis://afo-redis:6379", description="Redis 연결 URL")
     REDIS_HOST: str = Field(
-        default="afo-redis", description="Redis 호스트 (Docker: afo-redis, 로컬: localhost)"
+        default="afo-redis",
+        description="Redis 호스트 (Docker: afo-redis, 로컬: localhost)",
     )
     REDIS_PORT: int = Field(default=6379, description="Redis 포트")
 
@@ -264,9 +265,15 @@ def get_settings(env: str | None = None) -> AFOSettings:
         elif not os.path.exists(trinity_os_path):
             print(f"⚠️ Context7 trinity-os 경로 없음: {trinity_os_path}", file=sys.stderr)
         else:
-            print(f"✅ Context7 trinity-os 경로 이미 추가됨: {trinity_os_path}", file=sys.stderr)
+            print(
+                f"✅ Context7 trinity-os 경로 이미 추가됨: {trinity_os_path}",
+                file=sys.stderr,
+            )
 
-        print(f"✅ AFO 설정 로드 완료: {env} 환경 ({settings_class.__name__})", file=sys.stderr)
+        print(
+            f"✅ AFO 설정 로드 완료: {env} 환경 ({settings_class.__name__})",
+            file=sys.stderr,
+        )
 
     return _settings
 

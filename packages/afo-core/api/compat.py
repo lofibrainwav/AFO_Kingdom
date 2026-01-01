@@ -34,13 +34,13 @@ except ImportError:
     pillars_router = None
 
 try:
-    from AFO.api.routes.system_health import router as system_health_router
+    from afo.api.routes.system_health import router as system_health_router
 except ImportError as e:
     logging.getLogger(__name__).warning(f"System Health Router not available: {e}")
     system_health_router = None
 
 try:
-    from AFO.api.routers.health import router as health_router
+    from afo.api.routers.health import router as health_router
 except ImportError as e:
     logging.getLogger(__name__).warning(f"Health Router not available: {e}")
     health_router = None
@@ -520,11 +520,11 @@ def get_project_stats() -> dict[str, int]:
 def get_settings_safe() -> Any:
     """안전하게 설정 객체를 가져온다.
 
-    - 가능하면 `AFO.config.settings.get_settings()`의 정식 Settings 객체를 반환한다.
+    - 가능하면 `afo.config.settings.get_settings()`의 정식 Settings 객체를 반환한다.
     - 불가하면 env 기반 dict를 attribute-access 가능한 객체로 래핑해 반환한다.
     """
     try:
-        from AFO.config.settings import get_settings
+        from afo.config.settings import get_settings
 
         return get_settings()
     except Exception:
@@ -559,47 +559,47 @@ OLLAMA_AVAILABLE = False
 LMSTUDIO_AVAILABLE = False
 
 # Routers (실제 라우터가 없을 때 None)
-aicpa_router = _safe_import_router("AFO.api.routers.aicpa")
-auth_router = _safe_import_router("AFO.api.routers.auth")
-budget_router = _safe_import_router("AFO.api.routers.budget")
+aicpa_router = _safe_import_router("afo.api.routers.aicpa")
+auth_router = _safe_import_router("afo.api.routers.auth")
+budget_router = _safe_import_router("afo.api.routers.budget")
 # Direct import for Chancellor Router to avoid import issues
 try:
-    from AFO.api.routers.chancellor_router import router as chancellor_router
+    from afo.api.routers.chancellor_router import router as chancellor_router
 except ImportError:
     try:
         # Fallback for different working directory
         from api.routers.chancellor_router import router as chancellor_router
     except ImportError:
         chancellor_router = None
-chat_router = _safe_import_router("AFO.api.routes.chat")
-council_router = _safe_import_router("AFO.api.routers.council")
-education_system_router = _safe_import_router("AFO.api.routers.thoughts")
-finance_router = _safe_import_router("AFO.api.routers.finance")
-got_router = _safe_import_router("AFO.api.routers.got")
-grok_stream_router = _safe_import_router("AFO.api.routers.grok_stream")
+chat_router = _safe_import_router("afo.api.routes.chat")
+council_router = _safe_import_router("afo.api.routers.council")
+education_system_router = _safe_import_router("afo.api.routers.thoughts")
+finance_router = _safe_import_router("afo.api.routers.finance")
+got_router = _safe_import_router("afo.api.routers.got")
+grok_stream_router = _safe_import_router("afo.api.routers.grok_stream")
 # health_router is imported above
-learning_log_router = _safe_import_router("AFO.api.routers.learning_log_router")
-learning_pipeline = _safe_import_router("AFO.api.routers.learning_pipeline")
-matrix_router = _safe_import_router("AFO.api.routers.matrix")
-modal_data_router = _safe_import_router("AFO.api.routers.modal_data")
-multi_agent_router = _safe_import_router("AFO.api.routers.multi_agent")
-n8n_router = _safe_import_router("AFO.api.routers.n8n")
-personas_router = _safe_import_router("AFO.api.routers.personas")
+learning_log_router = _safe_import_router("afo.api.routers.learning_log_router")
+learning_pipeline = _safe_import_router("afo.api.routers.learning_pipeline")
+matrix_router = _safe_import_router("afo.api.routers.matrix")
+modal_data_router = _safe_import_router("afo.api.routers.modal_data")
+multi_agent_router = _safe_import_router("afo.api.routers.multi_agent")
+n8n_router = _safe_import_router("afo.api.routers.n8n")
+personas_router = _safe_import_router("afo.api.routers.personas")
 # pillars_router is imported above
-rag_query_router = _safe_import_router("AFO.api.routers.rag_query")
-root_router = _safe_import_router("AFO.api.routers.root")
-serenity_router = _safe_import_router("AFO.api.routes.serenity_router")
-skills_router = _safe_import_router("AFO.api.routes.skills")
-ssot_router = _safe_import_router("AFO.api.routers.ssot")
-strangler_router = _safe_import_router("AFO.api.routers.compat")
-streams_router = _safe_import_router("AFO.api.routes.streams")
+rag_query_router = _safe_import_router("afo.api.routers.rag_query")
+root_router = _safe_import_router("afo.api.routers.root")
+serenity_router = _safe_import_router("afo.api.routes.serenity_router")
+skills_router = _safe_import_router("afo.api.routes.skills")
+ssot_router = _safe_import_router("afo.api.routers.ssot")
+strangler_router = _safe_import_router("afo.api.routers.compat")
+streams_router = _safe_import_router("afo.api.routes.streams")
 # system_health_router is imported above
 tax_router = _safe_import_router("api.routes.tax")
-trinity_policy_router = _safe_import_router("AFO.api.routes.trinity_policy")
-trinity_sbt_router = _safe_import_router("AFO.api.routes.trinity_sbt")
-users_router = _safe_import_router("AFO.api.routers.users")
-voice_router = _safe_import_router("AFO.api.routers.voice")
-wallet_router = _safe_import_router("AFO.api.routes.wallet", "wallet_router")
+trinity_policy_router = _safe_import_router("afo.api.routes.trinity_policy")
+trinity_sbt_router = _safe_import_router("afo.api.routes.trinity_sbt")
+users_router = _safe_import_router("afo.api.routers.users")
+voice_router = _safe_import_router("afo.api.routers.voice")
+wallet_router = _safe_import_router("afo.api.routes.wallet", "wallet_router")
 
 # Edge Revalidate Router (Phase 6)
 edge_revalidate_router: APIRouter | None
@@ -657,11 +657,11 @@ def get_antigravity_control() -> Any:
     """AntiGravity 제어 객체를 반환한다.
 
     우선순위:
-    1) `AFO.config.antigravity.antigravity` (정식)
+    1) `afo.config.antigravity.antigravity` (정식)
     2) 최소 기능을 가진 fallback (AUTO_DEPLOY/DRY_RUN_DEFAULT 등)
     """
     try:
-        from AFO.config.antigravity import antigravity
+        from afo.config.antigravity import antigravity
 
         return antigravity
     except Exception:

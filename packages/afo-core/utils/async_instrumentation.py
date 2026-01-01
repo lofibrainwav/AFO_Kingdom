@@ -51,7 +51,9 @@ def instrument_task(task_name: str | None = None) -> Callable:
                 logger.warning(f"🛑 [Async Task CANCELLED] {name}")
                 with contextlib.suppress(NameError):
                     sentry_sdk.add_breadcrumb(
-                        category="task", message=f"🛑 Task CANCELLED: {name}", level="warning"
+                        category="task",
+                        message=f"🛑 Task CANCELLED: {name}",
+                        level="warning",
                     )
                 raise  # 핵심: 취소 신호를 절대로 삼키지 않고 재전파
             except Exception as e:

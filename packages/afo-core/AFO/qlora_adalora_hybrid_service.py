@@ -48,7 +48,12 @@ class QLoRAAdaLoRAHybridService:
             init_r=init_r,  # 초기 랭크
             target_r=target_r,  # 목표 랭크 (동적 조정)
             lora_alpha=alpha,
-            target_modules=["q_proj", "v_proj", "k_proj", "o_proj"],  # LLaMA attention layers
+            target_modules=[
+                "q_proj",
+                "v_proj",
+                "k_proj",
+                "o_proj",
+            ],  # LLaMA attention layers
             lora_dropout=0.05,
             bias="none",
             task_type="CAUSAL_LM",
@@ -76,7 +81,7 @@ class QLoRAAdaLoRAHybridService:
 
         total_params = sum(p.numel() for p in self.hybrid_model.parameters())
         trainable_params = sum(p.numel() for p in self.hybrid_model.parameters() if p.requires_grad)
-        percentage = 100 * trainable_params / total_params
+        100 * trainable_params / total_params
 
         return ".2f"
 

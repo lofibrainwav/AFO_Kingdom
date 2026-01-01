@@ -33,7 +33,7 @@ class TrinityVisionEvaluator:
     Truth (眞): Correct rendering, no errors, accessibility
     """
 
-    from AFO.config.trinity import Pillar, TrinityConfig
+    from afo.config.trinity import Pillar, TrinityConfig
 
     BEAUTY_WEIGHT = TrinityConfig.get_weight(Pillar.BEAUTY)
     TRUTH_WEIGHT = TrinityConfig.get_weight(Pillar.TRUTH)

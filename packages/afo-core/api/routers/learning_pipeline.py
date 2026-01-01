@@ -14,7 +14,7 @@ from typing import Any
 from fastapi import APIRouter
 from pydantic import BaseModel
 
-logger = logging.getLogger("AFO.Learning")
+logger = logging.getLogger("afo.Learning")
 router = APIRouter(prefix="/learning", tags=["AI Self-Improvement"])
 
 EVOLUTION_LOG_PATH = "evolution_log.jsonl"

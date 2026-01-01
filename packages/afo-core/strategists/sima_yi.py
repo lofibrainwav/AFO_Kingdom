@@ -4,7 +4,7 @@ from typing import Any
 from .base import log_action, robust_execute
 
 try:
-    from AFO.config.antigravity import antigravity
+    from afo.config.antigravity import antigravity
 except ImportError:
     # Dependency Injection Stub / Fallback Configuration
     class MockAntiGravity:

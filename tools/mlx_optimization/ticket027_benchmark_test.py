@@ -12,23 +12,18 @@ from pathlib import Path
 import psutil
 import torch
 
-
 # Add packages to path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "packages" / "afo-core"))
 
 try:
     from afo.qlora_adalora_hybrid_service import (
-        QLoRAAdaLoRAHybridService,
-        initialize_hybrid_qlora_adalora,
-    )
+        QLoRAAdaLoRAHybridService, initialize_hybrid_qlora_adalora)
 except ImportError as e:
     print(f"Import error: {e}")
     print("Trying alternative import...")
     try:
         from packages.afo_core.afo.qlora_adalora_hybrid_service import (
-            QLoRAAdaLoRAHybridService,
-            initialize_hybrid_qlora_adalora,
-        )
+            QLoRAAdaLoRAHybridService, initialize_hybrid_qlora_adalora)
     except ImportError as e2:
         print(f"Alternative import failed: {e2}")
         sys.exit(1)
@@ -102,9 +97,15 @@ def benchmark_hybrid_service():
         print(f"\n❌ Benchmark failed: {e}")
 
     # Calculate memory differences
-    results["memory_init_delta"] = results["memory_after_init"] - results["memory_before"]
-    results["memory_load_delta"] = results["memory_after_load"] - results["memory_after_init"]
-    results["memory_hybrid_delta"] = results["memory_after_hybrid"] - results["memory_after_load"]
+    results["memory_init_delta"] = (
+        results["memory_after_init"] - results["memory_before"]
+    )
+    results["memory_load_delta"] = (
+        results["memory_after_load"] - results["memory_after_init"]
+    )
+    results["memory_hybrid_delta"] = (
+        results["memory_after_hybrid"] - results["memory_after_load"]
+    )
 
     print("\n" + "=" * 60)
     print("RESULTS SUMMARY")

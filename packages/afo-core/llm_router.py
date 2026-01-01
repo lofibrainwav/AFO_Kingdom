@@ -25,9 +25,9 @@ from typing import Any
 # API wrapper imports
 # [장자] 무용지용 - 불필요한 주석은 제거하여 진실을 드러냄
 try:
-    from AFO.llms.claude_api import claude_api
-    from AFO.llms.cli_wrapper import CLIWrapper
-    from AFO.llms.openai_api import openai_api
+    from afo.llms.claude_api import claude_api
+    from afo.llms.cli_wrapper import CLIWrapper
+    from afo.llms.openai_api import openai_api
 
     API_WRAPPERS_AVAILABLE = True
 except ImportError as e:
@@ -104,7 +104,7 @@ class LLMRouter:
         try:
             # Phase 2-4: settings 사용
             try:
-                from AFO.config.settings import get_settings
+                from afo.config.settings import get_settings
 
                 settings = get_settings()
             except ImportError:
@@ -143,7 +143,7 @@ class LLMRouter:
             # Vault Integration - [손자] 지피지기 - 비밀을 아는 자가 승리함
             vault: Any = None
             try:
-                from AFO.security.vault_manager import vault as _vault
+                from afo.security.vault_manager import vault as _vault
 
                 vault = _vault
             except (ImportError, ValueError):
@@ -215,7 +215,7 @@ class LLMRouter:
             if LLMProvider.OLLAMA not in self.llm_configs:
                 # Phase 1 리팩터링: settings에서 기본값 가져오기
                 try:
-                    from AFO.config.settings import get_settings
+                    from afo.config.settings import get_settings
 
                     settings = get_settings()
                     ollama_url = settings.OLLAMA_BASE_URL
@@ -506,7 +506,7 @@ class LLMRouter:
 
             # 1. Check Redis Cache (Phase 1.1: LLM 응답 캐싱)
             try:
-                from AFO.services.llm_cache_service import get_llm_cache_service
+                from afo.services.llm_cache_service import get_llm_cache_service
 
                 cache_service = await get_llm_cache_service()
                 if cache_service and cache_service._initialized:
@@ -588,7 +588,7 @@ class LLMRouter:
 
                 # 3. Save to Redis Cache (Phase 1.1: LLM 응답 캐싱)
                 try:
-                    from AFO.services.llm_cache_service import get_llm_cache_service
+                    from afo.services.llm_cache_service import get_llm_cache_service
 
                     cache_service = await get_llm_cache_service()
                     if cache_service and cache_service._initialized:
@@ -649,7 +649,7 @@ class LLMRouter:
         try:
             # Phase 5: REST API 사용 (google.generativeai 대체)
             try:
-                from AFO.llms.gemini_api import gemini_api
+                from afo.llms.gemini_api import gemini_api
             except ImportError:
                 try:
                     from llms.gemini_api import gemini_api  # type: ignore[assignment]
@@ -713,7 +713,7 @@ class LLMRouter:
             base_url = config.base_url
         else:
             try:
-                from AFO.config.settings import get_settings
+                from afo.config.settings import get_settings
 
                 base_url = get_settings().OLLAMA_BASE_URL
             except ImportError:

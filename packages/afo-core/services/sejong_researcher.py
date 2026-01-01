@@ -10,10 +10,10 @@ import logging
 from datetime import datetime
 from typing import Any
 
-from AFO.services.trinity_calculator import trinity_calculator
-from AFO.utils.trinity_type_validator import validate_with_trinity
+from afo.services.trinity_calculator import trinity_calculator
+from afo.utils.trinity_type_validator import validate_with_trinity
 
-logger = logging.getLogger("AFO.Sejong")
+logger = logging.getLogger("afo.Sejong")
 
 KNOWLEDGE_BASE_PATH = "knowledge_base.jsonl"
 

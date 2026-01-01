@@ -10,9 +10,9 @@ from typing import Any
 
 from pydantic import BaseModel, ValidationError
 
-from AFO.utils.trinity_type_validator import validate_with_trinity
+from afo.utils.trinity_type_validator import validate_with_trinity
 
-logger = logging.getLogger("AFO.TruthMetrics")
+logger = logging.getLogger("afo.TruthMetrics")
 
 
 class TruthMetricsCalculator:

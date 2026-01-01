@@ -13,7 +13,7 @@ from typing import Any
 from fastapi import APIRouter, Request
 from fastapi.responses import StreamingResponse
 
-from AFO.models.learning_log import LearningLog
+from afo.models.learning_log import LearningLog
 
 router = APIRouter(prefix="/api/learning", tags=["Learning Log"])
 

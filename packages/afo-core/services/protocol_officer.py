@@ -13,8 +13,8 @@ from typing import Any
 
 # Lazy import to avoid circular dependency if constitution imports services later
 try:
-    from AFO.constitution.constitutional_ai import AFOConstitution
-    from AFO.utils.trinity_type_validator import validate_with_trinity
+    from afo.constitution.constitutional_ai import AFOConstitution
+    from afo.utils.trinity_type_validator import validate_with_trinity
 except ImportError:
     # Fallback for import issues - 시그니처를 실제 함수와 일치시킴
     def validate_with_trinity[TF: Callable[..., Any]](func: TF) -> TF:
@@ -28,7 +28,7 @@ except ImportError:
             return True, "Mock compliance check"
 
 
-logger = logging.getLogger("AFO.Protocol")
+logger = logging.getLogger("afo.Protocol")
 
 
 class ProtocolOfficer:

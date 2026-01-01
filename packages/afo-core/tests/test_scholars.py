@@ -8,10 +8,10 @@ from unittest.mock import AsyncMock, MagicMock, patch
 root_dir = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(root_dir))
 
-from AFO.scholars.bangtong import BangtongScholar
-from AFO.scholars.jaryong import JaryongScholar
-from AFO.scholars.yeongdeok import YeongdeokScholar
-from AFO.scholars.yukson import YuksonScholar
+from afo.scholars.bangtong import BangtongScholar
+from afo.scholars.jaryong import JaryongScholar
+from afo.scholars.yeongdeok import YeongdeokScholar
+from afo.scholars.yukson import YuksonScholar
 
 
 # Helper for consistent mock responses
@@ -58,7 +58,7 @@ class TestScholarsBehavior(unittest.IsolatedAsyncioTestCase):
 
     # --- Jaryong (Claude) Tests ---
 
-    @patch("AFO.scholars.jaryong.JaryongScholar._check_governance", return_value=True)
+    @patch("afo.scholars.jaryong.JaryongScholar._check_governance", return_value=True)
     async def test_jaryong_verify_logic(self, mock_gov):
         """Jaryong verify logic success"""
         mock_api = AsyncMock()
@@ -71,7 +71,7 @@ class TestScholarsBehavior(unittest.IsolatedAsyncioTestCase):
         call_args = mock_api.generate_with_context.call_args
         self.assertIn("claude-code-cli", call_args.kwargs["model"])
 
-    @patch("AFO.scholars.jaryong.JaryongScholar._check_governance", return_value=True)
+    @patch("afo.scholars.jaryong.JaryongScholar._check_governance", return_value=True)
     async def test_jaryong_refactor(self, mock_gov):
         """Jaryong suggest refactoring"""
         mock_api = AsyncMock()
@@ -111,10 +111,10 @@ class TestScholarsBehavior(unittest.IsolatedAsyncioTestCase):
     # --- Yeongdeok (Ollama) Tests ---
 
     @patch(
-        "AFO.scholars.yeongdeok.YeongdeokScholar._check_mlx_availability",
+        "afo.scholars.yeongdeok.YeongdeokScholar._check_mlx_availability",
         return_value=False,
     )
-    @patch("AFO.scholars.yeongdeok.httpx.AsyncClient")
+    @patch("afo.scholars.yeongdeok.httpx.AsyncClient")
     async def test_yeongdeok_document_code(self, mock_client_cls, mock_mlx_check):
         """Yeongdeok document code using mocked HTTP client (Force fallback by disabling MLX)"""
         # Setup mock client
@@ -139,7 +139,7 @@ class TestScholarsBehavior(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(call_args.args[0], "http://test-ollama:11434/api/generate")
         self.assertIn("def foo():", call_args.kwargs["json"]["prompt"])
 
-    @patch("AFO.scholars.yeongdeok.httpx.AsyncClient")
+    @patch("afo.scholars.yeongdeok.httpx.AsyncClient")
     async def test_yeongdeok_http_failure(self, mock_client_cls):
         """Yeongdeok HTTP 500 failure"""
         mock_client_instance = AsyncMock()
@@ -155,7 +155,7 @@ class TestScholarsBehavior(unittest.IsolatedAsyncioTestCase):
 
         self.assertIn("Ollama 호출 실패", result)
 
-    @patch("AFO.scholars.yeongdeok.httpx.AsyncClient")
+    @patch("afo.scholars.yeongdeok.httpx.AsyncClient")
     async def test_yeongdeok_security_scan(self, mock_client_cls):
         """Yeongdeok security scan"""
         mock_client_instance = AsyncMock()

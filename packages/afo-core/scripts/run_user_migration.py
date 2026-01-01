@@ -14,7 +14,7 @@ project_root = Path(__file__).resolve().parent.parent.parent
 if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
 
-from AFO.services.database_migrations import run_user_system_migration
+from afo.services.database_migrations import run_user_system_migration
 
 
 async def main():

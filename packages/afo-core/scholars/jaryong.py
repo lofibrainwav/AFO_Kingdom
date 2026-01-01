@@ -20,14 +20,14 @@ from __future__ import annotations
 
 import logging
 
-from AFO.api.compat import get_antigravity_control
+from afo.api.compat import get_antigravity_control
 
 # [정기구독] CLI 기반 연동 (API 키 불필요)
-from AFO.llms.claude_cli import ClaudeCLIWrapper, claude_cli
+from afo.llms.claude_cli import ClaudeCLIWrapper, claude_cli
 
 # Start with mock/stub import, handle failure gracefully
 try:
-    from AFO.skills.skill_019 import skill_019
+    from afo.skills.skill_019 import skill_019
 except ImportError:
     skill_019 = None
 

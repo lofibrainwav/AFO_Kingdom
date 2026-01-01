@@ -58,12 +58,22 @@ def main():
         )
     )
 
-    records.append(run(f"curl -sS {base_url}/health || true", out_dir, "curl_health_8010"))
     records.append(
-        run(f"curl -sS {base_url}/api/5pillars/current || true", out_dir, "curl_5pillars_current")
+        run(f"curl -sS {base_url}/health || true", out_dir, "curl_health_8010")
     )
-    records.append(run(f"curl -sS {base_url}/api/ssot-status || true", out_dir, "curl_ssot_status"))
-    records.append(run(f"curl -sS {rag_url}/health || true", out_dir, "curl_rag_health_8001"))
+    records.append(
+        run(
+            f"curl -sS {base_url}/api/5pillars/current || true",
+            out_dir,
+            "curl_5pillars_current",
+        )
+    )
+    records.append(
+        run(f"curl -sS {base_url}/api/ssot-status || true", out_dir, "curl_ssot_status")
+    )
+    records.append(
+        run(f"curl -sS {rag_url}/health || true", out_dir, "curl_rag_health_8001")
+    )
 
     file_checks = [
         "packages/afo-core/afo/rag/llamaindex_streaming_rag.py",
@@ -76,7 +86,9 @@ def main():
         else:
             file_stats.append({"path": rel, "missing": True})
 
-    (out_dir / "file_stats.json").write_text(json.dumps(file_stats, indent=2), encoding="utf-8")
+    (out_dir / "file_stats.json").write_text(
+        json.dumps(file_stats, indent=2), encoding="utf-8"
+    )
 
     manifest = {
         "ticket": "TICKET-045",
@@ -86,7 +98,9 @@ def main():
         "records": records,
         "file_stats": file_stats,
     }
-    (out_dir / "manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+    (out_dir / "manifest.json").write_text(
+        json.dumps(manifest, indent=2), encoding="utf-8"
+    )
 
     print(str(out_dir))
 

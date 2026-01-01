@@ -111,6 +111,7 @@ class TrinityOS:
         try:
             result = subprocess.run(
                 [sys.executable, str(script_path)],
+                check=False,
                 capture_output=True,
                 text=True,
                 cwd=self.base_path,
@@ -123,7 +124,11 @@ class TrinityOS:
         """Shell 스크립트 실행"""
         try:
             result = subprocess.run(
-                [str(script_path)], capture_output=True, text=True, cwd=self.base_path
+                [str(script_path)],
+                check=False,
+                capture_output=True,
+                text=True,
+                cwd=self.base_path,
             )
             return result.stdout.strip()
         except Exception as e:

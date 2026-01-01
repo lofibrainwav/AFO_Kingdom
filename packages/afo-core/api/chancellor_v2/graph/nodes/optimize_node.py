@@ -104,7 +104,8 @@ class OptimizeNode(ChancellorNode):
             # Execute optimization with timeout
             try:
                 result = await asyncio.wait_for(
-                    self._run_optimization(task_data), timeout=self.config.timeout_seconds
+                    self._run_optimization(task_data),
+                    timeout=self.config.timeout_seconds,
                 )
             except TimeoutError:
                 return {
@@ -112,7 +113,10 @@ class OptimizeNode(ChancellorNode):
                     "error": f"Optimization timeout after {self.config.timeout_seconds}s",
                     "node_type": self.node_type,
                     "trinity_score": self.trinity_metric.calculate_trinity_score(
-                        {"error": "timeout", "timeout_seconds": self.config.timeout_seconds}
+                        {
+                            "error": "timeout",
+                            "timeout_seconds": self.config.timeout_seconds,
+                        }
                     ),
                 }
 
@@ -184,7 +188,7 @@ class OptimizeNode(ChancellorNode):
                         # Use text as both question and answer
                         dataset.append(
                             {
-                                "question": text[:100] + "..." if len(text) > 100 else text,
+                                "question": (text[:100] + "..." if len(text) > 100 else text),
                                 "answer": text,
                             }
                         )
@@ -220,7 +224,10 @@ class OptimizeNode(ChancellorNode):
                 content = item.get("content", "")
                 if content:
                     dataset_items.append(
-                        {"question": f"Context information: {content[:100]}...", "answer": content}
+                        {
+                            "question": f"Context information: {content[:100]}...",
+                            "answer": content,
+                        }
                     )
 
             return dataset_items

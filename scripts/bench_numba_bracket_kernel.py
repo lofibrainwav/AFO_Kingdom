@@ -46,7 +46,9 @@ def run(fn, incomes, thresholds, rates):
 
 
 def main():
-    thresholds = np.array([11925, 48475, 103350, 197300, 250525, 626350], dtype=np.float64)
+    thresholds = np.array(
+        [11925, 48475, 103350, 197300, 250525, 626350], dtype=np.float64
+    )
     rates = np.array([0.10, 0.12, 0.22, 0.24, 0.32, 0.35, 0.37], dtype=np.float64)
     rng = np.random.default_rng(7)
     incomes = rng.uniform(1, 800000, size=5000).astype(np.float64)

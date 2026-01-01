@@ -17,7 +17,7 @@ class ChancellorGraph:
     """Unified Chancellor Graph interface."""
 
     @staticmethod
-    def run_v2(input_payload: dict, nodes_dict: dict = None) -> dict:
+    def run_v2(input_payload: dict, nodes_dict: dict | None = None) -> dict:
         """Run Chancellor Graph V2 with default nodes if not provided.
 
         Args:
@@ -45,7 +45,7 @@ class ChancellorGraph:
         def mipro_node(state):
             """MIPRO optimization node for Chancellor Graph (NO-OP by default)."""
             try:
-                from AFO.chancellor_mipro_plugin import ChancellorMiproPlugin
+                from afo.chancellor_mipro_plugin import ChancellorMiproPlugin
 
                 plugin = ChancellorMiproPlugin()
                 plan = plugin.plan()
@@ -56,7 +56,7 @@ class ChancellorGraph:
 
                 # Feature flags enabled: perform actual MIPRO optimization
                 try:
-                    from AFO.mipro import Example, Module, mipro_optimizer
+                    from afo.mipro import Example, Module, mipro_optimizer
 
                     # Prepare mock program and examples for MIPROv2
                     # In real implementation, this would come from graph inputs
@@ -83,12 +83,15 @@ class ChancellorGraph:
 
                 except ImportError as e:
                     # MIPRO modules not available
-                    state.outputs["_mipro"] = {"status": "modules_missing", "error": str(e)}
+                    state.outputs["_mipro"] = {
+                        "status": "modules_missing",
+                        "error": str(e),
+                    }
                 except Exception as e:
                     # MIPRO execution failed
                     state.outputs["_mipro"] = {"status": "failed", "error": str(e)}
 
-            except Exception as e:
+            except Exception:
                 # Plugin system failed, fallback to NO-OP
                 pass
 

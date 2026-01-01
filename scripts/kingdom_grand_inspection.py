@@ -6,7 +6,7 @@ import sys
 
 # Setup Logger
 logging.basicConfig(level=logging.INFO, format="%(message)s")
-logger = logging.getLogger("AFO.GrandInspection")
+logger = logging.getLogger("afo.GrandInspection")
 
 # Setup path
 sys.path.append(

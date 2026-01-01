@@ -5,7 +5,6 @@ import json
 import time
 from pathlib import Path
 
-
 ROOT = Path(".").resolve()
 LOG_DIR = ROOT / "artifacts" / "code_validation_logs"
 LOG_DIR.mkdir(parents=True, exist_ok=True)
@@ -35,14 +34,21 @@ def load_module():
     if not hits:
         raise SystemExit("code_review_node.py not found")
     target = hits[0]
-    spec = importlib.util.spec_from_file_location("ticket045_code_review_node", str(target))
+    spec = importlib.util.spec_from_file_location(
+        "ticket045_code_review_node", str(target)
+    )
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)  # type: ignore
     return mod, target
 
 
 def parse_result(r):
-    out = {"approved": None, "score": None, "critical_issues_count": None, "raw_type": str(type(r))}
+    out = {
+        "approved": None,
+        "score": None,
+        "critical_issues_count": None,
+        "raw_type": str(type(r)),
+    }
     if isinstance(r, dict):
         out["approved"] = r.get("review_approved", r.get("approved"))
         out["score"] = r.get("review_score", r.get("score"))
@@ -55,7 +61,11 @@ def parse_result(r):
 async def call_coordinator(mod, code, fname):
     Coordinator = getattr(mod, "CodeReviewCoordinator", None)
     if Coordinator is None:
-        return {"used": None, "notes": ["CodeReviewCoordinator not found"], "result": None}
+        return {
+            "used": None,
+            "notes": ["CodeReviewCoordinator not found"],
+            "result": None,
+        }
 
     coord = Coordinator()
     notes = []
@@ -69,7 +79,11 @@ async def call_coordinator(mod, code, fname):
                 r = fn({"review_code": code, "review_file_path": fname})
             if inspect.isawaitable(r):
                 r = await r
-            return {"used": f"CodeReviewCoordinator().{name}", "notes": notes, "result": r}
+            return {
+                "used": f"CodeReviewCoordinator().{name}",
+                "notes": notes,
+                "result": r,
+            }
     return {
         "used": None,
         "notes": notes + ["Coordinator found but no known method matched"],

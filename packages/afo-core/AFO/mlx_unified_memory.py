@@ -57,11 +57,14 @@ class MLXUnifiedMemoryManager:
                 return "Apple M4 GPU (Unified Memory)"
             else:
                 return "CPU (Fallback)"
-        except:
+        except (ImportError, AttributeError, OSError):
             return "Unknown"
 
     def allocate_shared_memory(
-        self, shape: tuple[int, ...], dtype: mx.Dtype = mx.float32, key: str | None = None
+        self,
+        shape: tuple[int, ...],
+        dtype: mx.Dtype = mx.float32,
+        key: str | None = None,
     ) -> mx.array:
         """
         통합 메모리에 공유 메모리 할당
@@ -169,7 +172,7 @@ class MLXUnifiedMemoryManager:
         keys_to_remove = []
         for key in self.allocated_blocks:
             if key not in active_keys:
-                start_idx, size = self.allocated_blocks[key]
+                _start_idx, size = self.allocated_blocks[key]
                 self.stats.active_bytes -= size
                 keys_to_remove.append(key)
 
@@ -227,7 +230,7 @@ class MLXMemoryOptimizer:
             model_name: 특정 모델만 정리 (None이면 전체 정리)
         """
         if model_name:
-            keys_to_remove = [k for k in self.model_cache.keys() if k.startswith(f"{model_name}.")]
+            keys_to_remove = [k for k in self.model_cache if k.startswith(f"{model_name}.")]
             for key in keys_to_remove:
                 del self.model_cache[key]
             logger.info(f"Cleared cache for model: {model_name}")

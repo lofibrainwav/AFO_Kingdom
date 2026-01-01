@@ -15,12 +15,7 @@ SSOT Integration: IRS/FTB official guidelines with real-time sync (TICKET-033)
 """
 
 from .ai_agents import AssociateAgent, AuditorAgent, JulieAgentOrchestrator, ManagerAgent
-from .depreciation import (
-    DepInput,
-    DepOutput,
-    DepreciationCalculator,
-    julie_depreciation_calc,
-)
+from .depreciation import DepInput, DepOutput, DepreciationCalculator, julie_depreciation_calc
 from .julie_logs import (
     julie_log_manager,
     log_associate_action,

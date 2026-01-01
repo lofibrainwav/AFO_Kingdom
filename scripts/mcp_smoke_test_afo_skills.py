@@ -33,7 +33,7 @@ def run_mcp_server_test(timeout_seconds: int = 30) -> bool:
     env.setdefault("AFO_API_BASE_URL", "http://127.0.0.1:8010")
 
     # Start MCP server process
-    server_cmd = [sys.executable, "-m", "AFO.mcp.afo_skills_mcp"]
+    server_cmd = [sys.executable, "-m", "afo.mcp.afo_skills_mcp"]
 
     print("🚀 Starting AFO Skills MCP Server...")
     print(f"Command: {' '.join(server_cmd)}")
@@ -73,10 +73,14 @@ def run_mcp_server_test(timeout_seconds: int = 30) -> bool:
         if init_response_line:
             init_response = json.loads(init_response_line)
             server_name = (
-                init_response.get("result", {}).get("serverInfo", {}).get("name", "Unknown")
+                init_response.get("result", {})
+                .get("serverInfo", {})
+                .get("name", "Unknown")
             )
             server_version = (
-                init_response.get("result", {}).get("serverInfo", {}).get("version", "Unknown")
+                init_response.get("result", {})
+                .get("serverInfo", {})
+                .get("version", "Unknown")
             )
             print(f"✅ Initialize response: {server_name} v{server_version}")
         else:
@@ -85,7 +89,11 @@ def run_mcp_server_test(timeout_seconds: int = 30) -> bool:
 
         print("📋 Sending notifications/initialized...")
         # Send initialized notification (Required by protocol)
-        initialized_notif = {"jsonrpc": "2.0", "method": "notifications/initialized", "params": {}}
+        initialized_notif = {
+            "jsonrpc": "2.0",
+            "method": "notifications/initialized",
+            "params": {},
+        }
         server_proc.stdin.write(json.dumps(initialized_notif) + "\n")
         server_proc.stdin.flush()
 

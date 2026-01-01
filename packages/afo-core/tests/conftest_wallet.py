@@ -21,9 +21,9 @@ def isolate_api_wallet_module() -> None:
     """
     # Store modules we might need to restore
     modules_to_track = [
-        "AFO.api_wallet",
+        "afo.api_wallet",
         "api_wallet",
-        "AFO.kms.vault_kms",
+        "afo.kms.vault_kms",
         "kms.vault_kms",
         "cryptography",
         "cryptography.fernet",

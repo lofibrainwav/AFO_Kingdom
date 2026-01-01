@@ -18,7 +18,7 @@ def check_truth():
 def check_goodness():
     print("Checking 善 (Goodness)...")
     try:
-        from AFO.config.antigravity import antigravity
+        from afo.config.antigravity import antigravity
 
         if antigravity.DRY_RUN_DEFAULT:
             print("✅ AntiGravity DRY_RUN_DEFAULT = True")
@@ -80,7 +80,7 @@ def check_serenity():
 def check_eternity():
     print("Checking 永 (Eternity)...")
     try:
-        from AFO.domain.metrics.trinity_ssot import TrinityWeights
+        from afo.domain.metrics.trinity_ssot import TrinityWeights
 
         total = (
             TrinityWeights.TRUTH
