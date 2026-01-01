@@ -1,0 +1,15 @@
+Summarize this error log in exactly 3 bullet points:
+
+2025-12-31 22:15:23 ERROR: Chancellor graph execution failed - Node 'truth_node' timeout after 30s
+Summarize this error log in exactly 3 bullet points:
+
+2025-12-31 22:14:45 WARNING: MLX memory allocation failed - Peak usage 5.8GB, available 4.2GB
+Summarize this error log in exactly 3 bullet points:
+
+2025-12-31 22:13:12 ERROR: API endpoint /api/vlm/latest returned 500 - Qwen3-VL processing error
+Summarize this error log in exactly 3 bullet points:
+
+2025-12-31 22:12:34 CRITICAL: Database connection pool exhausted - 50 active connections
+Summarize this error log in exactly 3 bullet points:
+
+2025-12-31 22:11:56 ERROR: Trinity score calculation failed - Invalid pillar weights sum != 1.0
