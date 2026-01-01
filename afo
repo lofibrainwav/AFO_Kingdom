@@ -74,12 +74,19 @@ cmd_help() {
     echo "  drift    - Monitor configuration drift"
     echo "  protect  - Enforce branch protection"
     echo "  status   - Show kingdom status"
+    echo "  alert    - Send notification (info|warning|error)"
     echo "  help     - Show this help"
     echo ""
     echo "Examples:"
     echo "  ./afo seal"
     echo "  ./afo trinity"
     echo "  ./afo status"
+    echo "  ./afo alert warning 'Title' 'Message'"
+}
+
+cmd_alert() {
+    echo -e "${YELLOW}📢 Alert System${NC}"
+    "$SCRIPTS_DIR/afo_alert.sh" "$@"
 }
 
 # Main
@@ -102,6 +109,10 @@ case "${1:-help}" in
         ;;
     status)
         cmd_status
+        ;;
+    alert)
+        shift || true
+        cmd_alert "$@"
         ;;
     help|--help|-h)
         cmd_help
