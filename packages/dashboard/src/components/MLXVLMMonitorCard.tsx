@@ -23,8 +23,8 @@ export default async function MLXVLMMonitorCard() {
         <div><span className="opacity-70">mode:</span> {String(last.mode ?? "")}</div>
         <div><span className="opacity-70">ok:</span> {String(last.ok ?? "")}</div>
         <div><span className="opacity-70">secs:</span> {String(last.secs ?? "")}</div>
-        <div><span className="opacity-70">max_rss_bytes:</span> {last.max_rss_bytes ? `${(last.max_rss_bytes / 1024 / 1024 / 1024).toFixed(2)} GB` : ""}</div>
-        <div><span className="opacity-70">cutline_bytes:</span> {last.cutline_bytes ? `${(last.cutline_bytes / 1024 / 1024 / 1024).toFixed(1)} GB` : ""}</div>
+        <div><span className="opacity-70">max_rss_bytes:</span> {last.max_rss_bytes ? `${(last.max_rss_bytes / 1024 / 1024 / 1024).toFixed(3)} GiB` : ""}</div>
+        <div><span className="opacity-70">cutline_bytes:</span> {last.cutline_bytes ? `${(last.cutline_bytes / 1024 / 1024 / 1024).toFixed(3)} GiB` : ""}</div>
         <div><span className="opacity-70">notes:</span> {String(last.notes ?? "")}</div>
       </div>
 
