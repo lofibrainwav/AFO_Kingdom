@@ -14,9 +14,10 @@
 - mode: "vlm_smoke" | "coload"
 - ok: boolean
 - secs: number (전체 실행 시간)
-- max_rss_kb_time: integer | null
-  - /usr/bin/time -l의 "maximum resident set size (kbytes)" 값
-  - 단위: kbytes (1024 bytes)
+- max_rss_bytes: integer | null
+  - /usr/bin/time -l의 "maximum resident set size" 값
+  - 단위: bytes (실측 검증: 213,762,048 bytes = 203 MB)
+- cutline_bytes: integer (고정 컷라인)
 - notes: string (짧은 메모)
 
 ## mode=vlm_smoke 추가 필드
@@ -32,5 +33,6 @@
 - rss_bytes_after_llm: integer (Python resource ru_maxrss)
 
 ## 정책(권장)
-- 컷라인(보수적): max_rss_kb_time <= 19,531,250
-  - 20GB(Decimal) / 1024 = 19,531,250 kbytes
+- 컷라인(보수적): max_rss_bytes <= 20,000,000,000
+  - 20GB(Decimal) = 20,000,000,000 bytes
+  - 안전 마진: 24GB 시스템의 83%

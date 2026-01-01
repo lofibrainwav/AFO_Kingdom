@@ -6,18 +6,24 @@ import sys
 import time
 
 
-CUTLINE_KB = 19_531_250  # 20,000,000,000 bytes / 1024 = 19,531,250 kbytes
+CUTLINE_BYTES = 20_000_000_000  # 20GB in bytes
 
 
 def now_iso() -> str:
     return time.strftime("%Y-%m-%dT%H:%M:%S%z")
 
 
-def parse_maxrss_kb(time_stderr: str):
+def parse_maxrss_bytes(time_stderr: str):
     for line in time_stderr.splitlines():
-        if "maximum resident set size" in line and "kbytes" in line:
+        if "maximum resident set size" in line:
             try:
-                return int(line.split(":")[-1].strip())
+                # Extract the number (could be with or without "kbytes")
+                value_str = line.split(":")[-1].strip()
+                value = int("".join(filter(str.isdigit, value_str)))
+                # If "kbytes" is in the line, convert to bytes
+                if "kbytes" in line.lower():
+                    return value * 1024
+                return value
             except Exception:
                 return None
     return None
@@ -30,7 +36,7 @@ def run_with_time(cmd):
         text=True,
         capture_output=True,
     )
-    maxrss = parse_maxrss_kb(p.stderr)
+    maxrss = parse_maxrss_bytes(p.stderr)
     return p.returncode, p.stdout, p.stderr, maxrss
 
 
@@ -101,8 +107,8 @@ def main():
         "mode": args.mode,
         "ok": False,
         "secs": None,
-        "max_rss_kb_time": None,
-        "cutline_kb": CUTLINE_KB,
+        "max_rss_bytes": None,
+        "cutline_bytes": CUTLINE_BYTES,
         "notes": "",
     }
 
@@ -117,9 +123,9 @@ def main():
             cmd_vlm_smoke(args.model, args.image, args.max_tokens, args.temperature, args.prompt)
         )
         rec["ok"] = rc == 0
-        rec["max_rss_kb_time"] = maxrss
+        rec["max_rss_bytes"] = maxrss
         rec["secs"] = round(time.time() - t0, 3)
-        if maxrss is not None and maxrss > CUTLINE_KB:
+        if maxrss is not None and maxrss > CUTLINE_BYTES:
             rec["notes"] = "OVER_CUTLINE"
         append_jsonl(args.out, rec)
         print(so[:1200])
@@ -145,7 +151,7 @@ def main():
             env=env,
         )
         rec["ok"] = p.returncode == 0
-        rec["max_rss_kb_time"] = parse_maxrss_kb(p.stderr)
+        rec["max_rss_bytes"] = parse_maxrss_bytes(p.stderr)
         rec["secs"] = round(time.time() - t0, 3)
 
         # stdout parsing (rss_after_* lines)
@@ -155,7 +161,7 @@ def main():
             if line.startswith("rss_after_llm_bytes"):
                 rec["rss_bytes_after_llm"] = int(line.split()[-1])
 
-        if rec["max_rss_kb_time"] is not None and rec["max_rss_kb_time"] > CUTLINE_KB:
+        if rec["max_rss_bytes"] is not None and rec["max_rss_bytes"] > CUTLINE_BYTES:
             rec["notes"] = "OVER_CUTLINE"
 
         append_jsonl(args.out, rec)
