@@ -1,0 +1,76 @@
+name: SSOT Auto-Seal
+
+on:
+  push:
+    branches: [main]
+    tags:
+      - 'v*'
+      - 'ssot-*'
+
+jobs:
+  seal:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      
+      - name: Create Evidence Folder
+        id: seal
+        run: |
+          set -euo pipefail
+          
+          TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+          HEAD_SHA=$(git rev-parse --short HEAD)
+          OUT="artifacts/seal_${HEAD_SHA}_${TIMESTAMP}"
+          
+          mkdir -p "$OUT"
+          
+          # Git State
+          git rev-parse HEAD > "$OUT/git_head.txt"
+          git status -sb > "$OUT/git_status.txt"
+          git log -1 --oneline > "$OUT/git_log1.txt"
+          git log -1 --format='%H%n%s%n%an%n%ae%n%ci' > "$OUT/git_commit_info.txt"
+          
+          # SHA256 checksums
+          shasum -a 256 "$OUT"/*.txt > "$OUT/sha256.txt"
+          
+          # Summary
+          cat > "$OUT/SEAL_SUMMARY.md" << EOF
+          # SSOT Seal Summary (CI)
+          - Timestamp: ${TIMESTAMP}
+          - Commit: ${HEAD_SHA}
+          - Ref: ${{ github.ref }}
+          - Actor: ${{ github.actor }}
+          EOF
+          
+          echo "out=$OUT" >> $GITHUB_OUTPUT
+          echo "sha=$HEAD_SHA" >> $GITHUB_OUTPUT
+      
+      - name: Upload Seal Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ssot-seal-${{ steps.seal.outputs.sha }}
+          path: ${{ steps.seal.outputs.out }}/
+          retention-days: 90
+      
+      - name: Create Release (on tag)
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            ${{ steps.seal.outputs.out }}/SEAL_SUMMARY.md
+            ${{ steps.seal.outputs.out }}/sha256.txt
+          body: |
+            ## SSOT Seal
+            - Commit: ${{ steps.seal.outputs.sha }}
+            - Tag: ${{ github.ref_name }}
