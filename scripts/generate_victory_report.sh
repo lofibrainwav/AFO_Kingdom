@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 set -euo pipefail
 
 ASOF="$(date +%Y-%m-%d)"
@@ -14,7 +15,7 @@ fi
 
 EVID_DIR=""
 if [ -d artifacts/final-report ]; then
-  EVID_DIR="$(ls -1d artifacts/final-report/* 2>/dev/null | tail -n 1 || true)"
+  EVID_DIR="$(find artifacts/final-report -maxdepth 1 -not -path artifacts/final-report -print | tail -n 1 || true)"
 fi
 
 {
