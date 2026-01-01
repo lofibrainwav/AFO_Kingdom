@@ -12,6 +12,12 @@ env:
 jobs:
   trinity-gate:
     runs-on: ubuntu-latest
+    # Fail-Fast: stop immediately on any failure
+    strategy:
+      fail-fast: true
+    defaults:
+      run:
+        shell: bash
     permissions:
       contents: read
       pull-requests: write
