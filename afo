@@ -1,0 +1,111 @@
+#!/usr/bin/env bash
+# AFO Kingdom Golden Path CLI
+# Usage: ./afo <command>
+# Commands: seal, trinity, drift, protect, status, help
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPTS_DIR="$SCRIPT_DIR/scripts"
+
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+banner() {
+    echo -e "${BLUE}"
+    echo "╔═══════════════════════════════════════╗"
+    echo "║       AFO Kingdom CLI v1.0            ║"
+    echo "║   眞善美孝永 - Golden Path            ║"
+    echo "╚═══════════════════════════════════════╝"
+    echo -e "${NC}"
+}
+
+cmd_seal() {
+    echo -e "${GREEN}🔐 SSOT Seal${NC}"
+    "$SCRIPTS_DIR/ssot_seal.sh" "$@"
+}
+
+cmd_trinity() {
+    echo -e "${GREEN}🏛️ Trinity Check${NC}"
+    "$SCRIPTS_DIR/trinity_check.sh" "$@"
+}
+
+cmd_drift() {
+    echo -e "${GREEN}🔍 Drift Monitor${NC}"
+    "$SCRIPTS_DIR/ssot_drift_monitor.sh" "$@"
+}
+
+cmd_protect() {
+    echo -e "${GREEN}🛡️ Branch Protection${NC}"
+    "$SCRIPTS_DIR/enforce_branch_protection.sh" "$@"
+}
+
+cmd_status() {
+    echo -e "${GREEN}📊 Kingdom Status${NC}"
+    echo ""
+    echo "Git:"
+    git status -sb
+    echo ""
+    echo "Trinity:"
+    curl -sS http://localhost:8010/health 2>/dev/null | python3 -c "
+import sys,json
+try:
+    d=json.load(sys.stdin)
+    print(f'  Score: {d.get(\"trinity\",{}).get(\"trinity_score\", \"N/A\")}')
+    print(f'  Organs: {d.get(\"healthy_organs\", \"?\")}/{d.get(\"total_organs\", \"?\")}')
+    print(f'  Status: {d.get(\"status\", \"unknown\")}')
+except:
+    print('  Server offline')
+" || echo "  Server offline"
+}
+
+cmd_help() {
+    banner
+    echo "Commands:"
+    echo "  seal     - Generate SSOT evidence bundle"
+    echo "  trinity  - Check Trinity Score (≥90%)"
+    echo "  drift    - Monitor configuration drift"
+    echo "  protect  - Enforce branch protection"
+    echo "  status   - Show kingdom status"
+    echo "  help     - Show this help"
+    echo ""
+    echo "Examples:"
+    echo "  ./afo seal"
+    echo "  ./afo trinity"
+    echo "  ./afo status"
+}
+
+# Main
+case "${1:-help}" in
+    seal)
+        shift || true
+        cmd_seal "$@"
+        ;;
+    trinity)
+        shift || true
+        cmd_trinity "$@"
+        ;;
+    drift)
+        shift || true
+        cmd_drift "$@"
+        ;;
+    protect)
+        shift || true
+        cmd_protect "$@"
+        ;;
+    status)
+        cmd_status
+        ;;
+    help|--help|-h)
+        cmd_help
+        ;;
+    *)
+        echo -e "${RED}Unknown command: $1${NC}"
+        cmd_help
+        exit 1
+        ;;
+esac
