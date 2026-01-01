@@ -48,9 +48,12 @@ class AFOSettings(BaseSettings):
 
     # ============================================================================
     # Database Settings (PostgreSQL)
+    # NOTE: Defaults are set for Docker environment. Override via env vars for local dev.
     # ============================================================================
-    POSTGRES_HOST: str = Field(default="localhost", description="PostgreSQL 호스트")
-    POSTGRES_PORT: int = Field(default=15432, description="PostgreSQL 포트")
+    POSTGRES_HOST: str = Field(default="afo-postgres", description="PostgreSQL 호스트")
+    POSTGRES_PORT: int = Field(
+        default=5432, description="PostgreSQL 포트 (Docker 내부 5432, 로컬 15432)"
+    )
     POSTGRES_DB: str = Field(default="afo_memory", description="PostgreSQL 데이터베이스 이름")
     POSTGRES_USER: str = Field(default="afo", description="PostgreSQL 사용자")
     POSTGRES_PASSWORD: str = Field(
@@ -62,12 +65,13 @@ class AFOSettings(BaseSettings):
 
     # ============================================================================
     # Redis Settings
+    # NOTE: Defaults are set for Docker environment. Override via env vars for local dev.
     # ============================================================================
-    REDIS_URL: str = Field(default="redis://localhost:6379", description="Redis 연결 URL")
+    REDIS_URL: str = Field(default="redis://afo-redis:6379", description="Redis 연결 URL")
     REDIS_HOST: str = Field(
-        default="localhost", description="Redis 호스트 (REDIS_URL이 없을 때 사용)"
+        default="afo-redis", description="Redis 호스트 (Docker: afo-redis, 로컬: localhost)"
     )
-    REDIS_PORT: int = Field(default=6379, description="Redis 포트 (REDIS_URL이 없을 때 사용)")
+    REDIS_PORT: int = Field(default=6379, description="Redis 포트")
 
     # ============================================================================
     # Qdrant Settings
@@ -76,9 +80,10 @@ class AFOSettings(BaseSettings):
 
     # ============================================================================
     # Ollama Settings
+    # NOTE: Defaults use host.docker.internal for Mac Docker. Override via env vars as needed.
     # ============================================================================
     OLLAMA_BASE_URL: str = Field(
-        default="http://localhost:11434", description="Ollama LLM 서버 URL"
+        default="http://host.docker.internal:11434", description="Ollama LLM 서버 URL"
     )
     OLLAMA_MODEL: str = Field(default="qwen3-vl:8b", description="Ollama 기본 모델")
 

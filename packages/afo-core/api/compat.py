@@ -594,6 +594,7 @@ ssot_router = _safe_import_router("AFO.api.routers.ssot")
 strangler_router = _safe_import_router("AFO.api.routers.compat")
 streams_router = _safe_import_router("AFO.api.routes.streams")
 # system_health_router is imported above
+tax_router = _safe_import_router("api.routes.tax")
 trinity_policy_router = _safe_import_router("AFO.api.routes.trinity_policy")
 trinity_sbt_router = _safe_import_router("AFO.api.routes.trinity_sbt")
 users_router = _safe_import_router("AFO.api.routers.users")
@@ -606,6 +607,10 @@ try:
     from api.routes.edge_revalidate import router as edge_revalidate_router
 except ImportError:
     edge_revalidate_router = None
+
+
+# Julie CPA Router (TICKET-042)
+julie_router = _safe_import_router("api.routes.julie")
 
 
 # Trinity metrics class (더미)
