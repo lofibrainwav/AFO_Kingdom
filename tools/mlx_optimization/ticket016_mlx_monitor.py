@@ -50,7 +50,8 @@ def cmd_vlm_smoke(model: str, image: str, max_tokens: int, temperature: float, p
     return [
         sys.executable,
         "-m",
-        "mlx_vlm.generate",
+        "mlx_vlm",
+        "generate",
         "--model",
         model,
         "--image",
@@ -97,6 +98,13 @@ def main():
     s2 = sub.add_parser("coload")
     s2.add_argument("--vlm-model", required=True)
     s2.add_argument("--llm-model", required=True)
+
+    s3 = sub.add_parser("chain_run")
+    s3.add_argument("--vlm-model", required=True)
+    s3.add_argument("--llm-model", required=True)
+    s3.add_argument("--image", required=True)
+    s3.add_argument("--max-tokens", type=int, default=220)
+    s3.add_argument("--temperature", type=float, default=0.7)
 
     args = ap.parse_args()
 
@@ -169,6 +177,57 @@ def main():
         if p.returncode != 0:
             print(p.stderr[-2000:], file=sys.stderr)
             sys.exit(p.returncode)
+
+    if args.mode == "chain_run":
+        rec.update({
+            "model_vlm": args.vlm_model,
+            "model_llm": args.llm_model,
+            "image": args.image,
+            "max_tokens": args.max_tokens,
+            "temperature": args.temperature,
+        })
+
+        # 체인 실행: Qwen3-VL 이미지 분석 → Llama 요약 생성
+        chain_code = rf"""
+import os
+from mlx_vlm import load as vlm_load, generate as vlm_generate
+from mlx_vlm.prompt_utils import apply_chat_template
+from mlx_vlm.utils import load_config
+from mlx_lm import load as lm_load, generate as llm_generate
+
+# 모델 로드
+vlm_model, vlm_proc = vlm_load("{args.vlm_model}")
+cfg = load_config("{args.vlm_model}")
+
+# 이미지 분석
+image = "{args.image}"
+prompt_vlm = "이 이미지에서 UI/에러 징후를 찾아서 3줄로 요약해 주세요."
+formatted_prompt = apply_chat_template(vlm_proc, cfg, prompt_vlm, num_images=1)
+vl_feedback = vlm_generate(vlm_model, vlm_proc, formatted_prompt, [image], max_tokens=120, verbose=False)
+
+# Llama 요약
+llm_model, llm_tok = lm_load("{args.llm_model}")
+prompt_llm = f"시각 요약: {{vl_feedback}}\n해결책을 5줄로 요약해 주세요."
+llm_output = llm_generate(llm_model, llm_tok, prompt=prompt_llm, max_tokens={args.max_tokens}, temperature={args.temperature}, verbose=False)
+
+print("VL 결과:", vl_feedback[:200] + "..." if len(vl_feedback) > 200 else vl_feedback)
+print("Llama 요약:", llm_output[:200] + "..." if len(llm_output) > 200 else llm_output)
+"""
+
+        cmd_chain = [sys.executable, "-c", chain_code]
+        rc, so, se, maxrss = run_with_time(cmd_chain)
+        rec["ok"] = rc == 0
+        rec["max_rss_bytes"] = maxrss
+        rec["secs"] = round(time.time() - t0, 3)
+
+        if maxrss is not None and maxrss > CUTLINE_BYTES:
+            rec["notes"] = "OVER_CUTLINE"
+
+        append_jsonl(args.out, rec)
+        print(so[:1200])
+        if rc != 0:
+            print(se[-2000:], file=sys.stderr)
+            sys.exit(rc)
 
 
 if __name__ == "__main__":
