@@ -19,6 +19,18 @@ export default async function MLXVLMMonitorCard() {
       <div className="mt-2 text-sm opacity-80">Last run (JSONL tail)</div>
 
       <div className="mt-3 grid gap-2 text-sm">
+        <div className="flex items-center gap-2">
+          <span className="opacity-70">status:</span>
+          <span className={`px-2 py-1 rounded text-xs font-medium ${
+            last.status_badge === 'SAFE' ? 'bg-green-100 text-green-800' :
+            last.status_badge === 'OVER_CUTLINE' ? 'bg-red-100 text-red-800' :
+            last.status_badge === 'WARNING' ? 'bg-yellow-100 text-yellow-800' :
+            'bg-gray-100 text-gray-800'
+          }`}>
+            {last.status_badge || 'UNKNOWN'}
+          </span>
+        </div>
+        <div><span className="opacity-70">health_score:</span> {last.health_score ? `${(last.health_score * 100).toFixed(1)}%` : ""}</div>
         <div><span className="opacity-70">ts:</span> {String(last.ts ?? "")}</div>
         <div><span className="opacity-70">mode:</span> {String(last.mode ?? "")}</div>
         <div><span className="opacity-70">ok:</span> {String(last.ok ?? "")}</div>

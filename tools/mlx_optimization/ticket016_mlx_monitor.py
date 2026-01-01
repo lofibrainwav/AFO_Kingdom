@@ -110,13 +110,22 @@ def main():
 
     t0 = time.time()
     rec = {
-        "schema_version": 1,
+        "schema_version": 2,
         "ts": now_iso(),
         "mode": args.mode,
         "ok": False,
         "secs": None,
         "max_rss_bytes": None,
         "cutline_bytes": CUTLINE_BYTES,
+        "status_badge": "UNKNOWN",
+        "health_score": 0.0,
+        "lazy_cache_hit_rate": None,
+        "reload_overhead_ms": None,
+        "image_pixels": None,
+        "compression_ratio": None,
+        "token_budget": None,
+        "kv_cache_size": None,
+        "model_fallback": None,
         "notes": "",
     }
 
