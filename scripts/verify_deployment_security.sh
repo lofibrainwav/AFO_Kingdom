@@ -37,13 +37,13 @@ check "$HARDENED_EXISTS" "docker-compose.hardened.yml exists"
 # Check for security patterns in hardened compose
 if [ "$HARDENED_EXISTS" = "true" ]; then
     READONLY=$(grep -c "read_only: true" packages/afo-core/docker-compose.hardened.yml || echo "0")
-    check "$([ $READONLY -gt 0 ] && echo 'true' || echo 'false')" "read_only filesystem enabled"
+    check "$([ "$READONLY" -gt 0 ] && echo 'true' || echo 'false')" "read_only filesystem enabled"
     
     CAPDROP=$(grep -c "cap_drop:" packages/afo-core/docker-compose.hardened.yml || echo "0")
-    check "$([ $CAPDROP -gt 0 ] && echo 'true' || echo 'false')" "capability drop configured"
+    check "$([ "$CAPDROP" -gt 0 ] && echo 'true' || echo 'false')" "capability drop configured"
     
     INTERNAL=$(grep -c "internal: true" packages/afo-core/docker-compose.hardened.yml || echo "0")
-    check "$([ $INTERNAL -gt 0 ] && echo 'true' || echo 'false')" "internal networks configured"
+    check "$([ "$INTERNAL" -gt 0 ] && echo 'true' || echo 'false')" "internal networks configured"
 fi
 
 echo ""
@@ -63,7 +63,7 @@ check "$NETPOL_EXISTS" "NetworkPolicy manifests exist"
 # Check PSS restricted labels
 if [ "$RBAC_EXISTS" = "true" ]; then
     PSS_LABEL=$(grep -c "pod-security.kubernetes.io/enforce: restricted" packages/afo-core/k8s/rbac/namespace-rbac.yaml || echo "0")
-    check "$([ $PSS_LABEL -gt 0 ] && echo 'true' || echo 'false')" "PSS restricted labels configured"
+    check "$([ "$PSS_LABEL" -gt 0 ] && echo 'true' || echo 'false')" "PSS restricted labels configured"
 fi
 
 echo ""
@@ -72,13 +72,13 @@ echo "────────────────────────�
 
 if [ "$KYVERNO_EXISTS" = "true" ]; then
     VALIDATE=$(grep -c "validationFailureAction: Enforce" packages/afo-core/k8s/policies/kyverno-pss.yaml || echo "0")
-    check "$([ $VALIDATE -gt 0 ] && echo 'true' || echo 'false')" "Enforce mode configured"
+    check "$([ "$VALIDATE" -gt 0 ] && echo 'true' || echo 'false')" "Enforce mode configured"
     
     NONROOT=$(grep -c "runAsNonRoot: true" packages/afo-core/k8s/policies/kyverno-pss.yaml || echo "0")
-    check "$([ $NONROOT -gt 0 ] && echo 'true' || echo 'false')" "Non-root enforcement"
+    check "$([ "$NONROOT" -gt 0 ] && echo 'true' || echo 'false')" "Non-root enforcement"
     
     READONLY_K8S=$(grep -c "readOnlyRootFilesystem: true" packages/afo-core/k8s/policies/kyverno-pss.yaml || echo "0")
-    check "$([ $READONLY_K8S -gt 0 ] && echo 'true' || echo 'false')" "Read-only filesystem policy"
+    check "$([ "$READONLY_K8S" -gt 0 ] && echo 'true' || echo 'false')" "Read-only filesystem policy"
 fi
 
 echo ""
@@ -87,10 +87,10 @@ echo "────────────────────────�
 
 if [ "$NETPOL_EXISTS" = "true" ]; then
     DEFAULT_DENY=$(grep -c "default-deny-all" packages/afo-core/k8s/network/network-policies.yaml || echo "0")
-    check "$([ $DEFAULT_DENY -gt 0 ] && echo 'true' || echo 'false')" "Default deny policy"
+    check "$([ "$DEFAULT_DENY" -gt 0 ] && echo 'true' || echo 'false')" "Default deny policy"
     
     DNS_EGRESS=$(grep -c "allow-dns-egress" packages/afo-core/k8s/network/network-policies.yaml || echo "0")
-    check "$([ $DNS_EGRESS -gt 0 ] && echo 'true' || echo 'false')" "DNS egress allowed"
+    check "$([ "$DNS_EGRESS" -gt 0 ] && echo 'true' || echo 'false')" "DNS egress allowed"
 fi
 
 echo ""

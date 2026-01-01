@@ -8,8 +8,8 @@ echo "⚔️  Exorcising Port 8010 hijackers..."
 DOCKER_8010=$(docker ps --all --filter "publish=8010" -q)
 if [ ! -z "$DOCKER_8010" ]; then
     echo "Found hijacker containers: $DOCKER_8010. Removing..."
-    docker stop $DOCKER_8010 || true
-    docker rm $DOCKER_8010 || true
+    docker stop "$DOCKER_8010" || true
+    docker rm "$DOCKER_8010" || true
 else
     echo "No hijacker containers found pinning 8010."
 fi
