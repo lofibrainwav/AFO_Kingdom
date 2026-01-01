@@ -126,7 +126,7 @@ async def check_mcp() -> dict[str, Any]:
 async def check_security() -> dict[str, Any]:
     """免疫_Trinity_Gate 보안 상태 체크 (PH19 통합)"""
     try:
-        from AFO.health.organs_v2 import _security_probe
+        from AFO.health.organs_truth import _security_probe
 
         probe = _security_probe()
         return {"healthy": probe.status == "healthy", "output": probe.output}
