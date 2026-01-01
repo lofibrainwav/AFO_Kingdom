@@ -21,20 +21,20 @@
 | TICKET-069 | Evidence Format | 7-B | `d8327067` | `ssot-phase7-complete-*` | `scripts/afo_manifest.sh` |
 | TICKET-070 | Shellcheck Gate | 7-C | `c8333672` | `ssot-phase7-complete-*` | `.github/workflows/shellcheck.yml` |
 | TICKET-071 | CI Failure Alert | 8-A | `99c62fc8` | `ssot-phase8A-ci-alert-*` | `trinity-gate.yml` (failure step) |
+| TICKET-072 | Release 체계 강화 | 8-B | `2a1fd63d` | `ssot-phase8B-release-*` | `scripts/afo_release_tag.sh` |
 
 ## 🆕 다음 티켓
 
 | ID | 제목 | Phase | 우선순위 |
 |---|------|-------|----------|
-| TICKET-072 | Release 체계 강화 | 8-B | HIGH |
 | TICKET-073 | 운영 대시보드 카드 | 8-C | MEDIUM |
 | TICKET-074 | Sakana DGM Integration | 9 | HIGH |
 | TICKET-075 | Multimodal Sovereignty | 10 | MEDIUM |
 
 ## 📊 진행 현황
 
-- **완료**: 12개 (Phase 3-8A) ✅
-- **계획**: 4개 (TICKET-072~075)
+- **완료**: 13개 (Phase 3-8B) ✅
+- **계획**: 3개 (TICKET-073~075)
 - **Healthy Organs**: 6/6 ✅
 
 ## 🔒 SSOT 봉인 태그
@@ -48,6 +48,7 @@
 - `ssot-phase7-complete-*`
 - `ssot-phase7A-alert-*`
 - `ssot-phase8A-ci-alert-*`
+- `ssot-phase8B-release-*`
 
 ## ✅ Definition of Done (측정 가능)
 
