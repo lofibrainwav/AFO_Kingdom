@@ -1,4 +1,4 @@
-
+#!/usr/bin/env bash
 set -euo pipefail
 
 : "${AFO_IMAGE_REF:?AFO_IMAGE_REF is required (e.g., ghcr.io/<owner>/afo-core-soul-engine:<tag>)}"

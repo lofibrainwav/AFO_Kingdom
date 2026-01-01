@@ -9,12 +9,13 @@ docker start afo-postgres afo-redis 2>/dev/null || docker compose -f packages/af
 
 # 2. Kill Old Processes
 echo "2. [Cleanup] 좀비 프로세스 정리 중..."
-lsof -ti :8010 | xargs kill -9 2>/dev/null
-lsof -ti :3000 | xargs kill -9 2>/dev/null
+lsof -ti :8010 | xargs -r kill -9 2>/dev/null || true
+lsof -ti :3000 | xargs -r kill -9 2>/dev/null || true
 
 # 3. Start API Server (Nerves)
 echo "3. [Nerves] API 서버(Soul Engine) 가동 중..."
 cd packages/afo-core
+# shellcheck disable=SC1091
 source ../../.venv/bin/activate
 PYTHONPATH=. nohup python3 api_server.py > /tmp/afo_api.log 2>&1 &
 API_PID=$!
