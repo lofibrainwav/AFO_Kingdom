@@ -9,9 +9,12 @@ set -euo pipefail
 generate_manifest() {
     local COMMAND="${1:-unknown}"
     local OUT_DIR="${2:-.}"
-    local TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-    local HEAD_SHA=$(git rev-parse HEAD 2>/dev/null || echo "unknown")
-    local HEAD_SHORT=$(git rev-parse --short HEAD 2>/dev/null || echo "unknown")
+    local TIMESTAMP
+    TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+    local HEAD_SHA
+    HEAD_SHA=$(git rev-parse HEAD 2>/dev/null || echo "unknown")
+    local HEAD_SHORT
+    HEAD_SHORT=$(git rev-parse --short HEAD 2>/dev/null || echo "unknown")
     
     # Get Trinity Score if available
     local TRINITY_SCORE="0"
@@ -71,7 +74,7 @@ PYEOF
     fi
     
     # Generate sha256.txt for all files including manifest
-    cd "$OUT_DIR" && shasum -a 256 * > sha256.txt 2>/dev/null || true
+    cd "$OUT_DIR" && shasum -a 256 ./* > sha256.txt 2>/dev/null || true
     cd - > /dev/null
     
     echo "$OUT_DIR/manifest.json"

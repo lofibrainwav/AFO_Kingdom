@@ -7,7 +7,6 @@ set -euo pipefail
 trap 'echo "❌ Dashboard failed at line $LINENO"; exit 1' ERR
 
 # Colors
-RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
@@ -17,7 +16,6 @@ NC='\033[0m'
 # Get data
 HEAD=$(git rev-parse --short HEAD 2>/dev/null || echo "unknown")
 BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "unknown")
-LAST_COMMIT=$(git log -1 --pretty=format:"%s" 2>/dev/null || echo "unknown")
 LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "none")
 
 # Trinity Score
@@ -33,7 +31,6 @@ if curl -sS http://localhost:8010/health &>/dev/null; then
     ORGANS_TOTAL=$(echo "$HEALTH_JSON" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('total_organs', 0))" 2>/dev/null || echo "0")
     
     # Calculate percentage
-    TRINITY_PCT=$(echo "$TRINITY_SCORE * 100" | bc 2>/dev/null || echo "0")
     if (( $(echo "$TRINITY_SCORE >= 0.9" | bc -l 2>/dev/null || echo "0") )); then
         TRINITY_STATUS="✅"
     else
@@ -42,7 +39,7 @@ if curl -sS http://localhost:8010/health &>/dev/null; then
 fi
 
 # Last seal
-LAST_SEAL=$(ls -dt artifacts/seal_* artifacts/ssot_* 2>/dev/null | head -n 1 || echo "none")
+LAST_SEAL=$(find artifacts -maxdepth 1 \( -name "seal_*" -o -name "ssot_*" \) -printf "%T@ %p\n" 2>/dev/null | sort -nr | head -n 1 | cut -d' ' -f2- || echo "none")
 LAST_SEAL_TIME=$(stat -f "%Sm" -t "%Y-%m-%d %H:%M" "$LAST_SEAL" 2>/dev/null || echo "N/A")
 
 # Last drift check
@@ -54,8 +51,8 @@ if [[ -f artifacts/drift/drift_status.txt ]]; then
 fi
 
 # Count scripts and workflows
-SCRIPT_COUNT=$(ls scripts/*.sh 2>/dev/null | wc -l | tr -d ' ')
-WORKFLOW_COUNT=$(ls .github/workflows/*.yml 2>/dev/null | wc -l | tr -d ' ')
+SCRIPT_COUNT=$(find scripts -maxdepth 1 -name "*.sh" 2>/dev/null | wc -l | tr -d ' ')
+WORKFLOW_COUNT=$(find .github/workflows -maxdepth 1 -name "*.yml" 2>/dev/null | wc -l | tr -d ' ')
 
 # Display card
 echo ""
