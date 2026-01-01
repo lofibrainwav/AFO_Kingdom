@@ -63,7 +63,7 @@ for TPL in "${TPL_CANDIDATES[@]}"; do
         BK="${TPL}.bak.$(date +%Y%m%d_%H%M%S)"
         cp "$TPL" "$BK"
 
-        python3 - <<'PY'
+        python3 - "$TPL" <<'PY'
 import sys
 import json
 from pathlib import Path
@@ -108,13 +108,13 @@ try:
 
 except Exception as e:
     print(f"⚠️  Config patch error: {e}")
-PY "$TPL"
+PY
     fi
 done
 
 echo "✅ Vault 패정 및 동기화 완료!"
-echo "- Scripts: $VAULT/Scripts (total: $(ls "$VAULT/Scripts" | wc -l | xargs))"
-echo "- Templates: $VAULT/Templates (total: $(ls "$VAULT/Templates" | wc -l | xargs))"
+echo "- Scripts: $VAULT/Scripts (total: $(find "$VAULT/Scripts" -maxdepth 1 -not -path "$VAULT/Scripts" | wc -l | xargs))"
+echo "- Templates: $VAULT/Templates (total: $(find "$VAULT/Templates" -maxdepth 1 -not -path "$VAULT/Templates" | wc -l | xargs))"
 echo "- Rollback: rsync -a --delete \"$BACKUP/\" \"$VAULT/\""
 echo ""
 echo "💡 마지막 단계: Obsidian 앱에서 'Community Plugins'를 통해 바이너리를 설치/업데이트 하세요."
