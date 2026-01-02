@@ -8,15 +8,43 @@ Full implementation in api_server.py.
 from __future__ import annotations
 
 import logging
+import os
+from dataclasses import dataclass, field
 from typing import Any
 
 logger = logging.getLogger(__name__)
 
-# Environment setting
-ENVIRONMENT = "production"
 
-# Version
-VERSION = "1.0.0"
+@dataclass
+class Antigravity:
+    """Core Antigravity configuration singleton."""
+
+    ENVIRONMENT: str = field(default_factory=lambda: os.getenv("AFO_ENV", "production"))
+    VERSION: str = "1.0.0"
+    DEBUG: bool = field(default_factory=lambda: os.getenv("AFO_DEBUG", "false").lower() == "true")
+    DRY_RUN: bool = field(
+        default_factory=lambda: os.getenv("AFO_DRY_RUN", "false").lower() == "true"
+    )
+
+    def get_version(self) -> str:
+        """Get AFO version."""
+        return self.VERSION
+
+    def get_config(self) -> dict[str, Any]:
+        """Get configuration dict."""
+        return {
+            "version": self.VERSION,
+            "environment": self.ENVIRONMENT,
+            "debug": self.DEBUG,
+        }
+
+
+# Singleton instance
+antigravity = Antigravity()
+
+# Environment setting (backwards compatibility)
+ENVIRONMENT = antigravity.ENVIRONMENT
+VERSION = antigravity.VERSION
 
 
 def get_version() -> str:
@@ -26,10 +54,7 @@ def get_version() -> str:
 
 def get_config() -> dict[str, Any]:
     """Get configuration stub."""
-    return {
-        "version": VERSION,
-        "environment": ENVIRONMENT,
-    }
+    return antigravity.get_config()
 
 
-__all__ = ["ENVIRONMENT", "VERSION", "get_version", "get_config"]
+__all__ = ["Antigravity", "antigravity", "ENVIRONMENT", "VERSION", "get_version", "get_config"]

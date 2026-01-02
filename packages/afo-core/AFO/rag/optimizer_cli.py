@@ -74,7 +74,12 @@ def main() -> int:
     if dspy is None:
         raise RuntimeError("DSPy is not installed.")
 
-    _maybe_configure_lm()
+    # DRY_RUN 모드에서는 LM 설정 건너뛰기
+    if not antigravity.DRY_RUN:
+        _maybe_configure_lm()
+    else:
+        print("[DRY_RUN] Skipping LM configuration.")
+
     _ensure_parent(args.out)
 
     rows = _load_jsonl(args.train)
