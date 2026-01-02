@@ -8,9 +8,9 @@ from unittest.mock import MagicMock, patch
 root_dir = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(root_dir))
 
-from AFO.utils.cache_utils import CacheManager, cached
-from AFO.utils.dry_run import DryRunMode, dry_run
-from AFO.utils.framework_selector import FrameworkName, MissionProfile, select_framework
+from afo.utils.cache_utils import CacheManager, cached
+from afo.utils.dry_run import DryRunMode, dry_run
+from afo.utils.framework_selector import FrameworkName, MissionProfile, select_framework
 
 
 class TestCacheUtils(unittest.IsolatedAsyncioTestCase):
@@ -56,7 +56,7 @@ class TestCacheUtils(unittest.IsolatedAsyncioTestCase):
         deleted = cm.delete("key")
         self.assertTrue(deleted)
 
-    @patch("AFO.utils.cache_utils.cache")
+    @patch("afo.utils.cache_utils.cache")
     async def test_cached_decorator(self, mock_cache_instance):
         """Test @cached decorator logic"""
         mock_cache_instance.get.return_value = None

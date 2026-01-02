@@ -72,7 +72,9 @@ async def rag_semaphore_context():
 
 
 async def execute_rag_with_flag(
-    query: str, request_headers: dict[str, str] | None = None, context: dict[str, Any] | None = None
+    query: str,
+    request_headers: dict[str, str] | None = None,
+    context: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """
     Flag 모드 기반 RAG 실행
@@ -105,7 +107,7 @@ async def execute_rag_with_flag(
     try:
         if flag_enabled:
             # Flag ON: 동기 실행 + timeout
-            timeout_seconds = config["timeout_ms"] / 1000.0
+            config["timeout_ms"] / 1000.0
 
             async with rag_semaphore_context():
                 try:
@@ -133,7 +135,7 @@ async def execute_rag_with_flag(
                     result["fallback_reason"] = f"error: {e!s}"
 
         # Shadow는 항상 실행 (응답 영향 없음)
-        shadow_task = asyncio.create_task(execute_rag_shadow(query, context))
+        asyncio.create_task(execute_rag_shadow(query, context))
         result["shadow_task_created"] = True
 
         # 결과 요약
@@ -166,9 +168,15 @@ def determine_rag_mode(request_headers: dict[str, str] | None = None) -> dict[st
     if os.getenv("AFO_RAG_KILL_SWITCH", "0") == "1":
         return {"mode": "killed", "applied": False, "reason": "kill_switch_active"}
 
-    # 2. 강제 헤더 (X-AFO-RAG: 1/0)
+    # 2. 강제 헤더 (X-AFO-RAG: 1/0) - 대소문자 무시
     if request_headers:
-        rag_header = request_headers.get("x-afo-rag")
+        # 헤더 키를 소문자로 변환해서 찾기
+        rag_header = None
+        for key, value in request_headers.items():
+            if key.lower() == "x-afo-rag":
+                rag_header = value
+                break
+
         if rag_header == "1":
             return {"mode": "forced_on", "applied": True, "reason": "header_forced"}
         elif rag_header == "0":
@@ -203,29 +211,35 @@ def get_bucket_seed(headers: dict[str, str] | None) -> str:
     안정적인 버킷팅을 위한 seed 생성
 
     우선순위:
-    1. X-AFO-CLIENT-ID
-    2. X-Request-ID
+    1. X-AFO-CLIENT-ID (대소문자 무시)
+    2. X-Request-ID (대소문자 무시)
     3. remote_addr + user_agent (실제 구현시)
     """
     if headers:
+        # 대소문자 무시 검색을 위한 매핑
+        header_map = {key.lower(): value for key, value in headers.items()}
+
         # 1순위: X-AFO-CLIENT-ID
-        if "x-afo-client-id" in headers:
-            return headers["x-afo-client-id"]
+        if "x-afo-client-id" in header_map:
+            return header_map["x-afo-client-id"]
 
         # 2순위: X-Request-ID
-        if "x-request-id" in headers:
-            return headers["x-request-id"]
+        if "x-request-id" in header_map:
+            return header_map["x-request-id"]
 
     # 3순위: 기본 seed (실제 구현시 IP + User-Agent 사용)
     return "default_seed"
 
 
 def get_bucket_seed_source(headers: dict[str, str] | None) -> str:
-    """버킷팅 seed 출처 반환"""
+    """버킷팅 seed 출처 반환 (대소문자 무시)"""
     if headers:
-        if "x-afo-client-id" in headers:
+        # 대소문자 무시 검색
+        header_map = {key.lower(): value for key, value in headers.items()}
+
+        if "x-afo-client-id" in header_map:
             return "client_id"
-        if "x-request-id" in headers:
+        if "x-request-id" in header_map:
             return "request_id"
 
     return "default"
@@ -249,7 +263,9 @@ def should_apply_gradual(seed: str, percent: int) -> bool:
 
 
 async def execute_rag_with_mode(
-    query: str, request_headers: dict[str, str] | None = None, context: dict[str, Any] | None = None
+    query: str,
+    request_headers: dict[str, str] | None = None,
+    context: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """
     통합 RAG 실행 (Shadow + Flag + Gradual) - TICKET-008 Phase 3
@@ -288,9 +304,9 @@ async def execute_rag_with_mode(
         result.update(
             {
                 "rollout_percent": mode_decision.get("rollout_percent", 0),
-                "bucket_id": hashlib.sha256(bucket_seed.encode()).hexdigest()[:8]
-                if bucket_seed
-                else "",
+                "bucket_id": (
+                    hashlib.sha256(bucket_seed.encode()).hexdigest()[:8] if bucket_seed else ""
+                ),
                 "bucket_seed_source": mode_decision.get("bucket_seed_source", ""),
             }
         )
@@ -298,7 +314,7 @@ async def execute_rag_with_mode(
     try:
         if mode_decision["applied"]:
             # RAG 적용: 동기 실행 + timeout
-            timeout_seconds = config["timeout_ms"] / 1000.0
+            config["timeout_ms"] / 1000.0
 
             async with rag_semaphore_context():
                 try:
@@ -327,7 +343,7 @@ async def execute_rag_with_mode(
                     result["applied"] = False  # fallback으로 변경
 
         # Shadow는 항상 실행 (응답 영향 없음)
-        shadow_task = asyncio.create_task(execute_rag_shadow(query, context))
+        asyncio.create_task(execute_rag_shadow(query, context))
         result["shadow_task_created"] = True
 
         # 결과 요약

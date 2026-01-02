@@ -141,7 +141,7 @@ def test_mcp_server(server_config: dict[str, Any]) -> dict[str, Any]:
             elif tool_name == "verify_fact":
                 test_args = {
                     "claim": "AFO Kingdom uses Trinity Score",
-                    "context": "AFO",
+                    "context": "afo",
                 }
             elif tool_name == "kingdom_health":
                 test_args = {}

@@ -10,7 +10,6 @@ from pathlib import Path
 
 import requests
 
-
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 
 
@@ -43,7 +42,9 @@ BASE_URL = "http://localhost:8010"
 def check_all_endpoints():
     """모든 엔드포인트 확인"""
     # #region agent log
-    log_debug("final_verification.py:check_all_endpoints", "Starting endpoint check", {}, "A")
+    log_debug(
+        "final_verification.py:check_all_endpoints", "Starting endpoint check", {}, "A"
+    )
     # #endregion agent log
 
     endpoints = [

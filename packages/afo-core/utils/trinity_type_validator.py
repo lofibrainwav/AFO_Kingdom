@@ -15,7 +15,7 @@ import traceback
 from collections.abc import Callable
 from typing import Any, TypeVar, Union
 
-from AFO.domain.metrics.trinity_manager import TrinityManager
+from afo.domain.metrics.trinity_manager import TrinityManager
 
 # 로깅 설정
 logger = logging.getLogger(__name__)

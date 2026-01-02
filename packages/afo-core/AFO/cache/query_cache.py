@@ -6,13 +6,11 @@ Phase 6C: Database Query Caching for Performance Optimization
 Implements intelligent caching for database queries to reduce DB load and improve response times.
 """
 
-import asyncio
 import functools
 import hashlib
 import json
 import logging
 from collections.abc import Callable
-from typing import Any
 
 from .manager import cache_manager
 

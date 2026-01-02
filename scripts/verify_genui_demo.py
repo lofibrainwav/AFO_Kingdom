@@ -7,7 +7,7 @@ sys.path.append(os.path.join(pathlib.Path.cwd(), "packages/trinity-os"))
 
 import pathlib
 
-from AFO.genui.genui_orchestrator import GenUIOrchestrator
+from afo.genui.genui_orchestrator import GenUIOrchestrator
 
 
 def verify_genui():

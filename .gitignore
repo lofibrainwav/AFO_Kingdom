@@ -85,3 +85,5 @@ scripts/_local_quarantine/
 
 # AFO runtime seals (local evidence only)
 artifacts/trinity_seals/
+dashboard_log.txt
+.venv-dspy/

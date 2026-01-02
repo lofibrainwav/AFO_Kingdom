@@ -9,7 +9,7 @@ from typing import Any
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
-from AFO.serenity.creation_loop import serenity_loop
+from afo.serenity.creation_loop import serenity_loop
 
 router = APIRouter(prefix="/serenity", tags=["Serenity (GenUI)"])
 

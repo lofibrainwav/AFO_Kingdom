@@ -300,10 +300,10 @@ def step5_check_imports():
     results = {}
     checks = [
         ("sqlmodel", "sqlmodel"),
-        ("LearningLog", "AFO.models.learning_log"),
-        ("learning_log_router", "AFO.api.compat"),
-        ("grok_stream_router", "AFO.api.compat"),
-        ("chancellor_router", "AFO.api.compat"),
+        ("LearningLog", "afo.models.learning_log"),
+        ("learning_log_router", "afo.api.compat"),
+        ("grok_stream_router", "afo.api.compat"),
+        ("chancellor_router", "afo.api.compat"),
     ]
 
     for name, module_path in checks:

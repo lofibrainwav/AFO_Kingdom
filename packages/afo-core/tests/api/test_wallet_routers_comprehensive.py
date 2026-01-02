@@ -13,13 +13,13 @@ if os.getenv("AFO_WALLET_TESTS") != "1":
         allow_module_level=True,
     )
 
+# Import wallet router
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-# Import wallet router
-from AFO.api.routes.wallet import wallet_router
-from AFO.api.routes.wallet.billing import billing_router
-from AFO.api.routes.wallet.browser_bridge import router as browser_router
+from afo.api.routes.wallet import wallet_router
+from afo.api.routes.wallet.billing import billing_router
+from afo.api.routes.wallet.browser_bridge import router as browser_router
 
 # Setup App
 app = FastAPI()
@@ -39,8 +39,8 @@ def test_list_keys_success():
     mock_module = MagicMock()
     mock_module.APIWallet = mock_wallet_class
 
-    # Inject our mock module into sys.modules so 'from AFO.api_wallet import APIWallet' finds it
-    with patch.dict(sys.modules, {"AFO.api_wallet": mock_module, "api_wallet": mock_module}):
+    # Inject our mock module into sys.modules so 'from afo.api_wallet import APIWallet' finds it
+    with patch.dict(sys.modules, {"afo.api_wallet": mock_module, "api_wallet": mock_module}):
         response = client.get("/keys")
         assert response.status_code == 200
         assert len(response.json()) == 1
@@ -55,7 +55,7 @@ def test_add_key_success():
     mock_module = MagicMock()
     mock_module.APIWallet = mock_wallet_class
 
-    with patch.dict(sys.modules, {"AFO.api_wallet": mock_module, "api_wallet": mock_module}):
+    with patch.dict(sys.modules, {"afo.api_wallet": mock_module, "api_wallet": mock_module}):
         response = client.post(
             "/keys", json={"name": "new_k", "key": "sk-...", "service": "openai"}
         )
@@ -70,7 +70,7 @@ def test_add_key_exists():
     mock_module = MagicMock()
     mock_module.APIWallet = mock_wallet_class
 
-    with patch.dict(sys.modules, {"AFO.api_wallet": mock_module, "api_wallet": mock_module}):
+    with patch.dict(sys.modules, {"afo.api_wallet": mock_module, "api_wallet": mock_module}):
         response = client.post("/keys", json={"name": "existing", "key": "sk-..."})
         assert response.status_code == 400
         assert "already exists" in response.json()["detail"]
@@ -83,7 +83,7 @@ def test_delete_key_success():
     mock_module = MagicMock()
     mock_module.APIWallet = mock_wallet_class
 
-    with patch.dict(sys.modules, {"AFO.api_wallet": mock_module, "api_wallet": mock_module}):
+    with patch.dict(sys.modules, {"afo.api_wallet": mock_module, "api_wallet": mock_module}):
         response = client.delete("/keys/del_k")
         assert response.status_code == 200
 
@@ -95,7 +95,7 @@ def test_delete_key_not_found():
     mock_module = MagicMock()
     mock_module.APIWallet = mock_wallet_class
 
-    with patch.dict(sys.modules, {"AFO.api_wallet": mock_module, "api_wallet": mock_module}):
+    with patch.dict(sys.modules, {"afo.api_wallet": mock_module, "api_wallet": mock_module}):
         response = client.delete("/keys/missing")
         assert response.status_code == 404
 
@@ -124,7 +124,7 @@ def test_get_api_usage_import_error():
             # This is tricky because builtins.__import__ affects EVERYTHING.
             # Better: Mock sys.modules.get to return None, and patch the import statement line?
             # Actually, we can just ensure it's not in sys.modules and let Python fail if it really isn't there.
-            # Or patch `AFO.api.routes.wallet.billing.sys.modules.get`? No, sys.modules is global.
+            # Or patch `afo.api.routes.wallet.billing.sys.modules.get`? No, sys.modules is global.
 
             # Easier: Patch the local import scope using a side effect on a targeted patch if possible.
             # But the code creates a local var.
@@ -166,7 +166,7 @@ def test_save_browser_token_success():
     mock_wallet.get.return_value = None
 
     with (
-        patch("AFO.api.routes.wallet.browser_bridge.APIWallet", return_value=mock_wallet),
+        patch("afo.api.routes.wallet.browser_bridge.APIWallet", return_value=mock_wallet),
         patch("os.urandom", return_value=b"\x00\x00"),
     ):  # hex '0000'
         response = client.post("/browser/save-token", json={"service": "n8n", "token": "abc"})

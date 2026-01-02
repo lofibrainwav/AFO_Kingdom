@@ -22,7 +22,7 @@ def test_trinity_validator():
     print("=" * 50)
 
     try:
-        from AFO.utils.trinity_type_validator import validate_with_trinity
+        from afo.utils.trinity_type_validator import validate_with_trinity
 
         print("✅ Trinity Validator 임포트 성공")
 
@@ -66,7 +66,7 @@ def test_trinity_validator():
             print(f"   ⚠️  예상된 오류: {e}")
 
         print("\n📊 성능 리포트:")
-        from AFO.utils.trinity_type_validator import trinity_validator
+        from afo.utils.trinity_type_validator import trinity_validator
 
         report = trinity_validator.get_performance_report()
         print(f"   모니터링된 함수: {report["summary"]["total_functions"]}개")

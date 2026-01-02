@@ -4,7 +4,7 @@ import sys
 # Set PYTHONPATH
 sys.path.append("/Users/brnestrm/AFO_Kingdom/packages/afo-core")
 
-from AFO.scholars.yeongdeok import yeongdeok
+from afo.scholars.yeongdeok import yeongdeok
 
 
 async def verify_education():

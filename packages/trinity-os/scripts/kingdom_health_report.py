@@ -36,6 +36,7 @@ class HealthReportGenerator:
                     "python3",
                     str(AFO_ROOT / ".claude" / "scripts" / "check_11_organs.py"),
                 ],
+                check=False,
                 capture_output=True,
                 text=True,
                 timeout=30,
@@ -47,12 +48,11 @@ class HealthReportGenerator:
                     "data": json.loads(result.stdout),
                     "error": None,
                 }
-            else:
-                return {
-                    "status": "failed",
-                    "data": None,
-                    "error": result.stderr[:200],
-                }
+            return {
+                "status": "failed",
+                "data": None,
+                "error": result.stderr[:200],
+            }
         except Exception as e:
             return {
                 "status": "error",
@@ -65,6 +65,7 @@ class HealthReportGenerator:
         try:
             result = subprocess.run(
                 ["python3", str(AFO_ROOT / "scripts" / "kingdom_problem_detector.py")],
+                check=False,
                 capture_output=True,
                 text=True,
                 timeout=60,
@@ -76,20 +77,19 @@ class HealthReportGenerator:
                     "data": json.loads(result.stdout),
                     "error": None,
                 }
-            else:
-                # 문제가 있어도 리포트는 생성 (exit code 1은 문제 발견 의미)
-                try:
-                    return {
-                        "status": "problems_found",
-                        "data": json.loads(result.stdout),
-                        "error": None,
-                    }
-                except json.JSONDecodeError:
-                    return {
-                        "status": "failed",
-                        "data": None,
-                        "error": result.stderr[:200],
-                    }
+            # 문제가 있어도 리포트는 생성 (exit code 1은 문제 발견 의미)
+            try:
+                return {
+                    "status": "problems_found",
+                    "data": json.loads(result.stdout),
+                    "error": None,
+                }
+            except json.JSONDecodeError:
+                return {
+                    "status": "failed",
+                    "data": None,
+                    "error": result.stderr[:200],
+                }
         except Exception as e:
             return {
                 "status": "error",
@@ -110,6 +110,7 @@ class HealthReportGenerator:
                         / "verify_kingdom_status.py"
                     ),
                 ],
+                check=False,
                 capture_output=True,
                 text=True,
                 timeout=120,
@@ -124,12 +125,11 @@ class HealthReportGenerator:
                     "data": {"message": "All Green", "output": output[:500]},
                     "error": None,
                 }
-            else:
-                return {
-                    "status": "failed",
-                    "data": {"output": output[:500]},
-                    "error": None,
-                }
+            return {
+                "status": "failed",
+                "data": {"output": output[:500]},
+                "error": None,
+            }
         except Exception as e:
             return {
                 "status": "error",
@@ -261,12 +261,11 @@ class HealthReportGenerator:
         """권장사항 생성"""
         if overall_score >= 0.9 and balance_gap < 0.3:
             return "🎉 완벽한 상태! 모든 시스템 정상 작동 중"
-        elif overall_score >= 0.8:
+        if overall_score >= 0.8:
             return "✅ 양호한 상태. 일부 개선 권장"
-        elif overall_score >= 0.7:
+        if overall_score >= 0.7:
             return "⚠️ 주의 필요. 문제 해결 권장"
-        else:
-            return "🚨 긴급 상황! 즉시 시스템 점검 필요"
+        return "🚨 긴급 상황! 즉시 시스템 점검 필요"
 
     def _generate_summary(self) -> dict[str, Any]:
         """요약 생성"""

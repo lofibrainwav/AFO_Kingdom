@@ -13,6 +13,7 @@ from dataclasses import dataclass
 @dataclass(frozen=True)
 class ChancellorMiproPlan:
     """MIPRO plugin execution plan."""
+
     enabled: bool
     reason: str
 
@@ -24,14 +25,14 @@ def plan() -> ChancellorMiproPlan:
         Plan indicating whether MIPRO should be enabled
     """
     enabled = (
-        os.getenv("AFO_MIPRO_ENABLED", "0") == "1" and
-        os.getenv("AFO_MIPRO_CHANCELLOR_ENABLED", "0") == "1"
+        os.getenv("AFO_MIPRO_ENABLED", "0") == "1"
+        and os.getenv("AFO_MIPRO_CHANCELLOR_ENABLED", "0") == "1"
     )
 
     if not enabled:
         return ChancellorMiproPlan(
             enabled=False,
-            reason=f"AFO_MIPRO_ENABLED!={os.getenv('AFO_MIPRO_ENABLED', '0')} or AFO_MIPRO_CHANCELLOR_ENABLED!={os.getenv('AFO_MIPRO_CHANCELLOR_ENABLED', '0')}"
+            reason=f"AFO_MIPRO_ENABLED!={os.getenv('AFO_MIPRO_ENABLED', '0')} or AFO_MIPRO_CHANCELLOR_ENABLED!={os.getenv('AFO_MIPRO_CHANCELLOR_ENABLED', '0')}",
         )
 
     return ChancellorMiproPlan(enabled=True, reason="Feature flags enabled")
@@ -47,13 +48,13 @@ class ChancellorMiproPlugin:
 
 def maybe_apply_mipro(graph: object) -> bool:
     """Legacy function for backward    enabled: bool
-    reason: str
+        reason: str
 
 
-daph: Graph object (not used in current implementation)
+    daph: Graph object (not used in current implementation)
 
-    Returns:
-        Always returns False (NO-OP)
+        Returns:
+            Always returns False (NO-OP)
     """
     # This is a NO-OP function for backward compatibility
     # Actual MIPRO logic is handled in ChancellorGraph.mipro_node()

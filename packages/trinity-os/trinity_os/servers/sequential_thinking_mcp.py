@@ -14,10 +14,9 @@ Sequential Thinking MCP Module
 - 사고 과정 요약 및 분석
 """
 
-import json
 import logging
 from datetime import datetime
-from typing import Dict, Any, List, Optional, Union
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +26,7 @@ DEFAULT_SERENITY_BASE_SCORE = 0.1
 TRUTH_KEYWORD_WEIGHT = 0.1
 SERENITY_KEYWORD_WEIGHT = 0.08
 MAX_IMPACT_SCORE = 1.0
+
 
 class SequentialThinkingMCP:
     """
@@ -46,8 +46,8 @@ class SequentialThinkingMCP:
 
         사고 기록을 초기화하고 로깅을 설정합니다.
         """
-        self.thought_history: List[Dict[str, Any]] = []
-        self.current_session: Optional[str] = None
+        self.thought_history: list[dict[str, Any]] = []
+        self.current_session: str | None = None
         logger.info("SequentialThinkingMCP initialized")
 
     def process_thought(
@@ -55,8 +55,8 @@ class SequentialThinkingMCP:
         thought: str,
         thought_number: int,
         total_thoughts: int,
-        next_thought_needed: bool
-    ) -> Dict[str, Any]:
+        next_thought_needed: bool,
+    ) -> dict[str, Any]:
         """
         단계별 사고 처리
 
@@ -87,11 +87,13 @@ class SequentialThinkingMCP:
                 "next_thought_needed": next_thought_needed,
                 "timestamp": self._get_timestamp(),
                 "truth_impact": self._evaluate_truth_impact(thought),
-                "serenity_impact": self._evaluate_serenity_impact(thought)
+                "serenity_impact": self._evaluate_serenity_impact(thought),
             }
 
             self.thought_history.append(thought_entry)
-            logger.debug(f"Thought processed: step {thought_number}/{total_thoughts}")
+            logger.debug(
+                "Thought processed: step %s/%s", thought_number, total_thoughts
+            )
 
             # 결과 생성
             result = {
@@ -103,8 +105,8 @@ class SequentialThinkingMCP:
                 "metadata": {
                     "truth_impact": thought_entry["truth_impact"],
                     "serenity_impact": thought_entry["serenity_impact"],
-                    "session_id": self.current_session or "default"
-                }
+                    "session_id": self.current_session or "default",
+                },
             }
 
             if thought_number >= total_thoughts:
@@ -113,7 +115,7 @@ class SequentialThinkingMCP:
             return result
 
         except Exception as e:
-            logger.error(f"Error processing thought: {e}")
+            logger.error("Error processing thought: %s", e)
             raise
 
     def _evaluate_truth_impact(self, thought: str) -> float:
@@ -137,13 +139,43 @@ class SequentialThinkingMCP:
             # 진실성 지표 키워드들
             truth_indicators = [
                 # 영어 키워드
-                "fact", "evidence", "data", "logic", "reason", "verify", "validate",
-                "proof", "logic", "verify", "validate", "analysis", "research",
-                "measurement", "observation", "experiment", "hypothesis", "theory",
+                "fact",
+                "evidence",
+                "data",
+                "logic",
+                "reason",
+                "verify",
+                "validate",
+                "proof",
+                "logic",
+                "verify",
+                "validate",
+                "analysis",
+                "research",
+                "measurement",
+                "observation",
+                "experiment",
+                "hypothesis",
+                "theory",
                 # 한글 키워드
-                "사실", "증거", "데이터", "논리", "이유", "검증", "확인",
-                "증명", "논리", "검증", "확인", "분석", "연구",
-                "측정", "관찰", "실험", "가설", "이론"
+                "사실",
+                "증거",
+                "데이터",
+                "논리",
+                "이유",
+                "검증",
+                "확인",
+                "증명",
+                "논리",
+                "검증",
+                "확인",
+                "분석",
+                "연구",
+                "측정",
+                "관찰",
+                "실험",
+                "가설",
+                "이론",
             ]
 
             score = DEFAULT_TRUTH_BASE_SCORE
@@ -162,15 +194,19 @@ class SequentialThinkingMCP:
                 score -= 0.1
 
             # 특수 문자나 코드 포함 보너스
-            if any(char in thought for char in ['=', '==', '!=', '<', '>', 'and', 'or']):
+            if any(
+                char in thought for char in ["=", "==", "!=", "<", ">", "and", "or"]
+            ):
                 score += 0.1
 
             final_score = min(max(score, 0.0), MAX_IMPACT_SCORE)
-            logger.debug(f"Truth impact calculated: {final_score:.2f} for thought: {thought[:50]}...")
+            logger.debug(
+                f"Truth impact calculated: {final_score:.2f} for thought: {thought[:50]}..."
+            )
             return final_score
 
         except Exception as e:
-            logger.error(f"Error evaluating truth impact: {e}")
+            logger.error("Error evaluating truth impact: %s", e)
             return DEFAULT_TRUTH_BASE_SCORE
 
     def _evaluate_serenity_impact(self, thought: str) -> float:
@@ -194,12 +230,35 @@ class SequentialThinkingMCP:
             # 평온성 지표 키워드들
             serenity_indicators = [
                 # 영어 키워드
-                "calm", "stable", "balanced", "harmony", "clear", "simple",
-                "serenity", "balance", "harmony", "calm", "clear", "simple",
-                "consistent", "reliable", "predictable", "organized", "structured",
+                "calm",
+                "stable",
+                "balanced",
+                "harmony",
+                "clear",
+                "simple",
+                "serenity",
+                "balance",
+                "harmony",
+                "calm",
+                "clear",
+                "simple",
+                "consistent",
+                "reliable",
+                "predictable",
+                "organized",
+                "structured",
                 # 한글 키워드
-                "평온", "안정", "균형", "조화", "명확", "단순",
-                "일관", "신뢰", "예측", "조직", "구조"
+                "평온",
+                "안정",
+                "균형",
+                "조화",
+                "명확",
+                "단순",
+                "일관",
+                "신뢰",
+                "예측",
+                "조직",
+                "구조",
             ]
 
             score = DEFAULT_SERENITY_BASE_SCORE
@@ -211,7 +270,7 @@ class SequentialThinkingMCP:
                     score += SERENITY_KEYWORD_WEIGHT
 
             # 문장 구조 분석 (간단한 문장이 더 평온함)
-            sentences = thought.split('.')
+            sentences = thought.split(".")
             if len(sentences) > 5:
                 score -= 0.1  # 너무 복잡한 사고는 평온성 낮음
             elif len(sentences) <= 2:
@@ -219,15 +278,19 @@ class SequentialThinkingMCP:
 
             # 감정 표현 감소 보너스 (감정적인 표현이 적을수록 평온)
             emotional_words = ["!", "?", "urgent", "critical", "error", "fail"]
-            emotional_count = sum(1 for word in emotional_words if word in thought_lower)
+            emotional_count = sum(
+                1 for word in emotional_words if word in thought_lower
+            )
             score -= emotional_count * 0.05
 
             final_score = min(max(score, 0.0), MAX_IMPACT_SCORE)
-            logger.debug(f"Serenity impact calculated: {final_score:.2f} for thought: {thought[:50]}...")
+            logger.debug(
+                f"Serenity impact calculated: {final_score:.2f} for thought: {thought[:50]}..."
+            )
             return final_score
 
         except Exception as e:
-            logger.error(f"Error evaluating serenity impact: {e}")
+            logger.error("Error evaluating serenity impact: %s", e)
             return DEFAULT_SERENITY_BASE_SCORE
 
     def _get_timestamp(self) -> str:
@@ -240,12 +303,16 @@ class SequentialThinkingMCP:
             return "No thought process recorded."
 
         total_steps = len(self.thought_history)
-        avg_truth = sum(t.get("truth_impact", 0) for t in self.thought_history) / total_steps
-        avg_serenity = sum(t.get("serenity_impact", 0) for t in self.thought_history) / total_steps
+        avg_truth = (
+            sum(t.get("truth_impact", 0) for t in self.thought_history) / total_steps
+        )
+        avg_serenity = (
+            sum(t.get("serenity_impact", 0) for t in self.thought_history) / total_steps
+        )
 
         return f"Total {total_steps} steps completed. Average truth: {avg_truth:.2f}, Average serenity: {avg_serenity:.2f}"
 
-    def get_thought_history(self) -> List[Dict[str, Any]]:
+    def get_thought_history(self) -> list[dict[str, Any]]:
         """사고 기록 반환"""
         return self.thought_history.copy()
 
@@ -261,15 +328,15 @@ class SequentialThinkingMCP:
 
         self.current_session = session_id
         self.clear_history()
-        logger.info(f"Started new thinking session: {session_id}")
+        logger.info("Started new thinking session: %s", session_id)
 
-    def end_session(self) -> Dict[str, Any]:
+    def end_session(self) -> dict[str, Any]:
         """현재 세션 종료 및 요약 반환"""
         summary = {
             "session_id": self.current_session,
             "total_thoughts": len(self.thought_history),
             "completed_at": self._get_timestamp(),
-            "final_summary": self._generate_summary()
+            "final_summary": self._generate_summary(),
         }
 
         self.current_session = None

@@ -12,7 +12,7 @@ import json
 import logging
 import time
 from collections import defaultdict
-from typing import Any, Optional, cast
+from typing import Any, cast
 
 from ..cache.manager import cache_manager
 

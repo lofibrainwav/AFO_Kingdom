@@ -84,7 +84,7 @@ def run_dream_hub_command(args: argparse.Namespace) -> int:
             )
         )
 
-        if not validation.get("valid", False):
+        if not validation.get("valid"):
             reason = validation.get("reason", "Unknown reason")
             violations = validation.get("violations", [])
             print(f"❌ Contract violation: {reason}")

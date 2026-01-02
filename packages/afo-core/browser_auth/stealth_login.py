@@ -18,7 +18,7 @@ if afo_dir not in sys.path:
     sys.path.append(afo_dir)
 
 try:
-    from AFO.api_wallet import APIWallet
+    from afo.api_wallet import APIWallet
 
     print("✅ APIWallet module loaded successfully.")
 except ImportError as e:

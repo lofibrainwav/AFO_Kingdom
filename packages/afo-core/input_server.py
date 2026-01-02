@@ -49,7 +49,7 @@ app = FastAPI(
 
 # API Wallet 서버 URL (중앙 설정 사용 - Phase 1 리팩토링)
 try:
-    from AFO.config.settings import get_settings
+    from afo.config.settings import get_settings
 
     settings = get_settings()
     API_WALLET_URL = settings.API_WALLET_URL
@@ -684,7 +684,7 @@ if __name__ == "__main__":
 
     # Phase 2-4: settings 사용
     try:
-        from AFO.config.settings import get_settings
+        from afo.config.settings import get_settings
 
         settings = get_settings()
         port = settings.INPUT_SERVER_PORT

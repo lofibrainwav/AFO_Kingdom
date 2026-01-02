@@ -85,7 +85,7 @@ def verify_all_imports():
 
     # 2. LearningLog 모델
     try:
-        from AFO.models.learning_log import LearningLog
+        from afo.models.learning_log import LearningLog
 
         fields = list(LearningLog.model_fields.keys())
         results["LearningLog"] = {"status": "success", "fields": fields}
@@ -112,7 +112,7 @@ def verify_all_imports():
 
     # 3. Learning Log Router
     try:
-        from AFO.api.routers.learning_log_router import router
+        from afo.api.routers.learning_log_router import router
 
         prefix = getattr(router, "prefix", "N/A")
         results["learning_log_router"] = {"status": "success", "prefix": prefix}
@@ -139,7 +139,7 @@ def verify_all_imports():
 
     # 4. Chancellor Router
     try:
-        from AFO.api.routers.chancellor_router import \
+        from afo.api.routers.chancellor_router import \
             router as chancellor_router
 
         prefix = getattr(chancellor_router, "prefix", "N/A")
@@ -167,7 +167,7 @@ def verify_all_imports():
 
     # 5. Grok Stream Router
     try:
-        from AFO.api.routers.grok_stream import router as grok_stream_router
+        from afo.api.routers.grok_stream import router as grok_stream_router
 
         prefix = getattr(grok_stream_router, "prefix", "N/A")
         results["grok_stream_router"] = {"status": "success", "prefix": prefix}

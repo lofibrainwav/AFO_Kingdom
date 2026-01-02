@@ -19,7 +19,7 @@ def verify_language_policy():
 
     # 1. antigravity 설정 확인
     try:
-        from AFO.config.antigravity import antigravity
+        from afo.config.antigravity import antigravity
 
         report_language = getattr(antigravity, "REPORT_LANGUAGE", None)
         use_protocol_officer = getattr(antigravity, "USE_PROTOCOL_OFFICER", None)
@@ -53,7 +53,7 @@ def verify_language_policy():
         # 언어 강제 로직 확인
         has_language_policy = "Output language: Korean" in content
         has_antigravity_import = (
-            "from AFO.config.antigravity import antigravity" in content
+            "from afo.config.antigravity import antigravity" in content
         )
         has_language_check = "REPORT_LANGUAGE" in content
 

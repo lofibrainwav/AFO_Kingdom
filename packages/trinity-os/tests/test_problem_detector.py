@@ -20,7 +20,11 @@ def test_problem_detector() -> None:
 
     # 실행 가능 확인
     result = subprocess.run(
-        [sys.executable, str(script_path)], capture_output=True, text=True, timeout=30
+        [sys.executable, str(script_path)],
+        check=False,
+        capture_output=True,
+        text=True,
+        timeout=30,
     )
 
     # 실행 성공 확인
@@ -47,7 +51,11 @@ def test_health_report() -> None:
     assert script_path.exists(), f"Script not found: {script_path}"
 
     result = subprocess.run(
-        [sys.executable, str(script_path)], capture_output=True, text=True, timeout=30
+        [sys.executable, str(script_path)],
+        check=False,
+        capture_output=True,
+        text=True,
+        timeout=30,
     )
 
     assert result.returncode == 0, f"Script failed with return code {result.returncode}"
@@ -74,7 +82,11 @@ def test_spirit_integration() -> None:
     assert script_path.exists(), f"Script not found: {script_path}"
 
     result = subprocess.run(
-        [sys.executable, str(script_path)], capture_output=True, text=True, timeout=30
+        [sys.executable, str(script_path)],
+        check=False,
+        capture_output=True,
+        text=True,
+        timeout=30,
     )
 
     assert result.returncode == 0, f"Script failed with return code {result.returncode}"

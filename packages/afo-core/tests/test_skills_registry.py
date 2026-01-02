@@ -4,7 +4,7 @@ from unittest.mock import patch
 
 import pytest
 
-from AFO.afo_skills_registry import AFOSkillCard, PhilosophyScore, SkillCategory, SkillRegistry
+from afo.afo_skills_registry import AFOSkillCard, PhilosophyScore, SkillCategory, SkillRegistry
 
 
 class TestSkillRegistry:
@@ -60,7 +60,7 @@ class TestSkillRegistry:
         registry.register(s1)
         registry.register(s2)
 
-        from AFO.afo_skills_registry import SkillFilterParams
+        from afo.afo_skills_registry import SkillFilterParams
 
         results = registry.filter(SkillFilterParams(category=SkillCategory.INTEGRATION))
         assert len(results) == 1
@@ -79,7 +79,7 @@ class TestSkillRegistry:
         )
         registry.register(s1)
 
-        from AFO.afo_skills_registry import SkillFilterParams
+        from afo.afo_skills_registry import SkillFilterParams
 
         # Match name
         assert len(registry.filter(SkillFilterParams(search="Apple"))) == 1
@@ -129,11 +129,11 @@ class TestSkillRegistry:
 
     def test_built_in_registration(self) -> None:
         """眞 (Truth): 내장 코어 스킬 등록 테스트"""
-        from AFO.afo_skills_registry import register_core_skills
+        from afo.afo_skills_registry import register_core_skills
 
         # Mock settings if needed, or rely on defaults/env
         with patch(
-            "AFO.afo_skills_registry._get_mcp_server_url",
+            "afo.afo_skills_registry._get_mcp_server_url",
             return_value="http://mock-mcp",
         ):
             registry: Any = register_core_skills()

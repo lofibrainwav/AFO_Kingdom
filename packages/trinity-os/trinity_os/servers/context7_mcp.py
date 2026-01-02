@@ -9,7 +9,6 @@ import re
 from pathlib import Path
 from typing import Any
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -38,14 +37,13 @@ class Context7MCP:
             # 1. Metadata Load
             # Import local helper (Serenity)
             try:
-                from context7_metadata import inject_meta_header, load_context7_metadata
+                from context7_metadata import (inject_meta_header,
+                                               load_context7_metadata)
             except ImportError:
                 # Fallback for when running from different CWD
                 try:
                     from trinity_os.servers.context7_metadata import (
-                        inject_meta_header,
-                        load_context7_metadata,
-                    )
+                        inject_meta_header, load_context7_metadata)
                 except ImportError:
                     logger.error("Failed to import context7_metadata helper")
                     raise
@@ -68,7 +66,9 @@ class Context7MCP:
                 full_path = repo_root / rel_path
                 if full_path.exists():
                     try:
-                        content = full_path.read_text(encoding="utf-8", errors="replace")
+                        content = full_path.read_text(
+                            encoding="utf-8", errors="replace"
+                        )
                         meta = meta_map.get(rel_path)
 
                         doc_id = f"doc_{len(self.knowledge_base)}"
@@ -81,23 +81,27 @@ class Context7MCP:
                             # Update Attributes from Metadata
                             doc_type = meta.type
                             title = (
-                                meta.description[:50] if meta.description else full_path.name
+                                meta.description[:50]
+                                if meta.description
+                                else full_path.name
                             )  # Use description start as title if available
 
-                        self.knowledge_base.append({
-                            "id": doc_id,
-                            "type": doc_type,
-                            "source": str(rel_path),
-                            "content": content,
-                            "title": title,
-                            "keywords": self._extract_keywords(content),
-                            "metadata": {
-                                "category": meta.category if meta else None,
-                                "tags": meta.tags if meta else [],
-                                "description": meta.description if meta else None,
-                                "keywords": meta.keywords if meta else [],
-                            },
-                        })
+                        self.knowledge_base.append(
+                            {
+                                "id": doc_id,
+                                "type": doc_type,
+                                "source": str(rel_path),
+                                "content": content,
+                                "title": title,
+                                "keywords": self._extract_keywords(content),
+                                "metadata": {
+                                    "category": meta.category if meta else None,
+                                    "tags": meta.tags if meta else [],
+                                    "description": meta.description if meta else None,
+                                    "keywords": meta.keywords if meta else [],
+                                },
+                            }
+                        )
                         loaded_count += 1
                     except Exception as e:
                         logger.warning("Failed to read %s: %s", rel_path, e)
@@ -111,7 +115,9 @@ class Context7MCP:
 
             # 3. Build Index
             self._build_index()
-            logger.info(f"Knowledge base initialized with {len(self.knowledge_base)} items")
+            logger.info(
+                f"Knowledge base initialized with {len(self.knowledge_base)} items"
+            )
 
         except Exception as e:
             logger.error("Failed to load knowledge base: %s", e)
@@ -148,7 +154,13 @@ class Context7MCP:
                 - 도구 기반 확장성
                 - 안전한 실행 환경
                 """,
-                "keywords": ["mcp", "model context protocol", "json-rpc", "cursor", "ecosystem"],
+                "keywords": [
+                    "mcp",
+                    "model context protocol",
+                    "json-rpc",
+                    "cursor",
+                    "ecosystem",
+                ],
             },
             {
                 "id": "skills_registry",
@@ -432,17 +444,21 @@ class Context7MCP:
         results = []
         for doc_idx, score in sorted_docs:
             item = self.knowledge_base[doc_idx]
-            results.append({
-                "id": item["id"],
-                "title": item["title"],
-                "type": item["type"],
-                "relevance_score": score,
-                "preview": item["content"][:200] + "..."
-                if len(item["content"]) > 200
-                else item["content"],
-                "source": item.get("source", "knowledge_base"),
-                "keywords": item.get("keywords", []),
-            })
+            results.append(
+                {
+                    "id": item["id"],
+                    "title": item["title"],
+                    "type": item["type"],
+                    "relevance_score": score,
+                    "preview": (
+                        item["content"][:200] + "..."
+                        if len(item["content"]) > 200
+                        else item["content"]
+                    ),
+                    "source": item.get("source", "knowledge_base"),
+                    "keywords": item.get("keywords", []),
+                }
+            )
 
         # Trinity Score 평가
         truth_impact = min(len(results) * 0.1, 1.0)  # 결과 수에 따른 진실성

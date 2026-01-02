@@ -180,7 +180,7 @@ def record_cpu_usage(percent: float, service: str = "afo-kingdom-api"):
 async def metrics_endpoint():
     """Prometheus metrics endpoint"""
     # Use the same registry as utils/metrics.py for consistency
-    from AFO.utils.metrics import get_metrics_response
+    from afo.utils.metrics import get_metrics_response
 
     return await get_metrics_response()
 

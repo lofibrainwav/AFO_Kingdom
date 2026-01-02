@@ -136,7 +136,7 @@ skip-magic-trailing-comma = false
 line-ending = "auto"
 
 [tool.ruff.lint.isort]
-known-first-party = ["AFO", "afo_soul_engine", "trinity_os", "sixXon"]
+known-first-party = ["afo", "afo_soul_engine", "trinity_os", "sixXon"]
 combine-as-imports = true     # as imports 결합 (美: 우아함)
 lines-after-imports = 2       # import 후 2줄 공백
 

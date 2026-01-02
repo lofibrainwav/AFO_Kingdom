@@ -4,14 +4,14 @@ import sys
 from unittest.mock import MagicMock, patch
 
 # We need to control 'hvac' import availability
-from AFO.kms.vault_kms import VaultKMS
+from afo.kms.vault_kms import VaultKMS
 
 
 def test_init_no_hvac():
     # Simulate hvac missing
     with patch.dict(sys.modules, {"hvac": None}):
         # Need to reload module or patch the 'hvac' symbol in the module if already imported
-        with patch("AFO.kms.vault_kms.hvac", None):
+        with patch("afo.kms.vault_kms.hvac", None):
             kms = VaultKMS()
             assert kms.client is None
             assert kms.is_available() is False
@@ -24,7 +24,7 @@ def test_init_success():
 
     # Patch the 'hvac' attribute in the imported module to be our mock
     with (
-        patch("AFO.kms.vault_kms.hvac", mock_hvac_module),
+        patch("afo.kms.vault_kms.hvac", mock_hvac_module),
         patch.dict(os.environ, {"VAULT_ADDR": "http://test", "VAULT_TOKEN": "token"}),
     ):
         kms = VaultKMS()

@@ -13,7 +13,7 @@ from pathlib import Path
 # Path setup
 sys.path.insert(0, str(Path(__file__).parent.parent / "packages" / "afo-core"))
 
-from AFO.aicpa import (FilingStatus, TaxInput, calculate_tax,
+from afo.aicpa import (FilingStatus, TaxInput, calculate_tax,
                        get_aicpa_service, simulate_roth_ladder)
 
 

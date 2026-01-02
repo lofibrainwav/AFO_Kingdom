@@ -15,7 +15,7 @@ from fastapi import APIRouter, BackgroundTasks
 
 # Import Models
 try:
-    from AFO.api.models.family import Activity, FamilyHubSystem, FamilyMember
+    from afo.api.models.family import Activity, FamilyHubSystem, FamilyMember
 
     MODELS_AVAILABLE = True
 except ImportError:

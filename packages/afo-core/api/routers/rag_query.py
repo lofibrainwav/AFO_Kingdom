@@ -5,7 +5,7 @@ from typing import Any
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
-from AFO.services.hybrid_rag import (
+from afo.services.hybrid_rag import (
     generate_answer_async,
     generate_hyde_query_async,
     get_embedding_async,

@@ -15,7 +15,7 @@ import json
 import logging
 from typing import Any
 
-from AFO.utils.redis_connection import get_redis_client as get_redis_connection
+from afo.utils.redis_connection import get_redis_client as get_redis_connection
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -160,7 +160,11 @@ def get_cache_stats() -> dict[str, Any]:
 
     try:
         keys = client.keys("multimodal_rag:*")
-        return {"status": "healthy", "entries": len(keys), "keys_sample": keys[:5] if keys else []}
+        return {
+            "status": "healthy",
+            "entries": len(keys),
+            "keys_sample": keys[:5] if keys else [],
+        }
 
     except Exception as e:
         logger.warning(f"⚠️ Multimodal RAG Cache stats failed: {e}")

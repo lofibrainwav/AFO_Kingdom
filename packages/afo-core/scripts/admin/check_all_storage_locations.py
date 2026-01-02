@@ -34,7 +34,7 @@ def main():
     try:
         import psycopg2
 
-        from AFO.config.settings import get_settings
+        from afo.config.settings import get_settings
 
         settings = get_settings()
         conn = psycopg2.connect(

@@ -64,11 +64,11 @@ def verify_router_prefixes():
     for router_name, expected_prefix in routers_to_check:
         try:
             if router_name == "chancellor_router":
-                from AFO.api.routers.chancellor_router import router
+                from afo.api.routers.chancellor_router import router
             elif router_name == "grok_stream":
-                from AFO.api.routers.grok_stream import router
+                from afo.api.routers.grok_stream import router
             elif router_name == "learning_log_router":
-                from AFO.api.routers.learning_log_router import router
+                from afo.api.routers.learning_log_router import router
 
             actual_prefix = getattr(router, "prefix", "")
             is_correct = actual_prefix == expected_prefix

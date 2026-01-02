@@ -484,7 +484,7 @@ if execute_result.get("status") == "success":
     improvements = review_result.get("improvements", [])
     print(f"\n개선 사항: {len(improvements)}개")
     for imp in improvements:
-        print(f"\n- {imp.get('type', 'Unknown')}: {imp.get('description', '')}")
+        print(f"\n- {imp.get('type', 'code_improvement')}: {imp.get('description', '')}")
         print(f"  Priority: {imp.get('priority', 'medium')}")
         if imp.get("suggestion"):
             print(f"  Suggestion: {imp['suggestion']}")
@@ -552,4 +552,3 @@ print(state.outputs["EXECUTE"])  # Skill 실행 결과
 **작성일**: 2025-12-25  
 **버전**: 1.0.0  
 **Trinity Score**: 眞 95% | 善 90% | 美 90% | 孝 95% | 永 90%
-

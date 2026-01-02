@@ -85,9 +85,9 @@ from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
 
 # AFO Kingdom imports (clear and organized)
-from AFO.api.config import get_app_config, get_server_config
-from AFO.api.middleware import setup_middleware
-from AFO.api.router_manager import setup_routers
+from afo.api.config import get_app_config, get_server_config
+from afo.api.middleware import setup_middleware
+from afo.api.router_manager import setup_routers
 
 if TYPE_CHECKING:
     from fastapi import FastAPI
@@ -136,9 +136,11 @@ class AFOServer:
             from sentry_sdk.integrations.logging import LoggingIntegration
             from sentry_sdk.integrations.starlette import StarletteIntegration
 
-            # DSN should be configured via environment or config
-            # Using a placeholder for now as per user request
-            dsn = "https://your_sentry_dsn.ingest.sentry.io/1234567"
+            # DSN should be configured via environment
+            dsn = os.getenv("SENTRY_DSN")
+            if not dsn:
+                logger.info("ℹ️ Sentry DSN not found in environment, skipping initialization")
+                return
 
             sentry_sdk.init(
                 dsn=dsn,
@@ -217,7 +219,7 @@ class AFOServer:
 
         # Chancellor Router 직접 등록
         try:
-            from AFO.api.routers.chancellor_router import router as chancellor_router
+            from afo.api.routers.chancellor_router import router as chancellor_router
 
             app.include_router(chancellor_router)
             logger.info("Chancellor Router registered successfully")
@@ -232,6 +234,15 @@ class AFOServer:
             logger.info("Multimodal Router registered successfully")
         except Exception as e:
             logger.warning(f"Multimodal Router registration failed: {e}")
+
+        # DSPy MIPROv2 Router 등록 (Phase 2)
+        try:
+            from afo.api.routers.dspy_router import router as dspy_router
+
+            app.include_router(dspy_router)
+            logger.info("DSPy Router registered successfully")
+        except Exception as e:
+            logger.warning(f"DSPy Router registration failed: {e}")
 
         return app
 

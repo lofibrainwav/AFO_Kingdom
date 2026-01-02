@@ -481,7 +481,8 @@ def main():
         indexer = SkeletonIndexer()
         try:
             skeleton_index = indexer.load_index()
-        except:
+        except (FileNotFoundError, ValueError, OSError) as e:
+            print(f"인덱스 로드 실패 ({e}), 새 인덱스 생성 중...")
             skeleton_index = indexer.scan_folders()
             indexer.save_index(skeleton_index)
 

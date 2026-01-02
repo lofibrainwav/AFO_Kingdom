@@ -25,8 +25,8 @@ from typing import TYPE_CHECKING, Any
 
 import httpx
 
-from AFO.afo_skills_registry import register_core_skills
-from AFO.scholars.libraries.obsidian_bridge import LocalObsidianBridge
+from afo.afo_skills_registry import register_core_skills
+from afo.scholars.libraries.obsidian_bridge import LocalObsidianBridge
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -75,7 +75,7 @@ class YeongdeokScholar:
             self.model = getattr(settings, "OLLAMA_MODEL", self.SAGE_SAMAHWI)
         except ImportError:
             try:
-                from AFO.config.settings import get_settings
+                from afo.config.settings import get_settings
 
                 settings = get_settings()
                 self.base_url = settings.OLLAMA_BASE_URL
@@ -160,7 +160,7 @@ class YeongdeokScholar:
         """
         try:
             # 眞: Pydantic Validation (Input)
-            from AFO.schemas.sage import SageRequest, SageResponse, SageType
+            from afo.schemas.sage import SageRequest, SageResponse, SageType
 
             # Map string type to Enum if needed, or assume caller provides compatible string/enum
             # Here we assume sage_type is valid for logging/logic
@@ -216,7 +216,7 @@ class YeongdeokScholar:
         [사마휘] 파이썬 백엔드 전문가 (眞/善) - Hybrid (MLX Priority > Ollama)
         Refactored for Optimization: Single Path
         """
-        from AFO.schemas.sage import SageType
+        from afo.schemas.sage import SageType
 
         # 善: Pre-check MLX Model Availability (Serenity Logic)
         custom_logic = None
@@ -224,7 +224,7 @@ class YeongdeokScholar:
         # Only check if we are on Apple Silicon and MLX is importable
         if self._mlx_available:
             try:
-                from AFO.llms.mlx_adapter import samahwi_sage
+                from afo.llms.mlx_adapter import samahwi_sage
 
                 # Allow if path exists locally OR if it looks like a HF Hub ID (contains '/')
                 if os.path.exists(samahwi_sage.model_path) or "/" in samahwi_sage.model_path:
@@ -266,12 +266,12 @@ class YeongdeokScholar:
         """
         [좌자] 프론트엔드 전문가 (美/孝) - MLX Native
         """
-        from AFO.schemas.sage import SageType
+        from afo.schemas.sage import SageType
 
         async def _jwaja_mlx_logic(req: Any) -> str:
             import asyncio
 
-            from AFO.llms.mlx_adapter import jwaja_sage
+            from afo.llms.mlx_adapter import jwaja_sage
 
             return await asyncio.to_thread(
                 jwaja_sage.generate,
@@ -300,7 +300,7 @@ class YeongdeokScholar:
         """
         [화타] UX 카피라이터 (孝/美) - Qwen3-VL
         """
-        from AFO.schemas.sage import SageType
+        from afo.schemas.sage import SageType
 
         return await self._consult_sage_core(
             sage_type=SageType.HWATA,
@@ -371,13 +371,13 @@ class YeongdeokScholar:
         # For this task, I will mock the "Executor" or import the relevant library if available.
         # User asked for MCP usage.
 
-        # Let's assume standard MCP usage via `mcp` library if installed, or `AFO.api.routes.mcp_routes`.
+        # Let's assume standard MCP usage via `mcp` library if installed, or `afo.api.routes.mcp_routes`.
         # Given the constraint, I will implement a direct bridge for the requested capabilities here,
         # wrapping them as "using the skill".
 
         if tool_name == "skill_012_mcp_tool_bridge":
             try:
-                from AFO.services.mcp_stdio_client import call_tool, list_tools
+                from afo.services.mcp_stdio_client import call_tool, list_tools
 
                 action = (kwargs.get("action") or "list_tools").strip()
                 server_name = (kwargs.get("server") or "afo-ultimate-mcp").strip()

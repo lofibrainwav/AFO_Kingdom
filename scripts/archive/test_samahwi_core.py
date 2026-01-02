@@ -10,7 +10,7 @@ sys.path.append(
     ).resolve()
 )
 
-from AFO.agents.samahwi_core import samahwi
+from afo.agents.samahwi_core import samahwi
 
 
 async def main():

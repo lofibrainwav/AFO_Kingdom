@@ -7,7 +7,7 @@ Handles secret retrieval from Environment or HashiCorp Vault.
 import logging
 import os
 
-logger = logging.getLogger("AFO.Security")
+logger = logging.getLogger("afo.Security")
 
 
 class VaultManager:

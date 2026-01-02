@@ -12,7 +12,7 @@ sys.modules["input_storage"] = mock_storage
 sys.modules["api_wallet"] = mock_wallet_module
 
 # Now import the app
-from AFO.input_server import app, parse_env_text
+from afo.input_server import app, parse_env_text
 
 client = TestClient(app)
 
@@ -89,7 +89,7 @@ def test_add_key_success(mock_post):
     mock_post.return_value = MagicMock(status_code=200)
 
     # Ensure save_input_to_db is mockable via sys.modules or direct attribute
-    # Since we mocked input_storage at top, AFO.input_server.save_input_to_db is a Mock
+    # Since we mocked input_storage at top, afo.input_server.save_input_to_db is a Mock
 
     response = client.post(
         "/add_key",
@@ -121,7 +121,7 @@ def test_api_status(mock_http_get):
     mock_storage.get_input_statistics.return_value = {"count": 10}
 
     # Force INPUT_STORAGE_AVAILABLE to True for this test
-    with patch("AFO.input_server.INPUT_STORAGE_AVAILABLE", True):
+    with patch("afo.input_server.INPUT_STORAGE_AVAILABLE", True):
         response = client.get("/api/status")
         assert response.status_code == 200
         data = response.json()
@@ -155,13 +155,13 @@ def test_bulk_import_empty_handling():
 
 def test_get_history():
     mock_storage.get_input_history.return_value = [{"id": 1}]
-    with patch("AFO.input_server.INPUT_STORAGE_AVAILABLE", True):
+    with patch("afo.input_server.INPUT_STORAGE_AVAILABLE", True):
         response = client.get("/api/history")
         assert response.status_code == 200
         assert response.json()["count"] == 1
 
 
 def test_get_history_unavailable():
-    with patch("AFO.input_server.INPUT_STORAGE_AVAILABLE", False):
+    with patch("afo.input_server.INPUT_STORAGE_AVAILABLE", False):
         response = client.get("/api/history")
         assert response.status_code == 503

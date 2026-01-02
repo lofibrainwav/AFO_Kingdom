@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from AFO.services.hybrid_rag import (
+from afo.services.hybrid_rag import (
     blend_results,
     generate_answer,
     get_embedding,
@@ -61,7 +61,7 @@ def test_query_pgvector_logic() -> None:
     query_emb = [1.0, 0.0]
 
     # Patch register_vector to prevent it from trying to run SQL on mock_conn
-    with patch("AFO.services.hybrid_rag.register_vector", MagicMock()):
+    with patch("afo.services.hybrid_rag.register_vector", MagicMock()):
         results = query_pgvector(query_emb, top_k=2, pg_pool=mock_pool)
 
     assert len(results) == 2

@@ -121,7 +121,9 @@ class EvidenceIndexGenerator:
         trend = {
             "direction": "stable",
             "avg_daily_change": round(statistics.mean(changes), 3) if changes else 0.0,
-            "volatility": (round(statistics.stdev(changes), 3) if len(changes) > 1 else 0.0),
+            "volatility": (
+                round(statistics.stdev(changes), 3) if len(changes) > 1 else 0.0
+            ),
             "consistency_score": round(
                 1.0 - (statistics.stdev(changes) if len(changes) > 1 else 0), 3
             ),
@@ -141,7 +143,9 @@ class EvidenceIndexGenerator:
 
     def identify_failure_patterns(self, all_evidence: list[dict]) -> dict[str, Any]:
         """Analyze failure patterns and root causes"""
-        failures = [ev for ev in all_evidence if ev and ev["calculation"]["gate"] != "AUTO_RUN"]
+        failures = [
+            ev for ev in all_evidence if ev and ev["calculation"]["gate"] != "AUTO_RUN"
+        ]
 
         if not failures:
             return {

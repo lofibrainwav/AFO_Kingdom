@@ -3,7 +3,6 @@ import os
 import re
 from pathlib import Path
 
-
 # Configuration
 DOCS_DIR = Path("docs")
 LOCAL_USER_PATH = "/Users/brnestrm"

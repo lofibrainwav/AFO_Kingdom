@@ -11,7 +11,7 @@ from pathlib import Path
 core_path = Path(__file__).parent.parent / "packages" / "afo-core"
 sys.path.insert(0, str(core_path))
 
-from AFO.afo_skills_registry import register_core_skills
+from afo.afo_skills_registry import register_core_skills
 
 # Python 패키지 매핑 (스킬 의존성 → 실제 패키지명)
 PACKAGE_MAPPING = {
@@ -83,7 +83,7 @@ def check_custom_verification(dep_name: str) -> tuple[bool, str]:
 
     if dep_name == "ai-analysis":
         # AFO Core 존재 확인
-        core_path = repo_root / "packages" / "afo-core" / "AFO"
+        core_path = repo_root / "packages" / "afo-core" / "afo"
         if core_path.exists():
             return True, "AFO Core Analysis Verified"
         return False, "AFO Core Missing"

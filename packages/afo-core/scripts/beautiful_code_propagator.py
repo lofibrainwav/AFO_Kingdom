@@ -26,10 +26,10 @@ from typing import Optional
 
 # AFO Kingdom imports
 try:
-    from AFO.observability.rule_constants import WEIGHTS
-    from AFO.services.trinity_calculator import TrinityCalculator, trinity_calculator
+    from afo.observability.rule_constants import WEIGHTS
+    from afo.services.trinity_calculator import TrinityCalculator, trinity_calculator
 except ImportError:
-    print("❌ AFO Kingdom modules not found. Please run from AFO Kingdom root.")
+    print("❌ AFO Kingdom modules not found. Please run from afo Kingdom root.")
     sys.exit(1)
 
 # Configure logging

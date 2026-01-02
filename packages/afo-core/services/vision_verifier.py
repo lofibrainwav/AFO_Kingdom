@@ -10,7 +10,7 @@ import logging
 from pathlib import Path
 from typing import Any
 
-from AFO.utils.playwright_bridge import bridge
+from afo.utils.playwright_bridge import bridge
 
 logger = logging.getLogger("afo.services.vision_verifier")
 

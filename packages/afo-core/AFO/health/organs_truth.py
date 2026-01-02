@@ -118,7 +118,11 @@ def build_organs_final(
 
     # ABSOLUTE TRUTH: Self-check
     organs["肺_API_Server"] = OrganReport(
-        status="healthy", score=100, output="Self-check: Responding", probe="self", latency_ms=0
+        status="healthy",
+        score=100,
+        output="Self-check: Responding",
+        probe="self",
+        latency_ms=0,
     )
     print(
         f">>>>>>>>>>>>>>>> API SERVER STATUS: {organs['肺_API_Server']} <<<<<<<<<<<<<<<<",
@@ -146,7 +150,11 @@ def build_organs_final(
         status="healthy", score=90, output="Manifesto OK", probe="static", latency_ms=0
     )
     organs["骨_CI"] = OrganReport(
-        status="healthy", score=88, output="Pipeline Green", probe="static", latency_ms=0
+        status="healthy",
+        score=88,
+        output="Pipeline Green",
+        probe="static",
+        latency_ms=0,
     )
 
     # Security Pillar (simplified for reliability)

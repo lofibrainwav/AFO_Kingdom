@@ -119,7 +119,7 @@ async def _check_truth_pillar() -> dict[str, Any]:
     # 3. 사실 검증 도구 확인
     try:
         # verify_fact 도구 존재 확인
-        from AFO.afo_skills_registry import register_core_skills
+        from afo.afo_skills_registry import register_core_skills
 
         registry = register_core_skills()
         skills = registry.list_all()
@@ -170,7 +170,7 @@ async def _check_goodness_pillar() -> dict[str, Any]:
     except ImportError:
         # Fallback to deprecated V1
         try:
-            from AFO.chancellor_graph import chancellor_graph
+            from afo.chancellor_graph import chancellor_graph
 
             checks["auto_run_gate"] = chancellor_graph is not None
         except ImportError:
@@ -178,7 +178,7 @@ async def _check_goodness_pillar() -> dict[str, Any]:
 
     # 2. DRY_RUN 기본값 확인
     try:
-        from AFO.config.antigravity import antigravity
+        from afo.config.antigravity import antigravity
 
         checks["dry_run_default"] = antigravity.DRY_RUN_DEFAULT is True
     except Exception as e:
@@ -186,7 +186,7 @@ async def _check_goodness_pillar() -> dict[str, Any]:
 
     # 3. CAI 엔진 확인
     try:
-        from AFO.constitution.constitutional_ai import AFOConstitution
+        from afo.constitution.constitutional_ai import AFOConstitution
 
         checks["cai_engine"] = AFOConstitution is not None and hasattr(
             AFOConstitution, "evaluate_compliance"
@@ -274,7 +274,7 @@ async def _check_serenity_pillar() -> dict[str, Any]:
 
     # 1. MCP 도구 점검
     try:
-        from AFO.config.health_check_config import health_check_config
+        from afo.config.health_check_config import health_check_config
 
         checks["mcp_tools"] = len(health_check_config.MCP_SERVERS) > 0
     except Exception as e:
@@ -282,7 +282,7 @@ async def _check_serenity_pillar() -> dict[str, Any]:
 
     # 2. 오장육부 건강도 확인
     try:
-        from AFO.services.health_service import get_comprehensive_health
+        from afo.services.health_service import get_comprehensive_health
 
         health_data = await get_comprehensive_health()
         organs = health_data.get("organs", [])
@@ -334,7 +334,7 @@ async def _check_eternity_pillar() -> dict[str, Any]:
 
     # 2. Project Genesis 모드 확인
     try:
-        from AFO.config.antigravity import antigravity
+        from afo.config.antigravity import antigravity
 
         checks["genesis_mode"] = antigravity.SELF_EXPANDING_MODE is True
     except Exception as e:

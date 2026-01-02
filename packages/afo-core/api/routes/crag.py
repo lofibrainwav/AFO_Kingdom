@@ -37,7 +37,7 @@ except ImportError:
 
 # AFO LLM Router 사용 (Ollama → Gemini → Claude → OpenAI fallback)
 try:
-    from AFO.llm_router import LLMRouter
+    from afo.llm_router import LLMRouter
 
     LLM_ROUTER_AVAILABLE = True
     llm_router: LLMRouter | None = LLMRouter()
@@ -64,7 +64,7 @@ web_search = None
 if TAVILY_AVAILABLE:
     # Phase 2-4: settings 사용
     try:
-        from AFO.config.settings import get_settings
+        from afo.config.settings import get_settings
 
         settings = get_settings()
         tavily_key = settings.TAVILY_API_KEY

@@ -65,7 +65,7 @@ def _create_receipt(repo_root: Path, *, out_name: str = "") -> Path:
     cmd = [sys.executable, str(bundle)]
     if out_name:
         cmd.extend(["--out", out_name])
-    p = subprocess.run(cmd, text=True, capture_output=True)
+    p = subprocess.run(cmd, check=False, text=True, capture_output=True)
     out_dir = (
         (p.stdout or "").strip().splitlines()[-1] if (p.stdout or "").strip() else ""
     )
@@ -2381,7 +2381,7 @@ def main(argv: list[str] | None = None) -> int:
                     receipt_dir = _latest_receipt_dir(repo_root)
 
             _handoff(
-                repo_root=repo_root if repo_root else Path.cwd(),
+                repo_root=repo_root or Path.cwd(),
                 receipt_dir=receipt_dir,
                 next_agent=args.to,
                 task=args.task,

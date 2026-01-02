@@ -6,7 +6,7 @@ import sys
 # Add package root to path
 sys.path.append(os.path.join(pathlib.Path.cwd(), "packages/afo-core"))
 
-from AFO.start.serenity.vision_verifier import VisionVerifier
+from afo.start.serenity.vision_verifier import VisionVerifier
 
 
 async def main():

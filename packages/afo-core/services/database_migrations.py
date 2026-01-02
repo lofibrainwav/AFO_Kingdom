@@ -197,7 +197,7 @@ async def run_user_system_migration() -> dict[str, Any]:
     Returns:
         마이그레이션 결과
     """
-    from AFO.services.database import get_db_connection
+    from afo.services.database import get_db_connection
 
     try:
         conn = await get_db_connection()

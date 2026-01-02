@@ -21,7 +21,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from AFO.chancellor_graph import ChancellorContext, ChancellorNode
+from afo.chancellor_graph import ChancellorContext, ChancellorNode
 from afo.trinity_metric_wrapper import TrinityScore
 
 logger = logging.getLogger(__name__)
@@ -505,7 +505,8 @@ class CodeReviewCoordinator:
         """Safe agent review with timeout"""
         try:
             return await asyncio.wait_for(
-                agent.review_code(code, file_path, self.config), timeout=self.config.timeout_seconds
+                agent.review_code(code, file_path, self.config),
+                timeout=self.config.timeout_seconds,
             )
         except TimeoutError:
             raise RuntimeError(f"Agent {agent.agent_id} timed out")

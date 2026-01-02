@@ -8,7 +8,7 @@ sys.path.append(
     ).resolve()
 )
 
-from AFO.domain.metrics.trinity_manager import trinity_manager
+from afo.domain.metrics.trinity_manager import trinity_manager
 
 
 def verify_trinity_dynamic():

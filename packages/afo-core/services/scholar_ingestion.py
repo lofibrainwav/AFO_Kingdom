@@ -13,7 +13,7 @@ try:
     from qdrant_client import QdrantClient
     from qdrant_client.http import models as models
 
-    from AFO.services.hybrid_rag import query_graph_context, query_qdrant
+    from afo.services.hybrid_rag import query_graph_context, query_qdrant
 
     _HAS_DEPS = True
 except ImportError:
@@ -91,7 +91,7 @@ class ScholarIngestionService:
 
     def _get_embedding(self, text: str) -> list[float]:
         # Use services.hybrid_rag.get_embedding if available, else random
-        from AFO.services.hybrid_rag import get_embedding
+        from afo.services.hybrid_rag import get_embedding
 
         # Mock client for now or real
         return get_embedding(text, None)

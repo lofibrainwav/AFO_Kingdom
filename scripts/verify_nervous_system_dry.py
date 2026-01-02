@@ -6,10 +6,10 @@ import sys
 # Add package root to path
 sys.path.append(os.path.join(pathlib.Path.cwd(), "packages/afo-core"))
 
-from AFO.guardians.critic_agent import CriticAgent
-from AFO.julie_cpa.services.julie_service import JulieService
-from AFO.start.serenity.genui_orchestrator import GenUIOrchestrator
-from AFO.start.serenity.vision_verifier import VisionVerifier
+from afo.guardians.critic_agent import CriticAgent
+from afo.julie_cpa.services.julie_service import JulieService
+from afo.start.serenity.genui_orchestrator import GenUIOrchestrator
+from afo.start.serenity.vision_verifier import VisionVerifier
 
 
 async def main():

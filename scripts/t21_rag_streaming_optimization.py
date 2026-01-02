@@ -8,20 +8,16 @@ Phase 2 Critical: T2.1 RAG 스트리밍 최적화
 
 import asyncio
 import json
-
 # Add the packages directory to Python path
 import sys
 import time
 from pathlib import Path
 
-
 sys.path.insert(0, str(Path(__file__).parent.parent / "packages" / "afo-core"))
 
-from afo.rag.llamaindex_streaming_rag import (
-    get_streaming_rag_health,
-    get_streaming_rag_service,
-    stream_rag_query,
-)
+from afo.rag.llamaindex_streaming_rag import (get_streaming_rag_health,
+                                              get_streaming_rag_service,
+                                              stream_rag_query)
 
 
 async def test_streaming_rag():
@@ -63,12 +59,16 @@ async def test_streaming_rag():
                     total_tokens = chunk["total_tokens"]
                     # Print first few characters of each chunk for demo
                     if chunks_received <= 5:  # Only show first 5 chunks
-                        print(f"📄 청크 {chunk['chunk_id']}: {chunk['content'][:50]}...")
+                        print(
+                            f"📄 청크 {chunk['chunk_id']}: {chunk['content'][:50]}..."
+                        )
 
                 elif chunk["type"] == "complete":
                     total_time = chunk["total_time"]
                     tokens_per_sec = chunk["tokens_per_second"]
-                    print(f"✅ 완료: {total_time}초, {total_tokens} 토큰, {tokens_per_sec} 토큰/초")
+                    print(
+                        f"✅ 완료: {total_time}초, {total_tokens} 토큰, {tokens_per_sec} 토큰/초"
+                    )
                     streaming_chunks.append(chunk)
 
                 elif chunk["type"] == "error":
@@ -94,12 +94,14 @@ async def test_streaming_rag():
 
         except Exception as e:
             print(f"❌ 예외 발생: {e}")
-            results.append({
-                "query_id": i,
-                "query": query,
-                "error": str(e),
-                "success": False,
-            })
+            results.append(
+                {
+                    "query_id": i,
+                    "query": query,
+                    "error": str(e),
+                    "success": False,
+                }
+            )
 
     # Generate comprehensive report
     report = {
@@ -153,8 +155,12 @@ async def test_streaming_rag():
     print(
         f"📊 테스트 완료: {report['performance_summary']['successful_queries']}/{report['performance_summary']['total_queries']} 성공"
     )
-    print(f"⚡ 평균 응답 시간: {report['performance_summary']['average_response_time']}초")
-    print(f"🎯 총 토큰 생성: {report['performance_summary']['total_tokens_generated']} 토큰")
+    print(
+        f"⚡ 평균 응답 시간: {report['performance_summary']['average_response_time']}초"
+    )
+    print(
+        f"🎯 총 토큰 생성: {report['performance_summary']['total_tokens_generated']} 토큰"
+    )
 
     return report
 
@@ -173,7 +179,9 @@ async def main():
         print(
             f"   - 예상 성과: Trinity Score {report['trinity_score_impact']['before_optimization']}% → {report['trinity_score_impact']['expected_after']}%"
         )
-        print(f"   - 증거 파일: {report.get('output_file', 'artifacts/t21_rag_streaming/*.jsonl')}")
+        print(
+            f"   - 증거 파일: {report.get('output_file', 'artifacts/t21_rag_streaming/*.jsonl')}"
+        )
 
     except Exception as e:
         print(f"❌ T2.1 테스트 실패: {e}")

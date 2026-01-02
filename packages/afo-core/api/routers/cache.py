@@ -8,7 +8,7 @@ from typing import Any
 
 from fastapi import APIRouter, HTTPException
 
-from AFO.cache import get_cache_metrics
+from afo.cache import get_cache_metrics
 
 router = APIRouter(prefix="/api/cache", tags=["Cache Metrics"])
 

@@ -46,7 +46,7 @@ class Historian:
 
         # 2. Persist to PostgreSQL via AuditTrail (Liver/Eternity)
         try:
-            from AFO.domain.audit.trail import AuditTrail
+            from afo.domain.audit.trail import AuditTrail
 
             audit = AuditTrail()
             # Risk score is inverted goodness, if not in metadata, we estimate from trinity

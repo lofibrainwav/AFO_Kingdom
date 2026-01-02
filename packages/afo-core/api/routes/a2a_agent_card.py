@@ -48,10 +48,14 @@ def _get_dynamic_skills() -> list[AgentSkill]:
             description="Trinity Score 기반 라우팅 및 철학 평가",
         ),
         AgentSkill(
-            id="trinity_evaluate", name="철학 평가", description="眞善美孝永 5대 가치 점수 계산"
+            id="trinity_evaluate",
+            name="철학 평가",
+            description="眞善美孝永 5대 가치 점수 계산",
         ),
         AgentSkill(
-            id="health_check", name="건강 체크", description="시스템 상태 및 오장육부 모니터링"
+            id="health_check",
+            name="건강 체크",
+            description="시스템 상태 및 오장육부 모니터링",
         ),
         AgentSkill(
             id="multi_agent_orchestration",

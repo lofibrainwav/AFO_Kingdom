@@ -224,9 +224,11 @@ class TaxCalculator:
                 "deduction": ca_deduction,
             },
             "total_tax": federal_tax + ca_tax,
-            "effective_rate": (federal_tax + ca_tax) / tax_input.gross_income
-            if tax_input.gross_income > 0
-            else 0.0,
+            "effective_rate": (
+                (federal_tax + ca_tax) / tax_input.gross_income
+                if tax_input.gross_income > 0
+                else 0.0
+            ),
             "input_summary": {
                 "filing_status": tax_input.filing_status,
                 "gross_income": tax_input.gross_income,

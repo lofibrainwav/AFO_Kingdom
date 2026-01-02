@@ -64,7 +64,7 @@ def simulate_router_registration():
 
     # 1. Comprehensive Health
     try:
-        from AFO.api.routes.comprehensive_health import \
+        from afo.api.routes.comprehensive_health import \
             router as comprehensive_health_router
 
         app.include_router(comprehensive_health_router)
@@ -121,7 +121,7 @@ def simulate_router_registration():
 
     # 3. Family
     try:
-        from AFO.api.routers.family import router as family_router
+        from afo.api.routers.family import router as family_router
 
         app.include_router(family_router)
         app.include_router(family_router, prefix="/api")

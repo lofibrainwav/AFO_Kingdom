@@ -8,7 +8,7 @@ sys.path.append("/Users/brnestrm/AFO_Kingdom/packages/afo-core")
 # Configure Logging to stdout
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 
-from AFO.scholars.yeongdeok import yeongdeok
+from afo.scholars.yeongdeok import yeongdeok
 
 
 async def verify_serenity():

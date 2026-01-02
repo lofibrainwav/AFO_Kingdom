@@ -25,14 +25,14 @@ class CacheManager:
         self.enabled: bool = False
         # Phase 2 리팩터링: redis_connection 모듈 직접 사용 (간소화)
         try:
-            from AFO.utils.redis_connection import get_redis_client
+            from afo.utils.redis_connection import get_redis_client
 
             self.redis = get_redis_client()
             self.enabled = True
         except ImportError:
             # 첫 번째 fallback: get_redis_url 사용
             try:
-                from AFO.utils.redis_connection import get_redis_url
+                from afo.utils.redis_connection import get_redis_url
 
                 redis_url = get_redis_url()
                 self.redis = redis.from_url(redis_url)

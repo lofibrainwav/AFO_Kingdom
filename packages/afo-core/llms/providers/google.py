@@ -6,12 +6,12 @@ Google Gemini Provider for AFO Kingdom
 import logging
 from typing import Any
 
-from AFO.llm_router import LLMConfig
+from afo.llm_router import LLMConfig
 
 from .base import BaseLLMProvider
 
 try:
-    from AFO.llms.gemini_api import gemini_api
+    from afo.llms.gemini_api import gemini_api
 except ImportError:
     gemini_api = None  # type: ignore[assignment]
 

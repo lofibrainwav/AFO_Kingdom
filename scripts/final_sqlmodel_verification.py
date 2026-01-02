@@ -85,7 +85,7 @@ def verify_imports():
 
     # 2. LearningLog 모델
     try:
-        from AFO.models.learning_log import LearningLog
+        from afo.models.learning_log import LearningLog
 
         fields = list(LearningLog.model_fields.keys())
         results["LearningLog"] = {"status": "success", "fields": fields}
@@ -112,7 +112,7 @@ def verify_imports():
 
     # 3. Learning Log Router
     try:
-        from AFO.api.routers.learning_log_router import router
+        from afo.api.routers.learning_log_router import router
 
         prefix = getattr(router, "prefix", "N/A")
         results["router"] = {"status": "success", "prefix": prefix}

@@ -19,7 +19,7 @@ from typing import Any
 
 from fastapi import FastAPI
 
-from AFO.api.compat import get_settings_safe
+from afo.api.compat import get_settings_safe
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -111,7 +111,7 @@ class AppFactory:
             Configured FastAPI application
         """
         try:
-            from AFO.api.metadata import get_api_metadata
+            from afo.api.metadata import get_api_metadata
 
             metadata = get_api_metadata()
 
@@ -188,7 +188,7 @@ class LifespanManager:
         """
         try:
             # Import here to avoid circular imports
-            from AFO.api.initialization import initialize_system
+            from afo.api.initialization import initialize_system
 
             await initialize_system()
             logger.debug("System initialization completed")
@@ -207,7 +207,7 @@ class LifespanManager:
         """
         try:
             # Import here to avoid circular imports
-            from AFO.api.cleanup import cleanup_system
+            from afo.api.cleanup import cleanup_system
 
             await cleanup_system()
             logger.debug("System cleanup completed")

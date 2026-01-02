@@ -6,7 +6,7 @@
 from abc import ABC, abstractmethod
 from decimal import Decimal, getcontext
 
-from AFO.security.vault_manager import vault as vault_manager
+from afo.security.vault_manager import vault as vault_manager
 from services.trinity_calculator import trinity_calculator
 
 # Set Decimal Precision

@@ -2,9 +2,12 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
-from AFO.bayesian_tuner import BayesianTuner, TuningCandidate
-from AFO.trinity_metric_wrapper import TrinityMetricWrapper, TrinityMetricResult
+from afo.bayesian_tuner import BayesianTuner, TuningCandidate
+
+if TYPE_CHECKING:
+    from afo.trinity_metric_wrapper import TrinityMetricResult, TrinityMetricWrapper
 
 
 @dataclass(frozen=True)

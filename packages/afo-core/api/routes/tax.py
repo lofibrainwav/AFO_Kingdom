@@ -40,7 +40,9 @@ class TaxEstimateRequest(BaseModel):
     # 개인 플래그
     is_dependent: bool = Field(default=False, description="부양가족 여부", examples=[False])
     age_65_or_over: bool = Field(
-        default=False, description="65세 이상 여부 (OBBBA 고령자 공제 적용)", examples=[True]
+        default=False,
+        description="65세 이상 여부 (OBBBA 고령자 공제 적용)",
+        examples=[True],
     )
     blind: bool = Field(default=False, description="시각장애인 여부", examples=[False])
 
@@ -54,7 +56,10 @@ class TaxEstimateRequest(BaseModel):
 
     # MAGI (고령자 보너스 공제 계산용)
     magi: float | None = Field(
-        default=None, ge=0, description="Modified AGI (65세 이상 공제 계산용)", examples=[75000.0]
+        default=None,
+        ge=0,
+        description="Modified AGI (65세 이상 공제 계산용)",
+        examples=[75000.0],
     )
 
 
@@ -117,12 +122,14 @@ async def estimate_tax(request: TaxEstimateRequest) -> TaxEstimateResponse:
                 age_65_or_over=request.age_65_or_over,
                 blind=request.blind,
             ),
-            spouse_flags=PersonFlags(
-                age_65_or_over=request.spouse_age_65_or_over or False,
-                blind=request.spouse_blind or False,
-            )
-            if request.filing_status in ("MARRIED_FILING_JOINTLY", "MARRIED_FILING_SEPARATELY")
-            else None,
+            spouse_flags=(
+                PersonFlags(
+                    age_65_or_over=request.spouse_age_65_or_over or False,
+                    blind=request.spouse_blind or False,
+                )
+                if request.filing_status in ("MARRIED_FILING_JOINTLY", "MARRIED_FILING_SEPARATELY")
+                else None
+            ),
             magi=request.magi,
         )
 

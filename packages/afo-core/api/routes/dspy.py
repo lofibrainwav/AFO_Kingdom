@@ -24,7 +24,6 @@ except ImportError:
 
 from afo.context7 import Context7Manager
 from afo.skills.skill_registry import SkillRegistry
-
 from afo.trinity_metric_wrapper import TrinityMetricWrapper
 
 router = APIRouter(prefix="/dspy", tags=["DSPy Optimization"])
@@ -222,7 +221,8 @@ async def optimize_prompt(request: OptimizationRequest, background_tasks: Backgr
 
         if len(trainset) < 5:
             raise HTTPException(
-                status_code=400, detail="Insufficient training data. Need at least 5 examples."
+                status_code=400,
+                detail="Insufficient training data. Need at least 5 examples.",
             )
 
         # Configure optimization

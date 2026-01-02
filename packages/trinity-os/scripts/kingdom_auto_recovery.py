@@ -54,6 +54,7 @@ class AutoRecovery:
             try:
                 proc_result = subprocess.run(
                     command,
+                    check=False,
                     capture_output=True,
                     text=True,
                     timeout=60,
@@ -111,6 +112,7 @@ class AutoRecovery:
                 try:
                     proc_result = subprocess.run(
                         alt_command,
+                        check=False,
                         capture_output=True,
                         text=True,
                         timeout=60,
@@ -285,10 +287,9 @@ class AutoRecovery:
         """권장사항 생성"""
         if failed == 0:
             return "✅ 모든 복구 성공"
-        elif successful > failed:
+        if successful > failed:
             return "⚠️ 일부 복구 실패. 수동 확인 권장"
-        else:
-            return "🚨 복구 실패 다수. 즉시 수동 개입 필요"
+        return "🚨 복구 실패 다수. 즉시 수동 개입 필요"
 
 
 def main():

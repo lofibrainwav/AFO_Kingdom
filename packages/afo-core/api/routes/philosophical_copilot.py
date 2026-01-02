@@ -15,9 +15,9 @@ from typing import Any, cast
 from fastapi import APIRouter, Depends, Header, HTTPException, status
 from pydantic import BaseModel
 
-from AFO.config.settings import AFOSettings as Settings
-from AFO.services.antigravity_engine import AntigravityEngine
-from AFO.services.trinity_calculator import TrinityCalculator
+from afo.config.settings import AFOSettings as Settings
+from afo.services.antigravity_engine import AntigravityEngine
+from afo.services.trinity_calculator import TrinityCalculator
 
 # 로깅 설정 (손자병법: 지피지기)
 logger = logging.getLogger(__name__)
@@ -31,7 +31,8 @@ def require_internal_secret(
     expected = os.getenv("AFO_INTERNAL_SECRET")
     if not expected:
         raise HTTPException(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="internal secret not configured"
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="internal secret not configured",
         )
     if x_internal_secret != expected:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="unauthorized")

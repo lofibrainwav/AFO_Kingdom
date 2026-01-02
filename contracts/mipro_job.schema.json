@@ -1,0 +1,22 @@
+{
+  "type": "object",
+  "required": ["task_id", "dataset_ref", "max_trials", "budget", "trinity_weights", "dry_run"],
+  "properties": {
+    "task_id": { "type": "string" },
+    "dataset_ref": { "type": "string" },
+    "max_trials": { "type": "integer", "minimum": 1 },
+    "budget": { "type": "number", "minimum": 0 },
+    "trinity_weights": {
+      "type": "object",
+      "required": ["truth", "goodness", "beauty", "serenity", "eternity"],
+      "properties": {
+        "truth": { "type": "number" },
+        "goodness": { "type": "number" },
+        "beauty": { "type": "number" },
+        "serenity": { "type": "number" },
+        "eternity": { "type": "number" }
+      }
+    },
+    "dry_run": { "type": "boolean" }
+  }
+}

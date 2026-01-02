@@ -37,6 +37,7 @@ class ProblemDetector:
         try:
             result = subprocess.run(
                 'find . -type d -name "__pycache__" 2>/dev/null | wc -l',
+                check=False,
                 shell=True,
                 capture_output=True,
                 text=True,
@@ -72,6 +73,7 @@ class ProblemDetector:
         try:
             result = subprocess.run(
                 'find . -name "node_modules" -type d -not -path "*/afo-frontend/*" -not -path "*/trinity-dashboard/*" 2>/dev/null | wc -l',
+                check=False,
                 shell=True,
                 capture_output=True,
                 text=True,
@@ -106,6 +108,7 @@ class ProblemDetector:
         try:
             result = subprocess.run(
                 "df -h . | tail -1 | awk '{print $5}' | sed 's/%//'",
+                check=False,
                 shell=True,
                 capture_output=True,
                 text=True,
@@ -148,6 +151,7 @@ class ProblemDetector:
             # Docker 컨테이너 찾기
             result = subprocess.run(
                 "docker ps --format '{{.Names}}' | grep -i redis | head -1",
+                check=False,
                 shell=True,
                 capture_output=True,
                 text=True,
@@ -158,6 +162,7 @@ class ProblemDetector:
             # Redis ping 테스트
             result = subprocess.run(
                 f"docker exec {redis_container} redis-cli PING 2>/dev/null",
+                check=False,
                 shell=True,
                 capture_output=True,
                 text=True,
@@ -191,6 +196,7 @@ class ProblemDetector:
         try:
             result = subprocess.run(
                 "docker ps --format '{{.Names}}' | grep -i postgres | head -1",
+                check=False,
                 shell=True,
                 capture_output=True,
                 text=True,
@@ -200,6 +206,7 @@ class ProblemDetector:
 
             result = subprocess.run(
                 f"docker exec {postgres_container} pg_isready -U afo 2>/dev/null",
+                check=False,
                 shell=True,
                 capture_output=True,
                 text=True,
@@ -233,6 +240,7 @@ class ProblemDetector:
         try:
             result = subprocess.run(
                 "curl -sf http://localhost:8000/health 2>/dev/null | jq -r '.status' 2>/dev/null || echo 'down'",
+                check=False,
                 shell=True,
                 capture_output=True,
                 text=True,
@@ -279,6 +287,7 @@ class ProblemDetector:
             try:
                 result = subprocess.run(
                     f"find . -name '{pattern}' -type f 2>/dev/null | wc -l",
+                    check=False,
                     shell=True,
                     capture_output=True,
                     text=True,
@@ -330,6 +339,7 @@ class ProblemDetector:
             try:
                 result = subprocess.run(
                     f"find . -maxdepth 1 -name '{pattern}' -type f 2>/dev/null | wc -l",
+                    check=False,
                     shell=True,
                     capture_output=True,
                     text=True,
@@ -358,6 +368,7 @@ class ProblemDetector:
             # Python 파일만 체크 (venv 제외)
             result = subprocess.run(
                 "grep -rn 'password=' --include='*.py' . 2>/dev/null | grep -v venv | grep -v '.env' | wc -l",  # nosec
+                check=False,
                 shell=True,
                 capture_output=True,
                 text=True,
@@ -390,6 +401,7 @@ class ProblemDetector:
                     "python3",
                     str(AFO_ROOT / ".claude" / "scripts" / "check_11_organs.py"),
                 ],
+                check=False,
                 capture_output=True,
                 text=True,
                 timeout=30,
@@ -398,8 +410,7 @@ class ProblemDetector:
             if result.returncode == 0:
                 health_data = json.loads(result.stdout)
                 return health_data
-            else:
-                return {"error": "Health check failed", "output": result.stderr[:200]}
+            return {"error": "Health check failed", "output": result.stderr[:200]}
         except Exception as e:
             return {"error": f"Health check exception: {e!s}"}
 
@@ -626,12 +637,11 @@ class ProblemDetector:
         """권장사항 생성"""
         if summary["critical"] > 0:
             return f"🚨 긴급: Critical 문제 {summary['critical']}개 즉시 해결 필요"
-        elif summary["high"] > 0:
+        if summary["high"] > 0:
             return f"⚠️ 중요: High 문제 {summary['high']}개 빠른 시일 내 해결 권장"
-        elif summary["medium"] > 0:
+        if summary["medium"] > 0:
             return f"💡 개선: Medium 문제 {summary['medium']}개 중기 개선 권장"
-        else:
-            return "✅ 문제 없음: 모든 시스템 정상"
+        return "✅ 문제 없음: 모든 시스템 정상"
 
 
 def main():

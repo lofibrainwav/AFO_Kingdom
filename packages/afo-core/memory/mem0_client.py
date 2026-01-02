@@ -124,11 +124,21 @@ class AFO_MemoryClient:
             self.performance_stats["total_latency_ms"] += latency
             self.performance_stats["last_operation"] = "add"
 
-            return {"success": True, "result": result, "latency_ms": latency, "user_id": user_id}
+            return {
+                "success": True,
+                "result": result,
+                "latency_ms": latency,
+                "user_id": user_id,
+            }
 
         except Exception as e:
             latency = (time.time() - start_time) * 1000
-            return {"success": False, "error": str(e), "latency_ms": latency, "user_id": user_id}
+            return {
+                "success": False,
+                "error": str(e),
+                "latency_ms": latency,
+                "user_id": user_id,
+            }
 
     def search_memory(
         self, query: str, user_id: str, limit: int = 5, session_id: str | None = None
@@ -196,7 +206,12 @@ class AFO_MemoryClient:
 
         except Exception as e:
             latency = (time.time() - start_time) * 1000
-            return {"success": False, "error": str(e), "latency_ms": latency, "user_id": user_id}
+            return {
+                "success": False,
+                "error": str(e),
+                "latency_ms": latency,
+                "user_id": user_id,
+            }
 
     def get_all_memories(self, user_id: str, session_id: str | None = None) -> dict[str, Any]:
         """
@@ -236,7 +251,12 @@ class AFO_MemoryClient:
 
         except Exception as e:
             latency = (time.time() - start_time) * 1000
-            return {"success": False, "error": str(e), "latency_ms": latency, "user_id": user_id}
+            return {
+                "success": False,
+                "error": str(e),
+                "latency_ms": latency,
+                "user_id": user_id,
+            }
 
     def get_performance_stats(self) -> dict[str, Any]:
         """

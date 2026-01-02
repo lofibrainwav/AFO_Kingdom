@@ -9,7 +9,6 @@ import subprocess
 import sys
 from pathlib import Path
 
-
 # 프로젝트 루트
 project_root = Path(__file__).parent.parent
 

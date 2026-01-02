@@ -3,12 +3,12 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
-from AFO.observability.verdict_event import Decision, VerdictEvent, VerdictFlags
+from afo.observability.verdict_event import Decision, VerdictEvent, VerdictFlags
 
 if TYPE_CHECKING:
     from collections.abc import Mapping
 
-    from AFO.observability.verdict_logger import VerdictLogger
+    from afo.observability.verdict_logger import VerdictLogger
 
 
 def build_verdict_event(

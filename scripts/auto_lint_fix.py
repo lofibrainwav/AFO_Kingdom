@@ -335,7 +335,7 @@ class AutoLintFixSystem:
         try:
             # Trinity Calculator 임포트
             try:
-                from AFO.services.trinity_calculator import trinity_calculator
+                from afo.services.trinity_calculator import trinity_calculator
 
                 calculator_available = True
             except ImportError:
@@ -356,7 +356,7 @@ class AutoLintFixSystem:
 
             # Antigravity 거버넌스 체크
             try:
-                from AFO.config.antigravity import antigravity
+                from afo.config.antigravity import antigravity
 
                 is_eligible, reason = antigravity.check_auto_run_eligibility(
                     final_score, 5.0

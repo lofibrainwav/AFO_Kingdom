@@ -12,7 +12,7 @@ from typing import Any
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
-from AFO.api.compat import (
+from afo.api.compat import (
     get_personas_list,
     get_philosophy_pillars,
     get_project_stats,

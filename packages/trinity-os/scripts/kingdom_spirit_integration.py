@@ -120,7 +120,6 @@ class SpiritIntegration:
         beauty_score: float | None = None,
     ) -> dict[str, Any]:
         """작업 평가 (眞善美孝永 점수 계산)"""
-
         # 眞(Truth): 문제 감지 정확도, 해결 검증
         if truth_score is None:
             # operation_data에서 추론
@@ -301,12 +300,11 @@ class SpiritIntegration:
 
         if total_score >= 0.9 and balance_gap < 0.3:
             return "🎉 완벽한 상태! 왕국 정신 완벽히 유지"
-        elif total_score >= 0.8:
+        if total_score >= 0.8:
             return "✅ 양호한 상태. 일부 개선 권장"
-        elif total_score >= 0.7:
+        if total_score >= 0.7:
             return "⚠️ 주의 필요. Trinity Score 개선 권장"
-        else:
-            return "🚨 긴급 상황! 즉시 왕국 정신 확인 필요"
+        return "🚨 긴급 상황! 즉시 왕국 정신 확인 필요"
 
     def generate_spirit_report(self) -> dict[str, Any]:
         """정신 통합 리포트 생성"""

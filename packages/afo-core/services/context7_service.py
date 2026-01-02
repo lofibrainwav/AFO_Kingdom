@@ -23,7 +23,7 @@ import sys
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Optional
 
-from AFO.utils.path_utils import add_to_sys_path, get_trinity_os_path
+from afo.utils.path_utils import add_to_sys_path, get_trinity_os_path
 
 if TYPE_CHECKING:
     from trinity_os.servers.context7_mcp import Context7MCP

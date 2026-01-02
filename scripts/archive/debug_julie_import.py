@@ -5,7 +5,7 @@ sys.path.append("/Users/brnestrm/AFO_Kingdom/packages/afo-core")
 
 try:
     print("Attempting to import Julie Royal Router...")
-    from AFO.api.routers.julie_royal import router
+    from afo.api.routers.julie_royal import router
 
     print("✅ Success! Router imported.")
     for route in router.routes:

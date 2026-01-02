@@ -160,6 +160,7 @@ class ObsidianMCP:
 
                         subprocess.run(
                             ["python3", str(script_path), str(target)],
+                            check=False,
                             capture_output=True,
                             timeout=10,
                         )
@@ -255,8 +256,7 @@ class ObsidianMCP:
                     "message": f"Template '{template_name}' applied to '{output_path}'",
                     "path": result["path"],
                 }
-            else:
-                return result
+            return result
         except Exception as e:
             return {
                 "success": False,

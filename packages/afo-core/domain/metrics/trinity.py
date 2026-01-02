@@ -19,7 +19,7 @@ from dataclasses import dataclass
 from math import isclose, prod
 from typing import Any, Literal
 
-from AFO.domain.metrics.trinity_ssot import TrinityWeights
+from afo.domain.metrics.trinity_ssot import TrinityWeights
 
 
 @dataclass(frozen=True)

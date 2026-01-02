@@ -18,7 +18,7 @@ def main():
         from psycopg2.extras import RealDictCursor
 
         # 실제 PostgreSQL 설정 확인
-        from AFO.config.settings import get_settings
+        from afo.config.settings import get_settings
 
         settings = get_settings()
         conn = psycopg2.connect(

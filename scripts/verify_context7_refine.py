@@ -2,7 +2,6 @@ import os
 import sys
 from pathlib import Path
 
-
 # Setup Path
 sys.path.append(str(Path.cwd() / "packages/trinity-os"))
 from trinity_os.servers.context7_mcp import Context7MCP
@@ -26,7 +25,9 @@ def verify_context7_richness():
                 break
 
         if not loaded:
-            print("❌ Test Failed: API_ENDPOINTS_REFERENCE.md not found in knowledge base.")
+            print(
+                "❌ Test Failed: API_ENDPOINTS_REFERENCE.md not found in knowledge base."
+            )
             return False
 
         print("✅ Test Passed: API_ENDPOINTS_REFERENCE.md loaded.")

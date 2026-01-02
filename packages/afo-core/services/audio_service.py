@@ -91,7 +91,15 @@ class AudioService:
         """Fallback using ffmpeg for basic audio info"""
         try:
             result = subprocess.run(
-                ["ffprobe", "-v", "quiet", "-print_format", "json", "-show_format", audio_path],
+                [
+                    "ffprobe",
+                    "-v",
+                    "quiet",
+                    "-print_format",
+                    "json",
+                    "-show_format",
+                    audio_path,
+                ],
                 capture_output=True,
                 text=True,
             )

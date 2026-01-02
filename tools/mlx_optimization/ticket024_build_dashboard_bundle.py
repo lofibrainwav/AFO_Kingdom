@@ -3,7 +3,6 @@ import json
 import os
 from datetime import UTC, datetime
 
-
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 ART = os.path.join(ROOT, "artifacts")
 
@@ -60,7 +59,9 @@ for d in rel_dirs[:5]:
     sha = os.path.join(d, "adapter_sha256.txt")
     row = {
         "dir": os.path.relpath(d, ROOT),
-        "manifest": os.path.relpath(manifest, ROOT) if os.path.isfile(manifest) else None,
+        "manifest": (
+            os.path.relpath(manifest, ROOT) if os.path.isfile(manifest) else None
+        ),
         "adapter_sha256": os.path.relpath(sha, ROOT) if os.path.isfile(sha) else None,
         "adapter_sha256_lines": count_lines(sha) if os.path.isfile(sha) else 0,
         "manifest_stat": safe_stat(manifest),

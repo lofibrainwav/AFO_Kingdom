@@ -8,7 +8,7 @@ PDF 평가 기준: 각 기둥별 세부 구현 완성도 평가
 import logging
 from typing import Any
 
-logger = logging.getLogger("AFO.PillarsMetrics")
+logger = logging.getLogger("afo.PillarsMetrics")
 
 
 class DetailedPillarsCalculator:

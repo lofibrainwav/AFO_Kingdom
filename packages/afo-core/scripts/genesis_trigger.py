@@ -19,7 +19,7 @@ sys.path.insert(0, str(Path("packages/afo-core").resolve()))
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 
-from AFO.serenity.creation_loop import serenity_loop
+from afo.serenity.creation_loop import serenity_loop
 
 PROMPT = """
 Create a 'Royal Ops Center' dashboard component (RoyalOpsCenter.tsx).

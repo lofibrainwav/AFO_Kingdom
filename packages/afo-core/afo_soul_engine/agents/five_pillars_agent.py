@@ -6,7 +6,7 @@ from typing import Any
 
 # Phase 5: google.generativeai → REST API 마이그레이션
 try:
-    from AFO.llms.gemini_api import GeminiAPIWrapper, gemini_api
+    from afo.llms.gemini_api import GeminiAPIWrapper, gemini_api
 
     GEMINI_AVAILABLE = True
 except ImportError:

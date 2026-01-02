@@ -20,7 +20,7 @@ def test_bulk_import_http_fallback():
     # We need to simulate imported module state where 'api_wallet' is NOT available
     # But input_server.py is already imported by previous tests potentially.
     # We must patch sys.modules to remove it if present, OR patch import mechanism.
-    # Easier: patch 'AFO.input_server.APIWallet' to raise ImportError?
+    # Easier: patch 'afo.input_server.APIWallet' to raise ImportError?
     # The code does `from api_wallet import APIWallet`.
 
     # Let's import input_server afresh or rely on the fact that we can control the imports inside the function via patch.dict
@@ -44,7 +44,7 @@ def test_bulk_import_http_fallback():
 
 
 # We'll use the existing app but patch the internals
-from AFO.input_server import app
+from afo.input_server import app
 
 client = TestClient(app)
 

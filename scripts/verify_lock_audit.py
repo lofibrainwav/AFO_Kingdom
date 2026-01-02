@@ -15,9 +15,9 @@ sys.path.append(
     ).resolve()
 )
 
-from AFO.config.antigravity import antigravity
-from AFO.domain.metrics.trinity_ssot import TrinityWeights
-from AFO.services.vision_verifier import vision_verifier
+from afo.config.antigravity import antigravity
+from afo.domain.metrics.trinity_ssot import TrinityWeights
+from afo.services.vision_verifier import vision_verifier
 
 
 async def run_audit():

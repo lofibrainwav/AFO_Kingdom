@@ -5,7 +5,6 @@ import subprocess
 import sys
 import time
 
-
 CUTLINE_BYTES = 20_000_000_000  # 20GB in bytes
 
 
@@ -46,7 +45,9 @@ def append_jsonl(path: str, rec: dict):
         f.write(json.dumps(rec, ensure_ascii=False) + "\n")
 
 
-def cmd_vlm_smoke(model: str, image: str, max_tokens: int, temperature: float, prompt: str):
+def cmd_vlm_smoke(
+    model: str, image: str, max_tokens: int, temperature: float, prompt: str
+):
     return [
         sys.executable,
         "-m",
@@ -92,7 +93,8 @@ def main():
     s1.add_argument("--max-tokens", type=int, default=140)
     s1.add_argument("--temperature", type=float, default=0.0)
     s1.add_argument(
-        "--prompt", default="이 이미지에서 UI/에러 징후를 찾아서 한글로 5줄 이내로 요약해 주세요."
+        "--prompt",
+        default="이 이미지에서 UI/에러 징후를 찾아서 한글로 5줄 이내로 요약해 주세요.",
     )
 
     s2 = sub.add_parser("coload")
@@ -141,14 +143,18 @@ def main():
     }
 
     if args.mode == "vlm_smoke":
-        rec.update({
-            "model_vlm": args.model,
-            "image": args.image,
-            "max_tokens": args.max_tokens,
-            "temperature": args.temperature,
-        })
+        rec.update(
+            {
+                "model_vlm": args.model,
+                "image": args.image,
+                "max_tokens": args.max_tokens,
+                "temperature": args.temperature,
+            }
+        )
         rc, so, se, maxrss = run_with_time(
-            cmd_vlm_smoke(args.model, args.image, args.max_tokens, args.temperature, args.prompt)
+            cmd_vlm_smoke(
+                args.model, args.image, args.max_tokens, args.temperature, args.prompt
+            )
         )
         rec["ok"] = rc == 0
         rec["max_rss_bytes"] = maxrss
@@ -162,12 +168,14 @@ def main():
             sys.exit(rc)
 
     if args.mode == "coload":
-        rec.update({
-            "model_vlm": args.vlm_model,
-            "model_llm": args.llm_model,
-            "rss_bytes_after_vlm": None,
-            "rss_bytes_after_llm": None,
-        })
+        rec.update(
+            {
+                "model_vlm": args.vlm_model,
+                "model_llm": args.llm_model,
+                "rss_bytes_after_vlm": None,
+                "rss_bytes_after_llm": None,
+            }
+        )
         env = os.environ.copy()
         env["VLM_MODEL"] = args.vlm_model
         env["LLM_MODEL"] = args.llm_model
@@ -199,13 +207,15 @@ def main():
             sys.exit(p.returncode)
 
     if args.mode == "chain_run":
-        rec.update({
-            "model_vlm": args.vlm_model,
-            "model_llm": args.llm_model,
-            "image": args.image,
-            "max_tokens": args.max_tokens,
-            "temperature": args.temperature,
-        })
+        rec.update(
+            {
+                "model_vlm": args.vlm_model,
+                "model_llm": args.llm_model,
+                "image": args.image,
+                "max_tokens": args.max_tokens,
+                "temperature": args.temperature,
+            }
+        )
 
         # 체인 실행: Qwen3-VL 이미지 분석 → Llama 요약 생성
         chain_code = rf"""

@@ -21,11 +21,11 @@ except ImportError:
 
 # Internal Modules
 try:
-    from AFO.chancellor.node_04_verdict import emit_verdict
-    from AFO.config.antigravity import antigravity
-    from AFO.config.settings import get_settings
-    from AFO.constitution.constitutional_ai import AFOConstitution
-    from AFO.observability.verdict_logger import VerdictLogger
+    from afo.chancellor.node_04_verdict import emit_verdict
+    from afo.config.antigravity import antigravity
+    from afo.config.settings import get_settings
+    from afo.constitution.constitutional_ai import AFOConstitution
+    from afo.observability.verdict_logger import VerdictLogger
     from services.trinity_calculator import trinity_calculator
     from strategists.sima_yi import goodness_review as sima_yi
     from strategists.zhou_yu import beauty_optimize as zhou_yu
@@ -216,7 +216,7 @@ async def rerank_node(state: ChancellorState) -> dict[str, Any]:
         return {"context": state.get("context", {})}
 
     try:
-        from AFO.julie_cpa.grok_engine import consult_grok
+        from afo.julie_cpa.grok_engine import consult_grok
 
         # Simple LLM Reranking logic: Score each result
         context_str = "\n".join([f"[{i}] {r['content']}" for i, r in enumerate(results[:10])])
@@ -328,7 +328,7 @@ async def trinity_node(state: ChancellorState) -> dict[str, Any]:
 
     # === 헌법 v1.0 + Amendment 0001: 개별 증거 거부권 적용 ===
     try:
-        from AFO.constitution.constitution_v1_0 import VETO_PILLARS, VETO_THRESHOLD
+        from afo.constitution.constitution_v1_0 import VETO_PILLARS, VETO_THRESHOLD
 
         # 개별 pillar 점수 확인 (0-1 scale로 변환)
         pillar_scores = {
@@ -430,7 +430,7 @@ async def tigers_node(state: ChancellorState) -> dict[str, Any]:
     if callable(VerdictLogger) and callable(emit_verdict):
         try:
             # Create logger instance with Redis (실제 SSE 전송을 위해)
-            from AFO.utils.redis_saver import get_redis_client
+            from afo.utils.redis_saver import get_redis_client
 
             redis_client = get_redis_client()
             logger = VerdictLogger(redis=redis_client)
@@ -489,7 +489,7 @@ async def historian_node(state: ChancellorState) -> dict[str, Any]:
     if callable(VerdictLogger) and callable(emit_verdict):
         try:
             # Create logger instance with Redis (실제 SSE 전송을 위해)
-            from AFO.utils.redis_saver import get_redis_client
+            from afo.utils.redis_saver import get_redis_client
 
             redis_client = get_redis_client()
             logger = VerdictLogger(redis=redis_client)
@@ -599,8 +599,8 @@ graph.add_edge("historian", END)
 try:
     from langgraph.checkpoint.base import BaseCheckpointSaver
 
-    from AFO.utils.cache_utils import cache
-    from AFO.utils.redis_saver import AsyncRedisSaver
+    from afo.utils.cache_utils import cache
+    from afo.utils.redis_saver import AsyncRedisSaver
 
     if cache.enabled:
         checkpointer: BaseCheckpointSaver = AsyncRedisSaver()

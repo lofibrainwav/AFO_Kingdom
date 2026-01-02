@@ -6,11 +6,13 @@ import json
 import os
 import re
 import sys
-from collections.abc import Iterable
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
 
 
 @dataclass(frozen=True)
@@ -123,14 +125,30 @@ def _parse_amount(row: dict[str, str]) -> float | None:
 
 
 def _get_desc(row: dict[str, str]) -> str:
-    for k in ("description", "Description", "memo", "Memo", "name", "Name", "merchant", "Merchant"):
+    for k in (
+        "description",
+        "Description",
+        "memo",
+        "Memo",
+        "name",
+        "Name",
+        "merchant",
+        "Merchant",
+    ):
         if k in row and row[k].strip():
             return row[k].strip()
     return ""
 
 
 def _get_date(row: dict[str, str]) -> str:
-    for k in ("date", "Date", "posted", "Posted", "transaction_date", "Transaction Date"):
+    for k in (
+        "date",
+        "Date",
+        "posted",
+        "Posted",
+        "transaction_date",
+        "Transaction Date",
+    ):
         if k in row and row[k].strip():
             return row[k].strip()
     return ""
@@ -239,8 +257,7 @@ def _iter_csv_inputs(p: Path) -> Iterable[Path]:
         yield p
         return
     if p.is_dir():
-        for f in sorted(p.glob("*.csv")):
-            yield f
+        yield from sorted(p.glob("*.csv"))
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -249,13 +266,18 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--rules", default="config/julie_cpa/label_rules.json", help="Rules JSON path")
     ap.add_argument("--out-dir", default="artifacts/fin/ph_fin_01", help="Output directory")
     ap.add_argument(
-        "--lock-env", default="AFO_FIN_ENABLED", help="Env var required to run (value must be '1')"
+        "--lock-env",
+        default="AFO_FIN_ENABLED",
+        help="Env var required to run (value must be '1')",
     )
     ns = ap.parse_args(argv)
 
     lock_env = str(ns.lock_env)
     if os.getenv(lock_env, "0") != "1":
-        print(f"[LOCKED] {lock_env}!=1 (default OFF). Set {lock_env}=1 to run.", file=sys.stderr)
+        print(
+            f"[LOCKED] {lock_env}!=1 (default OFF). Set {lock_env}=1 to run.",
+            file=sys.stderr,
+        )
         return 3
 
     # Assuming we run from root usually, but let's be safe

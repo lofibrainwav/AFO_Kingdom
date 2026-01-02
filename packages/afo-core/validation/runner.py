@@ -137,9 +137,17 @@ async def _run_fallback(mod, code: str, file_name: str) -> dict[str, Any] | None
             result = node_obj.execute({"review_code": code, "review_file_path": file_name})
             if inspect.isawaitable(result):
                 result = await result
-            return {"method": "code_review_node.execute", "result": result, "success": True}
+            return {
+                "method": "code_review_node.execute",
+                "result": result,
+                "success": True,
+            }
         except Exception as e:
-            return {"method": "code_review_node.execute", "error": str(e), "success": False}
+            return {
+                "method": "code_review_node.execute",
+                "error": str(e),
+                "success": False,
+            }
 
     # 2. 모듈 레벨 execute 함수 확인
     exec_fn = getattr(mod, "execute", None)

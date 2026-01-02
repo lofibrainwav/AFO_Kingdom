@@ -53,7 +53,7 @@ def test_comprehensive_health_import():
     # #endregion agent log
 
     try:
-        from AFO.api.routes.comprehensive_health import \
+        from afo.api.routes.comprehensive_health import \
             router as comprehensive_health_router
 
         # #region agent log
@@ -117,7 +117,7 @@ def test_intake_import():
     # #endregion agent log
 
     try:
-        from AFO.afo_soul_engine.routers.intake import router as intake_router
+        from afo.afo_soul_engine.routers.intake import router as intake_router
 
         # #region agent log
         log_debug(
@@ -179,7 +179,7 @@ def test_family_import():
     # #endregion agent log
 
     try:
-        from AFO.api.routers.family import router as family_router
+        from afo.api.routers.family import router as family_router
 
         # #region agent log
         log_debug(

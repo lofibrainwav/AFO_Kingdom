@@ -111,7 +111,9 @@ class AfoUltimateMCPServer:
             # Check if the resolved path is within workspace
             abs_path.relative_to(workspace_path)
         except ValueError:
-            raise ValueError(f"Access Denied: Path outside workspace ({path}) -> {abs_path}")
+            raise ValueError(
+                f"Access Denied: Path outside workspace ({path}) -> {abs_path}"
+            )
 
         return abs_path
 
@@ -126,6 +128,7 @@ class AfoUltimateMCPServer:
         try:
             result = subprocess.run(
                 command,
+                check=False,
                 shell=True,
                 capture_output=True,
                 text=True,
@@ -134,8 +137,7 @@ class AfoUltimateMCPServer:
             )
             if result.returncode == 0:
                 return result.stdout.strip()
-            else:
-                return f"Exit {result.returncode}\nstderr: {result.stderr.strip()}\nstdout: {result.stdout.strip()}"
+            return f"Exit {result.returncode}\nstderr: {result.stderr.strip()}\nstdout: {result.stdout.strip()}"
         except Exception as e:
             return f"Execution Failure: {e!s}"
 

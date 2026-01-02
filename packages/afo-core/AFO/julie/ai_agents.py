@@ -18,8 +18,9 @@ from enum import Enum
 from typing import Any
 
 import dspy
-from afo.context7 import search_irs_ftb
 from pydantic import BaseModel, Field
+
+from afo.context7 import search_irs_ftb
 
 
 class AgentLevel(str, Enum):
@@ -131,7 +132,11 @@ class AssociateAgent:
                 asset.get("description", "Unknown") for asset in structured_data["assets"]
             ],
             "estimated_income": structured_data["income"],
-            "potential_strategies": ["§179 deduction", "Bonus depreciation", "R&D credit"],
+            "potential_strategies": [
+                "§179 deduction",
+                "Bonus depreciation",
+                "R&D credit",
+            ],
             "disclaimer": "This is a preliminary analysis. Final determination requires professional review.",
         }
 
@@ -192,16 +197,20 @@ class ManagerAgent:
                 "quality_gate": quality_gate,
                 "recommendations": self._generate_recommendations(quality_gate),
             },
-            "next_actions": ["Auditor 감사 요청"]
-            if quality_gate["passed"]
-            else ["Associate 수정 요청"],
+            "next_actions": (
+                ["Auditor 감사 요청"] if quality_gate["passed"] else ["Associate 수정 요청"]
+            ),
             "evidence_id": self.evidence_id,
         }
 
     def _assess_risks(self, associate_output: dict[str, Any]) -> dict[str, Any]:
         """리스크 사전 평가"""
         return {
-            "high_risk": ["ERC refund claims", "R&D credit stacking", "International tax issues"],
+            "high_risk": [
+                "ERC refund claims",
+                "R&D credit stacking",
+                "International tax issues",
+            ],
             "medium_risk": ["Bonus depreciation timing", "§179 phase-out calculation"],
             "low_risk": ["Standard deduction optimization", "State tax credits"],
         }
@@ -226,7 +235,7 @@ class ManagerAgent:
 
         return {
             "business_purpose": business_purpose,
-            "strategy_match": "HIGH" if business_purpose == "tax_optimization" else "MEDIUM",
+            "strategy_match": ("HIGH" if business_purpose == "tax_optimization" else "MEDIUM"),
             "implementation_feasibility": "HIGH",
             "expected_benefits": "SUBSTANTIAL",
         }
@@ -386,7 +395,10 @@ class AuditorAgent:
             ],
             "calculation_log": {
                 "methodology": "OBBBA 2025/2026 §179 + Bonus Depreciation",
-                "assumptions": ["US domestic manufacturing", "Placed-in-service timing"],
+                "assumptions": [
+                    "US domestic manufacturing",
+                    "Placed-in-service timing",
+                ],
                 "parameters": {"federal_rate": 0.21, "ca_rate": 0.0884},
             },
             "trinity_score": {
@@ -445,9 +457,11 @@ class HumilityProtocol:
             return {
                 "DOING": "리스크 평가 및 전략 검토 중",
                 "DONE": f"품질 게이트 {'통과' if quality_gate.get('passed', False) else '실패'} (증거 ID: {agent_output.get('evidence_id', '')[:8]})",
-                "NEXT": "Auditor 감사 요청"
-                if quality_gate.get("passed", False)
-                else "Associate 수정 요청",
+                "NEXT": (
+                    "Auditor 감사 요청"
+                    if quality_gate.get("passed", False)
+                    else "Associate 수정 요청"
+                ),
             }
         elif level == AgentLevel.AUDITOR:
             determination = status.get("final_determination", {})
@@ -457,7 +471,11 @@ class HumilityProtocol:
                 "NEXT": "Julie 승인 대기",
             }
         else:
-            return {"DOING": "처리 중", "DONE": "알 수 없음", "NEXT": "다음 단계 확인 필요"}
+            return {
+                "DOING": "처리 중",
+                "DONE": "알 수 없음",
+                "NEXT": "다음 단계 확인 필요",
+            }
 
 
 class JulieAgentOrchestrator:
@@ -667,10 +685,20 @@ AFO Kingdom
             ]
         )
         writer.writerow(
-            ["Gross Income", tax_data.get("gross_income", 0), "W-2/1099", "Verify with Documents"]
+            [
+                "Gross Income",
+                tax_data.get("gross_income", 0),
+                "W-2/1099",
+                "Verify with Documents",
+            ]
         )
         writer.writerow(
-            ["Deductions", tax_data.get("deductions", 0), "Calculated", "Standard/Itemized"]
+            [
+                "Deductions",
+                tax_data.get("deductions", 0),
+                "Calculated",
+                "Standard/Itemized",
+            ]
         )
 
         csv_content = output.getvalue()

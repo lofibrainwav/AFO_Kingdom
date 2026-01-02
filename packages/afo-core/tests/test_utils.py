@@ -16,14 +16,14 @@ import pytest
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 try:
-    from AFO.utils.container_detector import ContainerDetector, get_redis_container
-    from AFO.utils.exponential_backoff import (
+    from afo.utils.container_detector import ContainerDetector, get_redis_container
+    from afo.utils.exponential_backoff import (
         BackoffStrategies,
         ExponentialBackoff,
         retry_with_exponential_backoff,
     )
-    from AFO.utils.friction_calibrator import FrictionCalibrator
-    from AFO.utils.lazy_imports import LazyModule
+    from afo.utils.friction_calibrator import FrictionCalibrator
+    from afo.utils.lazy_imports import LazyModule
 
     # Standardized for Trinity 100%
 except ImportError:
@@ -112,7 +112,7 @@ class TestContainerDetectorReal:
     def test_detect_api_wallet_path_env(self) -> None:
         """환경변수 기반 경로 감지 (Fallback Logic Check)"""
         # Force ImportError for settings modules to test fallback to os.getenv
-        with patch.dict(sys.modules, {"config.settings": None, "AFO.config.settings": None}):
+        with patch.dict(sys.modules, {"config.settings": None, "afo.config.settings": None}):
             with (
                 patch.dict(os.environ, {"AFO_HOME": "/tmp/test"}),
                 patch("pathlib.Path.exists", return_value=True),
@@ -154,7 +154,7 @@ class TestFrictionCalibratorReal:
 
     def test_recommend_logic(self) -> None:
         """추천 로직 테스트"""
-        from AFO.utils.friction_calibrator import FrictionStats
+        from afo.utils.friction_calibrator import FrictionStats
 
         calibrator = FrictionCalibrator()
 
@@ -172,7 +172,7 @@ class TestLazyImportsReal:
 
     def test_lazy_module_behavior(self) -> None:
         """지연 로딩 모듈 동작 테스트"""
-        from AFO.utils.lazy_imports import LazyModule
+        from afo.utils.lazy_imports import LazyModule
 
         # Use standard library module
         lazy_json = LazyModule("json")
@@ -180,7 +180,7 @@ class TestLazyImportsReal:
 
     def test_lazy_module_availability(self) -> None:
         """지연 로딩 가용성 테스트"""
-        from AFO.utils.lazy_imports import LazyModule
+        from afo.utils.lazy_imports import LazyModule
 
         lazy_os = LazyModule("os")
         assert lazy_os.is_available() is True
@@ -188,7 +188,7 @@ class TestLazyImportsReal:
 
     def test_lazy_module_fallback(self) -> None:
         """모듈 로딩 실패 시 Fallback 테스트"""
-        from AFO.utils.lazy_imports import LazyModule
+        from afo.utils.lazy_imports import LazyModule
 
         class Dummy:
             def hello(self):
@@ -202,7 +202,7 @@ class TestLazyImportsReal:
 
     def test_lazy_module_missing_no_fallback(self) -> None:
         """Fallback 없는 실패 케이스"""
-        from AFO.utils.lazy_imports import LazyModule
+        from afo.utils.lazy_imports import LazyModule
 
         lazy_fail = LazyModule("missing_module_abc")
 
@@ -214,14 +214,14 @@ class TestLazyImportsReal:
 
     def test_lazy_function(self) -> None:
         """LazyFunction 테스트"""
-        from AFO.utils.lazy_imports import LazyFunction
+        from afo.utils.lazy_imports import LazyFunction
 
         lazy_len = LazyFunction("builtins", "len")
         assert lazy_len([1, 2, 3]) == 3
 
     def test_lazy_function_fallback(self) -> None:
         """LazyFunction Fallback 테스트"""
-        from AFO.utils.lazy_imports import LazyFunction
+        from afo.utils.lazy_imports import LazyFunction
 
         def fallback(*args):
             return "fallback"
@@ -238,11 +238,11 @@ class TestLazyImportsReal:
 class TestRedisConnectionReal:
     """Redis Connection 실제 모듈 테스트"""
 
-    @patch("AFO.utils.redis_connection.get_settings")
+    @patch("afo.utils.redis_connection.get_settings")
     @patch("redis.from_url")
     def test_get_redis_client_success(self, mock_from_url: Any, mock_get_settings: Any) -> None:
         """동기 Redis 클라이언트 생성 성공"""
-        from AFO.utils.redis_connection import get_redis_client
+        from afo.utils.redis_connection import get_redis_client
 
         mock_settings = MagicMock()
         mock_settings.get_redis_url.return_value = "redis://test"
@@ -255,11 +255,11 @@ class TestRedisConnectionReal:
         assert client is mock_client
         mock_client.ping.assert_called_once()
 
-    @patch("AFO.utils.redis_connection.get_settings")
+    @patch("afo.utils.redis_connection.get_settings")
     @patch("redis.from_url")
     def test_get_redis_client_failure(self, mock_from_url: Any, mock_get_settings: Any) -> None:
         """동기 Redis 클라이언트 생성 실패"""
-        from AFO.utils.redis_connection import get_redis_client
+        from afo.utils.redis_connection import get_redis_client
 
         mock_settings = MagicMock()
         mock_settings.get_redis_url.return_value = "redis://test"
@@ -270,11 +270,11 @@ class TestRedisConnectionReal:
         with pytest.raises(ConnectionError):
             get_redis_client()
 
-    @patch("AFO.utils.redis_connection.get_settings")
+    @patch("afo.utils.redis_connection.get_settings")
     @patch("redis.asyncio.Redis.from_url")
     async def test_get_async_redis_client(self, mock_from_url: Any, mock_get_settings: Any) -> None:
         """비동기 Redis 클라이언트 생성"""
-        from AFO.utils.redis_connection import get_async_redis_client
+        from afo.utils.redis_connection import get_async_redis_client
 
         mock_settings = MagicMock()
         mock_settings.get_redis_url.return_value = "redis://test"
@@ -289,8 +289,8 @@ class TestRedisConnectionReal:
 
     async def test_shared_clients_and_close(self) -> None:
         """싱글톤 클라이언트 및 종료 테스트"""
-        import AFO.utils.redis_connection as rc_module
-        from AFO.utils.redis_connection import (
+        import afo.utils.redis_connection as rc_module
+        from afo.utils.redis_connection import (
             close_redis_connections,
             get_shared_async_redis_client,
             get_shared_redis_client,
@@ -302,10 +302,10 @@ class TestRedisConnectionReal:
 
         with (
             patch(
-                "AFO.utils.redis_connection.get_redis_client", return_value=MagicMock()
+                "afo.utils.redis_connection.get_redis_client", return_value=MagicMock()
             ) as mock_sync_getter,
             patch(
-                "AFO.utils.redis_connection.get_async_redis_client",
+                "afo.utils.redis_connection.get_async_redis_client",
                 return_value=AsyncMock(),
             ) as mock_async_getter,
         ):
@@ -338,7 +338,7 @@ class TestRedisConnectionReal:
 class TestFrictionCalibratorExtended:
     def test_friction_stats_calculations(self) -> None:
         """Friction 통계 계산 로직"""
-        from AFO.utils.friction_calibrator import FrictionStats
+        from afo.utils.friction_calibrator import FrictionStats
 
         # Concurrency 1 -> Friction 0
         s1 = FrictionStats(1, 1.0, 1.0)
@@ -386,7 +386,7 @@ class TestFrictionCalibratorExtended:
     def test_recommend_clamping(self) -> None:
         """추천 값 범위 제한 테스트"""
         calibrator = FrictionCalibrator(min_concurrency=2, max_concurrency=10)
-        from AFO.utils.friction_calibrator import FrictionStats
+        from afo.utils.friction_calibrator import FrictionStats
 
         # very high friction -> reduce
         # 0.7 * 10 = 7. But if we try to reduce below min?

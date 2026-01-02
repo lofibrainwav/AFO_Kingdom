@@ -10,8 +10,8 @@ sys.path.append(
 )
 
 try:
-    from AFO.domain.janus.contract import VisualAction, VisualPlan
-    from AFO.serenity.visual_agent import VisualAgent
+    from afo.domain.janus.contract import VisualAction, VisualPlan
+    from afo.serenity.visual_agent import VisualAgent
 
     print("✅ Import Successful: Janus Contract & Visual Agent")
 except ImportError as e:

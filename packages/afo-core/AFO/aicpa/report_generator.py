@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 try:
     from docx import Document
     from docx.enum.text import WD_ALIGN_PARAGRAPH
-    from docx.shared import Inches, Pt, RGBColor
+    # from docx.shared import Inches, Pt, RGBColor  # Unused imports removed
 
     DOCX_AVAILABLE = True
 except ImportError:

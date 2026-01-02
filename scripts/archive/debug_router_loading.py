@@ -63,7 +63,7 @@ def test_router_loading():
     results = {}
     for router_name, expected_prefix in routers_to_test:
         try:
-            from AFO.api.compat import (chancellor_router, grok_stream_router,
+            from afo.api.compat import (chancellor_router, grok_stream_router,
                                         learning_log_router)
 
             if router_name == "learning_log_router":
@@ -153,7 +153,7 @@ def test_router_registration():
     test_app = FastAPI()
 
     try:
-        from AFO.api.routers import setup_routers
+        from afo.api.routers import setup_routers
 
         setup_routers(test_app)
 

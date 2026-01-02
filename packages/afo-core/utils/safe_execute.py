@@ -11,7 +11,7 @@ from collections.abc import Callable
 from functools import wraps
 from typing import Any, TypeVar
 
-from AFO.config.antigravity import antigravity
+from afo.config.antigravity import antigravity
 
 logger = logging.getLogger(__name__)
 

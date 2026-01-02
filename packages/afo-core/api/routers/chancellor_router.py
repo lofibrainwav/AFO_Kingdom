@@ -17,11 +17,11 @@ from fastapi import APIRouter, HTTPException
 logger = logging.getLogger(__name__)
 
 # Strangler Fig: compat.py에서 타입 모델 import (眞: Truth 타입 안전성)
-from AFO.api.compat import ChancellorInvokeRequest, ChancellorInvokeResponse
+from afo.api.compat import ChancellorInvokeRequest, ChancellorInvokeResponse
 
 # Antigravity import (통합)
 try:
-    from AFO.config.antigravity import antigravity
+    from afo.config.antigravity import antigravity
 except ImportError:
     try:
         from config.antigravity import antigravity as ag
@@ -124,8 +124,8 @@ def _import_chancellor_graph() -> None:
         return
 
     try:
-        from AFO.chancellor_graph import build_chancellor_graph as _bcg
-        from AFO.chancellor_graph import chancellor_graph as _cg
+        from afo.chancellor_graph import build_chancellor_graph as _bcg
+        from afo.chancellor_graph import chancellor_graph as _cg
 
         build_chancellor_graph = _bcg
         chancellor_graph = _cg
@@ -140,7 +140,7 @@ router = APIRouter(prefix="/chancellor", tags=["Chancellor"])
 
 # Include chancellor engines endpoint from afo_agent_fabric
 try:
-    from AFO.afo_agent_fabric import _get_cached_engine_status
+    from afo.afo_agent_fabric import _get_cached_engine_status
 
     @router.get("/engines")
     async def chancellor_engines():
@@ -346,7 +346,11 @@ async def _execute_with_fallback(
         rag_result = await execute_rag_with_mode(
             query,
             request.headers if hasattr(request, "headers") else None,
-            {"llm_context": llm_context, "thread_id": request.thread_id, "mode_used": mode_used},
+            {
+                "llm_context": llm_context,
+                "thread_id": request.thread_id,
+                "mode_used": mode_used,
+            },
         )
 
     # TICKET-008 Phase 1: RAG Shadow 실행 (위험 0, 메트릭만 기록)
@@ -363,7 +367,7 @@ async def _execute_with_fallback(
             from api.routes.system_health import get_system_metrics
         except ImportError:
             try:
-                from AFO.api.routes.system_health import get_system_metrics
+                from afo.api.routes.system_health import get_system_metrics
             except ImportError as e:
                 logger.debug("시스템 메트릭 모듈 import 실패: %s", str(e))
                 return {"error": "system metrics route not available"}
@@ -383,7 +387,7 @@ async def _execute_with_fallback(
             from llm_router import llm_router as _router
         except ImportError:
             try:
-                from AFO.llm_router import llm_router as _afol_router
+                from afo.llm_router import llm_router as _afol_router
 
                 _router = _afol_router  # type: ignore[assignment]
             except ImportError as e:
@@ -589,7 +593,7 @@ async def _execute_full_mode_v1_legacy(
         ) from e
 
     graph = chancellor_graph
-    from AFO.api.compat import get_antigravity_control
+    from afo.api.compat import get_antigravity_control
 
     antigravity = get_antigravity_control()
     effective_auto_run = request.auto_run and not (antigravity and antigravity.DRY_RUN_DEFAULT)

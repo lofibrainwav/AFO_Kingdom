@@ -22,7 +22,7 @@ async def benchmark_persona_switch(iterations: int = 10) -> dict[str, Any]:
     print(f"⚡ [성능 벤치마크] 페르소나 전환 ({iterations}회 반복)\n")
 
     try:
-        from AFO.services.persona_service import persona_service
+        from afo.services.persona_service import persona_service
 
         persona_types = ["commander", "learner", "zhuge_liang", "sima_yi", "zhou_yu"]
         switch_times: list[float] = []
@@ -77,7 +77,7 @@ async def benchmark_trinity_score_calculation(iterations: int = 20) -> dict[str,
     print(f"\n⚡ [성능 벤치마크] Trinity Score 계산 ({iterations}회 반복)\n")
 
     try:
-        from AFO.services.persona_service import persona_service
+        from afo.services.persona_service import persona_service
 
         persona_data = {
             "id": "p007",
@@ -139,7 +139,7 @@ async def benchmark_concurrent_switches(concurrent_tasks: int = 5) -> dict[str, 
     print(f"\n⚡ [성능 벤치마크] 동시 페르소나 전환 ({concurrent_tasks}개 동시 작업)\n")
 
     try:
-        from AFO.services.persona_service import persona_service
+        from afo.services.persona_service import persona_service
 
         persona_types = ["commander", "learner", "zhuge_liang", "sima_yi", "zhou_yu"]
 

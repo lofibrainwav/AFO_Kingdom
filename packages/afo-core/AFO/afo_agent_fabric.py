@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from importlib.util import find_spec
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 from fastapi import APIRouter
 from pydantic import BaseModel
@@ -32,8 +32,6 @@ async def _stream_echo(text: str) -> AsyncIterator[bytes]:
 
 async def _stream_langgraph(text: str) -> AsyncIterator[bytes]:
     try:
-        import langgraph
-
         yield _sse("info", {"engine": "langgraph", "status": "installed"})
     except Exception:
         yield _sse("info", {"engine": "langgraph", "status": "missing"})
@@ -46,8 +44,6 @@ async def _stream_langgraph(text: str) -> AsyncIterator[bytes]:
 
 async def _stream_crewai(text: str) -> AsyncIterator[bytes]:
     try:
-        import crewai
-
         yield _sse("info", {"engine": "crewai", "status": "installed"})
     except Exception:
         yield _sse("info", {"engine": "crewai", "status": "missing"})
@@ -60,8 +56,6 @@ async def _stream_crewai(text: str) -> AsyncIterator[bytes]:
 
 async def _stream_autogen(text: str) -> AsyncIterator[bytes]:
     try:
-        import autogen
-
         yield _sse("info", {"engine": "autogen", "status": "installed"})
     except Exception:
         yield _sse("info", {"engine": "autogen", "status": "missing"})
@@ -159,7 +153,7 @@ async def chancellor_stream(req: ChancellorRequest):
 
 @router.post("/stream_v2")
 async def chancellor_stream_v2(req: ChancellorRequest):
-    from typing import Any, TypedDict, cast
+    from typing import TypedDict, cast
 
     class _LGState(TypedDict, total=False):
         input: str
@@ -219,7 +213,7 @@ async def chancellor_stream_v3(req: ChancellorRequest):
             {"engine": "langgraph_real", "installed": _is_installed("langgraph")},
         )
         try:
-            from typing import Any, TypedDict, cast
+            from typing import TypedDict, cast
 
             from langgraph.graph import END, StateGraph
 

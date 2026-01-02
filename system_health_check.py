@@ -81,7 +81,9 @@ class OllamaHealthChecker:
             self.health_metrics["fallback_logic"] = fallback_result["success"]
 
         except Exception as e:
-            self.health_metrics["error_details"].append(f"Ollama connectivity failed: {e!s}")
+            self.health_metrics["error_details"].append(
+                f"Ollama connectivity failed: {e!s}"
+            )
             self.health_metrics["ollama_connectivity"] = False
 
         self.health_metrics["performance_ms"] = (time.time() - start_time) * 1000
@@ -232,7 +234,9 @@ async def check_system_health():
         "env_vars": ollama_checker.env_vars,
         "ollama_health": ollama_health,
         "trinity_contribution": trinity_contribution,
-        "overall_status": "healthy" if ollama_health["ollama_connectivity"] else "degraded",
+        "overall_status": (
+            "healthy" if ollama_health["ollama_connectivity"] else "degraded"
+        ),
     }
 
     # artifacts에 저장
@@ -247,7 +251,9 @@ async def check_system_health():
     )
 
     print(f"SSOT 저장: {ssot_path}")
-    print(f"전체 상태: {'✅ 건강' if health_result['overall_status'] == 'healthy' else '⚠️ 저하'}")
+    print(
+        f"전체 상태: {'✅ 건강' if health_result['overall_status'] == 'healthy' else '⚠️ 저하'}"
+    )
 
     return health_result
 

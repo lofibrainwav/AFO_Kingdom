@@ -14,10 +14,10 @@ import logging
 import os
 import time
 
-
 # MLX-VLM imports
 try:
-    from mlx_lm import generate as llm_generate, load
+    from mlx_lm import generate as llm_generate
+    from mlx_lm import load
     from mlx_vlm import generate as vlm_generate
 
     MLX_VLM_AVAILABLE = True
@@ -27,7 +27,6 @@ except ImportError:
 
 # 메모리 모니터링
 import psutil
-
 
 # 로깅 설정
 logging.basicConfig(level=logging.INFO)
@@ -81,7 +80,9 @@ class Qwen3VLMLXPOC:
         try:
             # 메모리 체크 (초기화 전)
             mem_before = self.check_memory()
-            logger.info(f"Memory before initialization: {mem_before['used_gb']:.1f}GB used")
+            logger.info(
+                f"Memory before initialization: {mem_before['used_gb']:.1f}GB used"
+            )
 
             # Qwen3-VL은 mlx_vlm.generate()로 직접 사용하므로 별도 로드 불필요
             logger.info("Qwen3-VL ready for generation (mlx_vlm.generate)")
@@ -93,8 +94,12 @@ class Qwen3VLMLXPOC:
 
             # 메모리 체크 (초기화 후)
             mem_after = self.check_memory()
-            logger.info(f"Memory after initialization: {mem_after['used_gb']:.1f}GB used")
-            logger.info(f"Memory delta: {mem_after['used_gb'] - mem_before['used_gb']:.1f}GB")
+            logger.info(
+                f"Memory after initialization: {mem_after['used_gb']:.1f}GB used"
+            )
+            logger.info(
+                f"Memory delta: {mem_after['used_gb'] - mem_before['used_gb']:.1f}GB"
+            )
 
             self.initialized = True
             return True
@@ -256,11 +261,15 @@ class Qwen3VLMLXPOC:
 def main():
     """메인 함수 - CLI 인터페이스"""
     parser = argparse.ArgumentParser(description="Qwen3-VL MLX PoC")
-    parser.add_argument("--images", nargs="+", required=True, help="Path to image file(s)")
+    parser.add_argument(
+        "--images", nargs="+", required=True, help="Path to image file(s)"
+    )
     parser.add_argument(
         "--prompt", default="이 이미지들을 분석해서 요약해줘", help="Analysis prompt"
     )
-    parser.add_argument("--max-tokens", type=int, default=512, help="Max tokens to generate")
+    parser.add_argument(
+        "--max-tokens", type=int, default=512, help="Max tokens to generate"
+    )
     parser.add_argument(
         "--model", default="mlx-community/Qwen3-VL-8B-Instruct-4bit", help="Model name"
     )

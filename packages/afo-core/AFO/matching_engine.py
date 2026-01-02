@@ -219,7 +219,7 @@ class MatchingEngine:
         score = 0.0
 
         for keyword in keywords:
-            for domain, domain_keywords in self.keyword_weights.items():
+            for _domain, domain_keywords in self.keyword_weights.items():
                 if keyword in domain_keywords:
                     # 모듈이 해당 도메인과 관련 있는지 체크
                     module_text = f"{module.name} {module.type} {module.path}".lower()
@@ -328,8 +328,8 @@ def main():
         try:
             skeleton_index = indexer.load_index()
             print(f"기존 인덱스 로드됨: {skeleton_index.last_updated}")
-        except:
-            print("새 인덱스 생성 중...")
+        except (FileNotFoundError, ValueError, OSError) as e:
+            print(f"인덱스 로드 실패 ({e}), 새 인덱스 생성 중...")
             skeleton_index = indexer.scan_folders()
             indexer.save_index(skeleton_index)
 

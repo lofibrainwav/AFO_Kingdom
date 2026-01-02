@@ -15,6 +15,15 @@ from .antigravity import antigravity
 from .julie import JulieConfig, julie_config
 from .trinity import TrinityConfig
 
+try:
+    import dspy
+
+    DSPY_AVAILABLE = True
+    DSPY_VERSION = dspy.__version__
+except ImportError:
+    DSPY_AVAILABLE = False
+    DSPY_VERSION = "0.0.0"
+
 
 class AFOSettings(BaseSettings):
     """
@@ -69,7 +78,8 @@ class AFOSettings(BaseSettings):
     # ============================================================================
     REDIS_URL: str = Field(default="redis://afo-redis:6379", description="Redis 연결 URL")
     REDIS_HOST: str = Field(
-        default="afo-redis", description="Redis 호스트 (Docker: afo-redis, 로컬: localhost)"
+        default="afo-redis",
+        description="Redis 호스트 (Docker: afo-redis, 로컬: localhost)",
     )
     REDIS_PORT: int = Field(default=6379, description="Redis 포트")
 
@@ -175,6 +185,12 @@ class AFOSettings(BaseSettings):
     )
 
     # ============================================================================
+    # DSPy Settings (Phase 2)
+    # ============================================================================
+    DSPY_ENABLED: bool = Field(default=DSPY_AVAILABLE, description="DSPy 활성화 여부")
+    DSPY_OPTIMIZER_VERSION: str = Field(default=DSPY_VERSION, description="DSPy 버전")
+
+    # ============================================================================
     # Helper Methods
     # ============================================================================
 
@@ -264,9 +280,15 @@ def get_settings(env: str | None = None) -> AFOSettings:
         elif not os.path.exists(trinity_os_path):
             print(f"⚠️ Context7 trinity-os 경로 없음: {trinity_os_path}", file=sys.stderr)
         else:
-            print(f"✅ Context7 trinity-os 경로 이미 추가됨: {trinity_os_path}", file=sys.stderr)
+            print(
+                f"✅ Context7 trinity-os 경로 이미 추가됨: {trinity_os_path}",
+                file=sys.stderr,
+            )
 
-        print(f"✅ AFO 설정 로드 완료: {env} 환경 ({settings_class.__name__})", file=sys.stderr)
+        print(
+            f"✅ AFO 설정 로드 완료: {env} 환경 ({settings_class.__name__})",
+            file=sys.stderr,
+        )
 
     return _settings
 

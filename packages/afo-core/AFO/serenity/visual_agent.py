@@ -1,15 +1,14 @@
 # Trinity Score: 90.0 (Established by Chancellor)
 import asyncio
 import base64
-import json
 import logging
-from typing import Any, Optional, cast
+from typing import Any, cast
 
 import httpx
 from playwright.async_api import async_playwright
 from pydantic import ValidationError
 
-from AFO.domain.janus.contract import VisualAction, VisualPlan
+from afo.domain.janus.contract import VisualAction, VisualPlan
 
 logger = logging.getLogger(__name__)
 

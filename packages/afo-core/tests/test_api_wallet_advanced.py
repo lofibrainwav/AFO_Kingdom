@@ -4,7 +4,7 @@ import os
 import sys
 from unittest.mock import MagicMock, patch
 
-from AFO.api_wallet import APIWallet
+from afo.api_wallet import APIWallet
 
 # Load wallet-specific fixtures
 pytest_plugins = ["tests.conftest_wallet"]
@@ -16,7 +16,7 @@ def test_wallet_init_vault_success():
     mock_vault.is_available.return_value = True
     mock_vault.get_encryption_key.return_value = "3qX4+P5+12345678901234567890123456789012345="
 
-    with patch("AFO.api_wallet.VaultKMS", return_value=mock_vault):
+    with patch("afo.api_wallet.VaultKMS", return_value=mock_vault):
         with patch.dict(os.environ, {"VAULT_ENABLED": "true"}):
             wallet = APIWallet(use_vault=True)
             # It should try to get key from vault
@@ -30,7 +30,7 @@ def test_wallet_init_vault_failure_fallback():
 
     # Test vault fallback in local KMS mode (not fail-closed vault mode)
     with patch.dict(os.environ, {"API_WALLET_KMS": "local"}):
-        with patch("AFO.api_wallet.VaultKMS", return_value=mock_vault):
+        with patch("afo.api_wallet.VaultKMS", return_value=mock_vault):
             with patch.dict(os.environ, {"VAULT_ENABLED": "true"}):
                 # Should disable vault use and fallback to env/default
                 wallet = APIWallet(use_vault=True)
@@ -49,8 +49,8 @@ def test_mock_fernet_fallback():
     with patch.dict(os.environ, {"API_WALLET_KMS": "local"}):
         with patch.dict(sys.modules):
             # Remove it so we can re-import
-            if "AFO.api_wallet" in sys.modules:
-                del sys.modules["AFO.api_wallet"]
+            if "afo.api_wallet" in sys.modules:
+                del sys.modules["afo.api_wallet"]
             if "api_wallet" in sys.modules:
                 del sys.modules["api_wallet"]
 
@@ -63,7 +63,7 @@ def test_mock_fernet_fallback():
 
             # Now import
             # Use import_module to ensure it loads freshly and registers in sys.modules
-            api_wallet = importlib.import_module("AFO.api_wallet")
+            api_wallet = importlib.import_module("afo.api_wallet")
 
             assert api_wallet.CRYPTO_AVAILABLE is False
             assert api_wallet.Fernet.__name__ == "MockFernet"
@@ -85,7 +85,7 @@ def test_mock_fernet_fallback():
 
 # 3. CLI Tests using main()
 def test_cli_execution():
-    from AFO.api_wallet import main
+    from afo.api_wallet import main
 
     # Mock create_wallet to return a mock wallet
     mock_wallet_instance = MagicMock()
@@ -95,10 +95,10 @@ def test_cli_execution():
     mock_wallet_instance.delete.return_value = True
 
     # We must patch create_wallet in the exact module main() looks for it.
-    # main() is in AFO.api_wallet, and it calls create_wallet() from global scope of AFO.api_wallet.
-    # So patching AFO.api_wallet.create_wallet is correct.
+    # main() is in afo.api_wallet, and it calls create_wallet() from global scope of afo.api_wallet.
+    # So patching afo.api_wallet.create_wallet is correct.
 
-    with patch("AFO.api_wallet.create_wallet", return_value=mock_wallet_instance):
+    with patch("afo.api_wallet.create_wallet", return_value=mock_wallet_instance):
         # Test ADD
         with patch.object(
             sys, "argv", ["api_wallet.py", "add", "test_key", "secret_val", "openai"]

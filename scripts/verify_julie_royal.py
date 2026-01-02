@@ -7,7 +7,7 @@ from decimal import Decimal
 # Ensure pythonpath includes afo-core
 sys.path.append(os.path.join(pathlib.Path.cwd(), "packages/afo-core"))
 
-from AFO.julie_cpa.services.julie_service import JulieService
+from afo.julie_cpa.services.julie_service import JulieService
 
 
 async def verify_julie_royal():

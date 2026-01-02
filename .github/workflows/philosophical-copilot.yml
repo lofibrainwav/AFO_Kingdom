@@ -163,7 +163,7 @@ jobs:
           pip install -r requirements.txt
           python -c "
           import asyncio
-          from AFO.api.routes.philosophical_copilot import router
+          from afo.api.routes.philosophical_copilot import router
           print('🎯 철학적 Copilot API 라우트 로드 성공')
           print(f'📊 라우트 수: {len(router.routes)}')
           for route in router.routes:
@@ -181,7 +181,7 @@ jobs:
 
           # 철학적 상수 테스트
           try:
-              from AFO.api.routes.philosophical_copilot import PHILOSOPHICAL_CONSTANTS
+              from afo.api.routes.philosophical_copilot import PHILOSOPHICAL_CONSTANTS
               print('🧠 철학적 상수 로드 성공:')
               print(f'   - 손자: {PHILOSOPHICAL_CONSTANTS[\"sunzi_strategy\"]}')
               print(f'   - 맹자: {PHILOSOPHICAL_CONSTANTS[\"mencius_virtue\"]}')
@@ -191,7 +191,7 @@ jobs:
 
           # Trinity Score 계산 테스트
           try:
-              from AFO.api.routes.philosophical_copilot import calculate_trinity_score
+              from afo.api.routes.philosophical_copilot import calculate_trinity_score
               from pydantic import BaseModel
               class MockRequest(BaseModel):
                   architecture: int = 100

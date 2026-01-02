@@ -19,8 +19,8 @@ def test_direct_import():
     print("=" * 50)
 
     try:
-        print("📦 Importing AFO.api.routers.skills...")
-        from AFO.api.routers.skills import router
+        print("📦 Importing afo.api.routers.skills...")
+        from afo.api.routers.skills import router
 
         print("✅ Direct import successful!")
         print(f"   Router type: {type(router)}")
@@ -61,8 +61,8 @@ def test_compat_import():
     print("=" * 50)
 
     try:
-        print("📦 Importing AFO.api.compat.skills_router...")
-        from AFO.api.compat import skills_router
+        print("📦 Importing afo.api.compat.skills_router...")
+        from afo.api.compat import skills_router
 
         print("✅ Compat layer import successful!")
         print(f"   Router type: {type(skills_router)}")
@@ -104,9 +104,9 @@ def test_app_registration():
 
     try:
         print("🏗️ Creating FastAPI app...")
-        from AFO.api.config import get_app_config
-        from AFO.api.middleware import setup_middleware
-        from AFO.api.routers import setup_routers
+        from afo.api.config import get_app_config
+        from afo.api.middleware import setup_middleware
+        from afo.api.routers import setup_routers
 
         app = get_app_config()
         print("✅ App created successfully")

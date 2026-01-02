@@ -19,8 +19,8 @@ import time
 from pathlib import Path
 from typing import Any, Optional
 
-from AFO.utils.automation_tools import AutomationTools
-from AFO.utils.path_utils import get_project_root
+from afo.utils.automation_tools import AutomationTools
+from afo.utils.path_utils import get_project_root
 
 logger = logging.getLogger(__name__)
 

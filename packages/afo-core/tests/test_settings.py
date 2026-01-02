@@ -3,7 +3,7 @@
 AFO 설정 테스트
 """
 
-from AFO.config.settings import get_settings
+from afo.config.settings import get_settings
 
 
 def test_get_settings():

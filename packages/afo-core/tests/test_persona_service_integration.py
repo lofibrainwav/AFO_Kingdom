@@ -19,7 +19,7 @@ async def test_persona_switch_scenario() -> None:
     print("🧪 [통합 테스트] 페르소나 전환 시나리오 시작...\n")
 
     try:
-        from AFO.services.persona_service import persona_service
+        from afo.services.persona_service import persona_service
 
         # 1. 현재 페르소나 조회
         print("1️⃣ 현재 페르소나 조회")
@@ -94,7 +94,7 @@ async def test_all_personas() -> None:
     ]
 
     try:
-        from AFO.services.persona_service import persona_service
+        from afo.services.persona_service import persona_service
 
         for persona_type in persona_types:
             print(f"🔄 {persona_type} 페르소나로 전환 중...")

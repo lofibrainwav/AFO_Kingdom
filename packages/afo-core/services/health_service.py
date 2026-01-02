@@ -20,13 +20,13 @@ import httpx
 import redis.asyncio as redis
 
 # AFO internal imports
-from AFO.config.settings import get_settings
-from AFO.domain.metrics.trinity import calculate_trinity
-from AFO.services.database import get_db_connection
-from AFO.utils.redis_connection import get_redis_url
+from afo.config.settings import get_settings
+from afo.domain.metrics.trinity import calculate_trinity
+from afo.services.database import get_db_connection
+from afo.utils.redis_connection import get_redis_url
 
 if TYPE_CHECKING:
-    from AFO.domain.metrics.trinity import TrinityMetrics
+    from afo.domain.metrics.trinity import TrinityMetrics
 
 logger = logging.getLogger(__name__)
 
@@ -126,7 +126,7 @@ async def check_mcp() -> dict[str, Any]:
 async def check_security() -> dict[str, Any]:
     """免疫_Trinity_Gate 보안 상태 체크 (PH19 통합)"""
     try:
-        from AFO.health.organs_truth import _security_probe
+        from afo.health.organs_truth import _security_probe
 
         probe = _security_probe()
         return {"healthy": probe.status == "healthy", "output": probe.output}
@@ -221,10 +221,10 @@ async def get_comprehensive_health() -> dict[str, Any]:
     # T21: Use organs_truth (11 Organs) as the SSOT for Trinity Calculation
     # This ensures "Truthful" scores (e.g. 98, 92) rather than binary 100%
     try:
-        import AFO.health.organs_truth
-        from AFO.health.organs_truth import build_organs_final
+        import afo.health.organs_truth
+        from afo.health.organs_truth import build_organs_final
 
-        logger.warning(f"DEBUG: organs_truth loaded from {AFO.health.organs_truth.__file__}")
+        logger.warning(f"DEBUG: organs_truth loaded from {afo.health.organs_truth.__file__}")
 
         v2_data = build_organs_final()
         o2 = v2_data["organs"]
@@ -317,7 +317,7 @@ async def get_comprehensive_health() -> dict[str, Any]:
         decision_message = "모든 시스템 정상. 자동 실행 가능합니다."
 
     try:
-        from AFO.api.metadata import get_api_metadata
+        from afo.api.metadata import get_api_metadata
 
         api_metadata = get_api_metadata()
         service_name = str(api_metadata.get("title", "AFO Kingdom Soul Engine API"))

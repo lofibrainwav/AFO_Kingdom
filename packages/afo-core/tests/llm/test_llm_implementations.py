@@ -10,7 +10,7 @@ import pytest
 def test_claude_init_env() -> None:
     # Test initialization with Env Var
     with patch.dict(os.environ, {"ANTHROPIC_API_KEY": "sk-ant-test"}):
-        from AFO.llms.claude_api import ClaudeAPIWrapper
+        from afo.llms.claude_api import ClaudeAPIWrapper
 
         wrapper = ClaudeAPIWrapper()
         assert wrapper.is_available()
@@ -36,7 +36,7 @@ async def test_claude_generate_official() -> None:
     )
 
     with patch("httpx.AsyncClient", return_value=mock_client):
-        from AFO.llms.claude_api import ClaudeAPIWrapper
+        from afo.llms.claude_api import ClaudeAPIWrapper
 
         wrapper = ClaudeAPIWrapper()
         wrapper.api_key = "sk-ant-test"
@@ -61,7 +61,7 @@ async def test_claude_generate_web() -> None:
     mock_client.__aexit__.return_value = None
 
     with patch("httpx.AsyncClient", return_value=mock_client):
-        from AFO.llms.claude_api import ClaudeAPIWrapper
+        from afo.llms.claude_api import ClaudeAPIWrapper
 
         wrapper = ClaudeAPIWrapper()
         wrapper.api_key = "sk-ant-sid-session-key"  # triggers web mode
@@ -73,7 +73,7 @@ async def test_claude_generate_web() -> None:
 
 
 def test_claude_cost() -> None:
-    from AFO.llms.claude_api import ClaudeAPIWrapper
+    from afo.llms.claude_api import ClaudeAPIWrapper
 
     wrapper = ClaudeAPIWrapper()
     cost = wrapper.get_cost_estimate(1000000)
@@ -83,7 +83,7 @@ def test_claude_cost() -> None:
 # --- Gemini API Tests ---
 def test_gemini_init() -> None:
     with patch.dict(os.environ, {"GEMINI_API_KEY": "AIza-test"}):
-        from AFO.llms.gemini_api import GeminiAPIWrapper
+        from afo.llms.gemini_api import GeminiAPIWrapper
 
         wrapper = GeminiAPIWrapper()
         assert wrapper.is_available()
@@ -108,7 +108,7 @@ async def test_gemini_generate() -> None:
 
     with patch("httpx.AsyncClient", return_value=mock_client):
         with patch.dict(os.environ, {"GEMINI_API_KEY": "AIza-test"}):
-            from AFO.llms.gemini_api import GeminiAPIWrapper
+            from afo.llms.gemini_api import GeminiAPIWrapper
 
             wrapper = GeminiAPIWrapper()
             # Ensure client is our mock (re-init might call generic Client)
@@ -122,7 +122,7 @@ async def test_gemini_generate() -> None:
 # --- OpenAI API Tests ---
 def test_openai_init() -> None:
     with patch.dict(os.environ, {"OPENAI_API_KEY": "sk-test"}):
-        from AFO.llms.openai_api import OpenAIAPIWrapper
+        from afo.llms.openai_api import OpenAIAPIWrapper
 
         wrapper = OpenAIAPIWrapper()
         assert wrapper.is_available()
@@ -143,7 +143,7 @@ async def test_openai_generate() -> None:
 
     with patch("httpx.AsyncClient", return_value=mock_client):
         with patch.dict(os.environ, {"OPENAI_API_KEY": "sk-test"}):
-            from AFO.llms.openai_api import OpenAIAPIWrapper
+            from afo.llms.openai_api import OpenAIAPIWrapper
 
             wrapper = OpenAIAPIWrapper()
             wrapper.client = mock_client
@@ -175,7 +175,7 @@ async def test_gemini_generate_with_context() -> None:
 
     with patch("httpx.AsyncClient", return_value=mock_client):
         with patch.dict(os.environ, {"GEMINI_API_KEY": "AIza-test"}):
-            from AFO.llms.gemini_api import GeminiAPIWrapper
+            from afo.llms.gemini_api import GeminiAPIWrapper
 
             wrapper = GeminiAPIWrapper()
             wrapper.client = mock_client
@@ -210,7 +210,7 @@ async def test_gemini_error_handling() -> None:
 
     with patch("httpx.AsyncClient", return_value=mock_client):
         with patch.dict(os.environ, {"GEMINI_API_KEY": "AIza-test"}):
-            from AFO.llms.gemini_api import GeminiAPIWrapper
+            from afo.llms.gemini_api import GeminiAPIWrapper
 
             wrapper = GeminiAPIWrapper()
             wrapper.client = mock_client
@@ -231,7 +231,7 @@ async def test_claude_generate_with_context_web() -> None:
     mock_client.__aexit__.return_value = None
 
     with patch("httpx.AsyncClient", return_value=mock_client):
-        from AFO.llms.claude_api import ClaudeAPIWrapper
+        from afo.llms.claude_api import ClaudeAPIWrapper
 
         wrapper = ClaudeAPIWrapper()
         wrapper.api_key = "sk-ant-sid-test"
@@ -261,7 +261,7 @@ async def test_openai_generate_with_context() -> None:
 
     with patch("httpx.AsyncClient", return_value=mock_client):
         with patch.dict(os.environ, {"OPENAI_API_KEY": "sk-test"}):
-            from AFO.llms.openai_api import OpenAIAPIWrapper
+            from afo.llms.openai_api import OpenAIAPIWrapper
 
             wrapper = OpenAIAPIWrapper()
             wrapper.client = mock_client

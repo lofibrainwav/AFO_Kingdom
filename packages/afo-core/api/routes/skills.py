@@ -22,7 +22,7 @@ from typing import Annotated, Any, cast
 
 from fastapi import APIRouter, Body, Depends, HTTPException, Query
 
-from AFO.afo_skills_registry import (
+from afo.afo_skills_registry import (
     AFOSkillCard,
     SkillExecutionResult,
     SkillFilterParams,

@@ -33,7 +33,7 @@ async def _cleanup_yeongdeok() -> None:
     """Cleanup Yeongdeok Complete system."""
     try:
         # Import here to avoid circular imports during initialization
-        from AFO.api.initialization import yeongdeok
+        from afo.api.initialization import yeongdeok
 
         if yeongdeok and hasattr(yeongdeok, "browser"):
             await yeongdeok.close_eyes()
@@ -46,7 +46,7 @@ async def _cleanup_databases() -> None:
     """Cleanup database connections."""
     try:
         # Import here to avoid circular imports during initialization
-        from AFO.api.initialization import PG_POOL, REDIS_CLIENT
+        from afo.api.initialization import PG_POOL, REDIS_CLIENT
 
         # Cleanup PostgreSQL connection pool
         if PG_POOL:

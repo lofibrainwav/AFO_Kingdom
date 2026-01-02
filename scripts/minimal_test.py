@@ -27,7 +27,7 @@ def test_minimal_app():
 
     # Manually add Skills router
     try:
-        from AFO.api.compat import skills_router
+        from afo.api.compat import skills_router
 
         print("✅ Skills router imported from compat")
 
@@ -64,14 +64,14 @@ def test_full_setup():
 
     try:
         # Test config
-        from AFO.api.config import get_app_config
+        from afo.api.config import get_app_config
 
         app = get_app_config()
         print("✅ App created")
 
         # Test middleware (skip if problematic)
         try:
-            from AFO.api.middleware import setup_middleware
+            from afo.api.middleware import setup_middleware
 
             setup_middleware(app)
             print("✅ Middleware setup")
@@ -79,7 +79,7 @@ def test_full_setup():
             print(f"⚠️ Middleware setup skipped: {e}")
 
         # Test router setup
-        from AFO.api.routers import setup_routers
+        from afo.api.routers import setup_routers
 
         setup_routers(app)
         print("✅ Routers setup")
@@ -128,7 +128,7 @@ if __name__ == "__main__":
 
     elif not minimal_success:
         print("\n🔍 ISSUE: Skills router has fundamental problems")
-        print("   Check AFO.api.routers.skills implementation")
+        print("   Check afo.api.routers.skills implementation")
 
     else:
         print("\n🎉 SUCCESS: Skills API registration works correctly!")

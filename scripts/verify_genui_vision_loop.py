@@ -7,7 +7,7 @@ sys.path.append(pathlib.Path("packages/afo-core").resolve())
 sys.path.append(pathlib.Path("packages/trinity-os").resolve())
 
 try:
-    from AFO.genui.genui_orchestrator import GenUIOrchestrator
+    from afo.genui.genui_orchestrator import GenUIOrchestrator
 
     print("✅ GenUI Orchestrator imported successfully.")
 except ImportError as e:

@@ -18,13 +18,13 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from AFO.config.settings import get_settings
-from AFO.guardians.critic_agent import CriticAgent
+from afo.config.settings import get_settings
+from afo.guardians.critic_agent import CriticAgent
 
 # Core Systems
-from AFO.llm_router import LLMRouter
-from AFO.services.vision_verifier import vision_verifier
-from AFO.utils.logging import log_sse
+from afo.llm_router import LLMRouter
+from afo.services.vision_verifier import vision_verifier
+from afo.utils.logging import log_sse
 
 logger = logging.getLogger(__name__)
 
@@ -150,7 +150,7 @@ class SerenityCreationLoop:
 
     async def _generate_code(self, prompt: str, feedback: str = "") -> str:
         """Generate React component via Grok Web Bridge (The Brain)."""
-        from AFO.julie_cpa.grok_engine import generate_genui_component
+        from afo.julie_cpa.grok_engine import generate_genui_component
 
         log_sse("🧠 Connecting to Grok Brain for architecture...")
 

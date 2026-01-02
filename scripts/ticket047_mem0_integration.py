@@ -10,7 +10,6 @@ import sys
 import time
 from pathlib import Path
 
-
 # 프로젝트 루트 경로 추가
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
@@ -65,7 +64,9 @@ async def test_mem0_basic_functionality():
     # 3. 모든 메모리 조회 테스트
     print("\n3. 모든 메모리 조회 테스트")
     all_memories = client.get_all_memories(user_id="test_user")
-    memory_count = len(all_memories.get("memories", [])) if all_memories["success"] else 0
+    memory_count = (
+        len(all_memories.get("memories", [])) if all_memories["success"] else 0
+    )
     print(f"   총 메모리 수: {memory_count}개 ({all_memories['latency_ms']:.1f}ms)")
 
     # 4. 성능 통계 확인
@@ -106,7 +107,9 @@ async def test_context7_integration():
 
     search_results = []
     for query in search_queries:
-        result = manager.search_context7_knowledge(query=query, user_id="system", limit=2)
+        result = manager.search_context7_knowledge(
+            query=query, user_id="system", limit=2
+        )
         search_results.append(result)
         found = len(result.get("results", [])) if result["success"] else 0
         print(
@@ -116,7 +119,9 @@ async def test_context7_integration():
     # 3. 쿼리 강화 테스트
     print("\n3. 쿼리 강화 테스트")
     original_query = "어떻게 sequential thinking을 사용하나요?"
-    enhanced_query = manager.enhance_query_with_context7(original_query, user_id="system")
+    enhanced_query = manager.enhance_query_with_context7(
+        original_query, user_id="system"
+    )
     enhancement = "✅ 강화됨" if enhanced_query != original_query else "❌ 변경 없음"
     print(f"   쿼리 강화: {enhancement}")
     if len(enhanced_query) > 100:
@@ -230,8 +235,12 @@ async def main():
 
     import json
 
-    ssot_path = artifacts_dir / f"ticket047_mem0_integration_ssot_{int(time.time())}.jsonl"
-    Path(ssot_path).write_text(json.dumps(ssot_result, ensure_ascii=False) + "\n", encoding="utf-8")
+    ssot_path = (
+        artifacts_dir / f"ticket047_mem0_integration_ssot_{int(time.time())}.jsonl"
+    )
+    Path(ssot_path).write_text(
+        json.dumps(ssot_result, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
 
     print(f"\nSSOT 저장: {ssot_path}")
 

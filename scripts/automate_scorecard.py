@@ -173,7 +173,7 @@ class AutomatedScorecard:
         try:
             # MyPy needs packages/afo-core for proper import resolution
             mypy_path = self.project_dir
-            if self.project_dir.name == "AFO":
+            if self.project_dir.name == "afo":
                 mypy_path = self.project_dir.parent  # Go up to packages/afo-core
 
             # Use absolute path for venv (script may run from different cwd)

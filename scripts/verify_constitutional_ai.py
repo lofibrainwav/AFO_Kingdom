@@ -13,7 +13,7 @@ sys.path.append(
     ).resolve()
 )
 
-from AFO.constitution.constitutional_ai import AFOConstitution
+from afo.constitution.constitutional_ai import AFOConstitution
 
 
 async def verify_constitution():

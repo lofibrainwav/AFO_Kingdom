@@ -70,7 +70,7 @@ def main():
             soul_engine_port = settings.SOUL_ENGINE_PORT
         except Exception:
             try:
-                from AFO.config.settings import get_settings
+                from afo.config.settings import get_settings
 
                 settings = get_settings()
                 soul_engine_port = settings.SOUL_ENGINE_PORT

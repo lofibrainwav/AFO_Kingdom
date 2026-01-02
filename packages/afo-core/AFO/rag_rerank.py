@@ -63,7 +63,7 @@ async def rerank(query: str, docs: list[Any]) -> tuple[list[Any], RerankResult]:
             reranker = CrossEncoder(_model_name(), device=os.getenv("AFO_RAG_RERANK_DEVICE", "cpu"))
             pairs = [[query, _doc_text(d)] for d in docs]
             scores = reranker.predict(pairs)
-            ranked = [d for _, d in sorted(zip(scores, docs), key=lambda x: x[0], reverse=True)]
+            ranked = [d for _, d in sorted(zip(scores, docs, strict=False), key=lambda x: x[0], reverse=True)]
             return ranked[: _top_k()]
 
         return await asyncio.to_thread(_predict_sync)

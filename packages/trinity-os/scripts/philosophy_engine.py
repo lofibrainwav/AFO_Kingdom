@@ -279,10 +279,9 @@ class PhilosophyEngine:
 
         if current_score < 0.4:
             return ["philosophy_basics", "trinity_mathematics", "kingdom_heritage"]
-        elif current_score < 0.7:
+        if current_score < 0.7:
             return ["philosophy_basics", "trinity_mathematics", "practical_application"]
-        else:
-            return ["practical_application", "mastery_certification"]
+        return ["practical_application", "mastery_certification"]
 
     def _generate_welcome_message(self, name: str) -> str:
         """에이전트를 위한 환영 메시지 생성"""
@@ -497,12 +496,11 @@ Trinity Score에 기반한 개인화된 교육을 제공합니다.
                 "recommended_title": best_title,
                 "certification_available": True,
             }
-        else:
-            return {
-                "eligible": False,
-                "next_milestone": "Reach Trinity Score 0.80",
-                "progress_to_next": f"{current_score:.2f}/0.80",
-            }
+        return {
+            "eligible": False,
+            "next_milestone": "Reach Trinity Score 0.80",
+            "progress_to_next": f"{current_score:.2f}/0.80",
+        }
 
     def _generate_philosophy_feedback(self, analysis: dict[str, float]) -> str:
         """철학적 피드백 생성"""
@@ -525,10 +523,9 @@ Trinity Score에 기반한 개인화된 교육을 제공합니다.
 
         if score < 0.5:
             return ["철학 기초 모듈을 공부하세요", "Trinity Score 계산 방법을 배우세요"]
-        elif score < 0.8:
+        if score < 0.8:
             return ["실전 적용을 연습하세요", "왕국 유산을 탐구하세요"]
-        else:
-            return ["명장 인증에 도전하세요", "다른 에이전트를 멘토링하세요"]
+        return ["명장 인증에 도전하세요", "다른 에이전트를 멘토링하세요"]
 
     def certify_master(self, agent_id: str, title: str) -> dict[str, Any]:
         """명장 인증"""

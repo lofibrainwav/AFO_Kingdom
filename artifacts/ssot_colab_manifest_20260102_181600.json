@@ -1,0 +1,30 @@
+{
+  "ts": "20260102_181600",
+  "files": [
+    {
+      "path": "artifacts/ssot_colab_env_20260102_181600.json",
+      "bytes": 13294,
+      "mtime_utc": "2026-01-02T02:17:11Z"
+    },
+    {
+      "path": "artifacts/ssot_colab_run_stdout_20260102_181600.log",
+      "bytes": 5406,
+      "mtime_utc": "2026-01-02T02:17:33Z"
+    },
+    {
+      "path": "artifacts/mipro_colab_final_result.json",
+      "bytes": 3134,
+      "mtime_utc": "2026-01-02T02:17:58Z"
+    },
+    {
+      "path": "artifacts/ssot_colab_reproducibility_info.md",
+      "bytes": 1725,
+      "mtime_utc": "2026-01-02T02:18:16Z"
+    },
+    {
+      "path": "artifacts/ssot_colab_hashes_20260102_181600.txt",
+      "bytes": 447,
+      "mtime_utc": "2026-01-02T02:28:58Z"
+    }
+  ]
+}

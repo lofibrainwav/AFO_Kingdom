@@ -5,8 +5,8 @@
 from dataclasses import dataclass
 from datetime import datetime
 
-from AFO.config import antigravity
-from AFO.security.vault_manager import vault
+from afo.config import antigravity
+from afo.security.vault_manager import vault
 
 
 @dataclass
@@ -72,7 +72,7 @@ class FrictionCalibrator:
         try:
             # Lazy import to avoid circular dependency
             try:
-                from AFO.julie_cpa.services.julie_service import JulieService
+                from afo.julie_cpa.services.julie_service import JulieService
 
                 julie_service = JulieService()
             except ImportError:

@@ -60,7 +60,7 @@ def test_router_imports():
         project_root = Path(__file__).parent.parent
         sys.path.insert(0, str(project_root / "packages" / "afo-core"))
 
-        from AFO.api.routes.comprehensive_health import router as comp_router
+        from afo.api.routes.comprehensive_health import router as comp_router
 
         # #region agent log
         log_debug(
@@ -112,7 +112,7 @@ def test_router_imports():
 
     # 3. Family
     try:
-        from AFO.api.routers.family import router as family_router
+        from afo.api.routers.family import router as family_router
 
         # #region agent log
         log_debug(

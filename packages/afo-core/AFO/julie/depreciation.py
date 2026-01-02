@@ -17,9 +17,9 @@ from datetime import UTC, datetime
 from enum import Enum
 
 import dspy
-from afo.context7 import search_irs_ftb
 from pydantic import BaseModel, Field, field_validator
 
+from afo.context7 import search_irs_ftb
 from afo.dspy_optimizer import DepreciationSignature
 
 
@@ -44,7 +44,10 @@ class DepInput(BaseModel):
     state: State = Field(default=State.CA, description="세금 관할 구역")
     asset_type: AssetType = Field(default=AssetType.EQUIPMENT, description="자산 유형")
     business_income: float = Field(
-        default=0, ge=0, description="사업 소득 (§179 소득 한도 계산용)", examples=[150000]
+        default=0,
+        ge=0,
+        description="사업 소득 (§179 소득 한도 계산용)",
+        examples=[150000],
     )
     sec179_first: bool = Field(default=True, description="§179 우선 적용 여부")
 
@@ -109,7 +112,11 @@ class DepreciationCalculator:
         phase_out_start = self.PHASE_OUT_START_2026
 
         if not sec179_first:
-            return {"sec179_amount": 0, "bonus_amount": cost, "explanation": "§179 비적용 선택"}
+            return {
+                "sec179_amount": 0,
+                "bonus_amount": cost,
+                "explanation": "§179 비적용 선택",
+            }
 
         # 소득 한도 고려
         income_limit = min(sec179_limit, business_income)
@@ -269,7 +276,7 @@ def julie_depreciation_calc(input_data: DepInput) -> DepOutput:
     }
 
     try:
-        dspy_result = compiled(dspy_input)
+        compiled(dspy_input)
         # DSPy 결과로 Trinity Score 향상
         enhanced_score = calculator.calculate_trinity_score(accuracy=1.0, compliance=1.0)
         base_result.trinity_score = enhanced_score

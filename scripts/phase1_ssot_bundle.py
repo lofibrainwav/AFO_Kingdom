@@ -8,7 +8,6 @@ from time import perf_counter
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
-
 ROOT = Path(".").resolve()
 OUT_DIR = ROOT / "artifacts" / "ssot_phase1"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -19,7 +18,12 @@ RAG_BASE_URL = os.environ.get("AFO_RAG_URL", "http://localhost:8001").rstrip("/"
 
 def run(cmd):
     p = subprocess.run(cmd, check=False, cwd=str(ROOT), text=True, capture_output=True)
-    return {"cmd": cmd, "rc": p.returncode, "out": p.stdout.strip(), "err": p.stderr.strip()}
+    return {
+        "cmd": cmd,
+        "rc": p.returncode,
+        "out": p.stdout.strip(),
+        "err": p.stderr.strip(),
+    }
 
 
 def sha256_bytes(b: bytes) -> str:
@@ -81,7 +85,15 @@ def find_trinity_refs(limit=20):
         for p in base.rglob("*"):
             if not p.is_file():
                 continue
-            if p.suffix.lower() not in [".md", ".py", ".ts", ".tsx", ".json", ".yaml", ".yml"]:
+            if p.suffix.lower() not in [
+                ".md",
+                ".py",
+                ".ts",
+                ".tsx",
+                ".json",
+                ".yaml",
+                ".yml",
+            ]:
                 continue
             try:
                 txt = p.read_text(encoding="utf-8", errors="ignore")
@@ -103,12 +115,15 @@ def main():
     roadmap_path = ROOT / "docs" / "ANTIGRAVITY_ROADMAP_2026.md"
     ch_spec = ROOT / "docs" / "AFO_CHANCELLOR_GRAPH_SPEC.md"
 
-    organs_truth_hits = sorted([str(p.relative_to(ROOT)) for p in ROOT.rglob("organs_truth.py")])[
-        :5
-    ]
-    t11_logs = sorted([
-        str(p.relative_to(ROOT)) for p in ROOT.glob("artifacts/t11_ollama_integration_ssot_*.jsonl")
-    ])
+    organs_truth_hits = sorted(
+        [str(p.relative_to(ROOT)) for p in ROOT.rglob("organs_truth.py")]
+    )[:5]
+    t11_logs = sorted(
+        [
+            str(p.relative_to(ROOT))
+            for p in ROOT.glob("artifacts/t11_ollama_integration_ssot_*.jsonl")
+        ]
+    )
 
     bundle = {
         "ticket": "ANTIGRAVITY_PHASE1",
@@ -133,7 +148,9 @@ def main():
             "organs_truth_candidates": [
                 {"path": p, "sha256": sha256_file(ROOT / p)} for p in organs_truth_hits
             ],
-            "t11_ssot_logs": [{"path": p, "sha256": sha256_file(ROOT / p)} for p in t11_logs],
+            "t11_ssot_logs": [
+                {"path": p, "sha256": sha256_file(ROOT / p)} for p in t11_logs
+            ],
         },
         "endpoints": {
             "afo_health": http_probe(f"{AFO_BASE_URL}/health"),

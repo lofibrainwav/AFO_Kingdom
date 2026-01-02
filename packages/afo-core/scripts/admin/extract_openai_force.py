@@ -12,7 +12,7 @@ from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 
 # Add AFO to path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from AFO.api_wallet import APIWallet
+from afo.api_wallet import APIWallet
 
 
 def get_safe_storage_password():

@@ -67,7 +67,7 @@ if "AFO_TRINITY_METRIC_NAME" not in d:
     d = d.replace(
         "## 환경 변수\n- `AFO_BASE_URL` (기본: `http://localhost:8010`)\n- `TRINITY_EPSILON` (기본: `0.0001`)\n",
         "## 환경 변수\n- `AFO_BASE_URL` (기본: `http://localhost:8010`)\n- `TRINITY_EPSILON` (기본: `0.0001`)\n- `AFO_TRINITY_METRIC_NAME` (기본: `afo_trinity_score_total`)\n",
-        1
+        1,
     )
 doc.write_text(d, encoding="utf-8")
 

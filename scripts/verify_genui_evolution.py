@@ -7,8 +7,8 @@ from unittest.mock import patch
 # Path setup to ensure imports work
 sys.path.append(os.path.join(pathlib.Path.cwd(), "packages/afo-core"))
 
-from AFO.config.antigravity import antigravity
-from AFO.genui.genui_orchestrator import GenUIOrchestrator
+from afo.config.antigravity import antigravity
+from afo.genui.genui_orchestrator import GenUIOrchestrator
 
 
 class TestGenUIEvolution(unittest.TestCase):
@@ -27,7 +27,7 @@ class TestGenUIEvolution(unittest.TestCase):
         print("✅ Correctly BLOCKED by Governance.")
 
     @patch.object(antigravity, "get_feature_flag")
-    @patch("AFO.genui.genui_orchestrator.PlaywrightBridgeMCP")
+    @patch("afo.genui.genui_orchestrator.PlaywrightBridgeMCP")
     def test_rollout_hundred_percent(self, mock_playwright, mock_flag):
         """Test allowing when flag is True (100% rollout)"""
         print("\n🧪 Testing 100% Rollout / Enabled Flag...")

@@ -12,7 +12,7 @@ from pydantic import BaseModel, Field
 
 # Auth utilities import
 try:
-    from AFO.api.utils.auth import create_access_token, hash_password, verify_password, verify_token
+    from afo.api.utils.auth import create_access_token, hash_password, verify_password, verify_token
 
     AUTH_UTILS_AVAILABLE = True
 except ImportError:
@@ -83,7 +83,7 @@ async def login(request: LoginRequest) -> dict[str, Any]:
 
     # DB에서 사용자 조회 및 인증
     try:
-        from AFO.services.database import get_db_connection
+        from afo.services.database import get_db_connection
 
         conn = await get_db_connection()
 
@@ -103,7 +103,7 @@ async def login(request: LoginRequest) -> dict[str, Any]:
 
         # 비밀번호 검증
         if AUTH_UTILS_AVAILABLE:
-            from AFO.api.utils.auth import verify_password
+            from afo.api.utils.auth import verify_password
 
             password_valid = verify_password(request.password, user_result["hashed_password"])
         else:
@@ -116,7 +116,7 @@ async def login(request: LoginRequest) -> dict[str, Any]:
 
         # 세션 생성
         if AUTH_UTILS_AVAILABLE:
-            from AFO.api.utils.auth import create_access_token
+            from afo.api.utils.auth import create_access_token
 
             # JWT 토큰 생성
             token_data = {
@@ -204,7 +204,7 @@ async def verify_token_endpoint(
     try:
         # JWT 토큰 검증
         if AUTH_UTILS_AVAILABLE:
-            from AFO.api.utils.auth import verify_token as verify_token_func
+            from afo.api.utils.auth import verify_token as verify_token_func
 
             payload = verify_token_func(token)
 

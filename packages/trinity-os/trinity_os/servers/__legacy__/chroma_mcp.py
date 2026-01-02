@@ -178,13 +178,12 @@ class ChromaMCP:
                         "id": doc_id,
                     }
                 )
-            else:
-                return json.dumps(
-                    {
-                        "success": False,
-                        "error": f"문서 ID '{doc_id}'를 찾을 수 없습니다.",
-                    }
-                )
+            return json.dumps(
+                {
+                    "success": False,
+                    "error": f"문서 ID '{doc_id}'를 찾을 수 없습니다.",
+                }
+            )
         except Exception as e:
             return json.dumps({"success": False, "error": f"문서 조회 실패: {e!s}"})
 
@@ -325,7 +324,7 @@ def main():
         print("Chroma MCP Server")
         print("Usage:")
         print("  python chroma_mcp.py mcp  # MCP 서버 모드")
-        print("")
+        print()
         print("Available tools:")
         print("  - create_collection")
         print("  - get_or_create_collection")

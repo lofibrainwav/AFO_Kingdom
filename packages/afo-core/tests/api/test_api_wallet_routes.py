@@ -31,7 +31,7 @@ class TestWalletAPI:
 
     def test_list_keys(self, client: TestClient) -> None:
         """GET /api/wallet/keys 테스트"""
-        with patch("AFO.api_wallet.APIWallet") as MockWallet:
+        with patch("afo.api_wallet.APIWallet") as MockWallet:
             instance = MockWallet.return_value
             instance.list_keys.return_value = []
 

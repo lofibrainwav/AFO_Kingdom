@@ -50,7 +50,10 @@ def rollback_node(state: GraphState) -> GraphState:
     checkpoint_data = load_checkpoint(state.trace_id, rollback_step)
     if not checkpoint_data:
         state.errors.append(f"ROLLBACK: failed to load checkpoint {rollback_step}")
-        state.outputs["ROLLBACK"] = {"status": "error", "reason": "checkpoint load failed"}
+        state.outputs["ROLLBACK"] = {
+            "status": "error",
+            "reason": "checkpoint load failed",
+        }
         return state
 
     # Restore state (partial - only safe fields)

@@ -25,7 +25,10 @@ def _get_test_params():
                 "HEAD_OF_HOUSEHOLD": 23625,
             },
             "dependent_standard_deduction": {"min": 1350, "add_earned_income": 450},
-            "additional_std_deduction_aged_blind": {"single_or_hoh": 2000, "married_or_qss": 1600},
+            "additional_std_deduction_aged_blind": {
+                "single_or_hoh": 2000,
+                "married_or_qss": 1600,
+            },
             "senior_bonus_deduction": {
                 "amount_per_person": 6000,
                 "phaseout_magi_single": 75000,
@@ -295,7 +298,11 @@ def test_itemized_vs_standard_deduction():
     calc = TaxCalculator(params)
 
     base_input = TaxInput(
-        filing_status="SINGLE", gross_income=100000, adjustments=0, flags=PersonFlags(), magi=100000
+        filing_status="SINGLE",
+        gross_income=100000,
+        adjustments=0,
+        flags=PersonFlags(),
+        magi=100000,
     )
 
     # 표준공제 사용
