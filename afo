@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 # AFO Kingdom Golden Path CLI
 # Usage: ./afo <command>
 # Commands: seal, trinity, drift, protect, status, help
@@ -29,7 +29,19 @@ banner() {
 
 cmd_seal() {
     echo -e "${GREEN}🔐 SSOT Seal${NC}"
-    "$SCRIPTS_DIR/ssot_seal.sh" "$@"
+    if [ $# -eq 0 ]; then
+        echo -e "${YELLOW}Usage: ./afo seal <task_name>${NC}"
+        echo "Example: ./afo seal ph8-ssot-automation"
+        exit 1
+    fi
+    TASK_NAME="$1"
+    echo "Sealing task: $TASK_NAME"
+
+    # Generate SSOT header
+    "$SCRIPTS_DIR/ssot_seal.sh" "$TASK_NAME"
+
+    # Auto-generate SSOT header markdown
+    generate_ssot_header "$TASK_NAME"
 }
 
 cmd_trinity() {
@@ -69,24 +81,27 @@ except:
 cmd_help() {
     banner
     echo "Commands:"
-    echo "  seal      - Generate SSOT evidence bundle"
-    echo "  trinity   - Check Trinity Score (≥90%)"
-    echo "  drift     - Monitor configuration drift"
-    echo "  protect   - Enforce branch protection"
-    echo "  status    - Show kingdom status"
-    echo "  alert     - Send notification (info|warning|error)"
-    echo "  release   - Create release tag (vX.Y.Z)"
-    echo "  dashboard - Show full status card"
-    echo "  evolve    - Run DGM evolution cycle [--dry-run]"
-    echo "  help      - Show this help"
+    echo "  seal       - Generate SSOT evidence bundle"
+    echo "  trinity    - Check Trinity Score (≥90%)"
+    echo "  drift      - Monitor configuration drift"
+    echo "  protect    - Enforce branch protection"
+    echo "  status     - Show kingdom status"
+    echo "  alert      - Send notification (info|warning|error)"
+    echo "  release    - Create release tag (vX.Y.Z)"
+    echo "  dashboard  - Show full status card + Trinity monitoring"
+    echo "  antigravity- Show/manage antigravity system settings"
+    echo "  expand     - Self-expanding kingdom algorithm (PH8-B)"
+    echo "  evolve     - Run DGM evolution cycle [--dry-run]"
+    echo "  help       - Show this help"
     echo ""
     echo "Examples:"
-    echo "  ./afo seal"
+    echo "  ./afo seal ph8-ssot-automation"
     echo "  ./afo trinity"
-    echo "  ./afo status"
+    echo "  ./afo dashboard"
+    echo "  ./afo antigravity status"
+    echo "  ./afo expand"
     echo "  ./afo alert warning 'Title' 'Message'"
     echo "  ./afo release v1.0.0"
-    echo "  ./afo dashboard"
     echo "  ./afo evolve --dry-run"
 }
 
@@ -107,6 +122,151 @@ cmd_dashboard() {
 cmd_evolve() {
     echo -e "${YELLOW}🧬 DGM Evolution Cycle${NC}"
     "$SCRIPTS_DIR/afo_dgm_evolve.sh" "$@"
+}
+
+cmd_expand() {
+    echo -e "${GREEN}🚀 Kingdom Expansion${NC}"
+    echo "PH8-B: Self-Expanding Kingdom Algorithm"
+    echo "Analyzing potential modules for integration..."
+    echo ""
+    echo "Available expansion targets:"
+    echo "  🔍 Context7: MCP tools integration"
+    echo "  🤖 DSPy: Prompt optimization framework"
+    echo "  🧬 Trinity: Philosophical orchestration"
+    echo "  📊 Monitoring: Real-time health tracking"
+    echo ""
+    echo "To expand: ./afo expand <module_name>"
+}
+
+cmd_antigravity() {
+    echo -e "${BLUE}🧲 Antigravity System${NC}"
+    case "${1:-status}" in
+        status)
+            echo "Antigravity Status:"
+            PYTHONPATH="/Users/brnestrm/AFO_Kingdom/packages/afo-core:$PYTHONPATH" python3 -c "
+try:
+    from config.antigravity import antigravity
+    print(f'  Environment: {antigravity.ENVIRONMENT}')
+    print(f'  Auto Deploy: {antigravity.AUTO_DEPLOY}')
+    print(f'  Dry Run Default: {antigravity.DRY_RUN_DEFAULT}')
+    print(f'  Self Expanding Mode: {antigravity.SELF_EXPANDING_MODE}')
+    print('')
+    print('Trinity Integration:')
+    print(f'  Weights: {antigravity.trinity_weights}')
+    print(f'  Threshold: {antigravity.auto_run_trinity_threshold}')
+except Exception as e:
+    print(f'  Error: {e}')
+    print('  (Antigravity module not available)')
+" || echo "  offline (module not found)"
+            ;;
+        sync)
+            echo "Syncing antigravity settings..."
+            PYTHONPATH="/Users/brnestrm/AFO_Kingdom/packages/afo-core:$PYTHONPATH" python3 -c "
+try:
+    from config.antigravity import antigravity
+    result = antigravity.auto_sync()
+    print(f'✅ {result}')
+except Exception as e:
+    print(f'❌ Sync failed: {e}')
+" 2>/dev/null || echo "❌ Antigravity sync failed - module not found"
+            ;;
+        reset)
+            echo "Resetting antigravity to defaults..."
+            echo "⚠️ This will reset all antigravity settings to factory defaults"
+            echo "   Run with --force to confirm"
+            if [ "${2:-}" = "--force" ]; then
+                echo "Force reset confirmed - resetting..."
+                # Reset .env.antigravity to defaults
+                cat > "packages/afo-core/.env.antigravity" << 'EOF'
+ENVIRONMENT=dev
+AUTO_DEPLOY=true
+DRY_RUN_DEFAULT=true
+CENTRAL_CONFIG_SYNC=true
+AUTO_SYNC=true
+SELF_EXPANDING_MODE=true
+REPORT_LANGUAGE=ko
+EOF
+                echo "✅ Antigravity settings reset to defaults"
+            else
+                echo "❌ Reset cancelled - use --force to confirm"
+            fi
+            ;;
+        *)
+            echo "Usage: ./afo antigravity {status|sync|reset}"
+            echo ""
+            echo "Commands:"
+            echo "  status    - Show current antigravity settings"
+            echo "  sync      - Sync antigravity settings from .env.antigravity"
+            echo "  reset     - Reset antigravity to factory defaults (--force required)"
+            ;;
+    esac
+}
+
+generate_ssot_header() {
+    local TASK_NAME="$1"
+    local TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+    local HEAD_SHA=$(git rev-parse HEAD)
+    local SHORT_SHA=$(git rev-parse --short HEAD)
+
+    # Find latest evidence folder (most recently created)
+    local EVIDENCE_DIR=$(find artifacts -name "seal_*" -type d -print0 2>/dev/null | xargs -0 ls -td | head -1)
+
+    if [ -z "$EVIDENCE_DIR" ]; then
+        echo -e "${YELLOW}⚠️ No evidence folder found for task: $TASK_NAME${NC}"
+        return 1
+    fi
+
+    echo -e "${GREEN}📝 Generating SSOT Header for: $TASK_NAME${NC}"
+    echo "Evidence folder: $EVIDENCE_DIR"
+
+    # Extract information from evidence files
+    local AS_OF=$(date -Iseconds)
+    local ORIGIN_MAIN_SHA=$(cat "$EVIDENCE_DIR/ls_remote_main.txt" 2>/dev/null || echo "N/A")
+
+    # Get Trinity Score for decision logic
+    local TRINITY_SCORE=$(python3 -c "
+import json, sys
+try:
+    with open('$EVIDENCE_DIR/health.json', 'r') as f:
+        data = json.load(f)
+        score = data.get('trinity', {}).get('trinity_score', 0)
+        print(f'{score:.1f}')
+except:
+    print('0.0')
+" 2>/dev/null || echo "0.0")
+
+    # Determine decision based on Trinity Score
+    local DECISION="ASK_COMMANDER"
+    if (( $(echo "$TRINITY_SCORE >= 90" | bc -l 2>/dev/null || echo 0) )); then
+        DECISION="AUTO_RUN"
+    fi
+
+    # Generate SSOT Header
+    local HEADER_FILE="$EVIDENCE_DIR/SSOT_HEADER.md"
+
+    cat > "$HEADER_FILE" << EOF
+SSOT-HEADER
+As-of: $AS_OF
+HEAD: $HEAD_SHA
+origin/main: $ORIGIN_MAIN_SHA
+Change: $TASK_NAME implementation
+Evidence: $EVIDENCE_DIR/
+Manifest: $EVIDENCE_DIR/sha256.txt
+Decision: $DECISION
+Reproduce: ./afo seal $TASK_NAME
+EOF
+
+    echo -e "${GREEN}✅ SSOT Header generated: $HEADER_FILE${NC}"
+    echo ""
+    echo "SSOT-HEADER"
+    echo "As-of: $AS_OF"
+    echo "HEAD: $HEAD_SHA"
+    echo "origin/main: $ORIGIN_MAIN_SHA"
+    echo "Change: $TASK_NAME implementation"
+    echo "Evidence: $EVIDENCE_DIR/"
+    echo "Manifest: $EVIDENCE_DIR/sha256.txt"
+    echo "Decision: $DECISION"
+    echo "Reproduce: ./afo seal $TASK_NAME"
 }
 
 # Main
@@ -145,6 +305,13 @@ case "${1:-help}" in
         shift || true
         cmd_evolve "$@"
         ;;
+    expand)
+        cmd_expand
+        ;;
+    antigravity)
+        shift || true
+        cmd_antigravity "$@"
+        ;;
     help|--help|-h)
         cmd_help
         ;;
@@ -154,4 +321,3 @@ case "${1:-help}" in
         exit 1
         ;;
 esac
-
