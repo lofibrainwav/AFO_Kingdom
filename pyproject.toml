@@ -141,6 +141,7 @@ ignore = [
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401", "F403", "D104"]
 "**/scripts/**" = ["T201", "D", "ANN", "E402", "F401", "F811", "S", "TRY", "PLR", "ERA", "RUF", "DTZ", "ARG", "PTH", "BLE", "SIM", "RET", "SLF", "FURB", "EXE", "G", "INP", "ICN", "PIE", "PYI", "Q", "RSE", "TID", "TCH", "INT", "PGH", "PL", "FLY", "NPY", "AIR", "PERF", "LOG", "ASYNC", "EM", "TD", "FIX", "FA", "F821", "FBT", "E", "B", "C90", "A", "ISC", "UP", "W", "I", "N", "PT", "YTT", "T10", "C4", "DOC", "COM", "PD"]
+"**/tools/**" = ["T201", "D", "ANN", "E402", "F401", "F811", "S", "TRY", "PLR", "ERA", "RUF", "DTZ", "ARG", "PTH", "BLE", "SIM", "RET", "SLF", "FURB", "EXE", "G", "INP", "ICN", "PIE", "PYI", "Q", "RSE", "TID", "TCH", "INT", "PGH", "PL", "FLY", "NPY", "AIR", "PERF", "LOG", "ASYNC", "EM", "TD", "FIX", "FA", "F821", "FBT", "E", "B", "C90", "A", "ISC", "UP", "W", "I", "N", "PT", "YTT", "T10", "C4", "DOC", "COM", "PD"]
 "packages/trinity-os/**/*.py" = ["E402"]
 "packages/**" = ["B904", "F841", "E402", "B007", "F821"]
 "verify_full_stack.py" = ["T201", "D", "E402", "S106"]
