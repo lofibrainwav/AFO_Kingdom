@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 import sys
 from pathlib import Path
 
@@ -18,6 +19,16 @@ def has_kana(s: str) -> bool:
             if a <= o <= b:
                 return True
     return False
+
+
+def has_multilang_slogan(s: str) -> bool:
+    """Detect multilingual slogans (English + Japanese/Chinese)"""
+    # English uppercase slogan pattern (3+ uppercase letters + exclamation)
+    en_slogan = re.search(r"[A-Z]{3,}.*!", s) is not None
+    # Combined with Japanese/Chinese characters
+    has_cjk = any(ord(c) > 0x2E00 for c in s)  # CJK Unified Ideographs start
+
+    return en_slogan and has_cjk
 
 
 def main() -> int:

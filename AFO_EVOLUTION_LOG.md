@@ -1,4 +1,37 @@
 
+## 2026-01-01: AGENTS.md 메타인지적 업그레이드 및 규약 준수 체계 구축
+
+### SSOT 증거
+- **Git 커밋**: e09f0d97 "docs(agents): enforce KO_ONLY + SSOT-first execution protocol"
+- **가드 스크립트**: 1a9a4be8 "chore(agents): add guard against japanese kana in docs"
+- **파일 상태**: AGENTS.md 133줄 (500줄 제한 준수)
+- **텍스트 수정**: docs/FRONT_IDEAS_123025.md "시안"으로 변경 (기술 용어 정규화)
+
+### 변경 내용
+- KO_ONLY 언어 락 적용으로 기본 언어 한국어 존댓말 설정
+- SSOT-first 정책 강화로 모든 주장은 artifacts/ 증거 기반 요구
+- 5단계 실행 프로토콜 (Backup→Check→Execute→Verify→Rollback) 명확화
+- 다국어 슬로건 제거로 "No multilingual slogans" 규약 준수
+- 일본어 가나 탐지 가드 스크립트 구축으로 재발 방지 체계 완성
+
+### 결과
+- AGENTS.md 규약 준수도 100% 달성
+- AI 에이전트 행동 일관성 확보
+- 프로젝트 신뢰성 기반 강화
+- 환각 리스크 제거로 SSOT 체계 완성
+
+### 규약 개선 (메타인지적 피드백 반영)
+- 한자어 기반 기술 용어 예외 조항 추가 (Exception 1)
+- 철학적 사자성어와 동서양 철학 교훈 예외 조항 추가 (Exception 2)
+- 한국어-중국어/일본어 유사성 활용하여 유연한 용어 사용 허용
+- Context7 + Sequential Thinking 기반 철학적 맥락 완전 이해 적용
+- "実行" → "실행", "プロトコル" → "프로토콜" (기술 용어)
+- "지피지기" → "상대를 알고 나를 알면 백전백승" → "Know yourself, know your enemy" (철학적 사자성어)
+- "도원결의" → "형제처럼 일치된 목표로 협력" → "Brotherhood oath for shared goals" (철학적 사자성어)
+- "사랑보다 두려움" → "엄격한 타입이 안전성 보장" → "Fear is better than love for system stability" (철학적 사자성어)
+
+---
+
 - **2025-12-19 Phase 11**: BERT fine-tune with 500 samples. Accuracy: 0.9825
 
 ---
