@@ -39,6 +39,8 @@
     "packages/afo-core/afo",
     "packages/afo-core/afo_soul_engine",
     "packages/afo-core/rag_*",
+    "packages/afo-core/alignment",
+    "packages/afo-core/kms",
     "tests"
   ],
   "venvPath": ".",
