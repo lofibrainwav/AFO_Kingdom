@@ -5,7 +5,8 @@ SSOT 가중치(眞35%, 善35%, 美20%, 孝8%, 永2%) 검증
 """
 
 import pytest
-from AFO.domain.metrics.trinity import TrinityMetrics, TrinityInputs, calculate_trinity
+
+from AFO.domain.metrics.trinity import TrinityInputs, TrinityMetrics, calculate_trinity
 
 
 class TestTrinityScoreEdgeCases:
@@ -117,7 +118,7 @@ class TestTrinityScoreEdgeCases:
 
     @pytest.mark.parametrize("inputs,expected_status", [
         (TrinityInputs(1, 1, 1, 1), "balanced"),      # 완벽 균형
-        (TrinityInputs(0.8, 0.5, 0.8, 0.5), "warning"), # 중간 불균형
+        (TrinityInputs(0.8, 0.5, 0.8, 0.5), "warning"),  # 중간 불균형
         (TrinityInputs(1, 0, 1, 0), "imbalanced"),     # 심한 불균형
     ])
     def test_balance_status_parametrized(self, inputs, expected_status):
@@ -177,7 +178,7 @@ class TestTrinityScoreRegression:
         """예외 처리 테스트"""
         # Given: 잘못된 입력
         # When: 계산 시도
-        result = calculate_trinity(float('nan'), 1, 1, 1, 1)
+        result = calculate_trinity(float("nan"), 1, 1, 1, 1)
 
         # Then: 안전하게 처리 (fallback)
         assert isinstance(result, TrinityMetrics)

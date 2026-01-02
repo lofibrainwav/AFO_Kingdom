@@ -3,6 +3,7 @@ import os
 import pathlib
 import sys
 
+
 # Add project root to path
 sys.path.append(
     pathlib.Path(

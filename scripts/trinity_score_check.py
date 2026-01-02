@@ -9,6 +9,7 @@ import os
 import sys
 from pathlib import Path
 
+
 # Trinity Score 가중치
 TRINITY_WEIGHTS = {
     "truth": 0.35,  # 기술적 정확성

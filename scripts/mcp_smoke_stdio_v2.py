@@ -1,16 +1,19 @@
 import json
 import os
+import selectors
 import subprocess
 import sys
 import time
-import selectors
+
 
 SERVER_MODULE = os.environ.get("MCP_SERVER_MODULE", "AFO.mcp.afo_skills_mcp")
 TIMEOUT_S = float(os.environ.get("MCP_SMOKE_TIMEOUT_S", "10"))
 
+
 def send(w, msg):
     w.write((json.dumps(msg) + "\n").encode("utf-8"))
     w.flush()
+
 
 def read_until(sel, want_id, timeout_s):
     deadline = time.monotonic() + timeout_s
@@ -27,6 +30,7 @@ def read_until(sel, want_id, timeout_s):
             if isinstance(obj, dict) and obj.get("id") == want_id:
                 return obj
     raise TimeoutError(f"timeout waiting for id={want_id}")
+
 
 def main():
     cmd = [sys.executable, "-m", SERVER_MODULE]
@@ -100,6 +104,7 @@ def main():
     if err.strip():
         print(err.strip())
     return 1
+
 
 if __name__ == "__main__":
     raise SystemExit(main())

@@ -10,11 +10,11 @@ Phase 13 AICPA 군단 최종 검증 스크립트
 import sys
 from pathlib import Path
 
+
 # Path setup
 sys.path.insert(0, str(Path(__file__).parent.parent / "packages" / "afo-core"))
 
-from AFO.aicpa import (FilingStatus, TaxInput, calculate_tax,
-                       get_aicpa_service, simulate_roth_ladder)
+from AFO.aicpa import FilingStatus, TaxInput, calculate_tax, get_aicpa_service, simulate_roth_ladder
 
 
 def print_header(title: str):

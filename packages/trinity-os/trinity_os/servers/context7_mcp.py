@@ -4,11 +4,10 @@ Context7 MCP Module
 지식 그래프 기반 컨텍스트 검색 및 주입을 위한 MCP 도구
 """
 
-import json
 import logging
-from typing import Dict, Any, List, Optional, Set
-from pathlib import Path
 import re
+from pathlib import Path
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -19,8 +18,8 @@ class Context7MCP:
     """
 
     def __init__(self):
-        self.knowledge_base: List[Dict[str, Any]] = []
-        self.knowledge_index: Dict[str, Set[int]] = {}
+        self.knowledge_base: list[dict[str, Any]] = []
+        self.knowledge_index: dict[str, set[int]] = {}
         self._load_knowledge_base()
 
     def _load_knowledge_base(self) -> None:
@@ -137,7 +136,7 @@ class Context7MCP:
 
         self.knowledge_base.extend(core_knowledge)
 
-    def _extract_keywords(self, content: str) -> List[str]:
+    def _extract_keywords(self, content: str) -> list[str]:
         """콘텐츠에서 키워드 추출 (개선된 버전)"""
         keywords = set()
 
@@ -170,7 +169,7 @@ class Context7MCP:
             'that', 'with', 'have', 'this', 'will', 'your', 'from', 'they', 'know',
             'want', 'been', 'good', 'much', 'some', 'time', 'very', 'when', 'come',
             'here', 'just', 'like', 'long', 'make', 'many', 'over', 'such', 'take',
-            'than', 'them', 'well', 'were', 'what', 'when', 'where', 'which', 'while',
+            'than', 'them', 'well', 'were', 'what', 'where', 'which', 'while',
             'who', 'why', 'would'
         }]
 
@@ -206,7 +205,7 @@ class Context7MCP:
                     self.knowledge_index[keyword] = set()
                 self.knowledge_index[keyword].add(idx)
 
-    def retrieve_context(self, query: str, domain: str = "general") -> Dict[str, Any]:
+    def retrieve_context(self, query: str, domain: str = "general") -> dict[str, Any]:
         """
         쿼리에 기반한 컨텍스트 검색
 
@@ -285,7 +284,7 @@ class Context7MCP:
             }
         }
 
-    def add_knowledge(self, knowledge_item: Dict[str, Any]) -> str:
+    def add_knowledge(self, knowledge_item: dict[str, Any]) -> str:
         """새로운 지식 항목 추가"""
         knowledge_item["id"] = f"custom_{len(self.knowledge_base)}"
         knowledge_item["keywords"] = self._extract_keywords(
@@ -299,7 +298,7 @@ class Context7MCP:
 
         return knowledge_item["id"]
 
-    def get_knowledge_stats(self) -> Dict[str, Any]:
+    def get_knowledge_stats(self) -> dict[str, Any]:
         """지식 베이스 통계 반환"""
         types = {}
         sources = {}

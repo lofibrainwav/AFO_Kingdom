@@ -35,6 +35,7 @@ from typing import Any, Final
 
 import aiohttp
 
+
 # Constants
 TRINITY_WEIGHTS: Final = {
     "truth": 0.35,

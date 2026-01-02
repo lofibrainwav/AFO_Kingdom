@@ -14,10 +14,9 @@ Sequential Thinking MCP Module
 - 사고 과정 요약 및 분석
 """
 
-import json
 import logging
 from datetime import datetime
-from typing import Dict, Any, List, Optional, Union
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -46,8 +45,8 @@ class SequentialThinkingMCP:
 
         사고 기록을 초기화하고 로깅을 설정합니다.
         """
-        self.thought_history: List[Dict[str, Any]] = []
-        self.current_session: Optional[str] = None
+        self.thought_history: list[dict[str, Any]] = []
+        self.current_session: str | None = None
         logger.info("SequentialThinkingMCP initialized")
 
     def process_thought(
@@ -56,7 +55,7 @@ class SequentialThinkingMCP:
         thought_number: int,
         total_thoughts: int,
         next_thought_needed: bool
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         단계별 사고 처리
 
@@ -245,7 +244,7 @@ class SequentialThinkingMCP:
 
         return f"Total {total_steps} steps completed. Average truth: {avg_truth:.2f}, Average serenity: {avg_serenity:.2f}"
 
-    def get_thought_history(self) -> List[Dict[str, Any]]:
+    def get_thought_history(self) -> list[dict[str, Any]]:
         """사고 기록 반환"""
         return self.thought_history.copy()
 
@@ -263,7 +262,7 @@ class SequentialThinkingMCP:
         self.clear_history()
         logger.info(f"Started new thinking session: {session_id}")
 
-    def end_session(self) -> Dict[str, Any]:
+    def end_session(self) -> dict[str, Any]:
         """현재 세션 종료 및 요약 반환"""
         summary = {
             "session_id": self.current_session,

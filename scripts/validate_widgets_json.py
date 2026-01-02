@@ -12,6 +12,7 @@ import json
 import sys
 from pathlib import Path
 
+
 # Add afo-core to path
 repo_root = Path(__file__).parent.parent
 afo_core_path = repo_root / "packages" / "afo-core"

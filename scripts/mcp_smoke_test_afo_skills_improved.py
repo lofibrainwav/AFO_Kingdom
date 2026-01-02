@@ -17,7 +17,6 @@ from typing import Optional
 
 class TimeoutError(Exception):
     """Custom timeout exception"""
-    pass
 
 
 def timeout_handler(signum, frame):
@@ -44,7 +43,7 @@ def run_mcp_server_test(timeout_seconds: int = 30) -> bool:
     print(f"Test timeout: {timeout_seconds} seconds")
     print()
 
-    server_proc: Optional[subprocess.Popen] = None
+    server_proc: subprocess.Popen | None = None
 
     try:
         # Set up timeout handler
@@ -79,8 +78,8 @@ def run_mcp_server_test(timeout_seconds: int = 30) -> bool:
         init_response_line = server_proc.stdout.readline().strip()
         if init_response_line:
             init_response = json.loads(init_response_line)
-            server_name = init_response.get('result', {}).get('serverInfo', {}).get('name', 'Unknown')
-            server_version = init_response.get('result', {}).get('serverInfo', {}).get('version', 'Unknown')
+            server_name = init_response.get("result", {}).get("serverInfo", {}).get("name", "Unknown")
+            server_version = init_response.get("result", {}).get("serverInfo", {}).get("version", "Unknown")
             print(f"✅ Initialize response: {server_name} v{server_version}")
         else:
             print("❌ No initialize response received")
@@ -102,14 +101,14 @@ def run_mcp_server_test(timeout_seconds: int = 30) -> bool:
         list_response_line = server_proc.stdout.readline().strip()
         if list_response_line:
             list_response = json.loads(list_response_line)
-            tools = list_response.get('result', {}).get('tools', [])
-            tool_names = [tool.get('name', 'unknown') for tool in tools]
+            tools = list_response.get("result", {}).get("tools", [])
+            tool_names = [tool.get("name", "unknown") for tool in tools]
 
             print(f"✅ Tools found: {len(tools)}개")
             print(f"   도구 목록: {', '.join(tool_names)}")
 
             # Verify expected tools
-            expected_tools = ['skills_list', 'skills_detail', 'skills_execute', 'genui_generate', 'afo_api_health']
+            expected_tools = ["skills_list", "skills_detail", "skills_execute", "genui_generate", "afo_api_health"]
             missing_tools = [tool for tool in expected_tools if tool not in tool_names]
             extra_tools = [tool for tool in tool_names if tool not in expected_tools]
 
@@ -128,13 +127,12 @@ def run_mcp_server_test(timeout_seconds: int = 30) -> bool:
             print("✅ MCP 서버는 계속 실행되는 것이 정상입니다")
             return True
 
-        else:
-            print("❌ No tools/list response received")
-            # Check stderr for clues
-            stderr_output = server_proc.stderr.read()
-            if stderr_output.strip():
-                print(f"Server stderr: {stderr_output.strip()}")
-            return False
+        print("❌ No tools/list response received")
+        # Check stderr for clues
+        stderr_output = server_proc.stderr.read()
+        if stderr_output.strip():
+            print(f"Server stderr: {stderr_output.strip()}")
+        return False
 
     except TimeoutError:
         print(f"❌ Test timed out after {timeout_seconds} seconds")
@@ -182,10 +180,9 @@ def main():
         print("✅ AFO Skills MCP Server is ready for Cursor IDE integration")
         print("✅ Server will continue running (this is normal)")
         return 0
-    else:
-        print("💥 SMOKE TEST FAILED")
-        print("❌ AFO Skills MCP Server needs debugging")
-        return 1
+    print("💥 SMOKE TEST FAILED")
+    print("❌ AFO Skills MCP Server needs debugging")
+    return 1
 
 
 if __name__ == "__main__":

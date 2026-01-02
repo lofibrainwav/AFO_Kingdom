@@ -2,6 +2,7 @@ import os
 import pathlib
 import sys
 
+
 # Add package root to sys.path
 # Using absolute path to packages/afo-core so we can import modules directly
 sys.path.append(

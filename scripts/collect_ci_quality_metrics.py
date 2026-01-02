@@ -2,6 +2,7 @@
 import os
 from urllib.request import Request, urlopen
 
+
 PUSHGATEWAY_URL = os.getenv("PUSHGATEWAY_URL", "http://localhost:9091")
 JOB = os.getenv("AFO_METRICS_JOB", "afo_ci_quality")
 INSTANCE = os.getenv("AFO_INSTANCE", "afo_kingdom_main")

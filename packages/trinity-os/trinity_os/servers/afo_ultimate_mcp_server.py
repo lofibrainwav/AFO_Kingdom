@@ -39,8 +39,7 @@ except ImportError as e:
     print(f"⚠️ Failed to load Context7MCP: {e}", file=sys.stderr)
 
 try:
-    from sequential_thinking_mcp import \
-        SequentialThinkingMCP as _SequentialThinkingMCP
+    from sequential_thinking_mcp import SequentialThinkingMCP as _SequentialThinkingMCP
 
     SequentialThinkingMCP = _SequentialThinkingMCP
     SEQUENTIAL_LOADED = True
@@ -48,8 +47,7 @@ except ImportError as e:
     print(f"⚠️ Failed to load SequentialThinkingMCP: {e}", file=sys.stderr)
 
 try:
-    from trinity_score_mcp import \
-        TrinityScoreEngineHybrid as _TrinityScoreEngineHybrid
+    from trinity_score_mcp import TrinityScoreEngineHybrid as _TrinityScoreEngineHybrid
 
     TrinityScoreEngineHybrid = _TrinityScoreEngineHybrid
     TRINITY_LOADED = True
@@ -57,8 +55,7 @@ except ImportError as e:
     print(f"⚠️ Failed to load TrinityScoreEngineHybrid: {e}", file=sys.stderr)
 
 try:
-    from playwright_bridge_mcp import \
-        PlaywrightBridgeMCP as _PlaywrightBridgeMCP
+    from playwright_bridge_mcp import PlaywrightBridgeMCP as _PlaywrightBridgeMCP
 
     PlaywrightBridgeMCP = _PlaywrightBridgeMCP
     PLAYWRIGHT_LOADED = True
@@ -68,12 +65,10 @@ except ImportError as e:
 # Trinity Score Evaluator (동적 점수 계산)
 try:
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../../../afo-core"))
-    from AFO.services.mcp_tool_trinity_evaluator import \
-        mcp_tool_trinity_evaluator
+    from AFO.services.mcp_tool_trinity_evaluator import mcp_tool_trinity_evaluator
 except ImportError:
     try:
-        from AFO.services.mcp_tool_trinity_evaluator import \
-            mcp_tool_trinity_evaluator
+        from AFO.services.mcp_tool_trinity_evaluator import mcp_tool_trinity_evaluator
     except ImportError:
         mcp_tool_trinity_evaluator = None
 

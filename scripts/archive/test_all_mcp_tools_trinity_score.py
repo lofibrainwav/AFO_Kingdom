@@ -12,6 +12,7 @@ import time
 from pathlib import Path
 from typing import Any
 
+
 # 테스트할 MCP 서버 목록
 MCP_SERVERS = [
     {

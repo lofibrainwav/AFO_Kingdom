@@ -11,6 +11,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
+
 # -------------------------------
 # 철학적 상수 (SSOT)
 # -------------------------------

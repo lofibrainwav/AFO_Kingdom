@@ -1,10 +1,10 @@
 import json
 import sys
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any
 
 # Lazy import for performance: CuPy/NumPy are only imported when needed
-_GPU_AVAILABLE: Optional[bool] = None
+_GPU_AVAILABLE: bool | None = None
 _cp = None
 _np = None
 

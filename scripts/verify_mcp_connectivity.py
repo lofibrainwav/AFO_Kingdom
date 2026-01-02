@@ -6,6 +6,7 @@ import subprocess
 import sys
 import time
 
+
 p = pathlib.Path(".cursor/mcp.json")
 data = json.loads(p.read_text(encoding="utf-8"))
 servers = data.get("mcpServers") or data.get("servers") or {}

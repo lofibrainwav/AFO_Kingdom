@@ -4,6 +4,7 @@ import pathlib
 import sys
 from decimal import Decimal
 
+
 # Ensure pythonpath includes afo-core
 sys.path.append(os.path.join(pathlib.Path.cwd(), "packages/afo-core"))
 

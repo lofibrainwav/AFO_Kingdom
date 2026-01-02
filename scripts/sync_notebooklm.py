@@ -20,6 +20,7 @@ from pathlib import Path
 
 from qdrant_client import QdrantClient
 
+
 # Constants
 MANIFEST_PATH = Path("docs/kb/notebooklm/notebooklm.manifest.json")
 KB_ROOT = Path("docs/kb/notebooklm")
