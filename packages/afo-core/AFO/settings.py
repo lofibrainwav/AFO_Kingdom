@@ -25,7 +25,7 @@ class AFOSettings:
     version: str = "1.0.0"
 
     # API settings
-    api_host: str = field(default_factory=lambda: os.getenv("AFO_API_HOST", "0.0.0.0"))
+    api_host: str = field(default_factory=lambda: os.getenv("AFO_API_HOST", "127.0.0.1"))
     api_port: int = field(default_factory=lambda: int(os.getenv("AFO_API_PORT", "8010")))
 
     # LLM settings
