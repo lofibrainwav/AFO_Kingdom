@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Grok Interactive Auth - Stealth Mode (CDP)
+"""Grok Interactive Auth - Stealth Mode (CDP)
 Phase 15: The Grok Singularity
 
 Description:

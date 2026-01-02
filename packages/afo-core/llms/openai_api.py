@@ -28,7 +28,7 @@ class OpenAIAPIWrapper:
         # Vault Manager Integration (Zero Config)
         vault_client: Any = None
         try:
-            from ..security.vault_manager import vault as v1
+            from AFO.security.vault_manager import vault as v1
 
             vault_client = v1
         except (ImportError, ValueError):

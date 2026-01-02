@@ -5,8 +5,7 @@ from pydantic import BaseModel, Field
 
 
 class TrinityQuery(BaseModel):
-    """
-    Product: Immutable Complex Object
+    """Product: Immutable Complex Object
     Represents a full query context for the Chancellor-Strategist flow.
     """
 
@@ -18,8 +17,7 @@ class TrinityQuery(BaseModel):
 
 
 class TrinityQueryBuilder:
-    """
-    Builder Pattern:
+    """Builder Pattern:
     Constructs complex TrinityQuery objects step-by-step.
     Benefits:
     - Fluent Interface (Method Chaining)

@@ -53,6 +53,7 @@ julie_router = APIRouter(
     - 孝: 안전한 API 디자인
     - 永: Evidence Bundle 추적
 
+<<<<<<< HEAD
     **Evidence Bundle:** 각 계산마다 UUID 기반 증거 생성
     """,
     response_description="감가상각 계산 결과 및 Trinity Score",
@@ -72,6 +73,13 @@ async def calculate_depreciation(
 
     Raises:
         HTTPException: 입력 검증 실패 또는 계산 오류
+=======
+
+@router.get("/dashboard")
+async def get_dashboard() -> dict[str, Any]:
+    """[T26] Royal Finance Dashboard Logic
+    Returns Budget vs Actual, Forecast, and Recent Transactions.
+>>>>>>> wip/ph20-01-post-work
     """
     try:
         logger.info(f"Starting depreciation calculation for cost: ${input_data.total_cost:,.0f}")
@@ -103,6 +111,7 @@ async def calculate_depreciation(
         )
 
 
+<<<<<<< HEAD
 @julie_router.get(
     "/health",
     summary="Julie CPA 엔진 상태 확인",
@@ -167,3 +176,16 @@ async def _log_calculation_evidence(input_data: dict[str, Any], result_data: dic
 
 # Export router for main API server
 __all__ = ["julie_router"]
+=======
+@router.post("/transaction/approve")
+async def approve_transaction(tx_id: str) -> dict[str, Any]:
+    """[T26] Transaction Approval Action"""
+    # In Phase 2, this would trigger actual bank transfer or DB update.
+    # For now, we simulate approval.
+    return {
+        "success": True,
+        "message": f"Transaction {tx_id} approved",
+        "tx_id": tx_id,
+        "status": "APPROVED",
+    }
+>>>>>>> wip/ph20-01-post-work

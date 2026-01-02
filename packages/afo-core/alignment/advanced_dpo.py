@@ -19,14 +19,14 @@ def run_advanced_dpo_lora(
     data_path: str = "preference_data.json",
     output_dir: str = "./afo_dpo_lora_results",
 ):
-    """
-    Executes Advanced DPO Training using QLoRA/LoRA for parameter efficiency.
+    """Executes Advanced DPO Training using QLoRA/LoRA for parameter efficiency.
     Optimized for resource constrained environments (keeping Serenity/Eternity pillars).
 
     Args:
         model_name: Base model ID
         data_path: Path to preference dataset
         output_dir: Directory to save the adapter
+
     """
     logger.info(f"🚀 [Advanced DPO] Initializing LoRA Strategy for: {model_name}")
 

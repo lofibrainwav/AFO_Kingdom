@@ -1,7 +1,0 @@
-AFO/api/middleware/cache_middleware.py:59: error: Incompatible types in assignment (expression has type "Redis[Any]", variable has type "None")  [assignment]
-AFO/api/middleware/cache_middleware.py:62: error: Statement is unreachable  [unreachable]
-AFO/api/middleware/cache_middleware.py:89: error: Returning Any from function declared to return "int"  [no-any-return]
-AFO/api/middleware/cache_middleware.py:118: error: Statement is unreachable  [unreachable]
-AFO/api/middleware/cache_middleware.py:155: error: Right operand of "and" is never evaluated  [unreachable]
-AFO/api/middleware/cache_middleware.py:157: error: Statement is unreachable  [unreachable]
-Found 6 errors in 1 file (checked 1 source file)

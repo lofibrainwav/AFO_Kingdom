@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Skills Router
+"""Skills Router
 AFO Kingdom Skills API - Phase 2.5 Skills Registry Integration
 """
 
@@ -274,9 +273,7 @@ class SkillExecutionResponse(BaseModel):
 
 @router.get("/list")
 async def list_skills() -> dict[str, Any]:
-    """
-    등록된 모든 Skills 목록 조회
-    """
+    """등록된 모든 Skills 목록 조회"""
     try:
         # Use global registry instance
         skills = registry.list_skills()
@@ -301,9 +298,7 @@ async def list_skills() -> dict[str, Any]:
 
 @router.get("/detail/{skill_id}")
 async def get_skill_detail(skill_id: str) -> dict[str, Any]:
-    """
-    특정 Skill의 상세 정보 조회
-    """
+    """특정 Skill의 상세 정보 조회"""
     try:
         if SkillRegistry is None:
             raise HTTPException(status_code=503, detail="Skills Registry not available")
@@ -332,6 +327,7 @@ async def get_skill_detail(skill_id: str) -> dict[str, Any]:
 
 @router.post("/execute")
 async def execute_skill(request: SkillExecutionRequest) -> SkillExecutionResponse:
+<<<<<<< HEAD
     """
     Skill 실행
     """
@@ -340,6 +336,9 @@ async def execute_skill(request: SkillExecutionRequest) -> SkillExecutionRespons
     if not allowed:
         raise HTTPException(status_code=403, detail=reason)
 
+=======
+    """Skill 실행"""
+>>>>>>> wip/ph20-01-post-work
     try:
         if SkillRegistry is None:
             raise HTTPException(status_code=503, detail="Skills Registry not available")
@@ -387,9 +386,7 @@ async def execute_skill(request: SkillExecutionRequest) -> SkillExecutionRespons
 
 @router.get("/health")
 async def skills_health() -> dict[str, Any]:
-    """
-    Skills 시스템 건강 상태 확인
-    """
+    """Skills 시스템 건강 상태 확인"""
     try:
         health_status: dict[str, Any] = {
             "service": "skills_registry",
@@ -440,8 +437,7 @@ async def skills_health() -> dict[str, Any]:
 
 @router.post("/execute/{skill_id}/dry-run")
 async def execute_skill_dry_run(skill_id: str) -> dict[str, Any]:
-    """
-    [TRUTH WIRING]
+    """[TRUTH WIRING]
     Simulate skill execution and return projected Trinity Score impact.
     Connects Frontend 'DRY RUN' button to Backend Logic.
     """

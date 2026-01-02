@@ -6,6 +6,7 @@ import subprocess
 import sys
 import time
 
+
 p = pathlib.Path(".cursor/mcp.json")
 data = json.loads(p.read_text(encoding="utf-8"))
 servers = data.get("mcpServers") or data.get("servers") or {}
@@ -22,9 +23,7 @@ for name, cfg in servers.items():
         continue
 
     try:
-        proc = subprocess.Popen(
-            [cmd, *args], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
-        )
+        proc = subprocess.Popen([cmd, *args], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         time.sleep(1.2)
         rc = proc.poll()
         if rc is None:

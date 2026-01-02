@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-GenUI Schemas (GenUIRequest, GenUIResponse)
+"""GenUI Schemas (GenUIRequest, GenUIResponse)
 Phase 9: Self-Expanding Kingdom (Serenity)
 
 Defines the data structures for autonomous UI generation.
@@ -15,9 +14,7 @@ from AFO.api.models.persona import PersonaTrinityScore as TrinityScore
 
 
 class GenUIRequest(BaseModel):
-    """
-    Request to generate a new UI component.
-    """
+    """Request to generate a new UI component."""
 
     model_config = {
         "json_schema_extra": {
@@ -41,9 +38,7 @@ class GenUIRequest(BaseModel):
 
 
 class GenUIResponse(BaseModel):
-    """
-    Response containing the generated component.
-    """
+    """Response containing the generated component."""
 
     component_id: str = Field(..., description="Unique ID for the generated artifact")
     component_name: str = Field(..., description="React component name")

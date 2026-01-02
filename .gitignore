@@ -74,6 +74,7 @@ terraform/*.tfvars
 # AFO build/test artifacts
 artifacts/
 packages/**/artifacts/
+<<<<<<< HEAD
 *.report.*.json
 queue_report.*.md
 
@@ -85,3 +86,12 @@ scripts/_local_quarantine/
 
 # AFO runtime seals (local evidence only)
 artifacts/trinity_seals/
+=======
+.venv-dspy/
+.venv-dspy/
+.venv-dspy/
+tools/mlx_optimization/.venv/
+
+.venv-dspy/
+tools/mlx_optimization/.venv/
+>>>>>>> wip/ph20-01-post-work

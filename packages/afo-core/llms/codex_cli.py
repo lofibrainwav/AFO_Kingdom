@@ -1,8 +1,7 @@
 # Trinity Score: 90.0 (Established by Chancellor)
 # mypy: ignore-errors
 # mypy: ignore-errors
-"""
-OpenAI Codex CLI Wrapper
+"""OpenAI Codex CLI Wrapper
 형님 정기구독제 Codex CLI 연동
 
 CLI 기반으로 월 구독제 LLM 통합
@@ -19,8 +18,7 @@ logger = logging.getLogger(__name__)
 
 
 class CodexCLIWrapper:
-    """
-    OpenAI Codex CLI 연동
+    """OpenAI Codex CLI 연동
     형님 정기구독제 CLI 사용 (API 키 불필요)
     """
 
@@ -49,9 +47,7 @@ class CodexCLIWrapper:
             return False
 
     async def generate(self, prompt: str, **kwargs) -> dict[str, Any]:
-        """
-        Codex CLI로 텍스트 생성
-        """
+        """Codex CLI로 텍스트 생성"""
         if not self.available:
             return {"error": "Codex CLI not available", "success": False}
 
@@ -95,9 +91,7 @@ class CodexCLIWrapper:
     async def generate_with_context(
         self, messages: list[dict[str, str]], **kwargs
     ) -> dict[str, Any]:
-        """
-        대화 맥락을 포함한 생성
-        """
+        """대화 맥락을 포함한 생성"""
         # 메시지들을 하나의 프롬프트로 조합
         prompt_parts = []
         for msg in messages:

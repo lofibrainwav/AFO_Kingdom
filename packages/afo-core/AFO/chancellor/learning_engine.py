@@ -14,7 +14,7 @@ import time
 from collections import defaultdict
 from typing import Any, Optional, cast
 
-from ..cache.manager import cache_manager
+from AFO.cache.manager import cache_manager
 
 logger = logging.getLogger(__name__)
 

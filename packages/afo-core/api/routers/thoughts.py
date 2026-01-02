@@ -37,8 +37,7 @@ async def broadcast_thought(thought_data: dict[str, Any]) -> None:
 
 @router.get("/sse")
 async def stream_thoughts(request: Request) -> Any:
-    """
-    [The Matrix Stream]
+    """[The Matrix Stream]
     Streams real-time thoughts from Chancellor, Antigravity, and Trinity.
     Clients (AFOPantheon) connect here to visualize the "Soul of the Machine".
     """

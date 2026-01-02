@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Strategy Engine for AFO Kingdom
+"""Strategy Engine for AFO Kingdom
 Provides memory context and workflow management for LLM interactions.
 """
 
@@ -12,8 +11,7 @@ from typing import Any
 
 @dataclass
 class MemoryContext:
-    """
-    In-memory context manager for conversation history and state.
+    """In-memory context manager for conversation history and state.
     Provides short-term memory for LLM interactions.
     """
 
@@ -78,8 +76,7 @@ class WorkflowStep:
 
 
 class Workflow:
-    """
-    Workflow manager for multi-step LLM operations.
+    """Workflow manager for multi-step LLM operations.
     Supports sequential and parallel execution patterns.
     """
 

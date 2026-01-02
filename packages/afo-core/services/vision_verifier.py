@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Vision Verifier Service (The Eyes)
+"""Vision Verifier Service (The Eyes)
 Phase 9: Self-Expanding Kingdom
 
 Autonomous visual inspection of generated UI components.
@@ -16,8 +15,7 @@ logger = logging.getLogger("afo.services.vision_verifier")
 
 
 class VisionVerifier:
-    """
-    Autonomous visual verification service.
+    """Autonomous visual verification service.
     Uses Playwright to "see" the generated component.
     """
 
@@ -33,9 +31,7 @@ class VisionVerifier:
                 logger.warning(f"⚠️ [Vision] Could not create screenshot dir: {e}")
 
     async def verify_ui(self, url: str, screenshot_path: str) -> dict[str, Any]:
-        """
-        [Ultimate Vision] Performs exhaustive visual inspection.
-        """
+        """[Ultimate Vision] Performs exhaustive visual inspection."""
         logger.info(f"👁️ [Vision] Verifying {url}...")
 
         try:
@@ -66,9 +62,7 @@ class VisionVerifier:
             return {"success": False, "error": str(e)}
 
     async def verify_component(self, component_name: str) -> dict[str, Any]:
-        """
-        Visits the Sandbox Preview URL (convenience wrapper).
-        """
+        """Visits the Sandbox Preview URL (convenience wrapper)."""
         # Note: Sandbox routes are usually under /sandbox or /gen-ui/preview
         target_url = f"http://localhost:3000/sandbox/{component_name}"
         filename = f"{component_name}_v2025.png"

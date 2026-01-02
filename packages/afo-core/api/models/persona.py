@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Persona Models
+"""Persona Models
 Phase 2: Family Hub OS - 페르소나 모델링
 TRINITY-OS 페르소나 시스템 통합
 """

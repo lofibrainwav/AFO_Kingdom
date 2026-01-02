@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-MCP Tools Management API
+"""MCP Tools Management API
 MCP 도구 관리 및 상태 확인 엔드포인트
 """
 
@@ -113,8 +112,7 @@ async def list_mcp_tools() -> dict[str, Any]:
 
 @router.post("/add")
 async def add_mcp_tool(request: MCPToolRequest) -> dict[str, Any]:
-    """
-    새 MCP 도구 추가
+    """새 MCP 도구 추가
 
     MCP 설정 파일(.cursor/mcp.json)에 새 서버를 추가합니다.
     """
@@ -171,8 +169,7 @@ async def add_mcp_tool(request: MCPToolRequest) -> dict[str, Any]:
 
 @router.post("/test")
 async def test_mcp_connection(request: MCPTestRequest) -> dict[str, Any]:
-    """
-    MCP 서버 연결 테스트
+    """MCP 서버 연결 테스트
 
     서버가 실제로 실행 가능한지 확인합니다.
     """

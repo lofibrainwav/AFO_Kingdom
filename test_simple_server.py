@@ -3,15 +3,19 @@
 
 from fastapi import FastAPI
 
+
 app = FastAPI()
+
 
 @app.get("/health")
 async def health():
     return {"status": "ok", "message": "Simple test server is running"}
 
+
 @app.get("/chancellor/health")
 async def chancellor_health():
     return {"status": "ok", "message": "Chancellor health endpoint"}
+
 
 if __name__ == "__main__":
     import uvicorn

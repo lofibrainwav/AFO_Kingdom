@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Trinity Score Calculator (SSOT)
+"""Trinity Score Calculator (SSOT)
 동적 Trinity Score 계산기 - SSOT 가중치 기반 정밀 산출
 PDF 페이지 1: Trinity Score 계산기, 페이지 3: 5대 가치 동적 평가
 
@@ -54,17 +53,14 @@ SSOT_WEIGHTS = np.array(
 
 
 class TrinityCalculator:
-    """
-    Trinity Score Calculator (SSOT Implementation)
-    """
+    """Trinity Score Calculator (SSOT Implementation)"""
 
     def __init__(self) -> None:
         pass
 
     @validate_with_trinity
     def calculate_raw_scores(self, query_data: dict[str, Any]) -> list[float]:
-        """
-        Calculates Raw Scores [0.0, 1.0] for each Pillar.
+        """Calculates Raw Scores [0.0, 1.0] for each Pillar.
         Ideally this delegates to specific evaluators (TruthVerifier, RiskGate, etc.)
         For this service method, we implement the logic aggregation.
 
@@ -112,8 +108,7 @@ class TrinityCalculator:
     def calculate_trinity_score(
         self, raw_scores: list[float], static_score: float | None = None
     ) -> float:
-        """
-        Calculates final Trinity Score using SSOT Weights.
+        """Calculates final Trinity Score using SSOT Weights.
 
         [Option A: 7:3 Golden Ratio]
         If static_score is provided:
@@ -150,8 +145,7 @@ class TrinityCalculator:
     async def calculate_persona_scores(
         self, persona_data: dict[str, Any], context: dict[str, Any] | None = None
     ) -> dict[str, float]:
-        """
-        페르소나 기반 Trinity Score 계산 (Phase 2 확장)
+        """페르소나 기반 Trinity Score 계산 (Phase 2 확장)
 
         Args:
             persona_data: 페르소나 데이터 (id, name, type, role 등)
@@ -159,6 +153,7 @@ class TrinityCalculator:
 
         Returns:
             5기둥 점수 딕셔너리 (truth, goodness, beauty, serenity, eternity)
+
         """
         # 페르소나 타입에 따른 기본 점수 설정
         persona_type = persona_data.get("type", persona_data.get("id", "unknown"))

@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Automation Tools Utilities (야전교범 원칙 준수)
+"""Automation Tools Utilities (야전교범 원칙 준수)
 眞善美孝永 철학에 기반한 자동화 도구 통합
 
 眞 (Truth): 정확한 코드 품질 검증
@@ -45,11 +44,11 @@ class AutomationTools:
             return False
 
     def get_automation_score(self) -> float:
-        """
-        자동화 도구 점수 계산 (孝 - Serenity)
+        """자동화 도구 점수 계산 (孝 - Serenity)
 
         Returns:
             0.0 ~ 100.0 점수
+
         """
         tools = {
             "black": "코드 포맷팅",

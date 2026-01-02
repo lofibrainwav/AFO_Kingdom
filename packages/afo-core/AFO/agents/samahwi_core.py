@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Samahwi Agent Core (Phase 16-1)
+"""Samahwi Agent Core (Phase 16-1)
 The Strategic Architect of AFO Kingdom.
 Powered by Grok (The Sage from the Stars) or OpenAI.
 
@@ -26,8 +25,7 @@ class SamahwiAgent:
         }
 
     async def run(self, instruction: str) -> str:
-        """
-        Executes the Agent Loop:
+        """Executes the Agent Loop:
         1. Think (via Grok)
         2. Act (Call Tool)
         3. Observe (Result)
@@ -57,9 +55,7 @@ class SamahwiAgent:
         return f"Thinking complete. Output: {plan.get('thought', 'No response')}"
 
     async def _consult_brain(self, instruction: str) -> dict[str, Any]:
-        """
-        Uses Grok Engine to decide the next action.
-        """
+        """Uses Grok Engine to decide the next action."""
         # Context for Grok
         {
             "role": "Agent Samahwi",
@@ -81,8 +77,7 @@ class SamahwiAgent:
         return {"thought": "I will contemplate this strategy.", "action": None}
 
     async def _tool_create_widget(self, spec: str) -> str:
-        """
-        Phase 16-2: Widget Generation Tool (The Hand)
+        """Phase 16-2: Widget Generation Tool (The Hand)
         Writes a .tsx file to the GenUI sandbox.
         """
         logger.info(f"[{self.name}] Generating widget for: {spec}")
@@ -133,9 +128,7 @@ export function SamahwiGeneratedWidget() {{
             return f"Failed to create widget: {e}"
 
     async def _tool_analyze_trinity(self, _input: Any) -> str:
-        """
-        [Placeholder] Phase 16-4: Trinity Analysis
-        """
+        """[Placeholder] Phase 16-4: Trinity Analysis"""
         try:
             # Import dynamically to avoid circular dependnecy issues during init
             from AFO.api.routers.ssot import get_ssot_status

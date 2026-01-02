@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Truth Score Metrics Calculator (Phase 15)
+"""Truth Score Metrics Calculator (Phase 15)
 "Detailed Truth Score Metrics" - 왕국의 진실(眞) 점수 세부 지표
 PDF 평가 기준: 기술적 완성도 25/25
 """
@@ -16,9 +15,7 @@ logger = logging.getLogger("AFO.TruthMetrics")
 
 
 class TruthMetricsCalculator:
-    """
-    TruthMetricsCalculator: 진실 점수(25점 만점) 계산기
-    """
+    """TruthMetricsCalculator: 진실 점수(25점 만점) 계산기"""
 
     def __init__(self) -> None:
         pass
@@ -27,8 +24,7 @@ class TruthMetricsCalculator:
     def calculate_technical_score(
         self, code_snippet: str, data: dict[str, Any], test_mode: bool = True
     ) -> dict[str, Any]:
-        """
-        Calculate detailed Technical Score (Max 25).
+        """Calculate detailed Technical Score (Max 25).
 
         Metrics:
         1. Type Safety (10): Pydantic usage & MyPy check

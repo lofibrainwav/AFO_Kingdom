@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Performance Monitoring Middleware for AFO Kingdom
+"""Performance Monitoring Middleware for AFO Kingdom
 Tracks response times and identifies slow endpoints.
 
 Sequential Thinking: 단계별 성능 모니터링 미들웨어 구축
@@ -28,8 +27,7 @@ PERFORMANCE_THRESHOLDS = {
 
 
 class PerformanceMiddleware(BaseHTTPMiddleware):
-    """
-    성능 모니터링 미들웨어
+    """성능 모니터링 미들웨어
     Sequential Thinking: 단계별 성능 측정 및 알림
     """
 
@@ -40,6 +38,7 @@ class PerformanceMiddleware(BaseHTTPMiddleware):
         self._max_history = 1000  # 최근 1000개 요청만 유지
 
     async def dispatch(self, request: Request, call_next: Any) -> Any:
+<<<<<<< HEAD
         """
         성능 측정 및 모니터링 (Sequential Thinking Phase 1)
         SSE 스트림은 성능 측정에서 제외 (무한 스트림 blocking 방지)
@@ -48,6 +47,9 @@ class PerformanceMiddleware(BaseHTTPMiddleware):
         if "stream" in request.url.path:
             return await call_next(request)
 
+=======
+        """성능 측정 및 모니터링 (Sequential Thinking Phase 1)"""
+>>>>>>> wip/ph20-01-post-work
         # 시작 시간 기록
         start_time = time.time()
 
@@ -72,9 +74,7 @@ class PerformanceMiddleware(BaseHTTPMiddleware):
         return response
 
     def _record_performance(self, request: Request, elapsed_ms: float) -> None:
-        """
-        성능 데이터 기록
-        """
+        """성능 데이터 기록"""
         # 전체 요청 시간 기록
         self._request_times.append(elapsed_ms)
         if len(self._request_times) > self._max_history:
@@ -89,6 +89,7 @@ class PerformanceMiddleware(BaseHTTPMiddleware):
             self._endpoint_times[endpoint].pop(0)
 
     def _check_slow_endpoint(self, request: Request, elapsed_ms: float) -> None:
+<<<<<<< HEAD
         """
         느린 엔드포인트 감지 및 로깅
         """
@@ -99,6 +100,10 @@ class PerformanceMiddleware(BaseHTTPMiddleware):
         threshold_warning = 3000 if is_comprehensive else PERFORMANCE_THRESHOLDS["warning_ms"]
 
         if elapsed_ms >= threshold_critical:
+=======
+        """느린 엔드포인트 감지 및 로깅"""
+        if elapsed_ms >= PERFORMANCE_THRESHOLDS["critical_ms"]:
+>>>>>>> wip/ph20-01-post-work
             logger.warning(
                 f"🚨 CRITICAL: Slow endpoint detected - {request.method} {path} "
                 f"took {elapsed_ms:.2f}ms (threshold: {threshold_critical}ms)"
@@ -112,9 +117,7 @@ class PerformanceMiddleware(BaseHTTPMiddleware):
     def _update_prometheus_metrics(
         self, request: Request, elapsed_ms: float, status_code: int
     ) -> None:
-        """
-        Prometheus 메트릭 업데이트
-        """
+        """Prometheus 메트릭 업데이트"""
         try:
             from prometheus_client import Histogram
 
@@ -138,9 +141,7 @@ class PerformanceMiddleware(BaseHTTPMiddleware):
             logger.debug("Prometheus 메트릭 업데이트 실패 (무시): %s", e)
 
     def get_performance_stats(self) -> dict[str, Any]:
-        """
-        성능 통계 조회
-        """
+        """성능 통계 조회"""
         if not self._request_times:
             return {
                 "total_requests": 0,

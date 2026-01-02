@@ -1,7 +1,6 @@
 # Trinity Score: 90.0 (Established by Chancellor)
 #!/usr/bin/env python3
-"""
-Framework Selector - Mission Profile 기반 자동 프레임워크 선택
+"""Framework Selector - Mission Profile 기반 자동 프레임워크 선택
 眞善美孝: Truth, Goodness, Beauty, Serenity
 
 메타인지 기반 의사결정:
@@ -36,8 +35,7 @@ class MissionProfile:
 
 @lru_cache(maxsize=512)
 def select_framework(profile: MissionProfile) -> FrameworkName:
-    """
-    미션 프로필 기반 최적 프레임워크 선택
+    """미션 프로필 기반 최적 프레임워크 선택
 
     선택 로직 (메타인지 기반):
     - LangGraph: 복잡 + 신뢰 우선 (엔터프라이즈급)
@@ -49,6 +47,7 @@ def select_framework(profile: MissionProfile) -> FrameworkName:
 
     Returns:
         FrameworkName: 선택된 프레임워크
+
     """
     # 眞(진): 복잡하고 신뢰할 수 있어야 하는 미션
     if profile.complexity >= 4 and profile.reliability >= 4:
