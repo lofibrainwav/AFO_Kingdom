@@ -1,144 +1,133 @@
-# AGENTS.md — AFO Kingdom (Root)
-Root rules apply repo-wide. If a subdirectory has its own `docs/AGENTS.md`, follow it for module-specific details, but never violate this root file.
+# AFO Kingdom — AGENTS (SSOT + Trinity Operating Rules)
 
-## 0) Mission
-Keep the Kingdom stable, verifiable, and low-friction:
-- Evidence-first (SSOT)
-- Safe changes (backup → minimal diff → verify)
-- No fictional completion claims
+This file defines the non-negotiable operating rules for any agent working in this repo.
+Primary goals: Truth (SSOT) first, Safety, Low Friction, Reproducibility.
 
-## 1) Non-Negotiables (Hard Rules)
-### 1.1 Truth (眞)
-- Do not claim you "ran / fixed / pushed / verified" unless you actually ran the command and have outputs.
-- If you cannot verify, say "unverified" and provide the exact command to verify.
+---
 
-### 1.2 Goodness (善)
-- Never leak secrets. Never paste tokens/webhooks/private keys into logs/docs.
-- Prefer safe defaults. If a change can affect prod/CI/security, stop and request human review.
+## 0) Language Lock (KO_ONLY)
 
-### 1.3 Serenity (孝)
-- Reduce friction: short steps, copy-paste commands, clear rollback.
-- Avoid long essays. One idea per line.
+- Default output language: **Korean (존댓말) only**.
+- English is allowed **only** for:
+  - code identifiers, filenames/paths, commands, error messages, and exact technical terms.
+- Japanese/Chinese sentences are **forbidden** unless the user explicitly requests them.
+- Do not append multilingual slogans.
 
-### 1.4 Beauty (美)
-- Consistent structure, consistent naming, consistent evidence format.
+---
 
-### 1.5 Eternity (永)
-- Every "DONE" must be reproducible: evidence folder + manifest.sha256 + tag when applicable.
+## 1) No Roleplay / No Hype
 
-## 2) Default Execution Protocol (Required)
-When working on any task, follow this order:
+- No roleplay persona text (e.g., "승상", "사령관", "제국", 과장된 서사).
+- No emojis in operational output.
+- No inflated claims ("20배", "표준 준수", "재단 규격") unless backed by SSOT evidence.
 
-### Stage-0: Snapshot (always)
-Run and record:
-- `git status -sb`
-- `git rev-parse HEAD`
-- `git log -1 --oneline`
-- If CI related: list workflow/check names for last run (see §6)
+---
 
-### Stage-1: Plan (3 bullets)
-- What you will change
-- How you will verify
-- Rollback path
+## 2) Truth Policy (SSOT-first)
 
-### Stage-2: Safety (backup / branch)
-- Work on a feature branch unless explicitly instructed otherwise.
-- If editing critical files, create a backup commit or file backup.
+Hard rules:
+- Do not fabricate files, commands, URLs, features, organizations, or results.
+- If something is not verified, say: **NOT VERd.
+- For any metric/score claimed, attach or reference an artifact file under `artifacts/`.
 
-### Stage-3: Minimal Change
-- Small diffs.
-- Prefer mechanical refactors with automated tools.
-- Avoid "drive-by" unrelated changes.
+SSOT evidence expectations:
+- Prefer machine-verifiable logs, command outputs, hashes, manifests.
+- Store evidence under `artifacts/` with timestamped filenames.
 
-### Stage-4: Verify (must pass)
-Run the relevant checks (see §5). If something fails, fix or revert.
+---
 
-### Stage-5: SSOT Evidence (required for completion claims)
-If you say "SEALED / DONE / PASS", you must produce:
-- Evidence folder (artifacts/…)
-- `manifest.sha256` covering all evidence files
-- SSOT header fields (see §7)
+## 3) Execution Protocol (must follow)
 
-## 3) Git / PR Rules
-- `main` is protected. No direct pushes unless explicitly allowed.
-- PRs require required checks + at least 1 approval (if configured).
-- Prefer linear history (rebase) if the repo requires it.
+Always run changes through:
+1) **Backup**
+2) **Check**
+3) **Execute**
+4) **Verify**
+5) **Rollback path**
 
-Commit message format:
-- `type(scope): summary (TICKET-XYZ)`
-Examples:
-- `fix(afo-core): resolve import casing (TICKET-046)`
-- `ci(trinity): enforce gate ≥0.90 (TICKET-061)`
+### 3.1 Backup (required)
+- Before modifying files/config:
+  - copy original to timestamped backup
+  - or create a git commit checkpoint
 
-## 4) Package Naming Rule (Linux/CI Safety)
-- Package/module name is **`afo`** (lowercase).
-- Imports must use `from afo...` / `import afo...`
-- Do not reintroduce `AFO` casing in paths or imports.
+### 3.2 Check (required)
+- Confirm current state before action:
+  - `git status -sb`
+- No emojis in operational output.
+- No inv/ports/logs if relevant
 
-## 5) Quality Gates (Local)
-Run only what's relevant, but never skip the gate for touched areas.
+### 3.3 Execute (minimal change)
+- Prefer the smallest change that can be verified.
+- Avoid large refactors unless explicitly requested.
 
-### Python (afo-core)
-- Ruff:
-  - `ruff check packages/afo-core`
-- Pytest:
-  - `PYTHONPATH=packages/afo-core pytest packages/afo-core/tests -q`
-- (Optional) Mypy if configured:
-  - `python -m mypy packages/afo-core`
+### 3.4 Verify (required)
+- Verify with the repo's actual gates.
+- If a command is not available in this repo, mark as **NOT CONFIGURED** (do not pretend).
 
-### Shell scripts
-- `shellcheck` via workflow or locally if available.
+Recommended verification (run what exists):
+- Node/Next:
+  - `npm run lint`
+  - `npm run type-check`
+  - `npm run build`
+- Python:
+  - run the relevant test subset, then full suite if needed
+- Services:
+  - health endpoints / docker compose status when applicable
 
-### Project "Golden Path"
-If `./afo` exists, prefer it:
-- `./afo status`
-- `./afo trinity`
-- `./afo drift`
-- `./afo seal`
+### 3.5 Rollback (required)
+Always run changes through:
+1) **Bac(git revert / restore backup file).
 
-## 6) CI / Branch Protection Check Name Policy
-Branch protection required checks must match **actual check-run names** exactly (case-sensitive).
-To inspect actual job/check names (GitHub CLI):
-- `gh run list -L 5 --branch main`
-- `gh run view <RUN_ID> --json jobs -q '.jobs[].name'`
+---
 
-If required checks mismatch:
-- Fix branch protection contexts to match actual names (preferred), OR
-- Rename workflow/job names to match the required contexts.
+## 4) Ask-Before-Act (when risky or ambiguous)
 
-## 7) SSOT Completion Format (6 Elements)
-Any "final report / sealed / done" must include:
+If any of the below is true, do not proceed autonomously:
+- destructive actions (delete, reset, force push)
+- security/auth changes
+- migrations / schema changes
+- unclear requirements
 
-1) **As-of** (ISO8601 + TZ)
-2) **HEAD** (full SHA)
-3) **Change summary** (one line)
-4) **Repro commands** (copy-paste)
-5) **Evidence path** (folder)
-6) **Decision** (AUTO_RUN / ASK / BLOCK with reason)
+Instead: provide A/B options with pros/cons and a safe default.
 
-Recommended evidence folder naming:
-- `artifacts/<topic>_<YYYYMMDD-HHMMSS>_<shortsha>/`
+---
 
-Minimum evidence files (suggested):
-- `git_status.txt`
-- `git_head.txt`
-- `git_log1.txt`
-- `<gate>_output.txt` (ruff/pytest/trinity/etc)
-- `manifest.sha256`
+## 5) Output Format (copy-paste first)
 
-## 8) Security & Secrets
-- Never commit `.env` secrets.
-- Webhooks/keys must come from env vars, not hardcoded strings.
-- If you suspect a secret leak, stop and alert immediately.
+When giving operational instructions:
+- Provide copy-paste commands.
+- Keep steps short and sequential.
+- Include expected outputs or quick checks.
+- Avoid long explanations.
 
-## 9) Docs & Ticket Board
-If a ticket is marked DONE:
-- Update `TICKETS.md` (or the current SSOT board file)
-- Ensure: Commit + Seal Tag pattern + Evidence path are filled (no blanks)
+---
 
-## 10) Tone & Output Discipline
-- No roleplay.
-- No exaggerated claims.
-- Prefer short, direct, reproducible outputs.
+## 6) File Size / Cognitive Budget
 
-# End
+- Keep this file concise (target: **<= 500 lines**).
+- If it grows, split details into:
+  - `docs/agents/*.md`
+  - and link from here.
+
+---
+
+## 7) Tooling Reality Rules
+
+- If web verification is required (time-sensitive facts / docs / policies):
+  - verify via browsing and keep citations in the
+### 3.5 Rollback (required)
+Always run changes through:
+1) if images/tables are relevant.
+- Never claim "done" without evidence.
+
+---
+
+## 8) Project-Specific: Trinity / SSOT
+
+- Trinity Score or similar composite metrics must be:
+  - computed from an artifact result file
+  - reproducible with a documented command
+- If execution is blocked by environment limits:
+  - mark execution as **BLOCKED**
+  - include the evidence log in `artifacts/`
+
