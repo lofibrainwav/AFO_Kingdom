@@ -13,6 +13,11 @@
     "**/*.a",
     "**/libtorch*/**",
     "packages/trinity-os/tests",
+    "packages/afo-core/tests",
+    "packages/afo-core/scripts",
+    "packages/afo-core/legacy",
+    "packages/afo-core/tigers",
+    "packages/afo-core/verify_*.py",
     "tests"
   ],
   "venvPath": ".",
