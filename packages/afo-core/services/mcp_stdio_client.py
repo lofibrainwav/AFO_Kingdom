@@ -26,6 +26,7 @@ class MCPServerConfig:
 @dataclass
 class MCPProcessSession:
     """MCP server process session with connection reuse."""
+
     config: MCPServerConfig
     process: subprocess.Popen | None = None
     initialized: bool = False

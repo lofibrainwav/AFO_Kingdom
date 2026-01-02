@@ -39,7 +39,9 @@ class VisionService:
             import ollama
 
             models = ollama.list()
-            logger.info(f"Connected to Ollama at {OLLAMA_HOST}, models: {len(models.get('models', []))}")
+            logger.info(
+                f"Connected to Ollama at {OLLAMA_HOST}, models: {len(models.get('models', []))}"
+            )
             return True
         except Exception as e:
             logger.warning(f"Ollama not available at {OLLAMA_HOST}: {e}")
