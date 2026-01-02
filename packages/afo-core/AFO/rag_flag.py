@@ -168,9 +168,15 @@ def determine_rag_mode(request_headers: dict[str, str] | None = None) -> dict[st
     if os.getenv("AFO_RAG_KILL_SWITCH", "0") == "1":
         return {"mode": "killed", "applied": False, "reason": "kill_switch_active"}
 
-    # 2. 강제 헤더 (X-AFO-RAG: 1/0)
+    # 2. 강제 헤더 (X-AFO-RAG: 1/0) - 대소문자 무시
     if request_headers:
-        rag_header = request_headers.get("x-afo-rag")
+        # 헤더 키를 소문자로 변환해서 찾기
+        rag_header = None
+        for key, value in request_headers.items():
+            if key.lower() == "x-afo-rag":
+                rag_header = value
+                break
+
         if rag_header == "1":
             return {"mode": "forced_on", "applied": True, "reason": "header_forced"}
         elif rag_header == "0":
@@ -205,29 +211,35 @@ def get_bucket_seed(headers: dict[str, str] | None) -> str:
     안정적인 버킷팅을 위한 seed 생성
 
     우선순위:
-    1. X-AFO-CLIENT-ID
-    2. X-Request-ID
+    1. X-AFO-CLIENT-ID (대소문자 무시)
+    2. X-Request-ID (대소문자 무시)
     3. remote_addr + user_agent (실제 구현시)
     """
     if headers:
+        # 대소문자 무시 검색을 위한 매핑
+        header_map = {key.lower(): value for key, value in headers.items()}
+
         # 1순위: X-AFO-CLIENT-ID
-        if "x-afo-client-id" in headers:
-            return headers["x-afo-client-id"]
+        if "x-afo-client-id" in header_map:
+            return header_map["x-afo-client-id"]
 
         # 2순위: X-Request-ID
-        if "x-request-id" in headers:
-            return headers["x-request-id"]
+        if "x-request-id" in header_map:
+            return header_map["x-request-id"]
 
     # 3순위: 기본 seed (실제 구현시 IP + User-Agent 사용)
     return "default_seed"
 
 
 def get_bucket_seed_source(headers: dict[str, str] | None) -> str:
-    """버킷팅 seed 출처 반환"""
+    """버킷팅 seed 출처 반환 (대소문자 무시)"""
     if headers:
-        if "x-afo-client-id" in headers:
+        # 대소문자 무시 검색
+        header_map = {key.lower(): value for key, value in headers.items()}
+
+        if "x-afo-client-id" in header_map:
             return "client_id"
-        if "x-request-id" in headers:
+        if "x-request-id" in header_map:
             return "request_id"
 
     return "default"

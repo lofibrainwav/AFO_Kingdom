@@ -136,9 +136,11 @@ class AFOServer:
             from sentry_sdk.integrations.logging import LoggingIntegration
             from sentry_sdk.integrations.starlette import StarletteIntegration
 
-            # DSN should be configured via environment or config
-            # Using a placeholder for now as per user request
-            dsn = "https://your_sentry_dsn.ingest.sentry.io/1234567"
+            # DSN should be configured via environment
+            dsn = os.getenv("SENTRY_DSN")
+            if not dsn:
+                logger.info("ℹ️ Sentry DSN not found in environment, skipping initialization")
+                return
 
             sentry_sdk.init(
                 dsn=dsn,
@@ -232,6 +234,15 @@ class AFOServer:
             logger.info("Multimodal Router registered successfully")
         except Exception as e:
             logger.warning(f"Multimodal Router registration failed: {e}")
+
+        # DSPy MIPROv2 Router 등록 (Phase 2)
+        try:
+            from afo.api.routers.dspy_router import router as dspy_router
+
+            app.include_router(dspy_router)
+            logger.info("DSPy Router registered successfully")
+        except Exception as e:
+            logger.warning(f"DSPy Router registration failed: {e}")
 
         return app
 

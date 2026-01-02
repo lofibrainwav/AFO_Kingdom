@@ -26,7 +26,9 @@ class TrinityAwareMIPROv2(MIPROv2):
             num_trials: 최적화 시도 횟수
             **kwargs: MIPROv2 추가 파라미터
         """
-        super().__init__(metric=metric, num_trials=num_trials, **kwargs)
+        # MIPROv2 (dspy 3.0.4) does not take num_trials in __init__
+        super().__init__(metric=metric, **kwargs)
+        self.num_trials = num_trials
 
         # Trinity Score 가중치 (왕국 철학)
         self.trinity_weights = {
