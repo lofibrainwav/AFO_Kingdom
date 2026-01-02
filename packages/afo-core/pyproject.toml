@@ -165,6 +165,7 @@ ignore = [
     "ANN205",  # missing-return-type-staticmethod
     "ASYNC221", # async-process-run-blocking
     "PLC0206", # dict-index-iteration
+    "UP035",   # deprecated-typing-generics (Dict, List, etc. - allow for legacy)
 ]
 
 [tool.bandit]
