@@ -28,6 +28,9 @@ class Antigravity:
     AUTO_DEPLOY: bool = field(
         default_factory=lambda: os.getenv("AFO_AUTO_DEPLOY", "true").lower() == "true"
     )
+    DRY_RUN_DEFAULT: bool = field(
+        default_factory=lambda: os.getenv("AFO_DRY_RUN_DEFAULT", "true").lower() == "true"
+    )
 
     def get_version(self) -> str:
         """Get AFO version."""
