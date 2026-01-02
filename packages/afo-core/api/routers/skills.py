@@ -327,7 +327,6 @@ async def get_skill_detail(skill_id: str) -> dict[str, Any]:
 
 @router.post("/execute")
 async def execute_skill(request: SkillExecutionRequest) -> SkillExecutionResponse:
-<<<<<<< HEAD
     """
     Skill 실행
     """
@@ -336,9 +335,7 @@ async def execute_skill(request: SkillExecutionRequest) -> SkillExecutionRespons
     if not allowed:
         raise HTTPException(status_code=403, detail=reason)
 
-=======
     """Skill 실행"""
->>>>>>> wip/ph20-01-post-work
     try:
         if SkillRegistry is None:
             raise HTTPException(status_code=503, detail="Skills Registry not available")

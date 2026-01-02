@@ -38,7 +38,6 @@ class PerformanceMiddleware(BaseHTTPMiddleware):
         self._max_history = 1000  # 최근 1000개 요청만 유지
 
     async def dispatch(self, request: Request, call_next: Any) -> Any:
-<<<<<<< HEAD
         """
         성능 측정 및 모니터링 (Sequential Thinking Phase 1)
         SSE 스트림은 성능 측정에서 제외 (무한 스트림 blocking 방지)
@@ -47,9 +46,6 @@ class PerformanceMiddleware(BaseHTTPMiddleware):
         if "stream" in request.url.path:
             return await call_next(request)
 
-=======
-        """성능 측정 및 모니터링 (Sequential Thinking Phase 1)"""
->>>>>>> wip/ph20-01-post-work
         # 시작 시간 기록
         start_time = time.time()
 
@@ -89,7 +85,6 @@ class PerformanceMiddleware(BaseHTTPMiddleware):
             self._endpoint_times[endpoint].pop(0)
 
     def _check_slow_endpoint(self, request: Request, elapsed_ms: float) -> None:
-<<<<<<< HEAD
         """
         느린 엔드포인트 감지 및 로깅
         """
@@ -100,10 +95,6 @@ class PerformanceMiddleware(BaseHTTPMiddleware):
         threshold_warning = 3000 if is_comprehensive else PERFORMANCE_THRESHOLDS["warning_ms"]
 
         if elapsed_ms >= threshold_critical:
-=======
-        """느린 엔드포인트 감지 및 로깅"""
-        if elapsed_ms >= PERFORMANCE_THRESHOLDS["critical_ms"]:
->>>>>>> wip/ph20-01-post-work
             logger.warning(
                 f"🚨 CRITICAL: Slow endpoint detected - {request.method} {path} "
                 f"took {elapsed_ms:.2f}ms (threshold: {threshold_critical}ms)"

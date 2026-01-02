@@ -370,7 +370,7 @@ class ValidationNode(ChancellorNode):
         trinity_score = trinity_score.combine(validation_score)
         context["trinity_score"] = trinity_score
 
-        logger.info(".2f"        return context
+        logger.info(f"Validation completed. Score: {validation_score}")\n        return context
 
     def _calculate_validation_trinity_score(self, result: ValidationResult) -> TrinityScore:
         """Calculate Trinity score based on validation results"""
