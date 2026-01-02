@@ -155,7 +155,7 @@ class PersonaService:
         """
         try:
             # DB 연결 가져오기 (Phase 2 확장)
-            from AFO..services.database import import get_db_connection
+            from AFO.services.database import get_db_connection
 
             conn = await get_db_connection()
             try:
@@ -211,7 +211,7 @@ class PersonaService:
         """
         try:
             # Trinity Calculator 서비스 사용
-            from AFO..services.trinity_calculator import import trinity_calculator
+            from AFO.services.trinity_calculator import trinity_calculator
 
             # 페르소나 기반 Trinity Score 계산
             scores = await trinity_calculator.calculate_persona_scores(
@@ -355,7 +355,7 @@ class PersonaService:
         """
         try:
             # TRINITY-OS MCP 클라이언트 호출
-            from AFO..api.compat import import get_trinity_os_client
+            from AFO.api.compat import get_trinity_os_client
 
             trinity_client = get_trinity_os_client()
             if trinity_client:

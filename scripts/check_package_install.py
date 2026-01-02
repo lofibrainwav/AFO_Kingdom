@@ -4,7 +4,7 @@
 Sequential Thinking Phase 2: 실제 import 테스트
 """
 
-import importlib
+importlib
 import sys
 from pathlib import Path
 

@@ -21,8 +21,7 @@ class EvaluationResult:
 
 
 class CriticAgent:
-    """
-    Zhuge Liang (제갈량) - The Guardian of Truth & Strategy.
+    """Zhuge Liang (제갈량) - The Guardian of Truth & Strategy.
     Evaluates code and artifacts against the 41 Royal Rules.
     """
 
@@ -32,8 +31,7 @@ class CriticAgent:
         logger.info(f"🛡️ Guardian {self.name} Awoken.")
 
     async def critique_code(self, code_snippet: str, context: str = "") -> EvaluationResult:
-        """
-        Analyzes code for Trinity Compliance.
+        """Analyzes code for Trinity Compliance.
         Currently a logic skeleton - will connect to LLM later.
         """
         feedback = []

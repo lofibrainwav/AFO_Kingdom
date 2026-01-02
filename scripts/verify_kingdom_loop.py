@@ -8,7 +8,7 @@ from unittest.mock import patch
 
 sys.path.append(os.path.join(pathlib.Path.cwd(), "packages/afo-core"))
 
-from AFO..config.antigravity import import antigravity
+from AFO.config.antigravity import antigravity
 
 
 # We will mock the graph and router logic to test the flow "Commander -> Action"
@@ -56,7 +56,7 @@ class TestKingdomLoop(unittest.TestCase):
         # We mock get_feature_flag directly here to simulate Redis
         with patch.object(antigravity, "get_feature_flag", return_value=True):
             is_allowed = antigravity.check_governance("construct_fortress")
-            print(f"⚖️ Antigravity Verdict: {"ALLOWED" if is_allowed else "DENIED"}")
+            print(f"⚖️ Antigravity Verdict: {'ALLOWED' if is_allowed else 'DENIED'}")
 
             # Risk Brake Check (Simulated)
             # If Risk > 0.8, it should block even if allowed

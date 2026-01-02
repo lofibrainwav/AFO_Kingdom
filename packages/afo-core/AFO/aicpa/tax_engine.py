@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-AICPA Tax Engine - 2025 OBBBA 세법 계산
+"""AICPA Tax Engine - 2025 OBBBA 세법 계산
 
 眞 (Truth): IRS 공식 세법 기반 정밀 계산
 善 (Goodness): 절세 최적화 전략 제공

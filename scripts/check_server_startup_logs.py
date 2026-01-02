@@ -13,9 +13,7 @@ from pathlib import Path
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 
 
-def log_debug(
-    location: str, message: str, data: dict | None = None, hypothesis_id: str = "A"
-) -> None:
+def log_debug(location: str, message: str, data: dict | None = None, hypothesis_id: str = "A") -> None:
     """Debug logging to NDJSON file"""
     try:
         log_entry = {
@@ -155,9 +153,7 @@ def check_api_server_code():
     print("\n📋 api_server.py 라우터 등록 코드 확인\n")
     print("=" * 60)
 
-    api_server_path = (
-        Path(__file__).parent.parent / "packages" / "afo-core" / "api_server.py"
-    )
+    api_server_path = Path(__file__).parent.parent / "packages" / "afo-core" / "api_server.py"
 
     if not api_server_path.exists():
         print(f"❌ api_server.py를 찾을 수 없습니다: {api_server_path}")

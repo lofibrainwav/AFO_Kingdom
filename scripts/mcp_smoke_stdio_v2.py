@@ -52,16 +52,19 @@ def main():
     tools_id = 2
     shutdown_id = 3
 
-    send(p.stdin, {
-        "jsonrpc": "2.0",
-        "id": init_id,
-        "method": "initialize",
-        "params": {
-            "protocolVersion": "2024-11-05",
-            "capabilities": {},
-            "clientInfo": {"name": "afo-smoke", "version": "2"},
+    send(
+        p.stdin,
+        {
+            "jsonrpc": "2.0",
+            "id": init_id,
+            "method": "initialize",
+            "params": {
+                "protocolVersion": "2024-11-05",
+                "capabilities": {},
+                "clientInfo": {"name": "afo-smoke", "version": "2"},
+            },
         },
-    })
+    )
     _ = read_until(sel, init_id, TIMEOUT_S)
     print("OK: initialize")
 

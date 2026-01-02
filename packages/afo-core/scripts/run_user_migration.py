@@ -1,7 +1,6 @@
 # Trinity Score: 90.0 (Established by Chancellor)
 #!/usr/bin/env python3
-"""
-사용자 시스템 DB 마이그레이션 실행 스크립트
+"""사용자 시스템 DB 마이그레이션 실행 스크립트
 Phase 5: DB 스키마 설정 및 사용자 시스템 초기화
 """
 

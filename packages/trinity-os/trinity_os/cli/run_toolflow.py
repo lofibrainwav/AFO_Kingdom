@@ -11,12 +11,8 @@ from trinity_os.graphs.trinity_toolflow_graph_v1 import build_trinity_toolflow_g
 def main() -> int:
     ap = argparse.ArgumentParser(description="TRINITY Toolflow v1 Runner")
     ap.add_argument("prompt", type=str, help="User prompt")
-    ap.add_argument(
-        "--query", type=str, default="", help="Optional search query override"
-    )
-    ap.add_argument(
-        "--top-k", type=int, default=5, help="Number of candidates to fetch"
-    )
+    ap.add_argument("--query", type=str, default="", help="Optional search query override")
+    ap.add_argument("--top-k", type=int, default=5, help="Number of candidates to fetch")
     ap.add_argument(
         "--risk-score",
         type=float,

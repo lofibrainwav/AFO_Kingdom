@@ -65,9 +65,7 @@ def _is_completion_claim(text: str) -> bool:
     if _contains_any(text, FORBIDDEN_PHRASES):
         return True
     # Also catch common patterns.
-    return bool(
-        re.search(r"\b(done|fixed|shipped|merged)\b", text, flags=re.IGNORECASE)
-    )
+    return bool(re.search(r"\b(done|fixed|shipped|merged)\b", text, flags=re.IGNORECASE))
 
 
 def validate_report(text: str) -> Result:
@@ -77,7 +75,7 @@ def validate_report(text: str) -> Result:
     completion_claim = _is_completion_claim(text)
 
     if forbidden:
-        reasons.append(f"Forbidden completion phrase(s): {", ".join(forbidden)}")
+        reasons.append(f"Forbidden completion phrase(s): {', '.join(forbidden)}")
 
     if completion_claim and not _has_evidence(text):
         reasons.append("Completion claim detected but evidence markers are missing.")

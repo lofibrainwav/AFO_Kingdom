@@ -78,10 +78,7 @@ def verify_family_hub():
     last_activity = data["activities"][-1]
     print("Last Activity:", json.dumps(last_activity, indent=2, ensure_ascii=False))
 
-    if (
-        last_activity["type"] == "PersonaSwitch"
-        and "주유" in last_activity["description"]
-    ):
+    if last_activity["type"] == "PersonaSwitch" and "주유" in last_activity["description"]:
         print("✅ Persona Switch Logging Verified!")
     else:
         print("⚠️ Persona Switch Logging NOT found in last activity.")

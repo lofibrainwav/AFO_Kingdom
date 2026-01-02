@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-AFO 패키지 - 루트 모듈 re-export
+"""AFO 패키지 - 루트 모듈 re-export
 테스트 호환성을 위해 afo-core 루트 모듈들을 AFO 네임스페이스로 노출
 """
 

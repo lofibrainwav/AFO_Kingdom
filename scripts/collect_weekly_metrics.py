@@ -68,18 +68,13 @@ def collect_ssot_violation_metrics() -> dict[str, Any]:
         for log_file in logs_dir.glob("*.log"):
             with Path(log_file).open(encoding="utf-8", errors="ignore") as f:
                 content = f.read()
-                if (
-                    "SSOT violation detected" in content
-                    or "Report gate failed" in content
-                ):
+                if "SSOT violation detected" in content or "Report gate failed" in content:
                     violations.append(log_file.name)
 
     return {
         "total_violations": len(violations),
         "violation_files": violations[:10],  # 최근 10개만
-        "compliance_rate": max(
-            0, 1 - (len(violations) / max(1, len(list(logs_dir.glob("*.log")))))
-        ),
+        "compliance_rate": max(0, 1 - (len(violations) / max(1, len(list(logs_dir.glob("*.log")))))),
         "trend": "monitoring",
     }
 
@@ -95,17 +90,12 @@ def collect_chaos_test_metrics() -> dict[str, Any]:
     for log_file in workflow_dir.glob(f"{chaos_log_pattern}.log"):
         with Path(log_file).open(encoding="utf-8", errors="ignore") as f:
             content = f.read()
-            success = (
-                "Chaos #1 - kill one pod (expect self-heal)" in content
-                and "SUCCESS" in content
-            )
-            chaos_results.append(
-                {
-                    "date": log_file.stat().st_mtime,
-                    "success": success,
-                    "log_file": log_file.name,
-                }
-            )
+            success = "Chaos #1 - kill one pod (expect self-heal)" in content and "SUCCESS" in content
+            chaos_results.append({
+                "date": log_file.stat().st_mtime,
+                "success": success,
+                "log_file": log_file.name,
+            })
 
     success_count = sum(1 for r in chaos_results if r["success"])
     total_count = len(chaos_results)
@@ -150,7 +140,7 @@ def generate_weekly_report(week_info: dict[str, str], metrics: dict[str, Any]) -
 {chr(10).join(f"- {f}" for f in metrics["ssot_violations"]["violation_files"]) if metrics["ssot_violations"]["violation_files"] else "- 위반 없음"}
 
 ### Chaos 테스트 결과
-{chr(10).join(f"- {r["log_file"]}: {"✅" if r["success"] else "❌"}" for r in metrics["chaos_tests"]["recent_results"]) if metrics["chaos_tests"]["recent_results"] else "- 테스트 기록 없음"}
+{chr(10).join(f"- {r['log_file']}: {'✅' if r['success'] else '❌'}" for r in metrics["chaos_tests"]["recent_results"]) if metrics["chaos_tests"]["recent_results"] else "- 테스트 기록 없음"}
 
 ---
 
@@ -170,13 +160,13 @@ def save_metrics(week_info: dict[str, str], metrics: dict[str, Any]):
         "generated_at": datetime.now().isoformat(),
     }
 
-    json_file = metrics_dir / f"weekly_metrics_{week_info["week"]}.json"
+    json_file = metrics_dir / f"weekly_metrics_{week_info['week']}.json"
     with Path(json_file).open("w", encoding="utf-8") as f:
         json.dump(json_data, f, indent=2, ensure_ascii=False)
 
     # Markdown 보고서 저장
     md_report = generate_weekly_report(week_info, metrics)
-    md_file = metrics_dir / f"weekly_report_{week_info["week"]}.md"
+    md_file = metrics_dir / f"weekly_report_{week_info['week']}.md"
     with Path(md_file).open("w", encoding="utf-8") as f:
         f.write(md_report)
 
@@ -191,9 +181,7 @@ def main():
     try:
         # 주 정보 수집
         week_info = get_current_week_info()
-        print(
-            f"📅 대상 주: {week_info["week"]} ({week_info["start"]} ~ {week_info["end"]})"
-        )
+        print(f"📅 대상 주: {week_info['week']} ({week_info['start']} ~ {week_info['end']})")
 
         # 메트릭 수집
         metrics = {
@@ -203,9 +191,9 @@ def main():
         }
 
         print("📊 메트릭 수집 완료")
-        print(f"  - 영어 경고: {metrics["english_ratio"]["total_warnings"]}건")
-        print(f"  - SSOT 위반: {metrics["ssot_violations"]["total_violations"]}건")
-        print(f"  - Chaos 성공률: {metrics["chaos_tests"]["success_rate"]:.1%}")
+        print(f"  - 영어 경고: {metrics['english_ratio']['total_warnings']}건")
+        print(f"  - SSOT 위반: {metrics['ssot_violations']['total_violations']}건")
+        print(f"  - Chaos 성공률: {metrics['chaos_tests']['success_rate']:.1%}")
 
         # 저장
         save_metrics(week_info, metrics)

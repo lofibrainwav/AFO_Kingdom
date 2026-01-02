@@ -1,8 +1,7 @@
 # Trinity Score: 90.0 (Established by Chancellor)
 #!/usr/bin/env python3
 # mypy: ignore-errors
-"""
-LangGraph를 사용한 RAG 파이프라인
+"""LangGraph를 사용한 RAG 파이프라인
 옵시디언 vault 기반 질의응답 시스템
 """
 
@@ -119,14 +118,14 @@ def create_rag_graph() -> StateGraph:
 
 
 def query_obsidian_vault(question: str) -> dict:
-    """
-    옵시디언 vault에 질의
+    """옵시디언 vault에 질의
 
     Args:
         question: 질문
 
     Returns:
         답변 및 메타데이터
+
     """
     graph = create_rag_graph()
 

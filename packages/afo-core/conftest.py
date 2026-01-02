@@ -2,7 +2,7 @@
 import pytest
 from starlette.testclient import TestClient
 
-from AFO..api_server import import app
+from AFO.api_server import app
 
 
 @pytest.fixture

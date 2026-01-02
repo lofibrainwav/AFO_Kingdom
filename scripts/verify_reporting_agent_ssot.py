@@ -54,10 +54,7 @@ def check_forbidden_expressions(file_path: Path) -> list[tuple[int, str]]:
                 continue
 
             # 허용 컨텍스트 체크
-            is_allowed = any(
-                re.search(pattern, line, re.IGNORECASE)
-                for pattern in ALLOWED_IN_CONTEXT
-            )
+            is_allowed = any(re.search(pattern, line, re.IGNORECASE) for pattern in ALLOWED_IN_CONTEXT)
             if is_allowed:
                 continue
 
@@ -98,9 +95,7 @@ def verify_reporting_agent_ssot():
             print(f"   ❌ {len(violations)}개 금지 표현 발견:")
             for line_num, line in violations[:5]:  # 최대 5개만 표시
                 print(f"      Line {line_num}: {line[:80]}...")
-            all_violations.extend(
-                [(file_path, line_num, line) for line_num, line in violations]
-            )
+            all_violations.extend([(file_path, line_num, line) for line_num, line in violations])
         else:
             print("   ✅ 금지 표현 없음")
 
@@ -114,9 +109,9 @@ def verify_reporting_agent_ssot():
         has_forbidden = "완료 선언 금지" in content
         has_conditions = "완료 선언 조건" in content
 
-        print(f"   {"✅" if has_separation else "❌"} 경로 분리 선언")
-        print(f"   {"✅" if has_forbidden else "❌"} 완료 선언 금지 규칙")
-        print(f"   {"✅" if has_conditions else "❌"} 완료 선언 조건")
+        print(f"   {'✅' if has_separation else '❌'} 경로 분리 선언")
+        print(f"   {'✅' if has_forbidden else '❌'} 완료 선언 금지 규칙")
+        print(f"   {'✅' if has_conditions else '❌'} 완료 선언 조건")
 
         if not (has_separation and has_forbidden and has_conditions):
             print("   ⚠️  AGENTS.md에 SSOT 규칙이 완전하지 않습니다!")

@@ -476,7 +476,7 @@ def _get_mcp_server_url() -> str | None:
     # Phase 2-4: settings 사용
     # Phase 2-4: settings 사용
     try:
-        from AFO..config.settings import import get_settings
+        from AFO.config.settings import get_settings
 
         settings = get_settings()
         return settings.MCP_SERVER_URL

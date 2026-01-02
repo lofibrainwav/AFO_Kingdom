@@ -105,7 +105,7 @@ async def test_mcp_client_wrapper():
     print("=" * 60)
 
     try:
-        from AFO..api.compat import import get_trinity_os_client
+        from AFO.api.compat import get_trinity_os_client
 
         client = get_trinity_os_client()
         print("\n1️⃣ 클라이언트 생성:")

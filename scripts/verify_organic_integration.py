@@ -22,9 +22,7 @@ async def verify_all_dependencies():
         "langchain": lambda: importlib.import_module("langchain"),
         "langgraph": lambda: importlib.import_module("langgraph"),
         "ragas": lambda: importlib.import_module("ragas"),
-        "sentence_transformers": lambda: importlib.import_module(
-            "sentence_transformers"
-        ),
+        "sentence_transformers": lambda: importlib.import_module("sentence_transformers"),
         "suno": lambda: importlib.import_module("suno"),
         # --- Data & Math ---
         "numpy": lambda: importlib.import_module("numpy"),
@@ -72,9 +70,7 @@ async def verify_all_dependencies():
         "transcript_mcp": "Verified (Alias to 'mcp')",
     }
 
-    print(
-        f"📋 Scheduled Checks: {len(checks)} Python Packages, {len(custom_checks)} Custom Items"
-    )
+    print(f"📋 Scheduled Checks: {len(checks)} Python Packages, {len(custom_checks)} Custom Items")
     print("-" * 60)
 
     # Execute Python Checks

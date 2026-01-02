@@ -93,9 +93,7 @@ class EvidenceIndexGenerator:
             },
             "gates": {
                 "distribution": dict(Counter(gates)),
-                "auto_run_ratio": (
-                    round(gates.count("AUTO_RUN") / len(gates), 3) if gates else 0.0
-                ),
+                "auto_run_ratio": (round(gates.count("AUTO_RUN") / len(gates), 3) if gates else 0.0),
                 "total_evaluations": len(gates),
             },
         }
@@ -121,12 +119,8 @@ class EvidenceIndexGenerator:
         trend = {
             "direction": "stable",
             "avg_daily_change": round(statistics.mean(changes), 3) if changes else 0.0,
-            "volatility": (
-                round(statistics.stdev(changes), 3) if len(changes) > 1 else 0.0
-            ),
-            "consistency_score": round(
-                1.0 - (statistics.stdev(changes) if len(changes) > 1 else 0), 3
-            ),
+            "volatility": (round(statistics.stdev(changes), 3) if len(changes) > 1 else 0.0),
+            "consistency_score": round(1.0 - (statistics.stdev(changes) if len(changes) > 1 else 0), 3),
         }
 
         # Determine trend direction
@@ -143,9 +137,7 @@ class EvidenceIndexGenerator:
 
     def identify_failure_patterns(self, all_evidence: list[dict]) -> dict[str, Any]:
         """Analyze failure patterns and root causes"""
-        failures = [
-            ev for ev in all_evidence if ev and ev["calculation"]["gate"] != "AUTO_RUN"
-        ]
+        failures = [ev for ev in all_evidence if ev and ev["calculation"]["gate"] != "AUTO_RUN"]
 
         if not failures:
             return {
@@ -172,9 +164,7 @@ class EvidenceIndexGenerator:
         return {
             "total_failures": len(failures),
             "failure_rate": round(len(failures) / len(all_evidence), 3),
-            "avg_failure_score": (
-                round(statistics.mean(failure_scores), 3) if failure_scores else 0.0
-            ),
+            "avg_failure_score": (round(statistics.mean(failure_scores), 3) if failure_scores else 0.0),
             "failure_dates": failure_dates[:5],  # Last 5 failures
             "recommendations": [
                 "Investigate scores below 0.95 threshold",
@@ -266,17 +256,15 @@ def main():
     if success:
         print("\n📊 Evidence Index 생성 완료!")
         print(f"📁 파일 위치: {generator.index_file}")
-        print(f"📈 분석된 증거: {index["summary"]["valid_evidences"]}개")
-        print(
-            f"📅 날짜 범위: {index["summary"]["date_range"]["start"]} ~ {index["summary"]["date_range"]["end"]}"
-        )
+        print(f"📈 분석된 증거: {index['summary']['valid_evidences']}개")
+        print(f"📅 날짜 범위: {index['summary']['date_range']['start']} ~ {index['summary']['date_range']['end']}")
 
         # Print key statistics
         stats = index["statistics"]
         if stats:
             print("🏆 Trinity Score 통계:")
-            print(f"   평균 점수: {stats["overall"]["mean"]:.3f}")
-            print(f"   AUTO_RUN 비율: {stats["gates"]["auto_run_ratio"]:.1%}")
+            print(f"   평균 점수: {stats['overall']['mean']:.3f}")
+            print(f"   AUTO_RUN 비율: {stats['gates']['auto_run_ratio']:.1%}")
     else:
         print("❌ Evidence Index 생성 실패")
         return 1

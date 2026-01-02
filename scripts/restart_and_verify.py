@@ -15,9 +15,7 @@ from pathlib import Path
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 
 
-def log_debug(
-    location: str, message: str, data: dict | None = None, hypothesis_id: str = "A"
-) -> None:
+def log_debug(location: str, message: str, data: dict | None = None, hypothesis_id: str = "A") -> None:
     """Debug logging to NDJSON file"""
     try:
         log_entry = {
@@ -270,15 +268,9 @@ def main():
         print("📊 최종 요약")
         print("=" * 60)
 
-        working = [
-            name
-            for name, data in endpoint_results.items()
-            if data.get("status_code") == 200
-        ]
+        working = [name for name, data in endpoint_results.items() if data.get("status_code") == 200]
         not_working = [
-            name
-            for name, data in endpoint_results.items()
-            if data.get("status_code") != 200 and "error" not in data
+            name for name, data in endpoint_results.items() if data.get("status_code") != 200 and "error" not in data
         ]
 
         print(f"\n✅ 작동하는 엔드포인트: {len(working)}개")
@@ -294,9 +286,7 @@ def main():
         if isinstance(openapi_results, dict) and "found" in openapi_results:
             found_count = len(openapi_results["found"])
             missing_count = len(openapi_results["missing"])
-            print(
-                f"\n📋 OpenAPI 스키마: {found_count}개 경로 발견, {missing_count}개 누락"
-            )
+            print(f"\n📋 OpenAPI 스키마: {found_count}개 경로 발견, {missing_count}개 누락")
 
         # #region agent log
         log_debug(

@@ -32,9 +32,7 @@ def run_mcp_server_test(timeout_seconds: int = 30) -> bool:
     env.setdefault("AFO_API_BASE_URL", "http://127.0.0.1:8010")
 
     # Start MCP server process
-    server_cmd = [
-        sys.executable, "-m", "AFO.mcp.afo_skills_mcp"
-    ]
+    server_cmd = [sys.executable, "-m", "AFO.mcp.afo_skills_mcp"]
 
     print("🚀 Starting AFO Skills MCP Server...")
     print(f"Command: {' '.join(server_cmd)}")
@@ -59,18 +57,13 @@ def run_mcp_server_test(timeout_seconds: int = 30) -> bool:
             text=True,
             env=env,
             bufsize=1,
-            start_new_session=True
+            start_new_session=True,
         )
 
         print("📋 Sending initialize request...")
 
         # Send initialize request
-        init_request = {
-            "jsonrpc": "2.0",
-            "id": 1,
-            "method": "initialize",
-            "params": {}
-        }
+        init_request = {"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {}}
         server_proc.stdin.write(json.dumps(init_request) + "\n")
         server_proc.stdin.flush()
 
@@ -88,12 +81,7 @@ def run_mcp_server_test(timeout_seconds: int = 30) -> bool:
         print("📋 Sending tools/list request...")
 
         # Send tools/list request
-        list_request = {
-            "jsonrpc": "2.0",
-            "id": 2,
-            "method": "tools/list",
-            "params": {}
-        }
+        list_request = {"jsonrpc": "2.0", "id": 2, "method": "tools/list", "params": {}}
         server_proc.stdin.write(json.dumps(list_request) + "\n")
         server_proc.stdin.flush()
 

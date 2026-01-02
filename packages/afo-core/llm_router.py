@@ -104,7 +104,7 @@ class LLMRouter:
         try:
             # Phase 2-4: settings 사용
             try:
-                from AFO..config.settings import import get_settings
+                from AFO.config.settings import get_settings
 
                 settings = get_settings()
             except ImportError:
@@ -215,7 +215,7 @@ class LLMRouter:
             if LLMProvider.OLLAMA not in self.llm_configs:
                 # Phase 1 리팩터링: settings에서 기본값 가져오기
                 try:
-                    from AFO..config.settings import import get_settings
+                    from AFO.config.settings import get_settings
 
                     settings = get_settings()
                     ollama_url = settings.OLLAMA_BASE_URL
@@ -713,7 +713,7 @@ class LLMRouter:
             base_url = config.base_url
         else:
             try:
-                from AFO..config.settings import import get_settings
+                from AFO.config.settings import get_settings
 
                 base_url = get_settings().OLLAMA_BASE_URL
             except ImportError:

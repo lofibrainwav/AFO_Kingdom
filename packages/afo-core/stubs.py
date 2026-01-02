@@ -1,5 +1,4 @@
-"""
-Type stubs for AFO Kingdom modules
+"""Type stubs for AFO Kingdom modules
 This file provides minimal type stubs to resolve Pyright import issues
 """
 

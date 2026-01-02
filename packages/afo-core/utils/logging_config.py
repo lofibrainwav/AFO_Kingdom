@@ -172,7 +172,7 @@ def get_logger(name: str) -> logging.Logger:
 def configure_from_settings() -> None:
     """설정에서 로깅 구성 로드"""
     try:
-        from AFO..config.settings import import get_settings
+        from AFO.config.settings import get_settings
 
         settings = get_settings()
 

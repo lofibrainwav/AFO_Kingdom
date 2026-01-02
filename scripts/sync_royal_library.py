@@ -55,18 +55,14 @@ def parse_markdown(file_path):
             principle = m[2].strip()
             code_action = m[3].strip()
 
-            rules.append(
-                {
-                    "id": rule_id,
-                    "name": rule_name,
-                    "principle": principle,
-                    "code": code_action,
-                }
-            )
+            rules.append({
+                "id": rule_id,
+                "name": rule_name,
+                "principle": principle,
+                "code": code_action,
+            })
 
-        books.append(
-            {"id": book_num, "title": f"{book_num}. {book_title}", "rules": rules}
-        )
+        books.append({"id": book_num, "title": f"{book_num}. {book_title}", "rules": rules})
 
     return books
 
@@ -106,7 +102,7 @@ def main():
         books = parse_markdown(SOURCE_FILE)
         print(f"✅ Parsed {len(books)} books.")
         for b in books:
-            print(f"   - {b["title"]}: {len(b["rules"])} rules")
+            print(f"   - {b['title']}: {len(b['rules'])} rules")
 
         ts_content = generate_typescript(books)
 

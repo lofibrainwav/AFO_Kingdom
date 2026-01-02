@@ -1,6 +1,6 @@
 import asyncio
 
-from AFO..scholars.yeongdeok import import yeongdeok
+from AFO.scholars.yeongdeok import yeongdeok
 
 
 async def verify_field_manual_awareness():

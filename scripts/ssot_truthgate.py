@@ -54,7 +54,8 @@ def parse_report(report: Path) -> dict:
 
     def get_line(prefix: str) -> str:
         m = re.search(rf"^{re.escape(prefix)}\s*(.*)$", txt, flags=re.MULTILINE)
-        return (m.group(1).strip() if m else "")
+        return m.group(1).strip() if m else ""
+
     status = get_line("Status:")
     ts = get_line("Capture Timestamp:")
     ev = get_line("Evidence Directory:")
@@ -82,7 +83,7 @@ def replace_auto(report: Path, auto: str):
     b = txt.find(AUTO_END)
     if a == -1 or b == -1 or b < a:
         return
-    new_txt = txt[:a + len(AUTO_BEGIN)] + "\n\n" + auto + "\n\n" + txt[b:]
+    new_txt = txt[: a + len(AUTO_BEGIN)] + "\n\n" + auto + "\n\n" + txt[b:]
     report.write_text(new_txt, encoding="utf-8")
 
 
@@ -133,7 +134,7 @@ def seal(ticket: str, slug: str, ts: str):
     done = False
     if functional_green:
         if ticket == "T25":
-            done = (bandit_exit == 0)
+            done = bandit_exit == 0
         else:
             done = True
     if done:
@@ -180,7 +181,7 @@ def seal(ticket: str, slug: str, ts: str):
         f"- exitcode: {bandit_exit}" if bandit_exit is not None else "- not provided",
         "",
         "### Seal",
-        f"- seal.json: { (ev_dir / 'seal.json').as_posix() }",
+        f"- seal.json: {(ev_dir / 'seal.json').as_posix()}",
     ])
 
     replace_auto(report, auto)

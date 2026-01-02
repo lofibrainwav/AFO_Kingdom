@@ -27,9 +27,7 @@ def run_simulation(data_file):
 
     # Write log
     with pathlib.Path("AFO_EVOLUTION_LOG.md").open("a", encoding="utf-8") as f:
-        f.write(
-            f"\n- **2025-12-19 Phase 11**: BERT fine-tune with 500 samples. Accuracy: {final_acc:.4f}\n"
-        )
+        f.write(f"\n- **2025-12-19 Phase 11**: BERT fine-tune with 500 samples. Accuracy: {final_acc:.4f}\n")
 
     return final_acc
 

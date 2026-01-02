@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Test Circuit Breaker
+"""Test Circuit Breaker
 Tests the circuit breaker functionality for fault tolerance.
 """
 

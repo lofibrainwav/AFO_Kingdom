@@ -212,7 +212,7 @@ def _extract_services_status(health_data: dict[str, Any]) -> dict[str, bool]:
 async def _check_skills_registry() -> dict[str, Any]:
     """스킬 레지스트리 상태 확인"""
     try:
-        from AFO..afo_skills_registry import import register_core_skills
+        from AFO.afo_skills_registry import register_core_skills
 
         registry = register_core_skills()
         skills = registry.list_all()

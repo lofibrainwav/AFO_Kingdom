@@ -13,7 +13,7 @@ try:
     # However, '3_strategists.py' is not a valid module name for standard import (starts with number).
     # We should have named it 'three_strategists.py' but user requested '3_strategists.py'.
     # We will use importlib.util to load it.
-    import importlib.util
+    importlib.util
 
     file_path = "packages/afo-core/3_strategists.py"
     module_name = "three_strategists"
@@ -23,9 +23,7 @@ try:
     spec.loader.exec_module(module)
 
     ThreeStrategists = module.ThreeStrategists
-    print(
-        "✅ Successfully imported ThreeStrategists from packages/afo-core/3_strategists.py"
-    )
+    print("✅ Successfully imported ThreeStrategists from packages/afo-core/3_strategists.py")
 
 except Exception as e:
     print(f"❌ FAIL: Could not import ThreeStrategists: {e}")

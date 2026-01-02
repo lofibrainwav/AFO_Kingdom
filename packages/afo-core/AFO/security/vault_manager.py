@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Vault Manager for AFO Kingdom (Phase 22)
+"""Vault Manager for AFO Kingdom (Phase 22)
 Handles secret retrieval from Environment or HashiCorp Vault.
 """
 
@@ -17,8 +16,7 @@ class VaultManager:
         logger.info(f"🛡️ VaultManager Initialized (Mode: {mode})")
 
     def get_secret(self, key: str, default: str | None = None) -> str | None:
-        """
-        Retrieves a secret.
+        """Retrieves a secret.
         In 'vault' mode, this would connect to HCV.
         In 'env' mode, it reads from os.environ.
         """
@@ -31,9 +29,7 @@ class VaultManager:
             return os.getenv(key, default)
 
     def rotate_secret(self, key: str, new_value: str) -> bool:
-        """
-        Rotates a secret (Simulation).
-        """
+        """Rotates a secret (Simulation)."""
         logger.warning(f"🔄 Rotating Secret: {key} (Audit Logged)")
         self.secrets[key] = new_value
         return True

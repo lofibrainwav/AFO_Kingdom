@@ -23,12 +23,12 @@ def set_optimized_cache_headers(
     response: Response,
     asset_type: Literal["static", "dynamic", "realtime", "sensitive"],
 ) -> None:
-    """
-    Cache-Control Headers Optimization: 자산 유형별 최적 헤더
+    """Cache-Control Headers Optimization: 자산 유형별 최적 헤더
 
     Args:
         response: FastAPI Response object
         asset_type: Strategy name ('static', 'dynamic', 'realtime', 'sensitive')
+
     """
     strategy = CACHE_STRATEGIES.get(asset_type, CACHE_STRATEGIES["dynamic"])
 
@@ -46,8 +46,7 @@ def set_etag_and_cache(
     content: bytes,
     asset_type: Literal["static", "dynamic", "realtime", "sensitive"],
 ) -> None:
-    """
-    ETag + Cache-Control 결합 최적화
+    """ETag + Cache-Control 결합 최적화
     Generates ETag from content and applies cache headers.
     """
     # 1. Generate ETag (Strong validation)
@@ -61,8 +60,7 @@ def set_etag_and_cache(
 
 
 def check_etag_match(request: Request, current_content: bytes) -> bool:
-    """
-    Checks if client's If-None-Match header matches current content hash.
+    """Checks if client's If-None-Match header matches current content hash.
     Returns True if valid (should return 304), False otherwise.
     """
     client_etag = request.headers.get("If-None-Match")

@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Context7 MCP Module
+"""Context7 MCP Module
 지식 그래프 기반 컨텍스트 검색 및 주입을 위한 MCP 도구
 """
 
@@ -11,9 +10,9 @@ from typing import Any
 
 logger = logging.getLogger(__name__)
 
+
 class Context7MCP:
-    """
-    Context7 MCP - 지식 그래프 기반 컨텍스트 관리
+    """Context7 MCP - 지식 그래프 기반 컨텍스트 관리
     AFO 왕국의 지식 베이스에서 관련 컨텍스트를 검색하고 주입
     """
 
@@ -27,8 +26,9 @@ class Context7MCP:
         try:
             # AFO 왕국의 핵심 문서들 로드 - 절대 경로로 찾기
             import os
+
             # trinity-os 폴더에서 AFO_Kingdom 루트까지 올라감
-            base_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..', '..'))
+            base_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
 
             knowledge_sources = [
                 os.path.join(base_path, "AGENTS.md"),
@@ -36,7 +36,7 @@ class Context7MCP:
                 os.path.join(base_path, "docs/AFO_CHANCELLOR_GRAPH_SPEC.md"),
                 os.path.join(base_path, "docs/AFO_EVOLUTION_LOG.md"),
                 os.path.join(base_path, "docs/AFO_FRONTEND_ARCH.md"),
-                os.path.join(base_path, "docs/CURSOR_MCP_SETUP.md")
+                os.path.join(base_path, "docs/CURSOR_MCP_SETUP.md"),
             ]
 
             loaded_count = 0
@@ -62,15 +62,17 @@ class Context7MCP:
         try:
             path = Path(filepath)
             if path.exists():
-                content = path.read_text(encoding='utf-8')
-                self.knowledge_base.append({
-                    "id": f"doc_{len(self.knowledge_base)}",
-                    "type": "document",
-                    "source": filepath,
-                    "content": content,
-                    "title": path.name,
-                    "keywords": self._extract_keywords(content)
-                })
+                content = path.read_text(encoding="utf-8")
+                self.knowledge_base.append(
+                    {
+                        "id": f"doc_{len(self.knowledge_base)}",
+                        "type": "document",
+                        "source": filepath,
+                        "content": content,
+                        "title": path.name,
+                        "keywords": self._extract_keywords(content),
+                    }
+                )
             else:
                 logger.warning(f"Document not found: {filepath}")
         except Exception as e:
@@ -91,7 +93,7 @@ class Context7MCP:
                 - 孝 (Serenity): 평온·연속성, 인지 부하 최소화
                 - 永 (Eternity): 재현 가능성, 문서화, 버전·결정 기록
                 """,
-                "keywords": ["trinity", "철학", "5기둥", "眞善美孝永", "philosophy"]
+                "keywords": ["trinity", "철학", "5기둥", "眞善美孝永", "philosophy"],
             },
             {
                 "id": "mcp_ecosystem",
@@ -104,7 +106,7 @@ class Context7MCP:
                 - 도구 기반 확장성
                 - 안전한 실행 환경
                 """,
-                "keywords": ["mcp", "model context protocol", "json-rpc", "cursor", "ecosystem"]
+                "keywords": ["mcp", "model context protocol", "json-rpc", "cursor", "ecosystem"],
             },
             {
                 "id": "skills_registry",
@@ -117,7 +119,7 @@ class Context7MCP:
                 - DRY_RUN 모드 지원
                 - 실시간 상태 모니터링
                 """,
-                "keywords": ["skills", "registry", "trinity", "dry_run", "실행"]
+                "keywords": ["skills", "registry", "trinity", "dry_run", "실행"],
             },
             {
                 "id": "sequential_thinking",
@@ -130,8 +132,8 @@ class Context7MCP:
                 - 사고 과정 기록 및 분석
                 - Trinity Score 기반 품질 관리
                 """,
-                "keywords": ["sequential", "thinking", "단계별", "추론", "methodology"]
-            }
+                "keywords": ["sequential", "thinking", "단계별", "추론", "methodology"],
+            },
         ]
 
         self.knowledge_base.extend(core_knowledge)
@@ -143,17 +145,61 @@ class Context7MCP:
         # 기본 키워드 리스트 (AFO 왕국 관련 추가)
         base_keywords = [
             # 기존 키워드들
-            "trinity", "mcp", "skills", "api", "backend", "frontend",
-            "database", "redis", "postgresql", "docker", "kubernetes",
-            "monitoring", "metrics", "logging", "security", "auth",
-            "cache", "session", "router", "middleware", "validation",
-            "error", "handling", "async", "concurrency", "performance",
-            "testing", "ci", "cd", "deployment", "scaling",
+            "trinity",
+            "mcp",
+            "skills",
+            "api",
+            "backend",
+            "frontend",
+            "database",
+            "redis",
+            "postgresql",
+            "docker",
+            "kubernetes",
+            "monitoring",
+            "metrics",
+            "logging",
+            "security",
+            "auth",
+            "cache",
+            "session",
+            "router",
+            "middleware",
+            "validation",
+            "error",
+            "handling",
+            "async",
+            "concurrency",
+            "performance",
+            "testing",
+            "ci",
+            "cd",
+            "deployment",
+            "scaling",
             # AFO 왕국 관련 키워드 추가
-            "afo", "kingdom", "philosophy", "眞", "善", "美", "孝", "永",
-            "truth", "goodness", "beauty", "serenity", "eternity",
-            "chancellor", "agents", "cursor", "claude", "codex", "grok",
-            "sequential", "thinking", "context7", "orchestration"
+            "afo",
+            "kingdom",
+            "philosophy",
+            "眞",
+            "善",
+            "美",
+            "孝",
+            "永",
+            "truth",
+            "goodness",
+            "beauty",
+            "serenity",
+            "eternity",
+            "chancellor",
+            "agents",
+            "cursor",
+            "claude",
+            "codex",
+            "grok",
+            "sequential",
+            "thinking",
+            "context7",
+            "orchestration",
         ]
 
         content_lower = content.lower()
@@ -164,14 +210,53 @@ class Context7MCP:
                 keywords.add(keyword)
 
         # 동적 키워드 추출 - 단어 단위로 분리
-        words = re.findall(r'\b\w+\b', content_lower)
-        significant_words = [word for word in words if len(word) > 3 and word not in {
-            'that', 'with', 'have', 'this', 'will', 'your', 'from', 'they', 'know',
-            'want', 'been', 'good', 'much', 'some', 'time', 'very', 'when', 'come',
-            'here', 'just', 'like', 'long', 'make', 'many', 'over', 'such', 'take',
-            'than', 'them', 'well', 'were', 'what', 'where', 'which', 'while',
-            'who', 'why', 'would'
-        }]
+        words = re.findall(r"\b\w+\b", content_lower)
+        significant_words = [
+            word
+            for word in words
+            if len(word) > 3
+            and word
+            not in {
+                "that",
+                "with",
+                "have",
+                "this",
+                "will",
+                "your",
+                "from",
+                "they",
+                "know",
+                "want",
+                "been",
+                "good",
+                "much",
+                "some",
+                "time",
+                "very",
+                "when",
+                "come",
+                "here",
+                "just",
+                "like",
+                "long",
+                "make",
+                "many",
+                "over",
+                "such",
+                "take",
+                "than",
+                "them",
+                "well",
+                "were",
+                "what",
+                "where",
+                "which",
+                "while",
+                "who",
+                "why",
+                "would",
+            }
+        ]
 
         # 의미 있는 단어들 추가 (최대 10개)
         for word in significant_words[:10]:
@@ -180,9 +265,9 @@ class Context7MCP:
 
         # 기존 패턴 추출 유지
         patterns = [
-            r'#+\s*([^\n]+)',  # 헤더들
-            r'\*\*([^*]+)\*\*',  # 볼드 텍스트
-            r'`([^`]+)`',  # 코드
+            r"#+\s*([^\n]+)",  # 헤더들
+            r"\*\*([^*]+)\*\*",  # 볼드 텍스트
+            r"`([^`]+)`",  # 코드
         ]
 
         for pattern in patterns:
@@ -206,8 +291,7 @@ class Context7MCP:
                 self.knowledge_index[keyword].add(idx)
 
     def retrieve_context(self, query: str, domain: str = "general") -> dict[str, Any]:
-        """
-        쿼리에 기반한 컨텍스트 검색
+        """쿼리에 기반한 컨텍스트 검색
 
         Args:
             query: 검색 쿼리
@@ -215,14 +299,14 @@ class Context7MCP:
 
         Returns:
             관련 컨텍스트들
-        """
 
+        """
         # 쿼리 분석
         query_keywords = self._extract_keywords(query)
         query_lower = query.lower()
 
         # 관련 문서 찾기
-        relevant_docs = []
+        _relevant_docs = []
         scores = {}
 
         for keyword in query_keywords:
@@ -257,15 +341,17 @@ class Context7MCP:
         results = []
         for doc_idx, score in sorted_docs:
             item = self.knowledge_base[doc_idx]
-            results.append({
-                "id": item["id"],
-                "title": item["title"],
-                "type": item["type"],
-                "relevance_score": score,
-                "preview": item["content"][:200] + "..." if len(item["content"]) > 200 else item["content"],
-                "source": item.get("source", "knowledge_base"),
-                "keywords": item.get("keywords", [])
-            })
+            results.append(
+                {
+                    "id": item["id"],
+                    "title": item["title"],
+                    "type": item["type"],
+                    "relevance_score": score,
+                    "preview": item["content"][:200] + "..." if len(item["content"]) > 200 else item["content"],
+                    "source": item.get("source", "knowledge_base"),
+                    "keywords": item.get("keywords", []),
+                }
+            )
 
         # Trinity Score 평가
         truth_impact = min(len(results) * 0.1, 1.0)  # 결과 수에 따른 진실성
@@ -280,8 +366,8 @@ class Context7MCP:
                 "truth_impact": truth_impact,
                 "serenity_impact": serenity_impact,
                 "search_method": "keyword_matching",
-                "knowledge_base_size": len(self.knowledge_base)
-            }
+                "knowledge_base_size": len(self.knowledge_base),
+            },
         }
 
     def add_knowledge(self, knowledge_item: dict[str, Any]) -> str:
@@ -314,5 +400,5 @@ class Context7MCP:
             "total_items": len(self.knowledge_base),
             "types": types,
             "sources": sources,
-            "indexed_keywords": len(self.knowledge_index)
+            "indexed_keywords": len(self.knowledge_index),
         }

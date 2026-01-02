@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-AFO Kingdom Action Validator - Visual Agent Safety Guardian
+"""AFO Kingdom Action Validator - Visual Agent Safety Guardian
 안전 게이트 5개를 통한 자동화된 액션 검증 시스템
 """
 
@@ -42,8 +41,7 @@ class ValidatedAction:
 
 
 class ActionValidator:
-    """
-    Visual Agent 액션 검증기
+    """Visual Agent 액션 검증기
     5개 안전 게이트를 통한 철저한 검증
     """
 
@@ -81,8 +79,7 @@ class ActionValidator:
     def validate_actions(
         self, actions: list[dict[str, Any]], context: dict[str, Any]
     ) -> list[ValidatedAction]:
-        """
-        액션 리스트 전체 검증
+        """액션 리스트 전체 검증
         5개 게이트를 순차적으로 적용
         """
         validated_actions: list[ValidatedAction] = []

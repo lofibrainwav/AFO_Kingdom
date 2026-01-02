@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Learning Log Model (Phase 16-4)
+"""Learning Log Model (Phase 16-4)
 The Memory of the Kingdom's Evolution.
 """
 

@@ -10,7 +10,7 @@ import pathlib
 
 from langchain_core.messages import HumanMessage
 
-from AFO..chancellor_graph import import historian_node
+from AFO.chancellor_graph import historian_node
 
 
 async def verify_genesis_fast():

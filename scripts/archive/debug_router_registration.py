@@ -63,7 +63,7 @@ def test_compat_import():
 
     try:
         print("📦 Importing AFO.api.compat.skills_router...")
-        from AFO..api.compat import import skills_router
+        from AFO.api.compat import skills_router
 
         print("✅ Compat layer import successful!")
         print(f"   Router type: {type(skills_router)}")
@@ -105,7 +105,7 @@ def test_app_registration():
 
     try:
         print("🏗️ Creating FastAPI app...")
-        from AFO..api.config import import get_app_config
+        from AFO.api.config import get_app_config
         from AFO.api.middleware import setup_middleware
         from AFO.api.routers import setup_routers
 
@@ -135,9 +135,7 @@ def test_app_registration():
         # Check all routes containing 'skills'
         print("📋 All routes containing 'skills':")
         all_skills_routes = [
-            route.path
-            for route in app.routes
-            if hasattr(route, "path") and "skills" in route.path.lower()
+            route.path for route in app.routes if hasattr(route, "path") and "skills" in route.path.lower()
         ]
         if all_skills_routes:
             for route in all_skills_routes:

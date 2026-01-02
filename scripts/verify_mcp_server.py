@@ -42,9 +42,7 @@ def _load_server_command() -> tuple[list[str], dict[str, str]]:
                 env[str(k)] = _expand_default_vars(str(v))
 
             env.setdefault("WORKSPACE_ROOT", str(REPO_ROOT))
-            env.setdefault(
-                "PYTHONPYCACHEPREFIX", str(REPO_ROOT / ".pycache_mcp_verify")
-            )
+            env.setdefault("PYTHONPYCACHEPREFIX", str(REPO_ROOT / ".pycache_mcp_verify"))
 
             return [*cmd, *args], env
 
@@ -109,12 +107,7 @@ def verify_mcp():
         print("✅ Initialize Success")
 
         # MCP handshake requires notifications/initialized after initialize.
-        process.stdin.write(
-            json.dumps(
-                {"jsonrpc": "2.0", "method": "notifications/initialized", "params": {}}
-            )
-            + "\n"
-        )
+        process.stdin.write(json.dumps({"jsonrpc": "2.0", "method": "notifications/initialized", "params": {}}) + "\n")
         process.stdin.flush()
 
         # 2. List Tools
@@ -403,7 +396,7 @@ def verify_mcp():
                     assert "Example Domain" in content["content"]
                     print("✅ Browser Scrape Success")
                 else:
-                    print(f"⚠️ Browser Navigation Failed: {content.get("error")}")
+                    print(f"⚠️ Browser Navigation Failed: {content.get('error')}")
                     print("Skipping Scrape Test due to Navigation Failure")
 
             except Exception as e:

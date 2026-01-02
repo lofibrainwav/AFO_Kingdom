@@ -5,11 +5,7 @@ import sys
 
 
 # 프로젝트 루트 경로 추가
-sys.path.append(
-    pathlib.Path(
-        os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core/AFO")
-    ).resolve()
-)
+sys.path.append(pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core/AFO")).resolve())
 
 from utils.playwright_bridge import bridge
 
@@ -33,12 +29,10 @@ async def verify_real_ai_features():
     if ai_result["status"] == "PASS":
         print("✅ AI Integration Success (Code Generated & Executed)")
     elif ai_result["status"] == "FAIL":
-        print(
-            f"⚠️ AI Integration Failed (Expected if no LLM/Keys available): {ai_result.get("error")}"
-        )
+        print(f"⚠️ AI Integration Failed (Expected if no LLM/Keys available): {ai_result.get('error')}")
         print("✅ Graceful Failure Verified")
     else:
-        print(f"❓ Unexpected Status: {ai_result["status"]}")
+        print(f"❓ Unexpected Status: {ai_result['status']}")
 
     await bridge.teardown()
     print("\n=== Verification Complete ===")

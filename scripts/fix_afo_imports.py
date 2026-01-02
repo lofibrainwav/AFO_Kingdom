@@ -85,9 +85,7 @@ class AFOImportFixer:
                     import_match = re.search(import_pattern, content, re.MULTILINE)
                     if import_match:
                         original_line = import_match.group(0)
-                        new_import = original_line.replace(
-                            f"from {match}", f"from {self.conversion_map[match]}"
-                        )
+                        new_import = original_line.replace(f"from {match}", f"from {self.conversion_map[match]}")
                         conversions.append((original_line, new_import))
 
         except Exception as e:
@@ -116,9 +114,7 @@ class AFOImportFixer:
 
                 Path(file_path).write_text(content, encoding="utf-8")
 
-                print(
-                    f"✅ Converted {len(conversions)} imports in {file_path.relative_to(self.root_dir)}"
-                )
+                print(f"✅ Converted {len(conversions)} imports in {file_path.relative_to(self.root_dir)}")
 
             except Exception as e:
                 print(f"❌ Error converting {file_path}: {e}")
@@ -253,9 +249,7 @@ class AFOImportFixer:
 
         return files_with_imports
 
-    def convert_file_reverse(
-        self, file_path: Path, conversions: list[tuple[str, str]], dry_run: bool = True
-    ) -> bool:
+    def convert_file_reverse(self, file_path: Path, conversions: list[tuple[str, str]], dry_run: bool = True) -> bool:
         """역방향 변환: 상대 import → 절대 import"""
         if not conversions:
             return False
@@ -274,9 +268,7 @@ class AFOImportFixer:
 
                 Path(file_path).write_text(content, encoding="utf-8")
 
-                print(
-                    f"✅ Reverse converted {len(conversions)} imports in {file_path.relative_to(self.root_dir)}"
-                )
+                print(f"✅ Reverse converted {len(conversions)} imports in {file_path.relative_to(self.root_dir)}")
 
             except Exception as e:
                 print(f"❌ Error reverse converting {file_path}: {e}")
@@ -310,9 +302,7 @@ def main():
         else:
             print("🔍 FORWARD DRY RUN MODE - Showing absolute → relative conversion:")
         converted, total = fixer.convert_all(dry_run=True, reverse=args.reverse)
-        print(
-            f"\n📊 Summary: {converted} files would be changed, {total} imports would be converted"
-        )
+        print(f"\n📊 Summary: {converted} files would be changed, {total} imports would be converted")
 
     elif args.apply:
         if args.reverse:

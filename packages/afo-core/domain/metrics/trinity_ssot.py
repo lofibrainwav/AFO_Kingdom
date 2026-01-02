@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-[TRUTH WIRING]
+"""[TRUTH WIRING]
 Trinity Pillar SSOT (Single Source of Truth)
 Defines the immutable weights for the 5 Pillars of the AFO Kingdom.
 This file must be treated as a constant law.
@@ -33,8 +32,7 @@ DEFAULT_HEARTBEAT: Final[int] = 68
 
 
 class TrinityWeights:
-    """
-    [Compatibility Layer]
+    """[Compatibility Layer]
     Namespace for Trinity Weights to match usage in trinity.py
     """
 

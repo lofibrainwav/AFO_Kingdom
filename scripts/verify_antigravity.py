@@ -18,9 +18,7 @@ def check_config(expected_dry_run):
         if is_correct:
             print(f"✅ Verified: dry_run_default is {expected_dry_run}")
         else:
-            print(
-                f"❌ Failed: Expected {expected_dry_run}, got {data["dry_run_default"]}"
-            )
+            print(f"❌ Failed: Expected {expected_dry_run}, got {data['dry_run_default']}")
         return is_correct
     except Exception as e:
         print(f"❌ Connection Failed: {e}")
@@ -45,9 +43,7 @@ time.sleep(5)  # Wait for file watcher
 
 # 3. Check Updated State (Should be False)
 if not check_config(False):
-    print(
-        "⚠️ Hot reload didn't trigger automatically (expected on some envs sans watchdog). Manual trigger check?"
-    )
+    print("⚠️ Hot reload didn't trigger automatically (expected on some envs sans watchdog). Manual trigger check?")
     sys.exit(1)
 
 # 4. Restore Default (Set True)

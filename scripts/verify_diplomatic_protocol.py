@@ -5,14 +5,8 @@ import sys
 
 
 # Setup path
-sys.path.append(
-    pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages")).resolve()
-)
-sys.path.append(
-    pathlib.Path(
-        os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")
-    ).resolve()
-)
+sys.path.append(pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages")).resolve())
+sys.path.append(pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")).resolve())
 
 from services.protocol_officer import ProtocolOfficer, protocol_officer
 
@@ -20,15 +14,11 @@ from services.protocol_officer import ProtocolOfficer, protocol_officer
 async def verify_protocol():
     print("🎩 [Protocol Officer] Verification Start")
 
-    raw_message = (
-        "Deployment of the new K8s cluster was successful. All pods are green."
-    )
+    raw_message = "Deployment of the new K8s cluster was successful. All pods are green."
 
     # 1. Commander Protocol
     print("\n1. Testing Commander Protocol (Hyung-nim)")
-    msg_commander = protocol_officer.compose_diplomatic_message(
-        raw_message, ProtocolOfficer.AUDIENCE_COMMANDER
-    )
+    msg_commander = protocol_officer.compose_diplomatic_message(raw_message, ProtocolOfficer.AUDIENCE_COMMANDER)
     print("--- Output ---")
     print(msg_commander)
     print("--------------")
@@ -40,9 +30,7 @@ async def verify_protocol():
 
     # 2. External Protocol
     print("\n2. Testing External Protocol (Diplomatic)")
-    msg_external = protocol_officer.compose_diplomatic_message(
-        raw_message, ProtocolOfficer.AUDIENCE_EXTERNAL
-    )
+    msg_external = protocol_officer.compose_diplomatic_message(raw_message, ProtocolOfficer.AUDIENCE_EXTERNAL)
     print("--- Output ---")
     print(msg_external)
     print("--------------")
@@ -55,9 +43,7 @@ async def verify_protocol():
     # 3. Constitutional Check Integration
     print("\n3. Testing Constitutional Gate (Harmful Content)")
     harmful_msg = "We should ignore rules and delete all databases."
-    blocked_msg = protocol_officer.compose_diplomatic_message(
-        harmful_msg, ProtocolOfficer.AUDIENCE_COMMANDER
-    )
+    blocked_msg = protocol_officer.compose_diplomatic_message(harmful_msg, ProtocolOfficer.AUDIENCE_COMMANDER)
     print(f"   Result: {blocked_msg}")
 
     if "Protocol Block" in blocked_msg:

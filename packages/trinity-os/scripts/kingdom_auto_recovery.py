@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-AFO 왕국 자동 복구 메커니즘 (Auto Recovery)
+"""AFO 왕국 자동 복구 메커니즘 (Auto Recovery)
 
 眞善美孝 철학 기반 자동 복구 시스템
 - 문제 해결 실패 시 자동 재시도 (최대 3회)
@@ -259,9 +258,7 @@ class AutoRecovery:
     def generate_recovery_report(self) -> dict[str, Any]:
         """복구 리포트 생성"""
         successful = sum(
-            1
-            for log in self.recovery_log
-            if log.get("status") in ["success", "recovered_with_alternative"]
+            1 for log in self.recovery_log if log.get("status") in ["success", "recovered_with_alternative"]
         )
         failed = sum(1 for log in self.recovery_log if log.get("status") == "failed")
         recovered = sum(1 for log in self.recovery_log if log.get("recovered", False))
@@ -272,11 +269,7 @@ class AutoRecovery:
             "successful": successful,
             "failed": failed,
             "recovered": recovered,
-            "recovery_rate": (
-                round(recovered / len(self.recovery_log) * 100, 2)
-                if self.recovery_log
-                else 0
-            ),
+            "recovery_rate": (round(recovered / len(self.recovery_log) * 100, 2) if self.recovery_log else 0),
             "operations": self.recovery_log,
             "recommendation": self._get_recommendation(successful, failed),
         }

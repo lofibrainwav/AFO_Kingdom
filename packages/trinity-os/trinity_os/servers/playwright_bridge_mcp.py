@@ -3,8 +3,7 @@ from playwright.sync_api import sync_playwright
 
 
 class PlaywrightBridgeMCP:
-    """
-    Frontend Bridge Node (Playwright MCP)
+    """Frontend Bridge Node (Playwright MCP)
     Enables the AFO Kingdom to control web browsers, reducing manual friction (Serenity).
     """
 
@@ -14,9 +13,7 @@ class PlaywrightBridgeMCP:
 
     @classmethod
     def _ensure_browser(cls):
-        """
-        Singleton browser initialization.
-        """
+        """Singleton browser initialization."""
         if cls._page is None:
             cls._playwright = sync_playwright().start()
             # Launch headless by default, or headful if debugging (can be configured)
@@ -29,9 +26,7 @@ class PlaywrightBridgeMCP:
 
     @classmethod
     def navigate(cls, url: str) -> dict:
-        """
-        Navigate to a URL.
-        """
+        """Navigate to a URL."""
         try:
             cls._ensure_browser()
             cls._page.goto(url)
@@ -47,9 +42,7 @@ class PlaywrightBridgeMCP:
 
     @classmethod
     def screenshot(cls, path: str = "screenshot.png") -> dict:
-        """
-        Capture the current view.
-        """
+        """Capture the current view."""
         try:
             cls._ensure_browser()
             # Ensure path is just a filename in a temp dir or specific artifacts dir
@@ -66,9 +59,7 @@ class PlaywrightBridgeMCP:
 
     @classmethod
     def click(cls, selector: str) -> dict:
-        """
-        Click an element.
-        """
+        """Click an element."""
         try:
             cls._ensure_browser()
             cls._page.click(selector)
@@ -78,9 +69,7 @@ class PlaywrightBridgeMCP:
 
     @classmethod
     def type_text(cls, selector: str, text: str) -> dict:
-        """
-        Type text into an element.
-        """
+        """Type text into an element."""
         try:
             cls._ensure_browser()
             cls._page.fill(selector, text)
@@ -90,9 +79,7 @@ class PlaywrightBridgeMCP:
 
     @classmethod
     def scrape(cls, selector: str) -> dict:
-        """
-        Scrape text content from a selector.
-        """
+        """Scrape text content from a selector."""
         try:
             cls._ensure_browser()
             if selector == "body" or selector == "content":
@@ -116,9 +103,7 @@ class PlaywrightBridgeMCP:
 
     @classmethod
     def close(cls):
-        """
-        Close the browser resource.
-        """
+        """Close the browser resource."""
         if cls._browser:
             cls._browser.close()
         if cls._playwright:

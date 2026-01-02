@@ -5,11 +5,7 @@ import sys
 
 
 # Set path
-sys.path.append(
-    pathlib.Path(
-        os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")
-    ).resolve()
-)
+sys.path.append(pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")).resolve())
 
 import pathlib
 
@@ -40,9 +36,7 @@ async def main():
     final_code = pathlib.Path(target_path).read_text(encoding="utf-8")
 
     if "glass-card" in final_code:
-        print(
-            "\n✅ Phase 16-3 COMPLETE: Juyu successfully injected 'glass-card' token."
-        )
+        print("\n✅ Phase 16-3 COMPLETE: Juyu successfully injected 'glass-card' token.")
     else:
         print("\n❌ PHASE 16-3 FAILED: 'glass-card' token missing.")
 

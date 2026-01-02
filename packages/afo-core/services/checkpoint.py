@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 
 # Lazy import to avoid startup errors
 try:
-    from AFO..utils.redis_connection import import get_redis_url
+    from AFO.utils.redis_connection import get_redis_url
 
     REDIS_AVAILABLE = True
 except ImportError:
@@ -35,7 +35,7 @@ except ImportError:
     logger.warning("Redis not available - checkpoint will use in-memory storage")
 
 try:
-    from AFO..services.database import import get_db_connection
+    from AFO.services.database import get_db_connection
 
     DB_AVAILABLE = True
 except ImportError:

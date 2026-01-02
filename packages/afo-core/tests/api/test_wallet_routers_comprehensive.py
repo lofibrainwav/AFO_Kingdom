@@ -28,7 +28,7 @@ def test_list_keys_success():
     mock_module = MagicMock()
     mock_module.APIWallet = mock_wallet_class
 
-    # Inject our mock module into sys.modules so 'from AFO..api_wallet import import APIWallet' finds it
+    # Inject our mock module into sys.modules so 'from AFO.api_wallet import APIWallet' finds it
     with patch.dict(sys.modules, {"AFO.api_wallet": mock_module, "api_wallet": mock_module}):
         response = client.get("/keys")
         assert response.status_code == 200
@@ -121,7 +121,7 @@ def test_get_api_usage_import_error():
 
     # Retry strategy: The code does:
     # api_server_module = sys.modules.get("...")
-    # if api_server_module is None: from AFO... import import ...
+    # if api_server_module is None: from AFO. import ...
 
     # We can patch exception handling.
     with patch.dict(sys.modules):

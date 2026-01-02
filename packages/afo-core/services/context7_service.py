@@ -1,6 +1,5 @@
 # Trinity Score: 95.0 (Context7 Service Optimization)
-"""
-Context7 Service with Intelligent Caching and Lazy Loading
+"""Context7 Service with Intelligent Caching and Lazy Loading
 
 AFO 왕국 철학 준수 최적화:
 - 眞(Truth): 성능 측정 기반 캐싱 전략
@@ -37,14 +36,14 @@ _initialization_error: str | None = None
 
 
 def get_context7_instance() -> Context7MCP:
-    """
-    Context7MCP 인스턴스 지능적 캐싱 및 반환
+    """Context7MCP 인스턴스 지능적 캐싱 및 반환
 
     Returns:
         Context7MCP: 캐시된 인스턴스
 
     Raises:
         RuntimeError: 초기화 실패 시
+
     """
     global _context7_instance, _context7_initialized, _initialization_error
 
@@ -97,11 +96,11 @@ def get_context7_instance() -> Context7MCP:
 
 
 def _load_with_lazy_loader(trinity_os_path: str) -> None:
-    """
-    Python 3.12+ LazyLoader를 활용한 지연 로딩
+    """Python 3.12+ LazyLoader를 활용한 지연 로딩
 
     Args:
         trinity_os_path: Trinity-OS 경로
+
     """
     import importlib.util
 
@@ -129,9 +128,7 @@ def _load_with_lazy_loader(trinity_os_path: str) -> None:
 
 
 def _load_normally() -> None:
-    """
-    일반적인 임포트 방식 (폴백)
-    """
+    """일반적인 임포트 방식 (폴백)"""
     from trinity_os.servers.context7_mcp import Context7MCP
 
     global _context7_instance
@@ -141,11 +138,11 @@ def _load_normally() -> None:
 
 
 def get_context7_health() -> dict[str, Any]:
-    """
-    Context7 건강 상태 종합 반환
+    """Context7 건강 상태 종합 반환
 
     Returns:
         건강 상태 딕셔너리
+
     """
     try:
         instance = get_context7_instance()
@@ -185,8 +182,7 @@ def get_context7_health() -> dict[str, Any]:
 
 
 def reset_context7_cache() -> None:
-    """
-    Context7 캐시 리셋 (디버깅/테스트용)
+    """Context7 캐시 리셋 (디버깅/테스트용)
 
     Trinity Score: 孝 (Serenity) - 디버깅 편의성 제공
     """

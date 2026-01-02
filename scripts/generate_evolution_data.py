@@ -78,17 +78,15 @@ def generate_data() -> None:
     for pillar, phrases in PILLARS.items():
         for _ in range(100):
             phrase = random.choice(phrases)
-            context = random.choice(
-                [
-                    f"Executing {phrase} for system stability.",
-                    f"Applying {phrase} to the codebase.",
-                    f"System is optimizing {phrase} now.",
-                    f"Checking {phrase} status...",
-                    f"Refining {phrase} based on feedback.",
-                    f"Integration of {phrase} complete.",
-                    f"Analyzing {phrase} metrics.",
-                ]
-            )
+            context = random.choice([
+                f"Executing {phrase} for system stability.",
+                f"Applying {phrase} to the codebase.",
+                f"System is optimizing {phrase} now.",
+                f"Checking {phrase} status...",
+                f"Refining {phrase} based on feedback.",
+                f"Integration of {phrase} complete.",
+                f"Analyzing {phrase} metrics.",
+            ])
             data.append([context, pillar])
 
     # Shuffle

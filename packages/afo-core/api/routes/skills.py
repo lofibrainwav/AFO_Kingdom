@@ -17,7 +17,7 @@ from typing import Any, cast
 
 from fastapi import APIRouter, Body, Depends, HTTPException, Query
 
-from AFO..afo_skills_registry import import (
+from AFO.afo_skills_registry import (
     AFOSkillCard,
     SkillExecutionResult,
     SkillFilterParams,

@@ -4,7 +4,7 @@ from typing import Any
 from strategists.base import log_action, robust_execute
 
 try:
-    from AFO..config.antigravity import import antigravity
+    from AFO.config.antigravity import antigravity
 except ImportError:
 
     class MockAntiGravity:

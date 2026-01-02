@@ -42,9 +42,7 @@ class TypeInferenceEngine:
         self.confidence_threshold = confidence_threshold
         self.cache: dict[str, dict[str, Any]] = {}
 
-    def analyze_function(
-        self, func_node: ast.FunctionDef, source_code: str
-    ) -> dict[str, Any]:
+    def analyze_function(self, func_node: ast.FunctionDef, source_code: str) -> dict[str, Any]:
         """
         함수 AST 노드를 분석하여 타입 힌트를 추론
 
@@ -140,16 +138,14 @@ class TypeInferenceEngine:
                 import json
 
                 result = json.loads(result_text)
-                print(
-                    f"✅ 타입 추론 성공: {func_name} (신뢰도: {result.get("confidence", 0):.2f})"
-                )
+                print(f"✅ 타입 추론 성공: {func_name} (신뢰도: {result.get('confidence', 0):.2f})")
                 return result
             except Exception as parse_error:
                 print(f"❌ JSON 파싱 실패: {parse_error}")
                 # Fallback: 기본 형태 유지
                 return {
                     "imports": ["from typing import Any"],
-                    "function_signature": f"def {func_name}{func_source.split("(")[1].split(")")[0] + ")"}:",
+                    "function_signature": f"def {func_name}{func_source.split('(')[1].split(')')[0] + ')'}:",
                     "confidence": 0.5,
                     "explanation": "파싱 실패로 기본 타입 힌트 적용",
                 }
@@ -158,7 +154,7 @@ class TypeInferenceEngine:
             print(f"❌ AI 추론 실패: {e}")
             return {
                 "imports": [],
-                "function_signature": f"def {func_name}{func_source.split("(")[1].split(")")[0] + ")"}:",
+                "function_signature": f"def {func_name}{func_source.split('(')[1].split(')')[0] + ')'}:",
                 "confidence": 0.0,
                 "explanation": f"AI 추론 실패: {e}",
             }
@@ -184,23 +180,19 @@ class TypeInferenceEngine:
                 result = self.analyze_function(node, source_code)
 
                 if result["confidence"] >= self.confidence_threshold:
-                    changes.append(
-                        {
-                            "function": node.name,
-                            "confidence": result["confidence"],
-                            "new_signature": result["function_signature"],
-                            "imports": result["imports"],
-                        }
-                    )
+                    changes.append({
+                        "function": node.name,
+                        "confidence": result["confidence"],
+                        "new_signature": result["function_signature"],
+                        "imports": result["imports"],
+                    })
 
         if not dry_run and changes:
             self._apply_changes(file_path, changes)
 
         return {
             "file": str(file_path),
-            "total_functions": len(
-                [n for n in ast.walk(tree) if isinstance(n, ast.FunctionDef)]
-            ),
+            "total_functions": len([n for n in ast.walk(tree) if isinstance(n, ast.FunctionDef)]),
             "suggested_changes": len(changes),
             "applied_changes": len(changes) if not dry_run else 0,
             "changes": changes,
@@ -262,9 +254,7 @@ class TrinityTypeValidator:
             execution_time = __import__("time").time() - start_time
 
             # Post-validation
-            post_score = self._calculate_trinity_score(
-                func, args, kwargs, "post", result
-            )
+            post_score = self._calculate_trinity_score(func, args, kwargs, "post", result)
 
             return {
                 "status": "success",
@@ -282,9 +272,7 @@ class TrinityTypeValidator:
                 "confidence": 0.0,
             }
 
-    def _calculate_trinity_score(
-        self, func, args, kwargs, phase: str, result=None
-    ) -> float:
+    def _calculate_trinity_score(self, func, args, kwargs, phase: str, result=None) -> float:
         """
         Trinity Score 계산 (眞善美孝永)
         """
@@ -347,12 +335,8 @@ def main():
 
     parser = argparse.ArgumentParser(description="AI 기반 타입 힌트 자동 생성 도구")
     parser.add_argument("files", nargs="+", help="대상 Python 파일들")
-    parser.add_argument(
-        "--dry-run", action="store_true", help="실제 적용하지 않고 보고만 생성"
-    )
-    parser.add_argument(
-        "--confidence", type=float, default=0.8, help="신뢰도 임계값 (0-1)"
-    )
+    parser.add_argument("--dry-run", action="store_true", help="실제 적용하지 않고 보고만 생성")
+    parser.add_argument("--confidence", type=float, default=0.8, help="신뢰도 임계값 (0-1)")
     parser.add_argument("--validate", action="store_true", help="Trinity 검증 모드")
 
     args = parser.parse_args()
@@ -374,17 +358,13 @@ def main():
 
             result = engine.apply_type_hints(Path(file_path), dry_run=args.dry_run)
 
-            print(
-                f"📊 결과: {result["total_functions"]}개 함수 중 {result["suggested_changes"]}개 제안"
-            )
-            print(f"✅ 적용: {result["applied_changes"]}개 함수")
+            print(f"📊 결과: {result['total_functions']}개 함수 중 {result['suggested_changes']}개 제안")
+            print(f"✅ 적용: {result['applied_changes']}개 함수")
 
             if result["changes"]:
                 print("\n📝 상세 변경사항:")
                 for change in result["changes"][:5]:  # 처음 5개만 표시
-                    print(
-                        f"  • {change["function"]}: 신뢰도 {change["confidence"]:.2f}"
-                    )
+                    print(f"  • {change['function']}: 신뢰도 {change['confidence']:.2f}")
 
 
 if __name__ == "__main__":

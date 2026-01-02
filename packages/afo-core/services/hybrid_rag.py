@@ -194,7 +194,7 @@ def query_redis(embedding: list[float], top_k: int, redis_client: Any) -> list[d
         return []
 
     try:
-        from AFO..config.settings import import get_settings
+        from AFO.config.settings import get_settings
 
         settings = get_settings()
         index_name = settings.REDIS_RAG_INDEX
@@ -293,7 +293,7 @@ def query_qdrant(embedding: list[float], top_k: int, qdrant_client: Any) -> list
         return []
 
     try:
-        from AFO..config.settings import import get_settings
+        from AFO.config.settings import get_settings
 
         settings = get_settings()
         collection_name = "afokingdom_knowledge"  # Default collection

@@ -28,7 +28,7 @@ def test_app_initialization():
     print("=" * 60)
 
     try:
-        from AFO..api.config import import get_app_config
+        from AFO.api.config import get_app_config
         from AFO.api.metadata import get_api_metadata
 
         # Test metadata
@@ -195,7 +195,7 @@ def test_external_services():
         asyncio.run(_initialize_llm_clients())
 
         # Check service availability
-        from AFO..api.compat import import ANTHROPIC_AVAILABLE, OPENAI_AVAILABLE
+        from AFO.api.compat import ANTHROPIC_AVAILABLE, OPENAI_AVAILABLE
 
         services = {
             "OpenAI": OPENAI_AVAILABLE,

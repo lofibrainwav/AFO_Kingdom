@@ -36,9 +36,7 @@ def generate_sbom_from_requirements(requirements_path: Path, output_path: Path) 
 
         # JSON 출력
         json_output = get_instance(bom=bom, output_format=OutputFormat.JSON)
-        json_output.output_to_file(
-            output_path.with_suffix(".json"), allow_overwrite=True
-        )
+        json_output.output_to_file(output_path.with_suffix(".json"), allow_overwrite=True)
 
         # XML 출력
         xml_output = get_instance(bom=bom, output_format=OutputFormat.XML)
@@ -62,9 +60,7 @@ def generate_sbom_from_environment(output_path: Path) -> bool:
 
         # JSON 출력
         json_output = get_instance(bom=bom, output_format=OutputFormat.JSON)
-        json_output.output_to_file(
-            output_path.with_suffix(".json"), allow_overwrite=True
-        )
+        json_output.output_to_file(output_path.with_suffix(".json"), allow_overwrite=True)
 
         # XML 출력
         xml_output = get_instance(bom=bom, output_format=OutputFormat.XML)

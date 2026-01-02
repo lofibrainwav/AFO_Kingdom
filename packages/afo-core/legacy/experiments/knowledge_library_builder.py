@@ -4,8 +4,7 @@
 # ⚔️ 점수는 Truth Engine (scripts/calculate_trinity_score.py)에서만 계산됩니다.
 # LLM은 consult_the_lens MCP 도구를 통해 점수를 확인하세요.
 
-"""
-왕국의 도서관 구축 시스템 (Knowledge Library Builder)
+"""왕국의 도서관 구축 시스템 (Knowledge Library Builder)
 
 VibeCoding 초심:
   "코드들이 캐시로 사라지지 않고
@@ -125,19 +124,18 @@ METADATA_FILE = Path(__file__).parent / "knowledge_library_metadata.json"
 
 
 class KnowledgeLibraryBuilder:
-    """
-    왕국의 도서관 구축자
+    """왕국의 도서관 구축자
 
     모든 마크다운 문서를 RAG 시스템에 저장하여
     영구적인 지식 베이스 구축
     """
 
     def __init__(self, root_path: Path | None = None):
-        """
-        Initialize Knowledge Library Builder
+        """Initialize Knowledge Library Builder
 
         Args:
             root_path: 프로젝트 루트 경로 (기본값: 현재 스크립트의 상위 디렉토리)
+
         """
         if root_path is None:
             # 현재 스크립트의 상위 디렉토리 (프로젝트 루트)
@@ -206,11 +204,11 @@ class KnowledgeLibraryBuilder:
             return ""
 
     def _is_trusted_source(self, file_path: Path) -> bool:
-        """
-        메타인지적 접근: 문서 출처 신뢰성 평가
+        """메타인지적 접근: 문서 출처 신뢰성 평가
 
         Returns:
             신뢰할 수 있는 출처인지 여부
+
         """
         relative_path = str(file_path.relative_to(self.root_path))
 
@@ -228,8 +226,7 @@ class KnowledgeLibraryBuilder:
         return True  # 코드베이스 내부 문서는 기본적으로 신뢰
 
     def _validate_document_quality(self, content: str, file_path: Path) -> dict[str, Any]:
-        """
-        메타인지적 접근: 문서 품질 검증 (기본 덕목)
+        """메타인지적 접근: 문서 품질 검증 (기본 덕목)
 
         Args:
             content: 문서 내용
@@ -237,6 +234,7 @@ class KnowledgeLibraryBuilder:
 
         Returns:
             검증 결과 딕셔너리
+
         """
         validation_result: dict[str, Any] = {"valid": True, "reasons": [], "score": 1.0}
 
@@ -269,14 +267,14 @@ class KnowledgeLibraryBuilder:
         return validation_result
 
     def _validate_chunk_quality(self, chunk: Document) -> dict[str, Any]:
-        """
-        메타인지적 접근: 청크 품질 검증
+        """메타인지적 접근: 청크 품질 검증
 
         Args:
             chunk: 문서 청크
 
         Returns:
             검증 결과 딕셔너리
+
         """
         validation_result: dict[str, Any] = {"valid": True, "reasons": [], "score": 1.0}
 
@@ -299,14 +297,14 @@ class KnowledgeLibraryBuilder:
         return validation_result
 
     def find_markdown_files(self, exclude_dirs: list[str] | None = None) -> list[Path]:
-        """
-        Find all markdown files in the project
+        """Find all markdown files in the project
 
         Args:
             exclude_dirs: 제외할 디렉토리 목록 (예: ['node_modules', '.git'])
 
         Returns:
             List of markdown file paths
+
         """
         if exclude_dirs is None:
             exclude_dirs = EXCLUDED_PATTERNS
@@ -331,8 +329,7 @@ class KnowledgeLibraryBuilder:
         return sorted(markdown_files)
 
     def process_file(self, file_path: Path, force_update: bool = False) -> dict[str, Any]:
-        """
-        Process a single markdown file
+        """Process a single markdown file
 
         Args:
             file_path: 마크다운 파일 경로
@@ -340,6 +337,7 @@ class KnowledgeLibraryBuilder:
 
         Returns:
             처리 결과 딕셔너리
+
         """
         file_hash = self._get_file_hash(file_path)
         relative_path = file_path.relative_to(self.root_path)
@@ -473,8 +471,7 @@ class KnowledgeLibraryBuilder:
     def build_library(
         self, force_update: bool = False, file_pattern: str | None = None
     ) -> dict[str, Any]:
-        """
-        Build the entire knowledge library
+        """Build the entire knowledge library
 
         Args:
             force_update: 모든 파일 강제 업데이트
@@ -482,6 +479,7 @@ class KnowledgeLibraryBuilder:
 
         Returns:
             빌드 결과 요약
+
         """
         print("\n" + "=" * 70)
         print("📚 왕국의 도서관 구축 시작")
@@ -550,8 +548,7 @@ class KnowledgeLibraryBuilder:
         }
 
     def search_knowledge(self, query: str, top_k: int = 5) -> list[dict[str, Any]]:
-        """
-        Search the knowledge library
+        """Search the knowledge library
 
         Args:
             query: 검색 쿼리
@@ -559,6 +556,7 @@ class KnowledgeLibraryBuilder:
 
         Returns:
             검색 결과 리스트
+
         """
         if not LANGCHAIN_AVAILABLE:
             print("❌ LangChain 사용 불가")
@@ -593,11 +591,11 @@ class KnowledgeLibraryBuilder:
             return []
 
     def verify_library(self) -> dict[str, Any]:
-        """
-        Verify the knowledge library status
+        """Verify the knowledge library status
 
         Returns:
             검증 결과
+
         """
         print("\n🔍 도서관 검증 중...")
 

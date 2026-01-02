@@ -9,7 +9,7 @@ Analyzes user context to prefetch data before it is requested.
 import logging
 from typing import Any
 
-from AFO.manager import import MultiLevelCache
+from AFO.manager import MultiLevelCache
 
 logger = logging.getLogger(__name__)
 

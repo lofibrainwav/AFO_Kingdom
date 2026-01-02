@@ -12,8 +12,7 @@ class TruthModel(BaseModel):
 
 
 def guard(data: dict[str, Any]) -> float:
-    """
-    Guan Yu (Truth): Type Integrity Guard
+    """Guan Yu (Truth): Type Integrity Guard
 
     [Modular Design Benefit]:
     - Type Safety: Enforces contract via Pydantic.

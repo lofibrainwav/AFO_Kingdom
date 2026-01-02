@@ -47,7 +47,7 @@ def as_validated_actions(xs: list[dict[str, Any]]) -> list[ValidatedAction]:
 
 # AI Router (Truth & Goodness) with graceful import
 try:
-    from AFO..llm_router import import llm_router
+    from AFO.llm_router import llm_router
 
     LLM_ROUTER_AVAILABLE = True
 except ImportError:

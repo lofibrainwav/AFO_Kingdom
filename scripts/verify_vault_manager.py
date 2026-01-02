@@ -4,11 +4,7 @@ import sys
 
 
 # 프로젝트 루트 경로 추가
-sys.path.append(
-    pathlib.Path(
-        os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")
-    ).resolve()
-)
+sys.path.append(pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")).resolve())
 
 from AFO.security.vault_manager import VaultManager, vault
 

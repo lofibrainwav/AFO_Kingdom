@@ -1,8 +1,0 @@
-{
-  "mcpServers": {
-    "afo-skills-mcp": {
-      "command": "bash",
-      "args": ["-lc", "cd \"$(git rev-parse --show-toplevel)\" && ./scripts/run_afo_skills_mcp.sh"]
-    }
-  }
-}

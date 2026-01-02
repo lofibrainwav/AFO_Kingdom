@@ -72,3 +72,10 @@ terraform/*.tfvars
 # AFO build/test artifacts
 artifacts/
 packages/**/artifacts/
+.venv-dspy/
+.venv-dspy/
+.venv-dspy/
+tools/mlx_optimization/.venv/
+
+.venv-dspy/
+tools/mlx_optimization/.venv/

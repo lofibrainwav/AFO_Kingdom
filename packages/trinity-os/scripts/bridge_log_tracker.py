@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-TRINITY-OS Bridge Log Tracker
+"""TRINITY-OS Bridge Log Tracker
 
 Bridge Log(브릿지의 시선)은 에이전트들이 남긴 발자취입니다.
 이 스크립트는 TRINITY-OS/docs/bridge/*.yaml 로그를 모아
@@ -115,15 +114,9 @@ def _print_markdown(logs: list[dict[str, Any]]) -> None:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(
-        description="List and summarize TRINITY-OS Bridge Logs."
-    )
-    parser.add_argument(
-        "--limit", type=int, default=10, help="Number of logs to show (default: 10)."
-    )
-    parser.add_argument(
-        "--all", action="store_true", help="Show all logs (ignores --limit)."
-    )
+    parser = argparse.ArgumentParser(description="List and summarize TRINITY-OS Bridge Logs.")
+    parser.add_argument("--limit", type=int, default=10, help="Number of logs to show (default: 10).")
+    parser.add_argument("--all", action="store_true", help="Show all logs (ignores --limit).")
     parser.add_argument(
         "--format",
         choices=["json", "md"],

@@ -6,9 +6,7 @@ logger = logging.getLogger(__name__)
 
 
 class PromptGuardrail:
-    """
-    Prompt Injection Guardrail for LLM Inputs
-    """
+    """Prompt Injection Guardrail for LLM Inputs"""
 
     def __init__(self):
         self.injection_patterns = [
@@ -21,8 +19,7 @@ class PromptGuardrail:
         self.regex = re.compile("|".join(self.injection_patterns), re.IGNORECASE)
 
     def validate(self, input_text: str) -> bool:
-        """
-        Validates input text against injection patterns.
+        """Validates input text against injection patterns.
         Returns True if safe, False if unsafe.
         """
         if not input_text:

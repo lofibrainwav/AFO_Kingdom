@@ -106,7 +106,7 @@ class ContainerDetector:
         # 여러 가능한 경로 시도
         # Phase 2-4: settings 사용
         try:
-            from AFO..config.settings import import get_settings
+            from AFO.config.settings import get_settings
 
             settings = get_settings()
             afo_home = settings.AFO_HOME or ""

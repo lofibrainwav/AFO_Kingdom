@@ -5,11 +5,7 @@ import sys
 
 # Add package root to sys.path
 # Using absolute path to packages/afo-core so we can import modules directly
-sys.path.append(
-    pathlib.Path(
-        os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")
-    ).resolve()
-)
+sys.path.append(pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")).resolve())
 
 try:
     from factories.skill_factory import AFO_SkillFactory, Skill

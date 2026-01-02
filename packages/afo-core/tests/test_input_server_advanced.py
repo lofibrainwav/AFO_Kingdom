@@ -44,7 +44,7 @@ def test_bulk_import_http_fallback():
 
 
 # We'll use the existing app but patch the internals
-from AFO..input_server import import app
+from AFO.input_server import app
 
 client = TestClient(app)
 

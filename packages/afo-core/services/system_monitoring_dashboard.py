@@ -14,8 +14,8 @@ from typing import Any, cast
 import psutil
 from pydantic import BaseModel, Field
 
-from AFO.langchain_openai_service import import get_ai_stats
-from AFO.redis_cache_service import import get_cache_stats
+from AFO.langchain_openai_service import get_ai_stats
+from AFO.redis_cache_service import get_cache_stats
 
 # 로깅 설정
 logger = logging.getLogger(__name__)

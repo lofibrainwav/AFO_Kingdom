@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Prometheus Metrics for AFO Kingdom
+"""Prometheus Metrics for AFO Kingdom
 Provides observability for the Soul Engine API.
 """
 
@@ -208,14 +207,14 @@ class MetricsMiddleware(BaseHTTPMiddleware):
 def track_ollama_call(
     model: str = "default",
 ) -> Callable[[Callable[..., Awaitable[T]]], Callable[..., Awaitable[T]]]:
-    """
-    Decorator to track Ollama call metrics.
+    """Decorator to track Ollama call metrics.
 
     Args:
         model: Ollama model name
 
     Returns:
         Decorator function
+
     """
 
     def decorator(func: Callable[..., Awaitable[T]]) -> Callable[..., Awaitable[T]]:
@@ -247,14 +246,14 @@ def track_ollama_call(
 def track_llm_call(
     provider: str,
 ) -> Callable[[Callable[..., Awaitable[T]]], Callable[..., Awaitable[T]]]:
-    """
-    Decorator to track LLM router calls.
+    """Decorator to track LLM router calls.
 
     Args:
         provider: LLM provider name
 
     Returns:
         Decorator function
+
     """
 
     def decorator(func: Callable[..., Awaitable[T]]) -> Callable[..., Awaitable[T]]:
@@ -282,12 +281,12 @@ def track_llm_call(
 
 
 def update_circuit_breaker_metrics(service: str, state: str) -> None:
-    """
-    Update circuit breaker metrics.
+    """Update circuit breaker metrics.
 
     Args:
         service: Service name
         state: Circuit breaker state (closed/open/half_open)
+
     """
     if not PROMETHEUS_AVAILABLE:
         return
@@ -297,11 +296,11 @@ def update_circuit_breaker_metrics(service: str, state: str) -> None:
 
 
 def record_circuit_breaker_failure(service: str) -> None:
-    """
-    Record a circuit breaker failure.
+    """Record a circuit breaker failure.
 
     Args:
         service: Service name
+
     """
     if not PROMETHEUS_AVAILABLE:
         return
@@ -315,12 +314,12 @@ def record_circuit_breaker_failure(service: str) -> None:
 
 
 def update_organ_health(organ: str, is_healthy: bool) -> None:
-    """
-    Update organ health metric.
+    """Update organ health metric.
 
     Args:
         organ: Organ name
         is_healthy: Health status
+
     """
     if not PROMETHEUS_AVAILABLE:
         return
@@ -329,11 +328,11 @@ def update_organ_health(organ: str, is_healthy: bool) -> None:
 
 
 def update_trinity_scores(scores: dict[str, float]) -> None:
-    """
-    Update Trinity Score metrics.
+    """Update Trinity Score metrics.
 
     Args:
         scores: Dictionary of pillar scores
+
     """
     if not PROMETHEUS_AVAILABLE:
         return
@@ -347,12 +346,12 @@ def update_trinity_scores(scores: dict[str, float]) -> None:
 
 
 def update_memory_metrics(short_term: int, long_term: int) -> None:
-    """
-    Update memory system metrics.
+    """Update memory system metrics.
 
     Args:
         short_term: Short-term memory entries count
         long_term: Long-term memory entries count
+
     """
     if not PROMETHEUS_AVAILABLE:
         return
@@ -380,11 +379,11 @@ async def get_metrics_response() -> Response:
 
 
 def create_metrics_router() -> Any:
-    """
-    Create a FastAPI router for metrics endpoint.
+    """Create a FastAPI router for metrics endpoint.
 
     Returns:
         FastAPI router with /metrics endpoint
+
     """
     from fastapi import APIRouter
 

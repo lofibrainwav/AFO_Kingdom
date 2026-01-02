@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-AFO Kingdom System Cleanup
+"""AFO Kingdom System Cleanup
 
 Handles system component cleanup during FastAPI lifespan shutdown.
 """

@@ -11,7 +11,7 @@ async def verify_cache_integration():
 
     try:
         # Import LLMRouter
-        from AFO..llm_router import import LLMRouter, cache_manager, predictive_manager
+        from AFO.llm_router import LLMRouter, cache_manager, predictive_manager
 
         print("✅ LLMRouter Import: Success")
 

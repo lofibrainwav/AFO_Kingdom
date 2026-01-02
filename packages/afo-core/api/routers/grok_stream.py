@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Grok Real-time Stream Router (Phase 18)
+"""Grok Real-time Stream Router (Phase 18)
 The Pulse of the Kingdom - Connecting the Cloud to the Dashboard.
 """
 
@@ -16,8 +15,7 @@ router = APIRouter(prefix="/api/grok", tags=["Grok Stream"])
 
 
 async def grok_event_stream() -> AsyncGenerator[str, None]:
-    """
-    Generates a stream of 'Grok Insights' simulating real-time cloud analysis.
+    """Generates a stream of 'Grok Insights' simulating real-time cloud analysis.
     In a real scenario, this would subscribe to a Redis channel or actual LLM stream.
     """
     message_id = 1
@@ -69,7 +67,5 @@ async def grok_event_stream() -> AsyncGenerator[str, None]:
 
 @router.get("/stream")
 async def grok_stream() -> StreamingResponse:
-    """
-    SSE Endpoint for Grok's Real-time Stream.
-    """
+    """SSE Endpoint for Grok's Real-time Stream."""
     return StreamingResponse(grok_event_stream(), media_type="text/event-stream")

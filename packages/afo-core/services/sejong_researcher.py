@@ -10,7 +10,7 @@ import logging
 from datetime import datetime
 from typing import Any
 
-from AFO..services.trinity_calculator import import trinity_calculator
+from AFO.services.trinity_calculator import trinity_calculator
 from AFO.utils.trinity_type_validator import validate_with_trinity
 
 logger = logging.getLogger("AFO.Sejong")

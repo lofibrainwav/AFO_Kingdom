@@ -17,11 +17,11 @@ from fastapi import APIRouter, HTTPException
 logger = logging.getLogger(__name__)
 
 # Strangler Fig: compat.py에서 타입 모델 import (眞: Truth 타입 안전성)
-from AFO..api.compat import import ChancellorInvokeRequest, ChancellorInvokeResponse
+from AFO.api.compat import ChancellorInvokeRequest, ChancellorInvokeResponse
 
 # Antigravity import (통합)
 try:
-    from AFO..config.antigravity import import antigravity
+    from AFO.config.antigravity import antigravity
 except ImportError:
     try:
         from config.antigravity import antigravity as ag
@@ -45,7 +45,7 @@ _chancellor_import_error: str | None = None
 def _import_chancellor_graph() -> None:
     global build_chancellor_graph, chancellor_graph, _chancellor_import_error
     try:
-        from AFO..chancellor_graph import import ChancellorState as _CS  # Import State Definition
+        from AFO.chancellor_graph import ChancellorState as _CS  # Import State Definition
         from AFO.chancellor_graph import build_chancellor_graph as _bcg
         from AFO.chancellor_graph import chancellor_graph as _cg
 
@@ -310,7 +310,7 @@ async def _execute_with_fallback(
             from llm_router import llm_router as _router
         except ImportError:
             try:
-                from AFO..llm_router import import llm_router as _afol_router
+                from AFO.llm_router import llm_router as _afol_router
 
                 _router = _afol_router  # type: ignore[assignment]
             except ImportError as e:

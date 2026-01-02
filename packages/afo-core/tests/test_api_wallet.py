@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Tests for api_wallet.py
+"""Tests for api_wallet.py
 API Wallet 테스트 - Phase 4
 """
 

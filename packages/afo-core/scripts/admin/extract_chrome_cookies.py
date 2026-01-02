@@ -108,7 +108,7 @@ def save_to_wallet(token_value: str):
 
         # PostgreSQL 연결 (중앙 설정 사용 - Phase 1 리팩토링)
         try:
-            from AFO..config.settings import import get_settings
+            from AFO.config.settings import get_settings
 
             pg_settings = get_settings()
             conn = psycopg2.connect(

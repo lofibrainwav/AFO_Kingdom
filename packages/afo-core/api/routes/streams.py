@@ -23,7 +23,7 @@ async def stream_thoughts(request: Request) -> EventSourceResponse:
     Connection stays open to push updates instantly.
     """
 
-    from AFO..utils.redis_connection import import get_shared_async_redis_client
+    from AFO.utils.redis_connection import get_shared_async_redis_client
 
     async def event_generator() -> AsyncGenerator[dict[str, str], None]:
         # Initial greeting

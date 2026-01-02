@@ -5,11 +5,7 @@ import sys
 
 
 # Set path to allow imports
-sys.path.append(
-    pathlib.Path(
-        os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")
-    ).resolve()
-)
+sys.path.append(pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")).resolve())
 
 from AFO.agents.samahwi_core import samahwi
 

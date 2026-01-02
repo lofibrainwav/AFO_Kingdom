@@ -242,7 +242,7 @@ class TestRedisConnectionReal:
     @patch("redis.from_url")
     def test_get_redis_client_success(self, mock_from_url: Any, mock_get_settings: Any) -> None:
         """동기 Redis 클라이언트 생성 성공"""
-        from AFO..utils.redis_connection import import get_redis_client
+        from AFO.utils.redis_connection import get_redis_client
 
         mock_settings = MagicMock()
         mock_settings.get_redis_url.return_value = "redis://test"
@@ -259,7 +259,7 @@ class TestRedisConnectionReal:
     @patch("redis.from_url")
     def test_get_redis_client_failure(self, mock_from_url: Any, mock_get_settings: Any) -> None:
         """동기 Redis 클라이언트 생성 실패"""
-        from AFO..utils.redis_connection import import get_redis_client
+        from AFO.utils.redis_connection import get_redis_client
 
         mock_settings = MagicMock()
         mock_settings.get_redis_url.return_value = "redis://test"

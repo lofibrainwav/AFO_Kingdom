@@ -74,7 +74,7 @@ class TestLifespan:
     @pytest.mark.asyncio
     async def test_lifespan(self) -> None:
         """Lifespan 컨텍스트 매니저 테스트"""
-        from AFO..api.config import import get_lifespan_manager as lifespan
+        from AFO.api.config import get_lifespan_manager as lifespan
 
         # Use Any to avoid MyPy strictness on lifespan type
         # Disable strict startup checks by mocking
@@ -91,7 +91,7 @@ class TestDependencyInjection:
 
     def test_get_settings_injection(self) -> None:
         """설정 주입 테스트"""
-        from AFO..config.settings import import get_settings
+        from AFO.config.settings import get_settings
 
         # Explicitly check if the function object exists to satisfy MyPy
         assert callable(get_settings)

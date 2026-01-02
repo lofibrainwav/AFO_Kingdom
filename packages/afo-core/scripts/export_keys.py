@@ -7,7 +7,7 @@ import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 try:
-    from AFO..api_wallet import import APIWallet
+    from AFO.api_wallet import APIWallet
 except ImportError:
     # Fallback if running from scripts dir directly
     sys.path.append(

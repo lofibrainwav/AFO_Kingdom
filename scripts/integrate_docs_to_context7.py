@@ -92,9 +92,9 @@ for i, doc in enumerate(docs_to_integrate, 1):
     if doc_path.exists():
         content = doc_path.read_text(encoding="utf-8")
         lines = len(content.splitlines())
-        print(f"   {i}. ✅ {doc["title"]}: {lines}줄")
+        print(f"   {i}. ✅ {doc['title']}: {lines}줄")
     else:
-        print(f"   {i}. ❌ {doc["title"]}: 파일 없음")
+        print(f"   {i}. ❌ {doc['title']}: 파일 없음")
 
 print("\n" + "=" * 70)
 print("📝 Context7 통합 방법")
@@ -131,9 +131,7 @@ Context7은 MCP (Model Context Protocol) 서버를 통해 통합됩니다.
 # 통합 상태 저장
 integration_status = {
     "total_docs": len(docs_to_integrate),
-    "ready_docs": len(
-        [d for d in docs_to_integrate if (project_root / d["file"]).exists()]
-    ),
+    "ready_docs": len([d for d in docs_to_integrate if (project_root / d["file"]).exists()]),
     "status": "ready_for_integration",
     "integration_method": "MCP Server (Context7)",
 }

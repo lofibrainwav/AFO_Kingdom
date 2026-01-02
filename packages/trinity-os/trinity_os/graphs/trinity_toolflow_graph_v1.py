@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 """
 TRINITY Graph Toolflow v1 (Thin Layer)
 
@@ -9,6 +7,8 @@ Search → Card → Gate → (DryRun?) → Execute
 - MCP Tool Search + Programmatic Calling 흐름을 AFO에 맞게 얇게 조립한다.
 - 점수/판정은 새로 만들지 않고, 기존 SSOT(Registry/Gate/Proxy)만 호출한다.
 """
+
+from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass
@@ -49,8 +49,7 @@ class FlowState(TypedDict, total=False):
 
 @dataclass(frozen=True)
 class Deps:
-    """
-    외부 의존성(실제 MCP/Registry/Gate/Proxy)을 얇게 주입받는 구조.
+    """외부 의존성(실제 MCP/Registry/Gate/Proxy)을 얇게 주입받는 구조.
 
     - tool_search: 검색 결과 후보군 반환
     - get_skill_card: 단일 스킬 카드 반환
@@ -247,8 +246,7 @@ def node_final_ok(state: FlowState, deps: Deps) -> FlowState:
 
 
 def build_trinity_toolflow_graph(deps: Deps):
-    """
-    LangGraph로 Toolflow를 컴파일한다.
+    """LangGraph로 Toolflow를 컴파일한다.
     LangGraph가 없는 환경이면 ImportError를 올려 호출자가 처리하도록 한다.
     """
     from langgraph.graph import END, StateGraph
@@ -269,11 +267,7 @@ def build_trinity_toolflow_graph(deps: Deps):
     graph.add_edge("TOOL_SEARCH", "SELECT")
 
     def route_after_select(state: FlowState) -> str:
-        return (
-            "FINAL_NO_CANDIDATES"
-            if not (state.get("selected_skill_id") or "")
-            else "GET_CARD"
-        )
+        return "FINAL_NO_CANDIDATES" if not (state.get("selected_skill_id") or "") else "GET_CARD"
 
     graph.add_conditional_edges(
         "SELECT",

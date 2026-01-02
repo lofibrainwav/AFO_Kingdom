@@ -12,7 +12,7 @@ from pydantic import BaseModel, Field, ValidationError
 
 # Assuming these exist or need mocking if they don't
 try:
-    from AFO..config.antigravity import import antigravity
+    from AFO.config.antigravity import antigravity
 except ImportError:
     # Fallback/Mock for standalone testing if AFO package isn't fully set up in sys.path
     class MockAntiGravity:

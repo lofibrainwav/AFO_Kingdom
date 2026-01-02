@@ -1,7 +1,6 @@
 # Trinity Score: 90.0 (Established by Chancellor)
 #!/usr/bin/env python3
-"""
-Friction Calibrator - 병렬 실행 효율 측정 및 자동 튜닝
+"""Friction Calibrator - 병렬 실행 효율 측정 및 자동 튜닝
 眞善美孝: Truth, Goodness, Beauty, Serenity
 
 메타인지 기반 튜닝:
@@ -30,13 +29,13 @@ class FrictionStats:
 
     @property
     def friction(self) -> float:
-        """
-        Friction 계산: (실제 병렬 시간 - 이상적 병렬 시간) / 이상적 병렬 시간
+        """Friction 계산: (실제 병렬 시간 - 이상적 병렬 시간) / 이상적 병렬 시간
 
         이상적 병렬 시간 = 순차 시간 / 동시성
 
         Returns:
             float: Friction 값 (0.0 = 이상적, 높을수록 비효율적)
+
         """
         if self.concurrency <= 1:
             return 0.0
@@ -51,11 +50,11 @@ class FrictionStats:
 
     @property
     def efficiency(self) -> float:
-        """
-        효율성: 이상적 시간 / 실제 시간
+        """효율성: 이상적 시간 / 실제 시간
 
         Returns:
             float: 1.0 = 이상적, 낮을수록 비효율적
+
         """
         if self.parallel_time <= 0:
             return 0.0
@@ -64,8 +63,7 @@ class FrictionStats:
 
 
 class FrictionCalibrator:
-    """
-    Friction 기반 동시성 자동 튜닝
+    """Friction 기반 동시성 자동 튜닝
 
     메타인지 로직:
     - 목표 Friction 이하: 동시성 유지 또는 증가
@@ -86,14 +84,14 @@ class FrictionCalibrator:
         self.reduction_factor = reduction_factor
 
     def recommend(self, stats: FrictionStats) -> int:
-        """
-        측정 결과 기반 새로운 동시성 추천
+        """측정 결과 기반 새로운 동시성 추천
 
         Args:
             stats: Friction 측정 결과
 
         Returns:
             int: 추천 동시성
+
         """
         current_friction = stats.friction
 
@@ -120,8 +118,7 @@ class FrictionCalibrator:
         parallel_fn: Callable[[list[Any], int], None],
         tasks_data: list[Any],
     ) -> tuple[FrictionStats, int]:
-        """
-        순차/병렬 실행 측정 + 추천 계산
+        """순차/병렬 실행 측정 + 추천 계산
 
         Args:
             concurrency: 현재 동시성
@@ -131,6 +128,7 @@ class FrictionCalibrator:
 
         Returns:
             tuple: (측정 결과, 추천 동시성)
+
         """
         if not tasks_data:
             return FrictionStats(concurrency, 0.0, 0.0), concurrency
@@ -158,8 +156,7 @@ calibrator = FrictionCalibrator()
 
 
 def demo_friction() -> None:
-    """
-    데모: Friction 측정
+    """데모: Friction 측정
 
     Demonstrates friction measurement between sequential and parallel execution.
     """

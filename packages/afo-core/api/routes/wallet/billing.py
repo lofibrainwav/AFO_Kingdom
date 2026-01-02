@@ -12,7 +12,7 @@ from typing import Any
 
 from fastapi import APIRouter, HTTPException
 
-from AFO.models import import API_PROVIDERS
+from AFO.models import API_PROVIDERS
 
 # Create router
 billing_router = APIRouter(prefix="/billing", tags=["Wallet Billing"])
@@ -37,7 +37,7 @@ async def get_api_usage(api_id: str) -> dict[str, Any]:
         try:
             import redis
 
-            from AFO..config.settings import import get_settings
+            from AFO.config.settings import get_settings
 
             settings = get_settings()
             redis_client = redis.from_url(settings.get_redis_url(), decode_responses=True)
@@ -99,7 +99,7 @@ async def get_billing_summary() -> dict[str, Any]:
         try:
             import redis
 
-            from AFO..config.settings import import get_settings
+            from AFO.config.settings import get_settings
 
             settings = get_settings()
             redis_client = redis.from_url(settings.get_redis_url(), decode_responses=True)

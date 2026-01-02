@@ -18,9 +18,7 @@ sys.path.insert(0, str(project_root))
 sys.path.insert(0, str(project_root / "packages" / "afo-core"))
 
 # Configure logging
-logging.basicConfig(
-    level=logging.DEBUG, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.DEBUG, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 
@@ -32,7 +30,7 @@ def debug_app_creation():
 
     try:
         print("1. Importing config module...")
-        from AFO..api.config import import get_app_config, get_server_config
+        from AFO.api.config import get_app_config, get_server_config
 
         print("2. Getting server config...")
         host, port = get_server_config()
@@ -91,13 +89,13 @@ def debug_router_setup(app):
         if skills_routes:
             print("   Skills routes:")
             for route in skills_routes:
-                print(f"     - {route["path"]} {route["methods"]}")
+                print(f"     - {route['path']} {route['methods']}")
         else:
             print("   ❌ No skills routes found!")
 
         # Check if skills router was imported
         try:
-            from AFO..api.compat import import skills_router
+            from AFO.api.compat import skills_router
 
             print(f"   Skills router in compat: {skills_router is not None}")
             if skills_router:
@@ -184,9 +182,7 @@ def test_server_startup():
                 print(f"   Health check: {response.status_code}")
 
                 # Test OpenAPI
-                openapi_response = requests.get(
-                    "http://localhost:8010/openapi.json", timeout=2
-                )
+                openapi_response = requests.get("http://localhost:8010/openapi.json", timeout=2)
                 if openapi_response.status_code == 200:
                     openapi_data = openapi_response.json()
                     paths = list(openapi_data.get("paths", {}).keys())
@@ -206,9 +202,7 @@ def test_server_startup():
 
             # Test direct skills endpoint
             try:
-                skills_response = requests.get(
-                    "http://localhost:8010/api/skills/list", timeout=2
-                )
+                skills_response = requests.get("http://localhost:8010/api/skills/list", timeout=2)
                 print(f"   Skills API direct test: {skills_response.status_code}")
                 if skills_response.status_code != 404:
                     print(f"   Response: {skills_response.text[:200]}...")

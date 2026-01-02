@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from AFO..api_wallet import import main as cli
+from AFO.api_wallet import main as cli
 
 
 def test_cli_add_key():

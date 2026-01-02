@@ -13,9 +13,7 @@ from pathlib import Path
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 
 
-def log_debug(
-    location: str, message: str, data: dict | None = None, hypothesis_id: str = "A"
-) -> None:
+def log_debug(location: str, message: str, data: dict | None = None, hypothesis_id: str = "A") -> None:
     """Debug logging to NDJSON file"""
     try:
         log_entry = {
@@ -84,9 +82,7 @@ def verify_all_endpoints():
                     "is_streaming": True,
                 }
                 status = "✅" if is_ok else "⚠️" if response.status_code == 404 else "❌"
-                print(
-                    f"{status} {name}: {endpoint} - {response.status_code} (스트리밍)"
-                )
+                print(f"{status} {name}: {endpoint} - {response.status_code} (스트리밍)")
             else:
                 response = requests.get(f"{BASE_URL}{endpoint}", timeout=5)
                 is_ok = response.status_code == 200
@@ -193,9 +189,7 @@ def verify_openapi_schema():
                 if target_path in paths:
                     found_paths.append(target_path)
                     methods = list(paths[target_path].keys())
-                    print(
-                        f"✅ {target_path} - 스키마에 등록됨 (Methods: {", ".join(methods)})"
-                    )
+                    print(f"✅ {target_path} - 스키마에 등록됨 (Methods: {', '.join(methods)})")
                 else:
                     missing_paths.append(target_path)
                     print(f"⚠️  {target_path} - 스키마에 없음")
@@ -244,8 +238,7 @@ def main():
     not_working = [
         name
         for name, data in endpoint_results.items()
-        if data.get("status_code") not in {200, "timeout (expected for streaming)"}
-        and "error" not in data
+        if data.get("status_code") not in {200, "timeout (expected for streaming)"} and "error" not in data
     ]
     connection_errors = [
         name
@@ -273,9 +266,7 @@ def main():
         found_count = len(openapi_results["found"])
         missing_count = len(openapi_results["missing"])
         total_paths = openapi_results.get("total_paths", 0)
-        print(
-            f"\n📋 OpenAPI 스키마: {found_count}개 경로 발견, {missing_count}개 누락 (총 {total_paths}개 경로)"
-        )
+        print(f"\n📋 OpenAPI 스키마: {found_count}개 경로 발견, {missing_count}개 누락 (총 {total_paths}개 경로)")
 
     # #region agent log
     log_debug(

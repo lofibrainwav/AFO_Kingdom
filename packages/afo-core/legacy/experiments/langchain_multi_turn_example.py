@@ -4,8 +4,7 @@
 # 이 파일은 AFO 왕국의 眞善美孝 철학을 구현합니다
 
 #!/usr/bin/env python3
-"""
-사마의 책사 제안: Multi-turn Conversation (멀티 턴 대화)
+"""사마의 책사 제안: Multi-turn Conversation (멀티 턴 대화)
 ConversationChain + Memory로 이전 대화 맥락 유지
 """
 

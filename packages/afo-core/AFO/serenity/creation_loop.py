@@ -18,11 +18,11 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from AFO..config.settings import import get_settings
+from AFO.config.settings import get_settings
 from AFO.guardians.critic_agent import CriticAgent
 
 # Core Systems
-from AFO..llm_router import import LLMRouter
+from AFO.llm_router import LLMRouter
 from AFO.services.vision_verifier import vision_verifier
 from AFO.utils.logging import log_sse
 

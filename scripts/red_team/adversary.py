@@ -20,9 +20,7 @@ import httpx
 
 
 # Configure logging
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 
@@ -63,12 +61,10 @@ class RedTeamAdversary:
             try:
                 result = await attack()
                 self.results.append(result)
-                logger.info(f"🔴 [RED TEAM] {attack.__name__}: {result["status"]}")
+                logger.info(f"🔴 [RED TEAM] {attack.__name__}: {result['status']}")
             except Exception as e:
                 logger.exception(f"🔴 [RED TEAM] {attack.__name__} failed: {e}")
-                self.results.append(
-                    {"attack": attack.__name__, "status": "ERROR", "error": str(e)}
-                )
+                self.results.append({"attack": attack.__name__, "status": "ERROR", "error": str(e)})
 
         # Calculate success metrics
         total_attacks = len(self.results)
@@ -79,14 +75,12 @@ class RedTeamAdversary:
             "total_attacks": total_attacks,
             "attacks_blocked": successful_blocks,
             "attacks_succeeded": total_attacks - successful_blocks,
-            "success_rate": (
-                successful_blocks / total_attacks if total_attacks > 0 else 0
-            ),
+            "success_rate": (successful_blocks / total_attacks if total_attacks > 0 else 0),
             "results": self.results,
             "assessment": self._assess_security_posture(),
         }
 
-        logger.info(f".1fsuccess_rate={report["success_rate"]:.1%}")
+        logger.info(f".1fsuccess_rate={report['success_rate']:.1%}")
         return report
 
     async def _attack_sql_injection(self) -> dict[str, Any]:
@@ -110,24 +104,16 @@ class RedTeamAdversary:
                 )
 
                 # Check if attack was blocked
-                if (
-                    response.status_code in {400, 403, 422}
-                    or "error" in response.text.lower()
-                ):
+                if response.status_code in {400, 403, 422} or "error" in response.text.lower():
                     blocked_count += 1
                 elif response.status_code == 200:
                     # Additional check: should not return sensitive data
                     data = (
                         response.json()
-                        if response.headers.get("content-type", "").startswith(
-                            "application/json"
-                        )
+                        if response.headers.get("content-type", "").startswith("application/json")
                         else {}
                     )
-                    if any(
-                        keyword in str(data).lower()
-                        for keyword in ["password", "admin", "drop", "union"]
-                    ):
+                    if any(keyword in str(data).lower() for keyword in ["password", "admin", "drop", "union"]):
                         pass  # Attack might have succeeded
                     else:
                         blocked_count += 1
@@ -140,9 +126,7 @@ class RedTeamAdversary:
             "attack": "sql_injection",
             "payloads_tested": len(payloads),
             "blocked": blocked_count,
-            "status": (
-                "BLOCKED" if blocked_count >= len(payloads) * 0.8 else "VULNERABLE"
-            ),
+            "status": ("BLOCKED" if blocked_count >= len(payloads) * 0.8 else "VULNERABLE"),
         }
 
     async def _attack_rate_limiting(self) -> dict[str, Any]:
@@ -166,21 +150,12 @@ class RedTeamAdversary:
         time.time()
 
         # Analyze responses
-        successful_responses = [
-            r
-            for r in responses
-            if not isinstance(r, Exception) and hasattr(r, "status_code")
-        ]
-        rate_limited_responses = [
-            r for r in successful_responses if r.status_code == 429
-        ]
+        successful_responses = [r for r in responses if not isinstance(r, Exception) and hasattr(r, "status_code")]
+        rate_limited_responses = [r for r in successful_responses if r.status_code == 429]
         error_responses = [r for r in successful_responses if r.status_code >= 400]
 
         # Check rate limiting effectiveness
-        rate_limit_effective = (
-            len(rate_limited_responses) > 0
-            or len(error_responses) > concurrent_requests * 0.5
-        )
+        rate_limit_effective = len(rate_limited_responses) > 0 or len(error_responses) > concurrent_requests * 0.5
 
         return {
             "attack": "rate_limiting",
@@ -239,11 +214,7 @@ class RedTeamAdversary:
             "attack": "prompt_injection",
             "payloads_tested": len(injection_payloads),
             "blocked": blocked_count,
-            "status": (
-                "BLOCKED"
-                if blocked_count >= len(injection_payloads) * 0.9
-                else "VULNERABLE"
-            ),
+            "status": ("BLOCKED" if blocked_count >= len(injection_payloads) * 0.9 else "VULNERABLE"),
         }
 
     async def _attack_path_traversal(self) -> dict[str, Any]:
@@ -260,21 +231,15 @@ class RedTeamAdversary:
         blocked_count = 0
         for payload in traversal_payloads:
             try:
-                response = await self.client.get(
-                    f"{self.base_url}/api/files", params=payload
-                )
+                response = await self.client.get(f"{self.base_url}/api/files", params=payload)
 
                 # Path traversal should be blocked
-                if (
-                    response.status_code in {400, 403, 404}
-                    or "error" in response.text.lower()
-                ):
+                if response.status_code in {400, 403, 404} or "error" in response.text.lower():
                     blocked_count += 1
                 elif response.status_code == 200:
                     # Check if returned data looks like actual file contents
                     if len(response.text) > 1000 or any(
-                        suspicious in response.text
-                        for suspicious in ["root:", "passwd", "shadow"]
+                        suspicious in response.text for suspicious in ["root:", "passwd", "shadow"]
                     ):
                         pass  # Potential vulnerability
                     else:
@@ -287,9 +252,7 @@ class RedTeamAdversary:
             "attack": "path_traversal",
             "payloads_tested": len(traversal_payloads),
             "blocked": blocked_count,
-            "status": (
-                "BLOCKED" if blocked_count >= len(traversal_payloads) else "VULNERABLE"
-            ),
+            "status": ("BLOCKED" if blocked_count >= len(traversal_payloads) else "VULNERABLE"),
         }
 
     async def _attack_xss_payloads(self) -> dict[str, Any]:
@@ -312,17 +275,12 @@ class RedTeamAdversary:
                     headers={"Content-Type": "application/json"},
                 )
 
-                if (
-                    response.status_code in {400, 422}
-                    or "error" in response.text.lower()
-                ):
+                if response.status_code in {400, 422} or "error" in response.text.lower():
                     blocked_count += 1
                 elif response.status_code == 200:
                     # Check if XSS payload was sanitized
                     content = response.text
-                    if not any(
-                        payload["query"] in content
-                    ):  # Payload should be sanitized
+                    if not any(payload["query"] in content):  # Payload should be sanitized
                         blocked_count += 1
 
             except Exception:
@@ -351,10 +309,7 @@ class RedTeamAdversary:
             )
 
             # Should handle gracefully (413, 400, or process normally)
-            blocked = (
-                response.status_code in {400, 413, 422}
-                or response.elapsed.total_seconds() < 30
-            )
+            blocked = response.status_code in {400, 413, 422} or response.elapsed.total_seconds() < 30
 
             return {
                 "attack": "large_payload",
@@ -429,11 +384,11 @@ async def main():
         print("\n" + "=" * 60)
         print("🔴 AFO KINGDOM RED TEAM ASSESSMENT COMPLETE")
         print("=" * 60)
-        print(f"Total Attacks: {report["total_attacks"]}")
-        print(f"Blocked: {report["attacks_blocked"]}")
-        print(f"Succeeded: {report["attacks_succeeded"]}")
+        print(f"Total Attacks: {report['total_attacks']}")
+        print(f"Blocked: {report['attacks_blocked']}")
+        print(f"Succeeded: {report['attacks_succeeded']}")
         print(".1%")
-        print(f"Security Posture: {report["assessment"].upper()}")
+        print(f"Security Posture: {report['assessment'].upper()}")
         print("=" * 60)
 
 

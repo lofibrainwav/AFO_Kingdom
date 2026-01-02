@@ -16,10 +16,10 @@ import httpx
 import redis.asyncio as redis
 
 # AFO internal imports
-from AFO..config.settings import import get_settings
-from AFO..domain.metrics.trinity import import calculate_trinity
-from AFO..services.database import import get_db_connection
-from AFO..utils.redis_connection import import get_redis_url
+from AFO.config.settings import get_settings
+from AFO.domain.metrics.trinity import calculate_trinity
+from AFO.services.database import get_db_connection
+from AFO.utils.redis_connection import get_redis_url
 
 if TYPE_CHECKING:
     from AFO.domain.metrics.trinity import TrinityMetrics

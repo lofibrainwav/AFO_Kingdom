@@ -11,11 +11,7 @@ import sys
 
 
 # Ensure AFO package is importable
-sys.path.append(
-    pathlib.Path(
-        os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")
-    ).resolve()
-)
+sys.path.append(pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")).resolve())
 
 from langchain_core.messages import HumanMessage
 
@@ -25,8 +21,8 @@ async def verify_trinity_routing():
     print("=== Trinity-Driven Routing Verification ===")
 
     try:
-        from AFO..chancellor_graph import import chancellor_graph
-        from AFO..config.antigravity import import antigravity
+        from AFO.chancellor_graph import chancellor_graph
+        from AFO.config.antigravity import antigravity
         from AFO.domain.metrics.trinity_manager import trinity_manager
     except ImportError as e:
         print(f"❌ Import Failed: {e}")
@@ -90,11 +86,7 @@ async def verify_trinity_routing():
         # Check conditions
         trinity_ok = trinity_score >= 0.9
         risk_ok = risk_score <= 0.1
-        dry_run = (
-            result.get("kingdom_context", {})
-            .get("antigravity", {})
-            .get("DRY_RUN_DEFAULT", True)
-        )
+        dry_run = result.get("kingdom_context", {}).get("antigravity", {}).get("DRY_RUN_DEFAULT", True)
 
         print(f"  Trinity >= 0.9: {trinity_ok}")
         print(f"  Risk <= 0.1: {risk_ok}")
@@ -103,9 +95,7 @@ async def verify_trinity_routing():
         if auto_run and trinity_ok and risk_ok and not dry_run:
             print("  ✅ AUTO_RUN correctly triggered")
         elif dry_run:
-            print(
-                "  ⚠️ DRY_RUN 모드 활성화 - auto_run_eligible이 False로 강제됨 (善: 안전 우선)"
-            )
+            print("  ⚠️ DRY_RUN 모드 활성화 - auto_run_eligible이 False로 강제됨 (善: 안전 우선)")
         elif not trinity_ok:
             print(f"  ⚠️ Trinity Score {trinity_score:.2f} < 0.9 - ASK_COMMANDER")
         elif not risk_ok:

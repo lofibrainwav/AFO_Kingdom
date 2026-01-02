@@ -12,7 +12,7 @@ from pathlib import Path
 core_path = Path(__file__).parent.parent / "packages" / "afo-core"
 sys.path.insert(0, str(core_path))
 
-from AFO..afo_skills_registry import import register_core_skills
+from AFO.afo_skills_registry import register_core_skills
 
 
 # Python 패키지 매핑 (스킬 의존성 → 실제 패키지명)

@@ -85,19 +85,19 @@ def generate_context7_entry(file_path: Path, metadata: dict[str, Any]) -> str:
     ]
 
     if metadata.get("status"):
-        summary_parts.append(f"**상태**: {metadata.get("status")}")
+        summary_parts.append(f"**상태**: {metadata.get('status')}")
 
     if metadata.get("priority"):
-        summary_parts.append(f"**우선순위**: {metadata.get("priority")}")
+        summary_parts.append(f"**우선순위**: {metadata.get('priority')}")
 
     if tags:
-        summary_parts.append(f"**태그**: {", ".join(tags)}")
+        summary_parts.append(f"**태그**: {', '.join(tags)}")
 
     if metadata.get("description"):
-        summary_parts.append(f"**설명**: {metadata.get("description")}")
+        summary_parts.append(f"**설명**: {metadata.get('description')}")
 
     if metadata.get("trinity_score"):
-        summary_parts.append(f"**Trinity Score**: {metadata.get("trinity_score")}/100")
+        summary_parts.append(f"**Trinity Score**: {metadata.get('trinity_score')}/100")
 
     return "\n".join(summary_parts)
 
@@ -116,9 +116,7 @@ def register_to_context7(file_path: Path) -> bool:
     # Context7 KNOWLEDGE_BASE에 추가
     # 실제로는 MCP Memory 도구를 사용하거나 API를 호출해야 하지만,
     # 현재는 Context7MCP의 KNOWLEDGE_BASE를 직접 업데이트
-    doc_key = (
-        f"OBSIDIAN_DOC_{file_path.stem.upper().replace("-", "_").replace(" ", "_")}"
-    )
+    doc_key = f"OBSIDIAN_DOC_{file_path.stem.upper().replace('-', '_').replace(' ', '_')}"
 
     # Context7MCP.KNOWLEDGE_BASE에 동적으로 추가
     # (실제로는 영구 저장소에 저장해야 함)
@@ -126,7 +124,7 @@ def register_to_context7(file_path: Path) -> bool:
 
     print(f"✅ Context7에 등록됨: {doc_key}")
     print(f"   경로: {file_path.relative_to(project_root)}")
-    print(f"   타입: {metadata.get("type", "document")}")
+    print(f"   타입: {metadata.get('type', 'document')}")
 
     return True
 

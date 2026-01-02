@@ -6,7 +6,7 @@ Uses direct mocking for deterministic behavior.
 
 from unittest.mock import MagicMock, patch
 
-from AFO..api_wallet import import APIWallet
+from AFO.api_wallet import APIWallet
 
 
 def test_vault_init_exception_handling() -> None:

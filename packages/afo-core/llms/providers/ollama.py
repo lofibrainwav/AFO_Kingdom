@@ -6,9 +6,8 @@ from typing import Any
 
 import httpx
 
-from AFO..llm_router import import LLMConfig
-
-from AFO.base import import BaseLLMProvider
+from AFO.base import BaseLLMProvider
+from AFO.llm_router import LLMConfig
 
 logger = logging.getLogger(__name__)
 
@@ -36,7 +35,7 @@ class OllamaProvider(BaseLLMProvider):
             base_url = config.base_url
         else:
             try:
-                from AFO..config.settings import import get_settings
+                from AFO.config.settings import get_settings
 
                 base_url = get_settings().OLLAMA_BASE_URL
             except ImportError:
@@ -85,7 +84,7 @@ class OllamaProvider(BaseLLMProvider):
         Public contract implementation (眞: Ollama)
         """
         # Simple configuration conversion for Ollama call
-        from AFO..llm_router import import LLMConfig, LLMProvider
+        from AFO.llm_router import LLMConfig, LLMProvider
 
         config = LLMConfig(
             model=str(kwargs.get("model", "llama3")),

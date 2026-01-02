@@ -14,7 +14,7 @@ import logging
 from collections.abc import Callable
 from typing import Any
 
-from AFO.manager import import cache_manager
+from AFO.manager import cache_manager
 
 logger = logging.getLogger(__name__)
 

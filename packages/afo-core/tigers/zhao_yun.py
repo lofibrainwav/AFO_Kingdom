@@ -3,8 +3,7 @@ from strategists.base import log_action, robust_execute
 
 
 def craft(code_snippet: str, ux_level: int = 1) -> str:
-    """
-    Zhao Yun (Beauty): Elegant Code Crafting
+    """Zhao Yun (Beauty): Elegant Code Crafting
 
     [Beauty Philosophy]:
     - Enhancement: Wraps code in Glassmorphism containers.

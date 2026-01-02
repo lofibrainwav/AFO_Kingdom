@@ -6,7 +6,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
 try:
-    from AFO..api_wallet import import APIWallet
+    from AFO.api_wallet import APIWallet
 except ImportError:
     APIWallet = None  # type: ignore
 

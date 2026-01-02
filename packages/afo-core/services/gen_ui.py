@@ -82,7 +82,7 @@ class GenUIService:
         # 2. Call Scholar (The Execution)
         # Using Yeongdeok's localized logic or direct LLM Router
         try:
-            from AFO..llm_router import import LLMRouter
+            from AFO.llm_router import LLMRouter
 
             router = LLMRouter()
 
@@ -127,8 +127,8 @@ class GenUIService:
         is_valid_syntax = self.validate_syntax(code)
 
         # Soft Fallback for Mock Mode if Syntax Check Fails
-        from AFO..config.antigravity import import antigravity
-        from AFO..config.settings import import settings
+        from AFO.config.antigravity import antigravity
+        from AFO.config.settings import settings
 
         if not is_valid_syntax and (settings.MOCK_MODE or antigravity.DRY_RUN_DEFAULT):
             logger.warning("⚠️ [GenUI] Syntax check failed on LLM output. Using Mock Component.")

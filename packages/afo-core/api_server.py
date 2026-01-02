@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-AFO Kingdom API Server (아름다운 코드 적용)
+"""AFO Kingdom API Server (아름다운 코드 적용)
 FastAPI 기반 AFO 왕국 Soul Engine API 서버
 
 이 파일은 AFO 왕국의 眞善美孝 철학을 구현합니다.
@@ -36,7 +35,6 @@ def _patch_typing_inspection_if_needed() -> None:
     This patch is safe and idempotent; it only rewrites the installed file when the
     buggy snippet is detected.
     """
-
     spec = importlib.util.find_spec("typing_inspection.typing_objects")
     if not spec or not spec.origin:
         return
@@ -72,15 +70,15 @@ _patch_typing_inspection_if_needed()
 
 import uvicorn
 
-# AFO Kingdom imports (clear and organized)
-from AFO.api.config import get_app_config, get_server_config
-from AFO.api.middleware import setup_middleware
-from AFO.api.router_manager import setup_routers
-
 # Core FastAPI imports with type hints
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
+
+# AFO Kingdom imports (clear and organized)
+from AFO.api.config import get_app_config, get_server_config
+from AFO.api.middleware import setup_middleware
+from AFO.api.router_manager import setup_routers
 
 if TYPE_CHECKING:
     from fastapi import FastAPI
@@ -93,8 +91,7 @@ logger = logging.getLogger(__name__)
 
 
 class AFOServer:
-    """
-    AFO Kingdom API Server Manager
+    """AFO Kingdom API Server Manager
 
     아름다운 코드 원칙을 준수하는 API 서버 관리 클래스.
     Trinity Score 기반 품질 관리를 통해 안정성과 확장성을 보장.
@@ -102,6 +99,7 @@ class AFOServer:
     Attributes:
         app: FastAPI 애플리케이션 인스턴스
         limiter: Rate limiting 인스턴스
+
     """
 
     def __init__(self) -> None:
@@ -129,6 +127,7 @@ class AFOServer:
 
         Returns:
             Configured FastAPI application
+
         """
         app = get_app_config()
         logger.info("FastAPI application created")
@@ -149,6 +148,7 @@ class AFOServer:
 
         Returns:
             Configured rate limiter
+
         """
         limiter = Limiter(key_func=get_remote_address)
         logger.info("Rate limiter configured")
@@ -189,6 +189,7 @@ class AFOServer:
         Args:
             host: Server host address
             port: Server port number
+
         """
         logger.info(f"🚀 Starting AFO Kingdom API Server on {host}:{port}")
         uvicorn.run(self.app, host=host, port=port)

@@ -77,8 +77,7 @@ WORKSPACE_ROOT = os.environ.get("WORKSPACE_ROOT", os.getcwd())
 
 
 class AfoUltimateMCPServer:
-    """
-    [AFO Ultimate MCP]
+    """[AFO Ultimate MCP]
     The Universal Connector & Commander for the AFO Kingdom.
     Architecture: Vanilla JSON-RPC 2.0 (Zero Dependency check).
     Integrates: Trinity Score Engine, Afo Skills, and Core Shell Tools.
@@ -98,7 +97,7 @@ class AfoUltimateMCPServer:
             # Check if the resolved path is within workspace
             abs_path.relative_to(workspace_path)
         except ValueError:
-            raise ValueError(f"Access Denied: Path outside workspace ({path}) -> {abs_path}")
+            raise ValueError(f"Access Denied: Path outside workspace ({path}) -> {abs_path}") from None
 
         return abs_path
 
@@ -154,9 +153,7 @@ class AfoUltimateMCPServer:
         script_path = os.path.join(WORKSPACE_ROOT, "scripts", "verify_kingdom_core.py")
         if not os.path.exists(script_path):
             # Fallback to status script if core script missing
-            script_path = os.path.join(
-                WORKSPACE_ROOT, "scripts", "verify_kingdom_status.py"
-            )
+            script_path = os.path.join(WORKSPACE_ROOT, "scripts", "verify_kingdom_status.py")
             if not os.path.exists(script_path):
                 return "Error: Health Script Missing"
 
@@ -400,9 +397,7 @@ class AfoUltimateMCPServer:
                         elif tool_name == "read_file":
                             content = cls.read_file(args.get("path"))
                         elif tool_name == "write_file":
-                            content = cls.write_file(
-                                args.get("path"), args.get("content")
-                            )
+                            content = cls.write_file(args.get("path"), args.get("content"))
                         elif tool_name == "kingdom_health":
                             content = cls.kingdom_health()
 
@@ -425,13 +420,11 @@ class AfoUltimateMCPServer:
                         "kingdom_health",
                     ]:
                         try:
-                            trinity_eval = (
-                                mcp_tool_trinity_evaluator.evaluate_execution_result(
-                                    tool_name=tool_name,
-                                    execution_result=content,
-                                    execution_time_ms=execution_time_ms,
-                                    is_error=is_error,
-                                )
+                            trinity_eval = mcp_tool_trinity_evaluator.evaluate_execution_result(
+                                tool_name=tool_name,
+                                execution_result=content,
+                                execution_time_ms=execution_time_ms,
+                                is_error=is_error,
                             )
                             trinity_metadata = trinity_eval["trinity_metrics"]
                         except Exception:
@@ -446,9 +439,7 @@ class AfoUltimateMCPServer:
                     ]:
                         if tool_name == "calculate_trinity_score":
                             if not TRINITY_LOADED or TrinityScoreEngineHybrid is None:
-                                content = (
-                                    "Tool not available: trinity_score_mcp not loaded"
-                                )
+                                content = "Tool not available: trinity_score_mcp not loaded"
                                 is_error = True
                             else:
                                 res = TrinityScoreEngineHybrid.evaluate(**args)
@@ -457,31 +448,19 @@ class AfoUltimateMCPServer:
 
                         elif tool_name == "verify_fact":
                             if not SKILLS_LOADED or AfoSkillsMCP is None:
-                                content = (
-                                    "Tool not available: afo_skills_mcp not loaded"
-                                )
+                                content = "Tool not available: afo_skills_mcp not loaded"
                                 is_error = True
                             else:
-                                res = AfoSkillsMCP.verify_fact(
-                                    args.get("claim"), args.get("context", "")
-                                )
+                                res = AfoSkillsMCP.verify_fact(args.get("claim"), args.get("context", ""))
                                 content = json.dumps(res, indent=2, ensure_ascii=False)
-                                trinity_metadata = {
-                                    "truth_impact": (
-                                        10 if res["verdict"] == "PLAUSIBLE" else -10
-                                    )
-                                }
+                                trinity_metadata = {"truth_impact": (10 if res["verdict"] == "PLAUSIBLE" else -10)}
 
                         elif tool_name == "cupy_weighted_sum":
                             if not SKILLS_LOADED or AfoSkillsMCP is None:
-                                content = (
-                                    "Tool not available: afo_skills_mcp not loaded"
-                                )
+                                content = "Tool not available: afo_skills_mcp not loaded"
                                 is_error = True
                             else:
-                                res = AfoSkillsMCP.cupy_weighted_sum(
-                                    args.get("data", []), args.get("weights", [])
-                                )
+                                res = AfoSkillsMCP.cupy_weighted_sum(args.get("data", []), args.get("weights", []))
                                 content = str(res)
 
                         elif tool_name == "sequential_thinking":
@@ -500,12 +479,8 @@ class AfoUltimateMCPServer:
                                 content = json.dumps(res, indent=2, ensure_ascii=False)
                                 if "metadata" in res:
                                     trinity_metadata = {
-                                        "truth_impact": res["metadata"].get(
-                                            "truth_impact", 0
-                                        ),
-                                        "serenity_impact": res["metadata"].get(
-                                            "serenity_impact", 0
-                                        ),
+                                        "truth_impact": res["metadata"].get("truth_impact", 0),
+                                        "serenity_impact": res["metadata"].get("serenity_impact", 0),
                                     }
 
                         elif tool_name == "retrieve_context":
@@ -521,11 +496,7 @@ class AfoUltimateMCPServer:
                                 )
                                 content = json.dumps(res, indent=2, ensure_ascii=False)
                                 if "metadata" in res:
-                                    trinity_metadata = {
-                                        "truth_impact": res["metadata"].get(
-                                            "truth_impact", 0
-                                        )
-                                    }
+                                    trinity_metadata = {"truth_impact": res["metadata"].get("truth_impact", 0)}
 
                         # Browser Bridge Tools
                         elif tool_name == "browser_navigate":
@@ -543,9 +514,7 @@ class AfoUltimateMCPServer:
                                 is_error = True
                             else:
                                 content = json.dumps(
-                                    PlaywrightBridgeMCP.screenshot(
-                                        args.get("path", "screenshot.png")
-                                    ),
+                                    PlaywrightBridgeMCP.screenshot(args.get("path", "screenshot.png")),
                                     indent=2,
                                 )
                         elif tool_name == "browser_click":
@@ -563,9 +532,7 @@ class AfoUltimateMCPServer:
                                 is_error = True
                             else:
                                 content = json.dumps(
-                                    PlaywrightBridgeMCP.type_text(
-                                        args.get("selector"), args.get("text")
-                                    ),
+                                    PlaywrightBridgeMCP.type_text(args.get("selector"), args.get("text")),
                                     indent=2,
                                 )
                         elif tool_name == "browser_scrape":
@@ -612,9 +579,7 @@ class AfoUltimateMCPServer:
                     pass
 
                 if msg_id is not None:
-                    print(
-                        json.dumps({"jsonrpc": "2.0", "result": result, "id": msg_id})
-                    )
+                    print(json.dumps({"jsonrpc": "2.0", "result": result, "id": msg_id}))
                     sys.stdout.flush()
 
             except Exception as e:

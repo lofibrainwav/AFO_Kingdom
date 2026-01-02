@@ -1,5 +1,4 @@
-"""
-Dream Protocol: Human Dream AI Execution Framework
+"""Dream Protocol: Human Dream AI Execution Framework
 眞善美孝永 - Human-First AI Implementation System
 
 Core Philosophy:
@@ -119,9 +118,7 @@ class DreamProtocol:
         contract.status = "ANALYZED"
         return True
 
-    def execute_dream(
-        self, dream_id: str, trinity_score: dict[str, float]
-    ) -> dict[str, Any]:
+    def execute_dream(self, dream_id: str, trinity_score: dict[str, float]) -> dict[str, Any]:
         """Execute dream with Trinity Score validation"""
         if dream_id not in self.active_dreams:
             return {"status": "BLOCKED", "reason": "Dream not found"}

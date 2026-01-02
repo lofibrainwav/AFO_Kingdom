@@ -10,8 +10,8 @@ from fastapi import APIRouter
 
 # Phase 2 리팩토링: 상대 import 사용
 # Phase 2 리팩토링: 표준 import 사용
-from AFO..services.database import import get_db_connection
-from AFO..utils.redis_connection import import get_redis_url
+from AFO.services.database import get_db_connection
+from AFO.utils.redis_connection import get_redis_url
 
 router = APIRouter(prefix="/health", tags=["Health"])
 

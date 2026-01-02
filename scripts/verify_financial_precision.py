@@ -6,15 +6,9 @@ from decimal import Decimal
 
 
 # Setup path
-sys.path.append(
-    pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages")).resolve()
-)
+sys.path.append(pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages")).resolve())
 # Also add packages/afo-core directly for internal imports if needed
-sys.path.append(
-    pathlib.Path(
-        os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")
-    ).resolve()
-)
+sys.path.append(pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")).resolve())
 
 try:
     from julie_cpa.core.julie_engine import AdjustBudgetCommand, julie
@@ -27,9 +21,7 @@ async def verify_financial_precision():
     print("💰 [Julie CPA] Financial Precision Verification Start")
 
     # 1. Verify Decimal Types
-    print(
-        f"Checking types... Spending: {type(julie.monthly_spending)}, Budget: {type(julie.budget_limit)}"
-    )
+    print(f"Checking types... Spending: {type(julie.monthly_spending)}, Budget: {type(julie.budget_limit)}")
     if not isinstance(julie.monthly_spending, Decimal):
         print("❌ FAILED: Monthly spending is not Decimal!")
         return
@@ -56,9 +48,7 @@ async def verify_financial_precision():
     else:
         print(f"❌ Undo failed. Current: {julie.budget_limit}")
 
-    print(
-        "\n[Verification Complete] Financial Precision & Command Pattern Operational."
-    )
+    print("\n[Verification Complete] Financial Precision & Command Pattern Operational.")
 
 
 if __name__ == "__main__":

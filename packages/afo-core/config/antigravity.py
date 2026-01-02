@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-AFO Kingdom AntiGravity Configuration Settings
+"""AFO Kingdom AntiGravity Configuration Settings
 Step 0: The Core configuration for governed autonomous scaling.
 
 Integrated with AGENTS.md (SSOT for Trinity Pillars)
@@ -45,8 +44,7 @@ AGENTS_MD_RISK_SCORE_GUIDE = {
 
 
 class AntiGravitySettings(BaseSettings):
-    """
-    AntiGravity Governing Settings
+    """AntiGravity Governing Settings
     - Trinity Weights: AGENTS_MD_TRINITY_WEIGHTS
     - Threshholds: AGENTS_MD_AUTO_RUN_TRINITY_THRESHOLD, AGENTS_MD_AUTO_RUN_RISK_THRESHOLD
     - Risk Score Guide: AGENTS_MD_RISK_SCORE_GUIDE
@@ -105,8 +103,7 @@ class AntiGravitySettings(BaseSettings):
         extra = "allow"
 
     def auto_sync(self) -> str:
-        """
-        자동 동기화 실행 (孝: Serenity) - Hot Reload Implementation
+        """자동 동기화 실행 (孝: Serenity) - Hot Reload Implementation
 
         Reads .env.antigravity and updates the singleton instance in-place.
         """
@@ -127,7 +124,7 @@ class AntiGravitySettings(BaseSettings):
                     changes.append(f"{key}: {old_value} -> {value}")
 
             if changes:
-                log_msg = f"[孝: 자동 동기화] 설정 업데이트 완료: {", ".join(changes)}"
+                log_msg = f"[孝: 자동 동기화] 설정 업데이트 완료: {', '.join(changes)}"
                 logger.info(log_msg)
                 return log_msg
             else:

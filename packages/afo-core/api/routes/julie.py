@@ -33,8 +33,7 @@ async def julie_status() -> dict[str, Any]:
 
 @router.get("/dashboard")
 async def get_dashboard() -> dict[str, Any]:
-    """
-    [T26] Royal Finance Dashboard Logic
+    """[T26] Royal Finance Dashboard Logic
     Returns Budget vs Actual, Forecast, and Recent Transactions.
     """
     return await julie.get_financial_dashboard()
@@ -42,9 +41,7 @@ async def get_dashboard() -> dict[str, Any]:
 
 @router.post("/transaction/approve")
 async def approve_transaction(tx_id: str) -> dict[str, Any]:
-    """
-    [T26] Transaction Approval Action
-    """
+    """[T26] Transaction Approval Action"""
     # In Phase 2, this would trigger actual bank transfer or DB update.
     # For now, we simulate approval.
     return {

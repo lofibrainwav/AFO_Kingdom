@@ -19,9 +19,7 @@ from datetime import datetime
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 
 
-def log_debug(
-    location: str, message: str, data: dict | None = None, hypothesis_id: str = "A"
-) -> None:
+def log_debug(location: str, message: str, data: dict | None = None, hypothesis_id: str = "A") -> None:
     """Debug logging to NDJSON file"""
     try:
         log_entry = {
@@ -60,9 +58,7 @@ try:
         "A",
     )
     # #endregion agent log
-    print(
-        f"✅ Comprehensive Health: import 성공 (prefix: {comprehensive_health_router.prefix})"
-    )
+    print(f"✅ Comprehensive Health: import 성공 (prefix: {comprehensive_health_router.prefix})")
 
     # FastAPI app에 등록 테스트
     from fastapi import FastAPI

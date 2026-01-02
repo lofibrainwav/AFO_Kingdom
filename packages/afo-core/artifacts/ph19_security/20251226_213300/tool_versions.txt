@@ -1,7 +1,0 @@
-timestamp=20251226_213300
-pwd=/Users/brnestrm/AFO_Kingdom/packages/afo-core
-python=Python 3.12.12
-git=git version 2.50.1 (Apple Git-155)
-gitleaks=MISSING
-bandit=1.8.6
-pip_audit=2.10.0

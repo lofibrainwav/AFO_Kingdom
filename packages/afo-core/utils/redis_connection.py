@@ -10,7 +10,7 @@ from typing import cast
 import redis
 from redis.asyncio import Redis as AsyncRedis
 
-from AFO..config.settings import import get_settings
+from AFO.config.settings import get_settings
 
 
 def get_redis_client() -> redis.Redis:

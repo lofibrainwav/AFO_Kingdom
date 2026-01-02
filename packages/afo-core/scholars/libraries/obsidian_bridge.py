@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-AFO Kingdom Local Obsidian Bridge
+"""AFO Kingdom Local Obsidian Bridge
 영덕 학자가 직접 사용하는 로컬 옵시디언 연결 라이브러리
 """
 
@@ -14,8 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 class LocalObsidianBridge:
-    """
-    [영덕 전용] Local Obsidian Bridge
+    """[영덕 전용] Local Obsidian Bridge
     MCP 서버를 거치지 않고 직접 파일시스템을 통해 옵시디언 볼트를 제어합니다.
     """
 

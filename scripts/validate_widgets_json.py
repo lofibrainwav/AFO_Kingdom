@@ -28,14 +28,7 @@ except ImportError as e:
 
 def main() -> int:
     """Validate widgets.json"""
-    widgets_json_path = (
-        repo_root
-        / "packages"
-        / "dashboard"
-        / "src"
-        / "generated"
-        / "widgets.generated.json"
-    )
+    widgets_json_path = repo_root / "packages" / "dashboard" / "src" / "generated" / "widgets.generated.json"
 
     if not widgets_json_path.exists():
         print(f"❌ widgets.generated.json not found: {widgets_json_path}")
@@ -84,23 +77,17 @@ def main() -> int:
             # 허용 문자셋: a-z, 0-9, -, 가-힣
             slug_pattern = re.compile(r"^[a-z0-9가-힣\-]+$")
             if not slug_pattern.match(widget_id):
-                slug_issues.append(
-                    f"Invalid slug format (허용 문자: a-z, 0-9, -, 가-힣): {widget_id}"
-                )
+                slug_issues.append(f"Invalid slug format (허용 문자: a-z, 0-9, -, 가-힣): {widget_id}")
                 continue
 
             # 연속 하이픈 체크
             if "--" in widget_id:
-                slug_issues.append(
-                    f"Invalid slug format (연속 하이픈 불가): {widget_id}"
-                )
+                slug_issues.append(f"Invalid slug format (연속 하이픈 불가): {widget_id}")
                 continue
 
             # 양끝 하이픈 체크
             if widget_id.startswith("-") or widget_id.endswith("-"):
-                slug_issues.append(
-                    f"Invalid slug format (양끝 하이픈 불가): {widget_id}"
-                )
+                slug_issues.append(f"Invalid slug format (양끝 하이픈 불가): {widget_id}")
                 continue
 
         if slug_issues:
@@ -137,9 +124,7 @@ def main() -> int:
                 if fallback_value:
                     fallback_count += 1
                     # [Ticket 4] 이제는 error로 처리 (표준화 완료되었으므로)
-                    fragment_errors.append(
-                        f"Missing fragment_key (required): {widget_id} (fallback: {fallback_value})"
-                    )
+                    fragment_errors.append(f"Missing fragment_key (required): {widget_id} (fallback: {fallback_value})")
                 else:
                     # 완전히 없음 (error)
                     fragment_errors.append(f"Missing fragment pointer: {widget_id}")
@@ -149,9 +134,7 @@ def main() -> int:
             print(f"   ✅ 표준 키(fragment_key) 사용: {fragment_key_count}개")
 
         if fallback_count > 0:
-            print(
-                f"   ⚠️  Fallback 필드 사용: {fallback_count}개 (fragment_key로 마이그레이션 필요)"
-            )
+            print(f"   ⚠️  Fallback 필드 사용: {fallback_count}개 (fragment_key로 마이그레이션 필요)")
 
         if fragment_errors:
             print(f"   ❌ Fragment 포인터 에러 ({len(fragment_errors)}개):")
@@ -159,9 +142,7 @@ def main() -> int:
                 print(f"      - {issue}")
             if len(fragment_errors) > 5:
                 print(f"      ... and {len(fragment_errors) - 5} more")
-            print(
-                "   [Ticket 4] fragment_key는 필수입니다. generate_widgets_from_html.mjs에서 생성하세요."
-            )
+            print("   [Ticket 4] fragment_key는 필수입니다. generate_widgets_from_html.mjs에서 생성하세요.")
             return 1  # Error로 처리
 
         print("   ✅ Fragment 경로 필드 검증 완료")

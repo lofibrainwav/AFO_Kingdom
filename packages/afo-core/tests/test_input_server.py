@@ -12,7 +12,7 @@ sys.modules["input_storage"] = mock_storage
 sys.modules["api_wallet"] = mock_wallet_module
 
 # Now import the app
-from AFO..input_server import import app, parse_env_text
+from AFO.input_server import app, parse_env_text
 
 client = TestClient(app)
 

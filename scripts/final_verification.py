@@ -14,9 +14,7 @@ import requests
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 
 
-def log_debug(
-    location: str, message: str, data: dict | None = None, hypothesis_id: str = "A"
-) -> None:
+def log_debug(location: str, message: str, data: dict | None = None, hypothesis_id: str = "A") -> None:
     """Debug logging to NDJSON file"""
     try:
         log_entry = {
@@ -43,9 +41,7 @@ BASE_URL = "http://localhost:8010"
 def check_all_endpoints():
     """모든 엔드포인트 확인"""
     # #region agent log
-    log_debug(
-        "final_verification.py:check_all_endpoints", "Starting endpoint check", {}, "A"
-    )
+    log_debug("final_verification.py:check_all_endpoints", "Starting endpoint check", {}, "A")
     # #endregion agent log
 
     endpoints = [
@@ -107,9 +103,7 @@ def main():
             print(f"⚠️  API 서버가 응답하지 않습니다 (Status: {response.status_code})\n")
     except Exception as e:
         print(f"❌ API 서버에 연결할 수 없습니다: {e}\n")
-        print(
-            "💡 서버를 시작하세요: cd AFO && python -m uvicorn api_server:app --reload --port 8010\n"
-        )
+        print("💡 서버를 시작하세요: cd AFO && python -m uvicorn api_server:app --reload --port 8010\n")
         return
 
     # 모든 엔드포인트 확인

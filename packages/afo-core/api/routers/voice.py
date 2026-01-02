@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Voice Command Router for AFO Kingdom (Phase 24)
+"""Voice Command Router for AFO Kingdom (Phase 24)
 Handles voice command processing and TTS responses.
 """
 
@@ -28,8 +27,7 @@ class VoiceResponse(BaseModel):
 
 @router.post("/command", response_model=VoiceResponse)
 async def process_voice_command(command: VoiceCommand) -> VoiceResponse:
-    """
-    Process a voice command from the Commander.
+    """Process a voice command from the Commander.
     Routes to Chancellor Graph for decision making.
     """
     logger.info(f"🎙️ Voice Command Received: {command.text}")

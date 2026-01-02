@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-from __future__ import annotations
-
 """
 TRINITY-OS Autorun Gate Check (Light/Deep)
 
@@ -15,6 +13,8 @@ TRINITY-OS Autorun Gate Check (Light/Deep)
   기존 전용 스크립트의 **원문 출력/Exit Code**만 수집해 제공합니다.
 """
 
+from __future__ import annotations
+
 import argparse
 import json
 import subprocess
@@ -24,14 +24,11 @@ from pathlib import Path
 
 
 def find_afo_root(trinity_root: Path) -> tuple[Path, str]:
-    """
-    TRINITY-OS가 단독 레포로 실행되는 경우와
+    """TRINITY-OS가 단독 레포로 실행되는 경우와
     AFO 루트 하위에 통합되어 실행되는 경우를 모두 지원한다.
     """
     # Standalone TRINITY-OS 내부에 AFO 코어가 같이 있는 경우
-    if (trinity_root / "afo_soul_engine").exists() and (
-        trinity_root / ".claude"
-    ).exists():
+    if (trinity_root / "afo_soul_engine").exists() and (trinity_root / ".claude").exists():
         return trinity_root, "standalone"
 
     # 통합 리포(AFO 루트/ TRINITY-OS 하위)인 경우

@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Path Utilities (眞 - Truth)
+"""Path Utilities (眞 - Truth)
 경로 계산 유틸리티 - 하드코딩 제거
 
 야전교범 원칙: 가정 금지 - 경로는 항상 동적으로 계산
@@ -12,8 +11,7 @@ from pathlib import Path
 
 
 def get_project_root(start_path: Path | None = None) -> Path:
-    """
-    프로젝트 루트 경로를 동적으로 계산
+    """프로젝트 루트 경로를 동적으로 계산
 
     Args:
         start_path: 시작 경로 (기본값: 현재 파일의 위치)
@@ -24,6 +22,7 @@ def get_project_root(start_path: Path | None = None) -> Path:
     Example:
         >>> root = get_project_root()
         >>> trinity_os_path = root / "packages" / "trinity-os"
+
     """
     if start_path is None:
         # 호출한 파일의 위치를 기준으로 계산
@@ -72,40 +71,40 @@ def get_project_root(start_path: Path | None = None) -> Path:
 
 
 def get_trinity_os_path(start_path: Path | None = None) -> Path:
-    """
-    Trinity OS 패키지 경로를 동적으로 계산
+    """Trinity OS 패키지 경로를 동적으로 계산
 
     Args:
         start_path: 시작 경로 (기본값: 현재 파일의 위치)
 
     Returns:
         Trinity OS 패키지 경로
+
     """
     project_root = get_project_root(start_path)
     return project_root / "packages" / "trinity-os"
 
 
 def get_afo_core_path(start_path: Path | None = None) -> Path:
-    """
-    AFO Core 패키지 경로를 동적으로 계산
+    """AFO Core 패키지 경로를 동적으로 계산
 
     Args:
         start_path: 시작 경로 (기본값: 현재 파일의 위치)
 
     Returns:
         AFO Core 패키지 경로
+
     """
     project_root = get_project_root(start_path)
     return project_root / "packages" / "afo-core"
 
 
 def add_to_sys_path(path: Path, sys_path_list: list | None = None) -> None:
-    """
-    sys.path에 경로 추가 (중복 방지)
+    """sys.path에 경로 추가 (중복 방지)
 
     Args:
         path: 추가할 경로
         sys_path_list: sys.path 리스트 (기본값: sys.path)
+
     """
     import sys
 

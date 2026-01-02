@@ -1,5 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-from AFO.trinity import import TrinityInputs, TrinityMetrics
+from AFO.trinity import TrinityInputs, TrinityMetrics
 
 
 class TrinityManager:

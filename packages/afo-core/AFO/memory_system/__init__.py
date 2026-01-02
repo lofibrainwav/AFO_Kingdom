@@ -3,6 +3,6 @@
 AFO Kingdom Memory System
 """
 
-from AFO.yeongdeok_complete import import YeongdeokComplete
+from AFO.yeongdeok_complete import YeongdeokComplete
 
 __all__ = ["YeongdeokComplete"]

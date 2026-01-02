@@ -4,11 +4,7 @@ import sys
 
 
 # Add package root to path
-sys.path.append(
-    pathlib.Path(
-        os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")
-    ).resolve()
-)
+sys.path.append(pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")).resolve())
 
 try:
     from AFO.domain.janus.contract import VisualAction, VisualPlan

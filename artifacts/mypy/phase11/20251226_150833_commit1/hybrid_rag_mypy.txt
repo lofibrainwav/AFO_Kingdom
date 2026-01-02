@@ -1,9 +1,0 @@
-AFO/services/hybrid_rag.py:18: error: Unused "type: ignore[assignment, import]" comment  [unused-ignore]
-AFO/services/hybrid_rag.py:24: error: Unused "type: ignore[assignment, import]" comment  [unused-ignore]
-AFO/services/hybrid_rag.py:25: error: Unused "type: ignore[assignment, import]" comment  [unused-ignore]
-AFO/services/hybrid_rag.py:28: error: Unused "type: ignore[misc]" comment  [unused-ignore]
-AFO/services/hybrid_rag.py:32: error: Unused "type: ignore[assignment, import]" comment  [unused-ignore]
-AFO/services/hybrid_rag.py:33: error: Unused "type: ignore[assignment, import]" comment  [unused-ignore]
-AFO/services/hybrid_rag.py:35: error: Unused "type: ignore[assignment, misc]" comment  [unused-ignore]
-AFO/services/hybrid_rag.py:36: error: Unused "type: ignore[assignment, misc]" comment  [unused-ignore]
-Found 8 errors in 1 file (checked 1 source file)

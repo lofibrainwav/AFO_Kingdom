@@ -42,11 +42,7 @@ def main():
         skill_info = {
             "skill_id": skill.skill_id,
             "name": skill.name,
-            "category": (
-                skill.category.value
-                if hasattr(skill.category, "value")
-                else str(skill.category)
-            ),
+            "category": (skill.category.value if hasattr(skill.category, "value") else str(skill.category)),
             "has_philosophy": skill.philosophy_scores is not None,
         }
 
@@ -70,7 +66,7 @@ def main():
         # 출력
         print(f"{status_icon} {skill.skill_id}")
         print(f"   이름: {skill.name}")
-        print(f"   카테고리: {skill_info["category"]}")
+        print(f"   카테고리: {skill_info['category']}")
 
         if skill.philosophy_scores:
             print(f"   철학 점수: {skill.philosophy_scores.summary}")
@@ -83,28 +79,24 @@ def main():
     print("=" * 70)
     print("📊 검증 결과 요약")
     print("=" * 70)
-    print(f"전체 스킬: {results["total"]}개")
-    print(f"철학 점수 있음: {results["with_philosophy"]}개 ✅")
-    print(f"철학 점수 없음: {results["without_philosophy"]}개")
+    print(f"전체 스킬: {results['total']}개")
+    print(f"철학 점수 있음: {results['with_philosophy']}개 ✅")
+    print(f"철학 점수 없음: {results['without_philosophy']}개")
 
     if results["without_philosophy"] > 0:
         print("\n⚠️  철학 점수가 없는 스킬:")
         for skill_info in results["skills"]:
             if not skill_info["has_philosophy"]:
-                print(f"  - {skill_info["skill_id"]}: {skill_info["name"]}")
+                print(f"  - {skill_info['skill_id']}: {skill_info['name']}")
 
     # 통과율
-    pass_rate = (
-        (results["with_philosophy"] / results["total"] * 100)
-        if results["total"] > 0
-        else 0
-    )
+    pass_rate = (results["with_philosophy"] / results["total"] * 100) if results["total"] > 0 else 0
     print(f"\n통과율: {pass_rate:.1f}%")
 
     if results["without_philosophy"] == 0:
         print("\n✅ 모든 스킬이 철학 점수를 가지고 있습니다!")
         return 0
-    print(f"\n⚠️  {results["without_philosophy"]}개 스킬에 철학 점수가 없습니다.")
+    print(f"\n⚠️  {results['without_philosophy']}개 스킬에 철학 점수가 없습니다.")
     return 1
 
 

@@ -15,9 +15,7 @@ def verify_dashboard():
             return False
 
         data = res.json()
-        print(
-            f"Dashboard Data: Health={data.get("financial_health_score")}, Advice='{data.get("advice")[:30]}...'"
-        )
+        print(f"Dashboard Data: Health={data.get('financial_health_score')}, Advice='{data.get('advice')[:30]}...'")
 
         # Note: 'advice' might be the key, checking source.
 
@@ -44,7 +42,7 @@ def verify_dry_run():
             return False
 
         data = res.json()
-        print(f"Dry Run Result: Success={data.get("success")}, Mode={data.get("mode")}")
+        print(f"Dry Run Result: Success={data.get('success')}, Mode={data.get('mode')}")
 
         if data.get("mode") != "DRY_RUN":
             print("FAILED: Mode is not DRY_RUN")
