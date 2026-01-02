@@ -75,3 +75,26 @@
 
 ## 9) Guard (재발 방지)
 - (존재할 경우) scripts/guard_no_japanese_kana.py 통과가 필수입니다.
+
+## 10) Trinity Score 계산 정확성 가드 (SSOT-first 강화)
+- 수치 주장 시 반드시 계산식 + SSOT 근거 첨부 요구
+- "100%/PERFECT/Δ=0.00" 표현 사용 금지 (근거 없는 과장)
+- Trinity Score는 가중합 공식 적용하여 계산 (Raw × Weights)
+- Δ 계산 시 (Max - Min) 공식 적용
+- 모든 수치는 JSON 증거 파일에서 추출하여 계산
+
+## 11) LLM Provider Policy (Vendor-Neutral)
+- AGENTS.md는 특정 벤더/모델을 "기본(Primary)"으로 고정하지 않는다.
+- 외부 LLM 사용 여부/공급자 선택은 런타임 설정으로만 결정한다. (예: .env, CI secrets)
+- 설정이 없거나 모호하면 즉시 ASK_COMMANDER 한다. (추측으로 선택 금지)
+
+### Runtime Config (SSOT-first)
+- AFO_LLM_MODE: OFFLINE | EXTERNAL
+- AFO_LLM_PROVIDER: (빈값 허용) 예: openai | xai | ollama | ...
+- AFO_LLM_PRIORITY: 콤마 리스트 (예: "openai,xai,ollama")  # 없으면 fallback 금지
+
+### Decision Rules
+1) AFO_LLM_MODE=OFFLINE 이면 외부 호출 금지.
+2) AFO_LLM_PROVIDER가 지정되면 그 공급자만 사용. (실패 시 fallback 금지)
+3) AFO_LLM_PROVIDER가 비어있고 AFO_LLM_PRIORITY가 있으면, 리스트 순서대로 시도 가능.
+4) 위 설정이 없으면 ASK_COMMANDER.

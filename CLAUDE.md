@@ -34,7 +34,7 @@ poetry install                   # Alternative: Poetry
 make lint                        # Ruff lint (packages/afo-core)
 make type-check                  # Pyright type check
 make test                        # Unit tests (excludes integration/external)
-make check                       # Lint + type-check + test combined
+make check                       # Full CI protocol: Pyright → Ruff → pytest → SBOM
 
 # Run server
 cd packages/afo-core && uvicorn api.api_server:app --reload --port 8010
@@ -123,6 +123,7 @@ cd packages/afo-core && pytest tests/test_file.py::test_function -v
 | n8n | 5678 | Automation |
 
 **Start minimal dev stack**:
+
 ```bash
 cd packages/afo-core && docker-compose up -d postgres redis qdrant
 ```
@@ -139,6 +140,7 @@ Zilong (Claude Code) acts as the **Sword** (眞 - Technical Truth) in the AFO Ki
 ## 3 Strategists (Chancellor Graph Decision Makers)
 
 Zilong must recognize and align with the specialized roles of the Trinity:
+
 - **Zhuge Liang (諸葛亮) - 眞 Sword** ⚔️: Architecture, strategy, and technical certainty.
 - **Sima Yi (司馬懿) - 善 Shield** 🛡️: Ethics, stability, risk assessment, and gatekeeping.
 - **Zhou Yu (周瑜) - 美 Bridge** 🌉: Narrative, UX, communication, and cognitive load reduction.
@@ -177,6 +179,16 @@ Before completing any change:
 2. Keep diffs minimal - no reformatting unrelated code
 3. No "drive-by" refactoring outside request scope
 4. Evidence required - cite file paths, test output, or existing patterns
+
+## AGENTS.md Governance (Key Rules)
+
+AGENTS.md applies to all AI agents in this repository. Key policies:
+
+- **SSOT-first**: No fact/metric/completion claims without evidence (code, logs, hashes)
+- **Ask-Before-Act**: Confirm before data deletion, migrations, security changes, or "DONE" status
+- **Execution Protocol**: Backup → Check → Execute (minimal) → Verify → Rollback path
+- **Vendor-Neutral LLM**: LLM provider selection via runtime config only (`AFO_LLM_MODE`, `AFO_LLM_PROVIDER`)
+- **Korean Language**: Project agents use Korean; Claude Code assistance may use English
 
 ## Per-Package Guidelines
 
