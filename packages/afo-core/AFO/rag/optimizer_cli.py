@@ -40,6 +40,7 @@ def _ensure_parent(p: str) -> None:
 
 
 def _maybe_configure_lm() -> None:
+    """Configure DSPy LM: Ollama (local) first, OpenAI as fallback."""
     if dspy is None:
         raise RuntimeError("DSPy is not installed.")
 
@@ -47,16 +48,28 @@ def _maybe_configure_lm() -> None:
     if getattr(dspy.settings, "lm", None):
         return
 
-    # OpenAI 키가 있으면 최소 설정
+    # 1순위: 로컬 Ollama 사용 (OpenAI 의존성 제거)
+    try:
+        from AFO.config.local_dspy import configure_dspy_local_lm
+
+        configure_dspy_local_lm()
+        return
+    except Exception as e:
+        print(f"[AFO] Local Ollama config failed: {e}")
+
+    # 2순위: OpenAI API (fallback)
     if os.getenv("OPENAI_API_KEY"):
         model = os.getenv("DSPY_OPENAI_MODEL", "gpt-4o-mini")
-        lm = dspy.OpenAI(model=model)
-        dspy.settings.configure(lm=lm)
+        lm = dspy.LM(f"openai/{model}")
+        dspy.configure(lm=lm)
+        print(f"[AFO] Using OpenAI fallback: {model}")
         return
 
     raise RuntimeError(
-        "DSPy LM is not configured. Set OPENAI_API_KEY (and optionally DSPY_OPENAI_MODEL), "
-        "or configure dspy.settings.configure(lm=...) in your runtime."
+        "DSPy LM is not configured. Either:\n"
+        "  1. Start Ollama (ollama serve) with a model (deepseek-r1:14b)\n"
+        "  2. Set OPENAI_API_KEY environment variable\n"
+        "  3. Configure dspy.settings.configure(lm=...) in your runtime."
     )
 
 
