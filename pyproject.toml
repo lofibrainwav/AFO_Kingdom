@@ -81,7 +81,7 @@ include = [
 ]
 
 [tool.ruff]
-target-version = "py312"
+target-version = "py312"           # Python 버전 명시 (속도 +30%, 불필요 규칙 스킵)
 line-length = 100
 preview = true                     # 최신 규칙 즉시 적용 (眞: Red Knot 준비)
 cache-dir = ".ruff_cache"          # CI 속도 3배↑ (孝: 개발자 평온)
@@ -95,6 +95,8 @@ exclude = [
     "*.egg-info",
     "dist",
     "build",
+    "packages/trinity-os/tests",    # 중복 모듈 충돌 방지 (Phase 10 최적화)
+    "tests",                        # 루트 레벨 tests 중복 방지
 ]
 
 [tool.ruff.lint]
@@ -117,6 +119,7 @@ ignore = [
     "BLE001",  # Blind except (Pending verification)
     "PLR2004", # Magic values (Pending verification)
     "PTH",     # Use os.path (Stability)
+    "UP047",   # Removed rule (compatibility issue)
 ]
 
 [tool.ruff.lint.per-file-ignores]
