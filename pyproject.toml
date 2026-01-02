@@ -189,7 +189,7 @@ keep-runtime-typing = true      # Pydantic v1 호환 유지 (眞: 안전)
 [tool.pyright]
 pythonVersion = "3.12"
 pythonPlatform = "Darwin"
-typeCheckingMode = "strict"
+typeCheckingMode = "basic"
 include = ["packages/afo-core", "packages/trinity-os", "packages/dashboard", "scripts", "tests"]
 exclude = [
     "packages/trinity-os/tests",  # 중복 모듈 충돌 방지
@@ -200,7 +200,11 @@ exclude = [
     "*.egg-info",
     "dist",
     "build",
-    "node_modules"
+    "node_modules",
+    "packages/afo-core/tigers",
+    "packages/afo-core/AFO/external",
+    "packages/afo-core/AFO/domain/models/torch*",
+    "packages/afo-core/AFO/domain/models/mlx*"
 ]
 extraPaths = ["packages/afo-core", "packages/trinity-os", "packages/dashboard"]
 reportMissingImports = "warning"

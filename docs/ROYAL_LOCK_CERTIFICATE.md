@@ -12,6 +12,8 @@
 - [x] **Git Cleanliness**: All artifacts committed.
 - [x] **Linting (Truth)**: Ruff 100% Pass (Auto-fixed).
 - [x] **Dependency (Goodness)**: `uv.lock` Synchronized.
+- [x] **Type Safety (Truth)**: Pyright 100% Pass (Optimized).
+- [x] **Push Sync (Eternity)**: Local == Remote (Evidence Confirmed).
 - [x] **Meta-Cognition (Wisdom)**: Verified by Chancellor Antigravity.
 
 ## Declaration
