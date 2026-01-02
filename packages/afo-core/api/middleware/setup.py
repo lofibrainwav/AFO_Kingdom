@@ -7,10 +7,14 @@ Handles CORS, security, monitoring, and other middleware setup.
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 
 
 def setup_middleware(app: FastAPI) -> None:
     """Setup all middleware for the FastAPI application."""
+
+    # GZip compression (Disabled temporarily for streaming debug)
+    # app.add_middleware(GZipMiddleware, minimum_size=1000)
 
     # Cache middleware (Phase 1.2: API 엔드포인트 캐싱)
     _setup_cache_middleware(app)

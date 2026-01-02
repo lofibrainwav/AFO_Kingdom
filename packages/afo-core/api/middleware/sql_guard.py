@@ -48,14 +48,25 @@ def _walk_strings(x: Any) -> Iterable[str]:
             yield from _walk_strings(v)
 
 
-class SqlGuardMiddleware(BaseHTTPMiddleware):
-    async def dispatch(self, request: Request, call_next) -> Response:
+class SqlGuardMiddleware:
+    def __init__(self, app: Any):
+        self.app = app
+
+    async def __call__(self, scope: dict, receive: Any, send: Any) -> None:
+        if scope["type"] != "http":
+            await self.app(scope, receive, send)
+            return
+
+        from starlette.requests import Request
+
+        request = Request(scope, receive)
         mode = _mode()
+
         if mode == "off":
-            return await call_next(request)  # type: ignore[no-any-return]
+            await self.app(scope, receive, send)
+            return
 
         suspicious = False
-
         for k, v in request.query_params.items():
             if _is_suspicious_text(k) or _is_suspicious_text(v):
                 suspicious = True
@@ -64,23 +75,37 @@ class SqlGuardMiddleware(BaseHTTPMiddleware):
         if not suspicious and request.headers.get("content-type", "").startswith(
             "application/json"
         ):
-            raw = await request.body()
-            if raw and len(raw) <= 65536:
-                try:
+            # We must be careful about reading the body in ASGI middleware
+            # Starlette's Request.body() reads it into memory.
+            # To pass it on, we need a custom receive function.
+            try:
+                raw = await request.body()
+                if raw and len(raw) <= 65536:
                     data = json.loads(raw.decode("utf-8"))
                     for s in _walk_strings(data):
                         if _is_suspicious_text(s):
                             suspicious = True
                             break
-                except Exception:
-                    pass
 
-            async def _receive() -> dict:
-                return {"type": "http.request", "body": raw, "more_body": False}
+                async def mocked_receive() -> dict:
+                    return {"type": "http.request", "body": raw, "more_body": False}
 
-            request._receive = _receive
+                if suspicious and mode == "block":
+                    response = JSONResponse(
+                        {"ok": False, "error": "suspicious_input"}, status_code=400
+                    )
+                    await response(scope, receive, send)
+                    return
+
+                # Continue with the mocked receive channel
+                await self.app(scope, mocked_receive, send)
+                return
+            except Exception:
+                pass
 
         if suspicious and mode == "block":
-            return JSONResponse({"ok": False, "error": "suspicious_input"}, status_code=400)
+            response = JSONResponse({"ok": False, "error": "suspicious_input"}, status_code=400)
+            await response(scope, receive, send)
+            return
 
-        return await call_next(request)  # type: ignore[no-any-return]
+        await self.app(scope, receive, send)

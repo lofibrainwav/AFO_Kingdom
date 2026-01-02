@@ -16,14 +16,21 @@ from __future__ import annotations
 
 import asyncio
 import importlib.util
-import logging
-import os  # Added for env check
+import os
 import sys
+
+# High Priority Path Injection: Ensure /app is first to avoid shadowing by /AFO
+if "/app" not in sys.path:
+    sys.path.insert(0, "/app")
+# Remove root if it exists in path to avoid namespace package collisions
+if "/" in sys.path:
+    sys.path.remove("/")
+
+import logging
 from collections.abc import Awaitable, Callable
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, cast
 
-from fastapi import Header, HTTPException  # Added for security
 from starlette.requests import Request
 from starlette.responses import Response
 
@@ -97,6 +104,15 @@ logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
+
+# Use uvloop for maximum performance if available (眞·善)
+try:
+    import uvloop
+
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+    logger.info("✅ uvloop event loop policy installed")
+except ImportError:
+    logger.debug("uvloop not installed, using default event loop")
 
 
 class AFOServer:
@@ -212,8 +228,43 @@ class AFOServer:
         Returns:
             Configured FastAPI application
         """
+        from contextlib import asynccontextmanager
+
+        import httpx
+
+        @asynccontextmanager
+        async def lifespan(app: FastAPI):
+            # Startup Logic (眞)
+            logger.info("🚀 AFO Kingdom Soul Engine Starting...")
+
+            # Initialize Global AsyncClient (Persistent Connections)
+            app.state.http_client = httpx.AsyncClient(
+                timeout=30.0, limits=httpx.Limits(max_connections=100, max_keepalive_connections=20)
+            )
+
+            # Start Super Agent if enabled
+            if os.getenv("AFO_DEBUG_AGENT_ENABLED") == "1":
+                logger.info("🤖 Starting Debugging Super Agent (2026 Vision)...")
+                task = asyncio.create_task(self.healing_agent.start())
+                self._background_tasks.add(task)
+                task.add_done_callback(self._background_tasks.discard)
+
+            yield
+
+            # Shutdown Logic (善)
+            logger.info("🛑 AFO Kingdom Soul Engine Shutting down...")
+            await app.state.http_client.aclose()
+
+            # Cleanup background tasks
+            for task in self._background_tasks:
+                task.cancel()
+
+            logger.info("✅ Cleanup completed")
+
         app = get_app_config()
-        logger.info("FastAPI application created")
+        app.router.lifespan_context = lifespan
+
+        logger.info("FastAPI application created with lifespan support")
 
         # Chancellor Router 직접 등록
         try:
@@ -269,29 +320,6 @@ class AFOServer:
             self._background_tasks.add(task)
             task.add_done_callback(self._background_tasks.discard)
 
-        @self.app.post("/api/debug/agent/simulate", tags=["Debugging Agent"])
-        async def trigger_simulation(
-            error_code: str = "DTZ005",
-            x_afo_debug_secret: str | None = Header(None, alias="X-AFO-DEBUG-SECRET"),
-        ) -> dict[str, Any]:
-            """Trigger a self-healing simulation scenario (Protected)."""
-
-            # 1. Gate: Feature Flag Check
-            if os.getenv("AFO_DEBUG_AGENT_ENABLED") != "1":
-                raise HTTPException(status_code=403, detail="Debugging Agent is disabled.")
-
-            # 2. Gate: Secret Header Check (Simple protection for prototype)
-            required_secret = os.getenv("AFO_DEBUG_SECRET", "default-dev-secret")
-            if x_afo_debug_secret != required_secret:
-                raise HTTPException(status_code=401, detail="Invalid Debug Secret.")
-
-            await self.healing_agent.trigger_anomaly(error_code)
-            return {
-                "message": f"Anomaly {error_code} injected.",
-                "agent_name": self.healing_agent.name,
-                "current_entropy": self.healing_agent.state.entropy,
-            }
-
         logger.info("Application configured with security measures")
 
     def _setup_components(self) -> None:
@@ -329,7 +357,15 @@ class AFOServer:
             port: Server port number
         """
         logger.info(f"🚀 Starting AFO Kingdom API Server on {host}:{port}")
-        uvicorn.run(self.app, host=host, port=port)
+        # Optimized for performance (眞·善)
+        uvicorn.run(
+            "api_server:app",
+            host=host,
+            port=port,
+            loop="uvloop",
+            http="httptools",
+            workers=1,  # Gunicorn will handle multiple workers in production
+        )
 
 
 # Global server instance (Singleton pattern for beautiful code)

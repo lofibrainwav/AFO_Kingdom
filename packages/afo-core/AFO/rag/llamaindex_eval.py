@@ -15,13 +15,15 @@ import logging
 from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, TYPE_CHECKING
 
-from llama_index.core import VectorStoreIndex
 from llama_index.core.evaluation import (
     FaithfulnessEvaluator,
     RelevancyEvaluator,
 )
+
+if TYPE_CHECKING:
+    from llama_index.core import VectorStoreIndex
 
 logger = logging.getLogger(__name__)
 

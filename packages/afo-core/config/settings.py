@@ -63,24 +63,25 @@ class AFOSettings(BaseSettings):
     # ============================================================================
     # Redis Settings
     # ============================================================================
-    REDIS_URL: str = Field(default="redis://localhost:6379", description="Redis 연결 URL")
+    REDIS_URL: str = Field(default="redis://afo-redis:6379", description="Redis 연결 URL")
     REDIS_HOST: str = Field(
-        default="localhost", description="Redis 호스트 (REDIS_URL이 없을 때 사용)"
+        default="afo-redis", description="Redis 호스트 (REDIS_URL이 없을 때 사용)"
     )
     REDIS_PORT: int = Field(default=6379, description="Redis 포트 (REDIS_URL이 없을 때 사용)")
 
     # ============================================================================
     # Qdrant Settings
     # ============================================================================
-    QDRANT_URL: str = Field(default="http://localhost:6333", description="Qdrant 벡터 DB URL")
+    QDRANT_URL: str = Field(default="http://afo-qdrant:6333", description="Qdrant 벡터 DB URL")
 
     # ============================================================================
     # Ollama Settings
     # ============================================================================
     OLLAMA_BASE_URL: str = Field(
-        default="http://localhost:11434", description="Ollama LLM 서버 URL"
+        default="http://afo-ollama:11434", description="Ollama LLM 서버 URL"
     )
     OLLAMA_MODEL: str = Field(default="qwen3-vl:8b", description="Ollama 기본 모델")
+    OLLAMA_EMBED_MODEL: str = Field(default="nomic-embed-text", description="Ollama 임베딩 모델")
 
     # ============================================================================
     # N8N Settings

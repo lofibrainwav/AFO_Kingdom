@@ -62,18 +62,18 @@ class APIConfig:
 
     def _get_config_value(self, key: str, default: str) -> str:
         """Get configuration value with fallback hierarchy."""
-        # 1. Settings object
+        # 1. Environment variable (Highest priority for Docker/K8s)
+        env_value = os.getenv(key)
+        if env_value:
+            return env_value
+
+        # 2. Settings object (Default values from settings.py)
         if self.settings and hasattr(self.settings, key):
             value = getattr(self.settings, key)
             if value is not None:
                 return str(value)
 
-        # 2. Environment variable
-        env_value = os.getenv(key)
-        if env_value:
-            return env_value
-
-        # 3. Default value
+        # 3. Default value (Safest fallback)
         return default
 
     def _get_cors_origins(self) -> list[str]:

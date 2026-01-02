@@ -6,7 +6,8 @@ from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from typing import Any
 
-"""VERSION: FINAL_TRUTH_1"""
+"""VERSION: FINAL_TRUTH_OLLAMA_FIX_V2"""
+VERSION = "FINAL_TRUTH_OLLAMA_FIX_V2"
 
 
 @dataclass(frozen=True)
@@ -48,14 +49,14 @@ def _mk(
             status="healthy",
             score=ok_score,
             output=ok_msg,
-            probe=f"{probe}:{target}",
+            probe=target,  # Use the target string directly (already formatted as tcp://host:port)
             latency_ms=ms,
         )
     return OrganReport(
         status="disconnected",
         score=bad_score,
         output=bad_msg,
-        probe=f"{probe}:{target}",
+        probe=target,  # Use the target string directly
         latency_ms=ms,
     )
 
@@ -106,7 +107,18 @@ def build_organs_final(
         flush=True,
     )
 
-    ok, ms, t = _tcp_probe(ollama_host, ollama_port, timeout_tcp_s)
+    # Smart Ollama Probe: Handle OLLAMA_BASE_URL or OLLAMA_HOST as URLs
+    final_ollama_host = ollama_host
+    final_ollama_port = ollama_port
+
+    if "://" in str(final_ollama_host):
+        from urllib.parse import urlparse
+
+        parsed = urlparse(str(final_ollama_host))
+        final_ollama_host = parsed.hostname
+        final_ollama_port = parsed.port or 11434
+
+    ok, ms, t = _tcp_probe(final_ollama_host, final_ollama_port, timeout_tcp_s)
     organs["脾_Ollama"] = _mk(ok, ms, t, "tcp", 95, 20, "Connected", "Disconnected")
 
     ok, ms, t = _tcp_probe(qdrant_host, qdrant_port, timeout_tcp_s)

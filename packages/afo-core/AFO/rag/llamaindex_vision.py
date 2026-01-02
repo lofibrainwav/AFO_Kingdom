@@ -14,16 +14,35 @@ import base64
 import logging
 import os
 from pathlib import Path
-from typing import Any
+from typing import Any, TYPE_CHECKING
 
 import httpx
-from llama_index.core import VectorStoreIndex
+
+if TYPE_CHECKING:
+    from llama_index.core import VectorStoreIndex
 
 logger = logging.getLogger(__name__)
 
 # Vision model configuration
 VISION_MODEL = os.getenv("OLLAMA_VISION_MODEL", "qwen3-vl:8b")
-OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://host.docker.internal:11434")
+
+
+# Smart Ollama URL detection
+def _get_ollama_url() -> str:
+    """Get Ollama URL with smart fallback for Docker/local dev."""
+    env_url = os.getenv("OLLAMA_BASE_URL")
+    if env_url:
+        return env_url
+    import socket
+
+    try:
+        socket.gethostbyname("host.docker.internal")
+        return "http://host.docker.internal:11434"
+    except socket.gaierror:
+        return "http://localhost:11434"
+
+
+OLLAMA_BASE_URL = _get_ollama_url()
 
 
 def _encode_image(image_path: Path) -> str:

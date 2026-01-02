@@ -4,7 +4,7 @@ import React from 'react';
 import { useApi } from '@/hooks/useApi';
 
 export const SystemFingerprintFooter = () => {
-  const { data } = useApi('/api/kingdom-status');
+  const { data } = useApi('/api/kingdom-status') as any;
 
   const buildVersion = data?.buildVersion || '---';
   const backendStatus = data?.backendStatus || '---';

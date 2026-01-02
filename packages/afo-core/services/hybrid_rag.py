@@ -85,28 +85,40 @@ def random_embedding(dim: int = 1536) -> list[float]:
 
 def get_embedding(text: str, openai_client: Any) -> list[float]:
     """
-    眞 (Truth): OpenAI API를 이용한 텍스트 임베딩 추출
+    眞 (Truth): OpenAI 또는 Ollama를 이용한 텍스트 임베딩 추출
     善 (Goodness): 예외 발생 시 난수 임베딩으로 안전하게 폴백
-
-    Args:
-        text: 임베딩할 텍스트
-        openai_client: OpenAI 클라이언트 인스턴스
-
-    Returns:
-        list[float]: 추출된 임베딩 리스트
     """
-    if openai_client is None:
-        return random_embedding()
+    if openai_client:
+        try:
+            response = openai_client.embeddings.create(
+                model="text-embedding-3-small",
+                input=text,
+            )
+            return cast("list[float]", response.data[0].embedding)
+        except Exception as exc:
+            print(f"[Hybrid RAG] OpenAI Embedding 실패: {exc}")
 
+    # Fallback to Ollama (眞: Truth - Local Sovereign Logic)
     try:
-        response = openai_client.embeddings.create(
-            model="text-embedding-3-small",
-            input=text,
-        )
-        return cast("list[float]", response.data[0].embedding)
-    except Exception as exc:
-        print(f"[Hybrid RAG] Embedding 생성 실패, 난수로 대체합니다: {exc}")
-        return random_embedding()
+        import httpx
+
+        from AFO.config.settings import get_settings
+
+        settings = get_settings()
+        base_url = settings.OLLAMA_BASE_URL.rstrip("/")
+
+        # Optimized sync fallback (prefer async version below in production)
+        with httpx.Client(timeout=10.0) as client:
+            response = client.post(
+                f"{base_url}/api/embeddings",
+                json={"model": settings.OLLAMA_EMBED_MODEL, "prompt": text},
+            )
+            if response.status_code == 200:
+                return response.json()["embedding"]
+    except Exception as e:
+        print(f"[Hybrid RAG] Ollama Embedding 실패: {e}")
+
+    return random_embedding()
 
 
 def query_pgvector(embedding: list[float], top_k: int, pg_pool: Any) -> list[dict[str, Any]]:
@@ -132,12 +144,17 @@ def query_pgvector(embedding: list[float], top_k: int, pg_pool: Any) -> list[dic
 
         cursor_factory = RealDictCursor if RealDictCursor is not None else None
         with conn.cursor(cursor_factory=cursor_factory) as cur:
+            # 眞 (Truth): SQL-native Vector Search using pgvector (<=> is cosine distance)
+            # Optimized to offload calculation to PostgreSQL
             cur.execute(
                 """
-                SELECT id, title, url, content, embedding
+                SELECT id, title, url, content, 
+                       (1 - (embedding <=> %s::vector)) AS similarity
                 FROM rag_documents
-                LIMIT 200;
-                """
+                ORDER BY embedding <=> %s::vector
+                LIMIT %s;
+                """,
+                (embedding, embedding, top_k),
             )
             rows = cur.fetchall() if cur else []
     except Exception as e:
@@ -146,35 +163,15 @@ def query_pgvector(embedding: list[float], top_k: int, pg_pool: Any) -> list[dic
     finally:
         pg_pool.putconn(conn)
 
-    if not rows:
-        return []
-
-    norm_query = math.sqrt(sum(v * v for v in embedding)) or 1.0
-    scored: list[dict[str, Any]] = []
-    for row in rows:
-        content = row.get("content") or ""
-        if not content:
-            continue
-        vector = row.get("embedding")
-        if vector is None:
-            continue
-        if not isinstance(vector, (list, tuple)):
-            vector = vector.tolist() if hasattr(vector, "tolist") else list(vector)
-
-        norm_doc = math.sqrt(sum(v * v for v in vector)) or 1.0
-        dot = sum(a * b for a, b in zip(embedding, vector, strict=False))
-        similarity = dot / (norm_query * norm_doc)
-        scored.append(
-            {
-                "id": str(row["id"]),
-                "content": content,
-                "score": float(similarity),
-                "source": row.get("url") or row.get("title") or "pgvector",
-            }
-        )
-
-    scored.sort(key=lambda r: r["score"], reverse=True)
-    return scored[:top_k]
+    return [
+        {
+            "id": str(row["id"]),
+            "content": row["content"],
+            "score": float(row["similarity"]),
+            "source": row.get("url") or row.get("title") or "pgvector",
+        }
+        for row in rows
+    ]
 
 
 def query_redis(embedding: list[float], top_k: int, redis_client: Any) -> list[dict[str, Any]]:
@@ -300,36 +297,54 @@ def query_qdrant(embedding: list[float], top_k: int, qdrant_client: Any) -> list
     except Exception:
         collection_name = "afokingdom_knowledge"
 
+    # 1. Search in Qdrant
     try:
-        # 1. Search in Qdrant
-        search_result = qdrant_client.search(
-            collection_name=collection_name,
-            query_vector=embedding,
-            limit=top_k,
-            with_payload=True,
-        )
+        # Check for modern API first (v1.10+)
+        if hasattr(qdrant_client, "query_points"):
+            search_result = qdrant_client.query_points(
+                collection_name=collection_name,
+                query=embedding,
+                limit=top_k,
+                with_payload=True,
+            ).points
+        elif hasattr(qdrant_client, "search"):
+            # Classic search
+            search_result = qdrant_client.search(
+                collection_name=collection_name,
+                query_vector=embedding,
+                limit=top_k,
+                with_payload=True,
+            )
+        else:
+            print(
+                f"[Hybrid RAG] QdrantClient has no supported search method. Available: {dir(qdrant_client)}"
+            )
+            return []
 
         # 2. Format results
         rows: list[dict[str, Any]] = []
         for hit in search_result:
-            payload = hit.payload or {}
-            content = payload.get("content") or ""
+            # Handle both ScoredPoint (classic) and QueryResponse point
+            payload = getattr(hit, "payload", {}) or {}
+            score = getattr(hit, "score", 0.0)
+            hit_id = getattr(hit, "id", "unknown")
+
+            content = payload.get("content") or payload.get("text") or ""
             if not content:
                 continue
 
             rows.append(
                 {
-                    "id": str(hit.id),
+                    "id": str(hit_id),
                     "content": content,
-                    "score": float(hit.score),
+                    "score": float(score),
                     "source": payload.get("source") or "qdrant",
                     "metadata": payload,
                 }
             )
-
         return rows
-    except Exception as exc:
-        print(f"[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): {exc}")
+    except Exception as e:
+        print(f"[Hybrid RAG] Qdrant 검색 실패 ({collection_name}): {e}")
         return []
 
 
@@ -548,21 +563,67 @@ def generate_answer(
             )
             return str(completion.choices[0].message.content)
         except Exception as e:
-            return f"Error generating answer: {e}"
+            print(f"Error generating answer via OpenAI: {e}")
 
-    return "No LLM client available."
+    # Fallback to Ollama (眞: Truth - Local Sovereign Logic)
+    try:
+        import httpx
+
+        from AFO.config.settings import get_settings
+
+        settings = get_settings()
+        base_url = settings.OLLAMA_BASE_URL.rstrip("/")
+
+        prompt = f"{system_prompt}\n\nContext:\n{context_block}\n\nQuestion: {query}"
+
+        response = httpx.post(
+            f"{base_url}/api/generate",
+            json={
+                "model": settings.OLLAMA_MODEL,
+                "prompt": prompt,
+                "stream": False,
+                "options": {"temperature": temperature},
+            },
+            timeout=120.0,
+        )
+        if response.status_code == 200:
+            return response.json()["response"]
+
+    except Exception as e:
+        return f"Error generating answer via Ollama: {e}"
+
+    return "No LLM client available (OpenAI and Ollama both failed)."
 
 
-async def get_embedding_async(text: str, client: Any) -> list[float]:
-    """비동기 임베딩 생성 래퍼"""
-    loop = asyncio.get_event_loop()
-    return await loop.run_in_executor(_executor, get_embedding, text, client)
+async def get_embedding_async(text: str, client: Any = None) -> list[float]:
+    """
+    眞 (Truth): 비동기 임베딩 생성 (Native Async)
+    """
+    import httpx
+
+    from AFO.config.settings import get_settings
+
+    settings = get_settings()
+    base_url = settings.OLLAMA_BASE_URL.rstrip("/")
+
+    try:
+        async with httpx.AsyncClient(timeout=20.0) as async_client:
+            response = await async_client.post(
+                f"{base_url}/api/embeddings",
+                json={"model": settings.OLLAMA_EMBED_MODEL, "prompt": text},
+            )
+            if response.status_code == 200:
+                return response.json()["embedding"]
+    except Exception as e:
+        print(f"[Hybrid RAG Async] Embedding failed: {e}")
+
+    return random_embedding()
 
 
 async def query_pgvector_async(
     embedding: list[float], top_k: int, pool: Any
 ) -> list[dict[str, Any]]:
-    """비동기 PGVector 검색 래퍼"""
+    """비동기 PGVector 검색 래퍼 (SQL Native)"""
     loop = asyncio.get_event_loop()
     return await loop.run_in_executor(_executor, query_pgvector, embedding, top_k, pool)
 
@@ -623,3 +684,69 @@ async def generate_answer_async(
         openai_client,
         graph_context,
     )
+
+
+async def generate_answer_stream_async(
+    query: str,
+    contexts: list[str],
+    temperature: float,
+    response_format: str,
+    additional_instructions: str,
+    llm_provider: str = "ollama",
+) -> Any:
+    """
+    美 (Beauty): 실시간 답변 생성 스트리밍 (Native Async Streaming)
+    """
+    import json
+
+    import httpx
+
+    from AFO.config.settings import get_settings
+
+    settings = get_settings()
+    base_url = settings.OLLAMA_BASE_URL.rstrip("/")
+    context_block = "\n\n".join([f"Chunk {idx + 1}:\n{ctx}" for idx, ctx in enumerate(contexts)])
+
+    system_prompt = " ".join(
+        part
+        for part in [
+            "You are the AFO Kingdom Hybrid RAG assistant.",
+            "Answer using ONLY the provided chunks. If unsure, say you do not know.",
+            "Final answer MUST be in Markdown format.",
+            additional_instructions,
+        ]
+        if part
+    )
+
+    prompt = f"{system_prompt}\n\nContext:\n{context_block}\n\nQuestion: {query}"
+
+    try:
+        async with httpx.AsyncClient(timeout=120.0) as client:
+            async with client.stream(
+                "POST",
+                f"{base_url}/api/generate",
+                json={
+                    "model": settings.OLLAMA_MODEL,
+                    "prompt": prompt,
+                    "stream": True,
+                    "options": {"temperature": temperature},
+                },
+            ) as response:
+                if response.status_code != 200:
+                    yield f"Error: Ollama API returned {response.status_code}"
+                    return
+
+                async for line in response.aiter_lines():
+                    if not line:
+                        continue
+                    try:
+                        data = json.loads(line)
+                        token = data.get("response", "")
+                        if token:
+                            yield token
+                        if data.get("done"):
+                            break
+                    except json.JSONDecodeError:
+                        continue
+    except Exception as e:
+        yield f"Streaming Error: {e}"

@@ -21,7 +21,7 @@ RUN playwright install --with-deps chromium
 
 
 # Explicit uvicorn installation (RAG service fix)
-RUN pip install --no-cache-dir "uvicorn[standard]>=0.31.1"
+RUN pip install --no-cache-dir "uvicorn[standard]>=0.31.1" gunicorn uvloop httptools
 RUN python -c "import uvicorn; print('uvicorn', uvicorn.__version__)"
 # Copy Application Code
 COPY . /app/

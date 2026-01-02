@@ -221,12 +221,17 @@ async def get_comprehensive_health() -> dict[str, Any]:
     # T21: Use organs_truth (11 Organs) as the SSOT for Trinity Calculation
     # This ensures "Truthful" scores (e.g. 98, 92) rather than binary 100%
     try:
-        import AFO.health.organs_truth
         from AFO.health.organs_truth import build_organs_final
 
-        logger.warning(f"DEBUG: organs_truth loaded from {AFO.health.organs_truth.__file__}")
-
-        v2_data = build_organs_final()
+        settings = get_settings()
+        v2_data = build_organs_final(
+            redis_host=settings.REDIS_HOST,
+            redis_port=settings.REDIS_PORT,
+            postgres_host=settings.POSTGRES_HOST,
+            postgres_port=settings.POSTGRES_PORT,
+            qdrant_host=os.getenv("QDRANT_HOST", "afo-qdrant"),
+            ollama_host=settings.OLLAMA_BASE_URL,  # Pass the URL, build_organs_final will parse it
+        )
         o2 = v2_data["organs"]
 
         # 眞 (Truth 35%) - Knowledge Infrastructure

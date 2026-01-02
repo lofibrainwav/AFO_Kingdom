@@ -3,10 +3,12 @@ import asyncio
 from typing import Any
 
 from fastapi import APIRouter, HTTPException
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
 from AFO.services.hybrid_rag import (
     generate_answer_async,
+    generate_answer_stream_async,
     generate_hyde_query_async,
     get_embedding_async,
     query_graph_context,
@@ -23,16 +25,16 @@ class HybridRAG:
     available = True
 
     @staticmethod
-    async def generate_hyde_query_async(query: str, client: Any) -> str:
+    async def generate_hyde_query_async(query: str, client: Any = None) -> str:
         return await generate_hyde_query_async(query, client)
 
     @staticmethod
-    async def get_embedding_async(text: str, client: Any) -> list[float]:
+    async def get_embedding_async(text: str, client: Any = None) -> list[float]:
         return await get_embedding_async(text, client)
 
     @staticmethod
     async def query_qdrant_async(
-        embedding: list[float], top_k: int, client: Any
+        embedding: list[float], top_k: int, client: Any = None
     ) -> list[dict[str, Any]]:
         return await query_qdrant_async(embedding, top_k, client)
 
@@ -78,6 +80,48 @@ class RAGResponse(BaseModel):
     sources: list[Any]
     graph_context: list[Any]
     processing_log: list[str]
+
+
+@router.post("/query/stream")
+async def query_knowledge_base_stream(request: RAGRequest):
+    """
+    Real-time Streaming RAG Query Endpoint
+    """
+    if not HybridRAG.available:
+        raise HTTPException(status_code=503, detail="RAG Service Unavailable")
+
+    # 1. Hybrid Retrieval (Minimal logs for stream)
+    # Reuse embedding and retrieval logic if possible,
+    # but for simplicity in this router, we'll run a streamlined version.
+
+    # Heuristic entities
+    entities = [w for w in request.query.split() if len(w) > 4]
+
+    # Retrieval (Sync for now inside the generator or pre-fetch)
+    # We'll pre-fetch context to keep the stream focused on generation
+    try:
+        embedding = await HybridRAG.get_embedding_async(request.query)
+        from qdrant_client import QdrantClient
+
+        # Use container name for internal Docker communication
+        q_client = QdrantClient("afo-qdrant", port=6333)
+        results = await HybridRAG.query_qdrant_async(embedding, request.top_k, q_client)
+        contexts = [r["content"] for r in results[:5]]
+    except Exception as e:
+        contexts = []
+        print(f"Streaming Retrieval failed: {e}")
+
+    async def token_generator():
+        async for token in generate_answer_stream_async(
+            query=request.query,
+            contexts=contexts,
+            temperature=0.7,
+            response_format="markdown",
+            additional_instructions="Streamed response for AFO Dashboard.",
+        ):
+            yield token
+
+    return StreamingResponse(token_generator(), media_type="text/plain")
 
 
 @router.post("/query", response_model=RAGResponse)

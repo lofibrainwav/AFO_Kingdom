@@ -11,11 +11,13 @@ Alpha tuning for query-aware retrieval optimization.
 from __future__ import annotations
 
 import logging
-from typing import Any
+from typing import Any, TYPE_CHECKING
 
-from llama_index.core import VectorStoreIndex
 from llama_index.core.query_engine import SubQuestionQueryEngine
 from llama_index.core.tools import QueryEngineTool, ToolMetadata
+
+if TYPE_CHECKING:
+    from llama_index.core import VectorStoreIndex
 
 logger = logging.getLogger(__name__)
 

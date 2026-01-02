@@ -33,8 +33,25 @@ from llama_index.vector_stores.chroma import ChromaVectorStore
 
 logger = logging.getLogger(__name__)
 
+
 # Host Ollama URL (GPU accelerated via Metal)
-OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://host.docker.internal:11434")
+# Smart fallback: Docker uses host.docker.internal, local dev uses localhost
+def _get_ollama_url() -> str:
+    """Get Ollama URL with smart fallback for Docker/local dev."""
+    env_url = os.getenv("OLLAMA_BASE_URL")
+    if env_url:
+        return env_url
+    # Check if running in Docker (host.docker.internal exists)
+    import socket
+
+    try:
+        socket.gethostbyname("host.docker.internal")
+        return "http://host.docker.internal:11434"
+    except socket.gaierror:
+        return "http://localhost:11434"
+
+
+OLLAMA_BASE_URL = _get_ollama_url()
 
 # Default models
 DEFAULT_LLM_MODEL = os.getenv("OLLAMA_MODEL", "deepseek-r1:14b")
@@ -182,6 +199,29 @@ def create_query_engine(
     return query_engine
 
 
+async def aquery(
+    query_text: str,
+    index: VectorStoreIndex | None = None,
+) -> str:
+    """Execute a RAG query asynchronously.
+
+    Args:
+        query_text: The query string
+        index: Optional existing index (will build if None)
+
+    Returns:
+        Query response as string
+    """
+    if index is None:
+        configure_settings()
+        index = get_global_index()
+
+    query_engine = create_query_engine(index)
+    response = await query_engine.aquery(query_text)
+
+    return str(response)
+
+
 def query(
     query_text: str,
     index: VectorStoreIndex | None = None,
@@ -229,6 +269,7 @@ def get_global_index(rebuild: bool = False) -> VectorStoreIndex:
 
 # Export public API
 __all__ = [
+    "aquery",
     "build_index",
     "configure_settings",
     "create_query_engine",

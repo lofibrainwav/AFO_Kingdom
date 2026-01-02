@@ -28,6 +28,12 @@ except ImportError:
     pass  # comprehensive_health가 없어도 기본 health check는 작동
 
 
+@router.get("/ping")
+async def ping() -> dict[str, str]:
+    """Lightweight health check for Docker/K8s."""
+    return {"status": "healthy", "message": "pong"}
+
+
 @router.get("")
 async def health_check() -> dict[str, Any]:
     """

@@ -58,6 +58,11 @@ const nextConfig: NextConfig = {
         source: "/api/logs/stream",
         destination: `${soulEngineUrl}/api/logs/stream`,  // SSOT canonical path
       },
+      // Brain Organ (RAG) Proxy
+      {
+        source: "/api/query",
+        destination: `${soulEngineUrl}/api/query`,
+      },
       // Legacy Path 1 (Internal Forwarding)
       {
         source: "/api/stream/logs",
