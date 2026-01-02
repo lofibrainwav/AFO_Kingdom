@@ -112,7 +112,9 @@ exclude = [
     "**/*.dylib",
     "tools",
     "test_*.py",
-    "conftest.py"
+    "conftest.py",
+    "packages/afo-core/tests",
+    "packages/afo-core/scripts"
 ]
 
 [tool.ruff.lint]
