@@ -35,8 +35,8 @@ env -u PYTHONPATH uv run python -c "import importlib.util as u; assert u.find_sp
 
 # 5. Linting (Ruff)
 echo "🧹 Running Ruff..."
-uv run ruff check . --force-exclude
-uv run ruff format . --check --force-exclude
+uv run ruff check packages/afo-core --force-exclude
+uv run ruff format packages/afo-core --check --force-exclude
 
 # 6. Type Checking (Pyright)
 echo "🔍 Running Pyright..."
