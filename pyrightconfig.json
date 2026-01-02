@@ -18,6 +18,9 @@
     "packages/afo-core/legacy",
     "packages/afo-core/tigers",
     "packages/afo-core/verify_*.py",
+    "packages/afo-core/strategists",
+    "packages/afo-core/stubs.py",
+    "packages/afo-core/*.py",
     "tests"
   ],
   "venvPath": ".",
