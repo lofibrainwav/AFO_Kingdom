@@ -211,3 +211,41 @@ class TrinityCalculator:
 
 # Singleton Instance
 trinity_calculator = TrinityCalculator()
+
+
+def calculate_trinity_score(prediction: str, ground_truth: str) -> Any:
+    """Calculate Trinity Score for prediction vs ground truth.
+
+    Returns an object with .overall attribute for MIPROv2 compatibility.
+
+    Args:
+        prediction: Model prediction text
+        ground_truth: Expected ground truth text
+
+    Returns:
+        Object with .overall score (0.0 to 1.0)
+    """
+    # Simple similarity metric (can be enhanced later)
+    pred_lower = prediction.lower().strip()
+    gt_lower = ground_truth.lower().strip()
+
+    if pred_lower == gt_lower:
+        score = 1.0
+    elif gt_lower in pred_lower or pred_lower in gt_lower:
+        score = 0.8
+    else:
+        # Word overlap ratio
+        pred_words = set(pred_lower.split())
+        gt_words = set(gt_lower.split())
+        if gt_words:
+            overlap = len(pred_words & gt_words) / len(gt_words)
+            score = overlap * 0.7
+        else:
+            score = 0.0
+
+    # Return object with .overall attribute
+    class TrinityResult:
+        def __init__(self, overall: float):
+            self.overall = overall
+
+    return TrinityResult(overall=score)
