@@ -59,7 +59,7 @@ class AuditTrail:
             self.database_url = database_url
         else:
             # Try to get from AFO settings, fallback to .env then hardcoded default
-            from AFO.api.compat import get_settings_safe
+            from AFO..api.compat import import get_settings_safe
 
             settings = get_settings_safe()
 

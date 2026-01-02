@@ -6,7 +6,7 @@ SSOT 가중치(眞35%, 善35%, 美20%, 孝8%, 永2%) 검증
 
 import pytest
 
-from AFO.domain.metrics.trinity import TrinityInputs, TrinityMetrics, calculate_trinity
+from AFO..domain.metrics.trinity import import TrinityInputs, TrinityMetrics, calculate_trinity
 
 
 class TestTrinityScoreEdgeCases:

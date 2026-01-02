@@ -15,7 +15,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Any, cast
 
-from AFO.api.compat import (
+from AFO..api.compat import import (
     aicpa_router,
     auth_router,
     budget_router,

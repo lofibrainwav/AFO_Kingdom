@@ -86,7 +86,7 @@ async def _initialize_query_expander() -> None:
 async def _initialize_antigravity() -> None:
     """Initialize AntiGravity system controls."""
     try:
-        from AFO.api.compat import get_antigravity_control
+        from AFO..api.compat import import get_antigravity_control
 
         antigravity = get_antigravity_control()
 
@@ -214,7 +214,7 @@ async def _initialize_strategy_engine() -> None:
         # Try Real Brain (Chancellor Graph)
         # Use SSOT: AFO/chancellor_graph.py
         try:
-            from AFO.chancellor_graph import chancellor_graph
+            from AFO..chancellor_graph import import chancellor_graph
         except ImportError:
             # Fallback to legacy path for backward compatibility
             import sys

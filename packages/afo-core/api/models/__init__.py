@@ -4,7 +4,7 @@ AFO API Models
 Phase 2 리팩토링: Request/Response 모델 분리
 """
 
-from .requests import (
+from AFO.requests import import (
     BrowserClickRequest,
     BrowserKeyRequest,
     BrowserScrollRequest,
@@ -16,7 +16,7 @@ from .requests import (
     RAGQueryRequest,
     YeongdeokCommandRequest,
 )
-from .responses import (
+from AFO.responses import import (
     CrewAIExecuteResponse,
     LangChainRetrievalQAResponse,
     LangChainToolsResponse,

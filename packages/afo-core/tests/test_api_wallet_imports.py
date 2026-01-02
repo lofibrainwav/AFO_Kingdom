@@ -8,7 +8,7 @@ from unittest.mock import MagicMock, mock_open, patch
 
 import pytest
 
-from AFO.api_wallet import APIWallet
+from AFO..api_wallet import import APIWallet
 
 # DELETED: test_generate_default_key_reads_env()
 # 이유: Flaky 테스트, 기능은 이미 구현되어 있음 (api_wallet.py:209-232)

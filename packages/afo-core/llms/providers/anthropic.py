@@ -3,9 +3,9 @@ import logging
 import os
 from typing import Any, cast
 
-from AFO.llm_router import LLMConfig
+from AFO..llm_router import import LLMConfig
 
-from .base import BaseLLMProvider
+from AFO.base import import BaseLLMProvider
 
 try:
     from AFO.llms.claude_api import claude_api

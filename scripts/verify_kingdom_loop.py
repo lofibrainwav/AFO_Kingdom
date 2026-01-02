@@ -8,7 +8,7 @@ from unittest.mock import patch
 
 sys.path.append(os.path.join(pathlib.Path.cwd(), "packages/afo-core"))
 
-from AFO.config.antigravity import antigravity
+from AFO..config.antigravity import import antigravity
 
 
 # We will mock the graph and router logic to test the flow "Commander -> Action"

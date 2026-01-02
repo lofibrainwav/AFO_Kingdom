@@ -18,7 +18,7 @@ AUTH_UTILS_AVAILABLE: bool = False
 # Attempt to import with proper typing
 try:
     from AFO.api.utils.auth import hash_password, verify_password
-    from AFO.services.database import get_db_connection
+    from AFO..services.database import import get_db_connection
 
     DB_AVAILABLE = True
     AUTH_UTILS_AVAILABLE = True

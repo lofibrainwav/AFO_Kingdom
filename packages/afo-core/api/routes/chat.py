@@ -21,7 +21,7 @@ LLMRouter: Any = None
 llm_router: Any = None
 route_and_execute: Any = None
 with contextlib.suppress(ImportError):
-    from AFO.llm_router import llm_router, route_and_execute
+    from AFO..llm_router import import llm_router, route_and_execute
 
 logger = logging.getLogger(__name__)
 

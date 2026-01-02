@@ -17,7 +17,7 @@ from typing import Any
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
-from AFO.aicpa import get_aicpa_service
+from AFO..aicpa import import get_aicpa_service
 
 logger = logging.getLogger(__name__)
 

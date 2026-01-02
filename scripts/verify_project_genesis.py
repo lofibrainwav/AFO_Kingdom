@@ -11,7 +11,7 @@ import pathlib
 
 from langchain_core.messages import HumanMessage
 
-from AFO.chancellor_graph import chancellor_graph
+from AFO..chancellor_graph import import chancellor_graph
 
 
 async def verify_genesis():

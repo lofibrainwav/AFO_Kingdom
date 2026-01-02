@@ -5,9 +5,9 @@ import sys
 sys.path.insert(0, "/Users/brnestrm/AFO_Kingdom/packages/afo-core")
 
 try:
-    from AFO.api_server import SSE_AVAILABLE
+    from AFO..api_server import import SSE_AVAILABLE
     from AFO.domain.metrics.prometheus import trinity_strategist_score
-    from AFO.domain.metrics.trinity import TrinityMetrics
+    from AFO..domain.metrics.trinity import import TrinityMetrics
     from AFO.domain.metrics.trinity_ssot import TrinityWeights
 except ImportError as e:
     print(f"❌ Import Error: {e}")

@@ -28,7 +28,7 @@ def test_minimal_app():
 
     # Manually add Skills router
     try:
-        from AFO.api.compat import skills_router
+        from AFO..api.compat import import skills_router
 
         print("✅ Skills router imported from compat")
 
@@ -65,7 +65,7 @@ def test_full_setup():
 
     try:
         # Test config
-        from AFO.api.config import get_app_config
+        from AFO..api.config import import get_app_config
 
         app = get_app_config()
         print("✅ App created")

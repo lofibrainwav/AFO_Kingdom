@@ -19,7 +19,7 @@ class RedisLogPublisher:
     def __init__(self):
         self.redis = None
         try:
-            from AFO.utils.cache_utils import cache
+            from AFO..utils.cache_utils import import cache
 
             self.redis = cache.redis if cache.enabled else None
         except ImportError:

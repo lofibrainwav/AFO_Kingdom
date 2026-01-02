@@ -18,7 +18,7 @@ import json
 import re
 from typing import Any
 
-from AFO.domain.metrics.trinity import calculate_trinity
+from AFO..domain.metrics.trinity import import calculate_trinity
 
 
 class MCPToolTrinityEvaluator:

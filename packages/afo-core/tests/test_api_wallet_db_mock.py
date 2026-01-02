@@ -6,7 +6,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 import AFO.api_wallet as api_wallet_module
-from AFO.api_wallet import APIWallet
+from AFO..api_wallet import import APIWallet
 
 
 @pytest.fixture

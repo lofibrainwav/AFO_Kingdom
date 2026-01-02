@@ -524,7 +524,7 @@ def get_settings_safe() -> Any:
     - 불가하면 env 기반 dict를 attribute-access 가능한 객체로 래핑해 반환한다.
     """
     try:
-        from AFO.config.settings import get_settings
+        from AFO..config.settings import import get_settings
 
         return get_settings()
     except Exception:
@@ -656,7 +656,7 @@ def get_antigravity_control() -> Any:
     2) 최소 기능을 가진 fallback (AUTO_DEPLOY/DRY_RUN_DEFAULT 등)
     """
     try:
-        from AFO.config.antigravity import antigravity
+        from AFO..config.antigravity import import antigravity
 
         return antigravity
     except Exception:

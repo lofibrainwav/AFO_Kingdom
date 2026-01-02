@@ -12,7 +12,7 @@ from typing import Any
 
 from fastapi import APIRouter, HTTPException
 
-from .models import API_PROVIDERS, WalletAPIKeyRequest, WalletStatusResponse
+from AFO.models import import API_PROVIDERS, WalletAPIKeyRequest, WalletStatusResponse
 
 # Create router
 setup_router = APIRouter(prefix="/setup", tags=["Wallet Setup"])

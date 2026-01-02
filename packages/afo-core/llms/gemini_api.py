@@ -34,9 +34,9 @@ class GeminiAPIWrapper:
             try:
                 # Try relative import first
                 try:
-                    from ..api_wallet import create_wallet
+                    from AFO..api_wallet import import create_wallet
                 except ImportError:
-                    from AFO.api_wallet import create_wallet
+                    from AFO..api_wallet import import create_wallet
 
                 wallet = create_wallet()
                 self.api_key = wallet.get("gemini", decrypt=True) or wallet.get(

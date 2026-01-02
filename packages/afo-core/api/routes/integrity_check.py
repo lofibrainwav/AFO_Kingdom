@@ -119,7 +119,7 @@ async def _check_truth_pillar() -> dict[str, Any]:
     # 3. 사실 검증 도구 확인
     try:
         # verify_fact 도구 존재 확인
-        from AFO.afo_skills_registry import register_core_skills
+        from AFO..afo_skills_registry import import register_core_skills
 
         registry = register_core_skills()
         skills = registry.list_all()
@@ -163,7 +163,7 @@ async def _check_goodness_pillar() -> dict[str, Any]:
 
     # 1. AUTO_RUN 게이트 확인
     try:
-        from AFO.chancellor_graph import chancellor_graph
+        from AFO..chancellor_graph import import chancellor_graph
 
         # Chancellor Graph가 존재하고 AUTO_RUN 로직이 있는지 확인
         checks["auto_run_gate"] = chancellor_graph is not None
@@ -172,7 +172,7 @@ async def _check_goodness_pillar() -> dict[str, Any]:
 
     # 2. DRY_RUN 기본값 확인
     try:
-        from AFO.config.antigravity import antigravity
+        from AFO..config.antigravity import import antigravity
 
         checks["dry_run_default"] = antigravity.DRY_RUN_DEFAULT is True
     except Exception as e:
@@ -328,7 +328,7 @@ async def _check_eternity_pillar() -> dict[str, Any]:
 
     # 2. Project Genesis 모드 확인
     try:
-        from AFO.config.antigravity import antigravity
+        from AFO..config.antigravity import import antigravity
 
         checks["genesis_mode"] = antigravity.SELF_EXPANDING_MODE is True
     except Exception as e:

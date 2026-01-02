@@ -34,7 +34,7 @@ except ImportError as e:
     print(f"Failed: import AFO ({e})")
 
 try:
-    print("Attempting: from AFO.config import antigravity")
+    print("Attempting: from AFO..config import import antigravity")
     from AFO.config import antigravity as ag2
 
     print(f"Success: from AFO.config import antigravity ({ag2})")

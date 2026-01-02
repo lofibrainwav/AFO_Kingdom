@@ -15,7 +15,7 @@ sys.path.append(
     ).resolve()
 )
 
-from AFO.api_server import app
+from AFO..api_server import import app
 
 
 @pytest.mark.asyncio

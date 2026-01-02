@@ -16,13 +16,13 @@ from typing import Any
 import httpx
 
 try:
-    from .mcp_error_handler import MCPErrorHandler, mcp_tool_call_with_retry
+    from AFO.mcp_error_handler import import MCPErrorHandler, mcp_tool_call_with_retry
 
     ERROR_HANDLER_AVAILABLE = True
 except ImportError:
     ERROR_HANDLER_AVAILABLE = False
 
-    from .advanced_retry import with_condition_retry
+    from AFO.advanced_retry import import with_condition_retry
 
     ADVANCED_RETRY_AVAILABLE = True
 except ImportError:
@@ -53,7 +53,7 @@ class MCPBrowserTools:
         # 중앙 설정 사용 (Phase 1 리팩토링)
         if mcp_server_url is None:
             try:
-                from AFO.config.settings import get_settings
+                from AFO..config.settings import import get_settings
 
                 mcp_server_url = get_settings().MCP_SERVER_URL
             except ImportError:
@@ -254,7 +254,7 @@ class MCPIntegratedAuth:
             settings = get_settings()
         except ImportError:
             try:
-                from AFO.config.settings import get_settings
+                from AFO..config.settings import import get_settings
 
                 settings = get_settings()
             except ImportError:
@@ -374,7 +374,7 @@ Return only Python code in ```python blocks."""
         if not ERROR_HANDLER_AVAILABLE:
             return None
         try:
-            from AFO.config.settings import get_settings
+            from AFO..config.settings import import get_settings
 
             claude_key = get_settings().ANTHROPIC_API_KEY
             return MCPErrorHandler(api_key=claude_key)
@@ -586,7 +586,7 @@ if __name__ == "__main__":
         api_key = settings.ANTHROPIC_API_KEY
     except ImportError:
         try:
-            from AFO.config.settings import get_settings
+            from AFO..config.settings import import get_settings
 
             settings = get_settings()
             api_key = settings.ANTHROPIC_API_KEY

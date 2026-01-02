@@ -11,7 +11,7 @@ sys.path.append(
     ).resolve()
 )
 
-from AFO.config.settings import settings
+from AFO..config.settings import import settings
 from AFO.schemas.gen_ui import GenUIRequest
 from AFO.services.gen_ui import gen_ui_service
 from AFO.services.matrix_stream import matrix_stream

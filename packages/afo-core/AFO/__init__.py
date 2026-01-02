@@ -4,6 +4,7 @@ AFO 패키지 - 루트 모듈 re-export
 테스트 호환성을 위해 afo-core 루트 모듈들을 AFO 네임스페이스로 노출
 """
 
+import importlib
 import sys
 from pathlib import Path
 
@@ -11,6 +12,10 @@ from pathlib import Path
 _parent = Path(__file__).parent.parent
 if str(_parent) not in sys.path:
     sys.path.insert(0, str(_parent))
+
+# macOS case-insensitive 충돌 해결을 위한 alias
+# AFO와 afo 모두 같은 모듈을 참조하도록 설정
+sys.modules["AFO"] = importlib.import_module("afo")
 
 
 # 모듈 re-export (lazy import 방식으로 에러 방지)

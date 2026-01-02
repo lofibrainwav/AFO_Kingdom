@@ -15,16 +15,20 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          version: "latest"
+
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-          cache: 'pip'
 
       - name: Install Dependencies
         run: |
           cd packages/afo-core
-          pip install -r requirements.txt
+          uv sync --frozen
 
       - name: Generate Evidence (Trinity Protocol)
         run: |

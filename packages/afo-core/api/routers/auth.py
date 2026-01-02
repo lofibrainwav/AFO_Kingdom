@@ -83,7 +83,7 @@ async def login(request: LoginRequest) -> dict[str, Any]:
 
     # DB에서 사용자 조회 및 인증
     try:
-        from AFO.services.database import get_db_connection
+        from AFO..services.database import import get_db_connection
 
         conn = await get_db_connection()
 

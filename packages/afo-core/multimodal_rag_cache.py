@@ -15,7 +15,7 @@ import json
 import logging
 from typing import Any
 
-from AFO.utils.redis_connection import get_redis_client as get_redis_connection
+from AFO..utils.redis_connection import import get_redis_client as get_redis_connection
 
 # Configure logging
 logger = logging.getLogger(__name__)

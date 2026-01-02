@@ -22,7 +22,7 @@ async def test_mcp_log_event_full_flow():
     print("=" * 60)
 
     try:
-        from AFO.api.compat import get_trinity_os_client
+        from AFO..api.compat import import get_trinity_os_client
 
         client = get_trinity_os_client()
         if not client or not client.available:
@@ -87,7 +87,7 @@ async def test_mcp_multiple_events():
     print("=" * 60)
 
     try:
-        from AFO.api.compat import get_trinity_os_client
+        from AFO..api.compat import import get_trinity_os_client
 
         client = get_trinity_os_client()
         if not client or not client.available:

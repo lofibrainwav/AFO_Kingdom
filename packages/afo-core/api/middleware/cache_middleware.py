@@ -40,7 +40,7 @@ class CacheMiddleware(BaseHTTPMiddleware):
         if self._initialized:
             return
         try:
-            from AFO.utils.redis_connection import get_redis_client
+            from AFO..utils.redis_connection import import get_redis_client
 
             client = get_redis_client()
             if client is not None:

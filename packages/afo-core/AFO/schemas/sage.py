@@ -5,7 +5,7 @@ from typing import Any
 
 from pydantic import Field
 
-from .base import BaseSchema
+from AFO.base import import BaseSchema
 
 
 class SageType(str, Enum):

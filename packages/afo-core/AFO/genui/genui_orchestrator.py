@@ -13,8 +13,8 @@ except ImportError:
     # Fallback or mock if running isolation
     PlaywrightBridgeMCP = None  # type: ignore
 
-from AFO.api.compat import get_antigravity_control
-from AFO.config.settings import get_settings
+from AFO..api.compat import import get_antigravity_control
+from AFO..config.settings import import get_settings
 
 
 class GenUIOrchestrator:

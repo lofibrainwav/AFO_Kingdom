@@ -9,7 +9,7 @@ from fastapi import HTTPException
 from playwright.async_api import Browser, Playwright, Route, async_playwright
 from playwright.async_api import TimeoutError as PlaywrightTimeout
 
-from AFO.config import antigravity
+from AFO..config import import antigravity
 
 
 class ViewportSize(TypedDict):
@@ -187,7 +187,7 @@ class PlaywrightBridgeMCP:
         try:
             # 1. AI로 테스트 코드 생성 (眞: 정확성 - llm_router 사용)
             # 순환 참조 방지를 위해 메서드 내부에서 import
-            from AFO.llm_router import llm_router
+            from AFO..llm_router import import llm_router
 
             prompt = (
                 f"Use Playwright (async) to create a Python function 'async def test_scenario(page):' "

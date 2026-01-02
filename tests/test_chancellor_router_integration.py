@@ -13,7 +13,7 @@ from unittest.mock import patch
 import pytest
 
 # AFO 왕국 모듈 임포트
-from AFO.api.compat import ChancellorInvokeRequest, ChancellorInvokeResponse
+from AFO..api.compat import import ChancellorInvokeRequest, ChancellorInvokeResponse
 
 
 class TestChancellorRouterIntegration:

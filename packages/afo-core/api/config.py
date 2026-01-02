@@ -19,7 +19,7 @@ from typing import Any
 
 from fastapi import FastAPI
 
-from AFO.api.compat import get_settings_safe
+from AFO..api.compat import import get_settings_safe
 
 # Configure logging
 logger = logging.getLogger(__name__)

@@ -14,8 +14,8 @@ _CORE_ROOT = Path(__file__).resolve().parent.parent
 if str(_CORE_ROOT) not in sys.path:
     sys.path.insert(0, str(_CORE_ROOT))
 
-from AFO.config.settings import get_settings
-from AFO.services.database import get_db_connection
+from AFO..config.settings import import get_settings
+from AFO..services.database import import get_db_connection
 
 
 async def test_connection():

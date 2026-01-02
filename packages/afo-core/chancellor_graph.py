@@ -22,8 +22,8 @@ except ImportError:
 # Internal Modules
 try:
     from AFO.chancellor.node_04_verdict import emit_verdict
-    from AFO.config.antigravity import antigravity
-    from AFO.config.settings import get_settings
+    from AFO..config.antigravity import import antigravity
+    from AFO..config.settings import import get_settings
     from AFO.constitution.constitutional_ai import AFOConstitution
     from AFO.observability.verdict_logger import VerdictLogger
     from services.trinity_calculator import trinity_calculator
@@ -599,7 +599,7 @@ graph.add_edge("historian", END)
 try:
     from langgraph.checkpoint.base import BaseCheckpointSaver
 
-    from AFO.utils.cache_utils import cache
+    from AFO..utils.cache_utils import import cache
     from AFO.utils.redis_saver import AsyncRedisSaver
 
     if cache.enabled:

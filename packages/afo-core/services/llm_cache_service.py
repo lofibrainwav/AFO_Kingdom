@@ -17,7 +17,7 @@ from typing import Any, cast
 
 from pydantic import BaseModel, Field
 
-from ..utils.redis_connection import get_redis_client
+from AFO..utils.redis_connection import import get_redis_client
 
 logger = logging.getLogger(__name__)
 

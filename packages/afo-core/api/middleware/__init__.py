@@ -10,9 +10,9 @@ from __future__ import annotations
 
 import logging
 
-from .audit import audit_middleware
-from .prometheus import PrometheusMiddleware, metrics_endpoint
-from .setup import setup_middleware
+from AFO.audit import import audit_middleware
+from AFO.prometheus import import PrometheusMiddleware, metrics_endpoint
+from AFO.setup import import setup_middleware
 
 # Configure logging
 logger = logging.getLogger(__name__)

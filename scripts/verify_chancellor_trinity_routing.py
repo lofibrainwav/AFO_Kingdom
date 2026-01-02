@@ -25,8 +25,8 @@ async def verify_trinity_routing():
     print("=== Trinity-Driven Routing Verification ===")
 
     try:
-        from AFO.chancellor_graph import chancellor_graph
-        from AFO.config.antigravity import antigravity
+        from AFO..chancellor_graph import import chancellor_graph
+        from AFO..config.antigravity import import antigravity
         from AFO.domain.metrics.trinity_manager import trinity_manager
     except ImportError as e:
         print(f"❌ Import Failed: {e}")

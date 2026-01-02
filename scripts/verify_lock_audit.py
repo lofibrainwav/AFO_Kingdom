@@ -16,7 +16,7 @@ sys.path.append(
     ).resolve()
 )
 
-from AFO.config.antigravity import antigravity
+from AFO..config.antigravity import import antigravity
 from AFO.domain.metrics.trinity_ssot import TrinityWeights
 from AFO.services.vision_verifier import vision_verifier
 

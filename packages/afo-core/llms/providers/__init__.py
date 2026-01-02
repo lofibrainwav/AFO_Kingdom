@@ -1,10 +1,10 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-from .anthropic import AnthropicProvider
-from .base import BaseLLMProvider
-from .factory import ProviderFactory
-from .google import GoogleProvider
-from .ollama import OllamaProvider
-from .openai import OpenAIProvider
+from AFO.anthropic import import AnthropicProvider
+from AFO.base import import BaseLLMProvider
+from AFO.factory import import ProviderFactory
+from AFO.google import import GoogleProvider
+from AFO.ollama import import OllamaProvider
+from AFO.openai import import OpenAIProvider
 
 __all__ = [
     "AnthropicProvider",

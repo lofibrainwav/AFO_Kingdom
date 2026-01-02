@@ -93,7 +93,7 @@ def verify_code_changes():
 
     # 2. compat.py에서 라우터 로딩 확인
     try:
-        from AFO.api.compat import chancellor_router, grok_stream_router, learning_log_router
+        from AFO..api.compat import import chancellor_router, grok_stream_router, learning_log_router
 
         results["compat_loading"] = {
             "learning_log": learning_log_router is not None,

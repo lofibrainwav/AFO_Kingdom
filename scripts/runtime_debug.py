@@ -32,7 +32,7 @@ def debug_app_creation():
 
     try:
         print("1. Importing config module...")
-        from AFO.api.config import get_app_config, get_server_config
+        from AFO..api.config import import get_app_config, get_server_config
 
         print("2. Getting server config...")
         host, port = get_server_config()
@@ -97,7 +97,7 @@ def debug_router_setup(app):
 
         # Check if skills router was imported
         try:
-            from AFO.api.compat import skills_router
+            from AFO..api.compat import import skills_router
 
             print(f"   Skills router in compat: {skills_router is not None}")
             if skills_router:

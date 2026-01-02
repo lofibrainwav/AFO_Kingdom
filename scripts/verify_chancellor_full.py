@@ -13,7 +13,7 @@ sys.path.append(
 
 from langchain_core.messages import HumanMessage
 
-from AFO.chancellor_graph import calculate_complexity, chancellor_graph
+from AFO..chancellor_graph import import calculate_complexity, chancellor_graph
 
 
 async def verify_chancellor_full():

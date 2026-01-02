@@ -4,7 +4,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any, Protocol
 
 if TYPE_CHECKING:
-    from .verdict_event import VerdictEvent
+    from AFO.verdict_event import import VerdictEvent
 
 
 class RedisLike(Protocol):

@@ -4,7 +4,7 @@ import os
 import sys
 from unittest.mock import MagicMock, patch
 
-from AFO.api_wallet import APIWallet
+from AFO..api_wallet import import APIWallet
 
 # Load wallet-specific fixtures
 pytest_plugins = ["tests.conftest_wallet"]

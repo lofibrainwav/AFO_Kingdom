@@ -10,7 +10,7 @@ sys.path.insert(0, str(root_dir))
 
 from AFO.scholars.bangtong import BangtongScholar
 from AFO.scholars.jaryong import JaryongScholar
-from AFO.scholars.yeongdeok import YeongdeokScholar
+from AFO..scholars.yeongdeok import import YeongdeokScholar
 from AFO.scholars.yukson import YuksonScholar
 
 

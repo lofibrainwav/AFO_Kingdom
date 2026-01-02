@@ -9,7 +9,7 @@ sys.path.append(
     Path(os.path.join(Path(__file__).parent, "../packages/afo-core")).resolve()
 )
 
-from AFO.config.settings import settings
+from AFO..config.settings import import settings
 from AFO.schemas.gen_ui import GenUIRequest
 from AFO.services.gen_ui import gen_ui_service
 from AFO.services.vision_verifier import vision_verifier

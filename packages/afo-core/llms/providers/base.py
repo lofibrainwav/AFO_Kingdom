@@ -2,7 +2,7 @@
 from abc import ABC, abstractmethod
 from typing import Any, Protocol
 
-from AFO.llm_router import LLMConfig
+from AFO..llm_router import import LLMConfig
 
 
 class LLMProvider(Protocol):

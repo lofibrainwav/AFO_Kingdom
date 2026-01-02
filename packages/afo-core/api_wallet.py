@@ -45,7 +45,7 @@ except ImportError:
 
 # Phase 2-4: settings 사용
 try:
-    from AFO.config.settings import get_settings
+    from AFO..config.settings import import get_settings
 
     settings = get_settings()
     FORCE_MOCK = settings.MOCK_MODE
@@ -120,7 +120,7 @@ class APIWallet:
         # Phase 8.3.3: Vault KMS 초기화
         # Phase 2-4: settings 사용
         try:
-            from AFO.config.settings import get_settings
+            from AFO..config.settings import import get_settings
 
             settings = get_settings()
             vault_enabled_default = settings.VAULT_ENABLED
@@ -206,7 +206,7 @@ class APIWallet:
     def _get_encryption_key_from_settings(self) -> str | None:
         """Helper to get encryption key from settings with fallback"""
         try:
-            from AFO.config.settings import get_settings
+            from AFO..config.settings import import get_settings
 
             return get_settings().API_WALLET_ENCRYPTION_KEY
         except ImportError:
@@ -537,7 +537,7 @@ class APIWallet:
 
             # 중앙 설정 사용 (Phase 1 리팩토링)
             try:
-                from AFO.utils.redis_connection import get_redis_url
+                from AFO..utils.redis_connection import import get_redis_url
 
                 redis_url = get_redis_url()
             except ImportError:
@@ -570,7 +570,7 @@ class APIWallet:
 
             # 중앙 설정 사용 (Phase 1 리팩토링)
             try:
-                from AFO.utils.redis_connection import get_redis_url
+                from AFO..utils.redis_connection import import get_redis_url
 
                 redis_url = get_redis_url()
             except ImportError:

@@ -58,7 +58,7 @@ def test_qdrant_connection():
 
     # 중앙 설정 사용 (Phase 1 리팩토링)
     try:
-        from AFO.config.settings import get_settings
+        from AFO..config.settings import import get_settings
 
         qdrant_url = get_settings().QDRANT_URL
     except ImportError:

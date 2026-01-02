@@ -18,7 +18,7 @@ def check_truth():
 def check_goodness():
     print("Checking 善 (Goodness)...")
     try:
-        from AFO.config.antigravity import antigravity
+        from AFO..config.antigravity import import antigravity
 
         if antigravity.DRY_RUN_DEFAULT:
             print("✅ AntiGravity DRY_RUN_DEFAULT = True")

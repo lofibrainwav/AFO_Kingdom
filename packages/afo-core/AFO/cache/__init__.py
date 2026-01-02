@@ -8,10 +8,10 @@ Implements multi-level caching with predictive capabilities.
 
 from typing import Any
 
-from .backends import MemoryBackend, RedisBackend
-from .manager import MultiLevelCache, cache_manager
-from .predictive import PredictiveCacheManager, predictive_manager
-from .query_cache import (
+from AFO.backends import import MemoryBackend, RedisBackend
+from AFO.manager import import MultiLevelCache, cache_manager
+from AFO.predictive import import PredictiveCacheManager, predictive_manager
+from AFO.query_cache import import (
     CacheInvalidator,
     QueryCache,
     cache_query,

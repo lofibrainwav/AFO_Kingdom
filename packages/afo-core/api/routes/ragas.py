@@ -46,7 +46,7 @@ async def _get_redis_client() -> redis.Redis | None:
         # Phase 2-4: settings 사용
         # Phase 2-4: settings 사용
         try:
-            from AFO.utils.redis_connection import get_redis_url
+            from AFO..utils.redis_connection import import get_redis_url
 
             redis_url = get_redis_url()
         except ImportError:

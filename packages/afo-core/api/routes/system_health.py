@@ -77,7 +77,7 @@ def _get_redis_client() -> redis.Redis | None:
     # Phase 2-4: settings 사용
     # Phase 2-4: settings 사용
     try:
-        from AFO.utils.redis_connection import get_redis_url
+        from AFO..utils.redis_connection import import get_redis_url
 
         redis_url = get_redis_url()
     except ImportError:
@@ -234,7 +234,7 @@ async def get_kingdom_status() -> dict[str, Any]:
     """
     import importlib.util
 
-    from AFO.domain.metrics.trinity import TrinityInputs, TrinityMetrics
+    from AFO..domain.metrics.trinity import import TrinityInputs, TrinityMetrics
 
     # 1. Dependency Verification (42 Core Items)
     dependency_map = {
@@ -383,7 +383,7 @@ async def get_antigravity_config() -> dict[str, Any]:
     [TRUTH WIRING]
     Expose current AntiGravity settings for verification.
     """
-    from AFO.config.antigravity import antigravity
+    from AFO..config.antigravity import import antigravity
 
     return {
         "environment": antigravity.ENVIRONMENT,
@@ -412,7 +412,7 @@ async def stream_logs(request: Request, limit: int = 0) -> EventSourceResponse:
     async def log_generator():
         # 1. Try Redis Pub/Sub First
         try:
-            from AFO.utils.cache_utils import cache
+            from AFO..utils.cache_utils import import cache
 
             if cache.enabled and cache.redis:
                 pubsub = cache.redis.pubsub()

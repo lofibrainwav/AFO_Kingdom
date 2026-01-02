@@ -39,7 +39,7 @@ class AddKeyRequest(BaseModel):
 async def list_keys() -> list[KeyResponse]:
     """List all stored API keys (metadata only)"""
     try:
-        from AFO.api_wallet import APIWallet
+        from AFO..api_wallet import import APIWallet
 
         wallet = APIWallet()
 
@@ -69,7 +69,7 @@ async def list_keys() -> list[KeyResponse]:
 async def add_key(request: AddKeyRequest) -> dict[str, Any]:
     """Add a new API key"""
     try:
-        from AFO.api_wallet import APIWallet
+        from AFO..api_wallet import import APIWallet
 
         wallet = APIWallet()
 
@@ -100,7 +100,7 @@ async def add_key(request: AddKeyRequest) -> dict[str, Any]:
 async def delete_key(name: str) -> dict[str, Any]:
     """Delete an API key"""
     try:
-        from AFO.api_wallet import APIWallet
+        from AFO..api_wallet import import APIWallet
 
         wallet = APIWallet()
 

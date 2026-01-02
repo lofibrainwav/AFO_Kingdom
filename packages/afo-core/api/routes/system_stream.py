@@ -32,7 +32,7 @@ async def publish_thought(content: dict | None = None, **kwargs) -> None:
         **kwargs: Additional thought parameters
     """
     try:
-        from AFO.config.settings import get_settings
+        from AFO..config.settings import import get_settings
 
         settings = get_settings()
         redis_url = settings.REDIS_URL
@@ -71,7 +71,7 @@ async def log_stream_generator(request: Request) -> Any:
     pubsub = None
 
     try:
-        from AFO.config.settings import get_settings
+        from AFO..config.settings import import get_settings
 
         settings = get_settings()
         redis_url = settings.REDIS_URL

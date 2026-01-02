@@ -25,7 +25,7 @@ from typing import TYPE_CHECKING, Any
 
 import httpx
 
-from AFO.afo_skills_registry import register_core_skills
+from AFO..afo_skills_registry import import register_core_skills
 from AFO.scholars.libraries.obsidian_bridge import LocalObsidianBridge
 
 if TYPE_CHECKING:
@@ -75,7 +75,7 @@ class YeongdeokScholar:
             self.model = getattr(settings, "OLLAMA_MODEL", self.SAGE_SAMAHWI)
         except ImportError:
             try:
-                from AFO.config.settings import get_settings
+                from AFO..config.settings import import get_settings
 
                 settings = get_settings()
                 self.base_url = settings.OLLAMA_BASE_URL

@@ -5,10 +5,10 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from AFO.config.settings import get_settings
+from AFO..config.settings import import get_settings
 
 # AFO Components
-from AFO.scholars.yeongdeok import yeongdeok
+from AFO..scholars.yeongdeok import import yeongdeok
 
 logger = logging.getLogger("afo.genui")
 

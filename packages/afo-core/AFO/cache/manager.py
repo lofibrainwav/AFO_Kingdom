@@ -10,7 +10,7 @@ import logging
 import time
 from typing import Any
 
-from .backends import MemoryBackend, RedisBackend
+from AFO.backends import import MemoryBackend, RedisBackend
 
 logger = logging.getLogger(__name__)
 

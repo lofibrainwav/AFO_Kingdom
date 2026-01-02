@@ -15,7 +15,7 @@ sys.path.append(
     ).resolve()
 )
 
-from AFO.utils.cache_utils import cache, cached
+from AFO..utils.cache_utils import import cache, cached
 
 
 # Mock Redis Client

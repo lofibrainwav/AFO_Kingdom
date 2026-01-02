@@ -9,7 +9,7 @@ from unittest.mock import MagicMock, patch
 # Path setup is critical for imports from packages
 sys.path.append(os.path.join(pathlib.Path.cwd(), "packages/afo-core"))
 
-from AFO.config.antigravity import antigravity
+from AFO..config.antigravity import import antigravity
 from AFO.scholars.jaryong import JaryongScholar
 
 

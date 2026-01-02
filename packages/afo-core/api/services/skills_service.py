@@ -38,7 +38,7 @@ except ImportError:
 
 # Import skill registry components for runtime
 try:
-    from AFO.afo_skills_registry import (
+    from AFO..afo_skills_registry import import (
         ExecutionMode,
         SkillCategory,
         SkillFilterParams,
