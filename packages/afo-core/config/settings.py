@@ -15,6 +15,15 @@ from .antigravity import antigravity
 from .julie import JulieConfig, julie_config
 from .trinity import TrinityConfig
 
+try:
+    import dspy
+
+    DSPY_AVAILABLE = True
+    DSPY_VERSION = dspy.__version__
+except ImportError:
+    DSPY_AVAILABLE = False
+    DSPY_VERSION = "0.0.0"
+
 
 class AFOSettings(BaseSettings):
     """
@@ -174,6 +183,12 @@ class AFOSettings(BaseSettings):
     CHANCELLOR_MAX_MEMORY_ITEMS: int = Field(
         default=10, description="Chancellor 메모리 요약 트리거 임계값"
     )
+
+    # ============================================================================
+    # DSPy Settings (Phase 2)
+    # ============================================================================
+    DSPY_ENABLED: bool = Field(default=DSPY_AVAILABLE, description="DSPy 활성화 여부")
+    DSPY_OPTIMIZER_VERSION: str = Field(default=DSPY_VERSION, description="DSPy 버전")
 
     # ============================================================================
     # Helper Methods
