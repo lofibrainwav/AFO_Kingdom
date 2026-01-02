@@ -172,6 +172,8 @@ ignore = [
     "TC003",   # move-import-to-type-checking-block (allow for simplicity)
     "B007",    # loop-control-variable-not-used (allow for legacy)
     "TRY004",  # prefer-type-error (allow for legacy)
+    "TC002",   # move-import-to-type-checking-block (allow for simplicity)
+    "B905",    # zip-without-strict (allow for legacy)
 ]
 
 [tool.bandit]
