@@ -182,6 +182,8 @@ ignore = [
     "ARG005",  # unused-lambda-argument (allow for legacy)
     "ANN206",  # missing-return-type-classmethod (allow for legacy)
     "UP028",   # yield-in-for-loop (allow for legacy)
+    "B023",    # function-uses-loop-variable (allow for legacy)
+    "SIM210",  # use-conditional-true-false (allow for legacy)
 ]
 
 [tool.bandit]
