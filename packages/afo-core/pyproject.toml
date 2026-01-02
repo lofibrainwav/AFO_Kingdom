@@ -175,6 +175,8 @@ ignore = [
     "TC002",   # move-import-to-type-checking-block (allow for simplicity)
     "B905",    # zip-without-strict (allow for legacy)
     "RUF022",  # unsorted-all (allow for legacy)
+    "TC001",   # move-import-to-type-checking-block (allow for simplicity)
+    "SIM118",  # key-in-dict-keys (allow for legacy)
 ]
 
 [tool.bandit]
