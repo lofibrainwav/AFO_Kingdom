@@ -68,14 +68,16 @@ Chancellor Graph는 쿼리 실행 전 **Trinity Score**와 **Risk Score**를 평
 
 ---
 
-## Ⅴ. LLM 라우터 전략 (Fallback Logic)
+## Ⅴ. LLM 라우터 전략 (Vendor-Neutral)
 
-비용 효율성(善)과 가용성을 위해 다음 순서로 모델을 시도합니다.
+AGENTS.md LLM Provider Policy 준수로 런타임 설정 기반 벤더 중립적 선택:
 
-1. **Ollama** (Local): 무료, 로컬 우선.
-2. **Gemini** (Google): 고성능, 중간 비용.
-3. **Claude** (Anthropic): 고지능, 논리 검증.
-4. **OpenAI** (Fallback): 최후의 보루.
+- **AFO_LLM_MODE**: OFFLINE | EXTERNAL (외부 호출 제어)
+- **AFO_LLM_PROVIDER**: 특정 공급자 우선 (no fallback)
+- **AFO_LLM_PRIORITY**: 콤마 리스트 순차 시도 (fallback 제공)
+- **설정 없음**: ASK_COMMANDER (추측 선택 금지)
+
+**비용 효율성(善) 고려**: 런타임 설정으로 공급자 선택을 유연하게 관리
 
 ---
 
