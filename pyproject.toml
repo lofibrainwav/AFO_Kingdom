@@ -110,6 +110,9 @@ exclude = [
     "tests",
     "**/*.metallib",
     "**/*.dylib",
+    "tools",
+    "test_*.py",
+    "conftest.py"
 ]
 
 [tool.ruff.lint]
