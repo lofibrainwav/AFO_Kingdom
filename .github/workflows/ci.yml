@@ -1,34 +1,34 @@
-name: AFO Kingdom CI/CD
+name: AFO Kingdom CI/CD (uv 기반)
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
-  quality-gate:
+  test-and-lint:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.12", "3.13"]  # 왕국 Python 버전 매트릭스
+
     steps:
-      - name: Checkout
+      - name: Checkout 코드
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Setup uv
-        uses: astral-sh/setup-uv@v4
+      - name: uv 설치 및 환경 설정
+        uses: astral-sh/setup-uv@v7
         with:
-          version: "latest"
+          enable-cache: true                # 캐싱 활성 (10x 속도)
+          cache-dependency-glob: "uv.lock"  # uv.lock 변경 시 캐시 무효화
+          python-version: ${{ matrix.python-version }}
+          prune-cache: true                 # 오래된 캐시 정리
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-
-      - name: Install Dependencies
-        run: |
-          cd packages/afo-core
-          uv sync --frozen
+      - name: 의존성 설치 (재현성 보장)
+        run: uv sync --frozen               # uv.lock 기반 정확 설치
 
       - name: Generate Evidence (Trinity Protocol)
         run: |
@@ -37,16 +37,14 @@ jobs:
           echo "Royal Build Verified: $(date)" > artifacts/royal_build/build_status.txt
           echo "Commit SHA: ${{ github.sha }}" >> artifacts/royal_build/build_status.txt
 
-      - name: Lint & Type Check (Makefile SSOT)
-        run: |
-          make lint
-          make type-check
+      - name: Ruff 린트 & 포맷
+        run: uv run ruff check . --fix
 
-      - name: Test & Coverage (Makefile SSOT)
-        run: |
-          make test
-          # Coverage extension if needed, but sticking to Makefile Truth first
-          cd packages/afo-core && pytest --cov=AFO --cov-report=xml
+      - name: Pyright 타입 체크
+        run: uv run pyright
+
+      - name: Pytest 테스트
+        run: uv run pytest -v
 
       - name: Upload Coverage
         uses: codecov/codecov-action@v4
@@ -55,8 +53,7 @@ jobs:
 
       - name: AFO Import Verification (Case-Sensitive Check)
         run: |
-          cd packages/afo-core
-          python -c "
+          uv run python -c "
           import importlib.util as u
           afo_spec = u.find_spec('AFO')
           afo_lower_spec = u.find_spec('afo')
@@ -93,4 +90,4 @@ jobs:
           AFO_REPO: ${{ github.repository }}
         run: |
           cd packages/afo-core
-          python ../scripts/collect_ci_quality_metrics.py
+          uv run python ../scripts/collect_ci_quality_metrics.py
