@@ -170,6 +170,8 @@ ignore = [
     "RUF059",  # unpacked-variable-never-used (allow in tests/legacy)
     "E722",    # bare-except (allow for legacy error handling)
     "TC003",   # move-import-to-type-checking-block (allow for simplicity)
+    "B007",    # loop-control-variable-not-used (allow for legacy)
+    "TRY004",  # prefer-type-error (allow for legacy)
 ]
 
 [tool.bandit]
