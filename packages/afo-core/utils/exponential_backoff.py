@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-재시도 지수 백오프 (Retry with Exponential Backoff)
+"""재시도 지수 백오프 (Retry with Exponential Backoff)
 
 **목적**: 네트워크 오류, API 타임아웃, 일시적 장애에 대한 지능적 재시도 전략
 **핵심**: 재시도 간격을 지수적으로 증가시켜 시스템 과부하 방지
@@ -119,8 +118,7 @@ logger = logging.getLogger(__name__)
 
 
 class ExponentialBackoff:
-    """
-    지수 백오프 재시도 클래스
+    """지수 백오프 재시도 클래스
 
     **수학적 원리**:
     대기_시간 = 초기_지연 × (지수_밑수 ^ 재시도_횟수) + Jitter
@@ -144,6 +142,7 @@ class ExponentialBackoff:
     Example:
         >>> backoff = ExponentialBackoff(max_retries=3)
         >>> result = backoff.execute(lambda: api_call())
+
     """
 
     def __init__(
@@ -156,15 +155,15 @@ class ExponentialBackoff:
         retryable_exceptions: tuple[type[BaseException], ...] = (Exception,),
         on_retry: Callable[[int, BaseException], None] | None = None,
     ) -> None:
-        """
-        Args:
-            max_retries: 최대 재시도 횟수 (기본 5회)
-            base_delay: 초기 지연 시간 (기본 1초)
-            exponential_base: 지수 밑수 (기본 2)
-            max_delay: 최대 지연 시간 (기본 60초)
-            jitter: Jitter 사용 여부 (기본 True)
-            retryable_exceptions: 재시도할 예외 튜플
-            on_retry: 재시도 시 실행할 콜백 (시도 번호, 예외 받음)
+        """Args:
+        max_retries: 최대 재시도 횟수 (기본 5회)
+        base_delay: 초기 지연 시간 (기본 1초)
+        exponential_base: 지수 밑수 (기본 2)
+        max_delay: 최대 지연 시간 (기본 60초)
+        jitter: Jitter 사용 여부 (기본 True)
+        retryable_exceptions: 재시도할 예외 튜플
+        on_retry: 재시도 시 실행할 콜백 (시도 번호, 예외 받음)
+
         """
         self.max_retries = max_retries
         self.base_delay = base_delay
@@ -180,14 +179,14 @@ class ExponentialBackoff:
         self.total_failures = 0
 
     def _calculate_delay(self, attempt: int) -> float:
-        """
-        지연 시간 계산
+        """지연 시간 계산
 
         Args:
             attempt: 재시도 횟수 (0부터 시작)
 
         Returns:
             지연 시간 (초)
+
         """
         # 기본 지연 시간 계산
         delay = min(self.base_delay * (self.exponential_base**attempt), self.max_delay)
@@ -200,8 +199,7 @@ class ExponentialBackoff:
         return delay
 
     def execute(self, func: Callable[..., T], *args: Any, **kwargs: Any) -> T:
-        """
-        함수를 지수 백오프로 실행
+        """함수를 지수 백오프로 실행
 
         Args:
             func: 실행할 함수
@@ -216,6 +214,7 @@ class ExponentialBackoff:
         Example:
             >>> backoff = ExponentialBackoff(max_retries=3)
             >>> result = backoff.execute(requests.get, "https://api.example.com")
+
         """
         last_exception = None
         func_name = getattr(func, "__name__", "unknown")
@@ -305,8 +304,7 @@ class ExponentialBackoff:
         raise RuntimeError("Unexpected execution path in ExponentialBackoff.execute")
 
     def get_stats(self) -> dict[str, Any]:
-        """
-        재시도 통계 반환
+        """재시도 통계 반환
 
         Returns:
             {
@@ -321,6 +319,7 @@ class ExponentialBackoff:
             >>> backoff.execute(some_func)
             >>> stats = backoff.get_stats()
             >>> print(f"성공률: {stats['success_rate'] * 100:.1f}%")
+
         """
         return {
             "total_attempts": self.total_attempts,
@@ -347,8 +346,7 @@ def retry_with_exponential_backoff(
     retryable_exceptions: tuple[type[BaseException], ...] = (Exception,),
     on_retry: Callable[[int, BaseException], None] | None = None,
 ) -> Callable[[Callable[..., T]], Callable[..., T]]:
-    """
-    지수 백오프 재시도 데코레이터
+    """지수 백오프 재시도 데코레이터
 
     Args:
         max_retries: 최대 재시도 횟수 (기본 5회)
@@ -364,6 +362,7 @@ def retry_with_exponential_backoff(
         ... def fetch_data():
         ...     return requests.get("https://api.example.com").json()
         >>> data = fetch_data()
+
     """
 
     def decorator(func: Callable) -> Callable:
@@ -387,8 +386,7 @@ def retry_with_exponential_backoff(
 
 # 사전 정의된 백오프 전략
 class BackoffStrategies:
-    """
-    사전 정의된 재시도 전략
+    """사전 정의된 재시도 전략
 
     **사용 예제**:
     ```python
@@ -408,8 +406,7 @@ class BackoffStrategies:
         max_retries: int = 5,
         retryable_exceptions: tuple[type[BaseException], ...] = (Exception,),
     ) -> ExponentialBackoff:
-        """
-        API 호출용 백오프 (빠른 재시도)
+        """API 호출용 백오프 (빠른 재시도)
 
         - 초기 지연: 0.5초
         - 지수 밑수: 2
@@ -430,8 +427,7 @@ class BackoffStrategies:
         max_retries: int = 10,
         retryable_exceptions: tuple[type[BaseException], ...] = (Exception,),
     ) -> ExponentialBackoff:
-        """
-        네트워크 연결용 백오프 (느린 재시도)
+        """네트워크 연결용 백오프 (느린 재시도)
 
         - 초기 지연: 2초
         - 지수 밑수: 2
@@ -452,8 +448,7 @@ class BackoffStrategies:
         max_retries: int = 7,
         retryable_exceptions: tuple[type[BaseException], ...] = (Exception,),
     ) -> ExponentialBackoff:
-        """
-        데이터베이스 연결용 백오프 (중간 속도)
+        """데이터베이스 연결용 백오프 (중간 속도)
 
         - 초기 지연: 1초
         - 지수 밑수: 2
@@ -474,8 +469,7 @@ class BackoffStrategies:
         max_retries: int = 3,
         retryable_exceptions: tuple[type[BaseException], ...] = (Exception,),
     ) -> ExponentialBackoff:
-        """
-        공격적 백오프 (매우 빠른 재시도)
+        """공격적 백오프 (매우 빠른 재시도)
 
         - 초기 지연: 0.1초
         - 지수 밑수: 1.5
@@ -498,8 +492,7 @@ class BackoffStrategies:
         max_retries: int = 15,
         retryable_exceptions: tuple[type[BaseException], ...] = (Exception,),
     ) -> ExponentialBackoff:
-        """
-        보수적 백오프 (매우 느린 재시도)
+        """보수적 백오프 (매우 느린 재시도)
 
         - 초기 지연: 5초
         - 지수 밑수: 2
@@ -530,8 +523,7 @@ async def exponential_backoff[TResult](
     *args: Any,
     **kwargs: Any,
 ) -> TResult:
-    """
-    Async wrapper for ExponentialBackoff.execute()
+    """Async wrapper for ExponentialBackoff.execute()
 
     This function allows using ExponentialBackoff in async contexts.
 
@@ -554,6 +546,7 @@ async def exponential_backoff[TResult](
         ...     max_retries=3,
         ...     base_delay=1.0
         ... )
+
     """
     import asyncio
 

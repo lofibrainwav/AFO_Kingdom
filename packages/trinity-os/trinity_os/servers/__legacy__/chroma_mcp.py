@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Chroma Vector Database MCP Server
+"""Chroma Vector Database MCP Server
 AFO 왕국 - Chroma 벡터 데이터베이스 통합
 
 이 스크립트는 Chroma 벡터 데이터베이스를 MCP 프로토콜로 래핑합니다.
@@ -68,9 +67,7 @@ class ChromaMCP:
                 }
             )
         except Exception as e:
-            return json.dumps(
-                {"success": False, "error": f"컬렉션 가져오기 실패: {e!s}"}
-            )
+            return json.dumps({"success": False, "error": f"컬렉션 가져오기 실패: {e!s}"})
 
     def add_documents(
         self,
@@ -140,11 +137,7 @@ class ChromaMCP:
             # 안전하게 결과 길이 계산
             documents = results.get("documents", [])
             if isinstance(documents, list) and documents:
-                result_count = (
-                    len(documents)
-                    if isinstance(documents[0], list)
-                    else len([d for d in documents if d])
-                )
+                result_count = len(documents) if isinstance(documents[0], list) else len([d for d in documents if d])
             else:
                 result_count = 0
 
@@ -172,9 +165,7 @@ class ChromaMCP:
                         "success": True,
                         "collection_name": collection_name,
                         "document": result["documents"][0],
-                        "metadata": (
-                            result["metadatas"][0] if result["metadatas"] else {}
-                        ),
+                        "metadata": (result["metadatas"][0] if result["metadatas"] else {}),
                         "id": doc_id,
                     }
                 )
@@ -217,9 +208,7 @@ class ChromaMCP:
                 }
             )
         except Exception as e:
-            return json.dumps(
-                {"success": False, "error": f"컬렉션 목록 조회 실패: {e!s}"}
-            )
+            return json.dumps({"success": False, "error": f"컬렉션 목록 조회 실패: {e!s}"})
 
 
 def main():
@@ -256,9 +245,7 @@ def main():
                             documents = arguments.get("documents", [])
                             metadatas = arguments.get("metadatas")
                             ids = arguments.get("ids")
-                            response_text = chroma_mcp.add_documents(
-                                collection_name, documents, metadatas, ids
-                            )
+                            response_text = chroma_mcp.add_documents(collection_name, documents, metadatas, ids)
 
                         elif tool_name == "query_collection":
                             collection_name = arguments.get("collection_name", "")
@@ -277,9 +264,7 @@ def main():
                         elif tool_name == "get_document":
                             collection_name = arguments.get("collection_name", "")
                             doc_id = arguments.get("id", "")
-                            response_text = chroma_mcp.get_document(
-                                collection_name, doc_id
-                            )
+                            response_text = chroma_mcp.get_document(collection_name, doc_id)
 
                         elif tool_name == "delete_collection":
                             name = arguments.get("name", "")
@@ -291,9 +276,7 @@ def main():
                         result = {
                             "jsonrpc": "2.0",
                             "id": request.get("id"),
-                            "result": {
-                                "content": [{"type": "text", "text": response_text}]
-                            },
+                            "result": {"content": [{"type": "text", "text": response_text}]},
                         }
                         print(json.dumps(result))
                         sys.stdout.flush()

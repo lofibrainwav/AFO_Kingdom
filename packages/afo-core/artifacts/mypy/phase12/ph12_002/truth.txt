@@ -1,3 +1,0 @@
-AFO/llms/providers/factory.py:35: error: Incompatible types in assignment (expression has type "OpenAIProvider", variable has type "OllamaProvider")  [assignment]
-AFO/llms/providers/factory.py:37: error: Incompatible types in assignment (expression has type "AnthropicProvider", variable has type "OllamaProvider")  [assignment]
-Found 96 errors in 39 files (checked 249 source files)

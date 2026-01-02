@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Auth Utilities
+"""Auth Utilities
 JWT 토큰 생성/검증 및 비밀번호 해시 처리
 """
 
@@ -42,14 +41,14 @@ else:
 
 
 def hash_password(password: str) -> str:
-    """
-    비밀번호 해시 생성
+    """비밀번호 해시 생성
 
     Args:
         password: 평문 비밀번호
 
     Returns:
         해시된 비밀번호
+
     """
     if pwd_context:
         return str(pwd_context.hash(password))
@@ -60,8 +59,7 @@ def hash_password(password: str) -> str:
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """
-    비밀번호 검증
+    """비밀번호 검증
 
     Args:
         plain_password: 평문 비밀번호
@@ -69,6 +67,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
     Returns:
         검증 결과
+
     """
     if pwd_context:
         return bool(pwd_context.verify(plain_password, hashed_password))
@@ -83,8 +82,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 
 def create_access_token(data: dict[str, Any], expires_delta: timedelta | None = None) -> str:
-    """
-    JWT 액세스 토큰 생성
+    """JWT 액세스 토큰 생성
 
     Args:
         data: 토큰에 포함할 데이터 (예: {"sub": username})
@@ -92,6 +90,7 @@ def create_access_token(data: dict[str, Any], expires_delta: timedelta | None = 
 
     Returns:
         JWT 토큰 문자열
+
     """
     if JWT_AVAILABLE:
         to_encode = data.copy()
@@ -114,8 +113,7 @@ def create_access_token(data: dict[str, Any], expires_delta: timedelta | None = 
 
 
 def verify_token(token: str) -> dict[str, Any] | None:
-    """
-    JWT 토큰 검증 (眞: Truth - 정확한 예외 처리)
+    """JWT 토큰 검증 (眞: Truth - 정확한 예외 처리)
 
     Args:
         token: JWT 토큰 문자열
@@ -125,6 +123,7 @@ def verify_token(token: str) -> dict[str, Any] | None:
 
     Raises:
         None (예외는 내부에서 처리하여 None 반환)
+
     """
     if JWT_AVAILABLE:
         try:

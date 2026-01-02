@@ -9,7 +9,7 @@ import logging
 from datetime import datetime
 from typing import Any, Optional, cast
 
-from .modular_engine import ModularAntigravityEngine, create_simple_engine
+from AFO.modular_engine import ModularAntigravityEngine, create_simple_engine
 
 logger = logging.getLogger(__name__)
 

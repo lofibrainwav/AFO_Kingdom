@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Cache Metrics Router
+"""Cache Metrics Router
 Phase 6B: Expose cache performance metrics to the dashboard
 """
 
@@ -15,9 +14,7 @@ router = APIRouter(prefix="/api/cache", tags=["Cache Metrics"])
 
 @router.get("/metrics", response_model=dict[str, Any])
 async def get_metrics():
-    """
-    Get current cache performance metrics
-    """
+    """Get current cache performance metrics"""
     try:
         metrics = get_cache_metrics()
         return metrics

@@ -5,6 +5,7 @@ import sys
 import numpy as np
 import pytest
 
+
 # Ensure packages/afo-core is in python path
 sys.path.append(
     pathlib.Path(

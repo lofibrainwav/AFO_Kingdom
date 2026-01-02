@@ -16,8 +16,7 @@ import os
 # Trinity Score Evaluator (동적 점수 계산)
 try:
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../../../afo-core"))
-    from AFO.services.mcp_tool_trinity_evaluator import \
-        mcp_tool_trinity_evaluator
+    from AFO.services.mcp_tool_trinity_evaluator import mcp_tool_trinity_evaluator
 except ImportError:
     mcp_tool_trinity_evaluator = None
 
@@ -35,8 +34,7 @@ class AfoSkillsMCP:
 
     @staticmethod
     def verify_fact(claim: str, context: str = "") -> dict[str, Any]:
-        """
-        Hallucination Defense: Verifies a claim against known context or logic.
+        """Hallucination Defense: Verifies a claim against known context or logic.
         'Universe Teacher' Logic: Checks for grounding and consistency.
         """
         # In a full implementation, this connects to Vector DB or Search
@@ -88,21 +86,16 @@ class AfoSkillsMCP:
 
                     try:
                         if tool_name == "cupy_weighted_sum":
-                            execution_result = cls.cupy_weighted_sum(
-                                args.get("data", []), args.get("weights", [])
-                            )
+                            execution_result = cls.cupy_weighted_sum(args.get("data", []), args.get("weights", []))
                         elif tool_name == "verify_fact":
-                            execution_result = cls.verify_fact(
-                                args.get("claim"), args.get("context", "")
-                            )
+                            execution_result = cls.verify_fact(args.get("claim"), args.get("context", ""))
                         else:
                             execution_result = f"Unknown tool: {tool_name}"
                             is_error = True
 
                         # Error detection
                         if isinstance(execution_result, str) and (
-                            "Error" in execution_result
-                            or "error" in execution_result.lower()
+                            "Error" in execution_result or "error" in execution_result.lower()
                         ):
                             is_error = True
 
@@ -120,13 +113,11 @@ class AfoSkillsMCP:
                                 if isinstance(execution_result, dict)
                                 else str(execution_result)
                             )
-                            trinity_eval = (
-                                mcp_tool_trinity_evaluator.evaluate_execution_result(
-                                    tool_name=tool_name,
-                                    execution_result=result_str,
-                                    execution_time_ms=execution_time_ms,
-                                    is_error=is_error,
-                                )
+                            trinity_eval = mcp_tool_trinity_evaluator.evaluate_execution_result(
+                                tool_name=tool_name,
+                                execution_result=result_str,
+                                execution_time_ms=execution_time_ms,
+                                is_error=is_error,
                             )
                             trinity_score = trinity_eval["trinity_metrics"]
                         except Exception:

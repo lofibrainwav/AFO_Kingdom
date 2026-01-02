@@ -5,6 +5,7 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
+
 # Add package root to path
 sys.path.append(os.path.join(Path.cwd(), "packages/afo-core"))
 
@@ -36,7 +37,7 @@ class AutoRecon:
         }
 
         for target in self.targets:
-            print(f"   👀 Inspecting: {target["name"]} ({target["url"]})")
+            print(f"   👀 Inspecting: {target['name']} ({target['url']})")
             result = await self.verifier.verify_url(target["url"], target["name"])
 
             entry = {
@@ -57,14 +58,12 @@ class AutoRecon:
 
         report["summary"]["total"] = len(self.targets)
         self._save_report(report)
-        print(
-            f"🛡️ [AutoRecon] Patrol complete. Health: {report["summary"]["passed"]}/{report["summary"]["total"]}"
-        )
+        print(f"🛡️ [AutoRecon] Patrol complete. Health: {report['summary']['passed']}/{report['summary']['total']}")
 
         return report["summary"]["failed"] == 0
 
     def _save_report(self, report):
-        filename = f"recon_{datetime.now().strftime("%Y%m%d_%H%M%S")}.json"
+        filename = f"recon_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
         path = os.path.join(self.report_dir, filename)
         with Path(path).open("w", encoding="utf-8") as f:
             json.dump(report, f, indent=2)

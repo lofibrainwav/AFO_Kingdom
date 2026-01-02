@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Trinity Type Validator - 런타임 타입 검증 시스템
+"""Trinity Type Validator - 런타임 타입 검증 시스템
 Phase 5: 혁신적 타입 시스템 구현
 
 이 모듈은 런타임에 Trinity Score 기반 타입 검증을 수행합니다.
@@ -24,8 +23,7 @@ F = TypeVar("F", bound=Callable[..., Any])
 
 
 class TrinityTypeValidator:
-    """
-    런타임 Trinity Score 기반 타입 검증 시스템
+    """런타임 Trinity Score 기반 타입 검증 시스템
 
     Phase 5: 혁신적 타입 시스템의 핵심 컴포넌트
     """
@@ -36,8 +34,7 @@ class TrinityTypeValidator:
         self.performance_stats: dict[str, dict[str, Any]] = {}
 
     def validate_function(self, func: F, *args, **kwargs) -> dict[str, Any]:
-        """
-        함수 실행 전후로 Trinity Score 기반 검증 수행
+        """함수 실행 전후로 Trinity Score 기반 검증 수행
 
         Args:
             func: 검증할 함수
@@ -46,6 +43,7 @@ class TrinityTypeValidator:
 
         Returns:
             검증 결과 딕셔너리
+
         """
         func_name = getattr(func, "__name__", str(func))
         start_time = time.time()
@@ -134,8 +132,7 @@ class TrinityTypeValidator:
             }
 
     def __call__(self, func: F) -> F:
-        """
-        데코레이터 인터페이스 - 함수에 자동 검증 적용
+        """데코레이터 인터페이스 - 함수에 자동 검증 적용
 
         Usage:
             @TrinityTypeValidator()
@@ -187,9 +184,7 @@ class TrinityTypeValidator:
             return sync_wrapper  # type: ignore[return-value]
 
     def _pre_validate(self, func: Callable, args: tuple, kwargs: dict) -> dict[str, Any]:
-        """
-        사전 검증: 함수 시그니처와 입력 타입 일관성 검증
-        """
+        """사전 검증: 함수 시그니처와 입력 타입 일관성 검증"""
         try:
             sig = inspect.signature(func)
             bound_args = sig.bind(*args, **kwargs)
@@ -240,9 +235,7 @@ class TrinityTypeValidator:
     def _post_validate(
         self, func: Callable, args: tuple, kwargs: dict, result: Any
     ) -> dict[str, Any]:
-        """
-        사후 검증: 리턴 타입과 결과 일관성 검증
-        """
+        """사후 검증: 리턴 타입과 결과 일관성 검증"""
         try:
             sig = inspect.signature(func)
             return_annotation = sig.return_annotation
@@ -284,9 +277,7 @@ class TrinityTypeValidator:
             }
 
     def _calculate_type_match(self, expected: Any, actual: Any) -> float:
-        """
-        타입 일치도 계산 (0.0 ~ 1.0)
-        """
+        """타입 일치도 계산 (0.0 ~ 1.0)"""
         try:
             # 간단한 타입 일치도 계산
             if expected == actual:
@@ -321,9 +312,7 @@ class TrinityTypeValidator:
             return 0.0
 
     def _estimate_size(self, obj: Any) -> int:
-        """
-        객체 크기 추정 (메모리 사용량 기반)
-        """
+        """객체 크기 추정 (메모리 사용량 기반)"""
         try:
             import sys
 
@@ -342,9 +331,7 @@ class TrinityTypeValidator:
         post_validation: dict[str, Any],
         execution_time: float,
     ) -> float:
-        """
-        Trinity Score 계산 (眞善美孝永)
-        """
+        """Trinity Score 계산 (眞善美孝永)"""
         # 眞 (Truth): 타입 정확성
         truth_score = self._evaluate_truth(pre_validation, post_validation)
 
@@ -387,9 +374,7 @@ class TrinityTypeValidator:
         execution_time: float,
         error: Exception,
     ) -> float:
-        """
-        에러 상황에서의 Trinity Score 계산
-        """
+        """에러 상황에서의 Trinity Score 계산"""
         # 에러 시 기본 점수 절반으로 시작
         base_score = 50.0
 
@@ -623,8 +608,7 @@ trinity_validator = TrinityTypeValidator()
 
 
 def validate_with_trinity[TF: Callable[..., Any]](func: TF) -> TF:
-    """
-    Trinity 검증 데코레이터 (async 함수 지원)
+    """Trinity 검증 데코레이터 (async 함수 지원)
 
     Usage:
         @validate_with_trinity

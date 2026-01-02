@@ -6,8 +6,7 @@ from abc import ABC, abstractmethod
 # 1. Command Interface
 # ==========================================
 class Command(ABC):
-    """
-    Abstract Command: Declares an interface for executing an operation.
+    """Abstract Command: Declares an interface for executing an operation.
     Must support execute() and undo().
     """
 
@@ -26,8 +25,7 @@ class Command(ABC):
 # 2. Receiver (The Business Logic)
 # ==========================================
 class TigerGenerals:
-    """
-    Receiver: The object that knows how to perform the operations.
+    """Receiver: The object that knows how to perform the operations.
     (Simulating the 5 Tigers Execution)
     """
 
@@ -45,9 +43,7 @@ class TigerGenerals:
 # 3. Concrete Commands
 # ==========================================
 class DeployCommand(Command):
-    """
-    Concrete Command: Binds a specific action (Deploy) to the Receiver.
-    """
+    """Concrete Command: Binds a specific action (Deploy) to the Receiver."""
 
     def __init__(self, receiver: TigerGenerals, resource: str):
         self._receiver = receiver
@@ -61,9 +57,7 @@ class DeployCommand(Command):
 
 
 class AnalyzeCommand(Command):
-    """
-    Concrete Command: Analyzes risk (Read-only, Undo does nothing conceptually, or logs).
-    """
+    """Concrete Command: Analyzes risk (Read-only, Undo does nothing conceptually, or logs)."""
 
     def __init__(self, receiver: TigerGenerals, target: str):
         self._receiver = receiver
@@ -80,8 +74,7 @@ class AnalyzeCommand(Command):
 # 4. Invoker (Chancellor)
 # ==========================================
 class ChancellorInvoker:
-    """
-    Invoker: Asks the command to carry out the request.
+    """Invoker: Asks the command to carry out the request.
     Maintains a history for Undo functionality.
     """
 

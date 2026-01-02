@@ -4,9 +4,10 @@
 Sequential Thinking Phase 2: 실제 import 테스트
 """
 
-import importlib
+importlib
 import sys
 from pathlib import Path
+
 
 # packages/afo-core를 경로에 추가
 core_path = Path(__file__).parent.parent / "packages" / "afo-core"

@@ -5,8 +5,7 @@ from typing import Any
 
 
 class LivingBrainAsync:
-    """
-    Placeholder restoration of LivingBrainAsync.
+    """Placeholder restoration of LivingBrainAsync.
     The original file appears to have been lost.
     """
 
@@ -16,8 +15,7 @@ class LivingBrainAsync:
     async def think_async(
         self, thought: str, thread_id: str, mode: str = "DEFAULT"
     ) -> dict[str, Any]:
-        """
-        Mock think_async to pass verification.
+        """Mock think_async to pass verification.
         Reflects basic responses expected by test scripts.
         """
         # Simulate processing

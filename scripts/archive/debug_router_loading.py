@@ -8,13 +8,12 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
+
 # #region agent log
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 
 
-def log_debug(
-    location: str, message: str, data: dict | None = None, hypothesis_id: str = "A"
-) -> None:
+def log_debug(location: str, message: str, data: dict | None = None, hypothesis_id: str = "A") -> None:
     """Debug logging to NDJSON file"""
     try:
         log_entry = {
@@ -63,8 +62,7 @@ def test_router_loading():
     results = {}
     for router_name, expected_prefix in routers_to_test:
         try:
-            from AFO.api.compat import (chancellor_router, grok_stream_router,
-                                        learning_log_router)
+            from AFO.api.compat import chancellor_router, grok_stream_router, learning_log_router
 
             if router_name == "learning_log_router":
                 router = learning_log_router
@@ -93,9 +91,7 @@ def test_router_loading():
                     "expected": expected_prefix,
                 }
                 status = "✅" if is_correct else "⚠️"
-                print(
-                    f"{status} {router_name}: prefix={prefix} (예상: {expected_prefix})"
-                )
+                print(f"{status} {router_name}: prefix={prefix} (예상: {expected_prefix})")
                 # #region agent log
                 log_debug(
                     f"debug_router_loading.py:test_router_loading:{router_name}",
@@ -171,9 +167,7 @@ def test_router_registration():
         missing_paths = []
         for target_path in target_paths:
             # 경로가 정확히 일치하거나 포함되는지 확인
-            found = any(
-                target_path in route or route == target_path for route in routes
-            )
+            found = any(target_path in route or route == target_path for route in routes)
             if found:
                 found_paths.append(target_path)
                 print(f"✅ {target_path}")
@@ -239,7 +233,7 @@ def main():
     print("=" * 60)
 
     all_loaded = all(r.get("status") == "success" for r in loading_results.values())
-    print(f"\n✅ 라우터 로딩: {"모두 성공" if all_loaded else "일부 실패"}")
+    print(f"\n✅ 라우터 로딩: {'모두 성공' if all_loaded else '일부 실패'}")
 
     if isinstance(registration_results, dict) and "found" in registration_results:
         found_count = len(registration_results["found"])

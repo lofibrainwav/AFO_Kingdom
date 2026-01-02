@@ -1,6 +1,11 @@
+<<<<<<< HEAD
 # Trinity Score: 95.0 (Enhanced with Vision & Audio)
 """
 Multimodal RAG Engine for AFO Kingdom (Phase 3)
+=======
+# Trinity Score: 90.0 (Established by Chancellor)
+"""Multimodal RAG Engine for AFO Kingdom (Phase 2)
+>>>>>>> wip/ph20-01-post-work
 Handles multimodal content (images, audio, video) in RAG pipelines.
 Strangler Fig: 메모리 관리 및 문서 제한 추가
 
@@ -72,8 +77,7 @@ class MultimodalDocument:
 
 
 class MultimodalRAGEngine:
-    """
-    Multimodal RAG Engine supporting text, images, and other media.
+    """Multimodal RAG Engine supporting text, images, and other media.
     Strangler Fig: 메모리 관리 및 자동 정리 기능 추가
 
     ENHANCED: Integrated with VisionService and AudioService
@@ -99,8 +103,7 @@ class MultimodalRAGEngine:
     def _estimate_document_memory(
         self, content: str, content_type: str, metadata: dict[str, Any]
     ) -> float:
-        """
-        문서의 메모리 사용량 추정 (MB)
+        """문서의 메모리 사용량 추정 (MB)
 
         Args:
             content: 문서 내용
@@ -109,6 +112,7 @@ class MultimodalRAGEngine:
 
         Returns:
             예상 메모리 사용량 (MB)
+
         """
         try:
             # 기본 텍스트 크기
@@ -137,14 +141,14 @@ class MultimodalRAGEngine:
             return 1.0  # 기본 1MB 추정
 
     def _cleanup_old_documents(self, required_space_mb: float) -> int:
-        """
-        오래된 문서 정리 (LRU 기반)
+        """오래된 문서 정리 (LRU 기반)
 
         Args:
             required_space_mb: 필요한 공간 (MB)
 
         Returns:
             정리된 문서 수
+
         """
         if not _memory_config["lru_enabled"]:
             return 0
@@ -202,8 +206,7 @@ class MultimodalRAGEngine:
         content_type: str = "text",
         metadata: dict[str, Any] | None = None,
     ) -> bool:
-        """
-        문서를 RAG 인덱스에 추가 (Strangler Fig 메모리 관리 적용)
+        """문서를 RAG 인덱스에 추가 (Strangler Fig 메모리 관리 적용)
 
         Args:
             content: 문서 내용
@@ -212,6 +215,7 @@ class MultimodalRAGEngine:
 
         Returns:
             추가 성공 여부
+
         """
         try:
             with _memory_lock:
@@ -454,9 +458,7 @@ class MultimodalRAGEngine:
             return {"error": str(e)}
 
     def get_stats(self) -> dict[str, Any]:
-        """
-        엔진 통계 및 메모리 상태 반환 (Strangler Fig 메모리 모니터링)
-        """
+        """엔진 통계 및 메모리 상태 반환 (Strangler Fig 메모리 모니터링)"""
         try:
             type_counts: dict[str, int] = {}
             for doc in self.documents:
@@ -488,11 +490,11 @@ class MultimodalRAGEngine:
             return {"total_documents": 0, "error": "stats collection failed"}
 
     def _get_health_status(self) -> str:
-        """
-        엔진 건강 상태 평가
+        """엔진 건강 상태 평가
 
         Returns:
             건강 상태 문자열
+
         """
         try:
             doc_util = len(self.documents) / _memory_config["max_documents"]

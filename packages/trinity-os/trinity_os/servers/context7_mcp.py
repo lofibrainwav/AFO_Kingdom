@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Context7 MCP Module
+"""Context7 MCP Module
 지식 그래프 기반 컨텍스트 검색 및 주입을 위한 MCP 도구
 """
 
@@ -8,14 +7,16 @@ import logging
 import re
 from pathlib import Path
 from typing import Any
+<<<<<<< HEAD
 
+=======
+>>>>>>> wip/ph20-01-post-work
 
 logger = logging.getLogger(__name__)
 
 
 class Context7MCP:
-    """
-    Context7 MCP - 지식 그래프 기반 컨텍스트 관리
+    """Context7 MCP - 지식 그래프 기반 컨텍스트 관리
     AFO 왕국의 지식 베이스에서 관련 컨텍스트를 검색하고 주입
     """
 
@@ -28,6 +29,7 @@ class Context7MCP:
         """지식 베이스 로드 (Metadata JSON 기반 동적 로딩)"""
         try:
             import os
+<<<<<<< HEAD
 
             # Repo Root 찾기 (trinity-os 위치 기준)
             base_path = os.path.abspath(
@@ -62,6 +64,20 @@ class Context7MCP:
                     "docs/MCP_TOOLS_COMPLETE_DEFINITION.md",
                     "docs/SKILLS_REGISTRY_REFERENCE.md",
                 ]
+=======
+
+            # trinity-os 폴더에서 AFO_Kingdom 루트까지 올라감
+            base_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
+
+            knowledge_sources = [
+                os.path.join(base_path, "AGENTS.md"),
+                os.path.join(base_path, "docs/AFO_ROYAL_LIBRARY.md"),
+                os.path.join(base_path, "docs/AFO_CHANCELLOR_GRAPH_SPEC.md"),
+                os.path.join(base_path, "docs/AFO_EVOLUTION_LOG.md"),
+                os.path.join(base_path, "docs/AFO_FRONTEND_ARCH.md"),
+                os.path.join(base_path, "docs/CURSOR_MCP_SETUP.md"),
+            ]
+>>>>>>> wip/ph20-01-post-work
 
             loaded_count = 0
             for rel_path in files_to_load:
@@ -118,7 +134,29 @@ class Context7MCP:
             raise
 
     def _load_document(self, filepath: str) -> None:
+<<<<<<< HEAD
         """Deprecated: Logic moved to _load_knowledge_base"""
+=======
+        """문서 파일 로드"""
+        try:
+            path = Path(filepath)
+            if path.exists():
+                content = path.read_text(encoding="utf-8")
+                self.knowledge_base.append(
+                    {
+                        "id": f"doc_{len(self.knowledge_base)}",
+                        "type": "document",
+                        "source": filepath,
+                        "content": content,
+                        "title": path.name,
+                        "keywords": self._extract_keywords(content),
+                    }
+                )
+            else:
+                logger.warning(f"Document not found: {filepath}")
+        except Exception as e:
+            logger.error(f"Failed to load document {filepath}: {e}")
+>>>>>>> wip/ph20-01-post-work
 
     def _add_core_knowledge(self) -> None:
         """핵심 지식 항목들 추가"""
@@ -169,6 +207,7 @@ class Context7MCP:
                 - 실행 모드: SYNC, ASYNC, STREAMING, BACKGROUND
                 - DRY_RUN 모드 및 안전 게이트 지원
                 """,
+<<<<<<< HEAD
                 "keywords": [
                     "skills",
                     "registry",
@@ -211,6 +250,9 @@ class Context7MCP:
                     "tools",
                     "interface",
                 ],
+=======
+                "keywords": ["skills", "registry", "trinity", "dry_run", "실행"],
+>>>>>>> wip/ph20-01-post-work
             },
             {
                 "id": "sequential_thinking",
@@ -382,8 +424,12 @@ class Context7MCP:
                 self.knowledge_index[keyword].add(idx)
 
     def retrieve_context(self, query: str, domain: str = "general") -> dict[str, Any]:
+<<<<<<< HEAD
         """
         쿼리에 기반한 컨텍스트 검색
+=======
+        """쿼리에 기반한 컨텍스트 검색
+>>>>>>> wip/ph20-01-post-work
 
         Args:
             query: 검색 쿼리
@@ -391,13 +437,17 @@ class Context7MCP:
 
         Returns:
             관련 컨텍스트들
+<<<<<<< HEAD
+=======
+
+>>>>>>> wip/ph20-01-post-work
         """
         # 쿼리 분석
         query_keywords = self._extract_keywords(query)
         query_lower = query.lower()
 
         # 관련 문서 찾기
-        relevant_docs = []
+        _relevant_docs = []
         scores = {}
 
         for keyword in query_keywords:
@@ -432,6 +482,7 @@ class Context7MCP:
         results = []
         for doc_idx, score in sorted_docs:
             item = self.knowledge_base[doc_idx]
+<<<<<<< HEAD
             results.append({
                 "id": item["id"],
                 "title": item["title"],
@@ -443,6 +494,19 @@ class Context7MCP:
                 "source": item.get("source", "knowledge_base"),
                 "keywords": item.get("keywords", []),
             })
+=======
+            results.append(
+                {
+                    "id": item["id"],
+                    "title": item["title"],
+                    "type": item["type"],
+                    "relevance_score": score,
+                    "preview": item["content"][:200] + "..." if len(item["content"]) > 200 else item["content"],
+                    "source": item.get("source", "knowledge_base"),
+                    "keywords": item.get("keywords", []),
+                }
+            )
+>>>>>>> wip/ph20-01-post-work
 
         # Trinity Score 평가
         truth_impact = min(len(results) * 0.1, 1.0)  # 결과 수에 따른 진실성

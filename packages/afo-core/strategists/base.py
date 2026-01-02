@@ -28,8 +28,7 @@ def log_error(action: str, error: Exception) -> None:
 
 
 def robust_execute(func: Callable[..., T], data: Any, fallback_value: T | None = None) -> T:
-    """
-    Common Error Handling: Graceful degradation & Fallback.
+    """Common Error Handling: Graceful degradation & Fallback.
     (PDF Tech Completeness 25/25: Robust Error Handling)
     """
     try:

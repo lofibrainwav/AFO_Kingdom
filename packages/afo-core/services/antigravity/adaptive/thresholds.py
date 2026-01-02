@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Antigravity Adaptive Thresholds - 동적 임계값 조정 모듈
+"""Antigravity Adaptive Thresholds - 동적 임계값 조정 모듈
 프로젝트 맥락과 히스토리를 기반으로 임계값 자동 조정
 """
 
@@ -11,8 +10,7 @@ logger = logging.getLogger(__name__)
 
 
 class AdaptiveThresholds:
-    """
-    동적 임계값 관리자
+    """동적 임계값 관리자
     프로젝트 특성과 히스토리를 고려한 임계값 조정
     """
 
@@ -29,8 +27,7 @@ class AdaptiveThresholds:
         }
 
     def calculate_dynamic_thresholds(self, context: dict[str, Any]) -> dict[str, float]:
-        """
-        동적 임계값 계산
+        """동적 임계값 계산
         프로젝트 맥락과 히스토리를 기반으로 임계값 조정
 
         Args:
@@ -38,6 +35,7 @@ class AdaptiveThresholds:
 
         Returns:
             조정된 임계값들
+
         """
         base_thresholds = self.base_thresholds.copy()
 
@@ -82,8 +80,7 @@ class AdaptiveThresholds:
     def adjust_for_context(
         self, thresholds: dict[str, float], context: dict[str, Any]
     ) -> dict[str, float]:
-        """
-        맥락 기반 추가 임계값 조정
+        """맥락 기반 추가 임계값 조정
         코드 변경의 특성을 고려한 미세 조정
 
         Args:
@@ -92,6 +89,7 @@ class AdaptiveThresholds:
 
         Returns:
             추가 조정된 임계값
+
         """
         adjusted = thresholds.copy()
 
@@ -119,8 +117,7 @@ class AdaptiveThresholds:
         return adjusted
 
     def adapt_thresholds(self, quality_history: list) -> dict[str, Any]:
-        """
-        동적 임계값 적응
+        """동적 임계값 적응
         히스토리 데이터를 기반으로 임계값 자동 조정
 
         Args:
@@ -128,6 +125,7 @@ class AdaptiveThresholds:
 
         Returns:
             적응 결과
+
         """
         if len(quality_history) < 20:
             return {"status": "insufficient_data"}

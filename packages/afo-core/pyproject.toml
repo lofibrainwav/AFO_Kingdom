@@ -28,13 +28,17 @@ dependencies = [
     "transformers (>=4.57.3,<5.0.0)",
 ]
 
+[tool.setuptools.packages.find]
+include = ["AFO*"]
+exclude = ["tests*", "scripts*", "legacy*", "artifacts*", "node_modules*"]
+
 [project.optional-dependencies]
 dev = [
     "ruff==0.14.10",
     "pytest==7.4.3",
     "pytest-asyncio>=0.23.8",
     "pyright==1.1.391",
-    "anyio==4.7.0",
+    "anyio>=4.8.0",
     "trio==0.23.2",
     "sentry-sdk[fastapi]>=2.15.0",
     "types-redis>=4.6.0",

@@ -11,8 +11,7 @@ from langgraph.graph import START, StateGraph
 
 
 class AgentState(TypedDict):
-    """
-    The 'DNA' of the Dream Hub.
+    """The 'DNA' of the Dream Hub.
     Carries the conversation, the plan, and the critical Trinity Scores.
     """
 
@@ -25,8 +24,7 @@ class AgentState(TypedDict):
 
 
 def planner_node(state: AgentState) -> dict:
-    """
-    The 'Router' / 'Planner'.
+    """The 'Router' / 'Planner'.
     Decides the initial plan or updates it based on feedback.
     Vision Map: 'Human Dream AI Hub' - Orchestration Layer.
     """
@@ -35,15 +33,12 @@ def planner_node(state: AgentState) -> dict:
     return {
         "current_plan": ["check_feasibility", "execute_task", "final_review"],
         "next_step": "check_feasibility",
-        "messages": [
-            AIMessage(content="Plan generated: Feasibility -> Execute -> Review")
-        ],
+        "messages": [AIMessage(content="Plan generated: Feasibility -> Execute -> Review")],
     }
 
 
 def executor_node(state: AgentState) -> dict:
-    """
-    The 'Skills' Layer.
+    """The 'Skills' Layer.
     Vision Map: 'Universe Teacher' - Execution.
     """
     step = state.get("next_step", "unknown")
@@ -60,8 +55,7 @@ def executor_node(state: AgentState) -> dict:
 
 
 def reviewer_node(state: AgentState) -> dict:
-    """
-    The 'Governance' Layer.
+    """The 'Governance' Layer.
     Vision Map: 'Audit Gate' - Evaluation.
     """
     # Mocking Trinity Score calculation (Real: Call trinity_score_mcp)
@@ -72,9 +66,7 @@ def reviewer_node(state: AgentState) -> dict:
     return {
         "trinity_score": score,
         "risk_score": risk,
-        "messages": [
-            AIMessage(content=f"Audit Complete. Score: {score}, Risk: {risk}")
-        ],
+        "messages": [AIMessage(content=f"Audit Complete. Score: {score}, Risk: {risk}")],
         "audit_history": [f"Scored {score}"],
     }
 
@@ -82,8 +74,7 @@ def reviewer_node(state: AgentState) -> dict:
 def audit_gate(
     state: AgentState,
 ) -> Literal["executor_node", "planner_node", "__end__"]:
-    """
-    The 'Conditional Edge'.
+    """The 'Conditional Edge'.
     Decides flow based on Trinity Score (The Energy Flow).
     """
     score = state.get("trinity_score", 0)
@@ -129,8 +120,7 @@ app = workflow.compile(checkpointer=checkpointer)
 
 
 def run_dream_hub(task: str, thread_id: str = "default") -> dict:
-    """
-    Entry point for SixXon CLI.
+    """Entry point for SixXon CLI.
     Runs the Dream Hub graph synchronously (for now) and returns the final state.
     """
     initial_state = {"messages": [HumanMessage(content=task)], "next_step": "start"}

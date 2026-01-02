@@ -5,8 +5,7 @@
 # 이 파일은 AFO 왕국의 眞善美孝 철학을 구현합니다
 
 #!/usr/bin/env python3
-"""
-Suno-Style 음악 생성 RAG 시스템
+"""Suno-Style 음악 생성 RAG 시스템
 Phase 3 Month 1: 오디오 멀티모달 우선 구현
 
 아키텍처:

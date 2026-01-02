@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-AFO Kingdom API Middleware Configuration
+"""AFO Kingdom API Middleware Configuration
 
 Handles CORS, security, monitoring, and other middleware setup.
 """
@@ -11,7 +10,6 @@ from fastapi.middleware.cors import CORSMiddleware
 
 def setup_middleware(app: FastAPI) -> None:
     """Setup all middleware for the FastAPI application."""
-
     # Cache middleware (Phase 1.2: API 엔드포인트 캐싱)
     _setup_cache_middleware(app)
 

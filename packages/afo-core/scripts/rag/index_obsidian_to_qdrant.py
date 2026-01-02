@@ -1,9 +1,7 @@
 # Trinity Score: 90.0 (Established by Chancellor)
 #!/usr/bin/env python3
 # mypy: ignore-errors
-"""
-옵시디언 vault를 Qdrant 벡터 DB에 인덱싱
-"""
+"""옵시디언 vault를 Qdrant 벡터 DB에 인덱싱"""
 
 from __future__ import annotations
 
@@ -60,8 +58,7 @@ def index_obsidian_vault(
     chunk_overlap: int = CHUNK_OVERLAP,
     clear_existing: bool = False,
 ):
-    """
-    옵시디언 vault를 Qdrant에 인덱싱
+    """옵시디언 vault를 Qdrant에 인덱싱
 
     Args:
         vault_path: 옵시디언 vault 경로
@@ -71,6 +68,7 @@ def index_obsidian_vault(
         chunk_size: 청크 크기
         chunk_overlap: 청크 오버랩
         clear_existing: 기존 데이터 삭제 여부
+
     """
     print("🔧 옵시디언 vault → Qdrant 인덱싱 시작...\n")
 

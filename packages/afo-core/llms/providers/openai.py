@@ -3,9 +3,8 @@ import logging
 import os
 from typing import Any, cast
 
+from AFO.base import BaseLLMProvider
 from AFO.llm_router import LLMConfig
-
-from .base import BaseLLMProvider
 
 try:
     from AFO.llms.openai_api import openai_api

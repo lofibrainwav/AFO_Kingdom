@@ -1,3 +1,0 @@
-OK: initialize
-OK: tools/list (5): afo_api_health, skills_list, skills_detail, skills_execute, genui_generate
-PASS: clean exit (0)

@@ -1,0 +1,24 @@
+{
+  "include": ["packages/afo-core", "api", "scripts"],
+  "exclude": [
+    "**/.git/**",
+    "**/.venv*/**",
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/site-packages/**",
+    "**/*.metallib",
+    "**/*.dylib",
+    "**/*.so",
+    "**/*.a",
+    "**/libtorch*/**",
+    "packages/trinity-os/tests",
+    "tests"
+  ],
+  "venvPath": ".",
+  "venv": ".venv",
+  "pythonVersion": "3.12",
+  "typeCheckingMode": "basic",
+  "reportMissingImports": "warning",
+  "reportMissingTypeStubs": "none"
+}

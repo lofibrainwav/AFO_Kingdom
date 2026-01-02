@@ -25,8 +25,7 @@ logger = logging.getLogger(__name__)
 
 
 async def background_revalidate(key: str, fetch_func: Callable[[], Any], ttl: int, swr_grace: int):
-    """
-    백그라운드 재검증 (SWR 핵심)
+    """백그라운드 재검증 (SWR 핵심)
     Executes the fetch function and updates the cache.
     """
     try:
@@ -46,8 +45,7 @@ async def background_revalidate(key: str, fetch_func: Callable[[], Any], ttl: in
 
 
 def get_with_swr(key: str, fetch_func: Callable[[], Any], max_age: int = 60, swr: int = 300) -> Any:
-    """
-    Stale-While-Revalidate: stale 허용 + 백그라운드 갱신 (PDF 캐싱 최적화)
+    """Stale-While-Revalidate: stale 허용 + 백그라운드 갱신 (PDF 캐싱 최적화)
 
     Args:
         key: Cache Key
@@ -57,6 +55,7 @@ def get_with_swr(key: str, fetch_func: Callable[[], Any], max_age: int = 60, swr
 
     Returns:
         The data (fresh, stale, or newly fetched)
+
     """
     if not redis_client:
         return fetch_func()

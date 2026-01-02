@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Audit Middleware for AFO Kingdom (Phase 22)
+"""Audit Middleware for AFO Kingdom (Phase 22)
 Logs privileged actions (POST/PUT/DELETE) for security auditing.
 """
 

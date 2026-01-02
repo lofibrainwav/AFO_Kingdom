@@ -11,7 +11,7 @@ import asyncio
 import logging
 from typing import Any, Optional
 
-from ..cache.manager import cache_manager
+from AFO.cache.manager import cache_manager
 
 
 # Node configuration class for Phase 7A

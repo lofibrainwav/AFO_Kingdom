@@ -1,7 +1,6 @@
 # Trinity Score: 90.0 (Established by Chancellor)
 # serenity/test_generator.py
-"""
-Auto-Test Generator for Self-Healing Loop
+"""Auto-Test Generator for Self-Healing Loop
 Generates Playwright E2E tests when Trinity Score < 90.
 
 永 (Eternity): Ensures long-term quality through automated testing.
@@ -23,8 +22,7 @@ class GeneratedTest:
 
 
 class AutoTestGenerator:
-    """
-    Generates tests to improve Trinity Score.
+    """Generates tests to improve Trinity Score.
 
     When Truth score is low, generates:
     - Unit tests for component logic
@@ -35,8 +33,7 @@ class AutoTestGenerator:
     async def generate_tests(
         self, component_code: str, component_name: str, issues: list[str]
     ) -> list[GeneratedTest]:
-        """
-        Generate tests based on detected issues.
+        """Generate tests based on detected issues.
 
         Args:
             component_code: The React component code
@@ -45,6 +42,7 @@ class AutoTestGenerator:
 
         Returns:
             List of generated test cases
+
         """
         tests = []
 
@@ -156,11 +154,11 @@ test('{component_name} is responsive', async ({{ page }}) => {{
         )
 
     async def run_tests(self, tests: list[GeneratedTest]) -> tuple[bool, float]:
-        """
-        Run generated tests (mock for now).
+        """Run generated tests (mock for now).
 
         Returns:
             Tuple of (all_passed, truth_score_boost)
+
         """
         # In real implementation, would run playwright test
         passed = len(tests) > 0

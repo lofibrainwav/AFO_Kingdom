@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Chancellor Graph Rule Constants (SSOT)
+"""Chancellor Graph Rule Constants (SSOT)
 
 All decision rules used by the Chancellor Graph for AUTO_RUN/ASK routing.
 These constants ensure consistency across all nodes and provide audit trails.
@@ -21,8 +20,7 @@ WEIGHTS = {
 
 # 🛡️ SSOT 런타임 가드: 가중치 검증 함수
 def validate_weights(weights: dict[str, float]) -> None:
-    """
-    SSOT 무결성 검증: 가중치 합계가 정확히 1.0인지 확인
+    """SSOT 무결성 검증: 가중치 합계가 정확히 1.0인지 확인
     SSOT 드리프트 방지를 위한 런타임 가드
     """
     total = sum(float(v) for v in weights.values())

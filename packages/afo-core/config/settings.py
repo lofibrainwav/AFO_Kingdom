@@ -11,9 +11,9 @@ from typing import ClassVar
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from .antigravity import antigravity
-from .julie import JulieConfig, julie_config
-from .trinity import TrinityConfig
+from AFO.antigravity import antigravity
+from AFO.julie import JulieConfig, julie_config
+from AFO.trinity import TrinityConfig
 
 
 class AFOSettings(BaseSettings):
@@ -223,7 +223,7 @@ def get_settings(env: str | None = None) -> AFOSettings:
 
     if env == "prod" or env == "production":
         try:
-            from .settings_prod import AFOSettingsProd
+            from AFO.settings_prod import AFOSettingsProd
 
             settings_class = AFOSettingsProd
         except ImportError:
@@ -231,7 +231,7 @@ def get_settings(env: str | None = None) -> AFOSettings:
             settings_class = AFOSettings
     elif env == "test" or env == "testing":
         try:
-            from .settings_test import AFOSettingsTest
+            from AFO.settings_test import AFOSettingsTest
 
             settings_class = AFOSettingsTest
         except ImportError:
@@ -239,7 +239,7 @@ def get_settings(env: str | None = None) -> AFOSettings:
             settings_class = AFOSettings
     else:  # dev 또는 기본값
         try:
-            from .settings_dev import AFOSettingsDev
+            from AFO.settings_dev import AFOSettingsDev
 
             settings_class = AFOSettingsDev
         except ImportError:
