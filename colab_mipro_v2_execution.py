@@ -95,39 +95,123 @@ for package, version in required_packages.items():
 
 print(f"\n   설치된 패키지: {installed_packages}")
 
-# Phase 3: 코드 파일 업로드 안내
-print("\n📁 Phase 3: 코드 파일 업로드")
+# Phase 3: TrinityAwareMIPROv2 클래스 정의 (SSOT Embedded)
+print("\n📝 Phase 3: TrinityAwareMIPROv2 클래스 정의")
 print("-" * 40)
 
-print("다음 파일들을 Google Colab에 업로드하세요:")
-print("   - trinity_mipro_v2.py (TrinityAwareMIPROv2 클래스)")
-print("\n업로드 방법:")
-print("   from google.colab import files")
-print("   uploaded = files.upload()")
-print("\n업로드 완료 후 다음 셀로 진행하세요.")
+import optuna
+from dspy.teleprompt import MIPROv2
+from optuna.pruners import HyperbandPruner
 
-# Colab에서 파일 업로드 코드 (주석 처리)
-"""
-from google.colab import files
-uploaded = files.upload()
+class TrinityAwareMIPROv2(MIPROv2):
+    """왕국 Trinity 철학 기반 MIPROv2 최적화 클래스"""
 
-print("업로드된 파일:")
-for filename in uploaded.keys():
-    print(f"  - {filename}")
-"""
+    def __init__(self, metric, num_trials: int = 20, **kwargs):
+        """
+        TrinityAwareMIPROv2 초기화
+
+        Args:
+            metric: 평가 메트릭 함수
+            num_trials: 최적화 시도 횟수
+            **kwargs: MIPROv2 추가 파라미터
+        """
+        # MIPROv2 (dspy 3.0.4) does not take num_trials in __init__
+        super().__init__(metric=metric, **kwargs)
+        self.num_trials = num_trials
+
+        # Trinity Score 가중치 (왕국 철학)
+        self.trinity_weights = {
+            "truth": 0.35,  # 眞 - 기술적 정확성
+            "goodness": 0.35,  # 善 - 윤리·안정성
+            "beauty": 0.20,  # 美 - 구조적 우아함
+            "serenity": 0.08,  # 孝 - 평온·마찰 최소
+            "eternity": 0.02,  # 永 - 지속 가능성
+        }
+
+        print("🏰 TrinityAwareMIPROv2 초기화 완료")
+        print(f"   Trinity 가중치: {self.trinity_weights}")
+        print(f"   최적화 시도 횟수: {num_trials}")
+
+    def evaluate_trinity_score(self, example, pred, trace=None) -> float:
+        """Trinity Score 기반 평가"""
+        # 眞 (Truth) - 정확성 평가
+        if hasattr(example, "answer") and hasattr(pred, "answer"):
+            truth_score = float(pred.answer.lower().strip() == example.answer.lower().strip())
+        else:
+            truth_score = 0.5
+
+        # 善 (Goodness) - 길이 적절성
+        if hasattr(pred, "answer"):
+            answer_len = len(pred.answer)
+            goodness_score = (
+                1.0 if 50 <= answer_len <= 200 else max(0.1, 1.0 - abs(125 - answer_len) / 125)
+            )
+        else:
+            goodness_score = 0.5
+
+        # 美 (Beauty) - 구조적 우아함
+        if hasattr(pred, "answer"):
+            beauty_score = (
+                1.0
+                if any(keyword in pred.answer.lower() for keyword in ["분석", "설명", "결과"])
+                else 0.7
+            )
+        else:
+            beauty_score = 0.5
+
+        # 孝 (Serenity), 永 (Eternity)
+        serenity_score = 0.8
+        eternity_score = 0.9
+
+        # Trinity Score 계산
+        trinity_score = (
+            self.trinity_weights["truth"] * truth_score
+            + self.trinity_weights["goodness"] * goodness_score
+            + self.trinity_weights["beauty"] * beauty_score
+            + self.trinity_weights["serenity"] * serenity_score
+            + self.trinity_weights["eternity"] * eternity_score
+        )
+        return trinity_score
+
+    def compile(self, student, trainset, **kwargs):
+        """Trinity Score 기반 MIPROv2 컴파일"""
+        print("🏰 TrinityAwareMIPROv2 컴파일 시작")
+        print(f"   학습 데이터셋 크기: {len(trainset)}")
+        print(f"   최적화 시도 횟수: {self.num_trials}")
+
+        # Trinity Score 기반 메트릭 래퍼
+        def trinity_metric(example, pred, trace=None):
+            return self.evaluate_trinity_score(example, pred, trace)
+
+        self.metric = trinity_metric
+
+        # Optuna study 생성
+        study = optuna.create_study(
+            direction="maximize", pruner=HyperbandPruner(), study_name="trinity_mipro_v2"
+        )
+        kwargs["study"] = study
+
+        print("🏰 MIPROv2 최적화 실행 중...")
+        optimized_program = super().compile(student, trainset, **kwargs)
+
+        print("🏰 TrinityAwareMIPROv2 컴파일 완료")
+        return optimized_program
+
+def calculate_trinity_score(truth, goodness, beauty, serenity=0.8, eternity=0.9):
+    return (0.35*truth + 0.35*goodness + 0.20*beauty + 0.08*serenity + 0.02*eternity)
+
+print("   ✅ TrinityAwareMIPROv2 클래스 정의 완료")
 
 # Phase 4: TrinityAwareMIPROv2 import 및 초기화
 print("\n🚀 Phase 4: TrinityAwareMIPROv2 초기화")
 print("-" * 40)
 
 try:
-    # 경로 설정
-    sys.path.append('/content')
+# TrinityAwareMIPROv2 초기화 테스트
+    # (클래스가 이미 상단에 정의됨)
+    # from trinity_mipro_v2 import TrinityAwareMIPROv2  <-- REMOVED
 
-    # TrinityAwareMIPROv2 import
-    from trinity_mipro_v2 import TrinityAwareMIPROv2, calculate_trinity_score
-
-    print("   ✅ TrinityAwareMIPROv2 import 성공")
+    print("   ✅ TrinityAwareMIPROv2 (Embedded) 준비 완료")
 
     # 클래스 초기화 테스트
     test_optimizer = TrinityAwareMIPROv2(metric=lambda x,y: 1.0, num_trials=3)
