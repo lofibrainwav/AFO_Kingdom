@@ -194,6 +194,7 @@ exclude_dirs = ["tests", "artifacts", ".venv", "venv", "legacy", "node_modules",
 "api_wallet.py" = ["F401"]
 "chancellor_graph.py" = ["F811"]
 "llm_router.py" = ["F842"]
+"api/chancellor_v2/**/*.py" = ["F401", "F841", "F811", "ARG"]
 
 [tool.ruff.format]
 quote-style = "double"
