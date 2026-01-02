@@ -35,6 +35,10 @@
     "packages/afo-core/mediators",
     "packages/afo-core/browser_auth",
     "packages/afo-core/validation",
+    "packages/afo-core/examples",
+    "packages/afo-core/afo",
+    "packages/afo-core/afo_soul_engine",
+    "packages/afo-core/rag_*",
     "tests"
   ],
   "venvPath": ".",
