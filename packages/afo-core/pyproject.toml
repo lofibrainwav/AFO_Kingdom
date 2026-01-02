@@ -166,6 +166,8 @@ ignore = [
     "ASYNC221", # async-process-run-blocking
     "PLC0206", # dict-index-iteration
     "UP035",   # deprecated-typing-generics (Dict, List, etc. - allow for legacy)
+    "RUF013",  # implicit-optional (allow for legacy)
+    "RUF059",  # unpacked-variable-never-used (allow in tests/legacy)
 ]
 
 [tool.bandit]
