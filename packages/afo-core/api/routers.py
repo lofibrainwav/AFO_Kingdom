@@ -4,6 +4,8 @@ AFO Kingdom API Router Registration
 Centralized router registration system for organized API management.
 """
 
+from fastapi import FastAPI
+
 from AFO.api.compat import (  # Phase-specific routers; Core routers; Feature routers
     aicpa_router,
     auth_router,
@@ -38,7 +40,6 @@ from AFO.api.compat import (  # Phase-specific routers; Core routers; Feature ro
     voice_router,
     wallet_router,
 )
-from fastapi import FastAPI
 
 
 def setup_routers(app: FastAPI) -> None:

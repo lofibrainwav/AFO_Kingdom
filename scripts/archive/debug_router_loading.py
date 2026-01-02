@@ -245,7 +245,7 @@ def main():
     print("=" * 60)
 
     all_loaded = all(r.get("status") == "success" for r in loading_results.values())
-    print(f"\n✅ 라우터 로딩: {'모두 성공' if all_loaded else '일부 실패'}")
+    print(f"\n✅ 라우터 로딩: {"모두 성공" if all_loaded else "일부 실패"}")
 
     if isinstance(registration_results, dict) and "found" in registration_results:
         found_count = len(registration_results["found"])

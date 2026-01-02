@@ -6,6 +6,7 @@ SSOT 가중치 합계가 1.0인지 검증하여 재발을 원천 차단합니다
 """
 
 import pytest
+
 from AFO.observability.rule_constants import WEIGHTS, WEIGHTS_HASH, validate_weights
 
 

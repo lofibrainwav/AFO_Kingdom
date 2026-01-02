@@ -4,13 +4,15 @@ import os
 # Try to import Qdrant/Neo4j via HybridRAG (or directly if not exposed)
 # We will use the hybrid_rag service functions where possible
 try:
-    from AFO.services.hybrid_rag import query_graph_context, query_qdrant
     from neo4j import GraphDatabase
+
     # We need UPSERT methods which might not be in hybrid_rag yet.
     # So we will implement direct clients here for ingestion,
     # and later refactor common logic if needed.
     from qdrant_client import QdrantClient
     from qdrant_client.http import models as models
+
+    from AFO.services.hybrid_rag import query_graph_context, query_qdrant
 except ImportError:
     print("Warning: Missing dependencies for ingestion.")
     QdrantClient = None

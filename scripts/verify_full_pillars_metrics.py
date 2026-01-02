@@ -14,9 +14,9 @@ sys.path.append(
 )
 
 from services.detailed_pillars_calculator import pillars_metrics
-from services.truth_metrics_calculator import (
+from services.truth_metrics_calculator import (  # Re-using Truth from Phase 15
     truth_metrics,
-)  # Re-using Truth from Phase 15
+)
 
 
 async def verify_full_pillars():
@@ -61,7 +61,7 @@ async def verify_full_pillars():
     )
     truth_normalized = truth_raw["total_score"] / 25.0  # 0.0 ~ 1.0
     print(
-        f"🔹 Truth (眞): {truth_normalized * 100:.1f}% (Technical Score: {truth_raw['total_score']}/25)"
+        f"🔹 Truth (眞): {truth_normalized * 100:.1f}% (Technical Score: {truth_raw["total_score"]}/25)"
     )
 
     # 2. Calculate Goodness

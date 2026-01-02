@@ -352,7 +352,7 @@ def main():
 
     # Import 검증 결과
     all_imports_ok = all(r.get("status") == "success" for r in import_results.values())
-    print(f"\n✅ Import 검증: {'모두 성공' if all_imports_ok else '일부 실패'}")
+    print(f"\n✅ Import 검증: {"모두 성공" if all_imports_ok else "일부 실패"}")
     if all_imports_ok:
         for name, data in import_results.items():
             if data.get("status") == "success":

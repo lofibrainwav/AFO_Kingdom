@@ -97,7 +97,7 @@ def check_openapi_schema():
                     found_paths.append(target_path)
                     methods = list(paths[target_path].keys())
                     print(f"✅ {target_path}")
-                    print(f"   Methods: {', '.join(methods)}")
+                    print(f"   Methods: {", ".join(methods)}")
                 else:
                     missing_paths.append(target_path)
                     print(f"❌ {target_path} - 등록되지 않음")

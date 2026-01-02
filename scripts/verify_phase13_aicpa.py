@@ -24,7 +24,7 @@ from AFO.aicpa import (
 
 def print_header(title: str):
     """섹션 헤더 출력"""
-    print(f"\n{'=' * 60}")
+    print(f"\n{"=" * 60}")
     print(f"🏰 {title}")
     print("=" * 60)
 
@@ -51,7 +51,7 @@ def verify_tax_calculation():
     print(f"  Effective Rate: {result.effective_federal_rate}%")
     print(f"  Marginal Bracket: {result.marginal_bracket * 100}%")
     print(f"  Sweet Spot Headroom: ${result.sweet_spot_headroom:,}")
-    print(f"  IRMAA Warning: {'⚠️ Yes' if result.irmaa_warning else '✅ No'}")
+    print(f"  IRMAA Warning: {"⚠️ Yes" if result.irmaa_warning else "✅ No"}")
     print()
     print(f"  📝 Advice: {result.advice}")
 
@@ -74,16 +74,16 @@ def verify_roth_ladder():
         years=4,  # OBBBA 기간
     )
 
-    print(f"  Strategy: {result['strategy']}")
-    print(f"  Total Converted: ${result['total_converted']:,}")
-    print(f"  Total Tax Paid: ${result['total_tax_paid']:,}")
-    print(f"  Estimated Savings: ${result['estimated_savings']:,} 🎉")
-    print(f"  Summary: {result['summary']}")
+    print(f"  Strategy: {result["strategy"]}")
+    print(f"  Total Converted: ${result["total_converted"]:,}")
+    print(f"  Total Tax Paid: ${result["total_tax_paid"]:,}")
+    print(f"  Estimated Savings: ${result["estimated_savings"]:,} 🎉")
+    print(f"  Summary: {result["summary"]}")
     print()
     print("  📅 Year-by-Year Breakdown:")
     for year in result["years"]:
         print(
-            f"    {year['year']}: Convert ${year['conversion_amount']:,} → Tax ${year['tax_paid']:,}"
+            f"    {year["year"]}: Convert ${year["conversion_amount"]:,} → Tax ${year["tax_paid"]:,}"
         )
 
     # 검증
@@ -100,23 +100,23 @@ def verify_full_mission():
     service = get_aicpa_service()
     result = service.execute_full_mission("Justin Mason")
 
-    print(f"  Client: {result['client']['name']}")
-    print(f"  Goal: {result['client']['goal']}")
-    print(f"  Income: ${result['client']['gross_income']:,}")
-    print(f"  IRA Balance: ${result['client']['traditional_ira_balance']:,}")
+    print(f"  Client: {result["client"]["name"]}")
+    print(f"  Goal: {result["client"]["goal"]}")
+    print(f"  Income: ${result["client"]["gross_income"]:,}")
+    print(f"  IRA Balance: ${result["client"]["traditional_ira_balance"]:,}")
     print()
     print("  📊 Tax Analysis:")
-    print(f"    Total Tax: ${result['tax_analysis']['total_tax']:,}")
-    print(f"    Effective Rate: {result['tax_analysis']['effective_federal_rate']}%")
+    print(f"    Total Tax: ${result["tax_analysis"]["total_tax"]:,}")
+    print(f"    Effective Rate: {result["tax_analysis"]["effective_federal_rate"]}%")
     print(
-        f"    Roth Rec: ${result['tax_analysis']['roth_conversion_recommendation']:,}"
+        f"    Roth Rec: ${result["tax_analysis"]["roth_conversion_recommendation"]:,}"
     )
     print()
 
     if result["roth_strategy"]:
         print("  💰 Roth Strategy:")
-        print(f"    Savings: ${result['roth_strategy']['estimated_savings']:,}")
-        print(f"    Summary: {result['roth_strategy']['summary']}")
+        print(f"    Savings: ${result["roth_strategy"]["estimated_savings"]:,}")
+        print(f"    Summary: {result["roth_strategy"]["summary"]}")
 
     print()
     print("  📁 Generated Files:")
