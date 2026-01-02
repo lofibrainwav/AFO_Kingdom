@@ -44,7 +44,9 @@ jobs:
         run: uv run ruff format --check .
 
       - name: Pyright 타입 체크
-        run: uv run pyright
+        env:
+          NODE_OPTIONS: "--max-old-space-size=8192"
+        run: uv run pyright -p pyrightconfig.json
 
       - name: Pytest 테스트 (병렬 실행)
         run: uv run pytest -v -n auto
