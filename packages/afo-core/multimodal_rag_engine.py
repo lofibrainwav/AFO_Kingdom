@@ -1,11 +1,6 @@
-<<<<<<< HEAD
 # Trinity Score: 95.0 (Enhanced with Vision & Audio)
 """
 Multimodal RAG Engine for AFO Kingdom (Phase 3)
-=======
-# Trinity Score: 90.0 (Established by Chancellor)
-"""Multimodal RAG Engine for AFO Kingdom (Phase 2)
->>>>>>> wip/ph20-01-post-work
 Handles multimodal content (images, audio, video) in RAG pipelines.
 Strangler Fig: 메모리 관리 및 문서 제한 추가
 
@@ -24,21 +19,24 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-"""VERSION: FINAL_TRUTH_1"""
+VERSION = "FINAL_TRUTH_1"
+
+# Import vision and audio services
+logger = logging.getLogger(__name__)
 
 # Import vision and audio services
 try:
+    # Option A (AFO 패키지 내부인 경우 권장)
     from services.audio_service import get_audio_service
     from services.vision_service import get_vision_service
+    # Option B (정말 top-level `services`가 따로 있을 때만)
+    # from services.audio_service import get_audio_service
+    # from services.vision_service import get_vision_service
 
     _SERVICES_AVAILABLE = True
 except ImportError:
     _SERVICES_AVAILABLE = False
-    logger = logging.getLogger(__name__)
     logger.warning("Vision/Audio services not available - using fallback mode")
-
-# 로깅 설정
-logger = logging.getLogger(__name__)
 
 # Strangler Fig: 메모리 관리 추가 (善: Goodness 안전성)
 _memory_config = {
@@ -156,16 +154,16 @@ class MultimodalRAGEngine:
         try:
             # 접근 시간으로 정렬 (오래된 것부터)
             docs_with_times = []
-            for i, doc in enumerate(self.documents):
+            for doc in self.documents:
                 access_time = self._last_access_times.get(id(doc), doc.created_at or 0)
-                docs_with_times.append((access_time, i, doc))
+                docs_with_times.append((access_time, doc))
 
             docs_with_times.sort(key=lambda x: x[0])  # 접근 시간 오름차순
 
             cleaned = 0
             freed_space = 0.0
 
-            for _, index, doc in docs_with_times:
+            for _, doc in docs_with_times:
                 if freed_space >= required_space_mb:
                     break
 
@@ -175,7 +173,10 @@ class MultimodalRAGEngine:
                 )
 
                 # 문서 제거
-                self.documents.pop(index - cleaned)  # 인덱스 조정
+                try:
+                    self.documents.remove(doc)
+                except ValueError:
+                    continue
                 self._current_memory_mb -= doc_memory
                 freed_space += doc_memory
                 cleaned += 1
@@ -333,7 +334,7 @@ class MultimodalRAGEngine:
                 metadata=metadata,
             )
         except Exception as e:
-            logger.error(f"Failed to add image: {e}")
+            logger.error("Failed to add image: %s", str(e))
             return False
 
     def add_audio(self, audio_path: str, description: str = "", transcribe: bool = True) -> bool:
@@ -385,7 +386,7 @@ class MultimodalRAGEngine:
                 metadata=metadata,
             )
         except Exception as e:
-            logger.error(f"Failed to add audio: {e}")
+            logger.error("Failed to add audio: %s", str(e))
             return False
 
     def search(

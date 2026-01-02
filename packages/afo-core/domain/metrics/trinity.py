@@ -1,12 +1,6 @@
-# Trinity Score: 90.0 (Established by Chancellor)
-<<<<<<< HEAD
-# !/usr/bin/env python3
+#!/usr/bin/env python3
 """
 AFO Trinity Metrics Calculator
-=======
-#!/usr/bin/env python3
-"""AFO Trinity Metrics Calculator
->>>>>>> wip/ph20-01-post-work
 
 眞善美孝 (Truth, Goodness, Beauty, Filial Serenity) 수학 공식 구현
 
