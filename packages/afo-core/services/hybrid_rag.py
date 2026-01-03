@@ -623,3 +623,66 @@ async def generate_answer_async(
         openai_client,
         graph_context,
     )
+
+
+def _sse_fmt(event: str, data: Any) -> bytes:
+    import json
+
+    return (f"event: {event}\ndata: {json.dumps(data, ensure_ascii=False)}\n\n").encode()
+
+
+async def generate_answer_stream_async(
+    query: str,
+    contexts: list[str],
+    temperature: float,
+    response_format: str,
+    additional_instructions: str,
+    openai_client: Any = None,
+) -> Any:  # AsyncIterator[bytes]
+    """
+    眞 (Truth): SSE 패턴을 따르는 비동기 스트리밍 답변 생성
+    """
+    context_block = "\n\n".join([f"Chunk {idx + 1}:\n{ctx}" for idx, ctx in enumerate(contexts)])
+    system_prompt = " ".join(
+        part
+        for part in [
+            "You are the Brnestrm Hybrid RAG assistant.",
+            "Answer using ONLY the provided chunks. If unsure, say you do not know.",
+            "Reference the source when possible.",
+            additional_instructions,
+        ]
+        if part
+    )
+
+    if not openai_client:
+        yield _sse_fmt("error", {"error": "No LLM client available."})
+        return
+
+    try:
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {
+                "role": "user",
+                "content": f"Context:\n{context_block}\n\nQuestion: {query}",
+            },
+        ]
+
+        # Start event
+        yield _sse_fmt("start", {"engine": "hybrid_rag_stream"})
+
+        response = openai_client.chat.completions.create(
+            model="gpt-4",
+            messages=messages,
+            temperature=temperature,
+            stream=True,
+        )
+
+        for i, chunk in enumerate(response):
+            if chunk.choices and chunk.choices[0].delta.content:
+                token = chunk.choices[0].delta.content
+                yield _sse_fmt("token", {"i": i, "t": token})
+
+        yield _sse_fmt("done", {"ok": True})
+
+    except Exception as e:
+        yield _sse_fmt("error", {"error": str(e)})

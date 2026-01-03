@@ -24,6 +24,10 @@ class SecurityMiddleware(BaseHTTPMiddleware):
         self.sql_regex = re.compile("|".join(self.sql_injection_patterns), re.IGNORECASE)
 
     async def dispatch(self, request: Request, call_next: Callable) -> Response:
+        # SSE stream 경로는 바이패스 (RuntimeError 방지)
+        if "stream" in request.url.path:
+            return await call_next(request)
+
         # Check Query Params
         for key, value in request.query_params.items():
             if self.sql_regex.search(str(value)):
