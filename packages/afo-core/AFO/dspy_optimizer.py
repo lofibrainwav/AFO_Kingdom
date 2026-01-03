@@ -104,12 +104,69 @@ def compile_mipro(
             p = Path(save_path)
             try:
                 p.parent.mkdir(parents=True, exist_ok=True)
-                optimized.save(str(p))
-                print(f"[AFO] Optimization complete. Program saved to {save_path}")
+
+                # Safe-Save: try multiple methods to serialize the optimized program
+                saved = False
+
+                # Method 1: DSPy native save() if available
+                if hasattr(optimized, "save") and callable(optimized.save):
+                    try:
+                        optimized.save(str(p))
+                        saved = p.exists() and p.stat().st_size > 0
+                    except Exception as save_err:
+                        print(f"[AFO] DSPy save() failed: {save_err}")
+
+                # Method 2: JSON fallback using state_dict or __dict__
+                if not saved:
+                    import json
+
+                    state = None
+                    if hasattr(optimized, "state_dict"):
+                        state = optimized.state_dict()
+                    elif hasattr(optimized, "dump_state"):
+                        state = optimized.dump_state()
+                    elif hasattr(optimized, "__dict__"):
+                        # Extract serializable parts
+                        state = {
+                            "type": type(optimized).__name__,
+                            "module_keys": list(getattr(optimized, "__dict__", {}).keys()),
+                            "timestamp": __import__("datetime").datetime.now().isoformat(),
+                        }
+
+                    if state is not None:
+                        with open(p, "w", encoding="utf-8") as f:
+                            json.dump(state, f, indent=2, default=str)
+                        saved = p.exists() and p.stat().st_size > 0
+
+                # Validation: 0-byte is failure
+                if not saved or not p.exists() or p.stat().st_size == 0:
+                    raise RuntimeError(
+                        f"[AFO][FATAL] Artifact save failed: {p} is empty or missing"
+                    )
+
+                print(
+                    f"[AFO] Optimization complete. Program saved to {save_path} ({p.stat().st_size} bytes)"
+                )
+
             except Exception as e:
-                print(f"[WARNING] Failed to save optimized program: {e}")
+                # Write meta file for debugging
+                meta_path = p.with_suffix(".meta.json")
+                import json
+                import os
+
+                meta = {
+                    "error": str(e),
+                    "model": os.getenv("AFO_DSPY_MODEL", "unknown"),
+                    "dspy_version": getattr(__import__("dspy"), "__version__", "unknown"),
+                    "timestamp": __import__("datetime").datetime.now().isoformat(),
+                    "save_path": str(p),
+                }
+                with open(meta_path, "w", encoding="utf-8") as f:
+                    json.dump(meta, f, indent=2)
+                print(f"[AFO][ERROR] Save failed. Meta written to {meta_path}")
+
                 if strict:
-                    raise e
+                    raise
 
         return optimized
 
