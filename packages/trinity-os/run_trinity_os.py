@@ -19,6 +19,7 @@ class TrinityOS:
     """TRINITY-OS 메인 클래스 - 철학 엔진 통합."""
 
     def __init__(self, base_path: str | None = None):
+        """TRINITY-OS 초기화 - 철학 엔진과 스크립트 경로 설정."""
         self.base_path = Path(base_path or Path(__file__).parent)
         self.scripts_path = self.base_path / "scripts"
 
