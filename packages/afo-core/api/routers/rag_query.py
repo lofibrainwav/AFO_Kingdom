@@ -3,10 +3,12 @@ import asyncio
 from typing import Any
 
 from fastapi import APIRouter, HTTPException
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
 from AFO.services.hybrid_rag import (
     generate_answer_async,
+    generate_answer_stream_async,
     generate_hyde_query_async,
     get_embedding_async,
     query_graph_context,
@@ -189,4 +191,93 @@ async def query_knowledge_base(request: RAGRequest):
         sources=results[:5],
         graph_context=graph_context,
         processing_log=logs,
+    )
+
+
+@router.post("/query/stream")
+async def query_knowledge_base_stream(request: RAGRequest):
+    """
+    Advanced GraphRAG Streaming Query Endpoint
+    Mirror of /query but streams generation tokens via SSE.
+    """
+    if not HybridRAG.available:
+        raise HTTPException(
+            status_code=503, detail="RAG Service Unavailable (Missing dependencies)"
+        )
+
+    # 1. HyDE & Client Initialization
+    search_query = request.query
+    client = None
+
+    try:
+        import os
+
+        from openai import OpenAI
+
+        api_key = os.getenv("OPENAI_API_KEY")
+        if api_key:
+            client = OpenAI(api_key=api_key)
+    except Exception:
+        pass
+
+    if request.use_hyde and client:
+        try:
+            search_query = await generate_hyde_query_async(request.query, client)
+        except Exception:
+            pass
+
+    # 2. Embedding
+    try:
+        embedding = await get_embedding_async(search_query, client)
+    except Exception:
+        embedding = [0.0] * 1536
+
+    # 3. Retrieval (Mirror of /query)
+    tasks = []
+    if request.use_qdrant:
+        try:
+            from qdrant_client import QdrantClient
+
+            q_client = QdrantClient("localhost", port=6333)
+            tasks.append(query_qdrant_async(embedding, request.top_k, q_client))
+        except Exception:
+            pass
+
+    results: list[dict[str, Any]] = []
+    if tasks:
+        retrieval_results = await asyncio.gather(*tasks, return_exceptions=True)
+        for r_chunk in retrieval_results:
+            if isinstance(r_chunk, list):
+                results.extend(r_chunk)
+
+    # 4. Graph Context (Mirror of /query)
+    graph_context = []
+    if request.use_graph:
+        entities = [w for w in request.query.split() if len(w) > 4]
+        for res in results:
+            if isinstance(res, dict) and "metadata" in res and "content" in res["metadata"]:
+                words = [w for w in res["metadata"]["content"].split() if w[0].isupper()]
+                entities.extend(words[:3])
+        entities = list(set(entities))[:5]
+        if entities:
+            graph_context = query_graph_context(entities)
+
+    # 5. Extraction
+    contexts = [r["content"] for r in results[:5]]
+
+    # 6. Streaming Generation
+    # Headers to prevent buffering
+    headers = {"X-Accel-Buffering": "no", "Cache-Control": "no-cache"}
+
+    return StreamingResponse(
+        generate_answer_stream_async(
+            query=request.query,
+            contexts=contexts,
+            temperature=0.7,
+            response_format="markdown",
+            additional_instructions="Use the provided Graph Context to enrich the answer.",
+            openai_client=client,
+        ),
+        media_type="text/event-stream",
+        headers=headers,
     )

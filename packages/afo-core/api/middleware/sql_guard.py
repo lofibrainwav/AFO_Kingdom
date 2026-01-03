@@ -50,6 +50,10 @@ def _walk_strings(x: Any) -> Iterable[str]:
 
 class SqlGuardMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next) -> Response:
+        # SSE stream 경로는 바이패스 (RuntimeError 방지)
+        if "stream" in request.url.path:
+            return await call_next(request)
+
         mode = _mode()
         if mode == "off":
             return await call_next(request)  # type: ignore[no-any-return]

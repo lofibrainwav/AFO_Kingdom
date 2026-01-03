@@ -8,6 +8,14 @@ authors = [
 ]
 license = {text = "MIT"}
 readme = "README.md"
+dependencies = [
+    "httpx>=0.28.1",
+    "prometheus-client>=0.23.1",
+    "pydantic-settings>=2.12.0",
+    "pytest-asyncio>=1.3.0",
+    "redis>=7.1.0",
+    "slowapi>=0.1.9",
+]
 
 [project.urls]
 homepage = "https://github.com/afo-kingdom"
@@ -24,7 +32,6 @@ description = "眞善美孝永 Kingdom Monorepo"
 packages = [
     { include = "packages/afo-core" },
     { include = "packages/trinity-os" },
-    { include = "packages/sixXon" },
 ]
 
 [tool.poetry.dependencies]
