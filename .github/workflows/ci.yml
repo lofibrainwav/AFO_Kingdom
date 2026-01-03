@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  test-and-lint:
+  quality-gate:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -41,20 +41,6 @@ jobs:
           echo "Royal Build Verified: $(date)" > artifacts/royal_build/build_status.txt
           echo "Commit SHA: ${{ github.sha }}" >> artifacts/royal_build/build_status.txt
 
-<<<<<<< HEAD
-      - name: 1. Type Check (眞 - Truth)
-        continue-on-error: true
-        run: |
-          make type-check || echo "MyPy completed with warnings"
-
-      - name: 2. Lint (美 - Beauty)
-        run: make lint
-
-      - name: 3. Test & Coverage (善 - Goodness)
-        run: |
-          make test
-          cd packages/afo-core && pytest --cov=AFO --cov-report=xml
-=======
       - name: Ruff check (코드 품질 검증)
         run: uv run ruff check .
 
@@ -68,7 +54,6 @@ jobs:
 
       - name: Pytest 테스트 (병렬 실행)
         run: uv run pytest -v -n auto
->>>>>>> wip/ph20-01-post-work
 
       - name: 4. SBOM & Security (永 - Eternity)
         run: make sbom
@@ -119,13 +104,5 @@ jobs:
           AFO_WORKFLOW: ${{ github.workflow }}
           AFO_REPO: ${{ github.repository }}
         run: |
-<<<<<<< HEAD
-          if [ -f scripts/collect_ci_quality_metrics.py ]; then
-            python scripts/collect_ci_quality_metrics.py
-          else
-            echo "Metrics script not found, skipping"
-          fi
-=======
           cd packages/afo-core
           uv run python ../scripts/collect_ci_quality_metrics.py
->>>>>>> wip/ph20-01-post-work
