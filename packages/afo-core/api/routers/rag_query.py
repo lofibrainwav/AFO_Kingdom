@@ -1,12 +1,15 @@
 # Trinity Score: 90.0 (Established by Chancellor)
+from __future__ import annotations
+
 import asyncio
-from typing import Any
+from typing import Any, Union
 
 from fastapi import APIRouter, HTTPException
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
-
-from AFO.services.hybrid_rag import (
+from services.hybrid_rag import (
     generate_answer_async,
+    generate_answer_stream_async,
     generate_hyde_query_async,
     get_embedding_async,
     query_graph_context,
@@ -30,9 +33,7 @@ class HybridRAG:
         return await get_embedding_async(text, client)
 
     @staticmethod
-    async def query_qdrant_async(
-        embedding: list[float], top_k: int, client: Any
-    ) -> list[dict[str, Any]]:
+    async def query_qdrant_async(embedding: list[float], top_k: int, client: Any) -> list[dict[str, Any]]:
         return await query_qdrant_async(embedding, top_k, client)
 
     @staticmethod
@@ -70,10 +71,14 @@ class RAGRequest(BaseModel):
     use_hyde: bool = True
     use_graph: bool = True
     use_qdrant: bool = True
+    llm_provider: str = "openai"
+    temperature: float = 0.7
+    response_format: str = "markdown"
+    additional_instructions: str = ""
 
 
 class RAGResponse(BaseModel):
-    answer: str
+    answer: str | dict[str, Any]
     sources: list[Any]
     graph_context: list[Any]
     processing_log: list[str]
@@ -84,107 +89,159 @@ async def query_knowledge_base(request: RAGRequest):
     """Advanced GraphRAG Query Endpoint
     Orchestrates HyDE -> Hybrid Retrieval -> Graph Expansion -> Rerank -> Generation
     """
-    if not HybridRAG.available:
-        raise HTTPException(
-            status_code=503, detail="RAG Service Unavailable (Missing dependencies)"
-        )
+    logs = ["🧠 Advanced RAG Pipeline Started"]
 
-    logs = []
-    logs.append("🧠 Advanced RAG Pipeline Started")
-
-    # 1. HyDE (Hypothetical Document Embeddings)
+    # 1. HyDE & Client Initialization
     search_query = request.query
     client = None
+    try:
+        import os
 
-    if request.use_hyde and getattr(HybridRAG, "generate_hyde_query_async", None):
+        from openai import OpenAI
+
+        api_key = os.getenv("OPENAI_API_KEY")
+        if api_key:
+            client = OpenAI(api_key=api_key)
+    except Exception:
+        pass
+
+    if request.use_hyde and client:
         try:
-            import os
-
-            from openai import OpenAI
-
-            client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-        except Exception:
-            client = None
-
-        search_query = await HybridRAG.generate_hyde_query_async(request.query, client)
-        logs.append(f"✨ HyDE Generated: {search_query[:50]}...")
-    else:
-        logs.append("ℹ️ HyDE Skipped")
+            search_query = await generate_hyde_query_async(request.query, client)
+            logs.append(f"✨ HyDE Generated: {search_query[:50]}...")
+        except Exception as e:
+            logs.append(f"⚠️ HyDE Failed: {e}")
 
     # 2. Embedding
     try:
-        embedding = await HybridRAG.get_embedding_async(search_query, client)
+        embedding = await get_embedding_async(search_query, client)
     except Exception as e:
         logs.append(f"❌ Embedding Failed: {e}")
-        embedding = [0.0] * 1536  # Fallback
+        embedding = [0.0] * 1536
 
-    # 3. Retrieval (Parallel)
+    # 3. Retrieval
     tasks = []
-
-    # PGVector
-    # We need pg_pool. Assuming unavailable in straightforward way here without DI.
-    # For MVP Router, we might skip PG or use a global pool if available.
-    # We'll skip PG for now to focus on Qdrant which we set up.
-
-    # Qdrant
-    if request.use_qdrant and getattr(HybridRAG, "query_qdrant_async", None):
-        # Need client.
+    if request.use_qdrant:
         try:
             from qdrant_client import QdrantClient
 
             q_client = QdrantClient("localhost", port=6333)
-            tasks.append(HybridRAG.query_qdrant_async(embedding, request.top_k, q_client))
+            tasks.append(query_qdrant_async(embedding, request.top_k, q_client))
         except Exception:
             pass
 
-    results: list[dict[str, Any]] = []
+    results = []
     if tasks:
         retrieval_results = await asyncio.gather(*tasks, return_exceptions=True)
         for r_chunk in retrieval_results:
-            if isinstance(r_chunk, list) and all(isinstance(item, dict) for item in r_chunk):
+            if isinstance(r_chunk, list):
                 results.extend(r_chunk)
-            elif isinstance(r_chunk, Exception):
-                # Log exception but continue processing
-                pass
 
-    logs.append(f"🔍 Retrieved {len(results)} chunks from Vector Store")
+    logs.append(f"🔍 Retrieved {len(results)} chunks")
 
-    # 4. Graph Context (GraphRAG)
+    # 4. Graph Context
     graph_context = []
-    if request.use_graph and getattr(HybridRAG, "query_graph_context", None):
-        # Extract entities from results or query
-        # Simple extraction: split query by space for keywords (MVP)
+    if request.use_graph:
         entities = [w for w in request.query.split() if len(w) > 4]
-        # Or use extracted entities from chunks payload if available
-        for res in results:
-            if isinstance(res, dict) and "metadata" in res and "content" in res["metadata"]:
-                # Extract capitalized words as heuristic
-                words = [w for w in res["metadata"]["content"].split() if w[0].isupper()]
-                entities.extend(words[:3])
-
-        entities = list(set(entities))[:5]  # Limit
         if entities:
-            graph_context = HybridRAG.query_graph_context(entities)
-            logs.append(f"🕸️ Graph Context: Found {len(graph_context)} connections for {entities}")
+            graph_context = query_graph_context(entities[:5])
+            logs.append(f"🕸️ Graph Context: Found {len(graph_context)} connections")
 
-    # 5. Rerank / Selection
-    # Simple selection for now
+    # 5. Generation
     contexts = [r["content"] for r in results[:5]]
-
-    # 6. Generation
-    answer = await HybridRAG.generate_answer_async(
+    answer = await generate_answer_async(
         query=request.query,
         contexts=contexts,
-        temperature=0.7,
-        response_format="markdown",
-        additional_instructions="Use the provided Graph Context to enrich the answer.",
+        temperature=request.temperature,
+        response_format=request.response_format,
+        additional_instructions=request.additional_instructions,
         openai_client=client,
-        graph_context=graph_context,  # Passed to our updated function
+        graph_context=graph_context,
     )
 
+    # Convert answer to string if it's a dict for response_model compatibility
+    final_answer = answer if isinstance(answer, (str, dict)) else str(answer)
+
     return RAGResponse(
-        answer=str(answer),
+        answer=final_answer,
         sources=results[:5],
         graph_context=graph_context,
         processing_log=logs,
+    )
+
+
+@router.post("/query/stream")
+async def query_knowledge_base_stream(request: RAGRequest):
+    """
+    Advanced GraphRAG Streaming Query Endpoint
+    Mirror of /query but streams generation tokens via SSE.
+    """
+    # 1. HyDE & Client Initialization
+    search_query = request.query
+    client = None
+    try:
+        import os
+
+        from openai import OpenAI
+
+        api_key = os.getenv("OPENAI_API_KEY")
+        if api_key:
+            client = OpenAI(api_key=api_key)
+    except Exception:
+        pass
+
+    if request.use_hyde and client:
+        try:
+            search_query = await generate_hyde_query_async(request.query, client)
+        except Exception:
+            pass
+
+    # 2. Embedding
+    try:
+        embedding = await get_embedding_async(search_query, client)
+    except Exception:
+        embedding = [0.0] * 1536
+
+    # 3. Retrieval
+    tasks = []
+    if request.use_qdrant:
+        try:
+            from qdrant_client import QdrantClient
+
+            q_client = QdrantClient("localhost", port=6333)
+            tasks.append(query_qdrant_async(embedding, request.top_k, q_client))
+        except Exception:
+            pass
+
+    results = []
+    if tasks:
+        retrieval_results = await asyncio.gather(*tasks, return_exceptions=True)
+        for r_chunk in retrieval_results:
+            if isinstance(r_chunk, list):
+                results.extend(r_chunk)
+
+    # 4. Graph Context
+    graph_context = []
+    if request.use_graph:
+        entities = [w for w in request.query.split() if len(w) > 4]
+        if entities:
+            graph_context = query_graph_context(entities[:5])
+
+    # 5. Extraction
+    contexts = [r["content"] for r in results[:5]]
+
+    # 6. Streaming Generation
+    headers = {"X-Accel-Buffering": "no", "Cache-Control": "no-cache"}
+
+    return StreamingResponse(
+        generate_answer_stream_async(
+            query=request.query,
+            contexts=contexts,
+            temperature=request.temperature,
+            response_format=request.response_format,
+            additional_instructions=request.additional_instructions,
+            openai_client=client,
+        ),
+        media_type="text/event-stream",
+        headers=headers,
     )

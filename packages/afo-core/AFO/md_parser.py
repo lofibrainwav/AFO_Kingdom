@@ -5,6 +5,7 @@ MD→티켓 자동화의 핵심 컴포넌트
 
 import re
 from dataclasses import dataclass
+from typing import Optional
 
 
 @dataclass
@@ -12,10 +13,10 @@ class ParsedMD:
     """파싱된 MD 데이터"""
 
     goal: str = ""
-    files_to_create: list[str] | None = None
-    files_to_update: list[str] | None = None
+    files_to_create: Optional[list[str]] = None
+    files_to_update: Optional[list[str]] = None
     raw_notes: str = ""
-    constraints: list[str] | None = None
+    constraints: Optional[list[str]] = None
 
     def __post_init__(self):
         if self.files_to_create is None:

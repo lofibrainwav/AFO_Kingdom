@@ -4,8 +4,11 @@
 MD→티켓 자동화 관련 모듈들도 포함
 """
 
+from __future__ import annotations
+
 import sys
 from pathlib import Path
+
 
 # 부모 디렉토리(afo-core 루트)를 path에 추가
 _parent = Path(__file__).parent.parent
@@ -37,47 +40,47 @@ def __getattr__(name: str):
         import api_wallet
 
         return api_wallet
-    elif name == "llm_router":
+    if name == "llm_router":
         import llm_router
 
         return llm_router
-    elif name == "input_server":
+    if name == "input_server":
         import input_server
 
         return input_server
-    elif name == "afo_skills_registry":
+    if name == "afo_skills_registry":
         import afo_skills_registry
 
         return afo_skills_registry
-    elif name == "api_server":
+    if name == "api_server":
         import api_server
 
         return api_server
-    elif name == "chancellor_graph":
+    if name == "chancellor_graph":
         import importlib
 
         return importlib.import_module("AFO.chancellor_graph")
-    elif name == "kms":
+    if name == "kms":
         import kms
 
         return kms
-    elif name == "scholars":
+    if name == "scholars":
         import scholars
 
         return scholars
-    elif name == "services":
+    if name == "services":
         import services
 
         return services
-    elif name == "utils":
+    if name == "utils":
         import utils
 
         return utils
-    elif name == "llms":
+    if name == "llms":
         import llms
 
         return llms
-    elif name == "domain":
+    if name == "domain":
         import domain
 
         return domain
