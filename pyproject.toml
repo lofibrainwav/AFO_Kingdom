@@ -121,7 +121,8 @@ exclude = [
     "scripts/generate_sbom.py",
     "scripts/mcp_smoke_test_afo_skills.py",
     "scripts/ssot_roadmap_alignment_audit.py",
-    "scripts/ssot_roadmap_audit.py"
+    "scripts/ssot_roadmap_audit.py",
+    "packages/trinity-os"
 ]
 
 [tool.ruff.lint]
@@ -163,6 +164,7 @@ ignore = [
 "**/api_server.py" = ["E402", "PLR0915", "PLC0415"]
 "**/routers/*.py" = ["PLC0415", "F401", "E402"]
 "**/routes/*.py" = ["PLC0415", "F401", "E402"]
+"check_antigravity.py" = ["T201"]
 
 [tool.ruff.format]
 quote-style = "double"
