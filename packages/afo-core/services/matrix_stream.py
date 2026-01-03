@@ -1,5 +1,6 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""Matrix Stream Service (The Flow)
+"""
+Matrix Stream Service (The Flow)
 Phase 10: Thought Visualization
 
 Broadcasts AI internal monologues via SSE.
@@ -87,14 +88,17 @@ PILLAR_KEYWORDS = {
 
 
 class MatrixStreamService:
-    """Manages the broadcast of AI thoughts."""
+    """
+    Manages the broadcast of AI thoughts.
+    """
 
     def __init__(self) -> None:
         self._queue: asyncio.Queue[dict[str, Any]] = asyncio.Queue()
         self._history: list[dict[str, Any]] = []
 
     async def push_thought(self, text: str, level: str = "info") -> None:
-        """Push a thought to the stream.
+        """
+        Push a thought to the stream.
         Auto-classifies Pillar.
         """
         pillar, confidence = self._classify_pillar(text)
@@ -116,7 +120,8 @@ class MatrixStreamService:
         logger.debug(f"🧠 [Matrix] Pushed: {text} ({pillar}:{confidence}%)")
 
     async def event_generator(self) -> AsyncGenerator[str, None]:
-        """SSE Generator.
+        """
+        SSE Generator.
         Yields new thoughts as they come.
         """
         while True:
@@ -131,7 +136,8 @@ class MatrixStreamService:
                 break
 
     def _classify_pillar(self, text: str) -> tuple[str | None, int]:
-        """Advanced NLP Classification (TF-IDFish + Cosine Sim).
+        """
+        Advanced NLP Classification (TF-IDFish + Cosine Sim).
         Pure Python Implementation for portability.
         """
         # 1. Tokenize

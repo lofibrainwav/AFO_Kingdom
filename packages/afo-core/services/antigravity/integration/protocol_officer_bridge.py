@@ -1,5 +1,6 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""Antigravity Protocol Officer Bridge - 외부 시스템 통합 모듈
+"""
+Antigravity Protocol Officer Bridge - 외부 시스템 통합 모듈
 Protocol Officer를 통한 외교적 메시지 포맷팅
 """
 
@@ -10,7 +11,8 @@ logger = logging.getLogger(__name__)
 
 
 class ProtocolOfficerBridge:
-    """Protocol Officer 통합 브릿지
+    """
+    Protocol Officer 통합 브릿지
     외부 메시지 포맷팅을 위한 인터페이스
     """
 
@@ -30,7 +32,8 @@ class ProtocolOfficerBridge:
             self.protocol_officer = None
 
     def format_decision_message(self, result: dict[str, Any]) -> str:
-        """결정 메시지 포맷팅
+        """
+        결정 메시지 포맷팅
         Protocol Officer를 통한 외교적 메시지 생성
 
         Args:
@@ -38,7 +41,6 @@ class ProtocolOfficerBridge:
 
         Returns:
             포맷팅된 메시지
-
         """
         # 기본 메시지 생성
         message = self._create_basic_message(result)
@@ -56,7 +58,8 @@ class ProtocolOfficerBridge:
         return message
 
     def _create_basic_message(self, result: dict[str, Any]) -> str:
-        """기본 메시지 생성
+        """
+        기본 메시지 생성
         Protocol Officer 없이도 작동하는 기본 포맷
         """
         decision = result.get("decision", "UNKNOWN")
@@ -85,7 +88,8 @@ class ProtocolOfficerBridge:
         evidence: dict[str, Any],
         next_steps: list[str],
     ) -> str:
-        """분석 보고서 생성
+        """
+        분석 보고서 생성
         Protocol Officer를 통한 외교적 보고서 포맷팅
 
         Args:
@@ -96,7 +100,6 @@ class ProtocolOfficerBridge:
 
         Returns:
             포맷팅된 보고서
-
         """
         # 기본 보고서 생성
         report = self._create_basic_report(context, analysis, evidence, next_steps)
@@ -120,7 +123,8 @@ class ProtocolOfficerBridge:
         evidence: dict[str, Any],
         next_steps: list[str],
     ) -> str:
-        """기본 보고서 생성
+        """
+        기본 보고서 생성
         Protocol Officer 없이도 작동하는 기본 포맷
         """
         from datetime import datetime

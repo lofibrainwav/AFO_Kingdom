@@ -4,7 +4,7 @@ import socket
 import time
 from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
-from typing import Any, Optional, Union
+from typing import Any
 
 """VERSION: FINAL_TRUTH_1"""
 
@@ -89,37 +89,24 @@ def build_organs_final(
         from config.settings import get_settings
 
         settings = get_settings()
-        redis_host = (
-            redis_host
-            or getattr(settings, "REDIS_HOST", None)
-            or os.getenv("REDIS_HOST", "afo-redis")
-        )
+        redis_host = redis_host or settings.REDIS_HOST or os.getenv("REDIS_HOST", "afo-redis")
         postgres_host = (
-            postgres_host
-            or getattr(settings, "POSTGRES_HOST", None)
-            or os.getenv("POSTGRES_HOST", "afo-postgres")
+            postgres_host or settings.POSTGRES_HOST or os.getenv("POSTGRES_HOST", "afo-postgres")
         )
         qdrant_host = qdrant_host or os.getenv("QDRANT_HOST", "afo-qdrant")
         # Extract hostname from OLLAMA_BASE_URL if available
-        ollama_base = getattr(settings, "OLLAMA_BASE_URL", None)
+        ollama_base = settings.OLLAMA_BASE_URL
         if ollama_base and "://" in ollama_base:
-            # Parse http://host.docker.internal:11434 -> host.docker.internal
-            parsed_host = ollama_base.split("://")[1].split(":")[0].split("/")[0]
-            ollama_host = ollama_host or parsed_host
+            # Parse http://afo-ollama:11434 -> afo-ollama
+            ollama_host = ollama_host or ollama_base.split("://")[1].split(":")[0].split("/")[0]
         else:
             ollama_host = ollama_host or os.getenv("OLLAMA_HOST", "afo-ollama")
-    except (ImportError, Exception):
+    except ImportError:
         # Fallback to os.getenv if settings not available
         redis_host = redis_host or os.getenv("REDIS_HOST", "afo-redis")
         postgres_host = postgres_host or os.getenv("POSTGRES_HOST", "afo-postgres")
         qdrant_host = qdrant_host or os.getenv("QDRANT_HOST", "afo-qdrant")
         ollama_host = ollama_host or os.getenv("OLLAMA_HOST", "afo-ollama")
-
-    # Ensure all hosts are non-None strings for type safety
-    redis_host = redis_host or "afo-redis"
-    postgres_host = postgres_host or "afo-postgres"
-    qdrant_host = qdrant_host or "afo-qdrant"
-    ollama_host = ollama_host or "afo-ollama"
 
     organs: dict[str, OrganReport] = {}
 

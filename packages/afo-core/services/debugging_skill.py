@@ -11,7 +11,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from AFO.services.automated_debugging_system import AutomatedDebuggingSystem
+from ..services.automated_debugging_system import AutomatedDebuggingSystem
 
 logger = logging.getLogger(__name__)
 

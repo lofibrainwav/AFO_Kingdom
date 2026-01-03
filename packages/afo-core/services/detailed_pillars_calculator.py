@@ -1,5 +1,6 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""Detailed Pillars Calculator (Phase 16)
+"""
+Detailed Pillars Calculator (Phase 16)
 "Comprehensive 5-Pillar Metrics" - 선, 미, 효, 영 지표 상세 계산기
 PDF 평가 기준: 각 기둥별 세부 구현 완성도 평가
 """
@@ -11,10 +12,13 @@ logger = logging.getLogger("AFO.PillarsMetrics")
 
 
 class DetailedPillarsCalculator:
-    """DetailedPillarsCalculator: 선, 미, 효, 영 점수 계산기"""
+    """
+    DetailedPillarsCalculator: 선, 미, 효, 영 점수 계산기
+    """
 
     def calculate_goodness_score(self, context: dict[str, Any]) -> float:
-        """선 (Goodness) - 35%: 윤리, 안정성, 리스크 관리
+        """
+        선 (Goodness) - 35%: 윤리, 안정성, 리스크 관리
         Target: Risk Score <= 0.1, Ethical Guardrails Active
         """
         score = 0.0
@@ -40,7 +44,8 @@ class DetailedPillarsCalculator:
         return round(score, 2)  # 0.0 ~ 1.0
 
     def calculate_beauty_score(self, code_snippet: str, context: dict[str, Any]) -> float:
-        """미 (Beauty) - 20%: 미학, 단순함, UX 우아함
+        """
+        미 (Beauty) - 20%: 미학, 단순함, UX 우아함
         Target: Modularity, Naming Consistency, Glassmorphism
         """
         score = 0.0
@@ -68,7 +73,8 @@ class DetailedPillarsCalculator:
         return round(score, 2)
 
     def calculate_serenity_score(self, context: dict[str, Any]) -> float:
-        """효 (Serenity) - 8%: 평온, 마찰 제거, 자동화
+        """
+        효 (Serenity) - 8%: 평온, 마찰 제거, 자동화
         Target: Automation, Speed < 1s, Env Consistency
         """
         score = 0.0
@@ -92,7 +98,8 @@ class DetailedPillarsCalculator:
         return round(score, 2)
 
     def calculate_eternity_score(self, code_snippet: str, context: dict[str, Any]) -> float:
-        """영 (Eternity) - 2%: 영속성, 지속 가능성, 문서화
+        """
+        영 (Eternity) - 2%: 영속성, 지속 가능성, 문서화
         Target: Docs, Git, Evolution Logs
         """
         score = 0.0

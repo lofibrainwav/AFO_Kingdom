@@ -50,6 +50,12 @@ from AFO.api.compat import (
     wallet_router,
 )
 
+# Import RAG Stream Router (Ticket-076)
+try:
+    from AFO.api.routes.rag_stream import router as rag_stream_router
+except ImportError:
+    rag_stream_router = None
+
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
@@ -176,6 +182,7 @@ class AFORouterManager:
 
         # Advanced AI systems
         self._safe_register_router(rag_query_router, prefix="/api", tags=["Brain Organ (RAG)"])
+        self._safe_register_router(rag_stream_router, prefix="/api", tags=["Brain Organ (RAG)"])
         self._safe_register_router(personas_router, tags=["Phase 2: Family Hub OS"])
 
     def _register_phase_routers(self) -> None:
@@ -209,6 +216,15 @@ class AFORouterManager:
 
         # Chancellor and streaming systems
         self._safe_register_router(chancellor_router, tags=["LangGraph Optimized"])
+
+        # RAG Streaming for T2.1
+        try:
+            from AFO.api.routers.rag_query import router as rag_router
+
+            self._safe_register_router(rag_router, prefix="/api", tags=["RAG Streaming"])
+        except ImportError:
+            logger.warning("RAG Router not available")
+
         # NOTE: system_stream router is deprecated. SSE is now consolidated in sse_ssot_router (system_health.py)
         # Keeping import as fallback but not registering to prevent route conflicts.
         # try:

@@ -232,6 +232,15 @@ class AFOServer:
         except Exception as e:
             logger.warning(f"Multimodal Router registration failed: {e}")
 
+        # RAG Router 등록
+        try:
+            from AFO.api.routers.rag_query import router as rag_router
+
+            app.include_router(rag_router, prefix="/api")
+            logger.info("RAG Router registered successfully")
+        except Exception as e:
+            logger.warning(f"RAG Router registration failed: {e}")
+
         return app
 
     def _create_limiter(self) -> Limiter:
