@@ -103,8 +103,9 @@ def build_organs_final(
         # Extract hostname from OLLAMA_BASE_URL if available
         ollama_base = getattr(settings, "OLLAMA_BASE_URL", None)
         if ollama_base and "://" in ollama_base:
-            # Parse http://afo-ollama:11434 -> afo-ollama
-            ollama_host = ollama_host or ollama_base.split("://")[1].split(":")[0].split("/")[0]
+            # Parse http://host.docker.internal:11434 -> host.docker.internal
+            parsed_host = ollama_base.split("://")[1].split(":")[0].split("/")[0]
+            ollama_host = ollama_host or parsed_host
         else:
             ollama_host = ollama_host or os.getenv("OLLAMA_HOST", "afo-ollama")
     except (ImportError, Exception):
