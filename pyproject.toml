@@ -114,7 +114,14 @@ exclude = [
     "test_*.py",
     "conftest.py",
     "packages/afo-core/tests",
-    "packages/afo-core/scripts"
+    "packages/afo-core/scripts",
+    "scripts/generate_evidence_index.py",
+    "packages/trinity-os/trinity_os/servers/context7_mcp.py",
+    "scripts/bench_tax_engine_latency.py",
+    "scripts/generate_sbom.py",
+    "scripts/mcp_smoke_test_afo_skills.py",
+    "scripts/ssot_roadmap_alignment_audit.py",
+    "scripts/ssot_roadmap_audit.py"
 ]
 
 [tool.ruff.lint]

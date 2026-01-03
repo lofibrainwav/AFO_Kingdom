@@ -116,14 +116,15 @@ class EvidenceIndexGenerator:
             curr_score = sorted_data[i][1]["calculation"]["total"]
             changes.append(curr_score - prev_score)
 
+            "consistency_score": round(1.0 - (statistics.stdev(changes) if len(changes) > 1 else 0), 3),
+>>>>>>> wip/ph20-01-post-work
+        }
         trend = {
             "direction": "stable",
             "avg_daily_change": round(statistics.mean(changes), 3) if changes else 0.0,
             "volatility": (round(statistics.stdev(changes), 3) if len(changes) > 1 else 0.0),
-<<<<<<< HEAD
-            "consistency_score": round(
-                1.0 - (statistics.stdev(changes) if len(changes) > 1 else 0), 3
-            ),
+            "consistency_score": round(1.0 - (statistics.stdev(changes) if len(changes) > 1 else 0), 3),
+        }
 =======
             "consistency_score": round(1.0 - (statistics.stdev(changes) if len(changes) > 1 else 0), 3),
 >>>>>>> wip/ph20-01-post-work
