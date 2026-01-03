@@ -16,7 +16,7 @@ from scripts.philosophy_engine import philosophy_engine
 
 
 class TrinityOS:
-    """TRINITY-OS 메인 클래스 - 철학 엔진 통합"""
+    """TRINITY-OS 메인 클래스 - 철학 엔진 통합."""
 
     def __init__(self, base_path: str | None = None):
         self.base_path = Path(base_path or Path(__file__).parent)
