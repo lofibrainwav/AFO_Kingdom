@@ -7,7 +7,7 @@ echo ">> Starting AICPA Core on Port 3005..."
 PID=$(lsof -ti :3005)
 if [ ! -z "$PID" ]; then
   echo ">> Port 3005 is busy. Stopping existing process ($PID)..."
-  kill -9 $PID
+  kill -9 "$PID"
   sleep 1
 fi
 echo ">> Checking API Key..."
