@@ -3,14 +3,8 @@ name: Shellcheck Gate
 on:
   pull_request:
     branches: [main]
-    paths:
-      - '**/*.sh'
-      - 'afo'
   push:
     branches: [main]
-    paths:
-      - '**/*.sh'
-      - 'afo'
 
 jobs:
   shellcheck:

@@ -5,6 +5,7 @@ MD→티켓 자동화의 핵심 로직
 
 import re
 from dataclasses import dataclass
+from typing import Optional
 
 from .md_parser import ParsedMD
 from .skeleton_index import ModuleInfo, SkeletonIndex
@@ -25,7 +26,7 @@ class MatchingResult:
     """매칭 결과"""
 
     candidates: list[MatchCandidate]
-    best_match: MatchCandidate | None
+    best_match: Optional[MatchCandidate]
     confidence_score: float
     recommendations: list[str]
 

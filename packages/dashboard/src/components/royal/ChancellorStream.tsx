@@ -29,55 +29,46 @@ export default function ChancellorStream() {
   const retryCountRef = useRef(0);
   const retryTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Calculate backoff delay (1s -> 2s -> 4s -> 8s -> max 10s)
-  const getBackoffDelay = useCallback(() => {
-    const delay = Math.min(1000 * Math.pow(2, retryCountRef.current), 10000);
-    return delay;
-  }, []);
-
-  // Connect to SSE function declaration
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const connect = useCallback(() => {
-    // Cleanup previous connection
-    if (eventSourceRef.current) {
-      eventSourceRef.current.close();
-    }
-
-    setStatus("reconnecting");
-    const eventSource = new EventSource("/api/logs/stream");
-    eventSourceRef.current = eventSource;
-
-    eventSource.onopen = () => {
-      setStatus("connected");
-      retryCountRef.current = 0; // Reset retry count on successful connection
-    };
-
-    eventSource.onmessage = (event) => {
-      if (!event.data) return;
-      setLastMessageAt(new Date());
-      setLogs((prev) => {
-        const newLogs = [...prev, event.data];
-        if (newLogs.length > 50) return newLogs.slice(newLogs.length - 50);
-        return newLogs;
-      });
-    };
-
-    eventSource.onerror = () => {
-      eventSource.close();
-      setStatus("offline");
-      
-      // Retry with exponential backoff
-      const delay = getBackoffDelay();
-      retryCountRef.current += 1;
-      
-      console.log(`[SSE] Reconnecting in ${delay}ms (attempt ${retryCountRef.current})`);
-      retryTimeoutRef.current = setTimeout(connect, delay);
-    };
-  }, [getBackoffDelay]);
-
-  // Connect function is declared above, so it's safe to use in setTimeout
-
   useEffect(() => {
+    // Connect to SSE function declaration inside useEffect
+    const connect = () => {
+      // Cleanup previous connection
+      if (eventSourceRef.current) {
+        eventSourceRef.current.close();
+      }
+
+      setStatus("reconnecting");
+      const eventSource = new EventSource("/api/logs/stream");
+      eventSourceRef.current = eventSource;
+
+      eventSource.onopen = () => {
+        setStatus("connected");
+        retryCountRef.current = 0; // Reset retry count on successful connection
+      };
+
+      eventSource.onmessage = (event) => {
+        if (!event.data) return;
+        setLastMessageAt(new Date());
+        setLogs((prev) => {
+          const newLogs = [...prev, event.data];
+          if (newLogs.length > 50) return newLogs.slice(newLogs.length - 50);
+          return newLogs;
+        });
+      };
+
+      eventSource.onerror = () => {
+        eventSource.close();
+        setStatus("offline");
+
+        // Retry with exponential backoff using inline calculation
+        const delay = Math.min(1000 * Math.pow(2, retryCountRef.current), 10000);
+        retryCountRef.current += 1;
+
+        console.log(`[SSE] Reconnecting in ${delay}ms (attempt ${retryCountRef.current})`);
+        retryTimeoutRef.current = setTimeout(connect, delay);
+      };
+    };
+
     connect();
 
     return () => {
@@ -88,7 +79,7 @@ export default function ChancellorStream() {
         clearTimeout(retryTimeoutRef.current);
       }
     };
-  }, [connect]);
+  }, []);
 
   // Auto-scroll
   useEffect(() => {
@@ -115,24 +106,7 @@ export default function ChancellorStream() {
     []
   );
 
-  // Status badge component
-  const StatusBadge = () => {
-    const config = {
-      connected: { icon: Wifi, color: "bg-emerald-500", text: "Connected" },
-      reconnecting: { icon: RefreshCw, color: "bg-amber-500", text: "Reconnecting" },
-      offline: { icon: WifiOff, color: "bg-red-500", text: "Offline" },
-    }[status];
 
-    const Icon = config.icon;
-
-    return (
-      <div className="flex items-center gap-1.5">
-        <span className={`w-2 h-2 rounded-full ${config.color} ${status === "reconnecting" ? "animate-pulse" : ""}`} />
-        <Icon className={`w-3 h-3 text-slate-500 ${status === "reconnecting" ? "animate-spin" : ""}`} />
-        <span className="text-[10px] text-slate-400 font-mono">{config.text}</span>
-      </div>
-    );
-  };
 
   return (
     <motion.div
@@ -148,7 +122,19 @@ export default function ChancellorStream() {
           <span className={`w-2 h-2 rounded-full ${status === "connected" ? "bg-emerald-500 animate-pulse" : "bg-slate-400"}`} />
           CHANCELLOR NEURAL STREAM
         </h3>
-        <StatusBadge />
+        <div className="flex items-center gap-1.5">
+          <span className={`w-2 h-2 rounded-full ${
+            status === "connected" ? "bg-emerald-500" :
+            status === "reconnecting" ? "bg-amber-500" : "bg-red-500"
+          } ${status === "reconnecting" ? "animate-pulse" : ""}`} />
+          {status === "connected" && <Wifi className={`w-3 h-3 text-slate-500 ${status === "reconnecting" ? "animate-spin" : ""}`} />}
+          {status === "reconnecting" && <RefreshCw className={`w-3 h-3 text-slate-500 animate-spin`} />}
+          {status === "offline" && <WifiOff className={`w-3 h-3 text-slate-500`} />}
+          <span className="text-[10px] text-slate-400 font-mono">
+            {status === "connected" ? "Connected" :
+             status === "reconnecting" ? "Reconnecting" : "Offline"}
+          </span>
+        </div>
       </div>
 
       <div

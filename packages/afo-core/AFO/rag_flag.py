@@ -85,7 +85,7 @@ async def execute_rag_with_flag(
     Returns:
         RAG 실행 결과 또는 fallback 정보
     """
-    from afo.rag_shadow import execute_rag_shadow
+    from AFO.rag_shadow import execute_rag_shadow
 
     start_time = asyncio.get_event_loop().time()
     flag_enabled = is_rag_flag_enabled(request_headers)
@@ -262,7 +262,7 @@ async def execute_rag_with_mode(
     Returns:
         RAG 실행 결과 + 결정 메트릭
     """
-    from afo.rag_shadow import execute_rag_shadow
+    from AFO.rag_shadow import execute_rag_shadow
 
     start_time = asyncio.get_event_loop().time()
 

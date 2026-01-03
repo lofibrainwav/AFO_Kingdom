@@ -24,7 +24,6 @@ export async function GET(request: NextRequest) {
         'Connection': 'keep-alive',
       },
       // Critical: Keep the connection open for SSE
-      // @ts-expect-error - Next.js extended fetch options
       signal: request.signal,
     });
 

@@ -14,6 +14,8 @@ Provides enterprise-grade tax calculation services with:
 SSOT Integration: IRS/FTB official guidelines with real-time sync (TICKET-033)
 """
 
+from AFO.julie_cpa.config import JulieConfig, julie_config
+
 from .ai_agents import AssociateAgent, AuditorAgent, JulieAgentOrchestrator, ManagerAgent
 from .depreciation import (
     DepInput,
