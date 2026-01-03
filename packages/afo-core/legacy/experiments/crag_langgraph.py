@@ -3,8 +3,7 @@
 # LLM은 consult_the_lens MCP 도구를 통해 점수를 확인하세요.
 # 이 파일은 AFO 왕국의 眞善美孝 철학을 구현합니다
 
-"""
-AFO Kingdom - CRAG LangGraph Implementation
+"""AFO Kingdom - CRAG LangGraph Implementation
 제갈량의 전략, 영덕의 실행
 
 CRAG = LangGraph 상태 그래프로 구현한 버전
@@ -42,8 +41,7 @@ TAVILY_API_KEY = os.getenv("TAVILY_API_KEY", "")
 
 
 class GraphState(TypedDict):
-    """
-    CRAG 그래프 상태
+    """CRAG 그래프 상태
 
     초등학생: 로봇 놀이에서 기억할 것들
     - question: 질문
@@ -59,8 +57,7 @@ class GraphState(TypedDict):
 
 
 class CRAGLangGraph:
-    """
-    LangGraph 기반 CRAG 엔진
+    """LangGraph 기반 CRAG 엔진
 
     제갈량의 전략: 상태 그래프로 워크플로우 시각화
     영덕의 실행: 실제 작동하는 코드
@@ -76,13 +73,13 @@ class CRAGLangGraph:
         llm_model: str = "gpt-3.5-turbo",
         grade_threshold: float = 0.5,
     ):
-        """
-        초기화
+        """초기화
 
         Args:
             vectorstore: 벡터 DB (없으면 더미 사용)
             llm_model: LLM 모델 이름
             grade_threshold: 평가 임계값 (0.5 = 50%)
+
         """
         self.vectorstore = vectorstore
         self.llm = ChatOpenAI(model=llm_model, temperature=0, api_key=OPENAI_API_KEY)
@@ -106,8 +103,7 @@ class CRAGLangGraph:
         }
 
     def _build_graph(self) -> Any:
-        """
-        CRAG 워크플로우 그래프 빌드
+        """CRAG 워크플로우 그래프 빌드
 
         초등학생: 로봇 놀이 순서 정하기
         """
@@ -136,8 +132,7 @@ class CRAGLangGraph:
         return workflow.compile()
 
     def _retrieve(self, state: GraphState) -> GraphState:
-        """
-        1단계: 검색 (Retrieve)
+        """1단계: 검색 (Retrieve)
 
         초등학생: 책장에서 책 찾아와
         """
@@ -176,8 +171,7 @@ class CRAGLangGraph:
         }
 
     def _grade_documents(self, state: GraphState) -> GraphState:
-        """
-        2단계: 평가 (Grade)
+        """2단계: 평가 (Grade)
 
         초등학생: 각 책 읽고 "관련 있어?" 확인
         """
@@ -228,8 +222,7 @@ class CRAGLangGraph:
         }
 
     def _route_decision(self, state: GraphState) -> Literal["web_search", "generate"]:
-        """
-        3단계: 라우팅 결정 (Route)
+        """3단계: 라우팅 결정 (Route)
 
         초등학생: 책 충분해? → 바로 답 / 부족해? → 인터넷 검색
         """
@@ -243,8 +236,7 @@ class CRAGLangGraph:
             return "generate"
 
     def _web_search(self, state: GraphState) -> GraphState:
-        """
-        4단계: 웹 검색 (Web Search)
+        """4단계: 웹 검색 (Web Search)
 
         초등학생: 인터넷에서 최신 정보 찾아와
         """
@@ -288,8 +280,7 @@ class CRAGLangGraph:
         }
 
     def _generate(self, state: GraphState) -> GraphState:
-        """
-        5단계: 답변 생성 (Generate)
+        """5단계: 답변 생성 (Generate)
 
         초등학생: 좋은 책으로 답 만들어
         """
@@ -331,8 +322,7 @@ class CRAGLangGraph:
         }
 
     def query(self, question: str) -> dict:
-        """
-        CRAG 쿼리 실행
+        """CRAG 쿼리 실행
 
         초등학생: 질문 받으면 로봇 놀이 시작!
 
@@ -346,6 +336,7 @@ class CRAGLangGraph:
                 "num_documents": 3,
                 "stats": {...}
             }
+
         """
         print(f"\n{'=' * 60}")
         print(f"🤖 CRAG (LangGraph) 질문: {question}")
@@ -374,8 +365,7 @@ class CRAGLangGraph:
 
 
 def test_crag_langgraph():
-    """
-    LangGraph CRAG 테스트
+    """LangGraph CRAG 테스트
 
     초등학생: 로봇 놀이 테스트해봐
     """

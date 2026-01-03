@@ -2,13 +2,15 @@ import asyncio
 import sys
 from datetime import datetime
 
+
 # Setup Path
 sys.path.append("/Users/brnestrm/AFO_Kingdom/packages/afo-core")
 
 import pathlib
 
-from AFO.chancellor_graph import historian_node
 from langchain_core.messages import HumanMessage
+
+from AFO.chancellor_graph import historian_node
 
 
 async def verify_genesis_fast():

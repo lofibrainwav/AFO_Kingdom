@@ -1,6 +1,7 @@
 import pathlib
 import sys
 
+
 # Check AntiGravity Configuration
 try:
     sys.path.append("/Users/brnestrm/AFO_Kingdom/packages/afo-core")
@@ -14,9 +15,7 @@ try:
     # 2. Check LOG_LEVEL
     expected_log_level = "DEBUG" if antigravity.ENVIRONMENT == "dev" else "INFO"
     if expected_log_level != antigravity.LOG_LEVEL:
-        print(
-            f"❌ FAIL: LOG_LEVEL mismatch. Got {antigravity.LOG_LEVEL}, expected {expected_log_level}"
-        )
+        print(f"❌ FAIL: LOG_LEVEL mismatch. Got {antigravity.LOG_LEVEL}, expected {expected_log_level}")
         sys.exit(1)
 
     print("✅ AntiGravity Config Checked: Safe Mode Active")

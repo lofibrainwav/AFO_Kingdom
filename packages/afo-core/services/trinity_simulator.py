@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Trinity Score Simulator
+"""Trinity Score Simulator
 실시간 Trinity Score 시뮬레이션 엔진
 PDF 페이지 1: 평가 점수 요약표 (4항목 × 25점 = 100점 만점)
 """
@@ -12,8 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 class TrinitySimulator:
-    """
-    Trinity Score 실시간 시뮬레이션 - 왕국 상태 변화 반영
+    """Trinity Score 실시간 시뮬레이션 - 왕국 상태 변화 반영
 
     PDF 페이지 1: 평가 점수 요약표
     - 기술적 완성도: 25점
@@ -31,8 +29,7 @@ class TrinitySimulator:
     }
 
     def simulate_real_time(self, changes: dict[str, int] | None = None) -> dict[str, Any]:
-        """
-        실시간 변화에 따라 점수 동적 재계산
+        """실시간 변화에 따라 점수 동적 재계산
 
         PDF 페이지 1: 세부 항목 기반
         - 에러 발생 → 기술적 완성도 감점
@@ -47,6 +44,7 @@ class TrinitySimulator:
 
         Returns:
             계산된 점수 및 총점
+
         """
         if changes is None:
             changes = {}

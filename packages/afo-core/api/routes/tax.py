@@ -8,7 +8,7 @@ SSOT 기반 세금 엔진 API:
 
 import uuid
 from datetime import datetime
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field

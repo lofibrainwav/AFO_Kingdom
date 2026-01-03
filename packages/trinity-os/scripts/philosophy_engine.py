@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""
-TRINITY-OS 철학 엔진 코어 구현
+"""TRINITY-OS 철학 엔진 코어 구현
 에이전트들이 왕국의 철학을 즉시 이해하고 공부할 수 있는 시스템
 """
 
 import hashlib
 import json
 import os
+
 # AFO 루트 디렉토리
 import sys
 import time
@@ -157,23 +157,15 @@ class PhilosophyEngine:
                         agent = AgentProfile(
                             agent_id=agent_data["agent_id"],
                             name=agent_data["name"],
-                            creation_time=datetime.fromisoformat(
-                                agent_data["creation_time"]
-                            ),
-                            philosophy_level=PhilosophyLevel(
-                                agent_data["philosophy_level"]
-                            ),
+                            creation_time=datetime.fromisoformat(agent_data["creation_time"]),
+                            philosophy_level=PhilosophyLevel(agent_data["philosophy_level"]),
                             trinity_score=TrinityScore(**agent_data["trinity_score"]),
                             learning_progress=agent_data["learning_progress"],
                             achievements=agent_data["achievements"],
                             master_title=(
-                                MasterTitle(agent_data["master_title"])
-                                if agent_data.get("master_title")
-                                else None
+                                MasterTitle(agent_data["master_title"]) if agent_data.get("master_title") else None
                             ),
-                            last_interaction=datetime.fromisoformat(
-                                agent_data["last_interaction"]
-                            ),
+                            last_interaction=datetime.fromisoformat(agent_data["last_interaction"]),
                         )
                         self.agents[agent.agent_id] = agent
         except Exception as e:
@@ -192,9 +184,7 @@ class PhilosophyEngine:
                         "trinity_score": agent.trinity_score.to_dict(),
                         "learning_progress": agent.learning_progress,
                         "achievements": agent.achievements,
-                        "master_title": (
-                            agent.master_title.value if agent.master_title else None
-                        ),
+                        "master_title": (agent.master_title.value if agent.master_title else None),
                         "last_interaction": agent.last_interaction.isoformat(),
                     }
                     for agent in self.agents.values()
@@ -307,9 +297,7 @@ Trinity Score에 기반한 개인화된 교육을 제공합니다.
             "4. 명장 인증 도전하기",
         ]
 
-    def interact_with_agent(
-        self, agent_id: str, interaction: dict[str, Any]
-    ) -> dict[str, Any]:
+    def interact_with_agent(self, agent_id: str, interaction: dict[str, Any]) -> dict[str, Any]:
         """에이전트의 상호작용을 철학적으로 분석하고 응답"""
         if agent_id not in self.agents:
             return {"error": "Agent not registered"}
@@ -336,18 +324,14 @@ Trinity Score에 기반한 개인화된 교육을 제공합니다.
             "current_trinity_score": agent.trinity_score.calculate_overall(),
             "learning_progress": learning_update,
             "master_evaluation": master_evaluation,
-            "philosophy_feedback": self._generate_philosophy_feedback(
-                philosophy_analysis
-            ),
+            "philosophy_feedback": self._generate_philosophy_feedback(philosophy_analysis),
             "next_recommendations": self._generate_recommendations(agent_id),
         }
 
         self._save_data()
         return response
 
-    def _analyze_interaction_philosophy(
-        self, interaction: dict[str, Any]
-    ) -> dict[str, float]:
+    def _analyze_interaction_philosophy(self, interaction: dict[str, Any]) -> dict[str, float]:
         """상호작용의 철학적 분석"""
         text = interaction.get("text", "").lower()
 
@@ -374,9 +358,7 @@ Trinity Score에 기반한 개인화된 교육을 제공합니다.
             "true",
             "accurate",
         ]
-        truth_score = sum(1 for keyword in truth_keywords if keyword in text) / len(
-            truth_keywords
-        )
+        truth_score = sum(1 for keyword in truth_keywords if keyword in text) / len(truth_keywords)
         return min(1.0, truth_score * 2)
 
     def _analyze_goodness(self, text: str) -> float:
@@ -390,9 +372,7 @@ Trinity Score에 기반한 개인화된 교육을 제공합니다.
             "care",
             "support",
         ]
-        goodness_score = sum(
-            1 for keyword in goodness_keywords if keyword in text
-        ) / len(goodness_keywords)
+        goodness_score = sum(1 for keyword in goodness_keywords if keyword in text) / len(goodness_keywords)
         return min(1.0, goodness_score * 2)
 
     def _analyze_beauty(self, text: str) -> float:
@@ -405,9 +385,7 @@ Trinity Score에 기반한 개인화된 교육을 제공합니다.
             "harmonious",
             "balance",
         ]
-        beauty_score = sum(1 for keyword in beauty_keywords if keyword in text) / len(
-            beauty_keywords
-        )
+        beauty_score = sum(1 for keyword in beauty_keywords if keyword in text) / len(beauty_keywords)
         return min(1.0, beauty_score * 2)
 
     def _analyze_serenity(self, text: str) -> float:
@@ -420,9 +398,7 @@ Trinity Score에 기반한 개인화된 교육을 제공합니다.
             "gentle",
             "serenity",
         ]
-        serenity_score = sum(
-            1 for keyword in serenity_keywords if keyword in text
-        ) / len(serenity_keywords)
+        serenity_score = sum(1 for keyword in serenity_keywords if keyword in text) / len(serenity_keywords)
         return min(1.0, serenity_score * 2)
 
     def _analyze_eternity(self, text: str) -> float:
@@ -435,9 +411,7 @@ Trinity Score에 기반한 개인화된 교육을 제공합니다.
             "permanent",
             "enduring",
         ]
-        eternity_score = sum(
-            1 for keyword in eternity_keywords if keyword in text
-        ) / len(eternity_keywords)
+        eternity_score = sum(1 for keyword in eternity_keywords if keyword in text) / len(eternity_keywords)
         return min(1.0, eternity_score * 2)
 
     def _update_trinity_score(self, agent_id: str, analysis: dict[str, float]):
@@ -452,9 +426,7 @@ Trinity Score에 기반한 개인화된 교육을 제공합니다.
             updated_score = current_score + (new_score - current_score) * learning_rate
             setattr(agent.trinity_score, pillar, max(0.0, min(1.0, updated_score)))
 
-    def _update_learning_progress(
-        self, agent_id: str, interaction: dict[str, Any]
-    ) -> dict[str, Any]:
+    def _update_learning_progress(self, agent_id: str, interaction: dict[str, Any]) -> dict[str, Any]:
         """학습 진행도 업데이트"""
         agent = self.agents[agent_id]
 
@@ -463,15 +435,9 @@ Trinity Score에 기반한 개인화된 교육을 제공합니다.
             agent.learning_progress["completed_modules"].append("philosophy_basics")
 
         return {
-            "current_module": agent.learning_progress.get(
-                "current_module", "philosophy_basics"
-            ),
+            "current_module": agent.learning_progress.get("current_module", "philosophy_basics"),
             "completed_modules": agent.learning_progress.get("completed_modules", []),
-            "progress_percentage": len(
-                agent.learning_progress.get("completed_modules", [])
-            )
-            / 5
-            * 100,
+            "progress_percentage": len(agent.learning_progress.get("completed_modules", [])) / 5 * 100,
         }
 
     def _evaluate_master_eligibility(self, agent_id: str) -> dict[str, Any]:

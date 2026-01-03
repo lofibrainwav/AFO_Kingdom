@@ -35,10 +35,7 @@ def _call_sequential_thinking(
         "thought_processed": f"Processed: {thought[:50]}...",
         "step": f"{thought_number}/{total_thoughts}",
         "progress": thought_number / total_thoughts,
-        "metadata": {
-            "truth_impact": 0.8,
-            "serenity_impact": 0.9
-        }
+        "metadata": {"truth_impact": 0.8, "serenity_impact": 0.9},
     }
 
 

@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-AFO Kingdom API Metadata Configuration
+"""AFO Kingdom API Metadata Configuration
 
 Provides OpenAPI metadata and tags for the FastAPI application.
 """
@@ -10,7 +9,6 @@ from typing import Any
 
 def get_api_metadata() -> dict[str, Any]:
     """Get FastAPI application metadata for OpenAPI documentation."""
-
     return {
         "title": "AFO Kingdom Soul Engine API",
         "description": """
@@ -58,7 +56,6 @@ The AFO Soul Engine is a multi-agent RAG system with advanced monitoring and wor
 
 def get_api_tags() -> list[dict[str, Any]]:
     """Get OpenAPI tags for endpoint grouping."""
-
     return [
         {
             "name": "Health",

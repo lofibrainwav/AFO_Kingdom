@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Git Status API
+"""Git Status API
 Git 저장소 상태 조회 엔드포인트
 """
 
@@ -41,8 +40,7 @@ def _run_git_command(cmd: str) -> str:
 
 @router.get("/status")
 async def get_git_status() -> dict[str, Any]:
-    """
-    Git 저장소 상태 조회
+    """Git 저장소 상태 조회
 
     Returns:
         - total_commits: 전체 커밋 수
@@ -52,6 +50,7 @@ async def get_git_status() -> dict[str, Any]:
         - synced: 동기화 상태 (uncommitted changes 여부)
         - status: git status 출력
         - recent_commits: 최근 커밋 목록
+
     """
     try:
         # 기본 Git 정보
@@ -117,13 +116,13 @@ async def get_git_status() -> dict[str, Any]:
 
 @router.get("/info")
 async def get_git_info() -> dict[str, Any]:
-    """
-    Git 저장소 상세 정보 조회
+    """Git 저장소 상세 정보 조회
 
     Returns:
         - remote: 원격 저장소 정보
         - config: Git 설정 정보
         - tags: 태그 목록
+
     """
     try:
         # 원격 저장소 정보

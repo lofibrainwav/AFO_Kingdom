@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Grok.com Capture Script
+"""Grok.com Capture Script
 Target: grok.com (Standalone)
 Purpose: Extract session cookies from the user's active Chrome session.
 """

@@ -6,6 +6,7 @@ Router Registration Test Script
 import sys
 from pathlib import Path
 
+
 # 프로젝트 루트를 sys.path에 추가
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root / "packages" / "afo-core"))
@@ -14,12 +15,11 @@ sys.path.insert(0, str(project_root / "packages" / "afo-core"))
 import json
 from datetime import datetime
 
+
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 
 
-def log_debug(
-    location: str, message: str, data: dict | None = None, hypothesis_id: str = "A"
-) -> None:
+def log_debug(location: str, message: str, data: dict | None = None, hypothesis_id: str = "A") -> None:
     """Debug logging to NDJSON file"""
     try:
         log_entry = {
@@ -53,8 +53,7 @@ def test_comprehensive_health_import():
     # #endregion agent log
 
     try:
-        from AFO.api.routes.comprehensive_health import \
-            router as comprehensive_health_router
+        from AFO.api.routes.comprehensive_health import router as comprehensive_health_router
 
         # #region agent log
         log_debug(
@@ -62,9 +61,7 @@ def test_comprehensive_health_import():
             "Comprehensive health router imported successfully",
             {
                 "router_prefix": (
-                    str(comprehensive_health_router.prefix)
-                    if hasattr(comprehensive_health_router, "prefix")
-                    else "N/A"
+                    str(comprehensive_health_router.prefix) if hasattr(comprehensive_health_router, "prefix") else "N/A"
                 )
             },
             "A",
@@ -84,8 +81,7 @@ def test_comprehensive_health_import():
         # #endregion agent log
         print(f"❌ Comprehensive Health 라우터 import 실패: {e}")
         try:
-            from api.routes.comprehensive_health import \
-                router as comprehensive_health_router
+            from api.routes.comprehensive_health import router as comprehensive_health_router
 
             print("✅ Comprehensive Health 라우터 import 성공 (fallback)")
             return True, comprehensive_health_router
@@ -123,13 +119,7 @@ def test_intake_import():
         log_debug(
             "test_router_registration.py:test_intake_import",
             "Intake router imported successfully",
-            {
-                "router_prefix": (
-                    str(intake_router.prefix)
-                    if hasattr(intake_router, "prefix")
-                    else "N/A"
-                )
-            },
+            {"router_prefix": (str(intake_router.prefix) if hasattr(intake_router, "prefix") else "N/A")},
             "B",
         )
         # #endregion agent log
@@ -185,13 +175,7 @@ def test_family_import():
         log_debug(
             "test_router_registration.py:test_family_import",
             "Family router imported successfully",
-            {
-                "router_prefix": (
-                    str(family_router.prefix)
-                    if hasattr(family_router, "prefix")
-                    else "N/A"
-                )
-            },
+            {"router_prefix": (str(family_router.prefix) if hasattr(family_router, "prefix") else "N/A")},
             "C",
         )
         # #endregion agent log

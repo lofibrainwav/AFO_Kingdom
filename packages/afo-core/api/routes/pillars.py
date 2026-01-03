@@ -1,8 +1,7 @@
 # Trinity Score: 90.0 (Established by Chancellor)
 # mypy: ignore-errors
 # mypy: ignore-errors
-"""
-AFO 5기둥 API 엔드포인트 (眞善美孝永)
+"""AFO 5기둥 API 엔드포인트 (眞善美孝永)
 제3계명: 가족 플랫폼에 5기둥 심기
 Phase 23-D: LangFlow 실시간 연동 추가
 """
@@ -67,11 +66,11 @@ class LiveFivePillarsResponse(BaseModel):
 
 
 async def calculate_five_pillars_from_system() -> dict[str, float]:
-    """
-    시스템 메트릭에서 5기둥 점수 계산 (비동기)
+    """시스템 메트릭에서 5기둥 점수 계산 (비동기)
 
     Returns:
         5기둥 점수 딕셔너리
+
     """
     try:
         # 시스템 메트릭 가져오기
@@ -113,14 +112,14 @@ async def calculate_five_pillars_from_system() -> dict[str, float]:
 
 @router.get("/current", response_model=FivePillarsResponse, summary="현재 5기둥 점수 조회")
 async def get_current_pillars() -> FivePillarsResponse:
-    """
-    현재 5기둥 점수 조회
+    """현재 5기둥 점수 조회
 
     Frontend의 FamilyDashboard에서 사용합니다.
     시스템 메트릭을 기반으로 실시간 5기둥 점수를 계산합니다.
 
     Returns:
         5기둥 점수 (眞善美孝永) + Overall + Balance
+
     """
     try:
         # 5기둥 점수 계산 (비동기)
@@ -164,8 +163,7 @@ async def get_current_pillars() -> FivePillarsResponse:
 async def evaluate_five_pillars_live(
     request: LangFlowFivePillarsRequest,
 ) -> LiveFivePillarsResponse:
-    """
-    LangFlow 실시간 데이터를 받아서 5기둥으로 평가 (Phase 23-D)
+    """LangFlow 실시간 데이터를 받아서 5기둥으로 평가 (Phase 23-D)
 
     LangFlow 워크플로우에서 데이터를 실시간으로 전송받아
     5기둥 점수로 변환하고 건강 상태를 평가합니다.
@@ -175,6 +173,7 @@ async def evaluate_five_pillars_live(
 
     Returns:
         실시간 5기둥 평가 결과 (Frontend에서 실시간 표시용)
+
     """
     try:
         if not FIVE_PILLARS_AGENT_AVAILABLE:
@@ -264,13 +263,13 @@ family_members_data = load_family_data()
 
 @router.get("/family/hub", summary="가족 허브 전체 상태 조회")
 async def get_family_hub() -> dict[str, Any]:
-    """
-    가족 전체 허브 상태 조회 (Phase 23-E)
+    """가족 전체 허브 상태 조회 (Phase 23-E)
 
     가족 구성원별 상태 + 가족 전체 5기둥 + 미팅 정보 + 목표를 통합 제공
 
     Returns:
         가족 허브 전체 상태 데이터
+
     """
     try:
         if not FAMILY_HUB_AVAILABLE:

@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Widget Specification Models (Pydantic v2)
+"""Widget Specification Models (Pydantic v2)
 
 Contract validation for generated/widgets.json
 Used in CI/local validation and optional FastAPI endpoints.

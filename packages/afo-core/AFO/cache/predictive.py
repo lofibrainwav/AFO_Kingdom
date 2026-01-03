@@ -9,7 +9,7 @@ Analyzes user context to prefetch data before it is requested.
 import logging
 from typing import Any
 
-from .manager import MultiLevelCache
+from AFO.manager import MultiLevelCache
 
 logger = logging.getLogger(__name__)
 
@@ -81,7 +81,7 @@ class PredictiveCacheManager:
 
 # Singleton - Import after manager to avoid circular imports
 try:
-    from .manager import cache_manager
+    from AFO.manager import cache_manager
 
     predictive_manager = PredictiveCacheManager(cache_manager)
 except ImportError:

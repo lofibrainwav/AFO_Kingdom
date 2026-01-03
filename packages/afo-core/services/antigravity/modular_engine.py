@@ -7,11 +7,11 @@ Simple Gate를 기반으로 선택적 모듈 확장
 import logging
 from typing import Any, Optional
 
-from .adaptive.thresholds import adaptive_thresholds
-from .core.simple_gate import evaluate_gate
-from .integration.protocol_officer_bridge import protocol_officer_bridge
-from .ml.predictor import quality_predictor
-from .reporting.reports import report_generator
+from AFO.adaptive.thresholds import adaptive_thresholds
+from AFO.core.simple_gate import evaluate_gate
+from AFO.integration.protocol_officer_bridge import protocol_officer_bridge
+from AFO.ml.predictor import quality_predictor
+from AFO.reporting.reports import report_generator
 
 logger = logging.getLogger(__name__)
 

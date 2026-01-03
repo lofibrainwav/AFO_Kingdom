@@ -132,7 +132,7 @@ def test_get_api_usage_import_error():
 
     # Retry strategy: The code does:
     # api_server_module = sys.modules.get("...")
-    # if api_server_module is None: from ... import ...
+    # if api_server_module is None: from AFO. import ...
 
     # We can patch exception handling.
     with patch.dict(sys.modules):

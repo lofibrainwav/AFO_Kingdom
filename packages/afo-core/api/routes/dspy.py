@@ -62,11 +62,11 @@ class MIPROv2Optimizer:
             # Use local Ollama for cost efficiency
             try:
                 self.lm = dspy.OllamaLocal(model="llama3.1:8b")
-            except:
+            except Exception:
                 # Fallback to OpenAI if Ollama not available
                 try:
                     self.lm = dspy.OpenAI(model="gpt-4o-mini")
-                except:
+                except Exception:
                     self.lm = None
         else:
             self.lm = None

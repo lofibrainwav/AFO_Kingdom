@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Performance Monitoring Middleware for AFO Kingdom
+"""Performance Monitoring Middleware for AFO Kingdom
 Tracks response times and identifies slow endpoints.
 
 Sequential Thinking: 단계별 성능 모니터링 미들웨어 구축
@@ -28,8 +27,7 @@ PERFORMANCE_THRESHOLDS = {
 
 
 class PerformanceMiddleware(BaseHTTPMiddleware):
-    """
-    성능 모니터링 미들웨어
+    """성능 모니터링 미들웨어
     Sequential Thinking: 단계별 성능 측정 및 알림
     """
 
@@ -72,9 +70,7 @@ class PerformanceMiddleware(BaseHTTPMiddleware):
         return response
 
     def _record_performance(self, request: Request, elapsed_ms: float) -> None:
-        """
-        성능 데이터 기록
-        """
+        """성능 데이터 기록"""
         # 전체 요청 시간 기록
         self._request_times.append(elapsed_ms)
         if len(self._request_times) > self._max_history:
@@ -112,9 +108,7 @@ class PerformanceMiddleware(BaseHTTPMiddleware):
     def _update_prometheus_metrics(
         self, request: Request, elapsed_ms: float, status_code: int
     ) -> None:
-        """
-        Prometheus 메트릭 업데이트
-        """
+        """Prometheus 메트릭 업데이트"""
         try:
             from prometheus_client import Histogram
 
@@ -138,9 +132,7 @@ class PerformanceMiddleware(BaseHTTPMiddleware):
             logger.debug("Prometheus 메트릭 업데이트 실패 (무시): %s", e)
 
     def get_performance_stats(self) -> dict[str, Any]:
-        """
-        성능 통계 조회
-        """
+        """성능 통계 조회"""
         if not self._request_times:
             return {
                 "total_requests": 0,

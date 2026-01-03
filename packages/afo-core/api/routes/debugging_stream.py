@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Automated Debugging Real-time Stream (SSE)
+"""Automated Debugging Real-time Stream (SSE)
 자동화 디버깅 시스템 실시간 스트리밍
 
 眞善美孝永 철학에 기반한 실시간 모니터링
@@ -29,19 +28,18 @@ _debugging_event_queue: asyncio.Queue[dict[str, Any]] = asyncio.Queue()
 
 
 async def broadcast_debugging_event(event_data: dict[str, Any]) -> None:
-    """
-    디버깅 이벤트 브로드캐스트 (내부 모듈에서 호출)
+    """디버깅 이벤트 브로드캐스트 (내부 모듈에서 호출)
 
     Args:
         event_data: 이벤트 데이터
+
     """
     await _debugging_event_queue.put(event_data)
 
 
 @router.get("/stream")
 async def stream_debugging_events(request: Request) -> EventSourceResponse:
-    """
-    자동화 디버깅 시스템 실시간 스트리밍 (SSE)
+    """자동화 디버깅 시스템 실시간 스트리밍 (SSE)
 
     클라이언트가 연결하면 디버깅 과정의 모든 이벤트를 실시간으로 스트리밍합니다.
     """
@@ -91,14 +89,14 @@ async def stream_debugging_events(request: Request) -> EventSourceResponse:
 
 @router.post("/emit")
 async def emit_debugging_event(event: dict[str, Any]) -> dict[str, Any]:
-    """
-    디버깅 이벤트 발생 (내부 모듈에서 호출)
+    """디버깅 이벤트 발생 (내부 모듈에서 호출)
 
     Args:
         event: 이벤트 데이터
 
     Returns:
         브로드캐스트 상태
+
     """
     await broadcast_debugging_event(event)
     return {"status": "broadcasted", "event_type": event.get("type", "unknown")}

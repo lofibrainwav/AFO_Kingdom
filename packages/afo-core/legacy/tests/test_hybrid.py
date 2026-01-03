@@ -2,8 +2,7 @@
 # ⚔️ 점수는 Truth Engine (scripts/calculate_trinity_score.py)에서만 계산됩니다.
 # LLM은 consult_the_lens MCP 도구를 통해 점수를 확인하세요.
 
-"""
-AFO Kingdom - 하이브리드 CRAG + Self-RAG 테스트
+"""AFO Kingdom - 하이브리드 CRAG + Self-RAG 테스트
 제갈량 × 영덕 협력 테스트
 
 세 가지 방식 비교:
@@ -43,9 +42,7 @@ def print_section(title: str):
 
 
 def test_crag_only():
-    """
-    CRAG만 테스트 (검색 고침)
-    """
+    """CRAG만 테스트 (검색 고침)"""
     print_section("📚 CRAG (검색 고침) 테스트")
 
     try:
@@ -114,9 +111,7 @@ def test_crag_only():
 
 
 def test_hybrid():
-    """
-    하이브리드 CRAG + Self-RAG 테스트
-    """
+    """하이브리드 CRAG + Self-RAG 테스트"""
     print_section("🔀 하이브리드 (검색 고침 + 생성 반성) 테스트")
 
     try:
@@ -193,9 +188,7 @@ def test_hybrid():
 
 
 def compare_results(crag_result: dict[str, Any], hybrid_result: dict[str, Any]):
-    """
-    CRAG vs 하이브리드 비교
-    """
+    """CRAG vs 하이브리드 비교"""
     print_section("📊 비교 결과: CRAG vs 하이브리드")
 
     if not crag_result["success"] or not hybrid_result["success"]:
@@ -257,9 +250,7 @@ def compare_results(crag_result: dict[str, Any], hybrid_result: dict[str, Any]):
 
 
 def main():
-    """
-    메인 테스트 함수
-    """
+    """메인 테스트 함수"""
     print_header("🤖 AFO Kingdom RAG 진화 테스트")
     print("제갈량(전략) × 영덕(실행) = 진화의 완성\n")
 

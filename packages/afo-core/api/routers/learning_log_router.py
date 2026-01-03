@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Learning Log Router (Phase 16-4)
+"""Learning Log Router (Phase 16-4)
 Endpoints for the Kingdom's Self-Learning Loop.
 """
 
@@ -25,14 +24,14 @@ _new_log_event = asyncio.Event()
 
 @router.post("/learning-log")
 async def create_learning_log(log: LearningLog) -> dict[str, Any]:
-    """
-    Receives feedback from Agents (Sima Yi/Zhou Yu) and saves it.
+    """Receives feedback from Agents (Sima Yi/Zhou Yu) and saves it.
 
     Args:
         log: Learning log to create
 
     Returns:
         dict: Status and log ID
+
     """
     log.timestamp = datetime.utcnow()
     # Simulating DB ID assignment
@@ -54,14 +53,14 @@ async def get_latest_logs() -> list[LearningLog]:
 
 @router.get("/learning-log/stream")
 async def stream_learning_logs(request: Request) -> StreamingResponse:
-    """
-    SSE Endpoint: Streams new learning logs to the Dashboard.
+    """SSE Endpoint: Streams new learning logs to the Dashboard.
 
     Args:
         request: FastAPI request object
 
     Returns:
         StreamingResponse: SSE stream of learning logs
+
     """
 
     async def event_generator() -> AsyncGenerator[str, None]:

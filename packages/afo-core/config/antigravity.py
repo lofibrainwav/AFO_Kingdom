@@ -1,12 +1,12 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-AFO Kingdom AntiGravity Configuration Settings
+"""AFO Kingdom AntiGravity Configuration Settings
 Step 0: The Core configuration for governed autonomous scaling.
 
 Integrated with AGENTS.md (SSOT for Trinity Pillars)
 """
 
 import logging
+import os
 from pathlib import Path
 from typing import (
     Any,
@@ -45,8 +45,7 @@ AGENTS_MD_RISK_SCORE_GUIDE = {
 
 
 class AntiGravitySettings(BaseSettings):
-    """
-    AntiGravity Governing Settings
+    """AntiGravity Governing Settings
     - Trinity Weights: AGENTS_MD_TRINITY_WEIGHTS
     - Threshholds: AGENTS_MD_AUTO_RUN_TRINITY_THRESHOLD, AGENTS_MD_AUTO_RUN_RISK_THRESHOLD
     - Risk Score Guide: AGENTS_MD_RISK_SCORE_GUIDE
@@ -99,14 +98,21 @@ class AntiGravitySettings(BaseSettings):
     def LOG_LEVEL(self) -> str:
         return "DEBUG" if self.ENVIRONMENT == "dev" else "INFO"
 
+    @property
+    def DRY_RUN(self) -> bool:
+        """Runtime DRY_RUN mode from environment variable.
+
+        Allows CLI tools to run in dry-run mode without requiring LM configuration.
+        """
+        return os.getenv("AFO_DRY_RUN", "false").lower() == "true"
+
     class Config:
         env_file = ".env.antigravity"  # 별도 env 파일로 마찰 최소화
         case_sensitive = False
         extra = "allow"
 
     def auto_sync(self) -> str:
-        """
-        자동 동기화 실행 (孝: Serenity) - Hot Reload Implementation
+        """자동 동기화 실행 (孝: Serenity) - Hot Reload Implementation
 
         Reads .env.antigravity and updates the singleton instance in-place.
         """

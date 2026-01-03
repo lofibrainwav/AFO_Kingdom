@@ -15,8 +15,7 @@ from AFO.services.hybrid_rag import (
 
 
 class HybridRAG:
-    """
-    Strangler Fig Compatibility Layer for Hybrid RAG Service.
+    """Strangler Fig Compatibility Layer for Hybrid RAG Service.
     MyPy 87 Error Fix: Explicitly define async methods.
     """
 
@@ -82,8 +81,7 @@ class RAGResponse(BaseModel):
 
 @router.post("/query", response_model=RAGResponse)
 async def query_knowledge_base(request: RAGRequest):
-    """
-    Advanced GraphRAG Query Endpoint
+    """Advanced GraphRAG Query Endpoint
     Orchestrates HyDE -> Hybrid Retrieval -> Graph Expansion -> Rerank -> Generation
     """
     if not HybridRAG.available:

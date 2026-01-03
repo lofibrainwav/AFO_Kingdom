@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-AICPA Report Generator - 문서 생성기
+"""AICPA Report Generator - 문서 생성기
 
 眞 (Truth): 정확한 세금 데이터 기반
 美 (Beauty): 전문적이고 아름다운 보고서
@@ -190,8 +189,7 @@ def generate_strategy_report(
 
 
 def generate_turbotax_csv(client_name: str, tax_data: dict, output_path: str | None = None) -> str:
-    """
-    TurboTax 입력용 CSV 생성
+    """TurboTax 입력용 CSV 생성
 
     孝 (Serenity): 수동 입력 제거
     """
@@ -250,8 +248,7 @@ def generate_turbotax_csv(client_name: str, tax_data: dict, output_path: str | N
 def generate_quickbooks_csv(
     client_name: str, transaction_data: dict, output_path: str | None = None
 ) -> str:
-    """
-    QuickBooks Online 입력용 CSV 생성
+    """QuickBooks Online 입력용 CSV 생성
 
     포맷: Batch Enter Transactions 호환
     """
@@ -306,8 +303,7 @@ def generate_email_draft(
     tax_result: dict,
     next_steps: str = "Please review and let me know if you have questions.",
 ) -> str:
-    """
-    고객 이메일 초안 생성
+    """고객 이메일 초안 생성
 
     美 (Beauty): 전문적이면서 친근한 톤
     """

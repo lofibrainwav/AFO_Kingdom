@@ -1,7 +1,6 @@
 # Trinity Score: 90.0 (Established by Chancellor)
 #!/usr/bin/env python3
-"""
-Redis 최적화 모듈 - Pipeline + Lua Script 통합
+"""Redis 최적화 모듈 - Pipeline + Lua Script 통합
 AFO Ascension Protocol - Phase 1.1
 
 기능:
@@ -25,8 +24,7 @@ if TYPE_CHECKING:
 
 
 class OptimizedRedisCache:
-    """
-    최적화된 Redis 캐시 클래스
+    """최적화된 Redis 캐시 클래스
     Pipeline + Lua Script + 모니터링 통합
     """
 
@@ -86,8 +84,7 @@ class OptimizedRedisCache:
         *args: Any,
         **kwargs: Any,
     ) -> Any:
-        """
-        GET-OR-COMPUTE 패턴 구현
+        """GET-OR-COMPUTE 패턴 구현
 
         Args:
             key: 캐시 키
@@ -97,6 +94,7 @@ class OptimizedRedisCache:
 
         Returns:
             계산된 값
+
         """
         if not self.client:
             # Redis 없으면 직접 계산
@@ -124,14 +122,14 @@ class OptimizedRedisCache:
             return await compute_func(*args, **kwargs)
 
     async def batch_get(self, keys: list[str]) -> dict[str, Any]:
-        """
-        배치 GET 작업
+        """배치 GET 작업
 
         Args:
             keys: 키 리스트
 
         Returns:
             {key: value} 딕셔너리
+
         """
         if not self.client:
             return {}
@@ -153,12 +151,12 @@ class OptimizedRedisCache:
             return {}
 
     async def batch_set(self, key_values: dict[str, Any], ttl_seconds: int = 300) -> None:
-        """
-        배치 SET 작업
+        """배치 SET 작업
 
         Args:
             key_values: {key: value} 딕셔너리
             ttl_seconds: TTL 초
+
         """
         if not self.client:
             return

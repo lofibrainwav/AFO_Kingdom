@@ -1,7 +1,6 @@
 # Trinity Score: 90.0 (Established by Chancellor)
 # serenity/vision_evaluator.py
-"""
-Trinity Vision Evaluator
+"""Trinity Vision Evaluator
 Analyzes screenshots to score Beauty (美) and Truth (眞).
 
 Uses simple heuristics and optionally LLM vision for deeper analysis.
@@ -26,8 +25,7 @@ class VisionEvaluation:
 
 
 class TrinityVisionEvaluator:
-    """
-    Evaluates UI screenshots based on Trinity principles.
+    """Evaluates UI screenshots based on Trinity principles.
 
     Beauty (美): Visual harmony, spacing, color contrast
     Truth (眞): Correct rendering, no errors, accessibility
@@ -56,8 +54,7 @@ class TrinityVisionEvaluator:
     async def evaluate(
         self, screenshot_path: str, expected_elements: list[str] | None = None
     ) -> VisionEvaluation:
-        """
-        Evaluate a screenshot for Beauty and Truth.
+        """Evaluate a screenshot for Beauty and Truth.
 
         Args:
             screenshot_path: Path to screenshot image
@@ -65,6 +62,7 @@ class TrinityVisionEvaluator:
 
         Returns:
             VisionEvaluation with scores and feedback
+
         """
         issues = []
         suggestions = []

@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Trinity Score Calculator (SSOT)
+"""Trinity Score Calculator (SSOT)
 동적 Trinity Score 계산기 - SSOT 가중치 기반 정밀 산출
 PDF 페이지 1: Trinity Score 계산기, 페이지 3: 5대 가치 동적 평가
 
@@ -54,17 +53,14 @@ SSOT_WEIGHTS = np.array(
 
 
 class TrinityCalculator:
-    """
-    Trinity Score Calculator (SSOT Implementation)
-    """
+    """Trinity Score Calculator (SSOT Implementation)"""
 
     def __init__(self) -> None:
         pass
 
     @validate_with_trinity
     def calculate_raw_scores(self, query_data: dict[str, Any]) -> list[float]:
-        """
-        Calculates Raw Scores [0.0, 1.0] for each Pillar.
+        """Calculates Raw Scores [0.0, 1.0] for each Pillar.
         Ideally this delegates to specific evaluators (TruthVerifier, RiskGate, etc.)
         For this service method, we implement the logic aggregation.
 
@@ -112,8 +108,7 @@ class TrinityCalculator:
     def calculate_trinity_score(
         self, raw_scores: list[float], static_score: float | None = None
     ) -> float:
-        """
-        Calculates final Trinity Score using SSOT Weights.
+        """Calculates final Trinity Score using SSOT Weights.
 
         [Option A: 7:3 Golden Ratio]
         If static_score is provided:
@@ -150,8 +145,7 @@ class TrinityCalculator:
     async def calculate_persona_scores(
         self, persona_data: dict[str, Any], context: dict[str, Any] | None = None
     ) -> dict[str, float]:
-        """
-        페르소나 기반 Trinity Score 계산 (Phase 2 확장)
+        """페르소나 기반 Trinity Score 계산 (Phase 2 확장)
 
         Args:
             persona_data: 페르소나 데이터 (id, name, type, role 등)
@@ -159,6 +153,7 @@ class TrinityCalculator:
 
         Returns:
             5기둥 점수 딕셔너리 (truth, goodness, beauty, serenity, eternity)
+
         """
         # 페르소나 타입에 따른 기본 점수 설정
         persona_type = persona_data.get("type", persona_data.get("id", "unknown"))
@@ -216,3 +211,41 @@ class TrinityCalculator:
 
 # Singleton Instance
 trinity_calculator = TrinityCalculator()
+
+
+def calculate_trinity_score(prediction: str, ground_truth: str) -> Any:
+    """Calculate Trinity Score for prediction vs ground truth.
+
+    Returns an object with .overall attribute for MIPROv2 compatibility.
+
+    Args:
+        prediction: Model prediction text
+        ground_truth: Expected ground truth text
+
+    Returns:
+        Object with .overall score (0.0 to 1.0)
+    """
+    # Simple similarity metric (can be enhanced later)
+    pred_lower = prediction.lower().strip()
+    gt_lower = ground_truth.lower().strip()
+
+    if pred_lower == gt_lower:
+        score = 1.0
+    elif gt_lower in pred_lower or pred_lower in gt_lower:
+        score = 0.8
+    else:
+        # Word overlap ratio
+        pred_words = set(pred_lower.split())
+        gt_words = set(gt_lower.split())
+        if gt_words:
+            overlap = len(pred_words & gt_words) / len(gt_words)
+            score = overlap * 0.7
+        else:
+            score = 0.0
+
+    # Return object with .overall attribute
+    class TrinityResult:
+        def __init__(self, overall: float):
+            self.overall = overall
+
+    return TrinityResult(overall=score)

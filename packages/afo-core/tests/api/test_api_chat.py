@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Tests for api/routes/chat.py
+"""Tests for api/routes/chat.py
 Chat API 엔드포인트 테스트
 """
 
@@ -111,7 +110,7 @@ class TestChatValidation:
         assert response.status_code in [200, 422, 500]
 
     def test_missing_message_field(self, client: TestClient) -> None:
-        """message 필드 누락 시 422 반환 테스트"""
+        """Message 필드 누락 시 422 반환 테스트"""
         response = client.post("/api/chat/message", json={})
         assert response.status_code == 422
 

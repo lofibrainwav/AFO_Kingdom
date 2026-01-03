@@ -1,7 +1,6 @@
 # Trinity Score: 90.0 (Established by Chancellor)
 #!/usr/bin/env python3
-"""
-Lazy Import 모듈 - 무거운 라이브러리 지연 로딩
+"""Lazy Import 모듈 - 무거운 라이브러리 지연 로딩
 AFO Ascension Protocol - Phase 1.2
 
 기능:
@@ -25,8 +24,7 @@ logger = logging.getLogger(__name__)
 
 
 class LazyModule:
-    """
-    지연 로딩 모듈 클래스
+    """지연 로딩 모듈 클래스
 
     사용법:
         autogen = LazyModule("autogen")
@@ -34,10 +32,10 @@ class LazyModule:
     """
 
     def __init__(self, module_name: str, fallback: Any = None) -> None:
-        """
-        Args:
-            module_name: 실제 import할 모듈 이름
-            fallback: import 실패 시 사용할 대체 객체
+        """Args:
+        module_name: 실제 import할 모듈 이름
+        fallback: import 실패 시 사용할 대체 객체
+
         """
         self._module_name = module_name
         self._module: Any | None = None
@@ -85,13 +83,12 @@ class LazyModule:
         return self._import_error is None
 
     def get_error(self) -> Exception | None:
-        """import 에러 반환"""
+        """Import 에러 반환"""
         return self._import_error
 
 
 class LazyFunction:
-    """
-    지연 로딩 함수 클래스
+    """지연 로딩 함수 클래스
 
     사용법:
         from utils.lazy_imports import lazy_autogen_func
@@ -209,8 +206,7 @@ def get_available_modules() -> dict[str, bool]:
 
 
 def preload_critical_modules() -> None:
-    """
-    중요한 모듈들 미리 로딩
+    """중요한 모듈들 미리 로딩
     서버 시작 시 호출하여 초기 지연 최소화
     """
     critical_modules = [

@@ -3,6 +3,7 @@ import os
 import pathlib
 import sys
 
+
 # Add package root to path
 sys.path.append(os.path.join(pathlib.Path.cwd(), "packages/afo-core"))
 
@@ -33,7 +34,7 @@ async def main():
         julie = JulieService()
         status = await julie.get_royal_status()
         if status["status"] == "Social Strategy Active (Royal Edition)":
-            print(f"✅ [Goodness] JulieService active (Status: {status["status"]}).")
+            print(f"✅ [Goodness] JulieService active (Status: {status['status']}).")
             results["goodness"] = True
     except Exception as e:
         print(f"❌ [Goodness] JulieService Failed: {e}")
@@ -52,9 +53,7 @@ async def main():
     # 4. Serenity (VisionVerifier)
     try:
         vision = VisionVerifier()
-        print(
-            f"✅ [Serenity] VisionVerifier instantiated (Screenshot Dir: {vision.screenshot_dir})."
-        )
+        print(f"✅ [Serenity] VisionVerifier instantiated (Screenshot Dir: {vision.screenshot_dir}).")
         results["serenity"] = True
     except Exception as e:
         print(f"❌ [Serenity] VisionVerifier Failed: {e}")

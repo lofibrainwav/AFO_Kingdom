@@ -134,8 +134,7 @@ def _get_cached_engine_status() -> dict[str, bool]:
 
 @router.get("/engines")
 async def chancellor_engines():
-    """
-    Chancellor AI 엔진 설치 상태 확인 (캐시 최적화)
+    """Chancellor AI 엔진 설치 상태 확인 (캐시 최적화)
 
     Trinity Score: 眞 (Truth) - 정확한 라이브러리 상태
     성능 최적화: 5분 캐시 + 빠른 import 순서

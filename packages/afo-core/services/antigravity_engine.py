@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Antigravity Engine - Phase 6 고급 거버넌스 시스템
+"""Antigravity Engine - Phase 6 고급 거버넌스 시스템
 Trinity Score 기반 지능형 코드 품질 관리
 """
 
@@ -31,8 +30,7 @@ except ImportError:
 
 
 class AntigravityEngine:
-    """
-    Antigravity Engine - 지능형 품질 게이트 시스템
+    """Antigravity Engine - 지능형 품질 게이트 시스템
     Trinity Score 기반 ML 예측 및 동적 임계값 조정
     """
 
@@ -68,8 +66,7 @@ class AntigravityEngine:
     async def evaluate_quality_gate(
         self, trinity_score: float, risk_score: float, context: dict[str, Any]
     ) -> dict[str, Any]:
-        """
-        지능형 품질 게이트 평가
+        """지능형 품질 게이트 평가
         ML 예측과 동적 임계값을 활용한 의사결정
 
         Args:
@@ -79,6 +76,7 @@ class AntigravityEngine:
 
         Returns:
             게이트 평가 결과
+
         """
         # 1. ML 기반 예측 (향후 품질 추정)
         predicted_score = await self._predict_future_quality(trinity_score, context)
@@ -123,8 +121,7 @@ class AntigravityEngine:
         return result
 
     async def _predict_future_quality(self, current_score: float, context: dict[str, Any]) -> float:
-        """
-        ML 기반 미래 품질 예측
+        """ML 기반 미래 품질 예측
         간단한 회귀 모델로 향후 Trinity Score 예측
         """
         if len(self.quality_history) < self.dynamic_thresholds["min_samples_for_prediction"]:
@@ -162,8 +159,7 @@ class AntigravityEngine:
         return current_score
 
     async def _calculate_dynamic_thresholds(self, context: dict[str, Any]) -> dict[str, float]:
-        """
-        동적 임계값 계산
+        """동적 임계값 계산
         프로젝트 맥락과 히스토리를 기반으로 임계값 조정
         """
         base_thresholds = self.dynamic_thresholds.copy()
@@ -209,8 +205,7 @@ class AntigravityEngine:
     async def _adjust_for_context(
         self, thresholds: dict[str, float], context: dict[str, Any]
     ) -> dict[str, float]:
-        """
-        맥락 기반 추가 임계값 조정
+        """맥락 기반 추가 임계값 조정
         코드 변경의 특성을 고려한 미세 조정
         """
         adjusted = thresholds.copy()
@@ -246,8 +241,7 @@ class AntigravityEngine:
         thresholds: dict[str, float],
         context: dict[str, Any],
     ) -> str:
-        """
-        지능형 의사결정
+        """지능형 의사결정
         Trinity Score, 예측, 임계값을 종합한 최종 결정
         """
         # 예측 점수 가중 평균
@@ -272,9 +266,7 @@ class AntigravityEngine:
         return "ASK_COMMANDER"
 
     async def _calculate_confidence(self, decision: str, context: dict[str, Any]) -> float:
-        """
-        의사결정 신뢰도 계산
-        """
+        """의사결정 신뢰도 계산"""
         base_confidence = 0.8  # 기본 신뢰도
 
         # 데이터 양에 따른 조정
@@ -294,8 +286,7 @@ class AntigravityEngine:
         return max(0.1, min(1.0, base_confidence))
 
     async def _generate_recommendations(self, decision: str, context: dict[str, Any]) -> list[str]:
-        """
-        개선 권장사항 생성
+        """개선 권장사항 생성
         [Phase B] Protocol Officer를 통한 포맷팅 강제
         """
         recommendations = []
@@ -391,8 +382,7 @@ class AntigravityEngine:
         context: dict[str, Any],
         decision: str,
     ) -> None:
-        """
-        학습 데이터 수집
+        """학습 데이터 수집
         향후 예측 정확도 향상을 위한 데이터 축적
         """
         learning_data = {
@@ -411,8 +401,7 @@ class AntigravityEngine:
             self.quality_history = self.quality_history[-1000:]
 
     def _format_decision_message(self, result: dict[str, Any]) -> str:
-        """
-        [Phase B] 결정 메시지 포맷팅 (Protocol Officer 전달용)
+        """[Phase B] 결정 메시지 포맷팅 (Protocol Officer 전달용)
         [Phase A] REPORT_LANGUAGE에 따른 언어 분기
         """
         # [Phase A] REPORT_LANGUAGE 확인
@@ -453,8 +442,7 @@ class AntigravityEngine:
         return msg
 
     async def adapt_thresholds(self) -> dict[str, Any]:
-        """
-        동적 임계값 적응
+        """동적 임계값 적응
         히스토리 데이터를 기반으로 임계값 자동 조정
         """
         if len(self.quality_history) < 20:
@@ -497,8 +485,7 @@ class AntigravityEngine:
         evidence: dict[str, Any],
         next_steps: list[str],
     ) -> str:
-        """
-        분석 보고서 생성 (SSOT 규칙 준수)
+        """분석 보고서 생성 (SSOT 규칙 준수)
         완료 선언 없이 분석 결과만 제공
         [Phase A] REPORT_LANGUAGE에 따른 언어 분기
         [Phase B] Protocol Officer 포맷팅 강제
@@ -581,8 +568,7 @@ class AntigravityEngine:
         evidence: dict[str, Any],
         next_steps: list[str],
     ) -> str | None:
-        """
-        완료 보고서 생성 (SSOT 증거 필수)
+        """완료 보고서 생성 (SSOT 증거 필수)
         증거가 없으면 None 반환 (생성 금지)
         [Phase C] 구조화된 증거 검증 강화
         """
@@ -678,9 +664,7 @@ class AntigravityEngine:
         return report
 
     def save_report(self, report: str, filename: str) -> Path:
-        """
-        리포트를 docs/reports/에 저장
-        """
+        """리포트를 docs/reports/에 저장"""
         # 루트 기준 docs/reports/ 경로
         repo_root = Path(__file__).parent.parent.parent.parent
         reports_dir = repo_root / "docs" / "reports"

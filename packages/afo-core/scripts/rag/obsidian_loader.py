@@ -1,7 +1,6 @@
 # Trinity Score: 90.0 (Established by Chancellor)
 #!/usr/bin/env python3
-"""
-옵시디언 vault 문서 로더
+"""옵시디언 vault 문서 로더
 Markdown 파일 로드 및 메타데이터 파싱
 """
 
@@ -39,23 +38,23 @@ class ObsidianLoader:
     """옵시디언 vault 문서 로더"""
 
     def __init__(self, vault_path: str | Path):
-        """
-        Args:
-            vault_path: 옵시디언 vault 경로
+        """Args:
+        vault_path: 옵시디언 vault 경로
+
         """
         self.vault_path = Path(vault_path)
         if not self.vault_path.exists():
             raise ValueError(f"Vault path does not exist: {vault_path}")
 
     def load_documents(self, exclude_patterns: list[str] | None = None) -> list[Document]:
-        """
-        vault의 모든 Markdown 파일 로드
+        """vault의 모든 Markdown 파일 로드
 
         Args:
             exclude_patterns: 제외할 파일 패턴 (예: [".obsidian", "templates"])
 
         Returns:
             Document 리스트
+
         """
         if exclude_patterns is None:
             exclude_patterns = [".obsidian", "templates", "dataview-queries"]

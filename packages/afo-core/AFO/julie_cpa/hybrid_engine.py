@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Julie CPA Hybrid Prediction Engine - 99%+ 정확도
+"""Julie CPA Hybrid Prediction Engine - 99%+ 정확도
 
 Phase 14 완전체: Prophet + auto_arima Residual Correction
 형님의 경제적 眞 (Truth) - 돈을 담당하는 매우 중요한 시스템
@@ -314,8 +313,7 @@ def hybrid_predict(
 
 
 def get_hybrid_forecast(periods: int = 3) -> dict[str, Any]:
-    """
-    왕국 하이브리드 예측 (메인 API)
+    """왕국 하이브리드 예측 (메인 API)
 
     眞 (Truth): 99%+ 경제적 진실
     """
@@ -324,9 +322,7 @@ def get_hybrid_forecast(periods: int = 3) -> dict[str, Any]:
 
 
 def compare_engines(periods: int = 3) -> dict[str, Any]:
-    """
-    Prophet vs Hybrid 비교
-    """
+    """Prophet vs Hybrid 비교"""
     df = get_historical_data()
 
     prophet_only = hybrid_predict(df, periods=periods, use_residual_correction=False)
