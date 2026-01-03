@@ -736,3 +736,63 @@ async def generate_answer_stream_async(
 
     except Exception as e:
         yield _sse_fmt("error", {"error": f"All LLM providers failed: {e!s}"})
+
+class HybridRAG:
+    """Wrapper class for HybridRAG functional implementation."""
+    available = True
+
+    @staticmethod
+    async def generate_answer_async(
+        query: str,
+        contexts: list[str],
+        temperature: float,
+        response_format: str,
+        additional_instructions: str,
+        openai_client: Any = None,
+        graph_context: Optional[list[dict[str, Any]]] = None,
+    ) -> str | dict[str, Any]:
+        return await generate_answer_async(
+            query,
+            contexts,
+            temperature,
+            response_format,
+            additional_instructions,
+            openai_client=openai_client,
+            graph_context=graph_context
+        )
+
+    @staticmethod
+    async def generate_hyde_query_async(query: str, client: Any) -> str:
+        return await generate_hyde_query_async(query, client)
+
+    @staticmethod
+    async def get_embedding_async(text: str, client: Any) -> list[float]:
+        return await get_embedding_async(text, client)
+
+    @staticmethod
+    async def query_qdrant_async(
+        embedding: list[float], top_k: int, client: Any
+    ) -> list[dict[str, Any]]:
+        return await query_qdrant_async(embedding, top_k, client)
+
+    @staticmethod
+    def query_graph_context(entities: list[str]) -> list[dict[str, Any]]:
+        return query_graph_context(entities)
+
+    @staticmethod
+    async def generate_answer_stream_async(
+        query: str,
+        contexts: list[str],
+        temperature: float,
+        response_format: str,
+        additional_instructions: str,
+        openai_client: Any = None,
+    ) -> Any:
+        return generate_answer_stream_async(
+            query,
+            contexts,
+            temperature,
+            response_format,
+            additional_instructions,
+            openai_client
+        )

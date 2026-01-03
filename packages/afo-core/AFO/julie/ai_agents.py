@@ -18,7 +18,8 @@ from enum import Enum
 from typing import Any
 
 import dspy
-from afo.context7 import search_irs_ftb
+
+# from afo.context7 import search_irs_ftb
 from pydantic import BaseModel, Field
 
 
@@ -74,7 +75,7 @@ class AssociateAgent:
         rcate = RCAteWorkflow(
             role="Associate: 데이터 수집 및 초안 작성",
             context={
-                "irs_ssot": search_irs_ftb("OBBBA 2026 §179 bonus depreciation"),
+                "irs_ssot": "Legacy Search Disabled",
                 "customer_data": input_data,
                 "business_purpose": input_data.get("purpose", "tax_optimization"),
             },
@@ -158,7 +159,7 @@ class ManagerAgent:
             role="Manager: 전략 검토 및 품질 게이트",
             context={
                 "associate_output": associate_output,
-                "irs_ftb_compliance": search_irs_ftb("CA FTB business expense rules"),
+                "irs_ftb_compliance": "Legacy Search Disabled",
                 "risk_assessment": self._assess_risks(associate_output),
             },
             action="Associate 초안 검토 및 고객 목적 적합성 평가",
@@ -279,7 +280,7 @@ class AuditorAgent:
             role="Auditor: 규정 준수 감사 및 Evidence Bundle 생성",
             context={
                 "manager_output": manager_output,
-                "irs_ftb_official": search_irs_ftb("OBBBA official guidance 2026"),
+                "irs_ftb_official": "Legacy Search Disabled",
                 "two_source_rule": self._apply_two_source_rule(manager_output),
             },
             action="IRS/FTB 공식 근거로 최종 판정 및 Evidence Bundle 생성",
