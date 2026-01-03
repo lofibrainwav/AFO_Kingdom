@@ -143,11 +143,13 @@ class MIPROv2Optimizer:
         dspy.settings.configure(lm=self.lm)
 
         # Create MIPROv2 teleprompter
+        # Note: auto="medium" conflicts with explicit num_candidates/num_trials
+        # Using explicit parameters instead
         teleprompter = MIPROv2(
+            metric=self.trinity_metric_function,
             num_candidates=config.get("num_candidates", 10),
             max_bootstrapped_demos=config.get("max_bootstrapped_demos", 4),
-            num_trials=config.get("num_trials", 20),
-            metric=self.trinity_metric_function,
+            num_threads=1,  # Limit threads for stability
         )
 
         # Execute optimization
