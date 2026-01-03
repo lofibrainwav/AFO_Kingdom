@@ -13,8 +13,8 @@ from typing import Any
 import redis
 from pydantic import BaseModel, Field
 
-from AFO.utils.circuit_breaker import CircuitBreaker
-from AFO.utils.exponential_backoff import exponential_backoff
+from ..utils.circuit_breaker import CircuitBreaker
+from ..utils.exponential_backoff import exponential_backoff
 
 # 로깅 설정
 logger = logging.getLogger(__name__)

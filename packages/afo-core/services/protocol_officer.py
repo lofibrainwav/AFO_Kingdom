@@ -1,5 +1,6 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""Protocol Officer Service (Phase 18)
+"""
+Protocol Officer Service (Phase 18)
 "Diplomatic Protocol & AI Manners" - 왕국의 의전관
 Ensures all outputs are dignified, respectful, and constitutionally compliant.
 
@@ -31,7 +32,8 @@ logger = logging.getLogger("AFO.Protocol")
 
 
 class ProtocolOfficer:
-    """Protocol Officer: Responsible for the 'Tone and Manner' of the Kingdom.
+    """
+    Protocol Officer: Responsible for the 'Tone and Manner' of the Kingdom.
     "Manners maketh Man (and AI)."
     """
 
@@ -43,12 +45,14 @@ class ProtocolOfficer:
 
     @validate_with_trinity
     def compose_diplomatic_message(self, content: str, audience: str = AUDIENCE_COMMANDER) -> str:
-        """Wraps the raw content in the appropriate diplomatic protocol.
+        """
+        Wraps the raw content in the appropriate diplomatic protocol.
         1. Validates against Constitution (Goodness/Serenity).
         2. Applies Tone/Manner based on Audience.
 
         Phase 5: Trinity 검증 적용 - 런타임 품질 모니터링
         """
+
         # 1. Constitutional Check (The Internal Education)
         # We assume the content *action* itself was already checked, but we check the *message* again for safety.
         is_compliant, reason = AFOConstitution.evaluate_compliance("Protocol Check", content)
@@ -66,7 +70,8 @@ class ProtocolOfficer:
 
     @validate_with_trinity
     def _format_for_commander(self, content: str) -> str:
-        """Format for 'Hyung-nim' (Brother/Commander).
+        """
+        Format for 'Hyung-nim' (Brother/Commander).
         Tone: Loyal, Concise, Philosophically Aligned (Seung-sang Style).
         """
         # AFO Signature: Start with Status, End with Vision
@@ -80,7 +85,8 @@ class ProtocolOfficer:
 
     @validate_with_trinity
     def _format_for_external(self, content: str) -> str:
-        """Format for External Systems/AIs.
+        """
+        Format for External Systems/AIs.
         Tone: Professional, Diplomatic, High-Integrity (Official AFO Protocol).
         """
         prefix = "[AFO Kingdom Official Communication]\n"

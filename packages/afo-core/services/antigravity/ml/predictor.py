@@ -1,5 +1,6 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""Antigravity ML Predictor - 미래 품질 예측 모듈
+"""
+Antigravity ML Predictor - 미래 품질 예측 모듈
 Trinity Score 기반 ML 예측 기능
 """
 
@@ -13,7 +14,8 @@ logger = logging.getLogger(__name__)
 
 
 class QualityPredictor:
-    """ML 기반 품질 예측기
+    """
+    ML 기반 품질 예측기
     과거 데이터를 기반으로 미래 Trinity Score 예측
     """
 
@@ -21,7 +23,8 @@ class QualityPredictor:
         self.quality_history: list[dict[str, Any]] = []
 
     def predict_future_quality(self, current_score: float, context: dict[str, Any]) -> float:
-        """ML 기반 미래 품질 예측
+        """
+        ML 기반 미래 품질 예측
         간단한 회귀 모델로 향후 Trinity Score 예측
 
         Args:
@@ -30,7 +33,6 @@ class QualityPredictor:
 
         Returns:
             예측된 미래 Trinity Score
-
         """
         if len(self.quality_history) < 10:
             # 충분한 데이터가 없으면 현재 점수 반환
@@ -72,7 +74,8 @@ class QualityPredictor:
         context: dict[str, Any],
         decision: str,
     ) -> None:
-        """학습 데이터 수집
+        """
+        학습 데이터 수집
         향후 예측 정확도 향상을 위한 데이터 축적
 
         Args:
@@ -80,7 +83,6 @@ class QualityPredictor:
             risk_score: Risk Score
             context: 맥락 정보
             decision: 내린 결정
-
         """
         learning_data = {
             "timestamp": datetime.now(),

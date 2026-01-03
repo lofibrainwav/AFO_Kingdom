@@ -12,7 +12,8 @@ logger = logging.getLogger(__name__)
 
 
 class GracefulService:
-    """Graceful Degradation: 점진적 기능 저하 우아함 (PDF 안정성 25/25)
+    """
+    Graceful Degradation: 점진적 기능 저하 우아함 (PDF 안정성 25/25)
 
     Ensures that core functionality remains available even when optional components fail.
     Implements the 'Fail Safe' and 'Degrade Gracefully' patterns.
@@ -24,7 +25,8 @@ class GracefulService:
 
     @validate_with_trinity
     def execute_core(self, query: str) -> str:
-        """핵심 기능: 형님 쿼리 응답 (항상 유지)
+        """
+        핵심 기능: 형님 쿼리 응답 (항상 유지)
         Must never fail if at all possible.
         """
         # In a real scenario, this might be a DB query or basic echo
@@ -32,7 +34,9 @@ class GracefulService:
 
     @validate_with_trinity
     def execute_optional(self, feature: str) -> str | None:
-        """선택 기능: 실패 시 폴백 (Graceful Degradation)"""
+        """
+        선택 기능: 실패 시 폴백 (Graceful Degradation)
+        """
         try:
             # Simulate failure in DRY_RUN or if flagged
             if self.dry_run and feature == "risky_operation":
@@ -50,7 +54,9 @@ class GracefulService:
 
     @validate_with_trinity
     def handle_query(self, query: str, optional_features: list[str]) -> dict[str, Any]:
-        """통합 실행: 핵심 + 선택 기능 (형님 평온 100%)"""
+        """
+        통합 실행: 핵심 + 선택 기능 (형님 평온 100%)
+        """
         # 1. Execute Core (Unprotected - let it bubble if critical, or wrap if even core needs fallback)
         try:
             core_result = self.execute_core(query)

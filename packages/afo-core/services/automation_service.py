@@ -1,5 +1,6 @@
 # Trinity Score: 95.0 (Automation Service Optimization)
-"""Automation Service with Intelligent Caching
+"""
+Automation Service with Intelligent Caching
 
 AFO 왕국 철학 준수 최적화:
 - 眞(Truth): 성능 측정 기반 캐싱 전략
@@ -30,11 +31,11 @@ _AUTOMATION_CACHE_TTL = 300  # 5분 캐시 (자동화 도구는 자주 변경되
 
 
 def get_automation_health() -> dict[str, Any]:
-    """AutomationTools 건강 상태 캐싱 및 반환
+    """
+    AutomationTools 건강 상태 캐싱 및 반환
 
     Returns:
         건강 상태 딕셔너리
-
     """
     global _automation_cache, _automation_cache_timestamp
 
@@ -95,7 +96,8 @@ def get_automation_health() -> dict[str, Any]:
 
 
 def reset_automation_cache() -> None:
-    """Automation 캐시 리셋 (디버깅/테스트용)
+    """
+    Automation 캐시 리셋 (디버깅/테스트용)
 
     Trinity Score: 孝 (Serenity) - 디버깅 편의성 제공
     """

@@ -1,5 +1,6 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""Machine Learning Error Pattern Learner
+"""
+Machine Learning Error Pattern Learner
 머신러닝 기반 에러 패턴 학습 시스템
 
 眞善美孝永 철학에 기반한 ML 진단 강화
@@ -38,7 +39,8 @@ class ErrorPattern:
 
 
 class MLErrorPatternLearner:
-    """머신러닝 기반 에러 패턴 학습 시스템
+    """
+    머신러닝 기반 에러 패턴 학습 시스템
     Sequential Thinking: 패턴 학습 및 예측적 진단
     """
 
@@ -97,7 +99,8 @@ class MLErrorPatternLearner:
         fix_applied: dict[str, Any] | None = None,
         success: bool = False,
     ) -> None:
-        """에러로부터 학습 (眞 - Truth)
+        """
+        에러로부터 학습 (眞 - Truth)
 
         Args:
             error_type: 에러 타입
@@ -106,7 +109,6 @@ class MLErrorPatternLearner:
             file_path: 파일 경로
             fix_applied: 적용된 수정 사항
             success: 수정 성공 여부
-
         """
         # 패턴 키 생성 (에러 타입 + 카테고리)
         pattern_key = f"{error_type}:{category}"
@@ -173,7 +175,8 @@ class MLErrorPatternLearner:
     def predict_fix(
         self, error_type: str, category: str, error_message: str
     ) -> list[dict[str, Any]]:
-        """에러에 대한 수정 예측 (眞 - Truth)
+        """
+        에러에 대한 수정 예측 (眞 - Truth)
 
         Args:
             error_type: 에러 타입
@@ -182,7 +185,6 @@ class MLErrorPatternLearner:
 
         Returns:
             예측된 수정 사항 목록 (성공률 순으로 정렬)
-
         """
         pattern_key = f"{error_type}:{category}"
 
@@ -210,11 +212,11 @@ class MLErrorPatternLearner:
         ]
 
     def get_pattern_statistics(self) -> dict[str, Any]:
-        """패턴 통계 조회 (永 - Eternity)
+        """
+        패턴 통계 조회 (永 - Eternity)
 
         Returns:
             패턴 통계 정보
-
         """
         total_patterns = len(self.patterns)
         total_occurrences = sum(p.occurrence_count for p in self.patterns.values())
