@@ -9,7 +9,6 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-
 # 부모 디렉토리(afo-core 루트)를 path에 추가
 _parent = Path(__file__).parent.parent
 if str(_parent) not in sys.path:

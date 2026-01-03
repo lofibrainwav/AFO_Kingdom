@@ -10,7 +10,7 @@ JULIE_CPA_2_010126.md 기반 로그 스키마 구현:
 
 import json
 from datetime import UTC, datetime
-from typing import Any
+from typing import Any, ClassVar
 
 from pydantic import BaseModel, Field
 from sqlalchemy import Column, DateTime, Float, String, Text, create_engine
@@ -39,7 +39,7 @@ class JulieLogEntry(BaseModel):
     )
 
     class Config:
-        json_encoders = {datetime: lambda v: v.isoformat()}
+        json_encoders: ClassVar[dict] = {datetime: lambda v: v.isoformat()}
 
 
 class JulieLogTable(Base):

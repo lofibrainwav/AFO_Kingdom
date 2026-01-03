@@ -59,7 +59,7 @@ dev = [
 # ============================================================================
 [tool.ruff]
 # Python 버전
-target-version = "py39"
+target-version = "py312"
 line-length = 100
 exclude = [
     ".git",
@@ -170,6 +170,9 @@ ignore = [
     "UP028",   # yield-in-for-loop (allow for legacy)
     "B023",    # function-uses-loop-variable (allow for legacy)
     "SIM210",  # use-conditional-true-false (allow for legacy)
+    "B904",    # raise-without-from-error (allow for legacy)
+    "RUF006",  # async-task-without-reference (allow for legacy)
+    "RUF100",  # unused-noqa (allow for cleanup later)
 ]
 
 [tool.bandit]

@@ -46,7 +46,7 @@ class HealingAgent:
             tg.start_soon(self._action_loop)
 
             # Keep alive until stopped
-            while self.running:  # noqa: ASYNC110
+            while self.running:
                 await anyio.sleep(1)
 
         logger.info(f"💤 [HealingAgent] {self.name} entering stasis.")

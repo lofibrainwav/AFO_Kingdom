@@ -17,10 +17,9 @@ from datetime import UTC, datetime
 from enum import Enum
 
 import dspy
-from afo.context7 import search_irs_ftb
 from pydantic import BaseModel, Field, field_validator
 
-from afo.dspy_optimizer import DepreciationSignature
+from AFO.context7 import search_irs_ftb
 
 
 class State(str, Enum):
@@ -281,8 +280,12 @@ def julie_depreciation_calc(input_data: DepInput) -> DepOutput:
 
 
 # 글로벌 DSPy 최적화 프로그램 (MIPROv2)
-dspy_optimizer = dspy.MIPROv2(
-    metric=lambda x, y: x.get("net_saving", 0),  # 순 절감액 최대화
-    num_candidates=10,
-    init_temperature=1.0,
-)
+try:
+    dspy_optimizer = dspy.MIPROv2(
+        metric=lambda x, y: x.get("net_saving", 0),  # 순 절감액 최대화
+        num_candidates=10,
+        init_temperature=1.0,
+    )
+except Exception as e:
+    print(f"Warning: DSPy MIPROv2 initialization failed: {e}")
+    dspy_optimizer = None

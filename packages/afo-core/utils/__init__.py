@@ -7,7 +7,7 @@ AFO Soul Engine Utilities
 
 from __future__ import annotations
 
-from AFO.exponential_backoff import (
+from .exponential_backoff import (
     BackoffStrategies,
     ExponentialBackoff,
     retry_with_exponential_backoff,

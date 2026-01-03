@@ -7,6 +7,7 @@ from typing import Any, Union
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
+
 from services.hybrid_rag import (
     generate_answer_async,
     generate_answer_stream_async,
@@ -33,7 +34,9 @@ class HybridRAG:
         return await get_embedding_async(text, client)
 
     @staticmethod
-    async def query_qdrant_async(embedding: list[float], top_k: int, client: Any) -> list[dict[str, Any]]:
+    async def query_qdrant_async(
+        embedding: list[float], top_k: int, client: Any
+    ) -> list[dict[str, Any]]:
         return await query_qdrant_async(embedding, top_k, client)
 
     @staticmethod

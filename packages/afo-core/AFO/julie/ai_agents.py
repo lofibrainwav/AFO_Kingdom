@@ -18,8 +18,9 @@ from enum import Enum
 from typing import Any
 
 import dspy
-from afo.context7 import search_irs_ftb
 from pydantic import BaseModel, Field
+
+from AFO.context7 import search_irs_ftb
 
 
 class AgentLevel(str, Enum):

@@ -13,7 +13,6 @@ from typing import Any, cast
 from pydantic import BaseModel
 from redis.commands.search.query import Query as RedisQuery
 
-
 # 眞 (Truth): Neo4j Integration (GraphRAG)
 try:
     from neo4j import GraphDatabase
@@ -206,7 +205,9 @@ def query_redis(embedding: list[float], top_k: int, redis_client: Any) -> list[d
         vector_blob = struct.pack(f"<{len(embedding)}f", *embedding)
         query = RedisQuery(f"*=>[KNN {top_k} @embedding $vector AS score]")
         query = query.return_fields("content", "source", "score").dialect(2)
-        search_result = redis_client.ft(index_name).search(query, query_params={"vector": vector_blob})
+        search_result = redis_client.ft(index_name).search(
+            query, query_params={"vector": vector_blob}
+        )
     except Exception as exc:
         print(f"[Hybrid RAG] Redis 검색 실패: {exc}")
         return []
@@ -386,7 +387,9 @@ def rerank_results(results: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return deduplicated
 
 
-def blend_results(pg_rows: list[dict[str, Any]], redis_rows: list[dict[str, Any]], top_k: int) -> list[dict[str, Any]]:
+def blend_results(
+    pg_rows: list[dict[str, Any]], redis_rows: list[dict[str, Any]], top_k: int
+) -> list[dict[str, Any]]:
     """
     美 (Beauty): PGVector와 Redis 결과를 통합 및 가중치 정렬 (RRF 유사 방식)
 
@@ -556,13 +559,17 @@ async def get_embedding_async(text: str, client: Any) -> list[float]:
     return await loop.run_in_executor(_executor, get_embedding, text, client)
 
 
-async def query_pgvector_async(embedding: list[float], top_k: int, pool: Any) -> list[dict[str, Any]]:
+async def query_pgvector_async(
+    embedding: list[float], top_k: int, pool: Any
+) -> list[dict[str, Any]]:
     """비동기 PGVector 검색 래퍼"""
     loop = asyncio.get_event_loop()
     return await loop.run_in_executor(_executor, query_pgvector, embedding, top_k, pool)
 
 
-async def query_redis_async(embedding: list[float], top_k: int, client: Any) -> list[dict[str, Any]]:
+async def query_redis_async(
+    embedding: list[float], top_k: int, client: Any
+) -> list[dict[str, Any]]:
     """비동기 Redis 검색 래퍼"""
     loop = asyncio.get_event_loop()
     return await loop.run_in_executor(_executor, query_redis, embedding, top_k, client)
@@ -576,7 +583,9 @@ async def blend_results_async(
     return await loop.run_in_executor(_executor, blend_results, pg_rows, redis_rows, top_k)
 
 
-async def query_qdrant_async(embedding: list[float], top_k: int, client: Any) -> list[dict[str, Any]]:
+async def query_qdrant_async(
+    embedding: list[float], top_k: int, client: Any
+) -> list[dict[str, Any]]:
     """비동기 Qdrant 검색 래퍼"""
     loop = asyncio.get_event_loop()
     return await loop.run_in_executor(_executor, query_qdrant, embedding, top_k, client)
@@ -703,7 +712,9 @@ async def generate_answer_stream_async(
         async with httpx.AsyncClient(timeout=60.0) as client:
             async with client.stream("POST", f"{ollama_url}/api/chat", json=payload) as resp:
                 if resp.status_code != 200:
-                    yield _sse_fmt("error", {"error": f"Ollama failed with status {resp.status_code}"})
+                    yield _sse_fmt(
+                        "error", {"error": f"Ollama failed with status {resp.status_code}"}
+                    )
                     return
 
                 i = 0
