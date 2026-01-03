@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""TRINITY-OS Python 인터페이스
+"""TRINITY-OS Python 인터페이스.
 AFO 왕국의 통합 자동화 운영체제
 
 철학 엔진 통합: 에이전트들이 왕국의 철학을 즉시 이해하고 공부할 수 있는 구조
@@ -110,6 +110,7 @@ class TrinityOS:
         try:
             result = subprocess.run(
                 [sys.executable, str(script_path)],
+                check=False,
                 capture_output=True,
                 text=True,
                 cwd=self.base_path,
@@ -121,7 +122,7 @@ class TrinityOS:
     def _run_shell_script(self, script_path: Path) -> str:
         """Shell 스크립트 실행"""
         try:
-            result = subprocess.run([str(script_path)], capture_output=True, text=True, cwd=self.base_path)
+            result = subprocess.run([str(script_path)], check=False, capture_output=True, text=True, cwd=self.base_path)
             return result.stdout.strip()
         except Exception as e:
             return f"Error: {e}"
