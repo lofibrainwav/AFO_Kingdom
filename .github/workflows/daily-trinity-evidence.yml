@@ -68,7 +68,7 @@ jobs:
           fi
 
       - name: "증거 아티팩트 업로드 (美)"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: trinity-evidence-${{ steps.evidence.outputs.date }}
           path: artifacts/trinity/${{ steps.evidence.outputs.date }}/
@@ -90,7 +90,7 @@ jobs:
 
       - name: "운영 로그 업로드 (孝)"
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: trinity-logs-${{ steps.evidence.outputs.date }}
           path: artifacts/logs/trinity_evidence.log
