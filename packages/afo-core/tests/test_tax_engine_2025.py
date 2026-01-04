@@ -9,7 +9,7 @@ SSOT 기반 정확성 검증:
 
 import pytest
 
-from afo.tax_engine.calculator import PersonFlags, TaxCalculator, TaxInput
+from AFO.tax_engine.calculator import PersonFlags, TaxCalculator, TaxInput
 from afo.tax_engine.validator import validate_tax_params_2025
 
 
