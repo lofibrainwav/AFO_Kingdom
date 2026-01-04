@@ -95,3 +95,16 @@ tools/mlx_optimization/.venv/
 .venv-dspy/
 tools/mlx_optimization/.venv/
 >>>>>>> wip/ph20-01-post-work
+
+
+# AFO Housekeeping V2
+artifacts/**/tmp/
+artifacts/**/cache/
+artifacts/**/logs/
+artifacts/**/.DS_Store
+.ruff_cache/
+.mypy_cache/
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+artifacts/housekeeping/quarantine/
