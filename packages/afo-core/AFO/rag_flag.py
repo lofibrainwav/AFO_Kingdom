@@ -155,47 +155,71 @@ def determine_rag_mode(request_headers: dict[str, str] | None = None) -> dict[st
     RAG 적용 모드 결정 - 우선순위 순서대로 평가 (TICKET-008 Phase 3)
 
     우선순위 (높은 순):
-    1. KILL_SWITCH (무조건 OFF)
-    2. X-AFO-RAG 헤더 (1=강제ON, 0=강제OFF)
-    3. FLAG ENV (AFO_RAG_FLAG_ENABLED)
-    4. GRADUAL ENV (AFO_RAG_ROLLOUT_*)
-    5. 기본값: SHADOW_ONLY
+    1. X-AFO-RAG 헤더 forced_off (무조건 OFF)
+    2. KILL_SWITCH (무조건 OFF) 
+    3. X-AFO-RAG 헤더 forced_on (강제 ON)
+    4. FLAG ENV (AFO_RAG_FLAG_ENABLED)
+    5. GRADUAL ENV (AFO_RAG_ROLLOUT_*)
+    6. 기본값: SHADOW_ONLY
     """
+    
+    # Helper: case-insensitive header getter
+    def get_header(key: str) -> str | None:
+        if not request_headers:
+            return None
+        # Check both lowercase and uppercase variants
+        for header_key, header_value in request_headers.items():
+            if header_key.lower() == key.lower():
+                return header_value
+        return None
 
-    # 1. Kill Switch (최우선)
+    # 1. Header forced_off (최우선 - kill보다도 강함)
+    rag_header = get_header("x-afo-rag")
+    if rag_header == "0":
+        return {"mode": "forced_off", "applied": False, "reason": "header_forced_off"}
+
+    # 2. Kill Switch 
     if os.getenv("AFO_RAG_KILL_SWITCH", "0") == "1":
         return {"mode": "killed", "applied": False, "reason": "kill_switch_active"}
 
-    # 2. 강제 헤더 (X-AFO-RAG: 1/0)
-    if request_headers:
-        rag_header = request_headers.get("x-afo-rag")
-        if rag_header == "1":
-            return {"mode": "forced_on", "applied": True, "reason": "header_forced"}
-        elif rag_header == "0":
-            return {"mode": "forced_off", "applied": False, "reason": "header_forced"}
+    # 3. Header forced_on (kill 제외하고 최우선)
+    if rag_header == "1":
+        return {"mode": "forced_on", "applied": True, "reason": "header_forced_on"}
 
-    # 3. Flag ENV
+    # 4. Flag ENV
     if os.getenv("AFO_RAG_FLAG_ENABLED", "0") == "1":
         return {"mode": "flag", "applied": True, "reason": "flag_enabled"}
 
-    # 4. Gradual Rollout
+    # 5. Gradual Rollout (결정적)
     if os.getenv("AFO_RAG_ROLLOUT_ENABLED", "0") == "1":
         percent = int(os.getenv("AFO_RAG_ROLLOUT_PERCENT", "0"))
         if percent > 0:
-            # 버킷팅 결정
-            bucket_seed = get_bucket_seed(request_headers)
-            applied = should_apply_gradual(bucket_seed, percent)
+            # 결정적 시드 생성 (hashlib 사용)
+            seed = get_header("x-afo-client-id") or "default-seed"
+            applied = gradual_rollout_deterministic(percent, seed)
             return {
                 "mode": "gradual",
                 "applied": applied,
                 "rollout_percent": percent,
-                "bucket_seed": bucket_seed,
-                "bucket_seed_source": get_bucket_seed_source(request_headers),
-                "reason": f"gradual_{percent}pct",
+                "seed": seed,
+                "reason": f"gradual_{percent}pct_deterministic",
             }
 
-    # 5. 기본값: Shadow Only
+    # 6. 기본값: Shadow Only
     return {"mode": "shadow_only", "applied": False, "reason": "default_shadow"}
+
+
+def gradual_rollout_deterministic(percent: int, seed: str) -> bool:
+    """결정적 gradual rollout (hashlib 기반)"""
+    if percent <= 0:
+        return False
+    if percent >= 100:
+        return True
+    
+    import hashlib
+    h = hashlib.sha256(seed.encode("utf-8")).hexdigest()
+    bucket = int(h[:8], 16) % 100
+    return bucket < percent
 
 
 def get_bucket_seed(headers: dict[str, str] | None) -> str:
