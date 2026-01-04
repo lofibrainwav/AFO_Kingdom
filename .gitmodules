@@ -1,0 +1,3 @@
+[submodule "tools/dgm/upstream"]
+	path = tools/dgm/upstream
+	url = https://github.com/jennyzzt/dgm
