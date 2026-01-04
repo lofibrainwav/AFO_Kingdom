@@ -5,6 +5,7 @@ import hashlib
 import os
 from contextlib import asynccontextmanager
 from typing import Any
+from AFO.rag.canary import decide_rag_version
 
 # RAG 동시성 제한을 위한 세마포어
 _rag_semaphore: asyncio.Semaphore | None = None
@@ -366,3 +367,33 @@ async def execute_rag_with_mode(
         result["applied"] = False
         result["latency_ms"] = round((asyncio.get_event_loop().time() - start_time) * 1000, 2)
         return result
+
+def get_rag_decision(request, config):
+    """SSOT: 결정만 주입 (행동/라우팅은 기존 로직 유지)"""
+    user_key = getattr(getattr(request, "state", None), "user_id", None)
+    if user_key is None:
+        user_key = "anonymous"
+
+    header = None
+    try:
+        header = request.headers.get("X-RAG-Mode")
+    except Exception:
+        header = None
+
+    rag_enabled = getattr(config, "rag_enabled", True)
+
+    # env knobs (선택): 없으면 기본 0% (v1 고정)
+    try:
+        import os
+        canary_percent = int(os.getenv("AFO_RAG_CANARY_PERCENT", "0"))
+        salt = os.getenv("AFO_CANARY_SALT", "afo")
+    except Exception:
+        canary_percent, salt = 0, "afo"
+
+    return decide_rag_version(
+        user_key=str(user_key),
+        header_mode=header,
+        config_flag=bool(rag_enabled),
+        canary_percent=canary_percent,
+        salt=salt,
+    )
