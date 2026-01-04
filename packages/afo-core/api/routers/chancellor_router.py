@@ -70,7 +70,7 @@ except ImportError:
 
 # RAG Flag + Gradual Mode import (TICKET-008 Phase 2 + 3)
 try:
-    from afo.rag_flag import execute_rag_with_mode, get_rag_config, init_rag_semaphore
+    from AFO.rag_flag import execute_rag_with_mode, get_rag_config, init_rag_semaphore
 
     _rag_flag_available = True
     # 세마포어 초기화
