@@ -89,7 +89,7 @@ jobs:
       
       - name: Post Status Comment
         if: always()
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const trinity = '${{ steps.trinity.outputs.trinity_score }}';
