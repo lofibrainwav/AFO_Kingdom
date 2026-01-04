@@ -216,3 +216,30 @@ class TrinityCalculator:
 
 # Singleton Instance
 trinity_calculator = TrinityCalculator()
+
+
+# Convenience function for DSPy optimizer (backwards compatibility)
+def calculate_trinity_score(pred_str: str, gt_str: str) -> Any:
+    """
+    Convenience function for DSPy optimizer integration.
+    Returns a mock TrinityResult for compatibility.
+    """
+    # Simple string similarity as Trinity score proxy
+    pred_words = set(pred_str.lower().split())
+    gt_words = set(gt_str.lower().split())
+
+    if not gt_words:
+        similarity = 1.0 if not pred_words else 0.0
+    else:
+        intersection = pred_words & gt_words
+        similarity = len(intersection) / len(gt_words)
+
+    # Convert to 0-100 scale
+    score = similarity * 100
+
+    # Mock result object
+    class TrinityResult:
+        def __init__(self, overall: float):
+            self.overall = overall
+
+    return TrinityResult(score)

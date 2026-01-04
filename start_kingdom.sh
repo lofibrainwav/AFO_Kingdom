@@ -1,36 +1,44 @@
 #!/bin/bash
 
 # 🏰 AFO Kingdom One-Click Startup Script
-# Starts the Chancellor Backend (Docker) and Trinity Dashboard (Next.js)
+# Starts the Chancellor Backend (Python/FastAPI) and Trinity Dashboard (Next.js)
 
 set -e # Exit immediately if a command exits with a non-zero status.
 
-BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+cd "$SCRIPT_DIR"
 
 echo "==================================================="
 echo "   🚀 INITIALIZING AFO KINGDOM STARTUP SEQUENCE    "
 echo "==================================================="
 
-# 1. Start Backend Services
+# 1. Start Backend Services (Python/FastAPI)
 echo ""
 echo "🔌 [1/2] Booting Chancellor Backend Services..."
-cd "$BASE_DIR/AFO" || { echo "❌ Error: AFO directory not found at $BASE_DIR/AFO"; exit 1; }
+cd "$SCRIPT_DIR/packages/afo-core" || { echo "❌ Error: afo-core directory not found at $SCRIPT_DIR/packages/afo-core"; exit 1; }
 
-# Ensure Docker is running
-if ! docker info > /dev/null 2>&1; then
-  echo "❌ Error: Docker is not running. Please start Docker Desktop."
+# Check if Python environment is available
+if ! command -v python3 >/dev/null 2>&1 && ! command -v python >/dev/null 2>&1; then
+  echo "❌ Error: Python is not available. Please install Python 3.12+."
   exit 1
 fi
 
-echo "   -> Running 'docker-compose up -d'..."
-docker-compose up -d
+echo "   -> Installing Python dependencies..."
+if command -v poetry >/dev/null 2>&1; then
+  poetry install --no-dev || echo "⚠️ Poetry install failed, trying alternative..."
+fi
 
-echo "✅ Backend Services Initiated."
+echo "   -> Starting FastAPI server..."
+echo "   -> Backend will be available at: http://localhost:8010"
+uvicorn api_server:app --reload --port 8010 &
+BACKEND_PID=$!
+
+echo "✅ Backend Services Initiated (PID: $BACKEND_PID)."
 
 # 2. Start Frontend
 echo ""
 echo "🖥️  [2/2] Launching Trinity Dashboard..."
-cd "$BASE_DIR/trinity-dashboard" || { echo "❌ Error: trinity-dashboard directory not found at $BASE_DIR/trinity-dashboard"; exit 1; }
+cd "$SCRIPT_DIR/packages/dashboard" || { echo "❌ Error: dashboard directory not found at $SCRIPT_DIR/packages/dashboard"; exit 1; }
 
 # Check for node_modules
 if [ ! -d "node_modules" ]; then

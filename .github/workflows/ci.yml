@@ -73,6 +73,9 @@ jobs:
       - name: 4. SBOM & Security (永 - Eternity)
         run: make sbom
 
+      - name: SSOT Trinity Text Guard (孝 - Serenity)
+        run: python scripts/ci_trinity_text_guard.py
+
       - name: Upload Coverage
         uses: codecov/codecov-action@v4
         with:
