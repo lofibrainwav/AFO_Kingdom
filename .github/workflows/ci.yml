@@ -35,6 +35,15 @@ jobs:
           pyright --project packages/afo-core/pyproject.toml
 
       - name: Generate Evidence (Trinity Protocol)
+
+      - name: Start services for hardening gate
+        run: |
+          docker-compose up -d postgres redis qdrant ollama
+          sleep 15
+          docker ps -a
+
+      - name: Run hardening gate with services
+        run: ./scripts/ci_hardening_gate.sh
         run: |
           mkdir -p artifacts/trinity artifacts/royal_build
           echo "Trinity Gate Passed: $(date)" > artifacts/trinity/gate_status.txt
