@@ -4,6 +4,8 @@
 >
 > **眞善美孝永 (Truth · Goodness · Beauty · Serenity · Eternity)**
 
+* "개발/설치/API/CI는 `README_DEVELOPER.md`가 SSOT입니다."
+
 <div align="center">
 
 ## 🌟 왕국의 서곡
