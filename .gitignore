@@ -108,3 +108,6 @@ artifacts/**/.DS_Store
 **/*.pyc
 **/*.pyo
 artifacts/housekeeping/quarantine/
+
+# local-only quarantine
+scripts/_local_quarantine/
