@@ -310,6 +310,7 @@ class APIWallet:
         read_only: bool = True,
         service: str = "",
         description: str = "",
+        scopes: list[str] | None = None,
     ) -> int:
         """
         Add a new API key to wallet

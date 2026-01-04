@@ -89,6 +89,8 @@ from AFO.api.router_manager import setup_routers
 
 if TYPE_CHECKING:
     from fastapi import FastAPI
+from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
+from starlette.responses import Response
 
 # Configure logging
 logging.basicConfig(
@@ -241,6 +243,15 @@ class AFOServer:
         except Exception as e:
             logger.warning(f"RAG Router registration failed: {e}")
 
+        # Auth Router 등록 (ACL 관리용)
+        try:
+            from AFO.api.routes.auth import router as auth_router
+
+            app.include_router(auth_router)
+            logger.info("Auth Router registered successfully")
+        except Exception as e:
+            logger.warning(f"Auth Router registration failed: {e}")
+
         return app
 
     def _create_limiter(self) -> Limiter:
@@ -265,6 +276,22 @@ class AFOServer:
             RateLimitExceeded, cast("ExceptionHandler", _rate_limit_exceeded_handler)
         )
 
+        # Metrics 미들웨어 추가 (가장 먼저)
+        from AFO.api.middleware.metrics import MetricsMiddleware
+
+        self.app.add_middleware(MetricsMiddleware)
+
+        # ACL 미들웨어 추가 (rate limit 다음에)
+        from AFO.api.middleware.authz import APIKeyAuthMiddleware
+
+        self.app.add_middleware(APIKeyAuthMiddleware)
+
+        # ACL 초기화 (기본 엔드포인트 등록)
+        from AFO.api.auth.api_key_acl import DEFAULT_ENDPOINT_SCOPES, acl
+
+        for path, method, scopes in DEFAULT_ENDPOINT_SCOPES:
+            acl.add_endpoint_scope(path, method, scopes)
+
         @self.app.on_event("startup")
         async def start_super_agent() -> None:
             """Start the Debugging Super Agent in the background."""
@@ -277,6 +304,17 @@ class AFOServer:
             task = asyncio.create_task(self.healing_agent.start())
             self._background_tasks.add(task)
             task.add_done_callback(self._background_tasks.discard)
+
+        @self.app.on_event("shutdown")
+        async def persist_acl_keys() -> None:
+            """서버 종료 시 ACL 키 영속 저장"""
+            try:
+                from AFO.api.auth.api_key_acl import acl
+
+                acl.persist_all_keys()
+                logger.info("✅ ACL keys persisted on shutdown")
+            except Exception as e:
+                logger.warning(f"⚠️  ACL persistence failed on shutdown: {e}")
 
         @self.app.post("/api/debug/agent/simulate", tags=["Debugging Agent"])
         async def trigger_simulation(
@@ -300,6 +338,10 @@ class AFOServer:
                 "agent_name": self.healing_agent.name,
                 "current_entropy": self.healing_agent.state.entropy,
             }
+
+        @self.app.get("/metrics")
+        async def metrics():
+            return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)
 
         logger.info("Application configured with security measures")
 

@@ -56,6 +56,12 @@ try:
 except ImportError:
     rag_stream_router = None
 
+# Import Time Travel Router (TICKET-078)
+try:
+    from api.routes.time_travel import router as time_travel_router
+except ImportError:
+    time_travel_router = None
+
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
@@ -217,6 +223,12 @@ class AFORouterManager:
         # Chancellor and streaming systems
         self._safe_register_router(chancellor_router, tags=["LangGraph Optimized"])
 
+        # Time Travel Router (TICKET-078 - 북극성)
+        if time_travel_router:
+            self._safe_register_router(time_travel_router, tags=["Time Travel"])
+        else:
+            logger.warning("Time Travel Router not available")
+
         # RAG Streaming for T2.1
         try:
             from AFO.api.routers.rag_query import router as rag_router
@@ -224,6 +236,14 @@ class AFORouterManager:
             self._safe_register_router(rag_router, prefix="/api", tags=["RAG Streaming"])
         except ImportError:
             logger.warning("RAG Router not available")
+
+        # RAG Stream Router (TICKET-079 - 스트리밍 중 interrupt → fork → resume)
+        try:
+            from AFO.api.routes.rag_stream import router as rag_stream_router
+
+            self._safe_register_router(rag_stream_router, tags=["RAG Streaming"])
+        except ImportError:
+            logger.warning("RAG Stream Router not available")
 
         # NOTE: system_stream router is deprecated. SSE is now consolidated in sse_ssot_router (system_health.py)
         # Keeping import as fallback but not registering to prevent route conflicts.
