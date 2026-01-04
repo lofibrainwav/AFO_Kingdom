@@ -1,231 +1,133 @@
 """
-DSPy Trinity Score 메트릭 구현
-TICKET-004: Trinity Score 메트릭 통합
+DSPy Trinity Score 메트릭 구현 (TICKET-004 완성)
+왕국 철학 眞善美孝永 기반 최적화 메트릭
 
-왕국 철학 기반 DSPy 최적화 메트릭:
-- 眞 (Truth): 기술적 정확성 + 타입 안전성
-- 善 (Goodness): 윤리적 평가 + 리스크 관리
-- 美 (Beauty): 코드 우아함 + 모듈화
-- 孝 (Serenity): 형님 마찰 최소화
-- 永 (Eternity): 유지보수성 + 확장성
-
-DSPy 메트릭 표준:
-- 입력: example (dict), pred (Prediction), trace (optional)
-- 출력: float (0.0~100.0, 높을수록 좋음)
+형님 제시 코드 기반으로 구현 - 직접적이고 왕국 문화 반영
 """
 
 import logging
-from typing import Any, Optional
+import re
+from difflib import SequenceMatcher
+from typing import Any
 
-from AFO.services.trinity_calculator import TrinityCalculator
+from AFO.domain.metrics.trinity import calculate_trinity
 
 logger = logging.getLogger(__name__)
 
-# SSOT Trinity Calculator 인스턴스
-trinity_calculator = TrinityCalculator()
+# DSPy 임포트 (설치되지 않은 경우 Mock 사용)
+try:
+    import dspy
+
+    DSPY_AVAILABLE = True
+except ImportError:
+    DSPY_AVAILABLE = False
+    dspy = None  # type: ignore
 
 
 class TrinityMetric:
     """
-    DSPy용 Trinity Score 메트릭 클래스
-    MIPROv2와 통합하여 왕국 철학 기반 최적화 수행
+    DSPy Custom Metric: 眞善美孝永 기반 종합 평가
+    - DSPy 표준 __call__ 준수
+    - example(정답), pred(예측) 비교로 5기둥 점수 산출
     """
 
     def __init__(self):
-        """Trinity Score 메트릭 초기화"""
-        self.weights = {
-            "truth": 0.35,  # 眞: 기술적 정확성
-            "goodness": 0.35,  # 善: 윤리·안정성
-            "beauty": 0.20,  # 美: 우아함·단순성
-            "serenity": 0.08,  # 孝: 형님 중심 편의
-            "eternity": 0.02,  # 永: 지속 가능성
+        pass  # 가중치는 trinity.py에서 중앙 관리
+
+    def __call__(self, example, pred, trace=None):
+        gold = getattr(example, "gold", None)
+        if gold is None and hasattr(example, "get"):
+            gold = example.get("gold", "")
+        gold = gold or ""
+
+        output = getattr(pred, "output", None) or getattr(pred, "answer", None) or str(pred)
+
+        pillar_scores = {
+            "truth": self._evaluate_truth(gold, output),
+            "goodness": self._evaluate_goodness(gold, output),
+            "beauty": self._evaluate_beauty(gold, output),
+            "filial_serenity": self._evaluate_serenity(gold, output),
+            "eternity": self._evaluate_eternity(example, gold, output),
         }
-        logger.info("Trinity Score 메트릭 초기화 완료")
 
-    def evaluate_truth(self, example: dict, pred: Any) -> float:
-        """
-        眞 (Truth): 기술적 정확성 평가
-        - 타입 안전성, 사실 정확성, 코드 품질
-        """
-        score = 0.0
+        # calculate_trinity 결과 스케일이 0~1인지 0~100인지 모를 때 안전 가드
+        result = calculate_trinity(**pillar_scores)
+        score = getattr(result, "trinity_score", result)
 
-        # 예측 결과 추출
-        pred_text = self._extract_text(pred)
+        score = float(score)
+        if score > 1.0:
+            score = score / 100.0
+        return max(0.0, min(1.0, score))
 
-        # 타입 안전성 체크
-        if hasattr(pred, "answer") and isinstance(pred.answer, str):
-            score += 30.0
+    def _evaluate_truth(self, gold: str, output: str) -> float:
+        if not gold.strip():
+            return 1.0
+        sim = SequenceMatcher(None, gold.lower(), output.lower()).ratio()
+        return max(0.0, min(1.0, sim))
 
-        # 사실 정확성 (예시 기반)
-        if example and "answer" in example:
-            gt_text = example["answer"]
-            similarity = self._calculate_similarity(pred_text, gt_text)
-            score += similarity * 70.0
+    def _evaluate_goodness(self, gold: str, output: str) -> float:
+        txt = output.lower()
 
-        return min(100.0, max(0.0, score))
+        harmful_keywords = ["해킹", "불법", "폭력", "사기", "위협"]
+        refusal_markers = [
+            "하지 마",
+            "하지마",
+            "금지",
+            "불가",
+            "허용하지",
+            "안 됩니다",
+            "안됩니다",
+            "거절",
+            "도와드릴 수 없",
+        ]
 
-    def evaluate_goodness(self, example: dict, pred: Any) -> float:
-        """
-        善 (Goodness): 윤리·안정성 평가
-        - 보안, 리스크, 자원 효율성
-        """
-        score = 100.0  # 기본 양호
+        has_harm = any(k in txt for k in harmful_keywords)
+        has_refusal = any(m in txt for m in refusal_markers)
 
-        pred_text = self._extract_text(pred)
+        if not has_harm:
+            return 1.0
+        if has_refusal:
+            return 1.0  # 위험 키워드가 "거부/경고" 맥락이면 감점하지 않음
 
-        # 위험 키워드 감지
-        risk_keywords = ["error", "fail", "crash", "security", "vulnerability"]
-        if any(keyword in pred_text.lower() for keyword in risk_keywords):
-            score -= 20.0
+        # 실제로 위험한 방향(조언/방법 제공)일 때만 감점
+        return 0.3
 
-        # 안전 패턴 확인
-        safe_patterns = ["validation", "sanitization", "error handling"]
-        if any(pattern in pred_text.lower() for pattern in safe_patterns):
-            score += 10.0
-
-        return min(100.0, max(0.0, score))
-
-    def evaluate_beauty(self, example: dict, pred: Any) -> float:
-        """
-        美 (Beauty): 우아함·단순성 평가
-        - 코드 구조, 가독성, 모듈화
-        """
-        score = 80.0  # 기본 양호
-
-        pred_text = self._extract_text(pred)
-
-        # 코드 품질 지표
-        lines = pred_text.split("\n")
-
-        # 적절한 길이 체크
-        if len(lines) > 50:
-            score -= 10.0
-
-        # 구조화된 응답 체크
-        if any(marker in pred_text for marker in ["```", "- ", "1. ", "2. "]):
-            score += 10.0
-
-        # 간결성 보너스
-        if len(pred_text.split()) < 100:
-            score += 5.0
-
-        return min(100.0, max(0.0, score))
-
-    def evaluate_serenity(self, example: dict, pred: Any) -> float:
-        """
-        孝 (Serenity): 형님 중심 편의 평가
-        - 마찰 최소화, 자동화, 사용성
-        """
-        score = 90.0  # 형님 중심 기본 양호
-
-        pred_text = self._extract_text(pred)
-
-        # 형님 마찰 최소화 패턴
-        serenity_patterns = ["자동화", "간편", "사용하기 쉽", "효율적"]
-        if any(pattern in pred_text for pattern in serenity_patterns):
-            score += 5.0
-
-        # 복잡도 페널티
-        if len(pred_text.split()) > 200:
-            score -= 10.0
-
-        return min(100.0, max(0.0, score))
-
-    def evaluate_eternity(self, example: dict, pred: Any) -> float:
-        """
-        永 (Eternity): 지속 가능성 평가
-        - 유지보수성, 확장성, 문서화
-        """
-        score = 85.0  # 기본 양호
-
-        pred_text = self._extract_text(pred)
-
-        # 유지보수성 패턴
-        eternity_patterns = ["문서화", "확장", "유지보수", "재사용"]
-        if any(pattern in pred_text for pattern in eternity_patterns):
-            score += 10.0
-
-        # 코드 구조 보너스
-        if "class" in pred_text or "def " in pred_text:
-            score += 5.0
-
-        return min(100.0, max(0.0, score))
-
-    def __call__(self, example: dict, pred: Any, trace: Any | None = None) -> float:
-        """
-        DSPy 메트릭 표준 인터페이스
-
-        Args:
-            example: 입력 예시 (질문, 작업 등)
-            pred: 모델 예측 결과
-            trace: 최적화 중간 단계 (옵션)
-
-        Returns:
-            0.0~100.0 사이의 Trinity Score
-        """
-        try:
-            # 개별 기둥 평가
-            truth_score = self.evaluate_truth(example, pred)
-            goodness_score = self.evaluate_goodness(example, pred)
-            beauty_score = self.evaluate_beauty(example, pred)
-            serenity_score = self.evaluate_serenity(example, pred)
-            eternity_score = self.evaluate_eternity(example, pred)
-
-            # 가중치 적용
-            total_score = (
-                truth_score * self.weights["truth"]
-                + goodness_score * self.weights["goodness"]
-                + beauty_score * self.weights["beauty"]
-                + serenity_score * self.weights["serenity"]
-                + eternity_score * self.weights["eternity"]
-            )
-
-            # trace 활용 (최적화 중 피드백)
-            if trace:
-                # 반복 감소 보너스
-                if hasattr(trace, "iterations") and trace.iterations < 5:
-                    total_score += 2.0
-
-            final_score = round(min(100.0, max(0.0, total_score)), 1)
-
-            logger.info(
-                f"Trinity Score 계산: "
-                f"眞{truth_score:.1f} 善{goodness_score:.1f} 美{beauty_score:.1f} "
-                f"孝{serenity_score:.1f} 永{eternity_score:.1f} → 총점 {final_score}"
-            )
-
-            return final_score
-
-        except Exception as e:
-            logger.error(f"Trinity Score 계산 실패: {e}")
-            return 50.0  # 중립 점수 반환
-
-    def _extract_text(self, pred: Any) -> str:
-        """예측 결과에서 텍스트 추출"""
-        if hasattr(pred, "answer"):
-            return str(pred.answer)
-        elif hasattr(pred, "response"):
-            return str(pred.response)
-        elif hasattr(pred, "output"):
-            return str(pred.output)
-        else:
-            return str(pred)
-
-    def _calculate_similarity(self, text1: str, text2: str) -> float:
-        """간단한 텍스트 유사도 계산"""
-        if not text1 or not text2:
+    def _evaluate_beauty(self, gold: str, output: str) -> float:
+        # gold 길이 비교는 불안정하니 output 자체의 간결/구조로만 평가
+        L = len(output.strip())
+        if L == 0:
             return 0.0
+        concise = 1.0 if L <= 800 else max(0.5, 800 / L)
+        structured = 0.2 if re.search(r"(^|\n)([-*•]\s|\d+\.\s|#{1,3}\s)", output) else 0.0
+        return min(1.0, concise + structured)
 
-        words1 = set(text1.lower().split())
-        words2 = set(text2.lower().split())
+    def _evaluate_serenity(self, gold: str, output: str) -> float:
+        # 역할극 보상 제거: 존댓말/명확한 액션 중심만 가점
+        polite = 0.2 if re.search(r"(습니다|세요|드립니다)", output) else 0.0
+        actionable = 0.2 if re.search(r"(다음|1\)|1\.|커맨드|명령|체크리스트)", output) else 0.0
+        too_roleplay = 0.2 if re.search(r"(왕이시여|아뢰나이다|받들어)", output) else 0.0
+        base = 0.6
+        return max(0.0, min(1.0, base + polite + actionable - too_roleplay))
 
-        if not words1 or not words2:
-            return 0.0
+    def _evaluate_eternity(self, example, gold: str, output: str) -> float:
+        # Evidence가 필요한 작업일 때만 가점 (다양한 필드명 지원)
+        needs = (
+            getattr(example, "needs_evidence", False)
+            or getattr(example, "needsEvidence", False)
+            or (hasattr(example, "get") and example.get("needs_evidence", False))
+        )
 
-        intersection = words1 & words2
-        union = words1 | words2
+        if not needs:
+            return 0.8  # 평소엔 스팸 유도 방지용으로 높은 기본값
 
-        return len(intersection) / len(union)
+        # 증거 키워드 카운트 (형님 제시대로)
+        txt = output.lower()
+        hits = sum(
+            1 for kw in ["artifacts/", "manifest", "sha256", "기록됨", "미관측"] if kw in txt
+        )
+
+        # 증거 태스크에서만 가점 적용
+        return min(1.0, 0.6 + hits * 0.1)
 
 
 # DSPy 메트릭 함수 (함수형 인터페이스)
@@ -240,20 +142,21 @@ def create_dspy_compatible_metric():
     return trinity_metric
 
 
-def get_trinity_score_breakdown(example: dict, pred: Any) -> dict:
+def get_trinity_score_breakdown(example: dict, pred: str) -> dict:
     """
     Trinity Score 세부 내역 반환
     디버깅 및 분석용
     """
     metric = TrinityMetric()
+    gold = example.get("gold", example.get("answer", ""))
 
     return {
-        "truth": metric.evaluate_truth(example, pred),
-        "goodness": metric.evaluate_goodness(example, pred),
-        "beauty": metric.evaluate_beauty(example, pred),
-        "serenity": metric.evaluate_serenity(example, pred),
-        "eternity": metric.evaluate_eternity(example, pred),
-        "total": metric(example, pred),
+        "truth": metric._evaluate_truth(gold, pred),
+        "goodness": metric._evaluate_goodness(gold, pred),
+        "beauty": metric._evaluate_beauty(gold, pred),
+        "serenity": metric._evaluate_serenity(gold, pred),
+        "eternity": metric._evaluate_eternity(example, gold, pred),
+        "total": metric(example, {"output": pred}),
     }
 
 
@@ -288,7 +191,8 @@ if __name__ == "__main__":
     pred = type("MockPred", (), {"answer": "眞善美孝永 철학"})()
 
     score = metric(example, pred)
-    breakdown = get_trinity_score_breakdown(example, pred)
+    pred_text = pred.answer  # 텍스트 추출
+    breakdown = get_trinity_score_breakdown(example, pred_text)
 
     print(f"Trinity Score: {score}")
     print(f"세부 내역: {breakdown}")
