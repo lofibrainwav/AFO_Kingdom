@@ -81,22 +81,6 @@ def _ssot_pick_best_from_optimizer(opt):
     return best_score, breakdown, best_id
 
 def _ssot_finalize_mipro_run(auto=None, num_trials=None):
-# SSOT_RUN_RESULT_FALLBACK_V1
-# If optimizer does not expose best_score, try to use last_evaluation_score computed during run (if any).
-    try:
-        _ssot_last_eval = globals().get("_SSOT_LAST_EVAL", None)
-        if (best_score is None) and isinstance(_ssot_last_eval, dict):
-            v = _ssot_last_eval.get("score_total")
-            if isinstance(v, (int, float)):
-                best_score = float(v)
-            bd = _ssot_last_eval.get("score_breakdown")
-            if (best_breakdown is None) and isinstance(bd, dict):
-                best_breakdown = bd
-    except Exception:
-        pass
-
-# If still None, keep None (structure-first, null-safe)
-
     opt = None
     opt = None
 
@@ -117,8 +101,6 @@ def _ssot_finalize_mipro_run(auto=None, num_trials=None):
     })
 
 import atexit as _ssot_atexit  # noqa: E402
-from AFO.domain.metrics.trinity_runtime_v1 import trinity_metric, get_last_eval
-
 
 def _ssot_try_finalize_on_exit():
     auto = globals().get("auto", None) or globals().get("AUTO", None)
@@ -127,15 +109,3 @@ def _ssot_try_finalize_on_exit():
 
 _ssot_atexit.register(_ssot_try_finalize_on_exit)
 # === END SSOT_MIPRO_RESULT_LOGGING_V1 ===
-
-# SSOT_CAPTURE_LAST_EVAL_V1
-# (No evaluate() call detected. If you add an evaluation later, set _SSOT_LAST_EVAL={"score_total":..., "score_breakdown":...})
-
-
-# __SSOT_TRINITY_RUNTIME_FALLBACK_V1__
-try:
-    _x = get_last_eval()
-    if isinstance(_x, dict):
-        globals()['_SSOT_LAST_EVAL'] = _x
-except Exception:
-    pass
