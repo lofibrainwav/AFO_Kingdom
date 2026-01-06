@@ -7,7 +7,10 @@ import logging
 import re
 from pathlib import Path
 from typing import Any
+<<<<<<< HEAD
 
+=======
+>>>>>>> wip/ph20-01-post-work
 
 logger = logging.getLogger(__name__)
 
@@ -26,6 +29,7 @@ class Context7MCP:
         """지식 베이스 로드 (Metadata JSON 기반 동적 로딩)"""
         try:
             import os
+<<<<<<< HEAD
 
             # Repo Root 찾기 (trinity-os 위치 기준)
             base_path = os.path.abspath(
