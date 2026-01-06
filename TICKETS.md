@@ -23,6 +23,13 @@
 | TICKET-071 | CI Failure Alert | 8-A | `99c62fc8` | `ssot-phase8A-ci-alert-*` | `trinity-gate.yml` (failure step) |
 | TICKET-072 | Release 체계 강화 | 8-B | `2a1fd63d` | `ssot-phase8B-release-*` | `scripts/afo_release_tag.sh` |
 | TICKET-073 | Dashboard Status Card | 8-C | `5fb9f6f0` | `ssot-phase8C-dashboard-*` | `scripts/afo_dashboard.sh` |
+| TICKET-076 | TimelineState Generator Node | 11 | `WIP` | `ssot-phase11-timeline-*` | `packages/afo-core/AFO/multimodal/timeline_state_generator.py` |
+| TICKET-077 | Multimodal FANOUT-JOIN Extension | 12 | `WIP` | `ssot-phase12-multimodal-fanout-*` | `packages/afo-core/AFO/multimodal/fanout_join_ext.py` |
+| TICKET-078 | VideoBranch Detail Implementation | 13 | HIGH | `ssot-phase13-video-branch-*` | `packages/afo-core/AFO/multimodal/video_branch.py` |
+| TICKET-079 | MusicBranch Detail Implementation | 13 | HIGH | `ssot-phase13-music-branch-*` | `packages/afo-core/AFO/multimodal/music_branch.py` |
+| TICKET-080 | Fusion Compositing Integration | 14 | HIGH | `ssot-phase14-fusion-compositing-*` | `packages/afo-core/AFO/multimodal/fusion_branch.py` |
+| TICKET-081 | CapCut Style Integration | 15 | HIGH | `ssot-phase15-capcut-integration-*` | `packages/afo-core/AFO/multimodal/capcut_branch.py` |
+| TICKET-082 | Suno MusicBranch Integration & AV Fusion | 16 | HIGH | `ssot-phase16-suno-music-*` | `packages/afo-core/AFO/multimodal/suno_branch.py` | ✅ 완료 (2026-01-06) |
 
 ## 🆕 다음 티켓
 
@@ -30,6 +37,7 @@
 |---|------|-------|----------|
 | TICKET-074 | Sakana DGM Integration | 9 | HIGH |
 | TICKET-075 | Multimodal Sovereignty | 10 | MEDIUM |
+| TICKET-076 | TimelineState Generator Node | 11 | HIGH |
 
 ## 📊 진행 현황
 
