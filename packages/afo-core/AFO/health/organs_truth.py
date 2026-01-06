@@ -113,52 +113,8 @@ def build_organs_final(
     ok, ms, t = _tcp_probe(redis_host, redis_port, timeout_tcp_s)
     organs["心_Redis"] = _mk(ok, ms, t, "tcp", 98, 40, "Connected", "Disconnected")
 
-<<<<<<< Updated upstream
     ok, ms, t = _tcp_probe(postgres_host, postgres_port, timeout_tcp_s)
     organs["肝_PostgreSQL"] = _mk(ok, ms, t, "tcp", 99, 30, "Connected", "Disconnected")
-=======
-    def _build_candidates(
-        active_host: str | None, env_var_name: str, defaults: list[str]
-    ) -> list[str]:
-        candidates: list[str] = []
-
-        # 1. Active Host
-        if active_host:
-            candidates.append(active_host)
-
-        # 2. Manual Overrides (comma-separated)
-        env_hosts_str = os.getenv(env_var_name, "")
-        if env_hosts_str:
-            candidates.extend([h.strip() for h in env_hosts_str.split(",") if h.strip()])
-
-        # 3. Defaults
-        candidates.extend(defaults)
-
-        # Deduplicate while preserving order
-        seen = set()
-        deduped = []
-        for c in candidates:
-            if c not in seen:
-                deduped.append(c)
-                seen.add(c)
-        return deduped
-
-    # Redis Candidates
-    redis_defaults = ["afo-redis", "localhost", "127.0.0.1"]
-    redis_candidates = _build_candidates(redis_host, "AFO_HEALTH_REDIS_HOSTS", redis_defaults)
-
-    organs["心_Redis"] = _probe_host_candidates(redis_port, redis_candidates, timeout_tcp_s)
-
-    # PostgreSQL Candidates
-    postgres_defaults = ["afo-postgres", "localhost", "127.0.0.1"]
-    postgres_candidates = _build_candidates(
-        postgres_host, "AFO_HEALTH_POSTGRES_HOSTS", postgres_defaults
-    )
-
-    organs["肝_PostgreSQL"] = _probe_host_candidates(
-        postgres_port, postgres_candidates, timeout_tcp_s
-    )
->>>>>>> Stashed changes
 
     # ABSOLUTE TRUTH: Self-check (Brain)
     organs["腦_Soul_Engine"] = OrganReport(

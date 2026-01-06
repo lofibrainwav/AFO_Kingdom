@@ -3,6 +3,8 @@ QLoRA-AdaLoRA Hybrid Service for AFO Kingdom
 Combines QLoRA (4-bit quantization) with AdaLoRA (adaptive rank allocation)
 """
 
+from typing import Any
+
 import torch
 from peft import AdaLoraConfig, get_peft_model
 from transformers import AutoModelForCausalLM, BitsAndBytesConfig

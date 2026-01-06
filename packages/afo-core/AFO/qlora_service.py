@@ -3,6 +3,8 @@ QLoRA Service for AFO Kingdom
 Implements Quantized Low-Rank Adaptation with 4-bit NF4 quantization
 """
 
+from typing import Any
+
 import torch
 from peft import LoraConfig, get_peft_model
 from transformers import AutoModelForCausalLM, BitsAndBytesConfig
