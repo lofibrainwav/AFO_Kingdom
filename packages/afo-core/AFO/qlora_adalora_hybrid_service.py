@@ -13,8 +13,8 @@ class QLoRAAdaLoRAHybridService:
 
     def __init__(self, model_name: str = "llama3.1-8b"):
         self.model_name = model_name
-        self.model = None
-        self.hybrid_model = None
+        self.model: Any = None
+        self.hybrid_model: Any = None
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     def load_base_model(self) -> None:
@@ -78,7 +78,7 @@ class QLoRAAdaLoRAHybridService:
         trainable_params = sum(p.numel() for p in self.hybrid_model.parameters() if p.requires_grad)
         percentage = 100 * trainable_params / total_params
 
-        return ".2f"
+        return f"{trainable_params:,} ({percentage:.2f}%)"
 
     def prepare_for_training(self) -> None:
         """Prepare model for training with adaptive optimization"""

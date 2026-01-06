@@ -64,7 +64,7 @@ def get_with_swr(key: str, fetch_func: Callable[[], Any], max_age: int = 60, swr
 
     if cached_raw:
         try:
-            cached_entry = json.loads(cached_raw)  # type: ignore[arg-type]
+            cached_entry = json.loads(cached_raw)
             data = cached_entry.get("data")
             timestamp = cached_entry.get("timestamp", 0)
 

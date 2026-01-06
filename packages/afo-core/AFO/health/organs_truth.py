@@ -113,15 +113,63 @@ def build_organs_final(
     ok, ms, t = _tcp_probe(redis_host, redis_port, timeout_tcp_s)
     organs["心_Redis"] = _mk(ok, ms, t, "tcp", 98, 40, "Connected", "Disconnected")
 
+<<<<<<< Updated upstream
     ok, ms, t = _tcp_probe(postgres_host, postgres_port, timeout_tcp_s)
     organs["肝_PostgreSQL"] = _mk(ok, ms, t, "tcp", 99, 30, "Connected", "Disconnected")
+=======
+    def _build_candidates(
+        active_host: str | None, env_var_name: str, defaults: list[str]
+    ) -> list[str]:
+        candidates: list[str] = []
 
-    # ABSOLUTE TRUTH: Self-check
-    organs["肺_API_Server"] = OrganReport(
-        status="healthy", score=100, output="Self-check: Responding", probe="self", latency_ms=0
+        # 1. Active Host
+        if active_host:
+            candidates.append(active_host)
+
+        # 2. Manual Overrides (comma-separated)
+        env_hosts_str = os.getenv(env_var_name, "")
+        if env_hosts_str:
+            candidates.extend([h.strip() for h in env_hosts_str.split(",") if h.strip()])
+
+        # 3. Defaults
+        candidates.extend(defaults)
+
+        # Deduplicate while preserving order
+        seen = set()
+        deduped = []
+        for c in candidates:
+            if c not in seen:
+                deduped.append(c)
+                seen.add(c)
+        return deduped
+
+    # Redis Candidates
+    redis_defaults = ["afo-redis", "localhost", "127.0.0.1"]
+    redis_candidates = _build_candidates(redis_host, "AFO_HEALTH_REDIS_HOSTS", redis_defaults)
+
+    organs["心_Redis"] = _probe_host_candidates(redis_port, redis_candidates, timeout_tcp_s)
+
+    # PostgreSQL Candidates
+    postgres_defaults = ["afo-postgres", "localhost", "127.0.0.1"]
+    postgres_candidates = _build_candidates(
+        postgres_host, "AFO_HEALTH_POSTGRES_HOSTS", postgres_defaults
+    )
+
+    organs["肝_PostgreSQL"] = _probe_host_candidates(
+        postgres_port, postgres_candidates, timeout_tcp_s
+    )
+>>>>>>> Stashed changes
+
+    # ABSOLUTE TRUTH: Self-check (Brain)
+    organs["腦_Soul_Engine"] = OrganReport(
+        status="healthy",
+        score=100,
+        output="Sovereign Orchestration Active",
+        probe="self",
+        latency_ms=0,
     )
     print(
-        f">>>>>>>>>>>>>>>> API SERVER STATUS: {organs['肺_API_Server']} <<<<<<<<<<<<<<<<",
+        f">>>>>>>>>>>>>>>> SOUL ENGINE STATUS: {organs['腦_Soul_Engine']} <<<<<<<<<<<<<<<<",
         flush=True,
     )
 
@@ -129,14 +177,14 @@ def build_organs_final(
     organs["脾_Ollama"] = _mk(ok, ms, t, "tcp", 95, 20, "Connected", "Disconnected")
 
     ok, ms, t = _tcp_probe(qdrant_host, qdrant_port, timeout_tcp_s)
-    organs["腎_Qdrant"] = _mk(ok, ms, t, "tcp", 94, 20, "Connected", "Disconnected")
+    organs["肺_Qdrant"] = _mk(ok, ms, t, "tcp", 94, 20, "Connected", "Disconnected")
 
     # Static / Semi-static Organs
     organs["眼_Dashboard"] = OrganReport(
         status="healthy", score=92, output="Visual OK", probe="static", latency_ms=0
     )
 
-    organs["神経_MCP"] = OrganReport(
+    organs["腎_MCP"] = OrganReport(
         status="healthy", score=85, output="Tools Active", probe="static", latency_ms=0
     )
     organs["耳_Observability"] = OrganReport(
@@ -147,6 +195,9 @@ def build_organs_final(
     )
     organs["骨_CI"] = OrganReport(
         status="healthy", score=88, output="Pipeline Green", probe="static", latency_ms=0
+    )
+    organs["膽_Evolution_Gate"] = OrganReport(
+        status="healthy", score=90, output="Sovereign Decisiveness OK", probe="static", latency_ms=0
     )
 
     # Security Pillar (simplified for reliability)

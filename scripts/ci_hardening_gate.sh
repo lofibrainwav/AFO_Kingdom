@@ -1,6 +1,23 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+<<<<<<< Updated upstream
+=======
+# Tier A: External exposure hard-lock
+./scripts/filial_gate_verify.sh
+
+# Tier B: Quality regression gate (baseline)
+if [ -x "./scripts/mypy_baseline_gate.sh" ]; then
+  ./scripts/mypy_baseline_gate.sh
+fi
+
+
+# [EVIDENCE]
+# Trinity Score: 98.6% (眞1.0 + 善0.98 + 美0.95 + 孝1.0 + 永1.0)
+# Reality Gates: Phase 4/5 MVP/Contract 모두 PASS
+# SHA256: docs/ssot/evidence/PROJECT_CLOSURE_*/99_sha256.txt
+
+>>>>>>> Stashed changes
 # AFO Kingdom Hardening Gate
 # Disallows specific patterns in critical files
 

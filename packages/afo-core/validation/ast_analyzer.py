@@ -31,6 +31,7 @@ class ASTAnalyzer:
         """
         self.code = code
         self.issues: list[str] = []
+        self.tree: ast.Module | None = None
 
         try:
             self.tree = ast.parse(code)
@@ -148,7 +149,7 @@ class ASTAnalyzer:
 
         functions = []
         classes = []
-        imports = []
+        imports: list[str] = []
 
         for node in ast.walk(self.tree):
             if isinstance(node, ast.FunctionDef):

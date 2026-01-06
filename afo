@@ -78,6 +78,7 @@ cmd_help() {
     echo "  release   - Create release tag (vX.Y.Z)"
     echo "  dashboard - Show full status card"
     echo "  evolve    - Run DGM evolution cycle [--dry-run]"
+    echo "  debug     - Integrated debug & ratchet [--seal]"
     echo "  help      - Show this help"
     echo ""
     echo "Examples:"
@@ -102,6 +103,11 @@ cmd_release() {
 
 cmd_dashboard() {
     "$SCRIPTS_DIR/afo_dashboard.sh"
+}
+
+cmd_debug() {
+    echo -e "${BLUE}🛡️ Integrated Debugging${NC}"
+    "$SCRIPTS_DIR/afo_debug.sh" "$@"
 }
 
 cmd_evolve() {
@@ -144,6 +150,10 @@ case "${1:-help}" in
     evolve)
         shift || true
         cmd_evolve "$@"
+        ;;
+    debug)
+        shift || true
+        cmd_debug "$@"
         ;;
     help|--help|-h)
         cmd_help

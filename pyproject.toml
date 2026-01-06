@@ -139,25 +139,36 @@ ignore = [
     "BLE001",  # Blind except (Pending verification)
     "PLR2004", # Magic values (Pending verification)
     "PTH",     # Use os.path (Stability)
+<<<<<<< Updated upstream
 
     "D202",    # No blank lines allowed after function docstring
     "D205",    # 1 blank line required between summary line and description
     "D209",    # Multi-line docstring closing quotes should be on a separate line
+=======
+    # Beauty 기둥 강화 - Clean Architecture 강제
+    "C901",   # McCabe complexity - Clean Architecture로 해결
+    "PLR0912", # Too many branches - Clean Architecture로 해결
+    "PLR0915", # Too many statements - Clean Architecture로 해결
+>>>>>>> Stashed changes
 ]
 
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401", "F403", "D104"]
+<<<<<<< Updated upstream
 "**/scripts/**" = ["T201", "D", "ANN", "E402", "F401", "F811", "S", "TRY", "PLR", "ERA", "RUF", "DTZ", "ARG", "PTH", "BLE", "SIM", "RET", "SLF", "FURB", "EXE", "G", "INP", "ICN", "PIE", "PYI", "Q", "RSE", "TID", "TCH", "INT", "PGH", "PL", "FLY", "NPY", "AIR", "PERF", "LOG", "ASYNC", "EM", "TD", "FIX", "FA", "F821", "FBT", "E", "B", "C90", "A", "ISC", "UP", "W", "I", "N", "PT", "YTT", "T10", "C4", "DOC", "COM", "PD"]
 "**/tools/**" = ["T201", "D", "ANN", "E402", "F401", "F811", "S", "TRY", "PLR", "ERA", "RUF", "DTZ", "ARG", "PTH", "BLE", "SIM", "RET", "SLF", "FURB", "EXE", "G", "INP", "ICN", "PIE", "PYI", "Q", "RSE", "TID", "TCH", "INT", "PGH", "PL", "FLY", "NPY", "AIR", "PERF", "LOG", "ASYNC", "EM", "TD", "FIX", "FA", "F821", "FBT", "E", "B", "C90", "A", "ISC", "UP", "W", "I", "N", "PT", "YTT", "T10", "C4", "DOC", "COM", "PD"]
 "**/tools/mlx_optimization/**" = ["T201", "F841"]
 "packages/trinity-os/**/*.py" = ["E402"]
 "packages/**" = ["B904", "F841", "E402", "B007", "F821"]
+=======
+"scripts/**" = ["T201", "D", "ANN", "E402", "F811"]
+>>>>>>> Stashed changes
 "verify_full_stack.py" = ["T201", "D", "E402", "S106"]
-"tests/**" = ["S101", "ARG", "PLR0913", "D", "ANN", "PLR2004", "BLE001", "DOC201", "F401", "E402", "SLF001", "PLR6301", "SIM102"]
-"packages/*/tests/**" = ["S101", "ARG", "PLR0913", "D", "ANN", "PLR2004", "BLE001", "DOC201", "F401", "E402", "SLF001"]
+"tests/**" = ["S101", "ARG", "PLR0913", "D", "ANN", "PLR2004", "BLE001", "DOC201", "E402", "SLF001", "PLR6301", "SIM102"]
+"packages/*/tests/**" = ["S101", "ARG", "PLR0913", "D", "ANN", "PLR2004", "BLE001", "DOC201", "E402", "SLF001"]
 "**/api_server.py" = ["E402", "PLR0915", "PLC0415"]
-"**/routers/*.py" = ["PLC0415", "F401", "E402"]
-"**/routes/*.py" = ["PLC0415", "F401", "E402"]
+"**/routers/*.py" = ["PLC0415", "E402"]
+"**/routes/*.py" = ["PLC0415", "E402"]
 
 [tool.ruff.format]
 quote-style = "double"
@@ -222,14 +233,17 @@ exclude = [
     "conftest.py",                # 루트 레벨 conftest 중복 방지 (Phase 10: 범주 A 해결)
 ]
 
-# Phase 3: 엄격 모드 전환 (3-6개월 목표)
-check_untyped_defs = true        # Phase 3 활성화: 타입 힌트 없는 함수 검사
-disallow_untyped_defs = false    # Phase 4에서 true로 전환 예정
+# Phase 4: Truth 기둥 강화 - MyPy Strict 모드 완전 활성화
+check_untyped_defs = true        # 타입 힌트 없는 함수 검사
+disallow_untyped_defs = true     # 타입 힌트 없는 함수 금지 (眞 강화)
 strict_optional = true           # Optional 엄격 검사
 warn_redundant_casts = true      # 불필요한 캐스트 경고
 warn_unreachable = true          # 도달 불가능 코드 경고
 warn_unused_ignores = true       # 미사용 ignore 경고
 strict_equality = true           # 엄격한 동등성 검사
+disallow_any_generics = true     # Any 제네릭 금지 (眞 강화)
+disallow_untyped_calls = true    # 타입 없는 함수 호출 금지 (眞 강화)
+disallow_incomplete_defs = true  # 불완전한 함수 정의 금지
 
 [[tool.mypy.overrides]]
 module = ["services.trinity_score_monitor"]

@@ -30,27 +30,50 @@ class OllamaHealthChecker:
         }
 
     def _standardize_env_vars(self) -> dict[str, str]:
-        """환경변수 표준화 (Docker DNS 호환)"""
+        """환경변수 표준화 (Phase 2-4: 안티그라비티 설정과 동기화)"""
         env_vars = {}
 
         # 필수 환경변수들
         required_vars = {
+<<<<<<< Updated upstream
             "OLLAMA_BASE_URL": "afo-ollama:11434",  # Docker DNS 우선
             "OLLAMA_MODEL": "llama3.2:3b",  # 기본 모델
             "OLLAMA_NUM_PARALLEL": "4",
             "OLLAMA_NUM_THREAD": "-1",  # 자동 감지
             "OLLAMA_NUM_CTX": "4096",
+=======
+            "OLLAMA_BASE_URL": "http://localhost:11434",  # Phase 2-1 수정: 호스트명 문제 해결
+            "OLLAMA_MODEL": "llama3.2:1b",  # 메모리 절약 모델
+            "OLLAMA_NUM_PARALLEL": "1",
+            "OLLAMA_NUM_THREAD": "2",  # CPU 스레드 제한
+            "OLLAMA_NUM_CTX": "2048",  # 컨텍스트 길이 축소
+>>>>>>> Stashed changes
             "OLLAMA_KEEP_ALIVE": "5m",
         }
 
-        for var_name, default_value in required_vars.items():
-            env_vars[var_name] = os.getenv(var_name, default_value)
+        # Phase 2-4: 안티그라비티 설정 파일에서 환경변수 로드 시도
+        try:
+            import pathlib
 
-        # Docker 환경에서는 localhost fallback
-        if env_vars["OLLAMA_BASE_URL"] == "afo-ollama:11434":
-            # Docker 내부가 아니면 localhost로 fallback
-            if not self._is_docker_environment():
-                env_vars["OLLAMA_BASE_URL"] = "http://localhost:11434"
+            antigravity_env = pathlib.Path("packages/afo-core/.env")
+            if antigravity_env.exists():
+                # 간단한 .env 파싱 (주석과 빈 줄 무시)
+                with open(antigravity_env, encoding="utf-8") as f:
+                    for line in f:
+                        line = line.strip()
+                        if line and not line.startswith("#") and "=" in line:
+                            key, value = line.split("=", 1)
+                            key = key.strip()
+                            value = value.strip().strip('"').strip("'")
+                            if key.startswith("OLLAMA_"):
+                                env_vars[key] = value
+        except Exception:
+            # .env 파일 읽기 실패 시 기본값 사용
+            pass
+
+        # 환경변수에서 값 가져오기 (안티그라비티 설정 우선)
+        for var_name, default_value in required_vars.items():
+            env_vars[var_name] = os.getenv(var_name, env_vars.get(var_name, default_value))
 
         return env_vars
 
