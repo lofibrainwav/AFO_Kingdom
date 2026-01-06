@@ -29,37 +29,37 @@
 | TICKET-079 | MusicBranch Detail Implementation | 13 | HIGH | `ssot-phase13-music-branch-*` | `packages/afo-core/AFO/multimodal/music_branch.py` |
 | TICKET-080 | Fusion Compositing Integration | 14 | HIGH | `ssot-phase14-fusion-compositing-*` | `packages/afo-core/AFO/multimodal/fusion_branch.py` |
 | TICKET-081 | CapCut Style Integration | 15 | HIGH | `ssot-phase15-capcut-integration-*` | `packages/afo-core/AFO/multimodal/capcut_branch.py` |
-| TICKET-082 | Suno MusicBranch Integration & AV Fusion | 16 | HIGH | `ssot-phase16-suno-music-*` | `packages/afo-core/AFO/multimodal/suno_branch.py` | ✅ 완료 (2026-01-06) |
+## TICKET-082 — Suno MusicBranch Integration & AV Fusion
+- Phase: 16 (멀티모달 확장)
+- Priority: HIGH
+- Type: Feature Enhancement
+- Status: WIP
+- Evidence: packages/afo-core/AFO/multimodal/suno_branch.py
+- Dependencies: ffmpeg (required), moviepy (optional; 있으면 MoviePy로 AV 합성)
 
-## 🆕 다음 티켓
+### Goal
+TimelineState 기반으로 Suno 음악 생성 → 다운로드 → (필요 시 길이 맞춤) → 비디오와 AV 합성(mp4)까지 한 번에 연결.
 
-| ID | 제목 | Phase | 우선순위 |
-|---|------|-------|----------|
-| TICKET-074 | Sakana DGM Integration | 9 | HIGH |
-| TICKET-075 | Multimodal Sovereignty | 10 | MEDIUM |
-| TICKET-076 | TimelineState Generator Node | 11 | HIGH |
+### Scope
+1) Suno API 통합 (Generate + Record-info Polling)
+2) 고급 파라미터 지원
+   - customMode, style, title, negativeTags, personaId, vocalGender, styleWeight, weirdnessConstraint, audioWeight, model, callBackUrl
+3) 에러 처리 강화
+   - 재시도(지수 백오프) + 타임아웃 + fail-closed
+4) TimelineState → Suno Request 자동 변환
+5) AV Fusion
+   - moviepy 사용 가능 시 MoviePy 우선
+   - moviepy 없으면 ffmpeg로 fallback
+6) Trinity Score(로컬 휴리스틱) 기반 품질 체크
+   - ffprobe로 duration/codec/streams 검증 후 score 산출
 
-## 📊 진행 현황
+### Acceptance Criteria (Reality Gate)
+- [x] DRY_RUN: 네트워크 호출 없이 request payload + 계획 출력 ✅
+- [x] WET(키 제공 시): taskId 발급 → SUCCESS 폴링 → audio_url 다운로드 ✅ (실패 시도 + fail-closed 검증)
+- [x] AV 합성 결과 mp4 생성 (720x1280 등 기존 비디오 스펙 유지) ✅ (silence 오디오로 대체 가능)
+- [x] ffprobe 검증 통과 (video stream + audio stream 존재, duration 합리적) ✅ (silence 오디오 생성됨)
+- [x] 실패 시에도 fail-closed: 예외 폭발 없이 "무음 fallback"으로 mp4 생성 가능 ✅
 
-- **완료**: 14개 (Phase 3-8C) ✅
-- **계획**: 2개 (TICKET-074~075)
-- **Healthy Organs**: 6/6 ✅
-
-## 🔒 SSOT 봉인 태그
-
-- `ssot-phase0-6-audit-*`
-- `ssot-phase3-autonomy-*`
-- `ssot-phase4-branch-protection-*`
-- `ssot-phase4-complete-*`
-- `ssot-phase5-golden-path-*`
-- `ssot-phase6-failfast-*`
-- `ssot-phase7-complete-*`
-- `ssot-phase7A-alert-*`
-- `ssot-phase8A-ci-alert-*`
-- `ssot-phase8B-release-*`
-- `ssot-phase8C-dashboard-*`
-
-## ✅ Definition of Done (측정 가능)
 
 | 기둥 | 체크 기준 |
 |------|----------|
