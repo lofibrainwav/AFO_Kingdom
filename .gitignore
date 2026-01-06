@@ -96,6 +96,10 @@ tools/mlx_optimization/.venv/
 tools/mlx_optimization/.venv/
 >>>>>>> wip/ph20-01-post-work
 
-.bruin.yml.env.antigravity
+.bruin.yml
+.env.antigravity
 
-.bruin.ymltools/dgm/upstream
+tools/dgm/upstream
+
+# Music generation virtual environment
+venv_afo_music/
