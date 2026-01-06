@@ -64,7 +64,7 @@ TimelineState 기반으로 Suno 음악 생성 → 다운로드 → (필요 시 �
 - Phase: 17 (멀티모달 확장)
 - Priority: HIGH
 - Type: Feature Enhancement
-- Status: WIP
+- Status: ✅ 완료 (2026-01-06)
 - Evidence: packages/afo-core/AFO/multimodal/music_provider.py
 - Dependencies: audiocraft, stable-audio-tools (optional)
 
@@ -87,6 +87,80 @@ TimelineState 기반으로 Suno 음악 생성 → 다운로드 → (필요 시 �
 - [x] TimelineState → 음악 생성 파이프라인 완성 ✅
 - [x] Provider별 capability/capacity 평가 ✅
 
+---
+
+## 2026 Roadmap Tickets
+
+## TICKET-084 — Governance Agent 구현
+- Phase: 18 (AI 거버넌스)
+- Priority: HIGH
+- Type: Feature Enhancement
+- Status: PLANNED
+- Evidence: packages/afo-core/AFO/agents/governance_agent.py
+- Dependencies: LangGraph, AICPA patterns
+
+### Goal
+2026 Gartner 예측 (40% 기업 앱 AI Agent 탑재) 충족을 위한 Policy Adherence 모니터링 에이전트 구현.
+
+### Scope
+1) Policy adherence 모니터링
+2) Bounded autonomy 아키텍처
+3) Escalation path to human
+4) Audit trail 자동화
+
+---
+
+## TICKET-085 — Security Agent 구현
+- Phase: 19 (보안 자동화)
+- Priority: HIGH
+- Type: Security Enhancement
+- Status: PLANNED
+- Evidence: packages/afo-core/AFO/agents/security_agent.py
+
+### Goal
+이상 행동 탐지 및 실시간 보안 모니터링 자동화.
+
+### Scope
+1) Anomaly detection for agent behavior
+2) Real-time security monitoring
+3) Threat response automation
+
+---
+
+## TICKET-086 — OpenTelemetry AI Observability
+- Phase: 20 (관측성)
+- Priority: MEDIUM
+- Type: Monitoring Enhancement
+- Status: PLANNED
+- Evidence: packages/afo-core/AFO/observability/
+
+### Goal
+Agent behavior 실시간 모니터링 및 성능 추적.
+
+### Scope
+1) OpenTelemetry for AI integration
+2) Performance metrics dashboard
+3) Compliance violation detection
+
+---
+
+## TICKET-087 — Agentic RAG Enhancement
+- Phase: 21 (RAG 고도화)
+- Priority: MEDIUM
+- Type: Feature Enhancement
+- Status: PLANNED
+- Evidence: packages/afo-core/services/agentic_rag.py
+
+### Goal
+LangGraph Agentic RAG 패턴 적용으로 검색 정확도 향상.
+
+### Scope
+1) Query rewriting with agent reasoning
+2) Document relevance grading
+3) Web search fallback
+4) Hallucination self-correction
+
+---
 
 | 기둥 | 체크 기준 |
 |------|----------|
