@@ -125,13 +125,13 @@ async def get_current_pillars() -> FivePillarsResponse:
         # 5기둥 점수 계산 (비동기)
         scores_dict = await calculate_five_pillars_from_system()
 
-        # Overall 계산 (제3계명 공식)
+        # Overall 계산 (SSOT: 0.35×眞 + 0.35×善 + 0.20×美 + 0.08×孝 + 0.02×永)
         overall = (
-            scores_dict["truth"] * 0.3
-            + scores_dict["goodness"] * 0.3
-            + scores_dict["beauty"] * 0.2
-            + scores_dict["serenity"] * 0.15
-            + scores_dict["forever"] * 0.05
+            scores_dict["truth"] * 0.35
+            + scores_dict["goodness"] * 0.35
+            + scores_dict["beauty"] * 0.20
+            + scores_dict["serenity"] * 0.08
+            + scores_dict["forever"] * 0.02
         )
 
         # Balance 계산

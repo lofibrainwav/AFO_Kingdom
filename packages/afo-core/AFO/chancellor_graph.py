@@ -17,7 +17,7 @@ class ChancellorGraph:
     """Unified Chancellor Graph interface."""
 
     @staticmethod
-    def run_v2(input_payload: dict, nodes_dict: dict = None) -> dict:
+    def run_v2(input_payload: dict, nodes_dict: dict | None = None) -> dict:
         """Run Chancellor Graph V2 with default nodes if not provided.
 
         Args:

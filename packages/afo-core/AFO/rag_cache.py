@@ -5,9 +5,9 @@ import time
 from typing import Any
 
 try:
-    import redis  # type: ignore
+    import redis
 except Exception:
-    redis = None
+    redis: Any = None
 
 # RAG Cache SSOT Config
 RAG_CACHE_CONFIG = {
@@ -54,7 +54,9 @@ def _prefix() -> str:
 
 
 def _redis_client():
-    if redis is None:
+    # Use Any cast to avoid MyPy unreachable detection
+    r: Any = redis
+    if r is None:
         return None
     host = os.getenv("AFO_REDIS_HOST", "localhost")
     port = int(os.getenv("AFO_REDIS_PORT", "6379"))

@@ -24,7 +24,7 @@ async def _stream_echo(text: str) -> AsyncIterator[bytes]:
 
 async def _stream_langgraph(text: str) -> AsyncIterator[bytes]:
     try:
-        from langgraph.graph import END, StateGraph  # type: ignore
+        from langgraph.graph import END, StateGraph
     except Exception:
         async for b in _stream_echo("[langgraph 미설치/임포트 실패] " + text):
             yield b
@@ -52,7 +52,7 @@ async def _stream_langgraph(text: str) -> AsyncIterator[bytes]:
 
 async def _stream_crewai(text: str) -> AsyncIterator[bytes]:
     try:
-        from crewai import Agent, Crew, Process, Task  # type: ignore
+        from crewai import Agent, Crew, Process, Task
     except Exception:
         async for b in _stream_echo("[crewai 미설치/임포트 실패] " + text):
             yield b
@@ -80,7 +80,7 @@ async def _stream_crewai(text: str) -> AsyncIterator[bytes]:
 
 async def _stream_autogen(text: str) -> AsyncIterator[bytes]:
     try:
-        from autogen_agentchat.agents import AssistantAgent  # type: ignore
+        from autogen_agentchat.agents import AssistantAgent
     except Exception:
         async for b in _stream_echo("[autogen-agentchat 미설치/임포트 실패] " + text):
             yield b

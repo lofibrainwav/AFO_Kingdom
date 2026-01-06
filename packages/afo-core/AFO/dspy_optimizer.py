@@ -14,8 +14,20 @@ try:
 except ImportError:
     MIPROv2 = None
 
+<<<<<<< Updated upstream
 # Inferred strict mode from environment or existing config
 STRICT_MODE = True if antigravity.ENVIRONMENT == "test" else False
+=======
+    # DSPy가 설치되지 않은 경우 모의 클래스 제공
+    class MockMIPROv2:
+        def __init__(self, **kwargs):
+            pass
+
+        def compile(self, program, trainset=None, valset=None):
+            return program
+>>>>>>> Stashed changes
+
+    MIPROv2 = MockMIPROv2
 
 
 def compile_mipro(

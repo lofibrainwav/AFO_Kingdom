@@ -1,0 +1,44 @@
+{
+  "alliances": [
+    {
+      "id": "openai",
+      "name": "OpenAI",
+      "type": "external_api",
+      "status": "allied",
+      "internal_integration": {
+        "endpoint": "/health/openai",
+        "last_success": "2026-01-06T10:00:00Z",
+        "success_rate": 0.99
+      },
+      "dns_check": {
+        "domain": "api.openai.com",
+        "expected_ips": ["104.18.0.0/20"]
+      }
+    },
+    {
+      "id": "anthropic",
+      "name": "Anthropic",
+      "type": "external_api",
+      "status": "allied",
+      "internal_integration": {
+        "endpoint": "/health/anthropic",
+        "last_success": "2026-01-06T10:00:00Z",
+        "success_rate": 0.98
+      },
+      "dns_check": {
+        "domain": "api.anthropic.com"
+      }
+    },
+    {
+      "id": "local_vllm",
+      "name": "Local vLLM",
+      "type": "internal_service",
+      "status": "allied",
+      "internal_integration": {
+        "endpoint": "http://localhost:8000/health",
+        "last_success": "2026-01-06T10:00:00Z",
+        "success_rate": 1.0
+      }
+    }
+  ]
+}
