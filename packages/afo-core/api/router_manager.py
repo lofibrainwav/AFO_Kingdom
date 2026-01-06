@@ -17,6 +17,7 @@ from typing import TYPE_CHECKING, Any, cast
 
 from AFO.api.compat import (
     aicpa_router,
+    alliance_router,
     auth_router,
     budget_router,
     chancellor_router,
@@ -170,6 +171,7 @@ class AFORouterManager:
         self._safe_register_router(multi_agent_router)
         self._safe_register_router(got_router, prefix="/api/got", tags=["Graph of Thought"])
         self._safe_register_router(n8n_router, prefix="/api/n8n", tags=["N8N Integration"])
+        self._safe_register_router(alliance_router, tags=["Alliances"])
 
         # API and financial systems
         self._safe_register_router(wallet_router, tags=["API Wallet"])

@@ -6,11 +6,13 @@ import { CommandOverlay } from '../../components/genui/CommandOverlay';
 import { StrategistCard } from '../../components/genui/StrategistCard';
 import KingdomParticles from '../../components/genui/KingdomParticles';
 import { EvolutionMonitor } from '../../components/EvolutionMonitor';
+import { AllianceObserver } from '../../components/AllianceObserver';
 import { X } from 'lucide-react';
 
 export default function KingdomPage() {
     const [isCommandOpen, setIsCommandOpen] = useState(false);
     const [isEvolutionOpen, setIsEvolutionOpen] = useState(false);
+    const [isAllianceOpen, setIsAllianceOpen] = useState(false);
 
     // 🟢 6-SANCTUARY (Bio-Kingdom Map)
     // 1. Heart (Central)
@@ -92,6 +94,7 @@ export default function KingdomPage() {
                         label="Heavenly Obs."
                         organLabel="LUNGS (Monitor)"
                         riskLevel={5} 
+                        onClick={() => setIsAllianceOpen(true)}
                     />
 
                     {/* 6. STOMACH (Bottom-Right): Alchemical Warehouse */}
@@ -232,6 +235,20 @@ export default function KingdomPage() {
                             <X className="w-5 h-5" />
                         </button>
                         <EvolutionMonitor />
+                    </div>
+                </div>
+            )}
+
+            {isAllianceOpen && (
+                <div className="fixed inset-0 z-[300] flex items-center justify-center p-8 bg-black/80 backdrop-blur-md animate-in fade-in duration-500">
+                    <div className="relative w-full max-w-2xl shadow-[0_0_50px_rgba(59,130,246,0.3)] rounded-2xl overflow-hidden">
+                        <button 
+                            onClick={() => setIsAllianceOpen(false)}
+                            className="absolute top-4 right-4 z-[310] p-2 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white rounded-full transition-colors"
+                        >
+                            <X className="w-5 h-5" />
+                        </button>
+                        <AllianceObserver />
                     </div>
                 </div>
             )}

@@ -560,7 +560,9 @@ OLLAMA_AVAILABLE = False
 LMSTUDIO_AVAILABLE = False
 
 # Routers (실제 라우터가 없을 때 None)
+alliance_router: APIRouter | None
 aicpa_router = _safe_import_router("AFO.api.routers.aicpa")
+alliance_router = _safe_import_router("AFO.api.routers.alliance_router")
 auth_router = _safe_import_router("AFO.api.routers.auth")
 budget_router = _safe_import_router("AFO.api.routers.budget")
 # Direct import for Chancellor Router to avoid import issues
