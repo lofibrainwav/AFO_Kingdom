@@ -47,9 +47,9 @@ test -f AFO_EVOLUTION_LOG.md && tail -n 120 AFO_EVOLUTION_LOG.md || echo "AFO_EV
 
 echo "== STRICT RUFF (code-only scope) =="
 uv sync --frozen
-uv run ruff --version
-uv run ruff check packages scripts
-uv run ruff format --check packages scripts
+ruff --version
+ruff check packages scripts
+ruff format --check packages scripts
 echo "✅ RUFF 0-exit"
 
 echo "== STRICT PYRIGHT (code-only scope) =="
