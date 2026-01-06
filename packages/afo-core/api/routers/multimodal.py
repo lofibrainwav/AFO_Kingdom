@@ -191,3 +191,76 @@ async def process_video(
     except Exception as e:
         logger.error(f"Video processing failed: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/music/generate")
+async def generate_music(request: dict[str, Any]) -> dict[str, Any]:
+    """
+    Generate music from TimelineState using MLX MusicGen.
+
+    Args:
+        request: Request containing timeline_state and generation parameters
+    """
+    try:
+        timeline_state = request.get("timeline_state")
+        if not timeline_state:
+            raise HTTPException(status_code=400, detail="timeline_state is required")
+
+        provider = request.get("provider", "mlx_musicgen")
+        quality = request.get("quality", "high")
+
+        # Import MLX MusicGen provider
+        try:
+            from AFO.multimodal.music_provider import get_music_router
+
+            router = get_music_router()
+            result = router.generate_music(
+                timeline_state, quality=quality, local_only=True, max_cost=0.0
+            )
+
+            if result.get("success"):
+                # Return audio file URL for frontend access
+                audio_path = result.get("output_path", result.get("audio_path"))
+                if audio_path:
+                    # Convert to web-accessible URL
+                    audio_url = f"/api/audio/{Path(audio_path).name}"
+                    return {
+                        "success": True,
+                        "audio_path": audio_path,
+                        "audio_url": audio_url,
+                        "duration": result.get("duration", 30),
+                        "title": timeline_state.get("title", "Generated Music"),
+                        "provider": provider,
+                    }
+
+            return {
+                "success": False,
+                "error": result.get("error", "Music generation failed"),
+                "details": result,
+            }
+
+        except ImportError:
+            raise HTTPException(status_code=503, detail="Music generation service not available")
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Music generation failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Music generation failed: {e!s}")
+
+
+@router.get("/audio/{filename}")
+async def get_audio_file(filename: str) -> Any:
+    """
+    Serve generated audio files.
+
+    Args:
+        filename: Audio file name
+    """
+    from fastapi.responses import FileResponse
+
+    audio_path = Path("artifacts") / filename
+    if not audio_path.exists():
+        raise HTTPException(status_code=404, detail="Audio file not found")
+
+    return FileResponse(path=audio_path, media_type="audio/wav", filename=filename)

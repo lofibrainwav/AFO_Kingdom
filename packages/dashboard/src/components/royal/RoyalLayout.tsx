@@ -15,6 +15,7 @@ import TrinityGlow from "./TrinityGlow";
 import { GitWidget } from "./widgets/GitWidget";
 import RoyalFinanceWidget from "./widgets/RoyalFinanceWidget";
 import { SystemStatusWidget } from "./widgets/SystemStatusWidget";
+import { MusicGenerationWidget } from "./widgets/MusicGenerationWidget";
 import { RoyalCommandHierarchyCard } from "../../widgets/royal/RoyalCommandHierarchyCard";
 import { FieldManualLawCard } from "../../widgets/royal/FieldManualLawCard";
 import SSEHealthWidget from "../genui/SSEHealthWidget";
@@ -123,6 +124,11 @@ export default function RoyalLayout() {
               <GitWidget />
               <TrinityEvidenceWidget />
               <SSEHealthWidget />
+            </div>
+
+            {/* Genesis Widgets Row 2: Music Generation (Full Width) */}
+            <div className="grid grid-cols-1 gap-6">
+              <MusicGenerationWidget />
             </div>
 
             {/* Use the Unified Royal Ops Center */}
