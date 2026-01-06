@@ -99,6 +99,22 @@ class GovernanceAgent:
 
         self._operation_counts: dict[str, int] = {}
 
+        # OWASP Agentic 2026: Kill Switch state (ASI01 mitigation)
+        self._kill_switch_active = False
+        self._kill_switch_reason: str | None = None
+        self._kill_switch_timestamp: str | None = None
+
+        # Agent Goal Hijack detection patterns (OWASP ASI01)
+        self._goal_hijack_patterns = [
+            "ignore previous instructions",
+            "disregard your guidelines",
+            "forget your rules",
+            "override your constraints",
+            "you are now",
+            "new objective:",
+            "your real purpose",
+        ]
+
     async def evaluate_action(
         self, action: str, agent_name: str, context: dict[str, Any] | None = None
     ) -> GovernanceDecision:
@@ -286,3 +302,100 @@ governance_agent = GovernanceAgent()
 async def evaluate_action(action: str, agent_name: str, **context) -> GovernanceDecision:
     """Convenience function to evaluate an action through governance."""
     return await governance_agent.evaluate_action(action, agent_name, context)
+
+
+# ===== OWASP Agentic 2026 Kill Switch API =====
+
+
+def activate_kill_switch(reason: str) -> dict[str, Any]:
+    """Activate emergency kill switch for all agents (OWASP ASI01).
+
+    Args:
+        reason: Reason for activation
+
+    Returns:
+        Status of kill switch activation
+    """
+    governance_agent._kill_switch_active = True
+    governance_agent._kill_switch_reason = reason
+    governance_agent._kill_switch_timestamp = datetime.now(UTC).isoformat()
+
+    logger.critical(f"🚨 KILL SWITCH ACTIVATED: {reason}")
+
+    return {
+        "status": "activated",
+        "reason": reason,
+        "timestamp": governance_agent._kill_switch_timestamp,
+    }
+
+
+def deactivate_kill_switch(authorization_code: str) -> dict[str, Any]:
+    """Deactivate kill switch (requires authorization).
+
+    Args:
+        authorization_code: Human authorization code
+
+    Returns:
+        Status of deactivation
+    """
+    # In production, would validate authorization_code
+    if not authorization_code:
+        return {"status": "error", "message": "Authorization required"}
+
+    governance_agent._kill_switch_active = False
+    prev_reason = governance_agent._kill_switch_reason
+    governance_agent._kill_switch_reason = None
+
+    logger.info(f"✅ Kill switch deactivated (was: {prev_reason})")
+
+    return {
+        "status": "deactivated",
+        "previous_reason": prev_reason,
+        "deactivated_at": datetime.now(UTC).isoformat(),
+    }
+
+
+def is_kill_switch_active() -> bool:
+    """Check if kill switch is currently active."""
+    return governance_agent._kill_switch_active
+
+
+def get_kill_switch_status() -> dict[str, Any]:
+    """Get current kill switch status."""
+    return {
+        "active": governance_agent._kill_switch_active,
+        "reason": governance_agent._kill_switch_reason,
+        "activated_at": governance_agent._kill_switch_timestamp,
+    }
+
+
+def detect_goal_hijack(input_text: str) -> dict[str, Any]:
+    """Detect potential Agent Goal Hijack attempts (OWASP ASI01).
+
+    Args:
+        input_text: Text to analyze for hijack patterns
+
+    Returns:
+        Detection result with threat details
+    """
+    input_lower = input_text.lower()
+    detected = []
+
+    for pattern in governance_agent._goal_hijack_patterns:
+        if pattern in input_lower:
+            detected.append(pattern)
+
+    if detected:
+        logger.warning(f"⚠️ Goal Hijack attempt detected: {detected}")
+        return {
+            "is_hijack_attempt": True,
+            "patterns_found": detected,
+            "threat_level": "HIGH",
+            "recommendation": "Block input and log incident",
+        }
+
+    return {
+        "is_hijack_attempt": False,
+        "patterns_found": [],
+        "threat_level": "NONE",
+    }
