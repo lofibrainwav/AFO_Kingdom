@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { useState, useRef, useCallback } from "react";
-import { Play, Pause, Download, Music, Volume2, VolumeX } from "lucide-react";
+import { Play, Pause, Download, Music, Volume2, VolumeX, Video, Film } from "lucide-react";
 
 interface TimelineSection {
   start: number;
@@ -37,8 +37,17 @@ export function MusicGenerationWidget({ className = "" }: MusicGenerationWidgetP
   const [volume, setVolume] = useState(0.7);
   const [isMuted, setIsMuted] = useState(false);
 
+  // AV JOIN 관련 상태
+  const [isCreatingAV, setIsCreatingAV] = useState(false);
+  const [generatedAV, setGeneratedAV] = useState<{
+    url: string;
+    duration: number;
+    title: string;
+  } | null>(null);
+
   const audioRef = useRef<HTMLAudioElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   // 샘플 TimelineState (실제로는 props나 state에서 받아옴)
   const sampleTimeline: TimelineState = {
@@ -163,6 +172,68 @@ export function MusicGenerationWidget({ className = "" }: MusicGenerationWidgetP
       alert('다운로드 실패');
     }
   }, [generatedMusic]);
+
+  const createAV = useCallback(async () => {
+    if (isCreatingAV || !generatedMusic) return;
+
+    setIsCreatingAV(true);
+    try {
+      // AV JOIN API 호출
+      const response = await fetch('/api/multimodal/av/join', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          video_path: "artifacts/sample_video.mp4", // 샘플 비디오 경로
+          audio_path: generatedMusic.url.replace('/api/audio/', ''), // 오디오 파일명 추출
+          timeline_state: sampleTimeline,
+          duration_match: "min"
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`AV creation failed: ${response.status}`);
+      }
+
+      const result = await response.json();
+
+      if (result.success && result.av_url) {
+        setGeneratedAV({
+          url: result.av_url,
+          duration: result.duration || 30,
+          title: `${sampleTimeline.title} - Complete AV`
+        });
+      } else {
+        throw new Error(result.error || 'AV creation failed');
+      }
+    } catch (error) {
+      console.error('AV creation error:', error);
+      alert(`AV 생성 실패: ${error instanceof Error ? error.message : '알 수 없는 오류'}`);
+    } finally {
+      setIsCreatingAV(false);
+    }
+  }, [isCreatingAV, generatedMusic, sampleTimeline]);
+
+  const downloadAV = useCallback(async () => {
+    if (!generatedAV) return;
+
+    try {
+      const response = await fetch(generatedAV.url);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${generatedAV.title.replace(/[^a-zA-Z0-9]/g, '_')}.mp4`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('AV download failed:', error);
+      alert('AV 다운로드 실패');
+    }
+  }, [generatedAV]);
 
   const formatTime = (seconds: number): string => {
     const mins = Math.floor(seconds / 60);
@@ -304,9 +375,80 @@ export function MusicGenerationWidget({ className = "" }: MusicGenerationWidgetP
                 </motion.button>
               </div>
 
+              {/* AV JOIN Button */}
+              <div className="border-t border-white/10 pt-4">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={createAV}
+                  disabled={isCreatingAV}
+                  className={`w-full py-3 px-4 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 ${
+                    isCreatingAV
+                      ? 'bg-slate-300 text-slate-500 cursor-not-allowed'
+                      : 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white hover:from-indigo-600 hover:to-purple-600 shadow-lg hover:shadow-xl'
+                  }`}
+                >
+                  {isCreatingAV ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-slate-500 border-t-transparent rounded-full animate-spin" />
+                      🎬 AV 합성 중...
+                    </>
+                  ) : (
+                    <>
+                      <Film className="w-5 h-5" />
+                      🎬 비디오 + 음악 AV 합성
+                    </>
+                  )}
+                </motion.button>
+              </div>
+
               {/* Time Display */}
               <div className="text-center text-sm text-slate-500 font-mono">
                 {formatTime(currentTime)} / {formatTime(generatedMusic.duration)}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* AV Player */}
+      <AnimatePresence>
+        {generatedAV && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="mt-6 border-t border-white/20 pt-6"
+          >
+            <div className="space-y-4">
+              {/* Title */}
+              <div className="text-center">
+                <h4 className="text-lg font-semibold text-slate-700">{generatedAV.title}</h4>
+                <p className="text-sm text-slate-500">완전 AV 콘텐츠 • {formatTime(generatedAV.duration)}</p>
+              </div>
+
+              {/* Video Player */}
+              <div className="bg-black rounded-lg overflow-hidden">
+                <video
+                  ref={videoRef}
+                  src={generatedAV.url}
+                  controls
+                  className="w-full h-auto"
+                  preload="metadata"
+                />
+              </div>
+
+              {/* Download Button */}
+              <div className="text-center">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={downloadAV}
+                  className="px-6 py-3 bg-gradient-to-r from-purple-500 to-indigo-500 text-white rounded-lg font-medium hover:from-purple-600 hover:to-indigo-600 transition-all shadow-lg hover:shadow-xl flex items-center gap-2 mx-auto"
+                >
+                  <Download className="w-4 h-4" />
+                  완전 AV 다운로드 (MP4)
+                </motion.button>
               </div>
             </div>
           </motion.div>
