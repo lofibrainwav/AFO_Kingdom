@@ -87,6 +87,88 @@ TimelineState 기반으로 Suno 음악 생성 → 다운로드 → (필요 시 �
 - [x] TimelineState → 음악 생성 파이프라인 완성 ✅
 - [x] Provider별 capability/capacity 평가 ✅
 
+## TICKET-084 — Suno vs 오픈소스 비교 분석 + 학습 데이터 생성
+- Phase: 18 (멀티모달 확장)
+- Priority: HIGH
+- Type: Research & Analysis
+- Status: ✅ 완료 (2026-01-06)
+- Evidence: music_comparison_analyzer.py, artifacts/music_comparison/
+- Dependencies: MusicProvider 인터페이스
+
+### Goal
+Suno와 오픈소스 음악 생성 서비스를 체계적으로 비교 분석하여 학습 데이터를 생성하고 오픈소스 향상 전략 수립.
+
+### Scope
+1) MusicComparisonAnalyzer 프레임워크 구현 (품질/속도/스타일 메트릭)
+2) 동일 TimelineState로 양쪽 Provider 비교 테스트
+3) 성능 메트릭 수집 및 분석 (생성 시간, 메모리 사용량, 품질 점수)
+4) Suno 강점 추출 및 오픈소스 개선 기회 식별
+5) 학습 데이터 구조화 저장 (JSON 포맷)
+
+### Acceptance Criteria (Reality Gate)
+- [x] MusicComparisonAnalyzer 클래스 구현 ✅
+- [x] 품질/성능 메트릭 수집 체계 구축 ✅
+- [x] 동일 TimelineState 비교 분석 ✅
+- [x] 결과 JSON 구조화 저장 ✅
+- [x] 오픈소스 개선 인사이트 도출 ✅
+
+## TICKET-085 — OpenCut UI 음악 프리뷰 임베드 + 백엔드 API 통합
+- Phase: 19 (멀티모달 확장)
+- Priority: HIGH
+- Type: Feature Enhancement
+- Status: ✅ 완료 (2026-01-06)
+- Evidence: packages/dashboard/src/components/royal/widgets/MusicGenerationWidget.tsx, packages/afo-core/api/routers/multimodal.py
+- Dependencies: MLX MusicGen, TimelineState SSOT
+
+### Goal
+OpenCut UI에 MLX MusicGen 음악 생성 결과를 실시간으로 프리뷰하고 다운로드할 수 있는 기능을 완전히 통합.
+
+### Scope
+1) MusicGenerationWidget 컴포넌트 구현 (TimelineState 표시 + 생성 컨트롤 + 오디오 플레이어)
+2) RoyalLayout에 음악 생성 위젯 통합
+3) 백엔드 API 엔드포인트 추가 (/api/multimodal/music/generate + /api/audio/{filename})
+4) TimelineState → MLX MusicGen 자동 변환 파이프라인 구축
+5) 오디오 파일 서빙 및 다운로드 기능 구현
+
+### Acceptance Criteria (Reality Gate)
+- [x] MusicGenerationWidget 컴포넌트 구현 및 RoyalLayout 통합 ✅
+- [x] 백엔드 음악 생성 API 추가 (/api/multimodal/music/generate) ✅
+- [x] 오디오 파일 서빙 API 추가 (/api/audio/{filename}) ✅
+- [x] TimelineState 자동 변환 및 MLX MusicGen 호출 ✅
+- [x] 프론트엔드 오디오 플레이어 + 다운로드 기능 ✅
+
+## TICKET-086 — AV JOIN 자동화 완성 (영상 + 음악 → 완전 숏폼 콘텐츠)
+- Phase: 19 (멀티모달 확장)
+- Priority: HIGH
+- Type: Feature Enhancement
+- Status: ✅ 완료 (2026-01-06)
+- Evidence: packages/afo-core/AFO/multimodal/av_join_engine.py, packages/afo-core/api/routers/multimodal.py
+- Dependencies: MoviePy, MusicGenerationWidget
+
+### Goal
+TimelineState 하나로 영상 + 음악을 자동으로 합성하여 완전한 숏폼 AV 콘텐츠를 생성하는 파이프라인 완성.
+
+### Scope
+1) AVJoinEngine 클래스 구현 (MoviePy 기반 오디오-비디오 합성)
+2) 백엔드 AV JOIN API 추가 (/api/multimodal/av/join + /api/av/{filename})
+3) TimelineState 기반 완전 자동 AV 생성 워크플로우 구현
+4) MusicGenerationWidget에 AV 합성 기능 통합
+5) AV 플레이어 및 다운로드 기능 구현
+
+### Acceptance Criteria (Reality Gate)
+- [x] AVJoinEngine 클래스 및 MoviePy 통합 구현 ✅
+- [x] 백엔드 AV JOIN API (/api/multimodal/av/join) 추가 ✅
+- [x] AV 파일 서빙 API (/api/av/{filename}) 추가 ✅
+- [x] TimelineState 기반 완전 자동 AV 생성 ✅
+- [x] 프론트엔드 AV 플레이어 + 다운로드 기능 ✅
+
+### Final Pipeline: ABSORB → GENERATE → FANOUT → JOIN → RENDER ✅
+1. **ABSORB**: TimelineState 수집
+2. **GENERATE**: MLX MusicGen으로 음악 생성
+3. **FANOUT**: CapCut으로 비디오 생성 (병렬)
+4. **JOIN**: MoviePy로 AV 합성
+5. **RENDER**: 완전 숏폼 콘텐츠 출력
+
 ---
 
 ## 2026 Roadmap Tickets

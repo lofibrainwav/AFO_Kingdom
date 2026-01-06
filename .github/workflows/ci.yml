@@ -56,10 +56,10 @@ jobs:
           cd packages/afo-core && pytest --cov=AFO --cov-report=xml
 =======
       - name: Ruff check (코드 품질 검증)
-        run: uv run ruff check .
+        run: ruff check .
 
       - name: Ruff format check (코드 포맷 검증)
-        run: uv run ruff format --check .
+        run: ruff format --check .
 
       - name: Pyright 타입 체크
         env:

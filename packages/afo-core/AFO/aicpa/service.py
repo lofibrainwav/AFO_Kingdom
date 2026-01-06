@@ -17,7 +17,7 @@ from dataclasses import asdict
 from datetime import datetime
 from pathlib import Path
 
-from AFO.report_generator import (
+from AFO.aicpa.report_generator import (
     generate_email_draft,
     generate_quickbooks_csv,
     generate_strategy_report,

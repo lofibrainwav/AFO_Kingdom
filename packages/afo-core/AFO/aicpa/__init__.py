@@ -3,7 +3,7 @@
 AICPA Module - 에이전트 군단
 """
 
-from AFO.report_generator import (
+from AFO.aicpa.report_generator import (
     generate_email_draft,
     generate_quickbooks_csv,
     generate_strategy_report,

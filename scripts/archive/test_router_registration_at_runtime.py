@@ -16,7 +16,7 @@ import json
 from datetime import datetime
 
 
-LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
+LOG_PATH = Path(str(Path(__file__).parent.parent) + "/.cursor/debug.log")
 
 
 def log_debug(location: str, message: str, data: dict | None = None, hypothesis_id: str = "A") -> None:

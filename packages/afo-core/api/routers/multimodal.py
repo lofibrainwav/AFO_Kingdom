@@ -264,3 +264,119 @@ async def get_audio_file(filename: str) -> Any:
         raise HTTPException(status_code=404, detail="Audio file not found")
 
     return FileResponse(path=audio_path, media_type="audio/wav", filename=filename)
+
+
+@router.post("/av/join")
+async def join_audio_video(request: dict[str, Any]) -> dict[str, Any]:
+    """
+    Join audio and video files to create complete AV content.
+
+    Args:
+        request: Request containing video_path, audio_path, and output options
+    """
+    try:
+        video_path = request.get("video_path")
+        audio_path = request.get("audio_path")
+        output_path = request.get(
+            "output_path", f"artifacts/av_join_{int(__import__('time').time())}.mp4"
+        )
+        duration_match = request.get("duration_match", "min")
+        timeline_state = request.get("timeline_state")
+
+        if not video_path or not audio_path:
+            raise HTTPException(status_code=400, detail="video_path and audio_path are required")
+
+        # AV Join Engine 사용
+        try:
+            from AFO.multimodal.av_join_engine import get_av_join_engine
+
+            engine = get_av_join_engine()
+
+            if timeline_state:
+                # TimelineState 기반 AV 생성
+                result = engine.join_with_timeline_state(
+                    timeline_state, video_path, audio_path, output_path
+                )
+            else:
+                # 기본 AV JOIN
+                result = engine.join_audio_video(
+                    video_path, audio_path, output_path, duration_match=duration_match
+                )
+
+            if result.get("success"):
+                # 웹 접근 가능한 URL로 변환
+                output_filename = Path(output_path).name
+                result["av_url"] = f"/api/av/{output_filename}"
+
+            return result
+
+        except ImportError:
+            raise HTTPException(status_code=503, detail="AV Join engine not available")
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"AV join failed: {e}")
+        raise HTTPException(status_code=500, detail=f"AV join failed: {e!s}")
+
+
+@router.post("/av/create-complete")
+async def create_complete_av(request: dict[str, Any]) -> dict[str, Any]:
+    """
+    Create complete AV from TimelineState (auto-generate video + audio + join).
+
+    Args:
+        request: Request containing timeline_state and options
+    """
+    try:
+        timeline_state = request.get("timeline_state")
+        if not timeline_state:
+            raise HTTPException(status_code=400, detail="timeline_state is required")
+
+        # 미래: CapCut + MusicGen 자동 통합
+        # 현재는 수동 파일 기반 (테스트용)
+        video_path = request.get("video_path", "artifacts/sample_video.mp4")
+        audio_path = request.get("audio_path", "artifacts/mlx_music_test.wav")
+        output_path = request.get(
+            "output_path", f"artifacts/complete_av_{int(__import__('time').time())}.mp4"
+        )
+
+        try:
+            from AFO.multimodal.av_join_engine import get_av_join_engine
+
+            engine = get_av_join_engine()
+            result = engine.create_complete_av_from_timeline(
+                timeline_state, video_path, audio_path, output_path
+            )
+
+            if result.get("success"):
+                output_filename = Path(output_path).name
+                result["av_url"] = f"/api/av/{output_filename}"
+
+            return result
+
+        except ImportError:
+            raise HTTPException(status_code=503, detail="AV creation engine not available")
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Complete AV creation failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Complete AV creation failed: {e!s}")
+
+
+@router.get("/av/{filename}")
+async def get_av_file(filename: str) -> Any:
+    """
+    Serve generated AV files.
+
+    Args:
+        filename: AV file name
+    """
+    from fastapi.responses import FileResponse
+
+    av_path = Path("artifacts") / filename
+    if not av_path.exists():
+        raise HTTPException(status_code=404, detail="AV file not found")
+
+    return FileResponse(path=av_path, media_type="video/mp4", filename=filename)
