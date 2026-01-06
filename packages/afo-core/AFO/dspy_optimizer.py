@@ -12,12 +12,6 @@ from AFO.services.trinity_calculator import calculate_trinity_score
 try:
     from dspy.teleprompt import MIPROv2
 except ImportError:
-    MIPROv2 = None
-
-<<<<<<< Updated upstream
-# Inferred strict mode from environment or existing config
-STRICT_MODE = True if antigravity.ENVIRONMENT == "test" else False
-=======
     # DSPy가 설치되지 않은 경우 모의 클래스 제공
     class MockMIPROv2:
         def __init__(self, **kwargs):
@@ -25,9 +19,11 @@ STRICT_MODE = True if antigravity.ENVIRONMENT == "test" else False
 
         def compile(self, program, trainset=None, valset=None):
             return program
->>>>>>> Stashed changes
 
     MIPROv2 = MockMIPROv2
+
+# Inferred strict mode from environment or existing config
+STRICT_MODE = True if antigravity.ENVIRONMENT == "test" else False
 
 
 def compile_mipro(

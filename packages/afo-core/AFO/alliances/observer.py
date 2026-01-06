@@ -35,7 +35,9 @@ class AllianceObserver:
         for parent in [here, *here.parents]:
             if (parent / "AGENTS.md").exists():
                 return parent
-        return Path("/Users/brnestrm/AFO_Kingdom")  # Hard fallback
+        # Ultimate fallback: this file is at packages/afo-core/AFO/alliances/observer.py
+        # So repo root is 5 parents up
+        return here.parents[4]
 
     def load_config(self) -> list[dict[str, Any]]:
         """Load alliance configuration from JSON file."""

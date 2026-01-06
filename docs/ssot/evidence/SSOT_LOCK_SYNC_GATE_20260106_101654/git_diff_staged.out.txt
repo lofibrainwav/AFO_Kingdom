@@ -1,0 +1,3 @@
+A	docs/ssot/RUFF_RULES_PLAYBOOK.md
+A	docs/ssot/SSOT_LOCK_SYNC_GATE.md
+A	docs/ssot/allowlists/untracked_allowlist_regex.txt

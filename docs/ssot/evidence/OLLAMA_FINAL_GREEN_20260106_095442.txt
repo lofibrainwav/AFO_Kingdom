@@ -1,0 +1,35 @@
+🏰 AFO 왕국 시스템 헬스 체크 (T1.1 Ollama 통합 강화)
+============================================================
+
+1. Ollama 통합 강화 체크...
+환경변수 표준화:
+   OLLAMA_BASE_URL: http://localhost:11434
+   OLLAMA_MODEL: qwen2.5-coder:7b
+   OLLAMA_NUM_PARALLEL: 1
+   OLLAMA_NUM_THREAD: 2
+   OLLAMA_NUM_CTX: 2048
+   OLLAMA_KEEP_ALIVE: 5m
+   OLLAMA_GPU_LAYERS: 0
+   OLLAMA_MAX_LOADED_MODELS: 1
+   OLLAMA_USE_GPU: false
+
+Ollama 헬스 메트릭스:
+   연결성: ✅
+   모델 스위칭: ❌
+   Fallback 로직: ✅
+   성능: 14446.5ms
+
+Trinity Score 기여도 (T1.1 목표: 眞 +15%):
+   truth: 10.0%
+   goodness: 5.0%
+   beauty: 0.0%
+   serenity: 0.0%
+   eternity: 0.0%
+
+2. 기존 Sage Connectivity 체크...
+   Jwaja (MLX): ✅ (Apple Silicon)
+
+============================================================
+종합 헬스 체크 결과:
+SSOT 저장: artifacts/t11_ollama_integration_ssot_1767722097.jsonl
+전체 상태: ✅ 건강

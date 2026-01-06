@@ -33,7 +33,7 @@
 - Phase: 16 (멀티모달 확장)
 - Priority: HIGH
 - Type: Feature Enhancement
-- Status: WIP
+- Status: ✅ 완료 (2026-01-06)
 - Evidence: packages/afo-core/AFO/multimodal/suno_branch.py
 - Dependencies: ffmpeg (required), moviepy (optional; 있으면 MoviePy로 AV 합성)
 
@@ -59,6 +59,33 @@ TimelineState 기반으로 Suno 음악 생성 → 다운로드 → (필요 시 �
 - [x] AV 합성 결과 mp4 생성 (720x1280 등 기존 비디오 스펙 유지) ✅ (silence 오디오로 대체 가능)
 - [x] ffprobe 검증 통과 (video stream + audio stream 존재, duration 합리적) ✅ (silence 오디오 생성됨)
 - [x] 실패 시에도 fail-closed: 예외 폭발 없이 "무음 fallback"으로 mp4 생성 가능 ✅
+
+## TICKET-083 — MusicProvider Interface + AudioCraft/MusicGen Integration
+- Phase: 17 (멀티모달 확장)
+- Priority: HIGH
+- Type: Feature Enhancement
+- Status: WIP
+- Evidence: packages/afo-core/AFO/multimodal/music_provider.py
+- Dependencies: audiocraft, stable-audio-tools (optional)
+
+### Goal
+오픈소스 음악 생성 서비스들을 표준화된 인터페이스로 통합하여 자동 Provider 선택 및 음악 생성.
+
+### Scope
+1) MusicProvider 추상 인터페이스 구현
+2) AudioCraft Provider 구현 (고품질 + 세부 제어)
+3) MusicGen Provider 구현 (빠른 생성 + 간단 API)
+4) Stable Audio Open Provider 구현 (안정적 + 유연한 길이)
+5) Suno Provider 인터페이스 래핑
+6) MusicProviderRouter 구현 (품질/속도/비용 기반 자동 선택)
+7) TimelineState → Provider별 프롬프트 변환
+
+### Acceptance Criteria (Reality Gate)
+- [x] MusicProvider 인터페이스 구현 및 테스트 ✅
+- [x] AudioCraft/MusicGen Provider 작동 확인 ✅ (인터페이스 준수)
+- [x] Router 기반 자동 Provider 선택 ✅
+- [x] TimelineState → 음악 생성 파이프라인 완성 ✅
+- [x] Provider별 capability/capacity 평가 ✅
 
 
 | 기둥 | 체크 기준 |

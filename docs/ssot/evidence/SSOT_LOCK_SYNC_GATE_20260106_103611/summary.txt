@@ -1,0 +1,19 @@
+AS_OF=20260106_103611
+GIT_ROOT=/Users/brnestrm/AFO_Kingdom
+RUFF_TARGET=.
+ABS_PATH_REGEX=(/Users/brnestrm/AFO_Kingdom|/Users/[^/]+/AFO_Kingdom)
+ALLOW_AHEAD=false
+ALLOWLIST_FILE=
+APPLY_ALLOWLIST=false
+ALLOWLIST_OUTFILE=docs/ssot/allowlists/untracked_allowlist_regex.txt
+
+RUFF=FAIL (version_rc=0, check_rc=1)
+ABS_PATH=FAIL (hits=105)
+GIT=FAIL (unstaged=9, staged=5, bad_untracked=4, ahead_or_behind=yes)
+
+NEXT_ACTIONS_MAX_3:
+1) ruff 원인 파악: ruff check . --statistics
+2) 절대경로 히트 상위 확인: sed -n '1,80p' "/Users/brnestrm/AFO_Kingdom/docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_103611/abs_path_hits.out.txt"
+3) untracked 격리(옵션): SSOT_APPLY_UNTRACKED_ALLOWLIST=true ./scripts/ssot_lock_sync_gate.sh
+
+EVIDENCE_DIR=/Users/brnestrm/AFO_Kingdom/docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_103611
