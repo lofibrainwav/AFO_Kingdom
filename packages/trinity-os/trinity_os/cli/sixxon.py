@@ -7,7 +7,7 @@ Philosophy:
 """
 
 from __future__ import annotations
-from collections.abc import Mapping
+from collections.abc import Mapping, MutableMapping
 
 import argparse
 import asyncio
@@ -179,7 +179,7 @@ def _load_wallet_browser_sessions(repo_root: Path) -> list[dict[str, Any]]:
     for k in keys:
         if not isinstance(k, dict):
             continue
-        if k.get("key_type") != "browser_session":
+        if cast(Mapping[str, Any], k).get("key_type") != "browser_session":
             continue
         out.append(
             {
@@ -187,7 +187,7 @@ def _load_wallet_browser_sessions(repo_root: Path) -> list[dict[str, Any]]:
                 "service": cast(Mapping[str, Any], k).get("service"),
                 "read_only": cast(Mapping[str, Any], k).get("read_only"),
                 "description": cast(Mapping[str, Any], k).get("description"),
-                "created_at": k.get("created_at"),
+                "created_at": cast(Mapping[str, Any], k).get("created_at"),
             }
         )
     return out
@@ -213,7 +213,7 @@ def _probe_wallet_session_decryptable(provider: str) -> bool:
         return bool(
             isinstance(session, dict)
             and isinstance(cast(Mapping[str, Any], session).get("cookies"), list)
-            and len(session.get("cookies") or []) > 0
+            and len(cast(Mapping[str, Any], session).get("cookies") or []) > 0
         )
     except Exception:
         return False
@@ -803,7 +803,7 @@ def _load_receipt(receipt_dir: Path) -> dict[str, Any]:
     p = receipt_dir / "receipt.json"
     data = json.loads(p.read_text(encoding="utf-8"))
     if not isinstance(data, dict) or cast(Mapping[str, Any], data).get("schema") != "bridge_receipt_v1":
-        raise ValueError(f"invalid receipt schema: {data.get('schema') if isinstance(data, dict) else type(data)}")
+        raise ValueError(f"invalid receipt schema: {cast(Mapping[str, Any], data).get('schema') if isinstance(data, dict) else type(data)}")
     return data
 
 
@@ -816,31 +816,31 @@ def _calculate_trinity_score(receipt: dict[str, Any]) -> dict[str, Any]:
     """
     services = cast(Mapping[str, Any], receipt).get("services") or {}
     ports = cast(Mapping[str, Any], services).get("ports") or {}
-    http = services.get("http") or {}
+    http = cast(Mapping[str, Any], services).get("http") or {}
 
     # 기본 인프라 건강도 (眞 - Truth)
     infra_checks = [
         ("postgres_15432", cast(Mapping[str, Any], ports).get("postgres_15432")),
         ("redis_6379", cast(Mapping[str, Any], ports).get("redis_6379")),
         ("api_gateway_8000", cast(Mapping[str, Any], http).get("api_gateway_8000_health")),
-        ("soul_engine_8010", http.get("soul_engine_8010_health")),
+        ("soul_engine_8010", cast(Mapping[str, Any], http).get("soul_engine_8010_health")),
     ]
 
     truth_score = 0
     infra_status: list[Any] = []
     for name, check in infra_checks:
-        if isinstance(check, dict) and check.get("status") == "OK":
+        if isinstance(check, dict) and cast(Mapping[str, Any], check).get("status") == "OK":
             truth_score += 25  # 각 체크당 25점
             infra_status.append(f"{name}: OK")
         else:
-            infra_status.append(f"{name}: {check.get('status', 'UNKNOWN') if isinstance(check, dict) else 'MISSING'}")
+            infra_status.append(f"{name}: {cast(Mapping[str, Any], check).get('status', 'UNKNOWN') if isinstance(check, dict) else 'MISSING'}")
 
     # 서비스 응답 시간 (善 - Goodness)
     goodness_score = 100
     response_times: list[Any] = []
     for name, check in infra_checks:
         if isinstance(check, dict):
-            response_time = check.get("response_time", 0)
+            response_time = cast(Mapping[str, Any], check).get("response_time", 0)
             if response_time > 5000:  # 5초 이상
                 goodness_score -= 20
                 response_times.append(f"{name}: {response_time}ms (SLOW)")
@@ -865,7 +865,7 @@ def _calculate_trinity_score(receipt: dict[str, Any]) -> dict[str, Any]:
     versions: list[Any] = []
     for _name, check in infra_checks:
         if isinstance(check, dict):
-            version = check.get("version", "")
+            version = cast(Mapping[str, Any], check).get("version", "")
             if version:
                 versions.append(version)
 
@@ -881,7 +881,7 @@ def _calculate_trinity_score(receipt: dict[str, Any]) -> dict[str, Any]:
 
     # 임시: 인프라 상태 기반 계산
     failed_services = sum(
-        1 for _, check in infra_checks if not (isinstance(check, dict) and check.get("status") == "OK")
+        1 for _, check in infra_checks if not (isinstance(check, dict) and cast(Mapping[str, Any], check).get("status") == "OK")
     )
     serenity_score -= failed_services * 25
     serenity_score = max(0, min(100, serenity_score))
@@ -944,20 +944,20 @@ def _receipt_status_from_receipt(receipt: dict[str, Any]) -> dict[str, Any]:
     # 기본 인프라 상태 확인
     services = cast(Mapping[str, Any], receipt).get("services") or {}
     ports = cast(Mapping[str, Any], services).get("ports") or {}
-    http = services.get("http") or {}
+    http = cast(Mapping[str, Any], services).get("http") or {}
 
     required_paths = [
         ("ports.postgres_15432", cast(Mapping[str, Any], ports).get("postgres_15432")),
         ("ports.redis_6379", cast(Mapping[str, Any], ports).get("redis_6379")),
         ("http.api_gateway_8000_health", cast(Mapping[str, Any], http).get("api_gateway_8000_health")),
-        ("http.soul_engine_8010_health", http.get("soul_engine_8010_health")),
+        ("http.soul_engine_8010_health", cast(Mapping[str, Any], http).get("soul_engine_8010_health")),
     ]
 
     bad: list[str] = []
     for name, obj in required_paths:
         status = ""
         if isinstance(obj, dict):
-            status = str(obj.get("status") or "")
+            status = str(cast(Mapping[str, Any], obj).get("status") or "")
         if status != "OK":
             bad.append(f"{name}={status or 'MISSING'}")
 
@@ -1010,7 +1010,7 @@ def _explain_from_receipt(receipt_dir: Path, receipt: dict[str, Any]) -> dict[st
     Uses receipt evidence only; does not execute tools or alter any state.
     """
     env = cast(Mapping[str, Any], receipt).get("env") or {}
-    label = str(env.get("label") or "")
+    label = str(cast(Mapping[str, Any], env).get("label") or "")
 
     status_card = _receipt_status_from_receipt(receipt)
     status = str(status_card.get("status") or "UNKNOWN")
@@ -1055,7 +1055,7 @@ def _edu_from_receipt(receipt_dir: Path, receipt: dict[str, Any]) -> dict[str, A
     - Receipt evidence only
     """
     env = cast(Mapping[str, Any], receipt).get("env") or {}
-    label = str(env.get("label") or "")
+    label = str(cast(Mapping[str, Any], env).get("label") or "")
 
     status_card = _receipt_status_from_receipt(receipt)
     status = str(status_card.get("status") or "UNKNOWN")
@@ -1217,11 +1217,11 @@ def _toolflow_run(
                 "status": "OK",
                 "decision": "COMPLETED",
                 "summary": f"Dream Hub executed task: {task[:50]}...",
-                "output": graph_out.get("final_message"),
+                "output": cast(Mapping[str, Any], graph_out).get("final_message"),
                 "scores": {
-                    "trinity": graph_out.get("trinity_score"),
+                    "trinity": cast(Mapping[str, Any], graph_out).get("trinity_score"),
                 },
-                "audit_trail": graph_out.get("audit_history"),
+                "audit_trail": cast(Mapping[str, Any], graph_out).get("audit_history"),
             }
         except ImportError:
             return {
