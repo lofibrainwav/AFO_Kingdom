@@ -65,7 +65,7 @@ fi
 
 # 4. RAG Priority Rules Gate (TICKET-009)
 echo "🔍 Checking RAG Priority Rules..."
-if python -c "import afo; import afo.rag_flag; import afo.rag_shadow; print('imports: OK')" 2>/dev/null; then
+if python -c "import AFO; import AFO.rag_flag; import AFO.rag_shadow; print('imports: OK')" 2>/dev/null; then
   echo "✅ [PASS] RAG modules import check"
 else
   echo "❌ [FAIL] RAG modules import failed"
