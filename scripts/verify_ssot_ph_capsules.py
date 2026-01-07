@@ -45,27 +45,27 @@ def main():
 
     bad = []
 
-    # 각 캡슐 검증
+    # 각 캡슑 검증
     for i in hdr:
         block = t[i:i+5]
         if len(block) < 5:
             bad.append((i+1, "short", ""))
             continue
 
-        # Status 검증
-        if not re.match(r"^- Status: (SEALED|PARTIAL|PENDING)$", block[1]):
-            bad.append((i+1, "status", block[1]))
+        # Status 검증 (공백 유연하게 처리)
+        if not re.match(r"^\s*-\s*Status\s*:\s*(SEALED|PARTIAL|PENDING)\s*$", block[1]):
+            bad.append((i+1, "Status validation failed", block[1]))
 
         # Scope 검증
-        elif not re.match(r"^- Scope: .+$", block[2]):
+        elif not re.match(r"^\s*-\s*Scope\s*:\s*.+$", block[2]):
             bad.append((i+1, "scope", block[2]))
 
         # Evidence 검증
-        elif not re.match(r"^- Evidence: .+$", block[3]):
+        elif not re.match(r"^\s*-\s*Evidence\s*:\s*.+$", block[3]):
             bad.append((i+1, "evidence", block[3]))
 
         # Gaps 검증
-        elif not re.match(r"^- Gaps: .+$", block[4]):
+        elif not re.match(r"^\s*-\s*Gaps\s*:\s*.+$", block[4]):
             bad.append((i+1, "gaps", block[4]))
 
     # 2) 실패 시 라인 번호 + 내용 표시 (수정 속도↑)
