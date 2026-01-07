@@ -50,6 +50,7 @@ mypy packages/afo-core --strict
 
 - **[Final Handover Report (MUST READ)](docs/AFO_FINAL_HANDOVER.md)**
 - **[대시보드 가이드](DASHBOARD_README.md)** - 메인 대시보드 사용법
+- **[Claude Code AFO 가이드](docs/CLAUDE_CODE_AFO_GUIDE.md)** - 10초 프로토콜 + 커스텀 명령어
 - [CI/CD Pipeline](docs/CI_CD_PIPELINE.md)
 - [OSS Strategy (세종대왕 정신)](docs/OSS_STRATEGY.md)
 - [Security Policy](SECURITY.md)

@@ -106,7 +106,7 @@ def _which(cmd: str) -> str | None:
 
 
 def _run(cmd: list[str]) -> None:
-    subprocess.run(cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    subprocess.run(cmd, check=True, capture_output=True)
 
 
 def download_url(url: str, out_path: str) -> str:
@@ -130,7 +130,7 @@ def ffprobe_summary(media_path: str) -> dict[str, Any]:
         "-show_format",
         media_path,
     ]
-    p = subprocess.run(cmd, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    p = subprocess.run(cmd, text=True, capture_output=True)
     if p.returncode != 0:
         return {"ok": False, "stderr": p.stderr}
     try:

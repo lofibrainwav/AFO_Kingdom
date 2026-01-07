@@ -5,7 +5,7 @@
 from dataclasses import dataclass
 from datetime import datetime
 
-from AFO.config import antigravity
+from AFO.antigravity import antigravity
 from AFO.security.vault_manager import vault
 
 

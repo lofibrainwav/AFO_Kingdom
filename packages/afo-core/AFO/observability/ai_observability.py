@@ -211,9 +211,11 @@ class AIObservability:
         violations: list[str] = []
 
         # Check if Trinity check was performed
-        if self.compliance_rules["require_trinity_check"]:
-            if "trinity_score" not in span.attributes:
-                violations.append("missing_trinity_check")
+        if (
+            self.compliance_rules["require_trinity_check"]
+            and "trinity_score" not in span.attributes
+        ):
+            violations.append("missing_trinity_check")
 
         # Check if governance approval was obtained for certain operations
         if self.compliance_rules["require_governance_approval"]:

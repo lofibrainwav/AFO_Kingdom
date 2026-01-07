@@ -39,7 +39,7 @@ class EvalMetricType(Enum):
 class EvalResult(Enum):
     """Evaluation result status."""
 
-    PASS = "pass"
+    PASS = "pass"  # noqa: S105 - Not a password, it's an enum value
     FAIL = "fail"
     WARN = "warn"
     ERROR = "error"

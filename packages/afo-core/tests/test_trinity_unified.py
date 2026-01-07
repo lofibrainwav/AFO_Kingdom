@@ -22,7 +22,7 @@ def test_trinity_calculation_logic():
         truth=1.0, goodness=1.0, beauty=1.0, filial_serenity=1.0, eternity=1.0
     )
     assert metrics.truth == 1.0
-    assert metrics.trinity_score == 1.0
+    assert metrics.trinity_score == pytest.approx(1.0)
 
 
 def test_anatomy_mapping_in_code():

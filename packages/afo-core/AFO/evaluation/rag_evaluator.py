@@ -176,7 +176,7 @@ class RAGEvaluator:
         if not contexts:
             return 0.0
 
-        query_words = set(w.lower() for w in query.split() if len(w) > 3)
+        query_words = {w.lower() for w in query.split() if len(w) > 3}
 
         if not query_words:
             return 0.5  # Neutral for very short queries
@@ -195,7 +195,7 @@ class RAGEvaluator:
         answer: str,
     ) -> float:
         """Compute answer relevancy: does answer address the query."""
-        query_words = set(w.lower() for w in query.split() if len(w) > 3)
+        query_words = {w.lower() for w in query.split() if len(w) > 3}
         answer_lower = answer.lower()
 
         if not query_words:

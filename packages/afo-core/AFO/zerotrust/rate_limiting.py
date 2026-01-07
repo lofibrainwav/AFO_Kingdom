@@ -340,10 +340,12 @@ class SecretZeroGuard:
         results = {"safe": True, "violations": []}
 
         for key, value in os.environ.items():
-            if any(pattern in key.lower() for pattern in ["secret", "key", "token", "password"]):
-                if len(value) > 10:  # 의미 있는 값이 있는 경우
-                    results["violations"].append(f"Environment variable: {key}")
-                    results["safe"] = False
+            is_sensitive = any(
+                pattern in key.lower() for pattern in ["secret", "key", "token", "password"]
+            )
+            if is_sensitive and len(value) > 10:  # 의미 있는 값이 있는 경우
+                results["violations"].append(f"Environment variable: {key}")
+                results["safe"] = False
 
         return results
 

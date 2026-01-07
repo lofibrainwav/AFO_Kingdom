@@ -381,6 +381,20 @@
       "type": "library"
     },
     {
+      "bom-ref": "requirements-L95",
+      "description": "requirements line 95: ollama>=0.4.0",
+      "externalReferences": [
+        {
+          "comment": "implicit dist url",
+          "type": "distribution",
+          "url": "https://pypi.org/simple/ollama/"
+        }
+      ],
+      "name": "ollama",
+      "purl": "pkg:pypi/ollama",
+      "type": "library"
+    },
+    {
       "bom-ref": "requirements-L31",
       "description": "requirements line 31: openai>=1.10.0",
       "externalReferences": [
@@ -1022,10 +1036,13 @@
     },
     {
       "ref": "requirements-L94"
+    },
+    {
+      "ref": "requirements-L95"
     }
   ],
   "metadata": {
-    "timestamp": "2025-12-30T05:29:31.598866+00:00",
+    "timestamp": "2026-01-07T19:01:16.633780+00:00",
     "tools": {
       "components": [
         {
@@ -1129,7 +1146,7 @@
       ]
     }
   },
-  "serialNumber": "urn:uuid:b616799f-daec-4fed-9ce3-c36edfef5064",
+  "serialNumber": "urn:uuid:866913cc-0b6c-4742-8da2-21021019c5d1",
   "version": 1,
   "$schema": "http://cyclonedx.org/schema/bom-1.6.schema.json",
   "bomFormat": "CycloneDX",

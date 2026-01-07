@@ -23,13 +23,25 @@ except ImportError as e:
     print("   Install with: pip install cyclonedx-python-lib")
 
 
+def run_command(command: list[str]) -> bool:
+    """명령어 실행 및 결과 반환"""
+    try:
+        result = subprocess.run(command, capture_output=True, text=True, check=True)
+        return True
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Error running command {' '.join(command)}: {e.stderr}")
+        return False
+    except FileNotFoundError:
+        print(f"⚠️  Command not found: {command[0]}")
+        print("   Install with: pip install cyclonedx-bom")
+        return False
+
+
 def generate_sbom_from_requirements(requirements_path: Path, output_path: Path) -> bool:
     """requirements.txt에서 SBOM 생성"""
     if not CYCLONEDX_AVAILABLE:
         return False
 
-def run_command(command: list[str]) -> bool:
-    """명령어 실행 및 결과 반환"""
     try:
         parser = RequirementsParser(requirements_file_path=requirements_path)
         bom = parser.parse()
@@ -44,8 +56,8 @@ def run_command(command: list[str]) -> bool:
 
         print(f"✅ SBOM generated: {output_path}")
         return True
-    except subprocess.CalledProcessError as e:
-        print(f"❌ Error running command {' '.join(command)}: {e.stderr}")
+    except Exception as e:
+        print(f"❌ Error generating SBOM: {e}")
         return False
 
 

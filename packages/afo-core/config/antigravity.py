@@ -135,24 +135,6 @@ class AntiGravitySettings(BaseSettings):
         # Default to True for now, allowing authorized internal operations
         return True
 
-    def check_governance(self, action: str) -> bool:
-        """
-        [善: Goodness] Central Governance Gate.
-        Checks if a specific action is allowed under the current sovereignty policy.
-        """
-        # [Phase 14-A] Silent Civilization Lockdown
-        if self.SILENT_CIVILIZATION_MODE:
-            # scholars are generally allowed in silent mode as they are internal
-            if action.startswith("scholar_"):
-                return True
-
-            # External actions are blocked in silent mode
-            if action in ["external_api_call", "public_exposure"]:
-                return False
-
-        # Default to True for now, allowing authorized internal operations
-        return True
-
     def auto_sync(self) -> str:
         """자동 동기화 실행 (孝: Serenity) - Hot Reload Implementation
 

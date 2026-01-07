@@ -765,9 +765,8 @@ class MusicProviderRouter:
             if local_only and not caps.get("local_only", False):
                 continue
 
-            if max_cost < 0.01:  # 비용 0 = 로컬만
-                if not caps.get("local_only", False):
-                    continue
+            if max_cost < 0.01 and not caps.get("local_only", False):  # 비용 0 = 로컬만
+                continue
 
             # 점수 계산
             score = 0

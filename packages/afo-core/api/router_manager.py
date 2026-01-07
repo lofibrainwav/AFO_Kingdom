@@ -38,7 +38,6 @@ from AFO.api.compat import (
     n8n_router,
     personas_router,
     pillars_router,
-    public_sandbox_router,
     rag_query_router,
     root_router,
     serenity_router,

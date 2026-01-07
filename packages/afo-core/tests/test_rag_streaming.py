@@ -9,13 +9,13 @@ from AFO.api.config import get_app_config
 
 app = get_app_config()
 
-# RAG 스트리밍 라우터 등록
+# RAG Query 라우터 등록 (query/stream 엔드포인트 포함)
 try:
-    from AFO.api.routes.rag_stream import router as rag_stream_router
-    app.include_router(rag_stream_router, prefix="/api")
-    print("✅ RAG Stream Router registered successfully")
+    from AFO.api.routers.rag_query import router as rag_query_router
+    app.include_router(rag_query_router, prefix="/api")
+    print("✅ RAG Query Router registered successfully")
 except Exception as e:
-    print(f"❌ RAG Stream Router registration failed: {e}")
+    print(f"❌ RAG Query Router registration failed: {e}")
 
 
 def test_debug_routes():
