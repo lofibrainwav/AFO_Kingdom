@@ -4,12 +4,6 @@ AFO API Models
 Phase 2 리팩토링: Request/Response 모델 분리
 """
 
-from .responses import (
-    CrewAIExecuteResponse,
-    LangChainRetrievalQAResponse,
-    LangChainToolsResponse,
-    MultimodalRAGResponse,
-)
 from api.models.requests import (
     BrowserClickRequest,
     BrowserKeyRequest,
@@ -21,6 +15,13 @@ from api.models.requests import (
     LangChainToolsRequest,
     RAGQueryRequest,
     YeongdeokCommandRequest,
+)
+
+from .responses import (
+    CrewAIExecuteResponse,
+    LangChainRetrievalQAResponse,
+    LangChainToolsResponse,
+    MultimodalRAGResponse,
 )
 
 __all__ = [
