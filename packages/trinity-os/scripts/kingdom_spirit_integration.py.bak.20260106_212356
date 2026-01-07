@@ -13,7 +13,7 @@ import json
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Any, cast
+from typing import Any
 
 # AFO 루트 디렉토리
 AFO_ROOT = Path(__file__).resolve().parent.parent
@@ -162,7 +162,8 @@ class SpiritIntegration:
         trinity_result = calculate_trinity_score_5pillars(
             truth=truth_score,
             goodness=goodness_score,
-            beauty=cast(float, beauty_score),            serenity=serenity_score,
+            beauty=beauty_score,
+            serenity=serenity_score,
             forever=eternity_score,
         )
 

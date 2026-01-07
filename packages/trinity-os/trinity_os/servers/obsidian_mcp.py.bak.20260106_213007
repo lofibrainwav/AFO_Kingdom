@@ -123,7 +123,7 @@ class ObsidianMCP:
             }
 
     @staticmethod
-    def write_note(note_path: str, content: str, metadata: dict[str, Any] = cast(Any, None)) -> dict[str, Any]:
+    def write_note(note_path: str, content: str, metadata: dict[str, Any] = None) -> dict[str, Any]:
         """옵시디언 노트 쓰기"""
         try:
             target = ObsidianMCP._validate_path(note_path)
@@ -206,7 +206,7 @@ class ObsidianMCP:
             }
 
     @staticmethod
-    def apply_template(template_name: str, output_path: str, variables: dict[str, str] = cast(Any, None)) -> dict[str, Any]:
+    def apply_template(template_name: str, output_path: str, variables: dict[str, str] = None) -> dict[str, Any]:
         """템플릿 적용"""
         try:
             template_file = TEMPLATES_PATH / f"{template_name}.md"
@@ -504,7 +504,8 @@ class ObsidianMCP:
                         try:
                             trinity_eval = mcp_tool_trinity_evaluator.evaluate_execution_result(
                                 tool_name,
-                                cast(str, tool_result),                                execution_time_ms,
+                                tool_result,
+                                execution_time_ms,
                                 is_error,
                             )
                             trinity_score = trinity_eval.get("combined_scores", {})

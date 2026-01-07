@@ -137,7 +137,8 @@ class AfoSkillsRegistryMCP:
                             if mcp_tool_trinity_evaluator:
                                 trinity_eval = mcp_tool_trinity_evaluator.evaluate_execution_result(
                                     tool_name,
-                                    cast(str, execution_result),                                    execution_time_ms,
+                                    execution_result,
+                                    execution_time_ms,
                                     False,
                                 )
                                 trinity_score = trinity_eval.get("combined_scores", {})

@@ -18,7 +18,7 @@ import subprocess
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, cast
+from typing import Any
 
 from trinity_os.adapters.afo_ultimate_mcp_deps_v1 import build_deps_v1
 from trinity_os.graphs.trinity_toolflow_graph_v1 import build_trinity_toolflow_graph, run_trinity_toolflow
@@ -1241,7 +1241,7 @@ def _toolflow_run(
 
             # Local import to avoid top-level crashes if V1 is broken
             graph_data = build_trinity_toolflow_graph(build_deps_v1())
-            out = cast("str", run_trinity_toolflow(graph_data, cast(Any, {"task": task})))
+            out = run_trinity_toolflow(graph_data, {"task": task})
             result_payload = {
                 "status": "OK",
                 "decision": "COMPLETED",
@@ -1336,7 +1336,7 @@ def _run_toolflow(
     if verbose:
         print(json.dumps(final_card, ensure_ascii=False, indent=2))
     else:
-        _print_three_lines(cast(Any, final_card if isinstance(final_card, dict) else {"status": "UNKNOWN"}))
+        _print_three_lines(final_card if isinstance(final_card, dict) else {"status": "UNKNOWN"})
     return 0
 
 

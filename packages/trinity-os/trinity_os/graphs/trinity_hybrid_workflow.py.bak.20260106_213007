@@ -1,5 +1,5 @@
 import operator
-from typing import Annotated, Any, Literal, TypedDict, cast
+from typing import Annotated, Literal, TypedDict
 
 from langchain_core.messages import AIMessage, BaseMessage, HumanMessage
 from langgraph.checkpoint.memory import MemorySaver
@@ -127,7 +127,8 @@ def run_dream_hub(task: str, thread_id: str = "default") -> dict:
     config = {"configurable": {"thread_id": thread_id}}
 
     # Run the graph
-    final_state=cast(Any | None, app.invoke(cast(Any, initial_state)), config=config)
+    final_state = app.invoke(initial_state, config=config)
+
     # Extract key outputs for CLI
     return {
         "status": "OK",

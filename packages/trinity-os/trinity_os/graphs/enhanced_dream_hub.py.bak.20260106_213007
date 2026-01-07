@@ -41,7 +41,8 @@ def dream_initiator(state: EnhancedAgentState) -> dict[str, Any]:
     last_message = state["messages"][-1]
 
     # Create dream contract
-    dream_id=cast(str, create_dream_contract(cast(Any, last_message.content)))
+    dream_id = create_dream_contract(last_message.content)
+
     return {
         "dream_id": dream_id,
         "dream_status": "INITIATED",
@@ -232,7 +233,7 @@ def run_enhanced_dream_hub(human_dream: str, thread_id: str = "default") -> dict
     config = {"configurable": {"thread_id": thread_id}}
 
     try:
-        final_state = enhanced_dream_hub.invoke(cast(Any, initial_state), config=cast(Any, config))
+        final_state = enhanced_dream_hub.invoke(initial_state, config=config)
 
         # Extract final result
         result = {

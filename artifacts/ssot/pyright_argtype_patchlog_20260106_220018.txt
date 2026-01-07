@@ -1,0 +1,7 @@
+argtype_diags=18 files=5
+  0 changed |   0 multiline_skip |  10 already_cast | /Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/graphs/trinity_toolflow_graph_v1.py
+  3 changed |   0 multiline_skip |   0 already_cast | /Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/graphs/enhanced_dream_hub.py
+  2 changed |   0 multiline_skip |   0 already_cast | /Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py
+  2 changed |   0 multiline_skip |   0 already_cast | /Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/servers/obsidian_mcp.py
+  1 changed |   0 multiline_skip |   0 already_cast | /Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/graphs/trinity_hybrid_workflow.py
+total_changed=8 multiline_skipped=0 already_cast_skipped=10

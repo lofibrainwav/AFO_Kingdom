@@ -162,7 +162,8 @@ class SpiritIntegration:
         trinity_result = calculate_trinity_score_5pillars(
             truth=truth_score,
             goodness=goodness_score,
-            beauty=cast(float, beauty_score),            serenity=serenity_score,
+            beauty=beauty_score,
+            serenity=serenity_score,
             forever=eternity_score,
         )
 
