@@ -1,4 +1,7 @@
 {
+  "include": [
+    "packages/afo-core"
+  ],
   "exclude": [
     "**/.git/**",
     "**/.venv*/**",
@@ -42,36 +45,42 @@
     "packages/afo-core/kms",
     "tests"
   ],
-  "executionEnvironments": [
-    {
-      "extraPaths": [
-        "packages/afo-core",
-        "packages/trinity-os"
-      ],
-      "root": "packages/afo-core"
-    },
-    {
-      "extraPaths": [
-        "packages/afo-core",
-        "packages/trinity-os"
-      ],
-      "root": "packages/trinity-os"
-    },
-    {
-      "root": "scripts"
-    },
-    {
-      "root": "legacy"
-    }
-  ],
-  "include": [
-    "packages/afo-core"
-  ],
+  "venvPath": ".",
+  "venv": ".venv",
   "pythonVersion": "3.12",
+  "typeCheckingMode": "basic",
   "reportMissingImports": "warning",
   "reportMissingTypeStubs": "none",
-  "stubPath": "typings",
-  "typeCheckingMode": "strict",
-  "venv": ".venv",
-  "venvPath": "."
+  "executionEnvironments": [
+    {
+      "root": "packages/afo-core",
+      "extraPaths": [
+        "packages/afo-core",
+        "packages/trinity-os"
+      ],
+      "diagnosticSeverityOverrides": {
+        "reportMissingImports": "warning"
+      },
+      "typeCheckingMode": "strict"
+    },
+    {
+      "root": "packages/trinity-os",
+      "extraPaths": [
+        "packages/afo-core",
+        "packages/trinity-os"
+      ],
+      "diagnosticSeverityOverrides": {
+        "reportMissingImports": "none"
+      },
+      "typeCheckingMode": "basic"
+    },
+    {
+      "root": "scripts",
+      "typeCheckingMode": "basic"
+    },
+    {
+      "root": "legacy",
+      "typeCheckingMode": "off"
+    }
+  ]
 }

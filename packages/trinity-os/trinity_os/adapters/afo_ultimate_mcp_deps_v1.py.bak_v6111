@@ -7,7 +7,7 @@ import os
 from collections.abc import Callable
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
-from typing import Any, Mapping, cast
+from typing import Any
 
 
 def _maybe_import(mod: str):
@@ -35,8 +35,8 @@ def _normalize_candidates(items: Any) -> list[dict[str, Any]]:
     out: list[dict[str, Any]] = []
     for it in items:
         if isinstance(it, dict):
-            sid = str(cast(Mapping[str, Any], it).get("skill_id") or cast(Mapping[str, Any], it).get("id") or cast(Mapping[str, Any], it).get("name") or "")
-            title = str(cast(Mapping[str, Any], it).get("title") or cast(Mapping[str, Any], it).get("name") or sid)
+            sid = str(it.get("skill_id") or it.get("id") or it.get("name") or "")
+            title = str(it.get("title") or it.get("name") or sid)
             out.append({"skill_id": sid, "title": title, **it})
     return out
 
@@ -172,10 +172,10 @@ def build_deps_v1():
                 except Exception:
                     data = None
                 if isinstance(data, dict):
-                    raw_score = cast(Mapping[str, Any], data).get("overall_trinity_score")
+                    raw_score = data.get("overall_trinity_score")
                     if isinstance(raw_score, (int, float)):
                         score = float(raw_score)
-                    ts_raw = cast(Mapping[str, Any], data).get("timestamp")
+                    ts_raw = data.get("timestamp")
                     if isinstance(ts_raw, str):
                         try:
                             parsed = datetime.fromisoformat(ts_raw)
@@ -229,7 +229,7 @@ def build_deps_v1():
                     out = _call_flex(fn, payload)
                 except Exception:
                     out = None
-                if isinstance(out, dict) and (cast(Mapping[str, Any], out).get("decision") or cast(Mapping[str, Any], out).get("mode")):
+                if isinstance(out, dict) and (out.get("decision") or out.get("mode")):
                     return out
 
         # --- SSOT Serenity Gate fallback (Quantum Balance Lock) ---

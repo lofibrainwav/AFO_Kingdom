@@ -6,7 +6,7 @@ Context7 MCP Module
 
 import json
 import logging
-from typing import Any, Dict, List, Mapping, Optional, Set, cast
+from typing import Dict, Any, List, Optional, Set
 from pathlib import Path
 import re
 
@@ -162,7 +162,7 @@ class Context7MCP:
         # 기본 키워드 매칭
         for keyword in base_keywords:
             if keyword in content_lower:
-                cast(Any, keywords).add(keyword)
+                keywords.add(keyword)
 
         # 동적 키워드 추출 - 단어 단위로 분리
         words = re.findall(r'\b\w+\b', content_lower)
@@ -177,7 +177,7 @@ class Context7MCP:
         # 의미 있는 단어들 추가 (최대 10개)
         for word in significant_words[:10]:
             if len(word) >= 4:  # 4글자 이상만
-                cast(Any, keywords).add(word)
+                keywords.add(word)
 
         # 기존 패턴 추출 유지
         patterns = [
@@ -191,7 +191,7 @@ class Context7MCP:
             for match in matches[:5]:  # 최대 5개로 줄임
                 clean_match = match.strip().lower()
                 if len(clean_match) > 2:
-                    cast(Any, keywords).add(clean_match)
+                    keywords.add(clean_match)
 
         return list(keywords)
 
@@ -258,7 +258,7 @@ class Context7MCP:
         results = []
         for doc_idx, score in sorted_docs:
             item = self.knowledge_base[doc_idx]
-            cast(list[Any], results).append({
+            results.append({
                 "id": item["id"],
                 "title": item["title"],
                 "type": item["type"],
@@ -306,10 +306,10 @@ class Context7MCP:
 
         for item in self.knowledge_base:
             item_type = item.get("type", "unknown")
-            types[item_type] = cast(Mapping[str, Any], types).get(item_type, 0) + 1
+            types[item_type] = types.get(item_type, 0) + 1
 
             source = item.get("source", "unknown")
-            sources[source] = cast(Mapping[str, Any], sources).get(source, 0) + 1
+            sources[source] = sources.get(source, 0) + 1
 
         return {
             "total_items": len(self.knowledge_base),

@@ -25,7 +25,7 @@ class PlaywrightBridgeMCP:
     @classmethod
     def _ensure_browser(cls):
         """Singleton browser initialization."""
-        if cast(Any, cls)._page is None:
+        if cls._page is None:
             cls._playwright = sync_playwright().start()
             # Launch headless by default, or headful if debugging (can be configured)
             # Using headless=True for MCP to avoid popping up windows on User's face unexpectedly
@@ -40,8 +40,8 @@ class PlaywrightBridgeMCP:
         """Navigate to a URL."""
         try:
             cls._ensure_browser()
-            cast(Any, cls)._page.goto(url)
-            title = cast(Any, cls)._page.title()
+            cls._page.goto(url)
+            title = cls._page.title()
             return {
                 "success": True,
                 "url": url,
@@ -59,7 +59,7 @@ class PlaywrightBridgeMCP:
             # Ensure path is just a filename in a temp dir or specific artifacts dir
             # For safety, we force writing to /tmp or current dir if safe
             # Here we just use the provided path but valid absolute path should be enforced by caller
-            cast(Any, cls)._page.screenshot(path=path)
+            cls._page.screenshot(path=path)
             return {
                 "success": True,
                 "path": path,
@@ -73,7 +73,7 @@ class PlaywrightBridgeMCP:
         """Click an element."""
         try:
             cls._ensure_browser()
-            cast(Any, cls)._page.click(selector)
+            cls._page.click(selector)
             return {"success": True, "message": f"Clicked {selector}"}
         except Exception as e:
             return {"success": False, "error": str(e)}
@@ -94,8 +94,8 @@ class PlaywrightBridgeMCP:
         try:
             cls._ensure_browser()
             if selector == "body" or selector == "content":
-                content = cast(Any, cls)._page.content()  # Full HTML
-                text = cast(Any, cls)._page.inner_text("body")
+                content = cls._page.content()  # Full HTML
+                text = cls._page.inner_text("body")
                 return {
                     "success": True,
                     "text_length": len(text),
@@ -103,7 +103,7 @@ class PlaywrightBridgeMCP:
                     "message": "Scraped body content",
                 }
 
-            content = cast(Any, cls)._page.inner_text(selector)
+            content = cls._page.inner_text(selector)
             return {
                 "success": True,
                 "content": content,
@@ -115,10 +115,10 @@ class PlaywrightBridgeMCP:
     @classmethod
     def close(cls):
         """Close the browser resource."""
-        if cast(Any, cls)._browser:
-            cast(Any, cls)._browser.close()
-        if cast(Any, cls)._playwright:
-            cast(Any, cls)._playwright.stop()
+        if cls._browser:
+            cls._browser.close()
+        if cls._playwright:
+            cls._playwright.stop()
         cls._page = None
         cls._browser = None
         cls._playwright = None

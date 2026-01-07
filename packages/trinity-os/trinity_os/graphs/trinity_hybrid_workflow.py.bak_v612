@@ -102,9 +102,9 @@ def audit_gate(
 # --- Dream Hub Graph Construction ---
 workflow = StateGraph(AgentState)
 
-cast(Any, workflow).add_node("planner_node", planner_node)
-cast(Any, workflow).add_node("executor_node", executor_node)
-cast(Any, workflow).add_node("reviewer_node", reviewer_node)
+workflow.add_node("planner_node", planner_node)
+workflow.add_node("executor_node", executor_node)
+workflow.add_node("reviewer_node", reviewer_node)
 
 workflow.add_edge(START, "planner_node")
 workflow.add_edge("planner_node", "executor_node")
@@ -116,7 +116,7 @@ workflow.add_conditional_edges("reviewer_node", audit_gate)
 # Persistence (The 'Dream capability')
 checkpointer = MemorySaver()
 
-app = cast(Any, workflow).compile(checkpointer=checkpointer)
+app = workflow.compile(checkpointer=checkpointer)
 
 
 def run_dream_hub(task: str, thread_id: str = "default") -> dict:

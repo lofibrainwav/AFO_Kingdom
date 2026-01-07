@@ -8,7 +8,7 @@ NOT used in frontend build path.
 
 from __future__ import annotations
 
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -26,7 +26,7 @@ class BaseWidgetSpec(BaseModel):
     model_config = ConfigDict(extra="ignore", frozen=False)
 
     id: str = Field(..., description="Unique widget identifier")
-    source: Literal["manual", "generated", "api"] = Field(..., description="Widget source type")
+    source: str = Field(..., description="Widget source type")
     order: int = Field(default=0, description="Display order")
     title: str | None = Field(default=None, description="Widget title")
     route: str | None = Field(default=None, description="Widget route path")
@@ -36,7 +36,7 @@ class BaseWidgetSpec(BaseModel):
 class GeneratedWidgetSpec(BaseWidgetSpec):
     """Generated widget from HTML parsing"""
 
-    source: Literal["generated"] = "generated"
+    source: str = "generated"
     dataWidgetId: str | None = Field(default=None)
     sourceId: str | None = Field(default=None, description="Legacy field (fallback)")
     html_section_id: str | None = Field(default=None, description="Legacy field (fallback)")
@@ -54,7 +54,7 @@ class GeneratedWidgetSpec(BaseWidgetSpec):
 class ManualWidgetSpec(BaseWidgetSpec):
     """Manually registered widget"""
 
-    source: Literal["manual"] = "manual"
+    source: str = "manual"
     description: str | None = None
     category: Literal["card", "panel", "chart", "legacy"] | None = None
     visibility: Literal["public", "internal", "hidden"] | None = None
@@ -65,7 +65,7 @@ class ManualWidgetSpec(BaseWidgetSpec):
 class ApiWidgetSpec(BaseWidgetSpec):
     """API-generated widget"""
 
-    source: Literal["api"] = "api"
+    source: str = "api"
     endpoint: str | None = None
     method: Literal["GET", "POST", "PUT", "DELETE"] | None = None
 
@@ -97,7 +97,7 @@ class WidgetSpecFlexible(BaseModel):
     category: str | None = None
     defaultEnabled: bool | None = None
     tags: list[str] | None = None
-    legacy: dict | None = None
+    legacy: dict[str, Any] | None = None
 
 
 class WidgetsPayloadFlexible(BaseModel):

@@ -266,16 +266,16 @@ def build_trinity_toolflow_graph(deps: Deps):
     from langgraph.graph import END, StateGraph
 
     graph = StateGraph(FlowState)
-    cast(Any, graph).add_node("TOOL_SEARCH", _wrap_langgraph_node(node_tool_search, deps))
-    cast(Any, graph).add_node("SELECT", _wrap_langgraph_node(node_select, deps))
-    cast(Any, graph).add_node("GET_CARD", _wrap_langgraph_node(node_get_card, deps))
-    cast(Any, graph).add_node("SERENITY_GATE", _wrap_langgraph_node(node_serenity_gate, deps))
-    cast(Any, graph).add_node("DRY_RUN", _wrap_langgraph_node(node_dry_run, deps))
-    cast(Any, graph).add_node("EXECUTE", _wrap_langgraph_node(node_execute, deps))
-    cast(Any, graph).add_node("ASK", _wrap_langgraph_node(node_ask, deps))
-    cast(Any, graph).add_node("FINAL_BLOCK", _wrap_langgraph_node(node_final_block, deps))
-    cast(Any, graph).add_node("FINAL_NO_CANDIDATES", _wrap_langgraph_node(node_final_no_candidates, deps))
-    cast(Any, graph).add_node("FINAL_OK", _wrap_langgraph_node(node_final_ok, deps))
+    graph.add_node("TOOL_SEARCH", _wrap_langgraph_node(node_tool_search, deps))
+    graph.add_node("SELECT", _wrap_langgraph_node(node_select, deps))
+    graph.add_node("GET_CARD", _wrap_langgraph_node(node_get_card, deps))
+    graph.add_node("SERENITY_GATE", _wrap_langgraph_node(node_serenity_gate, deps))
+    graph.add_node("DRY_RUN", _wrap_langgraph_node(node_dry_run, deps))
+    graph.add_node("EXECUTE", _wrap_langgraph_node(node_execute, deps))
+    graph.add_node("ASK", _wrap_langgraph_node(node_ask, deps))
+    graph.add_node("FINAL_BLOCK", _wrap_langgraph_node(node_final_block, deps))
+    graph.add_node("FINAL_NO_CANDIDATES", _wrap_langgraph_node(node_final_no_candidates, deps))
+    graph.add_node("FINAL_OK", _wrap_langgraph_node(node_final_ok, deps))
 
     graph.set_entry_point("TOOL_SEARCH")
     graph.add_edge("TOOL_SEARCH", "SELECT")
@@ -318,7 +318,7 @@ def build_trinity_toolflow_graph(deps: Deps):
     graph.add_edge("FINAL_NO_CANDIDATES", END)
     graph.add_edge("FINAL_OK", END)
 
-    return cast(Any, graph).compile()
+    return graph.compile()
 
 
 def run_trinity_toolflow(

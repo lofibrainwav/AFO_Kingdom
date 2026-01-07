@@ -116,9 +116,9 @@ class PlaywrightBridgeMCP:
     def close(cls):
         """Close the browser resource."""
         if cast(Any, cls)._browser:
-            cast(Any, cls)._browser.close()
+            cls._browser.close()
         if cast(Any, cls)._playwright:
-            cast(Any, cls)._playwright.stop()
+            cls._playwright.stop()
         cls._page = None
         cls._browser = None
         cls._playwright = None

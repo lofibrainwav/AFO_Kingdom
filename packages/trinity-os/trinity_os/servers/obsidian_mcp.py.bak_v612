@@ -185,7 +185,7 @@ class ObsidianMCP:
 
                     variables = re.findall(r"\{\{(\w+)\}\}", content)
 
-                    cast(list[Any], templates).append(
+                    templates.append(
                         {
                             "name": template_file.stem,
                             "path": str(template_file.relative_to(OBSIDIAN_VAULT_PATH)),
@@ -261,7 +261,7 @@ class ObsidianMCP:
                         # 관련성 점수 계산 (간단한 구현)
                         score = content.lower().count(query_lower)
 
-                        cast(list[Any], results).append(
+                        results.append(
                             {
                                 "path": str(md_file.relative_to(OBSIDIAN_VAULT_PATH)),
                                 "name": md_file.stem,
@@ -272,7 +272,7 @@ class ObsidianMCP:
                     continue
 
             # 점수 기준 정렬
-            cast(Any, results).sort(key=lambda x: x["score"], reverse=True)
+            results.sort(key=lambda x: x["score"], reverse=True)
             results = results[:limit]
 
             return {

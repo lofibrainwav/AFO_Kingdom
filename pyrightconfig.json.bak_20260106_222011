@@ -44,24 +44,34 @@
   ],
   "executionEnvironments": [
     {
+      "diagnosticSeverityOverrides": {
+        "reportMissingImports": "warning"
+      },
       "extraPaths": [
         "packages/afo-core",
         "packages/trinity-os"
       ],
-      "root": "packages/afo-core"
+      "root": "packages/afo-core",
+      "typeCheckingMode": "strict"
     },
     {
+      "diagnosticSeverityOverrides": {
+        "reportMissingImports": "none"
+      },
       "extraPaths": [
         "packages/afo-core",
         "packages/trinity-os"
       ],
-      "root": "packages/trinity-os"
+      "root": "packages/trinity-os",
+      "typeCheckingMode": "basic"
     },
     {
-      "root": "scripts"
+      "root": "scripts",
+      "typeCheckingMode": "basic"
     },
     {
-      "root": "legacy"
+      "root": "legacy",
+      "typeCheckingMode": "off"
     }
   ],
   "include": [
@@ -71,7 +81,7 @@
   "reportMissingImports": "warning",
   "reportMissingTypeStubs": "none",
   "stubPath": "typings",
-  "typeCheckingMode": "strict",
+  "typeCheckingMode": "basic",
   "venv": ".venv",
   "venvPath": "."
 }

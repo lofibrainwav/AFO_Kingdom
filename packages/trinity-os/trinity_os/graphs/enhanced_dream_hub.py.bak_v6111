@@ -10,7 +10,7 @@ Integrates:
 
 import operator
 from datetime import UTC, datetime
-from typing import Annotated, Any, Literal, Mapping, TypedDict, cast
+from typing import Annotated, Any, Literal, TypedDict, cast
 
 from langchain_core.messages import AIMessage, BaseMessage, HumanMessage
 from langgraph.checkpoint.memory import MemorySaver
@@ -51,7 +51,7 @@ def dream_initiator(state: EnhancedAgentState) -> dict[str, Any]:
                 "event": "DREAM_INITIATED",
                 "dream_id": dream_id,
                 "timestamp": datetime.now(UTC).isoformat(),
-                "human_input": cast(Any, last_message).content,
+                "human_input": last_message.content,
             }
         ],
     }
@@ -94,7 +94,7 @@ def dream_executor(state: EnhancedAgentState) -> dict[str, Any]:
     # Simulate safe execution (no actual external calls)
     execution_results = []
     for i, step in enumerate(current_plan):
-        cast(list[Any], execution_results).append(f"Executed step {i + 1}: {step}")
+        execution_results.append(f"Executed step {i + 1}: {step}")
 
     # Progress to next phase
     next_phase = "REVIEW"
@@ -175,10 +175,10 @@ def build_enhanced_dream_hub():
     graph = StateGraph(EnhancedAgentState)
 
     # Add all nodes
-    cast(Any, graph).add_node("dream_initiator", dream_initiator)
-    cast(Any, graph).add_node("dream_planner", dream_planner)
-    cast(Any, graph).add_node("dream_executor", dream_executor)
-    cast(Any, graph).add_node("dream_reviewer", dream_reviewer)
+    graph.add_node("dream_initiator", dream_initiator)
+    graph.add_node("dream_planner", dream_planner)
+    graph.add_node("dream_executor", dream_executor)
+    graph.add_node("dream_reviewer", dream_reviewer)
 
     # Define flow
     graph.set_entry_point("dream_initiator")
@@ -199,7 +199,7 @@ def build_enhanced_dream_hub():
 
     # Persistence
     checkpointer = MemorySaver()
-    return cast(Any, graph).compile(checkpointer=checkpointer)
+    return graph.compile(checkpointer=checkpointer)
 
 
 # Global Enhanced Dream Hub instance
@@ -252,7 +252,7 @@ def run_enhanced_dream_hub(human_dream: str, thread_id: str = "default") -> dict
         return {
             "status": "ERROR",
             "error": str(e),
-            "dream_id": cast(Mapping[str, Any], initial_state).get("dream_id", ""),
+            "dream_id": initial_state.get("dream_id", ""),
         }
 
 

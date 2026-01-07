@@ -1,4 +1,5 @@
 {
+  "include": ["packages/afo-core"],
   "exclude": [
     "**/.git/**",
     "**/.venv*/**",
@@ -42,36 +43,10 @@
     "packages/afo-core/kms",
     "tests"
   ],
-  "executionEnvironments": [
-    {
-      "extraPaths": [
-        "packages/afo-core",
-        "packages/trinity-os"
-      ],
-      "root": "packages/afo-core"
-    },
-    {
-      "extraPaths": [
-        "packages/afo-core",
-        "packages/trinity-os"
-      ],
-      "root": "packages/trinity-os"
-    },
-    {
-      "root": "scripts"
-    },
-    {
-      "root": "legacy"
-    }
-  ],
-  "include": [
-    "packages/afo-core"
-  ],
-  "pythonVersion": "3.12",
-  "reportMissingImports": "warning",
-  "reportMissingTypeStubs": "none",
-  "stubPath": "typings",
-  "typeCheckingMode": "strict",
+  "venvPath": ".",
   "venv": ".venv",
-  "venvPath": "."
+  "pythonVersion": "3.12",
+  "typeCheckingMode": "basic",
+  "reportMissingImports": "warning",
+  "reportMissingTypeStubs": "none"
 }
