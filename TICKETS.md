@@ -283,7 +283,7 @@ Ruff v0.8+에서 제거된 규칙들(ANN101, ANN102, UP038)을 pyproject.toml에
 - Priority: HIGH
 - Type: Feature Enhancement
 - Status: ✅ COMPLETED (2026-01-06)
-- Evidence: pyproject.toml, .vscode/settings.json
+- Evidence: pyrightconfig.json, pyproject.toml, .vscode/settings.json
 - Dependencies: Pyright 1.1.407+, Pylance VSCode extension
 
 ### Goal
@@ -292,7 +292,7 @@ Pyright 타입 체커를 왕국 모노레포에 완벽 통합하여 타입 안�
 ### Scope
 1) **Pyright Setup Tutorial**
    - Poetry 환경에 Pyright 설치 (poetry add --group dev pyright)
-   - pyproject.toml에 [tool.pyright] 섹션 설정
+   - pyproject.toml에 pyrightconfig.json 섹션 설정
    - VSCode Pylance extension 통합
    - CI/CD 파이프라인에 pyright 게이트 추가
 
@@ -310,7 +310,7 @@ Pyright 타입 체커를 왕국 모노레포에 완벽 통합하여 타입 안�
 
 ### Acceptance Criteria (Reality Gate)
 - [x] Pyright 설치 및 기본 설정 완료 ✅ (poetry add --group dev pyright)
-- [x] pyproject.toml [tool.pyright] 섹션 완성 ✅ (strict 모드 + executionEnvironments)
+- [x] pyproject.toml pyrightconfig.json 섹션 완성 ✅ (strict 모드 + executionEnvironments)
 - [x] VSCode Pylance extension 통합 ✅ (실시간 squiggles 활성화)
 - [x] executionEnvironments 모노레포 스코핑 ✅ (packages별 독립 환경)
 - [x] CI/CD pyright 게이트 추가 ✅ (GitHub Actions 워크플로우)
@@ -331,3 +331,9 @@ Pyright 타입 체커를 왕국 모노레포에 완벽 통합하여 타입 안�
 - **永 (Eternity)**: 지속적 타입 안정성 확보 (+8)
 - **총합**: 97/100 (궁극 타입 체커 통합 완료)
 
+
+### SSOT Evidence
+- Config source: pyrightconfig.json (우선 적용)
+- Version: pyright 1.1.407
+- Run: pyright packages/afo-core packages/trinity-os (실행/검출 확인)
+- Note: 타입 오류 '0개'는 별도 정리 티켓에서 처리
