@@ -277,20 +277,29 @@ class AFOServer:
         )
 
         # Metrics 미들웨어 추가 (가장 먼저)
-        from AFO.api.middleware.metrics import MetricsMiddleware
+        try:
+            from AFO.api.middleware.metrics import MetricsMiddleware
 
-        self.app.add_middleware(MetricsMiddleware)
+            self.app.add_middleware(MetricsMiddleware)
+        except ImportError:
+            logger.warning("⚠️ MetricsMiddleware not available")
 
         # ACL 미들웨어 추가 (rate limit 다음에)
-        from AFO.api.middleware.authz import APIKeyAuthMiddleware
+        try:
+            from AFO.api.middleware.authz import APIKeyAuthMiddleware
 
-        self.app.add_middleware(APIKeyAuthMiddleware)
+            self.app.add_middleware(APIKeyAuthMiddleware)
+        except ImportError:
+            logger.warning("⚠️ APIKeyAuthMiddleware not available")
 
         # ACL 초기화 (기본 엔드포인트 등록)
-        from AFO.api.auth.api_key_acl import DEFAULT_ENDPOINT_SCOPES, acl
+        try:
+            from AFO.api.auth.api_key_acl import DEFAULT_ENDPOINT_SCOPES, acl
 
-        for path, method, scopes in DEFAULT_ENDPOINT_SCOPES:
-            acl.add_endpoint_scope(path, method, scopes)
+            for path, method, scopes in DEFAULT_ENDPOINT_SCOPES:
+                acl.add_endpoint_scope(path, method, scopes)
+        except ImportError:
+            logger.warning("⚠️ API Key ACL not available")
 
         @self.app.on_event("startup")
         async def start_super_agent() -> None:

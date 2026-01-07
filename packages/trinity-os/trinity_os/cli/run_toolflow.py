@@ -1,4 +1,5 @@
 from __future__ import annotations
+from trinity_os.core.risk_score import get_current_risk_score
 
 import argparse
 import json
@@ -39,7 +40,6 @@ def main() -> int:
     disable_auto_risk = os.environ.get("TRINITY_TOOLFLOW_DISABLE_AUTO_RISK") == "1"
     if args.risk_score is None and not disable_auto_risk:
         try:
-            from tools.guardian_sentinel import get_current_risk_score
 
             args.risk_score = float(get_current_risk_score())
         except Exception:

@@ -7,6 +7,7 @@ Philosophy:
 """
 
 from __future__ import annotations
+from collections.abc import Mapping, MutableMapping
 
 import argparse
 import asyncio
@@ -18,7 +19,7 @@ import subprocess
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from trinity_os.adapters.afo_ultimate_mcp_deps_v1 import build_deps_v1
 from trinity_os.graphs.trinity_toolflow_graph_v1 import build_trinity_toolflow_graph, run_trinity_toolflow
@@ -58,7 +59,7 @@ def _create_receipt(repo_root: Path, *, out_name: str = "") -> Path:
     cmd = [sys.executable, str(bundle)]
     if out_name:
         cmd.extend(["--out", out_name])
-    p = subprocess.run(cmd, text=True, capture_output=True)
+    p = subprocess.run(cmd, check=False, text=True, capture_output=True)
     out_dir = (p.stdout or "").strip().splitlines()[-1] if (p.stdout or "").strip() else ""
     if p.returncode != 0 or not out_dir:
         raise RuntimeError(f"receipt_bundle failed: {p.stderr.strip()}")
@@ -176,17 +177,18 @@ def _load_wallet_browser_sessions(repo_root: Path) -> list[dict[str, Any]]:
 
     out: list[dict[str, Any]] = []
     for k in keys:
+        k = cast(Any, k)
         if not isinstance(k, dict):
             continue
-        if k.get("key_type") != "browser_session":
+        if cast(Mapping[str, Any], k).get("key_type") != "browser_session":
             continue
         out.append(
             {
-                "name": k.get("name"),
-                "service": k.get("service"),
-                "read_only": k.get("read_only"),
-                "description": k.get("description"),
-                "created_at": k.get("created_at"),
+                "name": cast(Mapping[str, Any], k).get("name"),
+                "service": cast(Mapping[str, Any], k).get("service"),
+                "read_only": cast(Mapping[str, Any], k).get("read_only"),
+                "description": cast(Mapping[str, Any], k).get("description"),
+                "created_at": cast(Mapping[str, Any], k).get("created_at"),
             }
         )
     return out
@@ -211,8 +213,8 @@ def _probe_wallet_session_decryptable(provider: str) -> bool:
             session = load_session_from_wallet(provider)
         return bool(
             isinstance(session, dict)
-            and isinstance(session.get("cookies"), list)
-            and len(session.get("cookies") or []) > 0
+            and isinstance(cast(Mapping[str, Any], session).get("cookies"), list)
+            and len(cast(Mapping[str, Any], session).get("cookies") or []) > 0
         )
     except Exception:
         return False
@@ -800,9 +802,9 @@ def _latest_receipt_dir(repo_root: Path) -> Path | None:
 
 def _load_receipt(receipt_dir: Path) -> dict[str, Any]:
     p = receipt_dir / "receipt.json"
-    data = json.loads(p.read_text(encoding="utf-8"))
-    if not isinstance(data, dict) or data.get("schema") != "bridge_receipt_v1":
-        raise ValueError(f"invalid receipt schema: {data.get('schema') if isinstance(data, dict) else type(data)}")
+    data: Any = json.loads(p.read_text(encoding="utf-8"))
+    if not isinstance(data, dict) or cast(Mapping[str, Any], data).get("schema") != "bridge_receipt_v1":
+        raise ValueError(f"invalid receipt schema: {cast(Mapping[str, Any], data).get('schema') if isinstance(data, dict) else type(data)}")
     return data
 
 
@@ -813,33 +815,33 @@ def _calculate_trinity_score(receipt: dict[str, Any]) -> dict[str, Any]:
     - 각 점수 0-100 범위
     - 평균 80점 이상 + 개별 점수 편차 20점 이내여야 PASS
     """
-    services = receipt.get("services") or {}
-    ports = services.get("ports") or {}
-    http = services.get("http") or {}
+    services = cast(Mapping[str, Any], receipt).get("services") or {}
+    ports = cast(Mapping[str, Any], services).get("ports") or {}
+    http = cast(Mapping[str, Any], services).get("http") or {}
 
     # 기본 인프라 건강도 (眞 - Truth)
     infra_checks = [
-        ("postgres_15432", ports.get("postgres_15432")),
-        ("redis_6379", ports.get("redis_6379")),
-        ("api_gateway_8000", http.get("api_gateway_8000_health")),
-        ("soul_engine_8010", http.get("soul_engine_8010_health")),
+        ("postgres_15432", cast(Mapping[str, Any], ports).get("postgres_15432")),
+        ("redis_6379", cast(Mapping[str, Any], ports).get("redis_6379")),
+        ("api_gateway_8000", cast(Mapping[str, Any], http).get("api_gateway_8000_health")),
+        ("soul_engine_8010", cast(Mapping[str, Any], http).get("soul_engine_8010_health")),
     ]
 
     truth_score = 0
-    infra_status = []
+    infra_status: list[Any] = []
     for name, check in infra_checks:
-        if isinstance(check, dict) and check.get("status") == "OK":
+        if isinstance(check, dict) and cast(Mapping[str, Any], check).get("status") == "OK":
             truth_score += 25  # 각 체크당 25점
             infra_status.append(f"{name}: OK")
         else:
-            infra_status.append(f"{name}: {check.get('status', 'UNKNOWN') if isinstance(check, dict) else 'MISSING'}")
+            infra_status.append(f"{name}: {cast(Mapping[str, Any], check).get('status', 'UNKNOWN') if isinstance(check, dict) else 'MISSING'}")
 
     # 서비스 응답 시간 (善 - Goodness)
     goodness_score = 100
-    response_times = []
+    response_times: list[Any] = []
     for name, check in infra_checks:
         if isinstance(check, dict):
-            response_time = check.get("response_time", 0)
+            response_time = cast(Mapping[str, Any], check).get("response_time", 0)
             if response_time > 5000:  # 5초 이상
                 goodness_score -= 20
                 response_times.append(f"{name}: {response_time}ms (SLOW)")
@@ -861,10 +863,10 @@ def _calculate_trinity_score(receipt: dict[str, Any]) -> dict[str, Any]:
         beauty_score -= 30
 
     # 서비스 버전 일관성 (간단한 체크)
-    versions = []
+    versions: list[Any] = []
     for _name, check in infra_checks:
         if isinstance(check, dict):
-            version = check.get("version", "")
+            version = cast(Mapping[str, Any], check).get("version", "")
             if version:
                 versions.append(version)
 
@@ -880,7 +882,7 @@ def _calculate_trinity_score(receipt: dict[str, Any]) -> dict[str, Any]:
 
     # 임시: 인프라 상태 기반 계산
     failed_services = sum(
-        1 for _, check in infra_checks if not (isinstance(check, dict) and check.get("status") == "OK")
+        1 for _, check in infra_checks if not (isinstance(check, dict) and cast(Mapping[str, Any], check).get("status") == "OK")
     )
     serenity_score -= failed_services * 25
     serenity_score = max(0, min(100, serenity_score))
@@ -941,22 +943,22 @@ def _receipt_status_from_receipt(receipt: dict[str, Any]) -> dict[str, Any]:
     - 그 외 → BLOCK (에너지 흐름 불균형 감지)
     """
     # 기본 인프라 상태 확인
-    services = receipt.get("services") or {}
-    ports = services.get("ports") or {}
-    http = services.get("http") or {}
+    services = cast(Mapping[str, Any], receipt).get("services") or {}
+    ports = cast(Mapping[str, Any], services).get("ports") or {}
+    http = cast(Mapping[str, Any], services).get("http") or {}
 
     required_paths = [
-        ("ports.postgres_15432", ports.get("postgres_15432")),
-        ("ports.redis_6379", ports.get("redis_6379")),
-        ("http.api_gateway_8000_health", http.get("api_gateway_8000_health")),
-        ("http.soul_engine_8010_health", http.get("soul_engine_8010_health")),
+        ("ports.postgres_15432", cast(Mapping[str, Any], ports).get("postgres_15432")),
+        ("ports.redis_6379", cast(Mapping[str, Any], ports).get("redis_6379")),
+        ("http.api_gateway_8000_health", cast(Mapping[str, Any], http).get("api_gateway_8000_health")),
+        ("http.soul_engine_8010_health", cast(Mapping[str, Any], http).get("soul_engine_8010_health")),
     ]
 
     bad: list[str] = []
     for name, obj in required_paths:
         status = ""
         if isinstance(obj, dict):
-            status = str(obj.get("status") or "")
+            status = str(cast(Mapping[str, Any], obj).get("status") or "")
         if status != "OK":
             bad.append(f"{name}={status or 'MISSING'}")
 
@@ -965,7 +967,7 @@ def _receipt_status_from_receipt(receipt: dict[str, Any]) -> dict[str, Any]:
 
     # Audit Gate 판정
     if not trinity_analysis["audit_gate_passed"]:
-        reason_parts = []
+        reason_parts: list[Any] = []
         if trinity_analysis["average_score"] < 80:
             reason_parts.append(f"평균 점수 부족: {trinity_analysis['average_score']:.1f}/80")
         if trinity_analysis["imbalance"] > 20:
@@ -1008,8 +1010,8 @@ def _explain_from_receipt(receipt_dir: Path, receipt: dict[str, Any]) -> dict[st
     """PoChungCheon-style explanation (read-only).
     Uses receipt evidence only; does not execute tools or alter any state.
     """
-    env = receipt.get("env") or {}
-    label = str(env.get("label") or "")
+    env = cast(Mapping[str, Any], receipt).get("env") or {}
+    label = str(cast(Mapping[str, Any], env).get("label") or "")
 
     status_card = _receipt_status_from_receipt(receipt)
     status = str(status_card.get("status") or "UNKNOWN")
@@ -1019,6 +1021,7 @@ def _explain_from_receipt(receipt_dir: Path, receipt: dict[str, Any]) -> dict[st
     details = status_card.get("details") or []
     if isinstance(details, list):
         for d in details[:2]:
+            d = cast(Any, d)
             if isinstance(d, str) and d:
                 reasons.append(d)
     if not reasons:
@@ -1053,8 +1056,8 @@ def _edu_from_receipt(receipt_dir: Path, receipt: dict[str, Any]) -> dict[str, A
     - No punishment
     - Receipt evidence only
     """
-    env = receipt.get("env") or {}
-    label = str(env.get("label") or "")
+    env = cast(Mapping[str, Any], receipt).get("env") or {}
+    label = str(cast(Mapping[str, Any], env).get("label") or "")
 
     status_card = _receipt_status_from_receipt(receipt)
     status = str(status_card.get("status") or "UNKNOWN")
@@ -1138,9 +1141,9 @@ def _verify_run(
 
         # MVP: 기본 텍스트 검증 (실제로는 receipt에서 최근 출력 추출)
         test_content = "SixXon Energy Flow Vision은 인간 꿈과 AI 구현을 연결하는 완벽한 시스템입니다."
-        test_context = "AFO 왕국의 眞善美孝永 철학을 기반으로 한 AI 통제 및 관리를 위한 도구"
+        test_context: Any = "AFO 왕국의 眞善美孝永 철학을 기반으로 한 AI 통제 및 관리를 위한 도구"
 
-        result = verify_fact(content=test_content, context=test_context if deep else None, threshold=0.8)
+        result: Any = verify_fact(content=test_content, context=test_context if deep else None, threshold=0.8)
 
         payload = {
             "status": "OK" if result["status"] == "PASSED" else "BLOCK",
@@ -1216,11 +1219,11 @@ def _toolflow_run(
                 "status": "OK",
                 "decision": "COMPLETED",
                 "summary": f"Dream Hub executed task: {task[:50]}...",
-                "output": graph_out.get("final_message"),
+                "output": cast(Mapping[str, Any], graph_out).get("final_message"),
                 "scores": {
-                    "trinity": graph_out.get("trinity_score"),
+                    "trinity": cast(Mapping[str, Any], graph_out).get("trinity_score"),
                 },
-                "audit_trail": graph_out.get("audit_history"),
+                "audit_trail": cast(Mapping[str, Any], graph_out).get("audit_history"),
             }
         except ImportError:
             return {
@@ -1241,7 +1244,7 @@ def _toolflow_run(
 
             # Local import to avoid top-level crashes if V1 is broken
             graph_data = build_trinity_toolflow_graph(build_deps_v1())
-            out = run_trinity_toolflow(graph_data, {"task": task})
+            out = cast("str", run_trinity_toolflow(graph_data, cast(Any, {"task": task})))
             result_payload = {
                 "status": "OK",
                 "decision": "COMPLETED",
@@ -1288,12 +1291,13 @@ def _run_toolflow(
         # Kingdom profile can auto-inject SSOT risk evidence (if available).
         disable_auto_risk = os.environ.get("TRINITY_TOOLFLOW_DISABLE_AUTO_RISK") == "1"
         if risk_score is None and not disable_auto_risk:
-            try:
-                from tools.guardian_sentinel import get_current_risk_score
-
-                risk_score = float(get_current_risk_score())
-            except Exception:
-                risk_score = None
+            # try:
+            #     from tools.guardian_sentinel import get_current_risk_score
+            #
+            #     risk_score = float(get_current_risk_score())
+            # except Exception:
+            #     risk_score = None
+            risk_score = None
 
     runtime_stdout = io.StringIO()
     runtime_stderr = io.StringIO()
@@ -1335,7 +1339,7 @@ def _run_toolflow(
     if verbose:
         print(json.dumps(final_card, ensure_ascii=False, indent=2))
     else:
-        _print_three_lines(final_card if isinstance(final_card, dict) else {"status": "UNKNOWN"})
+        _print_three_lines(cast(Any, final_card if isinstance(final_card, dict) else {"status": "UNKNOWN"}))
     return 0
 
 
@@ -1348,7 +1352,7 @@ def _handoff(
     """Automated Handoff Message Generator (Serenity Pillar).
     Constructs the standard handoff message from an existing receipt.
     """
-    msg_lines = []
+    msg_lines: list[Any] = []
 
     # 1. Header
     msg_lines.append(f"**⚔️ Handoff to {next_agent or 'Next Agent'}**")

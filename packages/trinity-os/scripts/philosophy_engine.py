@@ -454,7 +454,7 @@ Trinity Score에 기반한 개인화된 교육을 제공합니다.
                 eligible_titles.append(title_name)
 
         if eligible_titles:
-            best_title = max(
+            best_title: Any = max(
                 eligible_titles,
                 key=lambda x: self.master_criteria[x]["trinity_threshold"],
             )

@@ -191,8 +191,8 @@ async def get_comprehensive_health() -> dict[str, Any]:
         "心_Redis",
         "肝_PostgreSQL",
         "脾_Ollama",
-        "肺_API_Server",
-        "肾_MCP",
+        "腦_Soul_Engine",
+        "腎_MCP",
         "免疫_Trinity_Gate",
     ]
     organs: list[dict[str, Any]] = []
@@ -232,7 +232,7 @@ async def get_comprehensive_health() -> dict[str, Any]:
         # 眞 (Truth 35%) - Knowledge Infrastructure
         # Redis(98), Postgres(99), Qdrant(94)
         truth_score = (
-            (o2["心_Redis"]["score"] + o2["肝_PostgreSQL"]["score"] + o2["腎_Qdrant"]["score"])
+            (o2["心_Redis"]["score"] + o2["肝_PostgreSQL"]["score"] + o2["肺_Qdrant"]["score"])
             / 3.0
             / 100.0
         )
@@ -242,12 +242,12 @@ async def get_comprehensive_health() -> dict[str, Any]:
         goodness_score = (o2["免疫_Trinity_Gate"]["score"] + o2["骨_CI"]["score"]) / 2.0 / 100.0
 
         # 美 (Beauty 20%) - User Experience & Interface
-        # Dashboard(92), API(100)
-        beauty_score = (o2["眼_Dashboard"]["score"] + o2["肺_API_Server"]["score"]) / 2.0 / 100.0
+        # Dashboard(92), Brain/API(100)
+        beauty_score = (o2["眼_Dashboard"]["score"] + o2["腦_Soul_Engine"]["score"]) / 2.0 / 100.0
 
         # 孝 (Serenity 8%) - Agency & Automation
         # Ollama(95), MCP(85)
-        filial_score = (o2["脾_Ollama"]["score"] + o2["神経_MCP"]["score"]) / 2.0 / 100.0
+        filial_score = (o2["脾_Ollama"]["score"] + o2["腎_MCP"]["score"]) / 2.0 / 100.0
 
         # 永 (Eternity 2%) - Observability & Documentation
         # Observability(80), Docs(90)

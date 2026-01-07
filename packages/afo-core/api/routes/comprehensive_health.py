@@ -197,13 +197,14 @@ def _extract_services_status(health_data: dict[str, Any]) -> dict[str, bool]:
             "api_server": False,
         }
 
-    # SSOT 표준: 5개 오장육부 매핑
+    # SSOT 표준: 5개 오장육부 매핑 (大一統)
     service_mapping = {
-        "redis": "心_Redis",  # 세션/캐시 저장소
-        "postgres": "肝_PostgreSQL",  # 메인 데이터베이스
-        "ollama": "脾_Ollama",  # AI 모델 서빙
-        "api_server": "肺_API_Server",  # API 서버 상태
-        "mcp": "肾_MCP",  # 외부 서비스 연결
+        "redis": "心_Redis",  # 세션/캐시 저장소 (Heart)
+        "postgres": "肝_PostgreSQL",  # 메인 데이터베이스 (Liver)
+        "ollama": "脾_Ollama",  # AI 모델 서빙 (Spleen)
+        "qdrant": "肺_Qdrant",  # 벡터 데이터베이스 (Lungs)
+        "mcp": "腎_MCP",  # 외부 서비스 연결 (Kidney)
+        "api_server": "腦_Soul_Engine",  # API 서버 상태 (Brain)
     }
 
     return {

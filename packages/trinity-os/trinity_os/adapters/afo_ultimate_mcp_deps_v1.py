@@ -7,7 +7,7 @@ import os
 from collections.abc import Callable
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
-from typing import Any
+from typing import Any, Mapping, cast
 
 
 def _maybe_import(mod: str):
@@ -34,9 +34,10 @@ def _normalize_candidates(items: Any) -> list[dict[str, Any]]:
         return []
     out: list[dict[str, Any]] = []
     for it in items:
+        it = cast(Any, it)
         if isinstance(it, dict):
-            sid = str(it.get("skill_id") or it.get("id") or it.get("name") or "")
-            title = str(it.get("title") or it.get("name") or sid)
+            sid = str(cast(Mapping[str, Any], it).get("skill_id") or cast(Mapping[str, Any], it).get("id") or cast(Mapping[str, Any], it).get("name") or "")
+            title = str(cast(Mapping[str, Any], it).get("title") or cast(Mapping[str, Any], it).get("name") or sid)
             out.append({"skill_id": sid, "title": title, **it})
     return out
 
@@ -124,7 +125,7 @@ def build_deps_v1():
 
     def get_skill_card(skill_id: str) -> dict[str, Any]:
         if mcp_get_card is not None:
-            out = _call_flex(mcp_get_card, skill_id=skill_id)
+            out: Any = _call_flex(mcp_get_card, skill_id=skill_id)
             if isinstance(out, dict):
                 return out
         if registry is None:
@@ -132,7 +133,7 @@ def build_deps_v1():
         for meth in ("get_skill_card", "get_card", "get", "get_skill"):
             fn = getattr(registry, meth, None)
             if callable(fn):
-                out = _call_flex(fn, skill_id) if meth in ("get", "get_skill") else _call_flex(fn, skill_id=skill_id)
+                out: Any = _call_flex(fn, skill_id) if meth in ("get", "get_skill") else _call_flex(fn, skill_id=skill_id)
                 if isinstance(out, dict):
                     return out
         return {}
@@ -172,10 +173,10 @@ def build_deps_v1():
                 except Exception:
                     data = None
                 if isinstance(data, dict):
-                    raw_score = data.get("overall_trinity_score")
+                    raw_score = cast(Mapping[str, Any], data).get("overall_trinity_score")
                     if isinstance(raw_score, (int, float)):
                         score = float(raw_score)
-                    ts_raw = data.get("timestamp")
+                    ts_raw = cast(Mapping[str, Any], data).get("timestamp")
                     if isinstance(ts_raw, str):
                         try:
                             parsed = datetime.fromisoformat(ts_raw)
@@ -228,8 +229,8 @@ def build_deps_v1():
                 try:
                     out = _call_flex(fn, payload)
                 except Exception:
-                    out = None
-                if isinstance(out, dict) and (out.get("decision") or out.get("mode")):
+                    out: Any = None
+                if isinstance(out, dict) and (cast(Mapping[str, Any], out).get("decision") or cast(Mapping[str, Any], out).get("mode")):
                     return out
 
         # --- SSOT Serenity Gate fallback (Quantum Balance Lock) ---
@@ -313,14 +314,14 @@ def build_deps_v1():
                 try:
                     out = _call_flex(mcp_exec, **call_kwargs)
                 except Exception:
-                    out = None
+                    out: Any = None
                 if isinstance(out, dict):
                     return out
 
             try:
                 out = _call_flex(mcp_exec, skill_id, args)
             except Exception:
-                out = None
+                out: Any = None
             if isinstance(out, dict):
                 return out
 
@@ -340,7 +341,7 @@ def build_deps_v1():
                 try:
                     out = _call_flex(fn, skill_id=skill_id, args=args)
                 except Exception:
-                    out = None
+                    out: Any = None
                 if isinstance(out, dict):
                     return out
 

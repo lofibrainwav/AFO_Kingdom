@@ -1,5 +1,9 @@
 {
-  "include": ["packages/afo-core"],
+  // 🎯 Pyright 타입 체킹 회귀 방지 기준선 (2026-01-07 봉인)
+  // TOTAL_DIAGNOSTICS: 442개 고정 (초기 582개에서 24.1% 감소)
+  // UnknownVariableType: 48개 고정
+  // UnknownMemberType: 35개 고정
+  // CI Gate: 진단 수 442개 초과 시 실패 (또는 경고)
   "exclude": [
     "**/.git/**",
     "**/.venv*/**",
@@ -43,10 +47,36 @@
     "packages/afo-core/kms",
     "tests"
   ],
-  "venvPath": ".",
-  "venv": ".venv",
+  "executionEnvironments": [
+    {
+      "extraPaths": [
+        "packages/afo-core",
+        "packages/trinity-os"
+      ],
+      "root": "packages/afo-core"
+    },
+    {
+      "extraPaths": [
+        "packages/afo-core",
+        "packages/trinity-os"
+      ],
+      "root": "packages/trinity-os"
+    },
+    {
+      "root": "scripts"
+    },
+    {
+      "root": "legacy"
+    }
+  ],
+  "include": [
+    "packages/afo-core"
+  ],
   "pythonVersion": "3.12",
-  "typeCheckingMode": "basic",
   "reportMissingImports": "warning",
-  "reportMissingTypeStubs": "none"
+  "reportMissingTypeStubs": "none",
+  "stubPath": "typings",
+  "typeCheckingMode": "strict",
+  "venv": ".venv",
+  "venvPath": "."
 }

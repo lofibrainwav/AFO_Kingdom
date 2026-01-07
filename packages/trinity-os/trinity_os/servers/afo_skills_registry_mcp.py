@@ -1,3 +1,4 @@
+from typing import cast
 #!/usr/bin/env python3
 """AFO Skills Registry MCP Server
 Skills Registry의 모든 스킬을 MCP 도구로 제공하는 서버
@@ -136,8 +137,7 @@ class AfoSkillsRegistryMCP:
                             if mcp_tool_trinity_evaluator:
                                 trinity_eval = mcp_tool_trinity_evaluator.evaluate_execution_result(
                                     tool_name,
-                                    execution_result,
-                                    execution_time_ms,
+                                    cast(str, execution_result),                                    execution_time_ms,
                                     False,
                                 )
                                 trinity_score = trinity_eval.get("combined_scores", {})

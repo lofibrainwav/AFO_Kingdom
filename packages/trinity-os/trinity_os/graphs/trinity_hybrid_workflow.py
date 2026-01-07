@@ -1,5 +1,5 @@
 import operator
-from typing import Annotated, Literal, TypedDict
+from typing import Annotated, Any, Literal, TypedDict, cast
 
 from langchain_core.messages import AIMessage, BaseMessage, HumanMessage
 from langgraph.checkpoint.memory import MemorySaver
@@ -45,7 +45,7 @@ def executor_node(state: AgentState) -> dict:
     # In reality, this calls AfoSkillsMCP tools
 
     # Progress the state (simple linear logic for MVP)
-    new_next_step = "final_review" if step != "final_review" else "done"
+    new_next_step: Any = "final_review" if step != "final_review" else "done"
 
     return {
         "messages": [AIMessage(content=f"Executed step: {step}")],
@@ -61,7 +61,7 @@ def reviewer_node(state: AgentState) -> dict:
     # Mocking Trinity Score calculation (Real: Call trinity_score_mcp)
     # Logic: Randomly assign scores for simulation, or deterministic based on content
     score = 95.0  # High score for "Happy Path"
-    risk = 5.0
+    risk: Any = 5.0
 
     return {
         "trinity_score": score,
@@ -102,9 +102,9 @@ def audit_gate(
 # --- Dream Hub Graph Construction ---
 workflow = StateGraph(AgentState)
 
-workflow.add_node("planner_node", planner_node)
-workflow.add_node("executor_node", executor_node)
-workflow.add_node("reviewer_node", reviewer_node)
+cast(Any, workflow).add_node("planner_node", planner_node)
+cast(Any, workflow).add_node("executor_node", executor_node)
+cast(Any, workflow).add_node("reviewer_node", reviewer_node)
 
 workflow.add_edge(START, "planner_node")
 workflow.add_edge("planner_node", "executor_node")
@@ -116,7 +116,7 @@ workflow.add_conditional_edges("reviewer_node", audit_gate)
 # Persistence (The 'Dream capability')
 checkpointer = MemorySaver()
 
-app = workflow.compile(checkpointer=checkpointer)
+app = cast(Any, workflow).compile(checkpointer=checkpointer)
 
 
 def run_dream_hub(task: str, thread_id: str = "default") -> dict:
@@ -124,11 +124,10 @@ def run_dream_hub(task: str, thread_id: str = "default") -> dict:
     Runs the Dream Hub graph synchronously (for now) and returns the final state.
     """
     initial_state = {"messages": [HumanMessage(content=task)], "next_step": "start"}
-    config = {"configurable": {"thread_id": thread_id}}
+    config: Any = {"configurable": {"thread_id": thread_id}}
 
     # Run the graph
-    final_state = app.invoke(initial_state, config=config)
-
+    final_state: Any = cast(Any | None, app.invoke(cast(Any, initial_state)), config=config)
     # Extract key outputs for CLI
     return {
         "status": "OK",

@@ -1,9 +1,20 @@
+from typing import Any, Mapping, cast
 import json
 import os
 import subprocess
 import sys
 import time
 from pathlib import Path
+
+def _as_mapping(x: object) -> Mapping[str, Any]:
+    return cast(Mapping[str, Any], x)
+
+def _as_list(x: object) -> list[Any]:
+    return cast(list[Any], x)
+
+def _as_any(x: object) -> Any:
+    return cast(Any, x)
+
 
 # Enhance Path for Sibling Imports (Conditional)
 # Add packages directory and trinity-os to PYTHONPATH for proper module resolution
@@ -231,7 +242,7 @@ class AfoUltimateMCPServer:
                     ]
 
                     if TRINITY_LOADED:
-                        tools.append(
+                        cast(list[Any], tools).append(
                             {
                                 "name": "calculate_trinity_score",
                                 "description": "Calculate the 5-Pillar Trinity Score (Truth, Goodness, Beauty, Serenity, Eternity).",
@@ -251,7 +262,7 @@ class AfoUltimateMCPServer:
                         )
 
                     if SKILLS_LOADED:
-                        tools.append(
+                        cast(list[Any], tools).append(
                             {
                                 "name": "verify_fact",
                                 "description": "Verify a factual claim against context (Hallucination Defense).",
@@ -265,7 +276,7 @@ class AfoUltimateMCPServer:
                                 },
                             }
                         )
-                        tools.append(
+                        cast(list[Any], tools).append(
                             {
                                 "name": "cupy_weighted_sum",
                                 "description": "Calculate weighted sum (GPU accelerated if available).",
@@ -287,7 +298,7 @@ class AfoUltimateMCPServer:
                         )
 
                     if SEQUENTIAL_LOADED:
-                        tools.append(
+                        cast(list[Any], tools).append(
                             {
                                 "name": "sequential_thinking",
                                 "description": "Execute sequential thinking step (Step-by-Step Reasoning).",
@@ -310,7 +321,7 @@ class AfoUltimateMCPServer:
                         )
 
                     if CONTEXT7_LOADED:
-                        tools.append(
+                        cast(list[Any], tools).append(
                             {
                                 "name": "retrieve_context",
                                 "description": "Retrieve pinned technical context (Context7 Knowledge Injector).",
@@ -326,7 +337,7 @@ class AfoUltimateMCPServer:
                         )
 
                     if PLAYWRIGHT_LOADED:
-                        tools.append(
+                        _as_list(tools).append(
                             {
                                 "name": "browser_navigate",
                                 "description": "Navigate to a URL using Playwright.",
@@ -337,7 +348,7 @@ class AfoUltimateMCPServer:
                                 },
                             }
                         )
-                        tools.append(
+                        _as_list(tools).append(
                             {
                                 "name": "browser_screenshot",
                                 "description": "Capture a screenshot of the current page.",
@@ -348,7 +359,7 @@ class AfoUltimateMCPServer:
                                 },
                             }
                         )
-                        tools.append(
+                        _as_list(tools).append(
                             {
                                 "name": "browser_click",
                                 "description": "Click an element on the current page.",
@@ -359,7 +370,7 @@ class AfoUltimateMCPServer:
                                 },
                             }
                         )
-                        tools.append(
+                        cast(list[Any], tools).append(
                             {
                                 "name": "browser_type",
                                 "description": "Type text into an element on the current page.",
@@ -373,7 +384,7 @@ class AfoUltimateMCPServer:
                                 },
                             }
                         )
-                        tools.append(
+                        cast(list[Any], tools).append(
                             {
                                 "name": "browser_scrape",
                                 "description": "Scrape text content from a selector.",
@@ -513,7 +524,7 @@ class AfoUltimateMCPServer:
                                 is_error = True
                             else:
                                 content = json.dumps(
-                                    PlaywrightBridgeMCP.navigate(args.get("url")),
+                                    cast(Any, PlaywrightBridgeMCP).navigate(args.get("url")),
                                     indent=2,
                                 )
                         elif tool_name == "browser_screenshot":
@@ -522,7 +533,7 @@ class AfoUltimateMCPServer:
                                 is_error = True
                             else:
                                 content = json.dumps(
-                                    PlaywrightBridgeMCP.screenshot(args.get("path", "screenshot.png")),
+                                    cast(Any, PlaywrightBridgeMCP).screenshot(args.get("path", "screenshot.png")),
                                     indent=2,
                                 )
                         elif tool_name == "browser_click":
@@ -531,7 +542,7 @@ class AfoUltimateMCPServer:
                                 is_error = True
                             else:
                                 content = json.dumps(
-                                    PlaywrightBridgeMCP.click(args.get("selector")),
+                                    cast(Any, PlaywrightBridgeMCP).click(args.get("selector")),
                                     indent=2,
                                 )
                         elif tool_name == "browser_type":
@@ -540,7 +551,7 @@ class AfoUltimateMCPServer:
                                 is_error = True
                             else:
                                 content = json.dumps(
-                                    PlaywrightBridgeMCP.type_text(args.get("selector"), args.get("text")),
+                                    cast(Any, PlaywrightBridgeMCP).type_text(args.get("selector"), args.get("text")),
                                     indent=2,
                                 )
                         elif tool_name == "browser_scrape":
@@ -549,7 +560,7 @@ class AfoUltimateMCPServer:
                                 is_error = True
                             else:
                                 content = json.dumps(
-                                    PlaywrightBridgeMCP.scrape(args.get("selector")),
+                                    cast(Any, PlaywrightBridgeMCP).scrape(args.get("selector")),
                                     indent=2,
                                 )
 

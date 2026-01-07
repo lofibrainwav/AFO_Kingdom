@@ -1,0 +1,9 @@
+M	.gitignore
+M	packages/afo-core/AFO/alliances/observer.py
+M	packages/afo-core/AFO/dspy_optimizer.py
+M	packages/afo-core/AFO/genui/genui_orchestrator.py
+M	packages/afo-core/AFO/skeleton_index.py
+M	packages/afo-core/api/routes/git_status.py
+M	packages/afo-core/api/routes/integrity_check.py
+M	pyproject.toml
+M	system_health_check.py

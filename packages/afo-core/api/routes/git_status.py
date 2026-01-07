@@ -16,8 +16,9 @@ router = APIRouter(prefix="/api/git", tags=["Git Status"])
 
 logger = logging.getLogger(__name__)
 
-# 프로젝트 루트 경로
-WORKSPACE_ROOT = Path("/Users/brnestrm/AFO_Kingdom")
+# Dynamic workspace root calculation
+# This file is at packages/afo-core/api/routes/git_status.py (4 parents up)
+WORKSPACE_ROOT = Path(__file__).resolve().parents[4]
 
 
 def _run_git_command(cmd: str) -> str:

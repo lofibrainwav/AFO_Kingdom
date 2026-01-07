@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from typing import Any, Mapping, cast
 """
 TRINITY-OS Autorun Gate Check (Light/Deep)
 
@@ -58,7 +59,7 @@ def run_command(
             capture_output=True,
             text=True,
             timeout=timeout,
-            check=False,
+            check: Any = False,
         )
         return {
             "status": "success" if result.returncode == 0 else "failed",
@@ -134,7 +135,7 @@ def main() -> None:
     health_script = afo_root / ".claude" / "scripts" / "check_11_organs.py"
     if health_script.exists():
         res = run_command([python_exe, str(health_script)], cwd=afo_root, timeout=60)
-        parsed = try_parse_json(res.get("stdout", ""))
+        parsed = try_parse_json(cast(Mapping[str, Any], res).get("stdout", ""))
         res["parsed"] = parsed
         report["checks"]["check_11_organs"] = res
     else:

@@ -15,6 +15,7 @@ import TrinityGlow from "./TrinityGlow";
 import { GitWidget } from "./widgets/GitWidget";
 import RoyalFinanceWidget from "./widgets/RoyalFinanceWidget";
 import { SystemStatusWidget } from "./widgets/SystemStatusWidget";
+import { MusicGenerationWidget } from "./widgets/MusicGenerationWidget";
 import { RoyalCommandHierarchyCard } from "../../widgets/royal/RoyalCommandHierarchyCard";
 import { FieldManualLawCard } from "../../widgets/royal/FieldManualLawCard";
 import SSEHealthWidget from "../genui/SSEHealthWidget";
@@ -45,7 +46,7 @@ export default function RoyalLayout() {
 
       {/* Main Content Container with Glass Effect */}
       <div className="relative z-10 max-w-7xl mx-auto p-6 md:p-10 lg:p-12 space-y-12 h-screen overflow-y-auto scrollbar-hide">
-        {/* Header Section */}
+        {/* Header Section - PDF 6.1절 眞 적용: 시스템 상태 투명한 시각화 */}
         <header className="flex justify-between items-end pb-8 border-b border-slate-300/50">
           <div>
             <motion.h1
@@ -65,6 +66,24 @@ export default function RoyalLayout() {
             </motion.p>
           </div>
           <div className="flex items-end gap-6">
+            {/* PDF 6.1절: 왕궁 현황판 - 메모리 상태 실시간 표시 */}
+            <div className="text-right bg-white/5 backdrop-blur-sm rounded-lg p-3 border border-white/10">
+              <div className="text-xs text-slate-400 font-mono mb-1">
+                🏰 메모리 현황 (Memory Status)
+              </div>
+              <div className="flex items-center gap-2 text-sm">
+                <div className="w-16 h-2 bg-slate-200 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-green-400 to-blue-500 transition-all duration-500"
+                    style={{ width: `${Math.min(100, ((data?.memory_usage || 0) / 24) * 100)}%` }}
+                  />
+                </div>
+                <span className="text-slate-500 font-mono text-xs">
+                  {data?.memory_usage || 0}GB / 24GB
+                </span>
+              </div>
+            </div>
+
             <a
               href="http://localhost:8000/kingdom_dashboard.html"
               target="_blank"
@@ -75,6 +94,7 @@ export default function RoyalLayout() {
               <span>🗺️ 왕국 설계도</span>
               <span className="text-[10px] bg-slate-200 px-1.5 py-0.5 rounded text-slate-500">:8000</span>
             </a>
+
             <div className="text-right">
               <div className="text-xs text-slate-400 font-mono">
                 {ROYAL_CONSTANTS.TRINITY_SCORE_LABEL}
@@ -104,6 +124,11 @@ export default function RoyalLayout() {
               <GitWidget />
               <TrinityEvidenceWidget />
               <SSEHealthWidget />
+            </div>
+
+            {/* Genesis Widgets Row 2: Music Generation (Full Width) */}
+            <div className="grid grid-cols-1 gap-6">
+              <MusicGenerationWidget />
             </div>
 
             {/* Use the Unified Royal Ops Center */}

@@ -27,11 +27,11 @@ PY
 
 # 3. Ruff Check
 echo "⚡ Running Ruff (Check)..."
-uv run ruff check packages scripts --ignore E402,B007,F841,B904,C901,A001,N806,I001 || { echo "❌ Ruff Check Failed"; exit 1; }
+ruff check packages scripts --ignore E402,B007,F841,B904,C901,A001,N806,I001 || { echo "❌ Ruff Check Failed"; exit 1; }
 
 # 4. Ruff Format
 echo "🎨 Running Ruff (Format Check)..."
-uv run ruff format --check packages scripts || { echo "❌ Ruff Format Failed"; exit 1; }
+ruff format --check packages scripts || { echo "❌ Ruff Format Failed"; exit 1; }
 
 # 5. Pyright
 echo "📘 Running Pyright..."

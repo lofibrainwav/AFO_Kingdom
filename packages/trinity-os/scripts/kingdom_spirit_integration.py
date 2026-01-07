@@ -13,7 +13,7 @@ import json
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 # AFO 루트 디렉토리
 AFO_ROOT = Path(__file__).resolve().parent.parent
@@ -102,10 +102,10 @@ class SpiritIntegration:
 
         for path in self.constitution_paths:
             if path.exists():
-                constitution_data["files_found"].append(str(path))
+                cast(list[Any], constitution_data["files_found"]).append(str(path))
                 constitution_data["total_size"] += path.stat().st_size
             else:
-                constitution_data["files_missing"].append(str(path))
+                cast(list[Any], constitution_data["files_missing"]).append(str(path))
 
         return constitution_data
 
@@ -162,8 +162,7 @@ class SpiritIntegration:
         trinity_result = calculate_trinity_score_5pillars(
             truth=truth_score,
             goodness=goodness_score,
-            beauty=beauty_score,
-            serenity=serenity_score,
+            beauty=cast(float, beauty_score),            serenity=serenity_score,
             forever=eternity_score,
         )
 
@@ -251,7 +250,7 @@ class SpiritIntegration:
             current = current_scores.get(pillar, 0)
             baseline = baseline_scores.get(pillar, 0)
             if current < baseline:
-                drops.append(
+                cast(list[Any], drops).append(
                     {
                         "pillar": pillar,
                         "baseline": baseline,
@@ -262,7 +261,7 @@ class SpiritIntegration:
 
         # 가장 큰 하락 찾기
         if drops:
-            biggest_drop = max(drops, key=lambda x: x["drop"])
+            biggest_drop: Any = max(drops, key=lambda x: x["drop"])
             return {
                 "status": "score_dropped",
                 "delta": delta,

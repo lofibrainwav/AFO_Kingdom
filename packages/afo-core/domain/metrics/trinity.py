@@ -64,7 +64,6 @@ class TrinityInputs:
             )
         except Exception:
             return TrinityInputs(0, 0, 0, 0)
-            return TrinityInputs(0, 0, 0, 0)
 
     @classmethod
     def from_100_scale(

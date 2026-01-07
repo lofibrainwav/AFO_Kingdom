@@ -1,0 +1,38 @@
+{
+  "title": "AFO Kingdom Victory Theme",
+  "template": "tiktok_trend",
+  "sections": [
+    {
+      "start": 0,
+      "end": 3,
+      "text": "AFO Kingdom!",
+      "effects": ["zoom_in"],
+      "music_directive": "slow_build"
+    },
+    {
+      "start": 3,
+      "end": 6,
+      "text": "영원히!",
+      "effects": ["fade_transition"],
+      "music_directive": "drop_beat"
+    },
+    {
+      "start": 6,
+      "end": 9,
+      "text": "TikTok급!",
+      "effects": ["color_pop"],
+      "music_directive": "peak_energy"
+    }
+  ],
+  "music": {
+    "custom_mode": true,
+    "customMode": true,
+    "style": "epic orchestral cinematic",
+    "title": "AFO Kingdom Victory Theme",
+    "instrumental": false,
+    "is_instrumental": false,
+    "model": "V5",
+    "template": "tiktok_trend",
+    "callBackUrl": "https://api.sunoapi.org/callback"
+  }
+}

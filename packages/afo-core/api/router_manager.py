@@ -22,7 +22,10 @@ from AFO.api.compat import (
     chancellor_router,
     chat_router,
     council_router,
+    decree_router,
     education_system_router,
+    evolution_router,
+    external_router,
     finance_router,
     got_router,
     grok_stream_router,
@@ -210,6 +213,9 @@ class AFORouterManager:
         self._safe_register_router(voice_router, prefix="/api", tags=["Voice Interface"])
         self._safe_register_router(council_router, prefix="/api", tags=["Council of Minds"])
         self._safe_register_router(learning_pipeline, prefix="/api", tags=["AI Self-Improvement"])
+        self._safe_register_router(evolution_router, tags=["Evolution (DGM)"])
+        self._safe_register_router(decree_router, tags=["Royal Decrees (Phase 12)"])
+        self._safe_register_router(external_router, tags=["Phase 13: External Interface"])
         self._safe_register_router(serenity_router, prefix="/api", tags=["Serenity (GenUI)"])
 
         # Philosophical Copilot (眞善美孝永 철학 실시간 모니터링)

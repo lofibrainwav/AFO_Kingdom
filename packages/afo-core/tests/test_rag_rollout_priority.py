@@ -3,7 +3,7 @@ import os
 from typing import Any
 from unittest.mock import patch
 
-from afo.rag_flag import determine_rag_mode
+from AFO.rag_flag import determine_rag_mode
 
 
 def _seed_bucket(seed: str) -> int:

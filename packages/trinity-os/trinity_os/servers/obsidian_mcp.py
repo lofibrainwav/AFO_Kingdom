@@ -10,7 +10,7 @@ import os
 import sys
 import time
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 # 프로젝트 루트를 Python 경로에 추가
 # __file__ = packages/trinity-os/trinity_os/servers/obsidian_mcp.py
@@ -123,7 +123,7 @@ class ObsidianMCP:
             }
 
     @staticmethod
-    def write_note(note_path: str, content: str, metadata: dict[str, Any] = None) -> dict[str, Any]:
+    def write_note(note_path: str, content: str, metadata: dict[str, Any] = cast(Any, None)) -> dict[str, Any]:
         """옵시디언 노트 쓰기"""
         try:
             target = ObsidianMCP._validate_path(note_path)
@@ -185,7 +185,7 @@ class ObsidianMCP:
 
                     variables = re.findall(r"\{\{(\w+)\}\}", content)
 
-                    templates.append(
+                    cast(list[Any], templates).append(
                         {
                             "name": template_file.stem,
                             "path": str(template_file.relative_to(OBSIDIAN_VAULT_PATH)),
@@ -206,7 +206,7 @@ class ObsidianMCP:
             }
 
     @staticmethod
-    def apply_template(template_name: str, output_path: str, variables: dict[str, str] = None) -> dict[str, Any]:
+    def apply_template(template_name: str, output_path: str, variables: dict[str, str] = cast(Any, None)) -> dict[str, Any]:
         """템플릿 적용"""
         try:
             template_file = TEMPLATES_PATH / f"{template_name}.md"
@@ -261,7 +261,7 @@ class ObsidianMCP:
                         # 관련성 점수 계산 (간단한 구현)
                         score = content.lower().count(query_lower)
 
-                        results.append(
+                        cast(list[Any], results).append(
                             {
                                 "path": str(md_file.relative_to(OBSIDIAN_VAULT_PATH)),
                                 "name": md_file.stem,
@@ -272,7 +272,7 @@ class ObsidianMCP:
                     continue
 
             # 점수 기준 정렬
-            results.sort(key=lambda x: x["score"], reverse=True)
+            cast(Any, results).sort(key=lambda x: x["score"], reverse=True)
             results = results[:limit]
 
             return {
@@ -297,7 +297,7 @@ class ObsidianMCP:
             }
 
         try:
-            result = Context7MCP.retrieve_context(query)
+            result: Any = Context7MCP.retrieve_context(query)
             return {
                 "success": result.get("found", False),
                 "query": query,
@@ -504,8 +504,7 @@ class ObsidianMCP:
                         try:
                             trinity_eval = mcp_tool_trinity_evaluator.evaluate_execution_result(
                                 tool_name,
-                                tool_result,
-                                execution_time_ms,
+                                cast(str, tool_result),                                execution_time_ms,
                                 is_error,
                             )
                             trinity_score = trinity_eval.get("combined_scores", {})

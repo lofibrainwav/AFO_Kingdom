@@ -58,6 +58,12 @@ class AntiGravitySettings(BaseSettings):
     AUTO_SYNC: bool = True  # 자동 동기화 활성화 (孝: 설정 마찰 제거)
     SELF_EXPANDING_MODE: bool = True  # 자율 확장 모드 (永: 창조자 트랙 활성화)
 
+    # [Phase 14-A] Silent Civilization & Sovereignty Lockdown
+    EXTERNAL_EXPOSURE_ENABLED: bool = False  # False: 외부 API/데이터 노출 완전 봉인
+    EXTERNAL_API_ENABLED: bool = False  # False: 외부 API 호출 완전 봉인
+    PUBLIC_ENDPOINTS_ENABLED: bool = False  # False: Public 엔드포인트 노출 완전 봉인
+    SILENT_CIVILIZATION_MODE: bool = True  # True: 내부 숙성 모드 활성화
+
     # [Phase A] 언어 정책 설정 (SSOT)
     REPORT_LANGUAGE: Literal["ko", "en"] = "ko"
     USE_PROTOCOL_OFFICER: bool = True  # Protocol Officer 사용 여부
@@ -110,6 +116,24 @@ class AntiGravitySettings(BaseSettings):
         env_file = ".env.antigravity"  # 별도 env 파일로 마찰 최소화
         case_sensitive = False
         extra = "allow"
+
+    def check_governance(self, action: str) -> bool:
+        """
+        [善: Goodness] Central Governance Gate.
+        Checks if a specific action is allowed under the current sovereignty policy.
+        """
+        # [Phase 14-A] Silent Civilization Lockdown
+        if self.SILENT_CIVILIZATION_MODE:
+            # scholars are generally allowed in silent mode as they are internal
+            if action.startswith("scholar_"):
+                return True
+
+            # External actions are blocked in silent mode
+            if action in ["external_api_call", "public_exposure"]:
+                return False
+
+        # Default to True for now, allowing authorized internal operations
+        return True
 
     def auto_sync(self) -> str:
         """자동 동기화 실행 (孝: Serenity) - Hot Reload Implementation

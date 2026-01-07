@@ -13,7 +13,7 @@ import sys
 import time
 from datetime import datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 # AFO 루트 디렉토리
 AFO_ROOT = Path(__file__).resolve().parent.parent
@@ -66,7 +66,7 @@ class AutoRecovery:
                     "stderr": proc_result.stderr[:500],
                     "success": proc_result.returncode == 0,
                 }
-                result["attempts"].append(attempt_result)
+                cast(list[Any], result["attempts"]).append(attempt_result)
 
                 if proc_result.returncode == 0:
                     result["status"] = "success"
@@ -86,7 +86,7 @@ class AutoRecovery:
                     "stderr": "Timeout expired",
                     "success": False,
                 }
-                result["attempts"].append(attempt_result)
+                cast(list[Any], result["attempts"]).append(attempt_result)
 
                 if attempt < self.max_retries:
                     time.sleep(self.retry_delay)
@@ -99,7 +99,7 @@ class AutoRecovery:
                     "stderr": str(e),
                     "success": False,
                 }
-                result["attempts"].append(attempt_result)
+                cast(list[Any], result["attempts"]).append(attempt_result)
 
                 if attempt < self.max_retries:
                     time.sleep(self.retry_delay)
@@ -139,7 +139,7 @@ class AutoRecovery:
 
     def analyze_failure(self, result: dict[str, Any]) -> dict[str, Any]:
         """실패 원인 분석"""
-        analysis = {
+        analysis: Any = {
             "failure_type": "unknown",
             "possible_causes": [],
             "recommendations": [],

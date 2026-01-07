@@ -35,9 +35,9 @@ class QLoRATrainerService:
 
     def __init__(self, model_name: str = "meta-llama/Meta-Llama-3.1-8B"):
         self.model_name = model_name
-        self.model = None
-        self.tokenizer = None
-        self.trainer = None
+        self.model: Any = None
+        self.tokenizer: Any = None
+        self.trainer: Any = None
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     def setup_qlora_config(self) -> BitsAndBytesConfig:

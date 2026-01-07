@@ -22,13 +22,13 @@ class TaxParameters:
     year: int = 2025
 
     # Federal Income Tax Brackets (Single Filer)
-    federal_brackets: list[dict[str, Any]] = None
+    federal_brackets: list[dict[str, Any]] | None = None
 
     # Federal Standard Deduction
-    federal_standard_deduction: dict[str, float] = None
+    federal_standard_deduction: dict[str, float] | None = None
 
     # CA State Tax Brackets
-    ca_brackets: list[dict[str, Any]] = None
+    ca_brackets: list[dict[str, Any]] | None = None
 
     # CA Standard Deduction
     ca_standard_deduction: float = 0.0

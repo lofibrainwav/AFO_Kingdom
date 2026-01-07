@@ -17,14 +17,14 @@ from redis.commands.search.query import Query as RedisQuery
 try:
     from neo4j import GraphDatabase
 except ImportError:
-    GraphDatabase = None  # type: ignore[assignment, misc]
+    GraphDatabase = None
 
 # Qdrant Integration
 try:
     from qdrant_client import QdrantClient
     from qdrant_client.http import models as qmodels
 except ImportError:
-    QdrantClient = None  # type: ignore[assignment, misc]
+    QdrantClient = None
     qmodels = None  # type: ignore[assignment]
 
 # Optional imports handling
@@ -32,7 +32,7 @@ try:
     from pgvector.psycopg2 import register_vector
     from psycopg2.extras import RealDictCursor
 except ImportError:
-    RealDictCursor = None  # type: ignore[assignment, misc]
+    RealDictCursor = None
     register_vector = None
 
 # Suppress Pydantic warnings locally
@@ -58,11 +58,11 @@ class HybridChunk(BaseModel):
     id: str
     content: str
     score: float
-    source: Optional[str] = None
+    source: str | None = None
 
 
 class HybridQueryResponse(BaseModel):
-    answer: Union[str, dict]
+    answer: str | dict
     chunks: list[HybridChunk] = []
     metadata: dict = {}
 
@@ -499,8 +499,8 @@ def generate_answer(
     additional_instructions: str,
     llm_provider: str = "openai",
     openai_client: Any = None,
-    graph_context: Optional[list[dict[str, Any]]] = None,  # New: Graph Context
-) -> Union[str, dict[str, Any]]:
+    graph_context: list[dict[str, Any]] | None = None,  # New: Graph Context
+) -> str | dict[str, Any]:
     """
     眞 (Truth): 컨텍스트 기반 LLM 답변 생성 (GraphRAG Enhanced)
     善 (Goodness): API 호출 실패 시 에러 메시지 반환
@@ -607,8 +607,8 @@ async def generate_answer_async(
     additional_instructions: str,
     llm_provider: str = "openai",
     openai_client: Any = None,
-    graph_context: Optional[list[dict[str, Any]]] = None,
-) -> Union[str, dict[str, Any]]:
+    graph_context: list[dict[str, Any]] | None = None,
+) -> str | dict[str, Any]:
     """비동기 답변 생성 래퍼"""
     loop = asyncio.get_event_loop()
     return await loop.run_in_executor(
@@ -737,8 +737,10 @@ async def generate_answer_stream_async(
     except Exception as e:
         yield _sse_fmt("error", {"error": f"All LLM providers failed: {e!s}"})
 
+
 class HybridRAG:
     """Wrapper class for HybridRAG functional implementation."""
+
     available = True
 
     @staticmethod
@@ -749,7 +751,7 @@ class HybridRAG:
         response_format: str,
         additional_instructions: str,
         openai_client: Any = None,
-        graph_context: Optional[list[dict[str, Any]]] = None,
+        graph_context: list[dict[str, Any]] | None = None,
     ) -> str | dict[str, Any]:
         return await generate_answer_async(
             query,
@@ -758,7 +760,7 @@ class HybridRAG:
             response_format,
             additional_instructions,
             openai_client=openai_client,
-            graph_context=graph_context
+            graph_context=graph_context,
         )
 
     @staticmethod
@@ -789,10 +791,5 @@ class HybridRAG:
         openai_client: Any = None,
     ) -> Any:
         return generate_answer_stream_async(
-            query,
-            contexts,
-            temperature,
-            response_format,
-            additional_instructions,
-            openai_client
+            query, contexts, temperature, response_format, additional_instructions, openai_client
         )

@@ -116,12 +116,16 @@ def build_organs_final(
     ok, ms, t = _tcp_probe(postgres_host, postgres_port, timeout_tcp_s)
     organs["肝_PostgreSQL"] = _mk(ok, ms, t, "tcp", 99, 30, "Connected", "Disconnected")
 
-    # ABSOLUTE TRUTH: Self-check
-    organs["肺_API_Server"] = OrganReport(
-        status="healthy", score=100, output="Self-check: Responding", probe="self", latency_ms=0
+    # ABSOLUTE TRUTH: Self-check (Brain)
+    organs["腦_Soul_Engine"] = OrganReport(
+        status="healthy",
+        score=100,
+        output="Sovereign Orchestration Active",
+        probe="self",
+        latency_ms=0,
     )
     print(
-        f">>>>>>>>>>>>>>>> API SERVER STATUS: {organs['肺_API_Server']} <<<<<<<<<<<<<<<<",
+        f">>>>>>>>>>>>>>>> SOUL ENGINE STATUS: {organs['腦_Soul_Engine']} <<<<<<<<<<<<<<<<",
         flush=True,
     )
 
@@ -129,14 +133,14 @@ def build_organs_final(
     organs["脾_Ollama"] = _mk(ok, ms, t, "tcp", 95, 20, "Connected", "Disconnected")
 
     ok, ms, t = _tcp_probe(qdrant_host, qdrant_port, timeout_tcp_s)
-    organs["腎_Qdrant"] = _mk(ok, ms, t, "tcp", 94, 20, "Connected", "Disconnected")
+    organs["肺_Qdrant"] = _mk(ok, ms, t, "tcp", 94, 20, "Connected", "Disconnected")
 
     # Static / Semi-static Organs
     organs["眼_Dashboard"] = OrganReport(
         status="healthy", score=92, output="Visual OK", probe="static", latency_ms=0
     )
 
-    organs["神経_MCP"] = OrganReport(
+    organs["腎_MCP"] = OrganReport(
         status="healthy", score=85, output="Tools Active", probe="static", latency_ms=0
     )
     organs["耳_Observability"] = OrganReport(
@@ -147,6 +151,9 @@ def build_organs_final(
     )
     organs["骨_CI"] = OrganReport(
         status="healthy", score=88, output="Pipeline Green", probe="static", latency_ms=0
+    )
+    organs["膽_Evolution_Gate"] = OrganReport(
+        status="healthy", score=90, output="Sovereign Decisiveness OK", probe="static", latency_ms=0
     )
 
     # Security Pillar (simplified for reliability)

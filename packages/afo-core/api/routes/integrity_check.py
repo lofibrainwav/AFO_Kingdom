@@ -20,7 +20,9 @@ router = APIRouter(prefix="/api/integrity", tags=["Integrity Check"])
 
 logger = logging.getLogger(__name__)
 
-WORKSPACE_ROOT = Path("/Users/brnestrm/AFO_Kingdom")
+# Dynamic workspace root calculation
+# This file is at packages/afo-core/api/routes/integrity_check.py (4 parents up)
+WORKSPACE_ROOT = Path(__file__).resolve().parents[4]
 
 
 class IntegrityCheckRequest(BaseModel):

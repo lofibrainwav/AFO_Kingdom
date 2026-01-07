@@ -14,7 +14,17 @@ import subprocess
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, Mapping, cast
+
+def _as_mapping(x: object) -> Mapping[str, Any]:
+    return cast(Mapping[str, Any], x)
+
+def _as_list(x: object) -> list[Any]:
+    return cast(list[Any], x)
+
+def _as_any(x: object) -> Any:
+    return cast(Any, x)
+
 
 # AFO 루트 디렉토리 (TRINITY-OS의 부모 디렉토리)
 TRINITY_OS_ROOT = Path(__file__).resolve().parent.parent
@@ -44,7 +54,7 @@ class ProblemDetector:
             )
             cache_count = int(result.stdout.strip() or "0")
             if cache_count > 100:  # 100개 이상이면 문제
-                issues.append(
+                cast(list[Any], issues).append(
                     {
                         "category": "performance",
                         "type": "python_cache",
@@ -57,7 +67,7 @@ class ProblemDetector:
                     }
                 )
         except Exception as e:
-            issues.append(
+            cast(list[Any], issues).append(
                 {
                     "category": "performance",
                     "type": "python_cache_check_failed",
@@ -79,7 +89,7 @@ class ProblemDetector:
             )
             node_count = int(result.stdout.strip() or "0")
             if node_count > 0:
-                issues.append(
+                cast(list[Any], issues).append(
                     {
                         "category": "performance",
                         "type": "unnecessary_node_modules",
@@ -91,7 +101,7 @@ class ProblemDetector:
                     }
                 )
         except Exception as e:
-            issues.append(
+            cast(list[Any], issues).append(
                 {
                     "category": "performance",
                     "type": "node_modules_check_failed",
@@ -113,7 +123,7 @@ class ProblemDetector:
             )
             disk_usage = int(result.stdout.strip() or "0")
             if disk_usage > 80:
-                issues.append(
+                cast(list[Any], issues).append(
                     {
                         "category": "performance",
                         "type": "disk_usage",
@@ -126,7 +136,7 @@ class ProblemDetector:
                     }
                 )
         except Exception as e:
-            issues.append(
+            cast(list[Any], issues).append(
                 {
                     "category": "performance",
                     "type": "disk_usage_check_failed",
@@ -163,7 +173,7 @@ class ProblemDetector:
                 timeout=5,
             )
             if "PONG" not in result.stdout:
-                issues.append(
+                cast(list[Any], issues).append(
                     {
                         "category": "connection",
                         "type": "redis_connection",
@@ -176,7 +186,7 @@ class ProblemDetector:
                     }
                 )
         except Exception as e:
-            issues.append(
+            cast(list[Any], issues).append(
                 {
                     "category": "connection",
                     "type": "redis_check_failed",
@@ -205,7 +215,7 @@ class ProblemDetector:
                 timeout=5,
             )
             if "accepting" not in result.stdout:
-                issues.append(
+                cast(list[Any], issues).append(
                     {
                         "category": "connection",
                         "type": "postgresql_connection",
@@ -218,7 +228,7 @@ class ProblemDetector:
                     }
                 )
         except Exception as e:
-            issues.append(
+            cast(list[Any], issues).append(
                 {
                     "category": "connection",
                     "type": "postgresql_check_failed",
@@ -239,7 +249,7 @@ class ProblemDetector:
             )
             status = result.stdout.strip()
             if status != "healthy":
-                issues.append(
+                cast(list[Any], issues).append(
                     {
                         "category": "connection",
                         "type": "api_server_connection",
@@ -251,7 +261,7 @@ class ProblemDetector:
                     }
                 )
         except Exception as e:
-            issues.append(
+            cast(list[Any], issues).append(
                 {
                     "category": "connection",
                     "type": "api_server_check_failed",
@@ -293,7 +303,7 @@ class ProblemDetector:
                         gitignore_content = gitignore_path.read_text(encoding="utf-8", errors="ignore")
 
                     if pattern.replace("*", ".*") not in gitignore_content:
-                        issues.append(
+                        cast(list[Any], issues).append(
                             {
                                 "category": "security",
                                 "type": "cookie_file_exposed",
@@ -306,7 +316,7 @@ class ProblemDetector:
                             }
                         )
             except Exception as e:
-                issues.append(
+                cast(list[Any], issues).append(
                     {
                         "category": "security",
                         "type": "cookie_check_failed",
@@ -335,7 +345,7 @@ class ProblemDetector:
                 )
                 count = int(result.stdout.strip() or "0")
                 if count > 0:
-                    issues.append(
+                    cast(list[Any], issues).append(
                         {
                             "category": "security",
                             "type": "debug_files_in_root",
@@ -363,7 +373,7 @@ class ProblemDetector:
             )
             count = int(result.stdout.strip() or "0")
             if count > 0:
-                issues.append(
+                cast(list[Any], issues).append(
                     {
                         "category": "security",
                         "type": "hardcoded_secrets",
@@ -470,7 +480,7 @@ class ProblemDetector:
         # 불균형 문제 자동 감지
         balance_issues = []
         if truth_score < 0.7:
-            balance_issues.append(
+            cast(list[Any], balance_issues).append(
                 {
                     "type": "truth_low",
                     "severity": "high",
@@ -483,7 +493,7 @@ class ProblemDetector:
                 }
             )
         if goodness_score < 0.7:
-            balance_issues.append(
+            cast(list[Any], balance_issues).append(
                 {
                     "type": "goodness_low",
                     "severity": "high",
@@ -496,7 +506,7 @@ class ProblemDetector:
                 }
             )
         if beauty_score < 0.7:
-            balance_issues.append(
+            cast(list[Any], balance_issues).append(
                 {
                     "type": "beauty_low",
                     "severity": "high",
@@ -509,7 +519,7 @@ class ProblemDetector:
                 }
             )
         if balance_delta > 0.3:
-            balance_issues.append(
+            cast(list[Any], balance_issues).append(
                 {
                     "type": "balance_imbalanced",
                     "severity": "high" if balance_delta > 0.5 else "medium",

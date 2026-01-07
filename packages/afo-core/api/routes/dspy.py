@@ -22,9 +22,9 @@ except ImportError:
     DSPY_AVAILABLE = False
     print("Warning: DSPy not available. Install with: pip install dspy-ai")
 
-from afo.context7 import Context7Manager
 from afo.skills.skill_registry import SkillRegistry
 
+from afo.context7 import Context7Manager
 from afo.trinity_metric_wrapper import TrinityMetricWrapper
 
 router = APIRouter(prefix="/dspy", tags=["DSPy Optimization"])
