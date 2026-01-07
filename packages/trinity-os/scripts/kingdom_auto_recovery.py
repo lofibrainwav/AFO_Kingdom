@@ -66,7 +66,7 @@ class AutoRecovery:
                     "stderr": proc_result.stderr[:500],
                     "success": proc_result.returncode == 0,
                 }
-                result["attempts"].append(attempt_result)
+                cast(list[Any], result["attempts"]).append(attempt_result)
 
                 if proc_result.returncode == 0:
                     result["status"] = "success"
@@ -86,7 +86,7 @@ class AutoRecovery:
                     "stderr": "Timeout expired",
                     "success": False,
                 }
-                result["attempts"].append(attempt_result)
+                cast(list[Any], result["attempts"]).append(attempt_result)
 
                 if attempt < self.max_retries:
                     time.sleep(self.retry_delay)
@@ -99,7 +99,7 @@ class AutoRecovery:
                     "stderr": str(e),
                     "success": False,
                 }
-                result["attempts"].append(attempt_result)
+                cast(list[Any], result["attempts"]).append(attempt_result)
 
                 if attempt < self.max_retries:
                     time.sleep(self.retry_delay)

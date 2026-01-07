@@ -102,10 +102,10 @@ class SpiritIntegration:
 
         for path in self.constitution_paths:
             if path.exists():
-                constitution_data["files_found"].append(str(path))
+                cast(list[Any], constitution_data["files_found"]).append(str(path))
                 constitution_data["total_size"] += path.stat().st_size
             else:
-                constitution_data["files_missing"].append(str(path))
+                cast(list[Any], constitution_data["files_missing"]).append(str(path))
 
         return constitution_data
 
