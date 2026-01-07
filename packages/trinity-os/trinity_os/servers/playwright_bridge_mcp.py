@@ -1,5 +1,16 @@
+from typing import Any, Mapping, cast
 # mypy: ignore-errors
 from playwright.sync_api import sync_playwright  # pyright: ignore[reportMissingImports]
+
+def _as_mapping(x: object) -> Mapping[str, Any]:
+    return cast(Mapping[str, Any], x)
+
+def _as_list(x: object) -> list[Any]:
+    return cast(list[Any], x)
+
+def _as_any(x: object) -> Any:
+    return cast(Any, x)
+
 
 
 class PlaywrightBridgeMCP:
@@ -72,7 +83,7 @@ class PlaywrightBridgeMCP:
         """Type text into an element."""
         try:
             cls._ensure_browser()
-            cls._page.fill(selector, text)
+            _as_any(cls)._page.fill(selector, text)
             return {"success": True, "message": f"Typed text into {selector}"}
         except Exception as e:
             return {"success": False, "error": str(e)}

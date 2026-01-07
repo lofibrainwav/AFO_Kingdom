@@ -1,9 +1,20 @@
+from typing import Any, Mapping, cast
 import json
 import os
 import subprocess
 import sys
 import time
 from pathlib import Path
+
+def _as_mapping(x: object) -> Mapping[str, Any]:
+    return cast(Mapping[str, Any], x)
+
+def _as_list(x: object) -> list[Any]:
+    return cast(list[Any], x)
+
+def _as_any(x: object) -> Any:
+    return cast(Any, x)
+
 
 # Enhance Path for Sibling Imports (Conditional)
 # Add packages directory and trinity-os to PYTHONPATH for proper module resolution
@@ -326,7 +337,7 @@ class AfoUltimateMCPServer:
                         )
 
                     if PLAYWRIGHT_LOADED:
-                        tools.append(
+                        _as_list(tools).append(
                             {
                                 "name": "browser_navigate",
                                 "description": "Navigate to a URL using Playwright.",
@@ -337,7 +348,7 @@ class AfoUltimateMCPServer:
                                 },
                             }
                         )
-                        tools.append(
+                        _as_list(tools).append(
                             {
                                 "name": "browser_screenshot",
                                 "description": "Capture a screenshot of the current page.",
@@ -348,7 +359,7 @@ class AfoUltimateMCPServer:
                                 },
                             }
                         )
-                        tools.append(
+                        _as_list(tools).append(
                             {
                                 "name": "browser_click",
                                 "description": "Click an element on the current page.",

@@ -14,7 +14,17 @@ import subprocess
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, Mapping, cast
+
+def _as_mapping(x: object) -> Mapping[str, Any]:
+    return cast(Mapping[str, Any], x)
+
+def _as_list(x: object) -> list[Any]:
+    return cast(list[Any], x)
+
+def _as_any(x: object) -> Any:
+    return cast(Any, x)
+
 
 # AFO 루트 디렉토리 (TRINITY-OS의 부모 디렉토리)
 TRINITY_OS_ROOT = Path(__file__).resolve().parent.parent
