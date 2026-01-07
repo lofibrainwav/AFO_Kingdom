@@ -7,6 +7,7 @@ Philosophy:
 """
 
 from __future__ import annotations
+from collections.abc import Mapping
 
 import argparse
 import asyncio
@@ -182,10 +183,10 @@ def _load_wallet_browser_sessions(repo_root: Path) -> list[dict[str, Any]]:
             continue
         out.append(
             {
-                "name": k.get("name"),
-                "service": k.get("service"),
-                "read_only": k.get("read_only"),
-                "description": k.get("description"),
+                "name": cast(Mapping[str, Any], k).get("name"),
+                "service": cast(Mapping[str, Any], k).get("service"),
+                "read_only": cast(Mapping[str, Any], k).get("read_only"),
+                "description": cast(Mapping[str, Any], k).get("description"),
                 "created_at": k.get("created_at"),
             }
         )
@@ -211,7 +212,7 @@ def _probe_wallet_session_decryptable(provider: str) -> bool:
             session = load_session_from_wallet(provider)
         return bool(
             isinstance(session, dict)
-            and isinstance(session.get("cookies"), list)
+            and isinstance(cast(Mapping[str, Any], session).get("cookies"), list)
             and len(session.get("cookies") or []) > 0
         )
     except Exception:
@@ -801,7 +802,7 @@ def _latest_receipt_dir(repo_root: Path) -> Path | None:
 def _load_receipt(receipt_dir: Path) -> dict[str, Any]:
     p = receipt_dir / "receipt.json"
     data = json.loads(p.read_text(encoding="utf-8"))
-    if not isinstance(data, dict) or data.get("schema") != "bridge_receipt_v1":
+    if not isinstance(data, dict) or cast(Mapping[str, Any], data).get("schema") != "bridge_receipt_v1":
         raise ValueError(f"invalid receipt schema: {data.get('schema') if isinstance(data, dict) else type(data)}")
     return data
 
@@ -813,20 +814,20 @@ def _calculate_trinity_score(receipt: dict[str, Any]) -> dict[str, Any]:
     - 각 점수 0-100 범위
     - 평균 80점 이상 + 개별 점수 편차 20점 이내여야 PASS
     """
-    services = receipt.get("services") or {}
-    ports = services.get("ports") or {}
+    services = cast(Mapping[str, Any], receipt).get("services") or {}
+    ports = cast(Mapping[str, Any], services).get("ports") or {}
     http = services.get("http") or {}
 
     # 기본 인프라 건강도 (眞 - Truth)
     infra_checks = [
-        ("postgres_15432", ports.get("postgres_15432")),
-        ("redis_6379", ports.get("redis_6379")),
-        ("api_gateway_8000", http.get("api_gateway_8000_health")),
+        ("postgres_15432", cast(Mapping[str, Any], ports).get("postgres_15432")),
+        ("redis_6379", cast(Mapping[str, Any], ports).get("redis_6379")),
+        ("api_gateway_8000", cast(Mapping[str, Any], http).get("api_gateway_8000_health")),
         ("soul_engine_8010", http.get("soul_engine_8010_health")),
     ]
 
     truth_score = 0
-    infra_status = []
+    infra_status: list[Any] = []
     for name, check in infra_checks:
         if isinstance(check, dict) and check.get("status") == "OK":
             truth_score += 25  # 각 체크당 25점
@@ -836,7 +837,7 @@ def _calculate_trinity_score(receipt: dict[str, Any]) -> dict[str, Any]:
 
     # 서비스 응답 시간 (善 - Goodness)
     goodness_score = 100
-    response_times = []
+    response_times: list[Any] = []
     for name, check in infra_checks:
         if isinstance(check, dict):
             response_time = check.get("response_time", 0)
@@ -861,7 +862,7 @@ def _calculate_trinity_score(receipt: dict[str, Any]) -> dict[str, Any]:
         beauty_score -= 30
 
     # 서비스 버전 일관성 (간단한 체크)
-    versions = []
+    versions: list[Any] = []
     for _name, check in infra_checks:
         if isinstance(check, dict):
             version = check.get("version", "")
@@ -941,14 +942,14 @@ def _receipt_status_from_receipt(receipt: dict[str, Any]) -> dict[str, Any]:
     - 그 외 → BLOCK (에너지 흐름 불균형 감지)
     """
     # 기본 인프라 상태 확인
-    services = receipt.get("services") or {}
-    ports = services.get("ports") or {}
+    services = cast(Mapping[str, Any], receipt).get("services") or {}
+    ports = cast(Mapping[str, Any], services).get("ports") or {}
     http = services.get("http") or {}
 
     required_paths = [
-        ("ports.postgres_15432", ports.get("postgres_15432")),
-        ("ports.redis_6379", ports.get("redis_6379")),
-        ("http.api_gateway_8000_health", http.get("api_gateway_8000_health")),
+        ("ports.postgres_15432", cast(Mapping[str, Any], ports).get("postgres_15432")),
+        ("ports.redis_6379", cast(Mapping[str, Any], ports).get("redis_6379")),
+        ("http.api_gateway_8000_health", cast(Mapping[str, Any], http).get("api_gateway_8000_health")),
         ("http.soul_engine_8010_health", http.get("soul_engine_8010_health")),
     ]
 
@@ -965,7 +966,7 @@ def _receipt_status_from_receipt(receipt: dict[str, Any]) -> dict[str, Any]:
 
     # Audit Gate 판정
     if not trinity_analysis["audit_gate_passed"]:
-        reason_parts = []
+        reason_parts: list[Any] = []
         if trinity_analysis["average_score"] < 80:
             reason_parts.append(f"평균 점수 부족: {trinity_analysis['average_score']:.1f}/80")
         if trinity_analysis["imbalance"] > 20:
@@ -1008,7 +1009,7 @@ def _explain_from_receipt(receipt_dir: Path, receipt: dict[str, Any]) -> dict[st
     """PoChungCheon-style explanation (read-only).
     Uses receipt evidence only; does not execute tools or alter any state.
     """
-    env = receipt.get("env") or {}
+    env = cast(Mapping[str, Any], receipt).get("env") or {}
     label = str(env.get("label") or "")
 
     status_card = _receipt_status_from_receipt(receipt)
@@ -1053,7 +1054,7 @@ def _edu_from_receipt(receipt_dir: Path, receipt: dict[str, Any]) -> dict[str, A
     - No punishment
     - Receipt evidence only
     """
-    env = receipt.get("env") or {}
+    env = cast(Mapping[str, Any], receipt).get("env") or {}
     label = str(env.get("label") or "")
 
     status_card = _receipt_status_from_receipt(receipt)
@@ -1349,7 +1350,7 @@ def _handoff(
     """Automated Handoff Message Generator (Serenity Pillar).
     Constructs the standard handoff message from an existing receipt.
     """
-    msg_lines = []
+    msg_lines: list[Any] = []
 
     # 1. Header
     msg_lines.append(f"**⚔️ Handoff to {next_agent or 'Next Agent'}**")
