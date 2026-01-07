@@ -54,6 +54,15 @@ else
   EXIT_CODE=1
 fi
 
+# 3.5. AFO Import Smoke Gate (Reality Gate - 런타임 import chain 검증)
+echo "🔍 Checking AFO Import Smoke..."
+if ./scripts/import_smoke_gate.sh >/dev/null 2>&1; then
+  echo "✅ [PASS] AFO import smoke check"
+else
+  echo "❌ [FAIL] AFO import smoke failed"
+  EXIT_CODE=1
+fi
+
 # 4. RAG Priority Rules Gate (TICKET-009)
 echo "🔍 Checking RAG Priority Rules..."
 if python -c "import afo; import afo.rag_flag; import afo.rag_shadow; print('imports: OK')" 2>/dev/null; then
