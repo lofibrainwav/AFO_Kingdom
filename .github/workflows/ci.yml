@@ -61,6 +61,29 @@ jobs:
       - name: SSOT Trinity Text Guard (孝 - Serenity)
         run: python scripts/ci_trinity_text_guard.py
 
+      - name: SSOT PH-* Capsule Format Validation (永 - Eternity)
+        run: |
+          python3 - <<'EOF'
+          import re, sys
+          p="docs/AFO_EVOLUTION_LOG.md"
+          t=open(p,encoding="utf-8").read().splitlines()
+          hdr=[i for i,l in enumerate(t) if re.match(r"^## \[SSOT/PH-[^]]+\]", l)]
+          bad=[]
+          for i in hdr:
+              block=t[i:i+5]
+              if len(block)<5: bad.append((i+1,"short")); continue
+              if not re.match(r"^- Status: (SEALED|PARTIAL|PENDING)$", block[1]): bad.append((i+1,"status"))
+              if not re.match(r"^- Scope: .+$", block[2]): bad.append((i+1,"scope"))
+              if not re.match(r"^- Evidence: .+$", block[3]): bad.append((i+1,"evidence"))
+              if not re.match(r"^- Gaps: .+$", block[4]): bad.append((i+1,"gaps"))
+          if bad:
+              print("❌ SSOT/PH-* capsule format violations:")
+              for ln,why in bad[:10]:
+                  print(f"  Line {ln}: {why}")
+              sys.exit(1)
+          print(f"✅ {len(hdr)} SSOT capsules validated (5-line format)")
+          EOF
+
       - name: Upload Coverage
         uses: codecov/codecov-action@v4
         with:
