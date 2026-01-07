@@ -1,0 +1,10 @@
+BASELINE_FILE=artifacts/ssot/pyright_baseline_20260106_195423.json
+COUNTS errors=45 warnings=26 infos=0
+DIAGNOSTICS_TOTAL=71
+TOP_RULES
+30	reportArgumentType
+26	reportMissingImports
+12	reportOptionalMemberAccess
+1	reportOptionalOperand
+1	reportGeneralTypeIssues
+1	reportCallIssue

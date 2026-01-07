@@ -90,3 +90,7 @@ tools/dgm/upstream
 # Music generation virtual environment
 venv_afo_music/
 venv_musicgen/
+!artifacts/ssot/
+!artifacts/ssot/*
+!artifacts/ssot/
+!artifacts/ssot/**
