@@ -251,3 +251,29 @@ LangGraph Agentic RAG 패턴 적용으로 검색 정확도 향상.
 | **美** | 문서 1개 + 사용 예시 |
 | **孝** | `./afo`로 원샷 실행 + 실패시 명확 메시지 |
 | **永** | Evidence 폴더 (manifest+sha256) + Seal Tag |
+
+## TICKET-088 — Ruff 제거된 규칙 SSOT 정리
+- Phase: Code Quality (Ruff 최적화)
+- Priority: MEDIUM
+- Type: Maintenance
+- Status: ✅ COMPLETED (2026-01-06)
+- Evidence: packages/afo-core/pyproject.toml, scripts/ssot_verify.sh
+- Dependencies: Ruff v0.14.4, ripgrep
+
+### Goal
+Ruff v0.8+에서 제거된 규칙들(ANN101, ANN102, UP038)을 pyproject.toml에서 정리하여 Unknown rule 경고 제거 및 SSOT 유지.
+
+### Scope
+1) packages/afo-core/pyproject.toml에서 제거된 규칙 잔존 스캔
+2) ANN101, ANN102 완전 라인 제거 (ignore 목록)
+3) UP038 토큰 제거 (per-file-ignores 리스트)
+4) Unknown rule 경고 사라짐 검증
+5) TOML 파싱 정상 확인
+
+### Acceptance Criteria (Reality Gate)
+- [x] ANN101/ANN102/UP038 잔존 위치 정확 파악 ✅ (라인 118, 151, 178, 209, 212, 213, 214, 215, 219)
+- [x] 문자열 패턴 기반 안전 제거 ✅ (Python 스크립트로 완전 정리)
+- [x] Unknown rule 경고 완전 사라짐 ✅ (packages/afo-core에서 ruff check 시 경고 없음)
+- [x] TOML 파싱 정상 유지 ✅ (python3 toml 파싱 성공)
+- [x] SSOT 봉인 완료 ✅ (모든 검증 통과)
+
