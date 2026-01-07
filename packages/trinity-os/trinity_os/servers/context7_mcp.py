@@ -139,7 +139,7 @@ class Context7MCP:
 
     def _extract_keywords(self, content: str) -> List[str]:
         """콘텐츠에서 키워드 추출 (개선된 버전)"""
-        keywords = set()
+        keywords: set[Any] = set()
 
         # 기본 키워드 리스트 (AFO 왕국 관련 추가)
         base_keywords = [
