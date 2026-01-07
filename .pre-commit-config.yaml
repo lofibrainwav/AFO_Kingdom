@@ -1,85 +1,10 @@
 repos:
-  # ============================================================================
-  # AFO 왕국 코드 품질 자동화 체계
-  # ============================================================================
-
-  # Ruff: 초고속 Python 린터 및 포맷터
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.6.8
-    hooks:
-      - id: ruff
-        args: [--fix]
-        types: [python]
-      - id: ruff-format
-        types: [python]
-
-  # Black: Python 코드 포맷터
-  - repo: https://github.com/psf/black
-    rev: 24.8.0
-    hooks:
-      - id: black
-        language_version: python3
-        types: [python]
-
-  # isort: Python import 정렬 도구
-  - repo: https://github.com/pycqa/isort
-    rev: 5.13.2
-    hooks:
-      - id: isort
-        args: ["--profile", "black", "--filter-files"]
-        types: [python]
-
-  # MyPy: 정적 타입 체커
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.11.2
-    hooks:
-      - id: mypy
-        types: [python]
-        additional_dependencies: [pydantic, types-requests, types-redis]
-        exclude: ^(tests/|scripts/|docs/|packages/afo-core/api_wallet.py|packages/afo-core/utils/exponential_backoff.py)
-
-  # AFO 왕국 커스텀 검증 스크립트
   - repo: local
     hooks:
-      - id: afo-syntax-check
-        name: AFO Syntax 검증
-        entry: python scripts/syntax_check.py
+      - id: ssot-capsule-format
+        name: SSOT Capsule Format Validation
+        entry: python3 scripts/verify_ssot_ph_capsules.py
         language: system
-        files: \.py$
+        files: docs/AFO_EVOLUTION_LOG.md
         pass_filenames: false
-        exclude: .venv/
-
-  # Trinity Score 검증
-  - repo: local
-    hooks:
-      - id: trinity-score-check
-        name: Trinity Score 검증
-        entry: python scripts/auto_lint_fix.py
-        language: system
-        files: \.py$
-        pass_filenames: false
-
-  # 보안 취약점 검사 (선택적)
-  - repo: https://github.com/PyCQA/bandit
-    rev: 1.7.9
-    hooks:
-      - id: bandit
-        args: ["-c", "pyproject.toml"]
-        exclude: ^(tests/|scripts/|docs/)
-        types: [python]
-
-# ============================================================================
-# 설정 설명
-# ============================================================================
-#
-# 이 pre-commit 설정은 AFO 왕국의 코드 품질을 자동으로 유지합니다:
-#
-# 1. ruff: 초고속 린팅 및 자동 수정
-# 2. black: 코드 포맷팅 표준화
-# 3. isort: import 문 정렬 및 정리
-# 4. mypy: 정적 타입 검증
-# 5. afo-syntax-check: AFO 전용 syntax 검증
-# 6. trinity-score-check: Trinity Score 기반 품질 검증
-# 7. bandit: 보안 취약점 검사
-#
-# 커밋 시 자동으로 실행되어 코드 품질을 보장합니다.
+        args: [docs/AFO_EVOLUTION_LOG.md]
