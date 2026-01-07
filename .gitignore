@@ -74,19 +74,6 @@ terraform/*.tfvars
 # AFO build/test artifacts
 artifacts/
 packages/**/artifacts/
-<<<<<<< HEAD
-*.report.*.json
-queue_report.*.md
-
-# Julie CPA / Local Data (PII SEALED)
-inbox/fin/
-artifacts/fin/
-scripts/_local_quarantine/
-!.env.afo.example/packages/afo-core/artifacts/ph19_security/
-
-# AFO runtime seals (local evidence only)
-artifacts/trinity_seals/
-=======
 .venv-dspy/
 .venv-dspy/
 .venv-dspy/
@@ -94,7 +81,6 @@ tools/mlx_optimization/.venv/
 
 .venv-dspy/
 tools/mlx_optimization/.venv/
->>>>>>> wip/ph20-01-post-work
 
 .bruin.yml
 .env.antigravity
@@ -103,3 +89,4 @@ tools/dgm/upstream
 
 # Music generation virtual environment
 venv_afo_music/
+venv_musicgen/

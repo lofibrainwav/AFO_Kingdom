@@ -399,6 +399,244 @@ class StableAudioProvider(MusicProvider):
             return False
 
 
+class MLXMusicGenProvider(MusicProvider):
+    """
+    MLX MusicGen Provider
+    Apple Silicon 최적화된 고성능 음악 생성
+    """
+
+    def __init__(self):
+        self.venv_path = "venv_musicgen"
+        self.model = None
+        self.sample_rate = None
+
+    @property
+    def name(self) -> str:
+        return "MLX MusicGen"
+
+    @property
+    def version(self) -> str:
+        return "v1.0.0"
+
+    def generate_music(self, timeline_state: dict[str, Any], **kwargs) -> dict[str, Any]:
+        """
+        MLX MusicGen을 사용한 음악 생성
+        venv 환경에서 Apple Silicon 최적화 모델 실행
+        """
+        try:
+            import json
+            import os
+            import subprocess
+            import tempfile
+
+            # TimelineState에서 프롬프트 생성
+            sections = timeline_state.get("sections", [])
+            music = timeline_state.get("music", {})
+
+            if sections:
+                # 첫 번째 섹션의 directive를 메인으로 사용
+                first_section = sections[0]
+                directive = first_section.get("music_directive", "epic orchestral")
+                text = first_section.get("text", "")
+                prompt = f"{directive} {text}".strip() if text else directive
+            else:
+                prompt = music.get("prompt", "epic orchestral music")
+
+            # MLX MusicGen 실행 스크립트 생성
+            script_content = f'''
+import sys
+import json
+sys.path.insert(0, "/Users/brnestrm/AFO_Kingdom/mlx-examples-official/musicgen")
+
+try:
+    from musicgen import MusicGen
+    import numpy as np
+
+    # 모델 로드
+    model = MusicGen.from_pretrained("facebook/musicgen-small")
+    print(f"Model loaded with sample rate: {{model.sampling_rate}}")
+
+    # 음악 생성 (MLX API에 맞게 수정)
+    prompt = "{prompt}"
+    print(f"Generating music for prompt: {{prompt}}")
+
+    # duration을 max_steps로 변환 (대략적인 계산)
+    duration = {kwargs.get("duration", 30)}
+    max_steps = min(int(duration * 50), 1000)  # 대략 50 steps per second, max 1000
+    print(f"Duration: {{duration}}s -> max_steps: {{max_steps}}")
+
+    audio = model.generate([prompt], max_steps=max_steps)
+    print(f"Generated audio shape: {{audio.shape}}")
+
+    # numpy array로 변환
+    audio_np = np.array(audio).squeeze()
+    print(f"Audio numpy shape: {{audio_np.shape}}")
+
+    # WAV 파일로 저장
+    import scipy.io.wavfile
+    output_path = "{kwargs.get("output_path", "artifacts/mlx_music_output.wav")}"
+    scipy.io.wavfile.write(output_path, model.sampling_rate, audio_np)
+
+    result = {{
+        "success": True,
+        "output_path": output_path,
+        "duration": len(audio_np) / model.sampling_rate,
+        "sample_rate": model.sampling_rate,
+        "prompt": prompt,
+        "max_steps": max_steps
+    }}
+    print(json.dumps(result))
+
+except Exception as e:
+    import traceback
+    error_result = {{
+        "success": False,
+        "error": str(e),
+        "traceback": traceback.format_exc()
+    }}
+    print(json.dumps(error_result))
+'''
+
+            # 임시 스크립트 파일 생성
+            with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
+                f.write(script_content)
+                script_path = f.name
+
+            # venv에서 스크립트 실행
+            venv_python = f"{self.venv_path}/bin/python3"
+            if not os.path.exists(venv_python):
+                return {
+                    "success": False,
+                    "error": f"MLX venv not found at {venv_python}",
+                    "provider": self.name,
+                }
+
+            cmd = [venv_python, script_path]
+            result = subprocess.run(
+                cmd,
+                capture_output=True,
+                text=True,
+                timeout=300,  # 5분 타임아웃
+                cwd="/Users/brnestrm/AFO_Kingdom",
+            )
+
+            # 임시 파일 정리
+            os.unlink(script_path)
+
+            if result.returncode != 0:
+                return {
+                    "success": False,
+                    "error": f"MLX execution failed: {result.stderr}",
+                    "stdout": result.stdout,
+                    "provider": self.name,
+                }
+
+            # JSON 결과 파싱 (마지막 줄만 파싱 - 다른 출력 무시)
+            try:
+                # stdout의 마지막 줄만 JSON으로 파싱
+                lines = result.stdout.strip().split("\n")
+                json_line = None
+                for line in reversed(lines):
+                    line = line.strip()
+                    if line.startswith("{") and line.endswith("}"):
+                        json_line = line
+                        break
+
+                if json_line:
+                    output_data = json.loads(json_line)
+                    if output_data.get("success"):
+                        return {
+                            "success": True,
+                            "provider": self.name,
+                            "output_path": output_data["output_path"],
+                            "duration": output_data["duration"],
+                            "sample_rate": output_data["sample_rate"],
+                            "prompt": output_data["prompt"],
+                        }
+                    else:
+                        return {
+                            "success": False,
+                            "error": output_data.get("error", "Unknown MLX error"),
+                            "traceback": output_data.get("traceback"),
+                            "provider": self.name,
+                        }
+                else:
+                    return {
+                        "success": False,
+                        "error": f"No JSON found in MLX output: {result.stdout}",
+                        "provider": self.name,
+                    }
+            except json.JSONDecodeError as e:
+                return {
+                    "success": False,
+                    "error": f"Failed to parse MLX JSON: {e}",
+                    "stdout": result.stdout,
+                    "provider": self.name,
+                }
+
+        except Exception as e:
+            logger.error(f"MLX MusicGen generation failed: {e}")
+            return {
+                "success": False,
+                "error": str(e),
+                "provider": self.name,
+            }
+
+    def get_capabilities(self) -> dict[str, Any]:
+        return {
+            "timeline_control": False,  # 통합 프롬프트 기반
+            "quality": "excellent",  # Apple Silicon 최적화
+            "speed": "fast",  # MPS 가속
+            "max_sections": 1,  # 단일 프롬프트
+            "requires_gpu": True,  # Apple Silicon GPU
+            "local_only": True,  # 로컬 실행
+            "model_sizes": ["small", "medium", "large"],
+            "apple_silicon_optimized": True,
+        }
+
+    def estimate_cost(self, timeline_state: dict[str, Any]) -> float:
+        # 로컬 실행이므로 비용 0
+        return 0.0
+
+    def is_available(self) -> bool:
+        """MLX venv 환경과 MusicGen 사용 가능 여부 확인"""
+        try:
+            import os
+            import subprocess
+
+            venv_python = f"{self.venv_path}/bin/python3"
+            if not os.path.exists(venv_python):
+                return False
+
+            # MLX import 테스트
+            result = subprocess.run(
+                [venv_python, "-c", "import mlx; print('MLX OK')"],
+                capture_output=True,
+                text=True,
+                timeout=10,
+            )
+
+            if result.returncode != 0:
+                return False
+
+            # MusicGen import 테스트
+            result = subprocess.run(
+                [
+                    venv_python,
+                    "-c",
+                    "import sys; sys.path.insert(0, '/Users/brnestrm/AFO_Kingdom/mlx-examples-official/musicgen'); from musicgen import MusicGen; print('MusicGen OK')",
+                ],
+                capture_output=True,
+                text=True,
+                timeout=10,
+            )
+
+            return result.returncode == 0
+
+        except Exception:
+            return False
+
+
 class SunoProvider(MusicProvider):
     """
     Suno (외부 API) Provider

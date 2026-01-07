@@ -22,7 +22,7 @@ dependencies = [
     "afo-core",
     "dspy-ai>=3.0.4",
     "dspy>=3.0.4",
-    "mlx-examples[musicgen]",
+    # mlx-examples[musicgen] - removed (local submodule, not on PyPI)
 ]
 
 [project.urls]
