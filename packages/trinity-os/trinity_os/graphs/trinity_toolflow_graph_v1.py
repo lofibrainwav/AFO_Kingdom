@@ -1,5 +1,6 @@
 """
 TRINITY Graph Toolflow v1 (Thin Layer)
+from langchain_core.runnables import RunnableConfig
 
 Search → Card → Gate → (DryRun?) → Execute
 
@@ -15,6 +16,15 @@ from dataclasses import dataclass
 from typing import Any, Literal, TypedDict, cast
 
 Decision = Literal["AUTO_RUN", "ASK", "BLOCK"]
+
+
+from typing import Any, Callable, cast
+def _wrap_langgraph_node(fn: Callable[..., Any], deps: Any) -> Callable[..., Any]:
+    def _node(state: Any, *, config: RunnableConfig | None = None, store: object | None = None) -> Any:
+        _ = config
+        _ = store
+        return fn(cast(FlowState, state), deps)
+    return _node
 
 
 def _as_flow_state(x: 'NodeInputT') -> 'FlowState':
@@ -256,16 +266,16 @@ def build_trinity_toolflow_graph(deps: Deps):
     from langgraph.graph import END, StateGraph
 
     graph = StateGraph(FlowState)
-    graph.add_node("TOOL_SEARCH", lambda s: node_tool_search(cast(FlowState, s), deps))
-    graph.add_node("SELECT", lambda s: node_select(cast(FlowState, s), deps))
-    graph.add_node("GET_CARD", lambda s: node_get_card(cast(FlowState, s), deps))
-    graph.add_node("SERENITY_GATE", lambda s: node_serenity_gate(cast(FlowState, s), deps))
-    graph.add_node("DRY_RUN", lambda s: node_dry_run(cast(FlowState, s), deps))
-    graph.add_node("EXECUTE", lambda s: node_execute(cast(FlowState, s), deps))
-    graph.add_node("ASK", lambda s: node_ask(cast(FlowState, s), deps))
-    graph.add_node("FINAL_BLOCK", lambda s: node_final_block(cast(FlowState, s), deps))
-    graph.add_node("FINAL_NO_CANDIDATES", lambda s: node_final_no_candidates(cast(FlowState, s), deps))
-    graph.add_node("FINAL_OK", lambda s: node_final_ok(cast(FlowState, s), deps))
+    graph.add_node("TOOL_SEARCH", _wrap_langgraph_node(node_tool_search, deps))
+    graph.add_node("SELECT", _wrap_langgraph_node(node_select, deps))
+    graph.add_node("GET_CARD", _wrap_langgraph_node(node_get_card, deps))
+    graph.add_node("SERENITY_GATE", _wrap_langgraph_node(node_serenity_gate, deps))
+    graph.add_node("DRY_RUN", _wrap_langgraph_node(node_dry_run, deps))
+    graph.add_node("EXECUTE", _wrap_langgraph_node(node_execute, deps))
+    graph.add_node("ASK", _wrap_langgraph_node(node_ask, deps))
+    graph.add_node("FINAL_BLOCK", _wrap_langgraph_node(node_final_block, deps))
+    graph.add_node("FINAL_NO_CANDIDATES", _wrap_langgraph_node(node_final_no_candidates, deps))
+    graph.add_node("FINAL_OK", _wrap_langgraph_node(node_final_ok, deps))
 
     graph.set_entry_point("TOOL_SEARCH")
     graph.add_edge("TOOL_SEARCH", "SELECT")
