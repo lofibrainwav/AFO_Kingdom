@@ -292,7 +292,7 @@ Pyright 타입 체커를 왕국 모노레포에 완벽 통합하여 타입 안�
 ### Scope
 1) **Pyright Setup Tutorial**
    - Poetry 환경에 Pyright 설치 (poetry add --group dev pyright)
-   - pyproject.toml에 pyrightconfig.json 섹션 설정
+   - pyrightconfig.json에 설정 반영
    - VSCode Pylance extension 통합
    - CI/CD 파이프라인에 pyright 게이트 추가
 
@@ -337,3 +337,36 @@ Pyright 타입 체커를 왕국 모노레포에 완벽 통합하여 타입 안�
 - Version: pyright 1.1.407
 - Run: pyright packages/afo-core packages/trinity-os (실행/검출 확인)
 - Note: 타입 오류 '0개'는 별도 정리 티켓에서 처리
+
+## TICKET-090 — Pyright Error Burn-down + Strict Scope Policy
+- Phase: Code Quality (Type Safety)
+- Priority: HIGH
+- Type: Maintenance
+- Status: TODO
+- Evidence: pyrightconfig.json, .github/workflows/* (or CI script), pyright run output
+- Dependencies: pyright (CLI), Pylance (IDE)
+
+### Goal
+Pyright를 "돌아가기만 하는 상태"에서 "운영 가능한 품질 게이트"로 승격.
+레거시 코드는 격리하고, 신규/핵심 패키지는 strict로 고정.
+
+### Scope
+1) Baseline 확정
+   - pyright를 CI와 동일 타겟으로 실행하고, 현재 에러/경고를 기록(로그 저장)
+2) Strict 범위 정의 (핵심만)
+   - packages/afo-core (또는 신규 코드 폴더) = strict
+   - legacy/experiments, scripts 등 = basic 또는 exclude/완화
+3) pyrightconfig.json executionEnvironments 정리
+   - strict/basic 범위를 JSON으로 명확히 분리
+4) Gate 스크립트/CI 연결
+   - "핵심 strict 범위"만 fail(차단)
+   - 레거시 범위는 리포트만(차단 X)
+5) 1차 burn-down
+   - strict 범위에서 "가장 반복되는 에러 TOP 3"만 제거
+
+### Acceptance Criteria (Reality Gate)
+- [ ] pyrightconfig.json에 strict/basic 범위가 명확히 분리됨
+- [ ] CI에서 strict 범위는 FAIL-ON-ERROR로 차단됨
+- [ ] 레거시 범위는 REPORT만 하고 차단하지 않음
+- [ ] baseline 로그가 artifacts/ssot 또는 docs에 남아 있음(숫자/대상 포함)
+
