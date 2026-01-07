@@ -59,7 +59,7 @@ def run_command(
             capture_output=True,
             text=True,
             timeout=timeout,
-            check=False,
+            check: Any = False,
         )
         return {
             "status": "success" if result.returncode == 0 else "failed",

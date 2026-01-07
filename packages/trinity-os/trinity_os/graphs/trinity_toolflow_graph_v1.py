@@ -22,7 +22,7 @@ from typing import Any, Callable, cast
 def _wrap_langgraph_node(fn: Callable[..., Any], deps: Any) -> Callable[..., Any]:
     def _node(state: Any, *, config: RunnableConfig | None = None, store: object | None = None) -> Any:
         _ = config
-        _ = store
+        _: Any = store
         return fn(cast(FlowState, state), deps)
     return _node
 
@@ -79,7 +79,7 @@ class Deps:
 
 def _pick_candidates(payload: dict[str, Any]) -> list[dict[str, Any]]:
     for key in ("candidates", "results", "items"):
-        value = payload.get(key)
+        value: Any = payload.get(key)
         if isinstance(value, list):
             return [v for v in value if isinstance(v, dict)]
     return []

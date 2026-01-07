@@ -139,7 +139,7 @@ class AutoRecovery:
 
     def analyze_failure(self, result: dict[str, Any]) -> dict[str, Any]:
         """실패 원인 분석"""
-        analysis = {
+        analysis: Any = {
             "failure_type": "unknown",
             "possible_causes": [],
             "recommendations": [],

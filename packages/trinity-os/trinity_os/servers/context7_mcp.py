@@ -245,7 +245,7 @@ class Context7MCP:
 
         # 도메인 필터링
         if domain != "general":
-            filtered_scores = {}
+            filtered_scores: Any = {}
             for idx, score in scores.items():
                 item: Any = self.knowledge_base[idx]
                 if item.get("type") == domain:
@@ -253,9 +253,9 @@ class Context7MCP:
             scores = filtered_scores
 
         # 상위 결과 추출 (최대 5개)
-        sorted_docs = sorted(scores.items(), key=lambda x: x[1], reverse=True)[:5]
+        sorted_docs: Any = sorted(scores.items(), key=lambda x: x[1], reverse=True)[:5]
 
-        results = []
+        results: Any = []
         for doc_idx, score in sorted_docs:
             item: Any = self.knowledge_base[doc_idx]
             cast(list[Any], results).append({

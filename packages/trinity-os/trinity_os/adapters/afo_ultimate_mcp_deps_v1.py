@@ -125,7 +125,7 @@ def build_deps_v1():
 
     def get_skill_card(skill_id: str) -> dict[str, Any]:
         if mcp_get_card is not None:
-            out = _call_flex(mcp_get_card, skill_id=skill_id)
+            out: Any = _call_flex(mcp_get_card, skill_id=skill_id)
             if isinstance(out, dict):
                 return out
         if registry is None:
@@ -133,7 +133,7 @@ def build_deps_v1():
         for meth in ("get_skill_card", "get_card", "get", "get_skill"):
             fn = getattr(registry, meth, None)
             if callable(fn):
-                out = _call_flex(fn, skill_id) if meth in ("get", "get_skill") else _call_flex(fn, skill_id=skill_id)
+                out: Any = _call_flex(fn, skill_id) if meth in ("get", "get_skill") else _call_flex(fn, skill_id=skill_id)
                 if isinstance(out, dict):
                     return out
         return {}
@@ -229,7 +229,7 @@ def build_deps_v1():
                 try:
                     out = _call_flex(fn, payload)
                 except Exception:
-                    out = None
+                    out: Any = None
                 if isinstance(out, dict) and (cast(Mapping[str, Any], out).get("decision") or cast(Mapping[str, Any], out).get("mode")):
                     return out
 
@@ -314,14 +314,14 @@ def build_deps_v1():
                 try:
                     out = _call_flex(mcp_exec, **call_kwargs)
                 except Exception:
-                    out = None
+                    out: Any = None
                 if isinstance(out, dict):
                     return out
 
             try:
                 out = _call_flex(mcp_exec, skill_id, args)
             except Exception:
-                out = None
+                out: Any = None
             if isinstance(out, dict):
                 return out
 
@@ -341,7 +341,7 @@ def build_deps_v1():
                 try:
                     out = _call_flex(fn, skill_id=skill_id, args=args)
                 except Exception:
-                    out = None
+                    out: Any = None
                 if isinstance(out, dict):
                     return out
 

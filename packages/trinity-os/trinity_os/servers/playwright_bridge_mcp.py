@@ -41,7 +41,7 @@ class PlaywrightBridgeMCP:
         try:
             cls._ensure_browser()
             cast(Any, cls)._page.goto(url)
-            title = cast(Any, cls)._page.title()
+            title: Any = cast(Any, cls)._page.title()
             return {
                 "success": True,
                 "url": url,
@@ -95,7 +95,7 @@ class PlaywrightBridgeMCP:
             cls._ensure_browser()
             if selector == "body" or selector == "content":
                 content = cast(Any, cls)._page.content()  # Full HTML
-                text = cast(Any, cls)._page.inner_text("body")
+                text: Any = cast(Any, cls)._page.inner_text("body")
                 return {
                     "success": True,
                     "text_length": len(text),
@@ -103,7 +103,7 @@ class PlaywrightBridgeMCP:
                     "message": "Scraped body content",
                 }
 
-            content = cast(Any, cls)._page.inner_text(selector)
+            content: Any = cast(Any, cls)._page.inner_text(selector)
             return {
                 "success": True,
                 "content": content,

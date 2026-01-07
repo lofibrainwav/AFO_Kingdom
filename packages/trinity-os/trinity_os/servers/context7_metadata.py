@@ -25,7 +25,7 @@ def _iter_meta_objects(obj: Any) -> Iterable[dict[str, Any]]:
     """
     if isinstance(obj, list):
         for x in obj:
-            x = cast(Any, x)
+            x: Any = cast(Any, x)
             yield from _iter_meta_objects(x)
         return
 
@@ -99,14 +99,14 @@ def load_context7_metadata(repo_root: Path) -> dict[str, Context7Meta]:
 
         category = str(m.get("category", "Uncategorized")).strip() or "Uncategorized"
         description = str(m.get("description", "")).strip()
-        tags_raw = m.get("tags", [])
+        tags_raw: Any = m.get("tags", [])
         tags: tuple[str, ...]
         if isinstance(tags_raw, list):
             tags: Any = tuple(str(t).strip() for t in tags_raw if str(t).strip())
         else:
             tags = tuple(x for x in (str(tags_raw).strip(),) if x)
 
-        keywords_raw = m.get("keywords", [])
+        keywords_raw: Any = m.get("keywords", [])
         keywords: tuple[str, ...]
         if isinstance(keywords_raw, list):
             keywords: Any = tuple(str(t).strip() for t in keywords_raw if str(t).strip())

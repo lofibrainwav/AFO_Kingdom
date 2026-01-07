@@ -45,7 +45,7 @@ def executor_node(state: AgentState) -> dict:
     # In reality, this calls AfoSkillsMCP tools
 
     # Progress the state (simple linear logic for MVP)
-    new_next_step = "final_review" if step != "final_review" else "done"
+    new_next_step: Any = "final_review" if step != "final_review" else "done"
 
     return {
         "messages": [AIMessage(content=f"Executed step: {step}")],
@@ -61,7 +61,7 @@ def reviewer_node(state: AgentState) -> dict:
     # Mocking Trinity Score calculation (Real: Call trinity_score_mcp)
     # Logic: Randomly assign scores for simulation, or deterministic based on content
     score = 95.0  # High score for "Happy Path"
-    risk = 5.0
+    risk: Any = 5.0
 
     return {
         "trinity_score": score,
@@ -124,10 +124,10 @@ def run_dream_hub(task: str, thread_id: str = "default") -> dict:
     Runs the Dream Hub graph synchronously (for now) and returns the final state.
     """
     initial_state = {"messages": [HumanMessage(content=task)], "next_step": "start"}
-    config = {"configurable": {"thread_id": thread_id}}
+    config: Any = {"configurable": {"thread_id": thread_id}}
 
     # Run the graph
-    final_state=cast(Any | None, app.invoke(cast(Any, initial_state)), config=config)
+    final_state: Any = cast(Any | None, app.invoke(cast(Any, initial_state)), config=config)
     # Extract key outputs for CLI
     return {
         "status": "OK",

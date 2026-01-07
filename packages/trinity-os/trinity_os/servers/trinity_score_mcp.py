@@ -59,7 +59,7 @@ class TrinityScoreEngineHybrid:
         if gpu_available and n > TrinityScoreEngineHybrid.THRESHOLD:
             # CuPy GPU Acceleration (only for large arrays)
             w_gpu = _cp.array(weights)
-            s_gpu = _cp.array(scores)
+            s_gpu: Any = _cp.array(scores)
             result: Any = _cp.sum(w_gpu * s_gpu)
             return float(result.get())
         elif gpu_available and n <= TrinityScoreEngineHybrid.THRESHOLD:

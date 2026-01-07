@@ -802,7 +802,7 @@ def _latest_receipt_dir(repo_root: Path) -> Path | None:
 
 def _load_receipt(receipt_dir: Path) -> dict[str, Any]:
     p = receipt_dir / "receipt.json"
-    data = json.loads(p.read_text(encoding="utf-8"))
+    data: Any = json.loads(p.read_text(encoding="utf-8"))
     if not isinstance(data, dict) or cast(Mapping[str, Any], data).get("schema") != "bridge_receipt_v1":
         raise ValueError(f"invalid receipt schema: {cast(Mapping[str, Any], data).get('schema') if isinstance(data, dict) else type(data)}")
     return data
@@ -1141,7 +1141,7 @@ def _verify_run(
 
         # MVP: 기본 텍스트 검증 (실제로는 receipt에서 최근 출력 추출)
         test_content = "SixXon Energy Flow Vision은 인간 꿈과 AI 구현을 연결하는 완벽한 시스템입니다."
-        test_context = "AFO 왕국의 眞善美孝永 철학을 기반으로 한 AI 통제 및 관리를 위한 도구"
+        test_context: Any = "AFO 왕국의 眞善美孝永 철학을 기반으로 한 AI 통제 및 관리를 위한 도구"
 
         result: Any = verify_fact(content=test_content, context=test_context if deep else None, threshold=0.8)
 
