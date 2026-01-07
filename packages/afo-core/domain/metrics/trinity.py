@@ -114,6 +114,7 @@ class TrinityMetrics:
     trinity_score: float  # weighted sum
     balance_delta: float  # max - min
     balance_status: Literal["balanced", "warning", "imbalanced"]
+    sentiment_score: float | None = None  # optional sentiment score 0.0-1.0
 
     @classmethod
     def from_inputs(cls, inputs: TrinityInputs, eternity: float = 1.0) -> TrinityMetrics:
@@ -190,9 +191,9 @@ class TrinityMetrics:
             return self
 
     def to_dict(self) -> dict[str, Any]:
-        """딕셔너리로 변환 (API 응답용) - 5기둥 SSOT"""
+        """딕셔너리로 변환 (API 응답용) - 5기둥 SSOT + ICCLS + Sentiment"""
         try:
-            return {
+            d = {
                 "truth": round(self.truth, 4),
                 "goodness": round(self.goodness, 4),
                 "beauty": round(self.beauty, 4),
@@ -202,6 +203,7 @@ class TrinityMetrics:
                 "trinity_score": round(self.trinity_score, 4),
                 "balance_delta": round(self.balance_delta, 4),
                 "balance_status": self.balance_status,
+                "iccls_score": round(self.balance_delta, 4),  # ICCLS: Inter-Component Consistency Level Score
                 "weights": {
                     "truth": self.WEIGHT_TRUTH,
                     "goodness": self.WEIGHT_GOODNESS,
@@ -210,6 +212,12 @@ class TrinityMetrics:
                     "eternity": self.WEIGHT_ETERNITY,
                 },
             }
+
+            # Optional sentiment score (feature flag controlled)
+            if self.sentiment_score is not None:
+                d["sentiment_score"] = round(self.sentiment_score, 4)
+
+            return d
         except Exception:
             return {"error": "failed to convert to dict"}
 

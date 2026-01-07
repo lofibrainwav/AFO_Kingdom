@@ -386,7 +386,7 @@ class GrokEngine:
             trinity_score: Current trinity score for routing decisions
 
         Returns:
-            Comprehensive analysis result
+            Comprehensive analysis result with sentiment_score
 
         """
         # 1. Check cache first (Cost Guardian)
@@ -405,7 +405,15 @@ class GrokEngine:
         else:
             response = await self._consult_real_grok(budget_summary)
 
-        # 3. Cache successful responses
+        # 3. Add sentiment_score for Trinity integration (feature flag controlled)
+        import os
+        if os.getenv("TRINITY_SENTIMENT") == "1":
+            sentiment = response.get("sentiment", "neutral")
+            # Convert sentiment to 0.0-1.0 scale
+            sentiment_mapping = {"bearish": 0.2, "neutral": 0.5, "bullish": 0.8}
+            response["sentiment_score"] = sentiment_mapping.get(sentiment, 0.5)
+
+        # 4. Cache successful responses
         if response and not response.get("is_mock", True):
             self.cache.set(cache_key, response)
 
