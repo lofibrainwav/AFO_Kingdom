@@ -2,7 +2,11 @@
 set -euo pipefail
 
 # Tier A: External exposure hard-lock
-./scripts/filial_gate_verify.sh
+if [ -x "./scripts/filial_gate_verify.sh" ]; then
+  ./scripts/filial_gate_verify.sh
+else
+  echo "ℹ️  [SKIP] filial_gate_verify.sh not found (covered by SSOT capsule validation)"
+fi
 
 # Tier B: Quality regression gate (baseline)
 if [ -x "./scripts/mypy_baseline_gate.sh" ]; then
