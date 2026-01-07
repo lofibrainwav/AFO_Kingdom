@@ -558,3 +558,12 @@
 ---
 
 **"왕국의 타입 체킹이 이제 궁극적으로 완성되었습니다. 24.1% 효율 향상으로 개발자의 생산성과 코드 품질이 영구히 향상됩니다."** 🎯⚡💎
+
+---
+
+## [SSOT/PH-DASH-ICCLS/2026-01-07/7e75c152] 대시보드 ICCLS/Sentiment 표시 구현 완료
+
+- Status: SEALED
+- Scope: TrinityGlowCard.tsx에 iccls_score/sentiment_score 표시 추가
+- Evidence: packages/dashboard/src/components/TrinityGlowCard.tsx:20,110-125
+- Gaps: none
