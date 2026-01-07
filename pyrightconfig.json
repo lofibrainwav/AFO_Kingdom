@@ -1,5 +1,7 @@
 {
-  "include": ["packages/afo-core"],
+  "include": [
+    "packages/afo-core"
+  ],
   "exclude": [
     "**/.git/**",
     "**/.venv*/**",
@@ -48,5 +50,34 @@
   "pythonVersion": "3.12",
   "typeCheckingMode": "basic",
   "reportMissingImports": "warning",
-  "reportMissingTypeStubs": "none"
+  "reportMissingTypeStubs": "none",
+  "executionEnvironments": [
+    {
+      "root": "packages/afo-core",
+      "extraPaths": [
+        "packages/afo-core",
+        "packages/trinity-os"
+      ],
+      "diagnosticSeverityOverrides": {
+        "reportMissingImports": "warning"
+      },
+      "typeCheckingMode": "strict"
+    },
+    {
+      "root": "packages/trinity-os",
+      "extraPaths": [
+        "packages/afo-core",
+        "packages/trinity-os"
+      ],
+      "typeCheckingMode": "basic"
+    },
+    {
+      "root": "scripts",
+      "typeCheckingMode": "basic"
+    },
+    {
+      "root": "legacy",
+      "typeCheckingMode": "off"
+    }
+  ]
 }
