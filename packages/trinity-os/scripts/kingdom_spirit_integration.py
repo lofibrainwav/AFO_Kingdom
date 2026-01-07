@@ -13,7 +13,7 @@ import json
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Any, cast
+from typing import Any, Mapping, cast
 
 # AFO 루트 디렉토리
 AFO_ROOT = Path(__file__).resolve().parent.parent
@@ -250,7 +250,7 @@ class SpiritIntegration:
             current = current_scores.get(pillar, 0)
             baseline = baseline_scores.get(pillar, 0)
             if current < baseline:
-                drops.append(
+                cast(list[Any], drops).append(
                     {
                         "pillar": pillar,
                         "baseline": baseline,
