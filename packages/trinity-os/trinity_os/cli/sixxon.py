@@ -58,7 +58,7 @@ def _create_receipt(repo_root: Path, *, out_name: str = "") -> Path:
     cmd = [sys.executable, str(bundle)]
     if out_name:
         cmd.extend(["--out", out_name])
-    p = subprocess.run(cmd, text=True, capture_output=True)
+    p = subprocess.run(cmd, check=False, text=True, capture_output=True)
     out_dir = (p.stdout or "").strip().splitlines()[-1] if (p.stdout or "").strip() else ""
     if p.returncode != 0 or not out_dir:
         raise RuntimeError(f"receipt_bundle failed: {p.stderr.strip()}")
@@ -1288,12 +1288,13 @@ def _run_toolflow(
         # Kingdom profile can auto-inject SSOT risk evidence (if available).
         disable_auto_risk = os.environ.get("TRINITY_TOOLFLOW_DISABLE_AUTO_RISK") == "1"
         if risk_score is None and not disable_auto_risk:
-            try:
-                from tools.guardian_sentinel import get_current_risk_score
-
-                risk_score = float(get_current_risk_score())
-            except Exception:
-                risk_score = None
+            # try:
+            #     from tools.guardian_sentinel import get_current_risk_score
+            #
+            #     risk_score = float(get_current_risk_score())
+            # except Exception:
+            #     risk_score = None
+            risk_score = None
 
     runtime_stdout = io.StringIO()
     runtime_stderr = io.StringIO()

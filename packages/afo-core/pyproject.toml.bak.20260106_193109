@@ -115,6 +115,7 @@ ignore = [
     "RUF002",  # ambiguous unicode
     "RUF003",  # ambiguous unicode
     "S101",    # assert (vetted)
+    "ANN102",  # missing-type-cls (not needed)
     "ANN401",  # any-type (allowed for now)
     "PLR2004", # magic-value-comparison
     "PLC0415", # import-outside-top-level (allow for now)
@@ -147,7 +148,7 @@ ignore = [
     "SIM105",  # try-except-pass
     "RUF012",  # mutable-class-default
     "RUF006",  # asyncio-dangling-task (older)
-       # non-pep604-isinstance
+    "UP038",   # non-pep604-isinstance
     "B008",    # function-call-in-default-argument
     "B904",    # raise-without-from
     "S607",    # partial-executable-path
@@ -174,6 +175,7 @@ ignore = [
     "ASYNC109", # async-function-with-timeout
     "ASYNC230", # blocking-open-call-in-async
     "TRY401",  # redundant-exception-in-logging
+    "ANN101",  # missing-type-self
     "ANN205",  # missing-return-type-staticmethod
     "ASYNC221", # async-process-run-blocking
     "PLC0206", # dict-index-iteration
@@ -204,17 +206,17 @@ exclude_dirs = ["tests", "artifacts", ".venv", "venv", "legacy", "node_modules",
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401"]
 "scripts/**" = ["T201", "E402", "F401", "F811"]
-"tests/**" = ["ARG", "F401", "E402", "SIM117", "SIM105", "B017",  "F811", "PLR2004", "S101", "BLE001", "DOC201", "CPY001"]
+"tests/**" = ["ARG", "F401", "E402", "SIM117", "SIM105", "B017", "UP038", "F811", "PLR2004", "S101", "BLE001", "DOC201", "CPY001"]
 "legacy/**" = ["E402", "F401", "SIM117", "F811", "F841", "B025", "E722", "B007", "SIM102", "BLE001", "DOC201", "B024"]
 "api_server.py" = ["E402"]
-"api/routers/*.py" = ["E402", "F401", "SIM105", "SIM108", "B904", "E722", "F841",  "PLC0415"]
-"api/routes/*.py" = ["E402", "F401", "F841",  "PLC0415"]
-"services/*.py" = ["E402", "F401", "ARG004", "F841",  "UP047", "B025", "RUF012", "SIM105", "SIM115", "E722"]
-"scholars/**/*.py" = ["F401", "F841", "SIM105", ]
+"api/routers/*.py" = ["E402", "F401", "SIM105", "SIM108", "B904", "E722", "F841", "UP038", "PLC0415"]
+"api/routes/*.py" = ["E402", "F401", "F841", "UP038", "PLC0415"]
+"services/*.py" = ["E402", "F401", "ARG004", "F841", "UP038", "UP047", "B025", "RUF012", "SIM105", "SIM115", "E722"]
+"scholars/**/*.py" = ["F401", "F841", "SIM105", "UP038"]
 "llms/*.py" = ["SIM115", "B007", "SIM105", "RUF013"]
 "AFO/**/*.py" = ["F401", "F811", "F841", "F842"]
 "afo_soul_engine/**/*.py" = ["F401"]
-"utils/*.py" = [ "UP047", "B025", "RUF012", "RUF006"]
+"utils/*.py" = ["UP038", "UP047", "B025", "RUF012", "RUF006"]
 "config/*.py" = ["RUF012", "B024", "B025"]
 "cache/*.py" = ["RUF006"]
 "browser_auth/*.py" = ["B025"]
