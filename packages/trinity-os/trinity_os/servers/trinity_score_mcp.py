@@ -60,7 +60,7 @@ class TrinityScoreEngineHybrid:
             # CuPy GPU Acceleration (only for large arrays)
             w_gpu = _cp.array(weights)
             s_gpu = _cp.array(scores)
-            result = _cp.sum(w_gpu * s_gpu)
+            result: Any = _cp.sum(w_gpu * s_gpu)
             return float(result.get())
         elif gpu_available and n <= TrinityScoreEngineHybrid.THRESHOLD:
             # Small arrays: use NumPy even if CuPy is available (lower overhead)

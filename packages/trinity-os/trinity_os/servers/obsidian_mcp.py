@@ -297,7 +297,7 @@ class ObsidianMCP:
             }
 
         try:
-            result = Context7MCP.retrieve_context(query)
+            result: Any = Context7MCP.retrieve_context(query)
             return {
                 "success": result.get("found", False),
                 "query": query,

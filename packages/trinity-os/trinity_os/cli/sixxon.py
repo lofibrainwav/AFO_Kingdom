@@ -177,6 +177,7 @@ def _load_wallet_browser_sessions(repo_root: Path) -> list[dict[str, Any]]:
 
     out: list[dict[str, Any]] = []
     for k in keys:
+        k = cast(Any, k)
         if not isinstance(k, dict):
             continue
         if cast(Mapping[str, Any], k).get("key_type") != "browser_session":
@@ -1020,6 +1021,7 @@ def _explain_from_receipt(receipt_dir: Path, receipt: dict[str, Any]) -> dict[st
     details = status_card.get("details") or []
     if isinstance(details, list):
         for d in details[:2]:
+            d = cast(Any, d)
             if isinstance(d, str) and d:
                 reasons.append(d)
     if not reasons:
@@ -1141,7 +1143,7 @@ def _verify_run(
         test_content = "SixXon Energy Flow Vision은 인간 꿈과 AI 구현을 연결하는 완벽한 시스템입니다."
         test_context = "AFO 왕국의 眞善美孝永 철학을 기반으로 한 AI 통제 및 관리를 위한 도구"
 
-        result = verify_fact(content=test_content, context=test_context if deep else None, threshold=0.8)
+        result: Any = verify_fact(content=test_content, context=test_context if deep else None, threshold=0.8)
 
         payload = {
             "status": "OK" if result["status"] == "PASSED" else "BLOCK",

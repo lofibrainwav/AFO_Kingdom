@@ -261,7 +261,7 @@ class SpiritIntegration:
 
         # 가장 큰 하락 찾기
         if drops:
-            biggest_drop = max(drops, key=lambda x: x["drop"])
+            biggest_drop: Any = max(drops, key=lambda x: x["drop"])
             return {
                 "status": "score_dropped",
                 "delta": delta,

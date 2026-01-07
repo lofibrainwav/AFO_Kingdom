@@ -247,7 +247,7 @@ class Context7MCP:
         if domain != "general":
             filtered_scores = {}
             for idx, score in scores.items():
-                item = self.knowledge_base[idx]
+                item: Any = self.knowledge_base[idx]
                 if item.get("type") == domain:
                     filtered_scores[idx] = score
             scores = filtered_scores
@@ -257,7 +257,7 @@ class Context7MCP:
 
         results = []
         for doc_idx, score in sorted_docs:
-            item = self.knowledge_base[doc_idx]
+            item: Any = self.knowledge_base[doc_idx]
             cast(list[Any], results).append({
                 "id": item["id"],
                 "title": item["title"],

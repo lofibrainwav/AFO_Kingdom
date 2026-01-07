@@ -34,6 +34,7 @@ def _normalize_candidates(items: Any) -> list[dict[str, Any]]:
         return []
     out: list[dict[str, Any]] = []
     for it in items:
+        it = cast(Any, it)
         if isinstance(it, dict):
             sid = str(cast(Mapping[str, Any], it).get("skill_id") or cast(Mapping[str, Any], it).get("id") or cast(Mapping[str, Any], it).get("name") or "")
             title = str(cast(Mapping[str, Any], it).get("title") or cast(Mapping[str, Any], it).get("name") or sid)
