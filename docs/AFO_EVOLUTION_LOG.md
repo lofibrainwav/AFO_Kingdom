@@ -13,10 +13,10 @@
 | No Extra Lines | 캡슐 내부 5줄 외 추가 라인 금지(빈 줄/주석/추가 불릿 금지) | 마찰 제거, 검증 100% 보장 |
 
 ### SSOT 캡슐 정규형(정확히 이 5줄)
-## [SSOT/PH-ICCLS-SENTIMENT/2026-01-07/c6251e9e] ICCLS/Sentiment API + Dashboard
+## [SSOT/PH-ICCLS-SENTIMENT/2026-01-07/69b5e860] ICCLS/Sentiment API + Dashboard
 - Status: SEALED
 - Scope: iccls_score/sentiment_score API 노출 + TrinityGlowCard 표시 + SSOT 캡슐 검증 자동화
-- Evidence: HEAD c6251e9e0586c820b081da4d57e27d44ca154e71 / 5 SSOT capsules validated (strict 5-line format) / scripts/verify_ssot_ph_capsules.py exists / docs/AFO_EVOLUTION_LOG.md exists / PR #49 merged
+- Evidence: HEAD 69b5e860ea5f5f1d29b9b7ca960fce56b6919e34 / 5 SSOT capsules validated (strict 5-line format) / scripts/verify_ssot_ph_capsules.py exists / docs/AFO_EVOLUTION_LOG.md exists / PR #49 merged
 - Gaps: None
 
 ### 추가 규칙
