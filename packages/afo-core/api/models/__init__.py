@@ -4,7 +4,7 @@ AFO API Models
 Phase 2 리팩토링: Request/Response 모델 분리
 """
 
-from AFO.responses import (
+from .responses import (
     CrewAIExecuteResponse,
     LangChainRetrievalQAResponse,
     LangChainToolsResponse,
