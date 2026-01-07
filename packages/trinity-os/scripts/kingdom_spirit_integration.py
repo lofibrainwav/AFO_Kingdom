@@ -13,7 +13,7 @@ import json
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Mapping, cast
+from typing import Any, cast
 
 # AFO 루트 디렉토리
 AFO_ROOT = Path(__file__).resolve().parent.parent

@@ -6,7 +6,7 @@ Context7 MCP Module
 
 import json
 import logging
-from typing import Any, Dict, List, Mapping, Optional, Set, cast
+from typing import Any, Dict, List, Mapping, Set, cast
 from pathlib import Path
 import re
 
