@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-<<<<<<< Updated upstream
-=======
 # Tier A: External exposure hard-lock
 ./scripts/filial_gate_verify.sh
 
@@ -17,7 +15,6 @@ fi
 # Reality Gates: Phase 4/5 MVP/Contract 모두 PASS
 # SHA256: docs/ssot/evidence/PROJECT_CLOSURE_*/99_sha256.txt
 
->>>>>>> Stashed changes
 # AFO Kingdom Hardening Gate
 # Disallows specific patterns in critical files
 

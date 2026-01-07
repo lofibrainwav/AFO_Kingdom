@@ -120,13 +120,7 @@ class EvidenceIndexGenerator:
             "direction": "stable",
             "avg_daily_change": round(statistics.mean(changes), 3) if changes else 0.0,
             "volatility": (round(statistics.stdev(changes), 3) if len(changes) > 1 else 0.0),
-<<<<<<< HEAD
-            "consistency_score": round(
-                1.0 - (statistics.stdev(changes) if len(changes) > 1 else 0), 3
-            ),
-=======
             "consistency_score": round(1.0 - (statistics.stdev(changes) if len(changes) > 1 else 0), 3),
->>>>>>> wip/ph20-01-post-work
         }
 
         # Determine trend direction
@@ -263,13 +257,7 @@ def main():
         print("\n📊 Evidence Index 생성 완료!")
         print(f"📁 파일 위치: {generator.index_file}")
         print(f"📈 분석된 증거: {index['summary']['valid_evidences']}개")
-<<<<<<< HEAD
-        print(
-            f"📅 날짜 범위: {index['summary']['date_range']['start']} ~ {index['summary']['date_range']['end']}"
-        )
-=======
         print(f"📅 날짜 범위: {index['summary']['date_range']['start']} ~ {index['summary']['date_range']['end']}")
->>>>>>> wip/ph20-01-post-work
 
         # Print key statistics
         stats = index["statistics"]
