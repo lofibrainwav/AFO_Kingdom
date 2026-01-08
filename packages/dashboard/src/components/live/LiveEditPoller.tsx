@@ -1,5 +1,6 @@
 "use client";
 
+import DOMPurify from "isomorphic-dompurify";
 import { useEffect, useState } from "react";
 
 type Props = { fragmentKey: string };
@@ -96,7 +97,10 @@ export default function LiveEditPoller({ fragmentKey }: Props) {
       {fragmentContent && (
         <div
           className="prose prose-invert max-w-none"
-          dangerouslySetInnerHTML={{ __html: fragmentContent }}
+          dangerouslySetInnerHTML={{
+            // XSS 방지: DOMPurify로 새니타이징 (Phase 15 Security Seal)
+            __html: DOMPurify.sanitize(fragmentContent, { USE_PROFILES: { html: true } }),
+          }}
         />
       )}
     </div>

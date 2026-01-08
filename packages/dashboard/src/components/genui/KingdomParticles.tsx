@@ -19,7 +19,7 @@ interface KingdomParticlesProps {
 
 export default function KingdomParticles({ isActive, mode }: KingdomParticlesProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const animationRef = useRef<number>();
+  const animationRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     const canvas = canvasRef.current;

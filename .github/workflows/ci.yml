@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.12", "3.13"]  # 왕국 Python 버전 매트릭스
+        python-version: ["3.12"]  # 왕국 Python 버전 (requires-python: ==3.12.*)
 
     steps:
       - name: Checkout 코드
@@ -30,9 +30,14 @@ jobs:
       - name: 의존성 설치 (재현성 보장)
         run: uv sync --frozen               # uv.lock 기반 정확 설치
 
+      - name: Setup Node.js (for pyright)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
       - name: Gate 1 - Pyright (Truth)
         run: |
-          pyright --project packages/afo-core/pyproject.toml
+          npx pyright --project packages/afo-core/pyproject.toml
 
       - name: Generate Evidence (Trinity Protocol)
         run: |

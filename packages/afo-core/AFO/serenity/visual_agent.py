@@ -3,7 +3,7 @@ import asyncio
 import base64
 import json
 import logging
-from typing import Any, Optional, cast
+from typing import Any, Dict, Optional, cast
 
 import httpx
 from playwright.async_api import async_playwright
@@ -28,7 +28,7 @@ class VisualAgent:
         Use "bbox" [x, y, w, h] normalized (0-1) for clicks.
         Output ONLY JSON."""
 
-    async def capture_screenshot(self, url: str = "http://localhost:3000") -> dict:
+    async def capture_screenshot(self, url: str = "http://localhost:3000") -> dict[str, Any]:
         """Eye (Screenshot Capture): Capture current screen state
         Returns: {image_b64, width, height, url, timestamp}
         """
@@ -58,7 +58,7 @@ class VisualAgent:
             finally:
                 await browser.close()
 
-    async def analyze_and_plan(self, screenshot_data: dict, goal: str) -> VisualPlan:
+    async def analyze_and_plan(self, screenshot_data: dict[str, Any], goal: str) -> VisualPlan:
         """Brain (Qwen3-VL): Analyze screenshot and create action plan"""
         try:
             image_b64 = screenshot_data["image_b64"]
@@ -108,7 +108,7 @@ class VisualAgent:
             logger.error(f"Brain analysis failed: {e}")
             return VisualPlan(goal=goal, actions=[], stop=True, summary=f"Analysis error: {e!s}")
 
-    async def execute_action(self, action: VisualAction, screenshot_data: dict) -> dict:
+    async def execute_action(self, action: VisualAction, screenshot_data: dict[str, Any]) -> dict[str, Any]:
         """Hand (Playwright): Execute single validated action"""
         try:
             # Denormalize bbox for screen coordinates
@@ -168,7 +168,7 @@ class VisualAgent:
 
     async def run_janus_loop(
         self, goal: str, url: str = "http://localhost:3000", max_iterations: int = 5
-    ) -> dict:
+    ) -> dict[str, Any]:
         """Complete Janus Loop: Screenshot -> Plan -> Execute -> Screenshot"""
         results = []
         iteration = 0

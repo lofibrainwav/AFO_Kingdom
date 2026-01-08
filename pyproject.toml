@@ -3,7 +3,8 @@ name = "afo-kingdom"
 version = "1.0.0"
 description = "AFO Kingdom - Unified Monorepo (AFO Core, TRINITY-OS, SixXon, Dashboard)"
 authors = [{ name = "AFO Kingdom", email = "afo@kingdom.dev" }]
-requires-python = ">=3.12"
+package-mode = false
+requires-python = ">=3.12,<3.13"
 readme = "README.md"
 license = { text = "MIT" }
 dependencies = [
@@ -37,6 +38,9 @@ build-backend = "hatchling.build"
 where = ["packages"]
 include = ["afo-core*", "trinity-os*", "dashboard*"]
 exclude = ["*test*", "*tests*", "*__pycache__*", "*.egg-info*"]
+
+[tool.poetry.dependencies]
+afo-core = { path = "packages/afo-core", develop = true }
 
 [dependency-groups]
 dev = [
@@ -203,7 +207,7 @@ python_version = "3.12"
 warn_return_any = true
 warn_unused_configs = true
 ignore_missing_imports = true
-mypy_path = "packages/afo-core:packages/trinity-os:/Users/brnestrm/AFO_Kingdom"
+mypy_path = "packages/afo-core:packages/trinity-os:/Users/brnestrm/AFO_Kingdom:typings"
 explicit_package_bases = true
 namespace_packages = true
 plugins = ["pydantic.mypy"]

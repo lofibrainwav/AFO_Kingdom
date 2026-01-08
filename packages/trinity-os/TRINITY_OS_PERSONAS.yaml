@@ -138,10 +138,12 @@ personas:
 # =============================================================================
 
 infrastructure:
+  type: "Local Kingdom (Hybrid)"
+  notes: "Docker is legacy. Prefer Homebrew (Redis) and Local Binary (Qdrant)."
   ports:
     soul_engine: 8010
     dashboard: 3000
-    ollama: 11435
+    ollama: 11434
     redis: 6379
     postgresql: 15432
     grafana: 3100
