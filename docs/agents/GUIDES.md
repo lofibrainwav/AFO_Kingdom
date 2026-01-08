@@ -18,9 +18,9 @@
 - **Composer Mode**: Multi-file 리팩터링 시 서사적 일관성 유지.
 - **Agent Mode**: 복잡 작업 시 MCP 9서버를 활용한 임기응변.
 
-### 3) OpenAI Codex (The Scholar - o1/Codex)
-- **핵심**: Chain-of-Thought (CoT). 단계별 reasoning 선행 출력.
-- **패턴**: 작은 단위로 생성 및 각 단계마다 검증.
+### 3) OpenAI Codex (The Scholar)
+- **핵심**: 작은 단위로 생성하고, 매 단계 "증거/검증 결과"만 짧게 출력.
+- **패턴**: 생성 → 검증 → 다음 단계 (3-step 이내 유지)
 
 ### 4) Claude (The Strategist - Anthropic)
 - **핵심**: Tree-of-Thoughts (ToT). 여러 가능성을 병렬 고려.
@@ -34,7 +34,7 @@
 
 ## Ⅱ. 공통 활용 원칙 (Common Principles)
 
-1. **Chain-of-Thought**: 모든 에이전트는 실행 전 내부 추론 과정을 거쳐야 함.
+1. **Reasoning (요약)**: 내부 추론은 수행하되, 출력은 "결론 + 근거 2줄"로 요약한다.
 2. **Tree-of-Thoughts**: 복잡한 아키텍처 결정 시 최소 2개 이상의 대안을 비교 평가.
 3. **Sequential Thinking**: 문제를 작은 하위 작업으로 쪼개어 단계별로 정복.
 4. **실시간 검색**: 최신 라이브러리/보안 취약점 다룰 시 반드시 Grok/Brave 검색 병행.
