@@ -229,7 +229,7 @@ class AgenticRAG:
         Returns:
             List of documents that meet relevance threshold
         """
-        relevant = []
+        relevant: list[RetrievedDocument] = []
 
         for doc in documents:
             # In production, would use cross-encoder or LLM for grading
@@ -243,7 +243,8 @@ class AgenticRAG:
             if doc.relevance_score >= self.thresholds["relevance_min"]:
                 relevant.append(doc)
 
-        return sorted(relevant, key=lambda d: d.relevance_score, reverse=True)
+        relevant.sort(key=lambda d: d.relevance_score, reverse=True)
+        return relevant
 
     def _decide_action(
         self, docs: list[RetrievedDocument], avg_relevance: float
@@ -377,6 +378,6 @@ class AgenticRAG:
 agentic_rag = AgenticRAG()
 
 
-async def query(user_query: str, **context) -> AgenticRAGResult:
+async def query(user_query: str, **context: Any) -> AgenticRAGResult:
     """Convenience function for agentic RAG query."""
     return await agentic_rag.query(user_query, context)

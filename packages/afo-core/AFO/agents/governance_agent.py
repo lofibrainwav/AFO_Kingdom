@@ -152,7 +152,7 @@ class GovernanceAgent:
             policy_checks.append(trinity_check)
 
         # Determine overall risk level
-        max_risk = max((c.risk_level for c in policy_checks), key=lambda x: x.value)
+        max_risk: RiskLevel = max((c.risk_level for c in policy_checks), key=lambda x: x.value)
         all_passed = all(c.passed for c in policy_checks)
 
         # Make decision
@@ -299,7 +299,9 @@ class GovernanceAgent:
 governance_agent = GovernanceAgent()
 
 
-async def evaluate_action(action: str, agent_name: str, **context) -> GovernanceDecision:
+async def evaluate_action(
+    action: str, agent_name: str, **context: Any
+) -> GovernanceDecision:
     """Convenience function to evaluate an action through governance."""
     return await governance_agent.evaluate_action(action, agent_name, context)
 
