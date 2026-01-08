@@ -65,6 +65,33 @@ jobs:
       - name: SSOT Trinity Text Guard (孝 - Serenity)
         run: python scripts/ci_trinity_text_guard.py
 
+      - name: SSOT Security Verification (🔒 - Security)
+        run: |
+          echo "=== SSOT Security Verification ==="
+          if [ ! -f "scripts/verify_security_cleanup.sh" ]; then
+            echo "❌ FAIL: SSOT verification script not found"
+            exit 1
+          fi
+
+          # SSOT 검증 실행 및 결과 확인
+          bash scripts/verify_security_cleanup.sh > ssot_security_output.txt 2>&1
+
+          # EXIT_CODE 확인
+          if ! grep -q "EXIT_CODE=0" ssot_security_output.txt; then
+            echo "❌ FAIL: SSOT security verification failed"
+            cat ssot_security_output.txt
+            exit 1
+          fi
+
+          # 민감 데이터 노출 확인 (보안 검증)
+          if grep -q "secrets\|password\|token\|key" ssot_security_output.txt; then
+            echo "❌ FAIL: Sensitive data detected in SSOT output"
+            exit 1
+          fi
+
+          echo "✅ PASS: SSOT security verification completed"
+          echo "Evidence saved: ssot_security_output.txt"
+
       - name: Upload Coverage
         uses: codecov/codecov-action@v4
         with:
