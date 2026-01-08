@@ -15,7 +15,6 @@ Philosophy:
 """
 
 import logging
-import os
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import Enum
@@ -73,21 +72,25 @@ class GovernanceAgent:
         self.name = "Governance Agent (사마의)"
         self.audit_log: list[GovernanceDecision] = []
 
-        # Bounded autonomy limits
-        self.limits = {
+        # Bounded autonomy limits (rate limits)
+        self.rate_limits: dict[str, int] = {
             "max_file_operations_per_minute": 10,
             "max_external_api_calls_per_minute": 5,
-            "allowed_directories": [
-                "packages/dashboard/src/components/genui",
-                "packages/afo-core/AFO",
-                "docs",
-            ],
-            "forbidden_operations": [
-                "delete_production_data",
-                "modify_credentials",
-                "disable_security",
-            ],
         }
+
+        # Bounded autonomy limits (path restrictions)
+        self.allowed_directories: list[str] = [
+            "packages/dashboard/src/components/genui",
+            "packages/afo-core/AFO",
+            "docs",
+        ]
+
+        # Forbidden operations
+        self.forbidden_operations: list[str] = [
+            "delete_production_data",
+            "modify_credentials",
+            "disable_security",
+        ]
 
         # Policy definitions
         self.policies = {
@@ -186,7 +189,7 @@ class GovernanceAgent:
 
     def _check_forbidden_operations(self, action: str) -> PolicyCheck:
         """Check if action is in forbidden list."""
-        is_forbidden = action in self.limits["forbidden_operations"]
+        is_forbidden = action in self.forbidden_operations
         return PolicyCheck(
             policy_name="forbidden_operations",
             passed=not is_forbidden,
@@ -200,7 +203,7 @@ class GovernanceAgent:
         key = f"{action}_{datetime.now(UTC).strftime('%Y%m%d%H%M')}"
         current_count = self._operation_counts.get(key, 0)
 
-        max_limit = self.limits.get(f"max_{action}_per_minute", 100)
+        max_limit = self.rate_limits.get(f"max_{action}_per_minute", 100)
         is_within_limit = current_count < max_limit
 
         self._operation_counts[key] = current_count + 1
@@ -215,7 +218,7 @@ class GovernanceAgent:
     def _check_allowed_directories(self, path: str) -> PolicyCheck:
         """Check if path is in allowed directories."""
         allowed = any(
-            path.startswith(allowed_dir) for allowed_dir in self.limits["allowed_directories"]
+            path.startswith(allowed_dir) for allowed_dir in self.allowed_directories
         )
         return PolicyCheck(
             policy_name="directory_restrictions",

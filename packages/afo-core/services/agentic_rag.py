@@ -109,6 +109,7 @@ class AgenticRAG:
 
         logger.info(f"[{self.name}] Processing query: {user_query[:100]}...")
         decision_path.append(f"Received query: {user_query[:50]}...")
+        relevant_docs: list[RetrievedDocument] = []
 
         # Step 1: Analyze and potentially rewrite query
         analyzed_query, reasoning = await self._analyze_query(user_query)

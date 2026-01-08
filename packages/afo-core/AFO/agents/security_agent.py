@@ -20,21 +20,24 @@ import os
 from collections import deque
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
-from enum import Enum
+from enum import Enum, IntEnum
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 logger = logging.getLogger(__name__)
 
 
-class ThreatLevel(Enum):
-    """Threat classification for security events."""
+class ThreatLevel(IntEnum):
+    """Threat classification for security events (ordered by severity)."""
 
-    NONE = "none"
-    LOW = "low"
-    MEDIUM = "medium"
-    HIGH = "high"
-    CRITICAL = "critical"
+    NONE = 0
+    LOW = 1
+    MEDIUM = 2
+    HIGH = 3
+    CRITICAL = 4
+
+    def __str__(self) -> str:
+        return self.name.lower()
 
 
 class SecurityEventType(Enum):
@@ -111,7 +114,7 @@ class SecurityAgent:
         self._blocked_entities: set[str] = set()
 
         # Alert subscribers (for notification integration)
-        self._alert_subscribers: list[callable] = []
+        self._alert_subscribers: list[Callable[[SecurityAlert], None]] = []
 
     def record_event(self, event: SecurityEvent) -> SecurityAlert | None:
         """Record a security event and check for threat patterns.
@@ -121,7 +124,7 @@ class SecurityAgent:
         """
         self._event_history.append(event)
         logger.info(
-            f"[{self.name}] Event recorded: {event.event_type.value} | Level: {event.threat_level.value}"
+            f"[{self.name}] Event recorded: {event.event_type.value} | Level: {event.threat_level.name}"
         )
 
         # Persist to security log
@@ -333,7 +336,7 @@ class SecurityAgent:
             with log_file.open("a", encoding="utf-8") as f:
                 entry = asdict(event)
                 entry["event_type"] = event.event_type.value
-                entry["threat_level"] = event.threat_level.value
+                entry["threat_level"] = event.threat_level.name.lower()
                 f.write(json.dumps(entry, ensure_ascii=False) + "\n")
 
         except Exception as e:
@@ -347,7 +350,7 @@ class SecurityAgent:
             except Exception as e:
                 logger.error(f"Alert notification failed: {e}")
 
-    def subscribe_to_alerts(self, callback: callable) -> None:
+    def subscribe_to_alerts(self, callback: Callable[[SecurityAlert], None]) -> None:
         """Subscribe to security alerts."""
         self._alert_subscribers.append(callback)
 
@@ -379,9 +382,8 @@ def record_security_event(
     threat_level: ThreatLevel,
     source: str,
     description: str,
-    **metadata,
+    **metadata: Any,
 ) -> SecurityAlert | None:
-    """Record a security event."""
     event = SecurityEvent(
         event_type=event_type,
         threat_level=threat_level,

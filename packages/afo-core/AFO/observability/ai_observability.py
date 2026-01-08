@@ -14,13 +14,16 @@ Philosophy:
 - 美 (Beauty): Clear, actionable dashboards and alerts
 """
 
+import inspect
 import logging
 import time
+from collections.abc import Callable, Generator
 from contextlib import contextmanager
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
+from functools import wraps
 from pathlib import Path
-from typing import Any, Generator
+from typing import Any, ParamSpec, TypeVar, cast
 
 logger = logging.getLogger(__name__)
 
@@ -101,7 +104,7 @@ class AIObservability:
 
     @contextmanager
     def trace(
-        self, operation_name: str, parent_span_id: str | None = None, **attributes
+        self, operation_name: str, parent_span_id: str | None = None, **attributes: Any
     ) -> Generator[Span, None, None]:
         """Context manager for tracing an operation.
 
@@ -294,27 +297,33 @@ class AIObservability:
 observability = AIObservability()
 
 
+P = ParamSpec("P")
+R = TypeVar("R")
+
+
 # Convenience decorator for tracing functions
-def traced(operation_name: str = None, **default_attributes):
+def traced(
+    operation_name: str | None = None, **default_attributes: Any
+) -> Callable[[Callable[P, R]], Callable[P, R]]:
     """Decorator to automatically trace a function."""
 
-    def decorator(func):
+    def decorator(func: Callable[P, R]) -> Callable[P, R]:
         op_name = operation_name or func.__name__
 
-        async def async_wrapper(*args, **kwargs):
-            with observability.trace(op_name, **default_attributes) as span:
-                result = await func(*args, **kwargs)
-                return result
+        @wraps(func)
+        async def async_wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
+            with observability.trace(op_name, **default_attributes):
+                result = await func(*args, **kwargs)  # type: ignore
+                return cast(R, result)
 
-        def sync_wrapper(*args, **kwargs):
-            with observability.trace(op_name, **default_attributes) as span:
+        @wraps(func)
+        def sync_wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
+            with observability.trace(op_name, **default_attributes):
                 result = func(*args, **kwargs)
-                return result
+                return cast(R, result)
 
-        import asyncio
-
-        if asyncio.iscoroutinefunction(func):
-            return async_wrapper
+        if inspect.iscoroutinefunction(func):
+            return async_wrapper  # type: ignore
         return sync_wrapper
 
     return decorator
