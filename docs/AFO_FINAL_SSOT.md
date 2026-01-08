@@ -12,11 +12,12 @@
   - **孝 (Serenity 8%)**: 평온 수호 & 연속성 (승상)
   - **永 (Eternity 2%)**: 영속성 & 레거시 유지 (승상)
 
-### 헌법 준수 검증 (Constitution Compliance)
+### 헌법 준수 검증 (Constitution Compliance) [Policy]
 **SSOT 요구사항**: 모든 시스템 구성 요소는 이 헌법을 참조해야 함
 - **참조 확인**: 각 컴포넌트는 헌법 조항을 인용
 - **준수 검증**: Trinity Score 계산 시 헌법 준수도 평가
 - **위반 처리**: 헌법 위반 시 자동 경고 및 수정 요구
+- **Evidence**: `scripts/verify_ssot_compliance.sh`, `packages/trinity-os/check_system.sh`
 
 ## 🧠 책사 시스템 (The Strategists)
 
