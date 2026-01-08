@@ -10,6 +10,8 @@ from typing import Any, Dict, List, TypedDict
 
 from langgraph.graph import END, StateGraph
 
+from AFO.multimodal.timeline_state_generator import timeline_generator_node
+
 
 class MultimodalState(TypedDict):
     """확장된 멀티모달 상태 - 병렬 브랜치 지원"""
@@ -29,25 +31,25 @@ def video_branch_node(state: MultimodalState) -> dict[str, Any]:
     timeline = state.get("timeline", {})
     sections = timeline.get("sections", [])
 
-    # 비디오 계획 생성 (stub 구현 - 실제로는 더 정교한 로직)
-    video_plan = {"total_duration": timeline.get("total_duration", "0:00"), "sections": []}
+    video_plan = {
+        "total_duration": timeline.get("total_duration", "0:00"),
+        "template_type": timeline.get("template_type", "standard"),
+        "sections": [],
+    }
+
+    # Parameter Expansion Map
+    expansion_map = {
+        "fade_in": {"effect": "opacity_transition", "duration": 2.0, "ease": "in_out"},
+        "fade_in_zoom": {"effect": "zoom_in_fade", "duration": 1.5, "scale": 1.1},
+        "text_overlay": {"effect": "text_overlay", "position": "center", "animation": "slide_up"},
+        "cut_sequence": {"effect": "cut_sequence", "interval": 0.5, "transition": "hard_cut"},
+        "zoom_effect": {"effect": "zoom", "scale_factor": 1.2, "duration": 1.0},
+        "fade_out": {"effect": "fade_out", "duration": 3.0},
+    }
 
     for section in sections:
-        video_instruction = section.get("video", "fade_in")
-
-        # 비디오 지시어를 실제 파라미터로 변환
-        if video_instruction == "fade_in":
-            video_params = {"effect": "opacity_transition", "duration": 2.0, "ease": "in_out"}
-        elif video_instruction == "text_overlay":
-            video_params = {"effect": "text_overlay", "position": "center", "animation": "slide_up"}
-        elif video_instruction == "cut_sequence":
-            video_params = {"effect": "cut_sequence", "interval": 0.5}
-        elif video_instruction == "zoom_effect":
-            video_params = {"effect": "zoom", "scale_factor": 1.2, "duration": 1.0}
-        elif video_instruction == "fade_out":
-            video_params = {"effect": "fade_out", "duration": 3.0}
-        else:
-            video_params = {"effect": "default"}
+        instr = section.get("video", "default")
+        video_params = expansion_map.get(instr, {"effect": "default", "instruction": instr})
 
         video_plan["sections"].append(
             {
@@ -69,42 +71,24 @@ def music_branch_node(state: MultimodalState) -> dict[str, Any]:
     timeline = state.get("timeline", {})
     sections = timeline.get("sections", [])
 
-    # 음악 계획 생성 (stub 구현 - 실제로는 더 정교한 로직)
     music_plan = {
         "total_duration": timeline.get("total_duration", "0:00"),
-        "bpm_range": "90-120",  # 기본값
-        "key": "C Major",  # 기본값
+        "bpm": 128 if timeline.get("template_type") == "short" else 95,
         "sections": [],
     }
 
-    for section in sections:
-        music_instruction = section.get("music", "slow_build")
+    # Parameter Expansion Map
+    expansion_map = {
+        "slow_build": {"energy": "low", "instruments": ["ambient", "pads"], "reverb": "large"},
+        "drop_beat": {"energy": "high", "kick_intensity": 0.9, "sidechain": True},
+        "main_theme": {"energy": "medium", "lead": "synth_brass", "resonance": 0.5},
+        "peak_energy": {"energy": "peak", "distortion": 0.2, "compression": "heavy"},
+        "resolve": {"energy": "low", "release": 5.0, "fade": "linear"},
+    }
 
-        # 음악 지시어를 실제 파라미터로 변환
-        if music_instruction == "slow_build":
-            music_params = {"energy": "low", "tempo": "slow", "instruments": ["pads", "ambient"]}
-        elif music_instruction == "drop_beat":
-            music_params = {
-                "energy": "high",
-                "tempo": "fast",
-                "instruments": ["kick", "snare", "bass"],
-            }
-        elif music_instruction == "main_theme":
-            music_params = {
-                "energy": "medium",
-                "tempo": "moderate",
-                "instruments": ["melody", "harmony"],
-            }
-        elif music_instruction == "peak_energy":
-            music_params = {
-                "energy": "peak",
-                "tempo": "fast",
-                "instruments": ["full_orchestra", "fx"],
-            }
-        elif music_instruction == "resolve":
-            music_params = {"energy": "low", "tempo": "slow", "instruments": ["resolution", "fade"]}
-        else:
-            music_params = {"energy": "medium", "tempo": "moderate"}
+    for section in sections:
+        instr = section.get("music", "default")
+        music_params = expansion_map.get(instr, {"energy": "medium", "instruction": instr})
 
         music_plan["sections"].append(
             {
@@ -184,46 +168,7 @@ def build_multimodal_workflow() -> StateGraph:
     workflow.add_node(
         "absorb", lambda state: {"raw_intent": state.get("raw_intent", "흥겨운 콘텐츠")}
     )
-    workflow.add_node(
-        "generate",
-        lambda state: {
-            "timeline": {
-                "sections": [
-                    {
-                        "time": "0:00-0:15",
-                        "intent": "intro",
-                        "video": "fade_in",
-                        "music": "slow_build",
-                    },
-                    {
-                        "time": "0:15-0:30",
-                        "intent": "hook",
-                        "video": "text_overlay",
-                        "music": "drop_beat",
-                    },
-                    {
-                        "time": "0:30-0:45",
-                        "intent": "content",
-                        "video": "cut_sequence",
-                        "music": "main_theme",
-                    },
-                    {
-                        "time": "0:45-1:00",
-                        "intent": "climax",
-                        "video": "zoom_effect",
-                        "music": "peak_energy",
-                    },
-                    {
-                        "time": "1:00-1:15",
-                        "intent": "outro",
-                        "video": "fade_out",
-                        "music": "resolve",
-                    },
-                ],
-                "total_duration": "1:15",
-            }
-        },
-    )
+    workflow.add_node("generate", timeline_generator_node)
 
     # FANOUT 노드 (병렬)
     workflow.add_node("video_branch", video_branch_node)
