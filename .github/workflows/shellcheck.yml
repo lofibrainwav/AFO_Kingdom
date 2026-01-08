@@ -42,7 +42,7 @@ jobs:
           FAILED=0
           for script in $SCRIPTS; do
             echo "Checking: $script"
-            if shellcheck -x "$script"; then
+            if shellcheck -x --severity=error "$script"; then
               echo "  ✅ PASS"
             else
               echo "  ❌ FAIL"

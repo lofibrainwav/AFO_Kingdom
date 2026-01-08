@@ -32,7 +32,7 @@ jobs:
 
       - name: Gate 1 - Pyright (Truth)
         run: |
-          pyright --project packages/afo-core/pyproject.toml
+          uv run pyright --project packages/afo-core/pyproject.toml
 
       - name: Generate Evidence (Trinity Protocol)
         run: |
