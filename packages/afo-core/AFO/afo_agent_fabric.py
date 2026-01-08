@@ -8,6 +8,13 @@ from fastapi import APIRouter
 from pydantic import BaseModel
 from starlette.responses import StreamingResponse
 
+# Optional SSE import
+try:
+    from AFO.utils.metrics import sse_open_connections, update_sse_health_metrics
+    METRICS_AVAILABLE = True
+except ImportError:
+    METRICS_AVAILABLE = False
+
 if TYPE_CHECKING:
     from collections.abc import AsyncIterator
 
@@ -153,7 +160,20 @@ async def chancellor_stream(req: ChancellorRequest):
         gen = _stream_autogen(req.input)
     else:
         gen = _stream_echo(req.input)
-    return StreamingResponse(gen, media_type="text/event-stream")
+
+    if METRICS_AVAILABLE:
+        sse_open_connections.inc()
+
+    async def _gen_wrapper():
+        try:
+            async for item in gen:
+                yield item
+        finally:
+            if METRICS_AVAILABLE:
+                sse_open_connections.dec()
+
+    return StreamingResponse(_gen_wrapper(), media_type="text/event-stream")
+
 
 
 @router.post("/stream_v2")
@@ -198,7 +218,19 @@ async def chancellor_stream_v2(req: ChancellorRequest):
         gen = _stream_langgraph_real(req.input)
     else:
         gen = _stream_echo(req.input)
-    return StreamingResponse(gen, media_type="text/event-stream")
+
+    if METRICS_AVAILABLE:
+        sse_open_connections.inc()
+
+    async def _gen_wrapper():
+        try:
+            async for item in gen:
+                yield item
+        finally:
+            if METRICS_AVAILABLE:
+                sse_open_connections.dec()
+
+    return StreamingResponse(_gen_wrapper(), media_type="text/event-stream")
 
 
 def _is_installed(mod: str) -> bool:
@@ -275,4 +307,15 @@ async def chancellor_stream_v3(req: ChancellorRequest):
     else:
         gen = _stream_echo(req.input)
 
-    return StreamingResponse(gen, media_type="text/event-stream", headers=yield_headers)
+    if METRICS_AVAILABLE:
+        sse_open_connections.inc()
+
+    async def _gen_wrapper():
+        try:
+            async for item in gen:
+                yield item
+        finally:
+            if METRICS_AVAILABLE:
+                sse_open_connections.dec()
+
+    return StreamingResponse(_gen_wrapper(), media_type="text/event-stream", headers=yield_headers)

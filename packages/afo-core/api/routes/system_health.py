@@ -20,6 +20,12 @@ from fastapi.responses import RedirectResponse, StreamingResponse
 
 # Optional SSE import
 try:
+    from AFO.utils.metrics import sse_open_connections, update_sse_health_metrics
+    METRICS_AVAILABLE = True
+except ImportError:
+    METRICS_AVAILABLE = False
+
+try:
     from sse_starlette.sse import EventSourceResponse
 
     SSE_AVAILABLE = True
@@ -331,6 +337,9 @@ async def _sse_log_generator(request: Request):
     Generate SSE events from Redis Pub/Sub messages with File Fallback.
     Trinity Score: 善 (Goodness) - Failover mechanism for high availability.
     """
+    if METRICS_AVAILABLE:
+        sse_open_connections.inc()
+
     redis_available = False
     pubsub = None
 
@@ -414,6 +423,9 @@ async def _sse_log_generator(request: Request):
         logger.error(f"[SSE] File Fallback failed: {e}")
         error_msg = {"message": f"Critical Stream Failure: {e}", "level": "ERROR"}
         yield f"data: {json.dumps(error_msg)}\n\n"
+    finally:
+        if METRICS_AVAILABLE:
+            sse_open_connections.dec()
 
 
 # SSOT Canonical Path: /api/logs/stream
