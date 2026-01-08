@@ -135,25 +135,67 @@ def build_organs_final(
     ok, ms, t = _tcp_probe(qdrant_host, qdrant_port, timeout_tcp_s)
     organs["肺_Qdrant"] = _mk(ok, ms, t, "tcp", 94, 20, "Connected", "Disconnected")
 
-    # Static / Semi-static Organs
-    organs["眼_Dashboard"] = OrganReport(
-        status="healthy", score=92, output="Visual OK", probe="static", latency_ms=0
+    # Static / Semi-static Organs -> NOW DYNAMIC (Ticket: No Hardcoding)
+    ok, ms, t = _tcp_probe("localhost", 3000, timeout_tcp_s)
+    organs["眼_Dashboard"] = _mk(ok, ms, t, "tcp", 92, 10, "Visual OK (Port 3000)", "Disconnected (Port 3000)")
+
+    # MCP: Check configured servers count
+    try:
+        from config.health_check_config import health_check_config
+        mcp_count = len(health_check_config.MCP_SERVERS)
+        mcp_score = min(100, 50 + (mcp_count * 5)) # Base 50 + 5 per server
+        mcp_msg = f"Tools Active ({mcp_count} configured)"
+        organs["腎_MCP"] = OrganReport(
+            status="healthy" if mcp_count > 0 else "unhealthy",
+            score=mcp_score,
+            output=mcp_msg,
+            probe="config:health_check_config",
+            latency_ms=0
+        )
+    except Exception as e:
+        organs["腎_MCP"] = OrganReport(
+           status="unhealthy", score=10, output=str(e), probe="error", latency_ms=0
+        )
+
+    # Observability: Check if Prometheus client is importable
+    try:
+        import prometheus_client
+        organs["耳_Observability"] = OrganReport(
+            status="healthy", score=90, output="Prometheus Client Loaded", probe="module:import", latency_ms=0
+        )
+    except ImportError:
+        organs["耳_Observability"] = OrganReport(
+            status="unhealthy", score=20, output="Prometheus Missing", probe="module:import", latency_ms=0
+        )
+
+    # Docs: Check existence of SSOT file (SSOT 永)
+    ssot_path = os.path.exists("docs/AFO_FINAL_SSOT.md") or os.path.exists("../docs/AFO_FINAL_SSOT.md")
+    organs["口_Docs"] = OrganReport(
+        status="healthy" if ssot_path else "unhealthy",
+        score=95 if ssot_path else 10,
+        output="SSOT Canon Found" if ssot_path else "SSOT Missing",
+        probe="fs:docs/AFO_FINAL_SSOT.md",
+        latency_ms=0
     )
 
-    organs["腎_MCP"] = OrganReport(
-        status="healthy", score=85, output="Tools Active", probe="static", latency_ms=0
-    )
-    organs["耳_Observability"] = OrganReport(
-        status="healthy", score=80, output="Listening", probe="static", latency_ms=0
-    )
-    organs["口_Docs"] = OrganReport(
-        status="healthy", score=90, output="Manifesto OK", probe="static", latency_ms=0
-    )
+    # CI: Check for github/workflows directory (Self-awareness)
+    ci_path = os.path.exists(".github/workflows") or os.path.exists("../.github/workflows")
     organs["骨_CI"] = OrganReport(
-        status="healthy", score=88, output="Pipeline Green", probe="static", latency_ms=0
+        status="healthy" if ci_path else "unhealthy",
+        score=90 if ci_path else 40,
+        output="Workflows Active" if ci_path else "No Workflows",
+        probe="fs:.github/workflows",
+        latency_ms=0
     )
+
+    # Evolution Gate: Check if Evolution Log exists (Self-evolution memory)
+    evo_path = os.path.exists("docs/AFO_EVOLUTION_LOG.md") or os.path.exists("../docs/AFO_EVOLUTION_LOG.md")
     organs["膽_Evolution_Gate"] = OrganReport(
-        status="healthy", score=90, output="Sovereign Decisiveness OK", probe="static", latency_ms=0
+        status="healthy" if evo_path else "unhealthy",
+        score=95 if evo_path else 30,
+        output="Evolution Memory Intact" if evo_path else "Amnesia Risk",
+        probe="fs:docs/AFO_EVOLUTION_LOG.md",
+        latency_ms=0
     )
 
     # Security Pillar (simplified for reliability)

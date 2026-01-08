@@ -144,8 +144,9 @@ async def comprehensive_health_check() -> dict[str, Any]:
             breakdown["beauty"] = trinity_info.get("beauty", 0.0)
             breakdown["filial_serenity"] = trinity_info.get("filial_serenity", 0.0)
             breakdown["eternity"] = trinity_info.get("eternity", 1.0)
-            breakdown["iccls_gap"] = trinity_info.get("iccls_gap", 0.0)
-            breakdown["sentiment"] = trinity_info.get("sentiment", 0.0)
+            # Use dynamic values from health_data (No Hardcoding)
+            breakdown["iccls_gap"] = health_data.get("iccls_gap", trinity_info.get("iccls_gap", 0.0))
+            breakdown["sentiment"] = health_data.get("sentiment", trinity_info.get("sentiment", 0.0))
             trinity_score = trinity_info.get("trinity_score", health_data.get("health_percentage", 0) / 100.0)
         else:
             trinity_score = health_data.get("health_percentage", 0) / 100.0

@@ -253,10 +253,29 @@ async def get_comprehensive_health() -> dict[str, Any]:
         # Observability(80), Docs(90)
         eternity_score = (o2["耳_Observability"]["score"] + o2["口_Docs"]["score"]) / 2.0 / 100.0
 
+        # ICCLS (Inter-Component Consistency Level Score) - Dynamic Calculation
+        # 점수들의 표준 편차를 역으로 환산 (편차가 적을수록 일관성 높음)
+        import statistics
+        all_scores = [o["score"] for o in o2.values()]
+        if len(all_scores) > 1:
+            stdev = statistics.stdev(all_scores)
+            # 표준편차가 0이면 1.0 (완벽), 30이면 0.0 (불일치)
+            iccls_score = max(0.0, 1.0 - (stdev / 30.0))
+        else:
+            iccls_score = 1.0
+
+        # Sentiment Score (System Vibe) - Dynamic Calculation based on Latency
+        # 평균 레이턴시가 낮을수록 기분 좋음
+        # 0ms -> 100%, 1000ms -> 0%
+        avg_latency = sum(o["latency_ms"] for o in o2.values()) / len(o2)
+        sentiment_score = max(0.0, 1.0 - (avg_latency / 500.0))
+
         response_v2 = {
             "organs_v2": o2,
             "contract_v2": v2_data["contract"],
             "ts_v2": v2_data["ts"],
+            "iccls_gap": iccls_score,     # Added Dynamic Metric
+            "sentiment": sentiment_score, # Added Dynamic Metric
         }
     except Exception as e:
         logger.warning("organs_v2 generation failed: %s", e)
