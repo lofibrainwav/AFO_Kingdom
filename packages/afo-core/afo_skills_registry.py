@@ -1194,7 +1194,6 @@ def register_core_skills() -> SkillRegistry:
         skill_004,
         skill_005,
         skill_006,
-        skill_007,
         skill_008,
         skill_009,
         skill_010,
