@@ -94,3 +94,6 @@ venv_musicgen/
 !artifacts/ssot/*
 !artifacts/ssot/
 !artifacts/ssot/**
+# MyPy cache directories (may contain sensitive path information)
+.mypy_cache/
+**/.mypy_cache/
