@@ -61,7 +61,7 @@ class SecurityEvent:
     threat_level: ThreatLevel
     source_agent: str
     description: str
-    metadata: dict[str, Any] = field(default_factory=dict)
+    metadata: dict[str, Any] = field(default_factory=lambda: {})
     timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
     event_id: str = field(
         default_factory=lambda: hashlib.sha256(
@@ -284,7 +284,7 @@ class SecurityAgent:
 
         if alerts_needed:
             max_level = max(level for _, level in alerts_needed)
-            descriptions = [desc for desc, _ in alerts_needed]
+            # Descriptions available: [desc for desc, _ in alerts_needed]
 
             return SecurityAlert(
                 alert_id=hashlib.sha256(f"{datetime.now(UTC).isoformat()}".encode()).hexdigest()[

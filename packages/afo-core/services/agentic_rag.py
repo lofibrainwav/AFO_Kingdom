@@ -40,7 +40,7 @@ class RetrievedDocument:
     content: str
     source: str
     relevance_score: float
-    metadata: dict[str, Any] = field(default_factory=dict)
+    metadata: dict[str, Any] = field(default_factory=lambda: {})
 
 
 @dataclass

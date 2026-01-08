@@ -39,8 +39,8 @@ class Span:
     start_time: float
     end_time: float | None = None
     status: str = "OK"
-    attributes: dict[str, Any] = field(default_factory=dict)
-    events: list[dict[str, Any]] = field(default_factory=list)
+    attributes: dict[str, Any] = field(default_factory=lambda: {})
+    events: list[dict[str, Any]] = field(default_factory=lambda: [])
 
     @property
     def duration_ms(self) -> float | None:
@@ -56,7 +56,7 @@ class Metric:
     name: str
     value: float
     unit: str
-    labels: dict[str, str] = field(default_factory=dict)
+    labels: dict[str, str] = field(default_factory=lambda: {})
     timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
 
 
@@ -143,7 +143,6 @@ class AIObservability:
             del self._active_spans[span_id]
             self._completed_spans.append(span)
 
-            # Record latency metric
             if span.duration_ms:
                 self.record_metric(
                     name=f"{operation_name}.latency",
@@ -158,13 +157,15 @@ class AIObservability:
             # Check compliance
             self._check_compliance(span)
 
-    def record_metric(self, name: str, value: float, unit: str = "count", **labels) -> None:
+    def record_metric(
+        self, name: str, value: float, unit: str = "count", labels: dict[str, str] | None = None
+    ) -> None:
         """Record a metric data point."""
         metric = Metric(
             name=name,
             value=value,
             unit=unit,
-            labels=labels,
+            labels=labels or {},
         )
         self._metrics.append(metric)
 
@@ -313,14 +314,12 @@ def traced(
         @wraps(func)
         async def async_wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
             with observability.trace(op_name, **default_attributes):
-                result = await func(*args, **kwargs)  # type: ignore
-                return cast(R, result)
+                return await func(*args, **kwargs)  # type: ignore[return-value]
 
         @wraps(func)
         def sync_wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
             with observability.trace(op_name, **default_attributes):
-                result = func(*args, **kwargs)
-                return cast(R, result)
+                return func(*args, **kwargs)
 
         if inspect.iscoroutinefunction(func):
             return async_wrapper  # type: ignore
