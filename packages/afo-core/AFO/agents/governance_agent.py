@@ -26,12 +26,12 @@ logger = logging.getLogger(__name__)
 
 
 class RiskLevel(Enum):
-    """Risk classification for governance decisions."""
+    """Risk classification for governance decisions (ordered by severity)."""
 
-    LOW = "low"  # Auto-approve
-    MEDIUM = "medium"  # Log and proceed with caution
-    HIGH = "high"  # Require additional validation
-    CRITICAL = "critical"  # Escalate to human
+    LOW = 1  # Auto-approve
+    MEDIUM = 2  # Log and proceed with caution
+    HIGH = 3  # Require additional validation
+    CRITICAL = 4  # Escalate to human
 
 
 @dataclass

@@ -31,11 +31,13 @@ class ChancellorGraph:
             # Default node configuration
             nodes_dict = {
                 "CMD": nodes.cmd_node,
+                "SECURITY": nodes.security_node,
                 "PARSE": nodes.parse_node,
                 "TRUTH": nodes.truth_node,
                 "GOODNESS": nodes.goodness_node,
                 "BEAUTY": nodes.beauty_node,
                 "MERGE": nodes.merge_node,
+                "GOVERNANCE": nodes.governance_node,
                 "EXECUTE": nodes.execute_node,
                 "VERIFY": nodes.verify_node,
                 "REPORT": nodes.report_node,

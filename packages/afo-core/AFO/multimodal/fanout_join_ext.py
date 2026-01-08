@@ -10,6 +10,12 @@ from typing import Any, Dict, List, TypedDict
 
 from langgraph.graph import END, StateGraph
 
+from AFO.multimodal.capcut_branch import capcut_edit_video
+from AFO.multimodal.fusion_branch import fusion_composite
+from AFO.multimodal.music_branch import music_branch_processor
+from AFO.multimodal.timeline_state_generator import timeline_generator_node
+from AFO.multimodal.video_branch import video_branch_processor
+
 
 class MultimodalState(TypedDict):
     """확장된 멀티모달 상태 - 병렬 브랜치 지원"""
@@ -19,44 +25,26 @@ class MultimodalState(TypedDict):
     video_plan: dict[str, Any]  # VideoBranch 출력
     music_plan: dict[str, Any]  # MusicBranch 출력
     joined_plan: dict[str, Any]  # JOIN 결과
+    fusion_plan: dict[str, Any]  # Fusion 결과
+    capcut_plan: dict[str, Any]  # CapCut 결과
 
 
 def video_branch_node(state: MultimodalState) -> dict[str, Any]:
     """
     VideoBranch: TimelineState를 비디오 계획으로 변환
-    각 구간의 video 지시어를 실제 렌더링 파라미터로 확장
+    가져온 video_branch_processor를 사용하여 전문적인 파라미터 확장 수행
     """
     timeline = state.get("timeline", {})
     sections = timeline.get("sections", [])
 
-    # 비디오 계획 생성 (stub 구현 - 실제로는 더 정교한 로직)
-    video_plan = {"total_duration": timeline.get("total_duration", "0:00"), "sections": []}
+    # 전문 프로세서 호출
+    rendered_sections = video_branch_processor(sections)
 
-    for section in sections:
-        video_instruction = section.get("video", "fade_in")
-
-        # 비디오 지시어를 실제 파라미터로 변환
-        if video_instruction == "fade_in":
-            video_params = {"effect": "opacity_transition", "duration": 2.0, "ease": "in_out"}
-        elif video_instruction == "text_overlay":
-            video_params = {"effect": "text_overlay", "position": "center", "animation": "slide_up"}
-        elif video_instruction == "cut_sequence":
-            video_params = {"effect": "cut_sequence", "interval": 0.5}
-        elif video_instruction == "zoom_effect":
-            video_params = {"effect": "zoom", "scale_factor": 1.2, "duration": 1.0}
-        elif video_instruction == "fade_out":
-            video_params = {"effect": "fade_out", "duration": 3.0}
-        else:
-            video_params = {"effect": "default"}
-
-        video_plan["sections"].append(
-            {
-                "time": section.get("time"),
-                "intent": section.get("intent"),
-                "video_params": video_params,
-                "description": section.get("description"),
-            }
-        )
+    video_plan = {
+        "total_duration": timeline.get("total_duration", "0:00"),
+        "template_type": timeline.get("template_type", "standard"),
+        "sections": rendered_sections,
+    }
 
     return {"video_plan": video_plan}
 
@@ -64,56 +52,19 @@ def video_branch_node(state: MultimodalState) -> dict[str, Any]:
 def music_branch_node(state: MultimodalState) -> dict[str, Any]:
     """
     MusicBranch: TimelineState를 음악 계획으로 변환
-    각 구간의 music 지시어를 실제 오디오 파라미터로 확장
+    가져온 music_branch_processor를 사용하여 전문적인 파라미터 확장 수행
     """
     timeline = state.get("timeline", {})
     sections = timeline.get("sections", [])
 
-    # 음악 계획 생성 (stub 구현 - 실제로는 더 정교한 로직)
+    # 전문 프로세서 호출
+    rendered_sections = music_branch_processor(sections)
+
     music_plan = {
         "total_duration": timeline.get("total_duration", "0:00"),
-        "bpm_range": "90-120",  # 기본값
-        "key": "C Major",  # 기본값
-        "sections": [],
+        "bpm": 128 if timeline.get("template_type") == "short" else 95,
+        "sections": rendered_sections,
     }
-
-    for section in sections:
-        music_instruction = section.get("music", "slow_build")
-
-        # 음악 지시어를 실제 파라미터로 변환
-        if music_instruction == "slow_build":
-            music_params = {"energy": "low", "tempo": "slow", "instruments": ["pads", "ambient"]}
-        elif music_instruction == "drop_beat":
-            music_params = {
-                "energy": "high",
-                "tempo": "fast",
-                "instruments": ["kick", "snare", "bass"],
-            }
-        elif music_instruction == "main_theme":
-            music_params = {
-                "energy": "medium",
-                "tempo": "moderate",
-                "instruments": ["melody", "harmony"],
-            }
-        elif music_instruction == "peak_energy":
-            music_params = {
-                "energy": "peak",
-                "tempo": "fast",
-                "instruments": ["full_orchestra", "fx"],
-            }
-        elif music_instruction == "resolve":
-            music_params = {"energy": "low", "tempo": "slow", "instruments": ["resolution", "fade"]}
-        else:
-            music_params = {"energy": "medium", "tempo": "moderate"}
-
-        music_plan["sections"].append(
-            {
-                "time": section.get("time"),
-                "intent": section.get("intent"),
-                "music_params": music_params,
-                "description": section.get("description"),
-            }
-        )
 
     return {"music_plan": music_plan}
 
@@ -156,20 +107,60 @@ def join_node(state: MultimodalState) -> dict[str, Any]:
     return {"joined_plan": joined_plan}
 
 
+def fusion_node(state: MultimodalState) -> dict[str, Any]:
+    """
+    FUSION: DaVinci Resolve Fusion 컴포지팅 계획 생성
+    """
+    joined_plan = state.get("joined_plan", {})
+    sections = joined_plan.get("sections", [])
+
+    # 더미 입력 클립 리스트 생성 (실제 환경에서는 DB나 파일 시스템에서 가져옴)
+    input_clips = [f"/assets/clips/clip_{i}.mp4" for i in range(len(sections))]
+
+    # Fusion 컴포지팅 계획 생성 (Dry Run)
+    result = fusion_composite(
+        sections, input_clips, "/output/fusion_composite.mp4", dry_run=True
+    )
+
+    return {"fusion_plan": result}
+
+
+def capcut_node(state: MultimodalState) -> dict[str, Any]:
+    """
+    CAPCUT: TikTok 스타일 비디오 편집 계획 생성
+    """
+    joined_plan = state.get("joined_plan", {})
+    sections = joined_plan.get("sections", [])
+
+    # CapCut 스타일 편집 계획 생성 (Dry Run)
+    result = capcut_edit_video(
+        sections,
+        "/output/fusion_composite.mp4",
+        "/output/final_tiktok_style.mp4",
+        template="tiktok_trend",
+        dry_run=True,
+    )
+
+    return {"capcut_plan": result}
+
+
 def render_node(state: MultimodalState) -> dict[str, Any]:
     """
     RENDER: 통합된 멀티모달 계획을 출력
     세종/개발자/바이브 모드 지원
     """
     joined_plan = state.get("joined_plan", {})
+    fusion_plan = state.get("fusion_plan", {})
+    capcut_plan = state.get("capcut_plan", {})
 
     # 구조화된 출력
     output = {
-        "status": "멀티모달 병렬 계획 생성 완료",
-        "joined_plan": joined_plan,
-        "sections_count": len(joined_plan.get("sections", [])),
+        "status": "멀티모달 통합 파이프라인 생성 완료",
         "total_duration": joined_plan.get("total_duration", "0:00"),
-        "sync_status": joined_plan.get("sync_status", "unknown"),
+        "joined_plan": joined_plan,
+        "fusion_plan": fusion_plan,
+        "capcut_plan": capcut_plan,
+        "pipeline_stages": ["ABSORB", "GENERATE", "FANOUT", "JOIN", "FUSION", "CAPCUT"],
     }
 
     return {"output": json.dumps(output, indent=2, ensure_ascii=False)}
@@ -231,6 +222,8 @@ def build_multimodal_workflow() -> StateGraph:
 
     # JOIN 노드
     workflow.add_node("join", join_node)
+    workflow.add_node("fusion", fusion_node)
+    workflow.add_node("capcut", capcut_node)
     workflow.add_node("render", render_node)
 
     # 플로우 설정
@@ -244,7 +237,9 @@ def build_multimodal_workflow() -> StateGraph:
     # JOIN: 병렬 브랜치 → 단일 출력
     workflow.add_edge("video_branch", "join")
     workflow.add_edge("music_branch", "join")
-    workflow.add_edge("join", "render")
+    workflow.add_edge("join", "fusion")
+    workflow.add_edge("fusion", "capcut")
+    workflow.add_edge("capcut", "render")
     workflow.add_edge("render", END)
 
     return workflow
@@ -266,7 +261,13 @@ def generate_multimodal_plan(intent: str = "흥겨운 콘텐츠") -> dict[str, A
         통합된 멀티모달 계획 딕셔너리
     """
     initial_state = MultimodalState(
-        raw_intent=intent, timeline={}, video_plan={}, music_plan={}, joined_plan={}
+        raw_intent=intent,
+        timeline={},
+        video_plan={},
+        music_plan={},
+        joined_plan={},
+        fusion_plan={},
+        capcut_plan={},
     )
 
     result = multimodal_app.invoke(initial_state)

@@ -21,6 +21,7 @@ NodeFn = Callable[[GraphState], GraphState]
 # Any changes to execution order MUST be made here and reflected in documentation
 ORDER = [
     "CMD",
+    "SECURITY",  # 2026 AI Threat Detection (TICKET-085)
     "PARSE",
     "TRUTH",  # 眞 (Truth) - 기술적 확실성
     "GOODNESS",  # 善 (Goodness) - 윤리·안정성
@@ -29,6 +30,7 @@ ORDER = [
     "ETERNITY",  # 永 (Eternity) - 영속성·재현성
     "MIPRO",  # MIPRO optimization node (optional, feature-flag controlled)
     "MERGE",  # 5기둥 종합 평가
+    "GOVERNANCE",  # 2026 Policy Adherence & Bounded Autonomy (TICKET-084)
     "EXECUTE",
     "VERIFY",
     "REPORT",
@@ -114,32 +116,57 @@ def run_v2(input_payload: dict[str, Any], nodes: dict[str, NodeFn]) -> GraphStat
         "kingdom_dna_injected": True,
     }
 
+    from AFO.observability.ai_observability import observability
+
     for step in ORDER:
         state.step = step
         _emit(state, step, "enter", True)
 
-        # Contract: Apply Sequential Thinking BEFORE every node (眞: step-by-step reasoning)
-        state = apply_sequential_thinking(state, step)
+        # Contract: Trace every node execution (眞: transparency, 善: monitoring)
+        with observability.trace(
+            operation_name=f"chancellor_graph.{step}",
+            trace_id=state.trace_id,
+            request_id=state.request_id,
+            agent="Chancellor",
+        ) as span:
+            # Contract: Apply Sequential Thinking BEFORE every node (眞: step-by-step reasoning)
+            state = apply_sequential_thinking(state, step)
 
-        # Contract: Inject Context7 knowledge BEFORE every node (眞: knowledge grounding)
-        state = inject_context(state, step)
+            # Contract: Inject Context7 knowledge BEFORE every node (眞: knowledge grounding)
+            state = inject_context(state, step)
 
-        fn = nodes.get(step)
-        if fn is None:
-            state.errors.append(f"missing node: {step}")
-            _emit(state, step, "missing_node", False)
-            _checkpoint(state, step)
-            return state
+            fn = nodes.get(step)
+            if fn is None:
+                state.errors.append(f"missing node: {step}")
+                _emit(state, step, "missing_node", False)
+                span.status = "ERROR"
+                span.attributes["error"] = f"missing node: {step}"
+                _checkpoint(state, step)
+                return state
 
-        try:
-            state = fn(state)
-            state.updated_at = _now()
-            _emit(state, step, "exit", True)
-            _checkpoint(state, step)
-        except Exception as e:
-            state.errors.append(f"{step} failed: {type(e).__name__}: {e}")
-            _emit(state, step, "error", False, {"error": f"{type(e).__name__}: {e}"})
-            _checkpoint(state, step)
-            return state
+            try:
+                state = fn(state)
+                state.updated_at = _now()
+                _emit(state, step, "exit", True)
+
+                # Record outcome in span
+                span.status = "OK"
+                if step == "MERGE":
+                    merge_out = state.outputs.get("MERGE", {})
+                    span.attributes["trinity_score"] = merge_out.get("trinity_score", 0.0)
+                    span.attributes["governance_approved"] = True  # Mark for compliance check
+
+                _checkpoint(state, step)
+
+            except Exception as e:
+                state.errors.append(f"{step} failed: {type(e).__name__}: {e}")
+                _emit(state, step, "error", False, {"error": f"{type(e).__name__}: {e}"})
+                span.status = "ERROR"
+                span.attributes["error.type"] = type(e).__name__
+                span.attributes["error.message"] = str(e)
+                _checkpoint(state, step)
+                return state
+
+    return state
 
     return state

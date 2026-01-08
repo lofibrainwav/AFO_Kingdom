@@ -8,10 +8,14 @@ if TYPE_CHECKING:
     from api.chancellor_v2.graph.state import GraphState
 
 
-def truth_node(state: GraphState) -> GraphState:
+from AFO.services.agentic_rag import agentic_rag
+
+
+async def truth_node(state: GraphState) -> GraphState:
     """Evaluate technical aspects of the planned execution.
 
     眞 (Truth) - 기술적 확실성, 타입 안전성, 테스트 무결성 평가
+    2026 Enhancement: Agentic RAG grounding for technical truth.
 
     Args:
         state: Current graph state
@@ -20,21 +24,35 @@ def truth_node(state: GraphState) -> GraphState:
         Updated graph state with truth evaluation
     """
     skill_id = state.plan.get("skill_id", "")
-    query = state.plan.get("query", "")
+    query_str = state.input.get("command", "") or state.plan.get("query", "")
 
-    # 실제 기술적 평가 로직
-    type_checking_score = _evaluate_type_safety(skill_id, query)
+    # 1. Agentic RAG Evaluation (TICKET-087)
+    rag_result = await agentic_rag.query(query_str)
+
+    # 2. Heuristic evaluations
+    type_checking_score = _evaluate_type_safety(skill_id, query_str)
     test_coverage_score = _evaluate_test_coverage(skill_id)
-    code_quality_score = _evaluate_code_quality(query)
+    code_quality_score = _evaluate_code_quality(query_str)
 
-    # 종합 Truth 점수 (가중 평균)
-    truth_score = type_checking_score * 0.4 + test_coverage_score * 0.35 + code_quality_score * 0.25
+    # 3. Comprehensive Truth Score (weighted average + RAG boost)
+    # RAG confidence acts as a multi-plier/grounding for truth
+    base_score = (
+        type_checking_score * 0.4 + test_coverage_score * 0.35 + code_quality_score * 0.25
+    )
+
+    # If RAG is highly confident, it grounds the truth score
+    truth_score = base_score * 0.5 + rag_result.confidence * 0.5
 
     evaluation = {
         "skill_id": skill_id,
         "type_checking": type_checking_score,
         "test_coverage": test_coverage_score,
         "code_quality": code_quality_score,
+        "rag_grounding": {
+            "confidence": rag_result.confidence,
+            "decision_path": rag_result.decision_path,
+            "was_corrected": rag_result.was_corrected,
+        },
         "score": truth_score,
         "issues": [],
     }
@@ -46,6 +64,24 @@ def truth_node(state: GraphState) -> GraphState:
     state.outputs["TRUTH"] = evaluation
 
     return state
+
+
+def truth_node_sync(state: GraphState) -> GraphState:
+    """Synchronous wrapper for truth_node (for graph runner compatibility)."""
+    import asyncio
+
+    try:
+        loop = asyncio.get_event_loop()
+        if loop.is_running():
+            import concurrent.futures
+
+            with concurrent.futures.ThreadPoolExecutor() as pool:
+                future = pool.submit(asyncio.run, truth_node(state))
+                return future.result()
+        else:
+            return loop.run_until_complete(truth_node(state))
+    except (RuntimeError, Exception):
+        return asyncio.run(truth_node(state))
 
 
 def _evaluate_type_safety(skill_id: str, query: str) -> float:
