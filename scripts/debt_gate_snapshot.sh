@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-export OUT_JSON="artifacts/debt_gate/baseline.json"
+export OUT_JSON="configs/debt_gate/baseline.json"
 export TMP_OUT="$(mktemp)"
 
 echo "🔍 Capturing Ruff error statistics..."
@@ -9,7 +9,7 @@ echo "🔍 Capturing Ruff error statistics..."
 poetry run ruff check . --statistics --exit-zero | tee "$TMP_OUT" >/dev/null
 
 python3 - <<'PY'
-import json, re, datetime, pathlib, os
+import json, re, datetime, pathlib, os, sys
 
 tmp_out_path = pathlib.Path(os.environ["TMP_OUT"])
 out_json_path = pathlib.Path(os.environ["OUT_JSON"])
@@ -23,8 +23,6 @@ txt = tmp_out_path.read_text(errors="ignore")
 # Looking for "Found N errors." or "Found N errors (M fixed)."
 m = re.search(r"Found\s+(\d+)\s+error", txt)
 if not m:
-    # If no errors found, ruff might not print "Found 0 errors" in some versions, 
-    # but usually it does with --statistics. Let's handle NO matches as 0.
     count = 0
     print("No errors found in ruff output.")
 else:
