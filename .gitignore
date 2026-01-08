@@ -85,7 +85,7 @@ tools/mlx_optimization/.venv/
 .bruin.yml
 .env.antigravity
 
-tools/dgm/upstream
+
 
 # Music generation virtual environment
 venv_afo_music/

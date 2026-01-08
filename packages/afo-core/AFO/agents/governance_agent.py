@@ -1,5 +1,5 @@
 # Trinity Score: 92.0 (Established by Chancellor)
-"""Governance Agent Core (TICKET-084)
+"""Governance Agent Core (TICKET-097)
 Policy adherence monitoring and bounded autonomy enforcement.
 
 2026 Best Practices Implementation:

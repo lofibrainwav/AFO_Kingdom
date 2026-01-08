@@ -1,11 +1,11 @@
 # 🎯 AFO 왕국 티켓 보드 (SSOT)
 
 **프로젝트 목표**: AFO Kingdom 자율 운영 시스템 완성
-**최종 업데이트**: 2026-01-01
-**Trinity Score**: 93.2% ✅ (목표: 90%+)
+**최종 업데이트**: 2026-01-08
+**Trinity Score**: 91.0% ✅ (목표: 90%+)
 **HEAD**: `40b98e37`
 
-## 📋 Phase 3-8 완료 티켓
+## 📋 Phase 3-17 완료 티켓
 
 | ID | 제목 | Phase | Commit | Seal Tag | Evidence |
 |---|------|-------|--------|----------|----------|
@@ -23,17 +23,22 @@
 | TICKET-071 | CI Failure Alert | 8-A | `99c62fc8` | `ssot-phase8A-ci-alert-*` | `trinity-gate.yml` (failure step) |
 | TICKET-072 | Release 체계 강화 | 8-B | `2a1fd63d` | `ssot-phase8B-release-*` | `scripts/afo_release_tag.sh` |
 | TICKET-073 | Dashboard Status Card | 8-C | `5fb9f6f0` | `ssot-phase8C-dashboard-*` | `scripts/afo_dashboard.sh` |
+| TICKET-074 | Sakana DGM Integration | 9 | `N/A` | `ssot-phase9-dgm-*` | tools/dgm/upstream (RESTORED) |
 | TICKET-075 | MIPROv2 Robustness | 10 | `9a3fcde5` | `ssot-phase10-mipro-*` | Safe-Save, local Ollama |
 | TICKET-076 | TimelineState Generator Node | 11 | `ed8f7c2a` | `ssot-phase11-timeline-*` | Dynamic Template Expansion |
-| TICKET-077 | Multimodal FANOUT-JOIN Ext | 12 | `f59390e6` | `ssot-phase12-multimodal-*` | Parameter Expansion |
+| TICKET-077 | Multimodal FANOUT-JOIN Ext | 12 | `7e75c152` | `ssot-phase12-multimodal-*` | Parameter Expansion |
 | TICKET-090 | Pyright Quality Gate | 13 | `c44bf7cd` | `ssot-phase13-pyright-*` | Strict Baseline (4553 errors) |
-| TICKET-078 | VideoBranch Detail Implementation | 13 | `f59390e6` | `ssot-phase13-video-*` | FFmpeg/RunwayML Parameters |
-| TICKET-079 | MusicBranch Detail Implementation | 13 | `f59390e6` | `ssot-phase13-music-*` | Suno/MusicGen Prompts |
-| TICKET-080 | Fusion Compositing Integration | 14 | `f59390e6` | `ssot-phase14-fusion-*` | Node Graph Integration |
-| TICKET-081 | CapCut Style Integration | 15 | `f59390e6` | `ssot-phase15-capcut-*` | TikTok Template Integration |
+| TICKET-078 | VideoBranch Detail Implementation | 13 | `7e75c152` | `ssot-phase13-video-*` | FFmpeg/RunwayML Parameters |
+| TICKET-079 | MusicBranch Detail Implementation | 13 | `7e75c152` | `ssot-phase13-music-*` | Suno/MusicGen Prompts |
+| TICKET-080 | Fusion Compositing Integration | 14 | `7e75c152` | `ssot-phase14-fusion-*` | Node Graph Integration |
+| TICKET-081 | CapCut Style Integration | 15 | `7e75c152` | `ssot-phase15-capcut-*` | TikTok Template Integration |
 | TICKET-091 | Phase 15: Security Seal | 15 | `e314fe9d` | `ssot-phase15-security-*` | XSS Fixes, Secret Removal, Quarantine |
 | TICKET-092 | Phase 16: CI Legacy Hygiene | 16 | `b59390e6` | `ssot-phase16-hygiene-*` | Hetzner Purge, Shellcheck Fixes, CI Scoping |
 | TICKET-093 | Phase 17: Debt Gate | 17 | `c44bf7cd` | `ssot-phase17-debt-*` | Ruff Baseline Monitoring, snapshot tool |
+| TICKET-097 | Governance Agent 구현 | 18 | `7e75c152` | `ssot-phase18-governance-*` | governance_agent.py |
+| TICKET-098 | Security Agent 구현 | 19 | `7e75c152` | `ssot-phase19-security-*` | security_agent.py |
+| TICKET-099 | OpenTelemetry AI Observability | 20 | `7e75c152` | `ssot-phase20-otel-*` | ai_observability.py |
+| TICKET-100 | Agentic RAG Enhancement | 21 | `7e75c152` | `ssot-phase21-rag-*` | agentic_rag.py |
 ## TICKET-082 — Suno MusicBranch Integration & AV Fusion
 - Phase: 16 (멀티모달 확장)
 - Priority: HIGH
@@ -178,7 +183,7 @@ TimelineState 하나로 영상 + 음악을 자동으로 합성하여 완전한 �
 
 ## 2026 Roadmap Tickets
 
-## TICKET-084 — Governance Agent 구현
+## TICKET-097 — Governance Agent 구현
 - Phase: 18 (AI 거버넌스)
 - Priority: HIGH
 - Type: Feature Enhancement
@@ -204,7 +209,7 @@ TimelineState 하나로 영상 + 음악을 자동으로 합성하여 완전한 �
 
 ---
 
-## TICKET-085 — Security Agent 구현
+## TICKET-098 — Security Agent 구현
 - Phase: 19 (보안 자동화)
 - Priority: HIGH
 - Type: Security Enhancement
@@ -228,7 +233,7 @@ TimelineState 하나로 영상 + 음악을 자동으로 합성하여 완전한 �
 
 ---
 
-## TICKET-086 — OpenTelemetry AI Observability
+## TICKET-099 — OpenTelemetry AI Observability
 - Phase: 20 (관측성)
 - Priority: MEDIUM
 - Type: Monitoring Enhancement
@@ -252,7 +257,7 @@ Agent behavior 실시간 모니터링 및 성능 추적.
 
 ---
 
-## TICKET-087 — Agentic RAG Enhancement
+## TICKET-100 — Agentic RAG Enhancement
 - Phase: 21 (RAG 고도화)
 - Priority: MEDIUM
 - Type: Feature Enhancement
@@ -402,4 +407,40 @@ Pyright를 "돌아가기만 하는 상태"에서 "운영 가능한 품질 게이
 - [x] CI에서 strict 범위는 FAIL-ON-ERROR로 차단됨 ✅ (Baseline 기준)
 - [x] 레거시 범위는 REPORT만 하고 차단하지 않음 ✅
 - [x] baseline 로그가 artifacts/ssot 또는 docs에 남아 있음 ✅ (packages/afo-core/AFO/pyright_baseline.txt)
+
+
+---
+
+## Phase 22 — Chancellor V2 & Deployment Hardening
+
+| ID | 제목 | Phase | Priority | Status | Evidence |
+|---|------|-------|----------|--------|----------|
+| TICKET-094 | Chancellor V2 Integration | 22 | HIGH | [/] 진행 중 | PH22_03_V2_CUTOVER_SSOT.md |
+| TICKET-095 | Vault Manager Implementation | 22 | HIGH | [/] 진행 중 | vault_manager.py |
+| TICKET-096 | Phase 22 Cleanup & Restoration | 22 | MEDIUM | ✅ 완료 | UPSTREAM_PIN.txt / jade_bell.mp3 |
+
+## TICKET-094 — Chancellor V2 Integration (Shadow/Canary)
+- Phase: 22 (운영 최적화)
+- Priority: HIGH
+- Type: Architecture Enhancement
+- Status: [/] 진행 중 (Shadow 완료, Canary 준비)
+- Evidence: packages/afo-core/docs/chancellor/PH22_03_V2_CUTOVER_SSOT.md
+- Dependencies: LangGraph, Chancellor V1
+
+## TICKET-095 — Vault Manager Implementation (Zero Trust Security)
+- Phase: 22 (보안 강화)
+- Priority: HIGH
+- Type: Security Enhancement
+- Status: [/] 진행 중 (Draft 완료)
+- Evidence: packages/afo-core/AFO/security/vault_manager.py
+- Dependencies: Hashicorp Vault (optional), local encryption fallback
+
+## TICKET-096 — Phase 22 Cleanup & Strategic Restoration
+- Phase: 22 (유지보수)
+- Priority: MEDIUM
+- Type: Maintenance
+- Status: ✅ 완료 (2026-01-08)
+- Evidence: tools/dgm/upstream restoration, jade_bell.mp3 recovery
+- Goal: PR 준비를 위한 불필요 파일 정리 및 핵심 유산(DGM)의 전략적 보존.
+
 

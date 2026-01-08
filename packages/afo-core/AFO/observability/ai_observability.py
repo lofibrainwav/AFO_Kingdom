@@ -1,5 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""OpenTelemetry AI Observability Module (TICKET-086)
+"""OpenTelemetry AI Observability Module (TICKET-099)
 Real-time monitoring and performance tracking for AFO Kingdom agents.
 
 Features:
