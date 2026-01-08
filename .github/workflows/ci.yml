@@ -30,9 +30,14 @@ jobs:
       - name: 의존성 설치 (재현성 보장)
         run: uv sync --frozen               # uv.lock 기반 정확 설치
 
+      - name: Setup Node.js (for pyright)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
       - name: Gate 1 - Pyright (Truth)
         run: |
-          uv run pyright --project packages/afo-core/pyproject.toml
+          npx pyright --project packages/afo-core/pyproject.toml
 
       - name: Generate Evidence (Trinity Protocol)
         run: |
