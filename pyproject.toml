@@ -12,7 +12,6 @@ dependencies = [
     "ragas>=0.4.1,<0.5",
     "boto3>=1.42.14,<2",
     "python-frontmatter>=1.1.0,<2",
-    "hcloud>=2.13.0,<3",
     "kafka-python>=2.3.0,<3",
     "sentence-transformers>=5.2.0,<6",
     "sqlmodel>=0.0.14,<0.0.15",

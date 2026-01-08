@@ -2810,26 +2810,6 @@ hpack = ">=4.1,<5"
 hyperframe = ">=6.1,<7"
 
 [[package]]
-name = "hcloud"
-version = "2.13.0"
-description = "Official Hetzner Cloud python library"
-optional = false
-python-versions = ">=3.10"
-groups = ["main"]
-files = [
-    {file = "hcloud-2.13.0-py3-none-any.whl", hash = "sha256:8b97c3f98fd8198e92375b37dd9ec082d011079bcec2aa506b62699a6850f6a6"},
-    {file = "hcloud-2.13.0.tar.gz", hash = "sha256:974b22a36c347e113ff8b25abd2cd3868011288485192b562729dba6b22375e1"},
-]
-
-[package.dependencies]
-python-dateutil = ">=2.7.5"
-requests = ">=2.20"
-
-[package.extras]
-docs = ["myst-parser (>=4,<4.1)", "sphinx (>=8,<8.3)", "sphinx-rtd-theme (>=3,<3.1)", "watchdog (>=6,<6.1)"]
-test = ["coverage (>=7.13,<7.14)", "mypy (>=1.19,<1.20)", "pylint (>=4,<4.1)", "pytest (>=9,<9.1)", "pytest-cov (>=7,<7.1)", "types-python-dateutil", "types-requests"]
-
-[[package]]
 name = "hexbytes"
 version = "1.3.1"
 description = "hexbytes: Python `bytes` subclass that decodes hex, with a readable console output"
@@ -10427,4 +10407,4 @@ cffi = ["cffi (>=1.17,<2.0) ; platform_python_implementation != \"PyPy\" and pyt
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12,<3.13"
-content-hash = "f653af63afc07a587b0a3a16041d6aad713ef1170cadb6d7d23fd1dbb068e3aa"
+content-hash = "8660927ab18e7c69369c8b19adb72975f71ab463b647d52e4ee651c1f8533224"
