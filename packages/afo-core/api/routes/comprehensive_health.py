@@ -126,14 +126,29 @@ async def comprehensive_health_check() -> dict[str, Any]:
         automation_status = await _check_automation_tools()
 
         # 8. 종합 결과 구성
-        # health_data에서 trinity 정보 추출
+        # health_data에서 trinity 정보 추출 (TrinityMetrics 객체 또는 dict)
         trinity_info = health_data.get("trinity", {})
-        if isinstance(trinity_info, dict) and "trinity_score" in trinity_info:
-            trinity_score = trinity_info["trinity_score"]
-        elif "health_percentage" in health_data:
-            trinity_score = health_data["health_percentage"] / 100.0
+        breakdown = {
+            "truth": 0.0,
+            "goodness": 0.0,
+            "beauty": 0.0,
+            "filial_serenity": 0.0,
+            "eternity": 0.0,
+            "iccls_gap": 0.0,
+            "sentiment": 0.0,
+        }
+
+        if isinstance(trinity_info, dict):
+            breakdown["truth"] = trinity_info.get("truth", 0.0)
+            breakdown["goodness"] = trinity_info.get("goodness", 0.0)
+            breakdown["beauty"] = trinity_info.get("beauty", 0.0)
+            breakdown["filial_serenity"] = trinity_info.get("filial_serenity", 0.0)
+            breakdown["eternity"] = trinity_info.get("eternity", 1.0)
+            breakdown["iccls_gap"] = trinity_info.get("iccls_gap", 0.0)
+            breakdown["sentiment"] = trinity_info.get("sentiment", 0.0)
+            trinity_score = trinity_info.get("trinity_score", health_data.get("health_percentage", 0) / 100.0)
         else:
-            trinity_score = 0.0
+            trinity_score = health_data.get("health_percentage", 0) / 100.0
 
         config = health_check_config
         response_data = {
@@ -147,7 +162,8 @@ async def comprehensive_health_check() -> dict[str, Any]:
             "ts_v2": health_data.get("ts_v2"),
             "trinity_score": trinity_score,
             "health_percentage": round(trinity_score * 100, 2),
-            "trinity_breakdown": trinity_info if isinstance(trinity_info, dict) else {},
+            "trinity_breakdown": breakdown,  # 5기둥 상세 점수 (Dashboard용)
+            "breakdown": breakdown,  # Alias for fallback
             "skills": skills_status,
             "scholars": scholars_status,
             "mcp_tools": mcp_tools_status,
