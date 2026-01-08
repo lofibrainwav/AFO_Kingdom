@@ -23,12 +23,17 @@
 | TICKET-071 | CI Failure Alert | 8-A | `99c62fc8` | `ssot-phase8A-ci-alert-*` | `trinity-gate.yml` (failure step) |
 | TICKET-072 | Release 체계 강화 | 8-B | `2a1fd63d` | `ssot-phase8B-release-*` | `scripts/afo_release_tag.sh` |
 | TICKET-073 | Dashboard Status Card | 8-C | `5fb9f6f0` | `ssot-phase8C-dashboard-*` | `scripts/afo_dashboard.sh` |
-| TICKET-076 | TimelineState Generator Node | 11 | `WIP` | `ssot-phase11-timeline-*` | `packages/afo-core/AFO/multimodal/timeline_state_generator.py` |
-| TICKET-077 | Multimodal FANOUT-JOIN Extension | 12 | `WIP` | `ssot-phase12-multimodal-fanout-*` | `packages/afo-core/AFO/multimodal/fanout_join_ext.py` |
-| TICKET-078 | VideoBranch Detail Implementation | 13 | HIGH | `ssot-phase13-video-branch-*` | `packages/afo-core/AFO/multimodal/video_branch.py` |
-| TICKET-079 | MusicBranch Detail Implementation | 13 | HIGH | `ssot-phase13-music-branch-*` | `packages/afo-core/AFO/multimodal/music_branch.py` |
-| TICKET-080 | Fusion Compositing Integration | 14 | HIGH | `ssot-phase14-fusion-compositing-*` | `packages/afo-core/AFO/multimodal/fusion_branch.py` |
-| TICKET-081 | CapCut Style Integration | 15 | HIGH | `ssot-phase15-capcut-integration-*` | `packages/afo-core/AFO/multimodal/capcut_branch.py` |
+| TICKET-075 | MIPROv2 Robustness | 10 | `9a3fcde5` | `ssot-phase10-mipro-*` | Safe-Save, local Ollama |
+| TICKET-076 | TimelineState Generator Node | 11 | `ed8f7c2a` | `ssot-phase11-timeline-*` | Dynamic Template Expansion |
+| TICKET-077 | Multimodal FANOUT-JOIN Ext | 12 | `f59390e6` | `ssot-phase12-multimodal-*` | Parameter Expansion |
+| TICKET-090 | Pyright Quality Gate | 13 | `c44bf7cd` | `ssot-phase13-pyright-*` | Strict Baseline (4553 errors) |
+| TICKET-078 | VideoBranch Detail Implementation | 13 | `f59390e6` | `ssot-phase13-video-*` | FFmpeg/RunwayML Parameters |
+| TICKET-079 | MusicBranch Detail Implementation | 13 | `f59390e6` | `ssot-phase13-music-*` | Suno/MusicGen Prompts |
+| TICKET-080 | Fusion Compositing Integration | 14 | `f59390e6` | `ssot-phase14-fusion-*` | Node Graph Integration |
+| TICKET-081 | CapCut Style Integration | 15 | `f59390e6` | `ssot-phase15-capcut-*` | TikTok Template Integration |
+| TICKET-091 | Phase 15: Security Seal | 15 | `e314fe9d` | `ssot-phase15-security-*` | XSS Fixes, Secret Removal, Quarantine |
+| TICKET-092 | Phase 16: CI Legacy Hygiene | 16 | `b59390e6` | `ssot-phase16-hygiene-*` | Hetzner Purge, Shellcheck Fixes, CI Scoping |
+| TICKET-093 | Phase 17: Debt Gate | 17 | `c44bf7cd` | `ssot-phase17-debt-*` | Ruff Baseline Monitoring, snapshot tool |
 ## TICKET-082 — Suno MusicBranch Integration & AV Fusion
 - Phase: 16 (멀티모달 확장)
 - Priority: HIGH
@@ -177,8 +182,8 @@ TimelineState 하나로 영상 + 음악을 자동으로 합성하여 완전한 �
 - Phase: 18 (AI 거버넌스)
 - Priority: HIGH
 - Type: Feature Enhancement
-- Status: PLANNED
-- Evidence: packages/afo-core/AFO/agents/governance_agent.py
+- Status: ✅ 완료 (2026-01-08)
+- Evidence: packages/afo-core/AFO/agents/governance_agent.py, packages/afo-core/api/chancellor_v2/graph/nodes/governance_node.py
 - Dependencies: LangGraph, AICPA patterns
 
 ### Goal
@@ -190,14 +195,21 @@ TimelineState 하나로 영상 + 음악을 자동으로 합성하여 완전한 �
 3) Escalation path to human
 4) Audit trail 자동화
 
+### Acceptance Criteria (Reality Gate)
+- [x] GovernanceAgent (Sima Yi) 핵심 로직 구현 ✅
+- [x] Governance Node Graph Integration (MERGE-EXECUTE 사이) ✅
+- [x] RiskLevel Enum Bug 수정 및 정수형 가중치 적용 ✅
+- [x] Forbidden/Restricted Action 차단 검증 ✅
+- [x] Audit Trail 자동화 (governance_decisions.jsonl) ✅
+
 ---
 
 ## TICKET-085 — Security Agent 구현
 - Phase: 19 (보안 자동화)
 - Priority: HIGH
 - Type: Security Enhancement
-- Status: PLANNED
-- Evidence: packages/afo-core/AFO/agents/security_agent.py
+- Status: ✅ 완료 (2026-01-08)
+- Evidence: packages/afo-core/AFO/agents/security_agent.py, packages/afo-core/api/chancellor_v2/graph/nodes/security_node.py
 
 ### Goal
 이상 행동 탐지 및 실시간 보안 모니터링 자동화.
@@ -207,14 +219,21 @@ TimelineState 하나로 영상 + 음악을 자동으로 합성하여 완전한 �
 2) Real-time security monitoring
 3) Threat response automation
 
+### Acceptance Criteria (Reality Gate)
+- [x] SecurityAgent (Zhang Fei) 핵심 로직 구현 ✅
+- [x] Security Node Graph Integration (주입 공격 탐지) ✅
+- [x] ThreatLevel Enum Bug 수정 및 정수형 가중치 적용 ✅
+- [x] Entity Blocking 및 실시간 모니터링 검증 ✅
+- [x] Security Events 자동 로깅 (security_events.jsonl) ✅
+
 ---
 
 ## TICKET-086 — OpenTelemetry AI Observability
 - Phase: 20 (관측성)
 - Priority: MEDIUM
 - Type: Monitoring Enhancement
-- Status: PLANNED
-- Evidence: packages/afo-core/AFO/observability/
+- Status: ✅ 완료 (2026-01-08)
+- Evidence: packages/afo-core/AFO/observability/ai_observability.py, packages/afo-core/api/chancellor_v2/graph/runner.py
 
 ### Goal
 Agent behavior 실시간 모니터링 및 성능 추적.
@@ -224,14 +243,21 @@ Agent behavior 실시간 모니터링 및 성능 추적.
 2) Performance metrics dashboard
 3) Compliance violation detection
 
+### Acceptance Criteria (Reality Gate)
+- [x] AIObservability (Distributed Tracing) 핵심 구현 ✅
+- [x] Graph Runner (runner.py) 자동 Span 생성 연동 ✅
+- [x] Latency, Error Rate, Trinity Score 메트릭 수집 ✅
+- [x] `traces.jsonl` 영속화 및 Compliance Violation 감지 ✅
+- [x] 실시간 성능 모니터링 대시보드 데이터 준비 ✅
+
 ---
 
 ## TICKET-087 — Agentic RAG Enhancement
 - Phase: 21 (RAG 고도화)
 - Priority: MEDIUM
 - Type: Feature Enhancement
-- Status: PLANNED
-- Evidence: packages/afo-core/services/agentic_rag.py
+- Status: ✅ 완료 (2026-01-08)
+- Evidence: packages/afo-core/services/agentic_rag.py, packages/afo-core/api/chancellor_v2/graph/nodes/truth_node.py
 
 ### Goal
 LangGraph Agentic RAG 패턴 적용으로 검색 정확도 향상.
@@ -241,6 +267,13 @@ LangGraph Agentic RAG 패턴 적용으로 검색 정확도 향상.
 2) Document relevance grading
 3) Web search fallback
 4) Hallucination self-correction
+
+### Acceptance Criteria (Reality Gate)
+- [x] AgenticRAG (Hua Tuo) 핵심 아키텍처 구현 ✅
+- [x] TRUTH Node 연동 (기술적 확실성 근거 강화) ✅
+- [x] Query Rewriting 및 Decision Path 분기 로직 검증 ✅
+- [x] Hallucination 감지 및 자동 Self-Correction 연동 ✅
+- [x] RAG 결과 분석 로깅 (agentic_rag_log.jsonl) ✅
 
 ---
 
@@ -342,7 +375,7 @@ Pyright 타입 체커를 왕국 모노레포에 완벽 통합하여 타입 안�
 - Phase: Code Quality (Type Safety)
 - Priority: HIGH
 - Type: Maintenance
-- Status: TODO
+- Status: ✅ COMPLETED (2026-01-08)
 - Evidence: pyrightconfig.json, .github/workflows/* (or CI script), pyright run output
 - Dependencies: pyright (CLI), Pylance (IDE)
 
@@ -365,8 +398,8 @@ Pyright를 "돌아가기만 하는 상태"에서 "운영 가능한 품질 게이
    - strict 범위에서 "가장 반복되는 에러 TOP 3"만 제거
 
 ### Acceptance Criteria (Reality Gate)
-- [ ] pyrightconfig.json에 strict/basic 범위가 명확히 분리됨
-- [ ] CI에서 strict 범위는 FAIL-ON-ERROR로 차단됨
-- [ ] 레거시 범위는 REPORT만 하고 차단하지 않음
-- [ ] baseline 로그가 artifacts/ssot 또는 docs에 남아 있음(숫자/대상 포함)
+- [x] pyrightconfig.json에 strict/basic 범위가 명확히 분리됨 ✅
+- [x] CI에서 strict 범위는 FAIL-ON-ERROR로 차단됨 ✅ (Baseline 기준)
+- [x] 레거시 범위는 REPORT만 하고 차단하지 않음 ✅
+- [x] baseline 로그가 artifacts/ssot 또는 docs에 남아 있음 ✅ (packages/afo-core/AFO/pyright_baseline.txt)
 
