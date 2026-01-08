@@ -75,7 +75,6 @@ SERVICE_MAPPING = {
     "POSTGRES_PASSWORD": "postgres",
     "DISCORD_BOT_TOKEN": "discord",
     "CLOUDFLARE_API_TOKEN": "cloudflare",
-    "HETZNER_API_TOKEN": "hetzner",
     "GITHUB_TOKEN": "github",
 }
 
