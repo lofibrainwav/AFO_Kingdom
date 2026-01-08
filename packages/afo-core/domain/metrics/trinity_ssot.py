@@ -7,21 +7,21 @@ This file must be treated as a constant law.
 
 from typing import Final
 
-# 🏛️ SSOT Trinity Weights (眞善美孝永) - Single Source of Truth
+# 🏛️ SSOT Trinity Weights (眞善美孝永) - Friction Calculator v2.0 Standard
 WEIGHTS = {
-    "truth": 0.35,  # 眞: 제갈량 (Technical Certainty)
-    "goodness": 0.35,  # 善: 사마의 (Ethical Safety)
-    "beauty": 0.20,  # 美: 주유 (UX/Aesthetics)
-    "serenity": 0.08,  # 孝: 승상 (Friction Reduction)
-    "eternity": 0.02,  # 永: 승상 (Persistence/Legacy)
+    "truth": 0.35,  # 眞: 제갈량 (Technical Certainty - System Friction)
+    "goodness": 0.35,  # 善: 사마의 (Ethical Safety - Security Friction)
+    "beauty": 0.30,  # 美: 주유 (UX/Aesthetics - Cognitive Friction)
+    "serenity": 0.00,  # 孝: 승상 (Legacy Merged into Radar Area)
+    "eternity": 0.00,  # 永: 승상 (Legacy Merged into Radar Area)
 }
 
 # 🏛️ 5 Pillar Weights (Total: 1.0) - Legacy compatibility
-WEIGHT_TRUTH: Final[float] = 0.35  # 眞: 제갈량 (Technical Certainty)
-WEIGHT_GOODNESS: Final[float] = 0.35  # 善: 사마의 (Ethical Safety)
-WEIGHT_BEAUTY: Final[float] = 0.20  # 美: 주유 (UX/Aesthetics)
-WEIGHT_SERENITY: Final[float] = 0.08  # 孝: 승상 (Friction Reduction)
-WEIGHT_ETERNITY: Final[float] = 0.02  # 永: 승상 (Persistence/Legacy)
+WEIGHT_TRUTH: Final[float] = 0.35
+WEIGHT_GOODNESS: Final[float] = 0.35
+WEIGHT_BEAUTY: Final[float] = 0.30
+WEIGHT_SERENITY: Final[float] = 0.00
+WEIGHT_ETERNITY: Final[float] = 0.00
 
 # 🛡️ Governance Thresholds
 THRESHOLD_AUTO_RUN_SCORE: Final[float] = 90.0

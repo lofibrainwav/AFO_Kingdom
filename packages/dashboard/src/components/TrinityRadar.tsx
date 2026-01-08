@@ -37,7 +37,7 @@ export function TrinityRadar({
   showLabels = true,
   animated = true,
 }: TrinityRadarProps) {
-  // Transform breakdown to radar data format
+  // Transform breakdown to radar data format (3-Axis Friction Triangle)
   const radarData = useMemo(() => {
     return [
       {
@@ -56,27 +56,10 @@ export function TrinityRadar({
       },
       {
         pillar: "美",
-        fullName: "Beauty (20%)",
+        fullName: "Beauty (30%)",
         value: breakdown.beauty !== null ? breakdown.beauty * 100 : 0,
-        weight: 20,
+        weight: 30,
         color: "#ec4899", // pink-500
-      },
-      {
-        pillar: "孝",
-        fullName: "Serenity (8%)",
-        value:
-          breakdown.filial_serenity !== null
-            ? breakdown.filial_serenity * 100
-            : 0,
-        weight: 8,
-        color: "#a855f7", // purple-500
-      },
-      {
-        pillar: "永",
-        fullName: "Eternity (2%)",
-        value: breakdown.eternity !== null ? breakdown.eternity * 100 : 0,
-        weight: 2,
-        color: "#f59e0b", // amber-500
       },
     ];
   }, [breakdown]);
