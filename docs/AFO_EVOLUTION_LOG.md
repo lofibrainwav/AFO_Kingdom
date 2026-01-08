@@ -108,11 +108,17 @@
 - Evidence: pytest 71s -> 4.85s (93% 개선); 14 workers active
 - Gaps: None
 
-## [SSOT/PH-22/2026-01-08/40a21587] Phase 22: Cleanup & Strategic Restoration
+## [SSOT/PH-22/2026-01-08/40a21587] Phase 22 Cleanup & Strategic Restoration
 - Status: SEALED
-- Scope: Broken gitlink 제거 + tools/dgm/upstream vendorization + jade_bell.mp3 복구
-- Evidence: tools/dgm/upstream is regular files; UPSTREAM_PIN.txt pinned; docs/ssot/evidence count=175
+- Scope: Broken gitlink 제거 + tools/dgm/upstream vendorization(TICKET-074 보존) + jade_bell.mp3 복구 + docs/ssot/evidence 보존
+- Evidence: tools/dgm/upstream regular files(100644/100755); git submodule status: no entry; tools/dgm/upstream/.git absent; tools/dgm/UPSTREAM_PIN.txt pins a565fd2; jade_bell.mp3 exists + JulieTaxWidget.tsx ref; docs/ssot/evidence tracked=175
 - Gaps: None
+
+## [SSOT/PH-23/2026-01-08/] Phase 23 Operation Hardening
+- Status: PARTIAL
+- Scope: Chancellor V2 Integration (Shadow/Canary) + Vault Manager Integration
+- Evidence: PH22_03_V2_CUTOVER_SSOT.md exists; packages/afo-core/AFO/security/vault_manager.py (Draft)
+- Gaps: V2 Graph cutover ongoing; Vault Manager sealing pending
 
 ---
 
