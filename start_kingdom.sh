@@ -25,7 +25,7 @@ fi
 
 echo "   -> Installing Python dependencies..."
 if command -v poetry >/dev/null 2>&1; then
-  poetry install --no-dev || echo "⚠️ Poetry install failed, trying alternative..."
+  poetry install --without dev || echo "⚠️ Poetry install failed, trying alternative..."
 fi
 
 echo "   -> Starting FastAPI server..."

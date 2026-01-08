@@ -1861,6 +1861,29 @@
       "version": "0.10"
     },
     {
+      "bom-ref": "execnet==2.1.2",
+      "description": "execnet: rapid multi-Python deployment",
+      "externalReferences": [
+        {
+          "comment": "from packaging metadata Project-URL: Homepage",
+          "type": "website",
+          "url": "https://execnet.readthedocs.io/en/latest/"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "acknowledgement": "declared",
+            "id": "MIT"
+          }
+        }
+      ],
+      "name": "execnet",
+      "purl": "pkg:pypi/execnet@2.1.2",
+      "type": "library",
+      "version": "2.1.2"
+    },
+    {
       "bom-ref": "fastapi==0.128.0",
       "description": "FastAPI framework, high performance, easy to learn, fast to code, ready for production",
       "externalReferences": [
@@ -6024,6 +6047,49 @@
       "version": "0.23.8"
     },
     {
+      "bom-ref": "pytest-xdist==3.8.0",
+      "description": "pytest xdist plugin for distributed testing, most importantly across multiple CPUs",
+      "externalReferences": [
+        {
+          "comment": "from packaging metadata Project-URL: Documentation",
+          "type": "documentation",
+          "url": "https://pytest-xdist.readthedocs.io/en/latest"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Tracker",
+          "type": "issue-tracker",
+          "url": "https://github.com/pytest-dev/pytest-xdist/issues"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Source",
+          "type": "other",
+          "url": "https://github.com/pytest-dev/pytest-xdist"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Changelog",
+          "type": "release-notes",
+          "url": "https://pytest-xdist.readthedocs.io/en/latest/changelog.html"
+        },
+        {
+          "comment": "from packaging metadata Project-URL: Homepage",
+          "type": "website",
+          "url": "https://github.com/pytest-dev/pytest-xdist"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "acknowledgement": "declared",
+            "id": "MIT"
+          }
+        }
+      ],
+      "name": "pytest-xdist",
+      "purl": "pkg:pypi/pytest-xdist@3.8.0",
+      "type": "library",
+      "version": "3.8.0"
+    },
+    {
       "bom-ref": "python-dateutil==2.9.0.post0",
       "description": "Extensions to the standard Python datetime module",
       "externalReferences": [
@@ -8071,6 +8137,7 @@
         "numpy==2.4.0",
         "packaging==25.0",
         "psutil==7.1.3",
+        "pytest-xdist==3.8.0",
         "pytest==7.4.3",
         "rich==14.2.0",
         "safetensors==0.7.0",
@@ -8246,6 +8313,7 @@
     {
       "dependsOn": [
         "build==1.3.0",
+        "pytest-xdist==3.8.0",
         "pytest==7.4.3"
       ],
       "ref": "boolean.py==5.0"
@@ -8343,6 +8411,7 @@
         "certifi==2025.11.12",
         "cffi==2.0.0",
         "click==8.3.1",
+        "pytest-xdist==3.8.0",
         "pytest==7.4.3",
         "typing_extensions==4.15.0"
       ],
@@ -8434,6 +8503,12 @@
     },
     {
       "ref": "durationpy==0.10"
+    },
+    {
+      "dependsOn": [
+        "pytest==7.4.3"
+      ],
+      "ref": "execnet==2.1.2"
     },
     {
       "dependsOn": [
@@ -8588,6 +8663,7 @@
         "packaging==25.0",
         "pillow==11.3.0",
         "pytest-asyncio==0.23.8",
+        "pytest-xdist==3.8.0",
         "pytest==7.4.3",
         "requests==2.32.5",
         "safetensors==0.7.0",
@@ -8789,6 +8865,7 @@
     {
       "dependsOn": [
         "boolean.py==5.0",
+        "pytest-xdist==3.8.0",
         "pytest==7.4.3"
       ],
       "ref": "license-expression==30.4.4"
@@ -9022,6 +9099,7 @@
     {
       "dependsOn": [
         "numpy==2.4.0",
+        "pytest-xdist==3.8.0",
         "pytest==7.4.3"
       ],
       "ref": "ml_dtypes==0.5.4"
@@ -9072,6 +9150,7 @@
         "numpy==2.4.0",
         "pandas==2.3.3",
         "pillow==11.3.0",
+        "pytest-xdist==3.8.0",
         "pytest==7.4.3",
         "scipy==1.16.3",
         "sympy==1.14.0"
@@ -9246,6 +9325,7 @@
         "pandas==2.3.3",
         "pillow==11.3.0",
         "protobuf==6.33.2",
+        "pytest-xdist==3.8.0",
         "pytest==7.4.3",
         "redis==7.1.0",
         "scipy==1.16.3",
@@ -9283,6 +9363,7 @@
         "fsspec==2025.12.0",
         "lxml==6.0.2",
         "numpy==2.4.0",
+        "pytest-xdist==3.8.0",
         "pytest==7.4.3",
         "python-dateutil==2.9.0.post0",
         "pytz==2025.2",
@@ -9301,6 +9382,7 @@
         "packaging==25.0",
         "protobuf==6.33.2",
         "psutil==7.1.3",
+        "pytest-xdist==3.8.0",
         "pytest==7.4.3",
         "safetensors==0.7.0",
         "scipy==1.16.3",
@@ -9314,6 +9396,7 @@
       "dependsOn": [
         "defusedxml==0.7.1",
         "packaging==25.0",
+        "pytest-xdist==3.8.0",
         "pytest==7.4.3",
         "typing_extensions==4.15.0"
       ],
@@ -9323,6 +9406,7 @@
       "dependsOn": [
         "packaging==25.0",
         "pyparsing==3.3.1",
+        "pytest-xdist==3.8.0",
         "pytest==7.4.3"
       ],
       "ref": "pip-requirements-parser==32.0.1"
@@ -9380,6 +9464,7 @@
       "dependsOn": [
         "colorama==0.4.6",
         "packaging==25.0",
+        "pytest-xdist==3.8.0",
         "pytest==7.4.3",
         "requests==2.32.5",
         "setuptools==80.9.0"
@@ -9467,6 +9552,7 @@
       "dependsOn": [
         "cryptography==46.0.3",
         "pillow==11.3.0",
+        "pytest-xdist==3.8.0",
         "typing_extensions==4.15.0"
       ],
       "ref": "pypdf==6.5.0"
@@ -9479,6 +9565,15 @@
         "pytest==7.4.3"
       ],
       "ref": "pytest-asyncio==0.23.8"
+    },
+    {
+      "dependsOn": [
+        "execnet==2.1.2",
+        "filelock==3.20.1",
+        "psutil==7.1.3",
+        "pytest==7.4.3"
+      ],
+      "ref": "pytest-xdist==3.8.0"
     },
     {
       "dependsOn": [
@@ -9623,6 +9718,7 @@
       "dependsOn": [
         "mpmath==1.3.0",
         "numpy==2.4.0",
+        "pytest-xdist==3.8.0",
         "pytest==7.4.3",
         "typing_extensions==4.15.0"
       ],
@@ -9636,6 +9732,7 @@
         "packaging==25.0",
         "platformdirs==4.5.1",
         "pyproject_hooks==1.2.0",
+        "pytest-xdist==3.8.0",
         "pytest==7.4.3"
       ],
       "ref": "setuptools==80.9.0"
@@ -9760,6 +9857,7 @@
         "psutil==7.1.3",
         "pydantic==2.12.5",
         "pytest-asyncio==0.23.8",
+        "pytest-xdist==3.8.0",
         "pytest==7.4.3",
         "regex==2025.11.3",
         "requests==2.32.5",
@@ -9883,7 +9981,7 @@
     }
   ],
   "metadata": {
-    "timestamp": "2026-01-08T00:27:23.264014+00:00",
+    "timestamp": "2026-01-08T00:36:15.831674+00:00",
     "tools": {
       "components": [
         {
@@ -9987,7 +10085,7 @@
       ]
     }
   },
-  "serialNumber": "urn:uuid:ad22cf98-7ab1-4a71-ba24-83e9df725832",
+  "serialNumber": "urn:uuid:1c40e53c-116c-43ce-9164-f30b6752dab1",
   "version": 1,
   "$schema": "http://cyclonedx.org/schema/bom-1.6.schema.json",
   "bomFormat": "CycloneDX",

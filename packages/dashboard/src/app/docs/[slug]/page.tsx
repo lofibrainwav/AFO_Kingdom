@@ -1,4 +1,5 @@
 import generated from '@/generated/widgets.generated.json';
+import DOMPurify from 'isomorphic-dompurify';
 import { readFile } from 'fs/promises';
 import type { Metadata } from 'next';
 import Link from 'next/link';
@@ -124,7 +125,10 @@ export default async function DocWidgetPage({
       
       <div
         className='prose prose-invert max-w-none'
-        dangerouslySetInnerHTML={{ __html: fragmentContent }}
+        dangerouslySetInnerHTML={{
+          // XSS 방지: DOMPurify로 새니타이징 (Phase 15 Security Seal)
+          __html: DOMPurify.sanitize(fragmentContent, { USE_PROFILES: { html: true } }),
+        }}
       />
     </div>
   );

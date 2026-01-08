@@ -11,32 +11,21 @@
 | [sixXon](packages/sixXon/) | SixXon 모듈 |
 | [dashboard](packages/dashboard/) | Next.js 대시보드 |
 
-## Quick Start
+## 🚀 Quick Start (딱 이것만 기억하세요)
+
+이미 떠 있으면 스킵하고, 없으면 알아서 켜줍니다.
 
 ```bash
-# Python 의존성
-pip install -e .
-
-# 개발 의존성
-pip install -e ".[dev]"
-
-# 테스트
-# 단위 테스트 (기본)
-make test
-
-# 통합 테스트 (PostgreSQL, Redis 필요)
-make test-integration
-
-# 외부 API 테스트
-make test-external
-
-# 또는 직접 실행
-pytest --cov=packages
-
-# 린팅
-ruff check packages/
-mypy packages/afo-core --strict
+./start_kingdom_v2.sh
 ```
+
+**실행되는 것들 (Local Kingdom):**
+*   ✅ **Redis** (brew): 심장 (자동 실행)
+*   ✅ **Qdrant** (local): 폐 (자동 실행)
+*   ✅ **API** (:8010): 영혼
+*   ✅ **UI** (:3000): 얼굴
+*   ⏸ **Postgres** (docker): 간 (옵션 - 데이터 영속성 필요시 `brew install postgresql` 권장)
+
 
 ## CI/CD
 

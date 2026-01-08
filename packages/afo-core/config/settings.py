@@ -56,8 +56,10 @@ class AFOSettings(BaseSettings):
     )
     POSTGRES_DB: str = Field(default="afo_memory", description="PostgreSQL 데이터베이스 이름")
     POSTGRES_USER: str = Field(default="afo", description="PostgreSQL 사용자")
+    # Phase 15 Security Seal: 하드코딩된 시크릿 제거
+    # 프로덕션에서는 반드시 환경변수로 설정 필요
     POSTGRES_PASSWORD: str = Field(
-        default="afo_secret_change_me", description="PostgreSQL 비밀번호"
+        default="", description="PostgreSQL 비밀번호 (환경변수 POSTGRES_PASSWORD로 설정 필수)"
     )
     DATABASE_URL: str | None = Field(
         default=None, description="PostgreSQL 연결 URL (선택적, 개별 설정보다 우선)"
@@ -109,8 +111,11 @@ class AFOSettings(BaseSettings):
 
     # ============================================================================
     # API Keys
+    # Phase 15 Security Seal: 하드코딩된 시크릿 제거
     # ============================================================================
-    API_YUNGDEOK: str = Field(default="default_yungdeok_key", description="영덕 API 키")
+    API_YUNGDEOK: str = Field(
+        default="", description="영덕 API 키 (환경변수 API_YUNGDEOK로 설정)"
+    )
     OPENAI_API_KEY: str | None = Field(default=None, description="OpenAI API 키")
     ANTHROPIC_API_KEY: str | None = Field(default=None, description="Anthropic (Claude) API 키")
     GEMINI_API_KEY: str | None = Field(default=None, description="Google Gemini API 키")
