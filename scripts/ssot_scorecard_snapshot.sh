@@ -1,6 +1,6 @@
 #!/bin/bash
-# AFO Kingdom - SSOT ScoreCard Autogen v1
-# [眞善美孝永] Antigravity Chancellor Script
+# AFO Kingdom - SSOT ScoreCard Autogen v1.1
+# [眞善美孝영] Antigravity Chancellor Script
 
 AS_OF=$(date +"%Y-%m-%d (%Z)")
 BRANCH=$(git branch --show-current)
@@ -13,15 +13,17 @@ else
     RUNTIME="OFFLINE | Docker Daemon / Soul Engine 미기동"
 fi
 
-# Trinity Score (Current Target / Simulation)
-# Note: Final Runtime score will be aggregated from trunk traces.jsonl
-TRINITY="95.5% [Target (Simulation)]"
+# Trinity Score Decomposition [Target (Simulation)]
+# Individual Pillar Targets (Simulation based on observability_test.py)
+TR_SH="95.5%"
+PI_TR="94"
+PI_GD="97"
+PI_BT="95"
+PI_SR="96"
+PI_ET="95"
 
 # Debt Status Collection
-# Ruff: Frozen baseline established at 2026-01-08
 RUFF_DEBT=2285
-
-# Pyright: Count from actual baseline file if exists
 PYRIGHT_FILE="packages/afo-core/AFO/pyright_baseline.txt"
 if [ -f "$PYRIGHT_FILE" ]; then
     PYRIGHT_DEBT=$(grep -c "error:" "$PYRIGHT_FILE")
@@ -35,6 +37,7 @@ cat <<EOF
 > **As-of**: $AS_OF
 > **Repo Anchor**: Branch \`$BRANCH\` | SHA \`$SHA\`
 > **Runtime Status**: **$RUNTIME**
-> **Trinity Score**: **$TRINITY**
+> **Trinity Score [Target (Simulation)]**: **$TR_SH**
+> **AESTHETIC (眞/善/美/孝/永) [Target (Simulation)]**: **$PI_TR/$PI_GD/$PI_BT/$PI_SR/$PI_ET**
 > **Debt Status**: Ruff: Frozen=$RUFF_DEBT | Pyright(strict): Baseline=$PYRIGHT_DEBT
 EOF
