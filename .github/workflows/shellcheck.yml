@@ -31,8 +31,8 @@ jobs:
           
           echo "🔍 Running Shellcheck on all scripts..."
           
-          # Find all shell scripts (exclude legacy/quarantine scripts)
-          SCRIPTS=$(find . -name "*.sh" -not -path "./.venv/*" -not -path "./node_modules/*" -not -path "*/_local_quarantine/*" -not -name "hetzner-*.sh" -not -name "vagrant-*.sh" -type f)
+          # Find all shell scripts (exclude legacy/quarantine/vendored scripts)
+          SCRIPTS=$(find . -name "*.sh" -not -path "*/.venv/*" -not -path "*/node_modules/*" -not -path "*/_local_quarantine/*" -not -name "hetzner-*.sh" -not -name "vagrant-*.sh" -type f)
           
           # Add afo CLI
           if [[ -f ./afo ]]; then
