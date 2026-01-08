@@ -9,6 +9,8 @@ export interface TrinityBreakdown {
   beauty: number | null;
   filial_serenity: number | null;
   eternity: number | null;
+  iccls_score?: number | null;  // ICCLS: Inter-Component Consistency Level Score
+  sentiment_score?: number | null;  // Optional sentiment 0.0-1.0
 }
 
 interface TrinityGlowCardProps {
@@ -112,6 +114,24 @@ export function TrinityGlowCard({
             <div className="text-amber-500">永</div>
             <div>{breakdown.eternity !== null ? (breakdown.eternity * 100).toFixed(0) : "--"}</div>
           </div>
+        </div>
+      )}
+
+      {/* ICCLS + Sentiment Status */}
+      {(breakdown?.iccls_score !== undefined || breakdown?.sentiment_score !== undefined) && (
+        <div className="flex justify-between mt-2 text-xs border-t border-white/10 pt-2">
+          {breakdown.iccls_score !== undefined && breakdown.iccls_score !== null && (
+            <div className={`flex items-center gap-1 ${breakdown.iccls_score > 0.3 ? 'text-red-400' : 'text-green-400'}`}>
+              <span>🔗</span>
+              <span>ICCLS: {(breakdown.iccls_score * 100).toFixed(1)}%</span>
+            </div>
+          )}
+          {breakdown.sentiment_score !== undefined && breakdown.sentiment_score !== null && (
+            <div className="flex items-center gap-1">
+              <span>{breakdown.sentiment_score > 0.6 ? '🟢' : breakdown.sentiment_score > 0.4 ? '🟡' : '🔴'}</span>
+              <span>Sentiment: {(breakdown.sentiment_score * 100).toFixed(0)}%</span>
+            </div>
+          )}
         </div>
       )}
 
