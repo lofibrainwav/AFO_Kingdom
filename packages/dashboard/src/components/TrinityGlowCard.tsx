@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback, useMemo } from "react";
+import { TrinityRadar } from "./TrinityRadar";
 
 // Breakdown Interface - now supports null for loading states
 export interface TrinityBreakdown {
@@ -18,6 +19,7 @@ interface TrinityGlowCardProps {
   riskScore: number | null; // 0.0 - 1.0, null = loading
   breakdown?: TrinityBreakdown;
   children?: React.ReactNode;
+  showRadar?: boolean; // Show TrinityRadar visualization
 }
 
 /**
@@ -34,6 +36,7 @@ export function TrinityGlowCard({
   riskScore,
   breakdown,
   children,
+  showRadar = false,
 }: TrinityGlowCardProps) {
   const [pulseScale, setPulseScale] = useState(1);
 
@@ -86,6 +89,13 @@ export function TrinityGlowCard({
 
       {/* Content */}
       <div className="relative z-10">{children}</div>
+
+      {/* Trinity Radar Visualization */}
+      {showRadar && breakdown && (
+        <div className="flex justify-center mt-4">
+          <TrinityRadar breakdown={breakdown} size={200} />
+        </div>
+      )}
 
       {/* Breakdown Display */}
       {breakdown && (
