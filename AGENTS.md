@@ -19,11 +19,15 @@
 ## 1) SSOT 읽는 순서 (존재하는 것만)
 에이전트는 작업 전 "파일 존재"를 먼저 확인하고, **있는 것만** 읽습니다.
 
-1) docs/AFO_ROYAL_LIBRARY.md
-2) docs/AFO_CHANCELLOR_GRAPH_SPEC.md
-3) docs/AFO_EVOLUTION_LOG.md (또는 루트 AFO_EVOLUTION_LOG.md)
-4) docs/AFO_FRONTEND_ARCH.md
-5) docs/CURSOR_MCP_SETUP.md
+**최우선 SSOT:**
+1) docs/AFO_FINAL_SSOT.md (최고 헌법 및 시스템 진실의 근원)
+
+**참조 문서:**
+2) docs/AFO_ROYAL_LIBRARY.md
+3) docs/AFO_CHANCELLOR_GRAPH_SPEC.md
+4) docs/AFO_EVOLUTION_LOG.md (또는 루트 AFO_EVOLUTION_LOG.md)
+5) docs/AFO_FRONTEND_ARCH.md
+6) docs/CURSOR_MCP_SETUP.md
 
 없으면: "없음"을 명시하고, 그 전제에서만 진행합니다.
 
