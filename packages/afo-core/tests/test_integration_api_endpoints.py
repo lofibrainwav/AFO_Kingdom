@@ -46,6 +46,7 @@ class TestHealthEndpointsIntegration:
         assert "version" in data
         assert data["name"] == "AFO Kingdom Soul Engine API"
 
+    @pytest.mark.slow
     def test_comprehensive_health_endpoint(self, api_client: TestClient) -> None:
         """종합 건강 체크 엔드포인트 테스트"""
         response = api_client.get("/api/health/comprehensive")

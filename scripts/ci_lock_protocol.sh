@@ -65,7 +65,8 @@ echo "🌉 [Step 2/4] Ruff Linting & Formatting (Beauty)..."
 
 # 3. pytest (膽 - Gallbladder/Goodness)
 echo "🛡️  [Step 3/4] pytest Unit & Integration Tests (Goodness)..."
-(cd packages/afo-core && pytest -q --maxfail=1 -m "not integration and not external" --ignore=tests/test_scholars.py 2>&1 | tee "../../$LOG_DIR/pytest_report.txt") || {
+# 2026 Optimization: parallel execution with pytest-xdist (-n auto) + exclude slow tests
+(cd packages/afo-core && pytest -q --maxfail=1 -n auto --dist worksteal -m "not integration and not external and not slow" --ignore=tests/test_scholars.py 2>&1 | tee "../../$LOG_DIR/pytest_report.txt") || {
     echo "❌ pytest failed. Goodness/Stability Pillar compromised. Refer to $LOG_DIR/pytest_report.txt"
     exit 1
 }

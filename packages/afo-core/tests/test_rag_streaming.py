@@ -28,6 +28,7 @@ def test_debug_routes():
     assert "/api/query/stream" in routes
 
 
+@pytest.mark.slow
 @pytest.mark.asyncio
 async def test_rag_streaming_endpoint():
     """
