@@ -4,7 +4,7 @@
 
 ## 🏛️ 핵심 헌법 & 철학 (Constitution & Philosophy)
 
-- **최고 헌법**: [TRINITY_CONSTITUTION.md](file://<LOCAL_WORKSPACE>/AFO_Kingdom/packages/trinity-os/TRINITY_CONSTITUTION.md)
+- **최고 헌법**: packages/trinity-os/TRINITY_CONSTITUTION.md
 - **5대 기둥 (眞善美孝永)**:
   - **眞 (Truth 35%)**: 기술적 확실성 & 아키텍처 ([Zhuge Liang])
   - **善 (Goodness 35%)**: 윤리·안정성 & 리스크 게이트 ([Sima Yi])
@@ -36,8 +36,8 @@
 
 ## 🛠️ 운영 매뉴얼 (Operations)
 
-- **[야전교범]**: [AFO_ROYAL_LIBRARY.md](file://<LOCAL_WORKSPACE>/AFO_Kingdom/docs/AFO_ROYAL_LIBRARY.md)
-- **[시스템 상태]**: [AFO_KINGDOM_MAIN.md](file://<LOCAL_WORKSPACE>/AFO_Kingdom/docs/AFO_KINGDOM_MAIN.md)
+- **[야전교범]**: docs/AFO_ROYAL_LIBRARY.md
+- **[시스템 상태]**: docs/AFO_KINGDOM_MAIN.md
 - **[복구 매뉴얼]**: `scripts/reboot_kingdom.sh`
 
 
