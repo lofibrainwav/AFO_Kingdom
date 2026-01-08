@@ -1,0 +1,74 @@
+name: Debt Gate (Legacy Debt Monitor)
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Weekly Monday 18:00 UTC (~10:00 AM Los Angeles when UTC-8)
+    - cron: "0 18 * * 1"
+
+jobs:
+  ruff_debt_gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Poetry
+        run: pipx install poetry
+
+      - name: Install deps
+        run: |
+          poetry install --without dev
+          poetry run pip install ruff
+
+      - name: Run ruff (count only)
+        run: |
+          set -euo pipefail
+          poetry run ruff check . --statistics --exit-zero | tee ruff_stats.txt
+
+      - name: Compare against baseline
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+import json, re, pathlib, sys
+
+baseline_path = pathlib.Path("configs/debt_gate/baseline.json")
+if not baseline_path.exists():
+    print("❌ Missing baseline.json at configs/debt_gate/baseline.json")
+    sys.exit(1)
+
+baseline = json.loads(baseline_path.read_text())
+baseline_count = int(baseline.get("ruff_errors", 0))
+
+txt = pathlib.Path("ruff_stats.txt").read_text(errors="ignore")
+m = re.search(r"Found\s+(\d+)\s+error", txt)
+
+if not m:
+    current_count = 0
+else:
+    current_count = int(m.group(1))
+
+print(f"📊 Baseline ruff_errors: {baseline_count}")
+print(f"📊 Current  ruff_errors: {current_count}")
+
+# Check if GITHUB_STEP_SUMMARY exists
+summary_env = pathlib.Path(".").joinpath("GITHUB_STEP_SUMMARY")
+if summary_env.exists():
+    with open(summary_env, "a") as f:
+        f.write(f"### Debt Gate Report (Ruff)\n")
+        f.write(f"- **Baseline**: {baseline_count}\n")
+        f.write(f"- **Current**: {current_count}\n")
+        if current_count > baseline_count:
+            f.write(f"❌ **FAILED**: Debt increased by {current_count - baseline_count}\n")
+        else:
+            f.write(f"✅ **PASSED**: Debt reduced or stable (Δ={current_count - baseline_count})\n")
+
+if current_count > baseline_count:
+    print(f"❌ FAILED: legacy debt increased (baseline={baseline_count}, current={current_count})")
+    sys.exit(1)
+else:
+    print(f"✅ PASS: legacy debt did not increase.")
+PY
