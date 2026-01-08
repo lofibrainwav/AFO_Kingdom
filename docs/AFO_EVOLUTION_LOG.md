@@ -587,7 +587,7 @@
 - Evidence: pytest 71-105초 → 4.85초 (93% 개선) / pytest-xdist 3.8.0 설치 / 14 workers 병렬 실행 / --dist worksteal 적용 / 5개 slow 테스트 분리 (45초 별도 실행 가능)
 - Gaps: None
 
-## [SSOT/PH-22/2026-01-08/c3b920b5] Phase 22: Cleanup & Strategic Restoration
+## [SSOT/PH-22/2026-01-08/40a21587] Phase 22: Cleanup & Strategic Restoration
 - Status: SEALED
 - Scope: Broken gitlink 제거 + tools/dgm/upstream vendorization(TICKET-074 보존) + jade_bell.mp3 복구 + docs/ssot/evidence 보존
 - Evidence: tools/dgm/upstream is regular files(100644/100755); no submodule mapping; no nested .git; UPSTREAM_PIN.txt pinned(a565fd2); packages/dashboard/public/sounds/jade_bell.mp3 exists + ref hit; docs/ssot/evidence tracked=175
