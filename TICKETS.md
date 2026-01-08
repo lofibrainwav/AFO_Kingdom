@@ -411,29 +411,11 @@ Pyright를 "돌아가기만 하는 상태"에서 "운영 가능한 품질 게이
 
 ---
 
-## Phase 22 — Chancellor V2 & Deployment Hardening
+## Phase 22 — Cleanup & Strategic Restoration
 
 | ID | 제목 | Phase | Priority | Status | Evidence |
 |---|------|-------|----------|--------|----------|
-| TICKET-094 | Chancellor V2 Integration | 22 | HIGH | [/] 진행 중 | PH22_03_V2_CUTOVER_SSOT.md |
-| TICKET-095 | Vault Manager Implementation | 22 | HIGH | [/] 진행 중 | vault_manager.py |
 | TICKET-096 | Phase 22 Cleanup & Restoration | 22 | MEDIUM | ✅ 완료 | UPSTREAM_PIN.txt / jade_bell.mp3 |
-
-## TICKET-094 — Chancellor V2 Integration (Shadow/Canary)
-- Phase: 22 (운영 최적화)
-- Priority: HIGH
-- Type: Architecture Enhancement
-- Status: [/] 진행 중 (Shadow 완료, Canary 준비)
-- Evidence: packages/afo-core/docs/chancellor/PH22_03_V2_CUTOVER_SSOT.md
-- Dependencies: LangGraph, Chancellor V1
-
-## TICKET-095 — Vault Manager Implementation (Zero Trust Security)
-- Phase: 22 (보안 강화)
-- Priority: HIGH
-- Type: Security Enhancement
-- Status: [/] 진행 중 (Draft 완료)
-- Evidence: packages/afo-core/AFO/security/vault_manager.py
-- Dependencies: Hashicorp Vault (optional), local encryption fallback
 
 ## TICKET-096 — Phase 22 Cleanup & Strategic Restoration
 - Phase: 22 (유지보수)
@@ -442,5 +424,31 @@ Pyright를 "돌아가기만 하는 상태"에서 "운영 가능한 품질 게이
 - Status: ✅ 완료 (2026-01-08)
 - Evidence: tools/dgm/upstream restoration, jade_bell.mp3 recovery
 - Goal: PR 준비를 위한 불필요 파일 정리 및 핵심 유산(DGM)의 전략적 보존.
+
+
+---
+
+## Phase 23 — Operation Hardening (WIP)
+
+| ID | 제목 | Phase | Priority | Status | Evidence |
+|---|------|-------|----------|--------|----------|
+| TICKET-094 | Chancellor V2 Integration | 23 | HIGH | [/] 진행 중 | PH22_03_V2_CUTOVER_SSOT.md |
+| TICKET-095 | Vault Manager Implementation | 23 | HIGH | [/] 진행 중 | vault_manager.py |
+
+## TICKET-094 — Chancellor V2 Integration (Shadow/Canary)
+- Phase: 23 (운영 최적화)
+- Priority: HIGH
+- Type: Architecture Enhancement
+- Status: [/] 진행 중 (Shadow 완료, Canary 준비)
+- Evidence: packages/afo-core/docs/chancellor/PH22_03_V2_CUTOVER_SSOT.md
+- Dependencies: LangGraph, Chancellor V1
+
+## TICKET-095 — Vault Manager Implementation (Zero Trust Security)
+- Phase: 23 (보안 강화)
+- Priority: HIGH
+- Type: Security Enhancement
+- Status: [/] 진행 중 (Draft 완료)
+- Evidence: packages/afo-core/AFO/security/vault_manager.py
+- Dependencies: Hashicorp Vault (optional), local encryption fallback
 
 
