@@ -26,7 +26,7 @@ NodeFn = Callable[[GraphState], Awaitable[GraphState]]
 ORDER = [
     "CMD",
     "PARSE",
-    "ASSESSMENT_CLUSTER", # Pseudo-step for parallel Trinity assessment
+    "ASSESSMENT_CLUSTER",  # Pseudo-step for parallel Trinity assessment
     "MIPRO",
     "MERGE",
     "EXECUTE",
@@ -191,6 +191,7 @@ async def _save_evidence_pack(state: GraphState) -> None:
     """Save the results of this run to the Council Evidence Pack (.jsonl)."""
     try:
         from AFO.config.settings import get_settings
+
         settings = get_settings()
 
         # Ensure artifacts directory exists
@@ -205,7 +206,7 @@ async def _save_evidence_pack(state: GraphState) -> None:
             "command": state.input.get("command", ""),
             "outputs": state.outputs,
             "errors": state.errors,
-            "decision": state.outputs.get("MERGE", {})
+            "decision": state.outputs.get("MERGE", {}),
         }
 
         # Append to daily evidence pack
@@ -218,6 +219,7 @@ async def _save_evidence_pack(state: GraphState) -> None:
     except Exception as e:
         # Don't let evidence pack failure crash the command, but log it
         import logging
+
         logging.getLogger(__name__).error(f"Failed to save Council Evidence Pack: {e}")
 
 
@@ -233,10 +235,10 @@ async def _execute_node_safe(state: GraphState, step: str, fn: NodeFn) -> GraphS
         input=state.input,
         plan=state.plan,
         outputs=copy.deepcopy(state.outputs),
-        errors=[], # Start with clean errors for this branch
+        errors=[],  # Start with clean errors for this branch
         step=step,
         started_at=state.started_at,
-        updated_at=state.updated_at
+        updated_at=state.updated_at,
     )
 
     from api.chancellor_v2.context7 import inject_context

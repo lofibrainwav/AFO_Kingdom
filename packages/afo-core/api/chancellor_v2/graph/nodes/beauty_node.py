@@ -22,7 +22,12 @@ async def beauty_node(state: GraphState) -> GraphState:
     structural_simplicity_score = _evaluate_structural_simplicity(skill_id)
     api_consistency_score = _evaluate_api_consistency(skill_id, query)
     modularity_score = _evaluate_modularity(skill_id)
-    heuristic_score = ux_friendliness_score * 0.3 + structural_simplicity_score * 0.3 + api_consistency_score * 0.2 + modularity_score * 0.2
+    heuristic_score = (
+        ux_friendliness_score * 0.3
+        + structural_simplicity_score * 0.3
+        + api_consistency_score * 0.2
+        + modularity_score * 0.2
+    )
 
     # 2. Scholar Assessment (Lushun)
     import json
@@ -36,7 +41,7 @@ async def beauty_node(state: GraphState) -> GraphState:
     Plan:
     - Skill: {skill_id}
     - Query: {query}
-    - Command: {state.input.get('command', '')}
+    - Command: {state.input.get("command", "")}
 
     Guidelines:
     - Evaluate the structural simplicity of the proposed plan.
@@ -59,12 +64,13 @@ async def beauty_node(state: GraphState) -> GraphState:
 
     try:
         response = await llm_router.execute_with_routing(
-            prompt,
-            context={"provider": "gemini", "quality_tier": "standard"}
+            prompt, context={"provider": "gemini", "quality_tier": "standard"}
         )
         if response and response.get("response"):
             try:
-                text = response["response"].strip().replace("```json", "").replace("```", "").strip()
+                text = (
+                    response["response"].strip().replace("```json", "").replace("```", "").strip()
+                )
                 data = json.loads(text)
                 scholar_score = data.get("score", heuristic_score)
                 reasoning = data.get("reasoning", reasoning)
@@ -83,11 +89,7 @@ async def beauty_node(state: GraphState) -> GraphState:
         "score": round(final_score, 3),
         "reasoning": reasoning,
         "issues": issues,
-        "metadata": {
-            "mode": assessment_mode,
-            "scholar": "Lushun (美)",
-            "model": scholar_model
-        }
+        "metadata": {"mode": assessment_mode, "scholar": "Lushun (美)", "model": scholar_model},
     }
 
     state.outputs["BEAUTY"] = evaluation
@@ -218,6 +220,5 @@ def _evaluate_modularity(skill_id: str) -> float:
             modularity_score = max(modularity_score, score)
 
     return max(modularity_score, 0.6)  # 기본 모듈화 수준
-
 
     return max(modularity_score, 0.6)  # 기본 모듈화 수준

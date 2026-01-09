@@ -491,7 +491,7 @@ async def _execute_with_fallback(
 async def _execute_full_mode(
     request: ChancellorInvokeRequest,
     llm_context: dict[str, Any],
-    headers: dict[str, str] | None = None
+    headers: dict[str, str] | None = None,
 ) -> dict[str, Any]:
     """
     FULL 모드 실행 - Phase 24: Unified ChancellorGraph 사용
@@ -506,7 +506,7 @@ async def _execute_full_mode(
         headers=headers,
         llm_context=llm_context,
         thread_id=request.thread_id,
-        max_strategists=getattr(request, "max_strategists", 3)
+        max_strategists=getattr(request, "max_strategists", 3),
     )
 
     # Extract response text from potentially complex graph outputs
@@ -733,7 +733,7 @@ async def invoke_chancellor(
         if "speaker" in result and "engine_used" not in result:
             result["engine_used"] = result["speaker"]
         if "execution_time" not in result:
-            result["execution_time"] = 1.0 # Static or calculated
+            result["execution_time"] = 1.0  # Static or calculated
         if "mode" not in result:
             result["mode"] = mode_used
 

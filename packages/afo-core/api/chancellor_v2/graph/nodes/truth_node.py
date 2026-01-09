@@ -21,7 +21,9 @@ async def truth_node(state: GraphState) -> GraphState:
     type_checking_score = _evaluate_type_safety(skill_id, query)
     test_coverage_score = _evaluate_test_coverage(skill_id)
     code_quality_score = _evaluate_code_quality(query)
-    heuristic_score = type_checking_score * 0.4 + test_coverage_score * 0.35 + code_quality_score * 0.25
+    heuristic_score = (
+        type_checking_score * 0.4 + test_coverage_score * 0.35 + code_quality_score * 0.25
+    )
 
     # 2. Scholar Assessment (Zilong)
     import json
@@ -35,7 +37,7 @@ async def truth_node(state: GraphState) -> GraphState:
     Plan:
     - Skill: {skill_id}
     - Query/Target: {query}
-    - Command: {state.input.get('command', '')}
+    - Command: {state.input.get("command", "")}
 
     Guidelines:
     - Evaluate if the skill choice matches the query logic.
@@ -58,13 +60,14 @@ async def truth_node(state: GraphState) -> GraphState:
 
     try:
         response = await llm_router.execute_with_routing(
-            prompt,
-            context={"provider": "anthropic", "quality_tier": "premium"}
+            prompt, context={"provider": "anthropic", "quality_tier": "premium"}
         )
         if response and response.get("response"):
             try:
                 # Basic JSON cleaning (in case of markdown blocks)
-                text = response["response"].strip().replace("```json", "").replace("```", "").strip()
+                text = (
+                    response["response"].strip().replace("```json", "").replace("```", "").strip()
+                )
                 data = json.loads(text)
                 scholar_score = data.get("score", heuristic_score)
                 reasoning = data.get("reasoning", reasoning)
@@ -83,11 +86,7 @@ async def truth_node(state: GraphState) -> GraphState:
         "score": round(final_score, 3),
         "reasoning": reasoning,
         "issues": issues,
-        "metadata": {
-            "mode": assessment_mode,
-            "scholar": "Zilong (眞)",
-            "model": scholar_model
-        }
+        "metadata": {"mode": assessment_mode, "scholar": "Zilong (眞)", "model": scholar_model},
     }
 
     state.outputs["TRUTH"] = evaluation

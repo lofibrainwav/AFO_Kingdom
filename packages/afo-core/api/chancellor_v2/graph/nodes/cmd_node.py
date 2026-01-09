@@ -10,13 +10,13 @@ if TYPE_CHECKING:
 
 async def cmd_node(state: GraphState) -> GraphState:
     """Read command from input and initialize state.
-lidation.
+    lidation.
 
-    Args:
-        state: Current graph state
+        Args:
+            state: Current graph state
 
-    Returns:
-        Updated graph state
+        Returns:
+            Updated graph state
     """
     # Basic command validation
     if not state.input or not isinstance(state.input, dict):

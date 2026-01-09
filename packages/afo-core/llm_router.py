@@ -37,7 +37,7 @@ except ImportError as e:
     try:
         from services.ollama_service import ollama_service
     except ImportError:
-        ollama_service = None # type: ignore
+        ollama_service = None  # type: ignore
     logging.warning(f"⚠️ API wrappers or OllamaService not fully available: {e}")
 
 logger = logging.getLogger(__name__)

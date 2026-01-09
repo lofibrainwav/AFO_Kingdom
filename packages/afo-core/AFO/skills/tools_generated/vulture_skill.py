@@ -13,6 +13,7 @@ class ToolSkillResult:
     score: int
     evidence: str
 
+
 def run(repo_root: Path) -> dict:
     # Auto-generated evidence candidates
     candidates = [repo_root / "artifacts/vulture.json", repo_root / "artifacts/vulture.txt"]

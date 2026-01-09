@@ -21,7 +21,11 @@ async def eternity_node(state: GraphState) -> GraphState:
     documentation_quality_score = _evaluate_documentation_quality(query)
     reproducibility_score = _evaluate_reproducibility(skill_id)
     persistence_guarantees_score = _evaluate_persistence_guarantees(state)
-    heuristic_score = documentation_quality_score * 0.4 + reproducibility_score * 0.3 + persistence_guarantees_score * 0.3
+    heuristic_score = (
+        documentation_quality_score * 0.4
+        + reproducibility_score * 0.3
+        + persistence_guarantees_score * 0.3
+    )
 
     # 2. Scholar Assessment (Yeongdeok)
     import json
@@ -35,7 +39,7 @@ async def eternity_node(state: GraphState) -> GraphState:
     Plan:
     - Skill: {skill_id}
     - Query: {query}
-    - Command: {state.input.get('command', '')}
+    - Command: {state.input.get("command", "")}
 
     Guidelines:
     - Evaluate if the results of this plan will be persisted correctly.
@@ -58,12 +62,13 @@ async def eternity_node(state: GraphState) -> GraphState:
 
     try:
         response = await llm_router.execute_with_routing(
-            prompt,
-            context={"provider": "ollama", "quality_tier": "standard"}
+            prompt, context={"provider": "ollama", "quality_tier": "standard"}
         )
         if response and response.get("response"):
             try:
-                text = response["response"].strip().replace("```json", "").replace("```", "").strip()
+                text = (
+                    response["response"].strip().replace("```json", "").replace("```", "").strip()
+                )
                 data = json.loads(text)
                 scholar_score = data.get("score", heuristic_score)
                 reasoning = data.get("reasoning", reasoning)
@@ -82,11 +87,7 @@ async def eternity_node(state: GraphState) -> GraphState:
         "score": round(final_score, 3),
         "reasoning": reasoning,
         "issues": issues,
-        "metadata": {
-            "mode": assessment_mode,
-            "scholar": "Yeongdeok (永)",
-            "model": scholar_model
-        }
+        "metadata": {"mode": assessment_mode, "scholar": "Yeongdeok (永)", "model": scholar_model},
     }
 
     # Store evaluation results

@@ -176,15 +176,13 @@ class ChancellorGraph:
                 "success": True,
                 "engine": "V1 (Legacy)",
                 "input": command,
-                "outputs": {"V1": "Executed via legacy V1 engine (Canary OFF)"}
+                "outputs": {"V1": "Executed via legacy V1 engine (Canary OFF)"},
             }
 
             # 2. Shadow Path (PH24)
             # Combined condition per SIM102: shadow enabled AND random sampling
             if shadow_enabled and random.random() < settings.CHANCELLOR_V2_DIFF_SAMPLING_RATE:
-                asyncio.create_task(
-                    ChancellorGraph._run_shadow_diff(command, result, **kwargs)
-                )
+                asyncio.create_task(ChancellorGraph._run_shadow_diff(command, result, **kwargs))
 
             return result
 

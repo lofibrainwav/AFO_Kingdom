@@ -10,13 +10,13 @@ if TYPE_CHECKING:
 
 async def report_node(state: GraphState) -> GraphState:
     """Generate final report for the commander.
-sive report.
+    sive report.
 
-    Args:
-        state: Current graph state
+        Args:
+            state: Current graph state
 
-    Returns:
-        Updated graph state with final report
+        Returns:
+            Updated graph state with final report
     """
     # Collect all results
     merge_result = state.outputs.get("MERGE", {})

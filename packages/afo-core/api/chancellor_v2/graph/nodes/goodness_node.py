@@ -22,7 +22,9 @@ async def goodness_node(state: GraphState) -> GraphState:
     privacy_score = _evaluate_privacy_compliance(query)
     cost_score = _evaluate_cost_efficiency(skill_id)
     ethical_score = _evaluate_ethical_considerations(query)
-    heuristic_score = security_score * 0.4 + privacy_score * 0.2 + cost_score * 0.2 + ethical_score * 0.2
+    heuristic_score = (
+        security_score * 0.4 + privacy_score * 0.2 + cost_score * 0.2 + ethical_score * 0.2
+    )
 
     # 2. Scholar Assessment (Pangtong)
     import json
@@ -36,7 +38,7 @@ async def goodness_node(state: GraphState) -> GraphState:
     Plan:
     - Skill: {skill_id}
     - Query: {query}
-    - Command: {state.input.get('command', '')}
+    - Command: {state.input.get("command", "")}
 
     Guidelines:
     - Identify potential security risks (jailbreaks, prompt injection).
@@ -59,12 +61,13 @@ async def goodness_node(state: GraphState) -> GraphState:
 
     try:
         response = await llm_router.execute_with_routing(
-            prompt,
-            context={"provider": "openai", "quality_tier": "premium"}
+            prompt, context={"provider": "openai", "quality_tier": "premium"}
         )
         if response and response.get("response"):
             try:
-                text = response["response"].strip().replace("```json", "").replace("```", "").strip()
+                text = (
+                    response["response"].strip().replace("```json", "").replace("```", "").strip()
+                )
                 data = json.loads(text)
                 scholar_score = data.get("score", heuristic_score)
                 reasoning = data.get("reasoning", reasoning)
@@ -83,11 +86,7 @@ async def goodness_node(state: GraphState) -> GraphState:
         "score": round(final_score, 3),
         "reasoning": reasoning,
         "issues": issues,
-        "metadata": {
-            "mode": assessment_mode,
-            "scholar": "Pangtong (善)",
-            "model": scholar_model
-        }
+        "metadata": {"mode": assessment_mode, "scholar": "Pangtong (善)", "model": scholar_model},
     }
 
     state.outputs["GOODNESS"] = evaluation

@@ -160,11 +160,18 @@ class AFOSettings(BaseSettings):
         default=None, description="AFO Soul Engine 홈 디렉토리 경로"
     )
     BASE_DIR: str = Field(
-        default=os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))),
+        default=os.path.dirname(
+            os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+        ),
         description="프로젝트 루트 디렉토리",
     )
     ARTIFACTS_DIR: str = Field(
-        default=os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))), "artifacts"),
+        default=os.path.join(
+            os.path.dirname(
+                os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+            ),
+            "artifacts",
+        ),
         description="아티팩트 및 증거 저장 디렉토리",
     )
 

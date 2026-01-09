@@ -13,6 +13,7 @@ logger = logging.getLogger("AFO.Security")
 class VaultManager:
     def __init__(self, mode: str = "env"):
         from AFO.config.settings import get_settings
+
         self.settings = get_settings()
         self.mode = mode
         self.secrets: dict[str, str] = {}
@@ -27,7 +28,7 @@ class VaultManager:
                 "action": action,
                 "key": key,
                 "success": success,
-                "head_sha": os.getenv("GIT_COMMIT_SHA", "unknown")
+                "head_sha": os.getenv("GIT_COMMIT_SHA", "unknown"),
             }
             self._audit_log.append(entry)
             logger.info(f"📋 [Vault Audit] {action} on {key} (Success: {success})")
@@ -57,7 +58,7 @@ class VaultManager:
         """Emergency bypass protocol (High Priority Alert)."""
         logger.critical("🚨 [VAULT] BREAK-GLASS PROTOCOL ACTIVATED!")
         self._audit("BREAK_GLASS", "ALL", True)
-        self.mode = "env" # Revert to env for emergency access
+        self.mode = "env"  # Revert to env for emergency access
 
     def rotate_secret(self, key: str, new_value: str) -> bool:
         """Rotates a secret (Simulation)."""

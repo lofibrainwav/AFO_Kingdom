@@ -13,9 +13,14 @@ class ToolSkillResult:
     score: int
     evidence: str
 
+
 def run(repo_root: Path) -> dict:
     # Auto-generated evidence candidates
-    candidates = [repo_root / "trivy-results.json", repo_root / "artifacts/trivy-results.json", repo_root / "logs/trivy-results.json"]
+    candidates = [
+        repo_root / "trivy-results.json",
+        repo_root / "artifacts/trivy-results.json",
+        repo_root / "logs/trivy-results.json",
+    ]
 
     # Find first existing evidence
     hit = next((p for p in candidates if p.exists()), None)

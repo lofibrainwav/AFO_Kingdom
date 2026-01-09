@@ -29,11 +29,7 @@ class OllamaService:
         self._active_model: str = self.settings.OLLAMA_MODEL
         self._switch_lock = asyncio.Lock()
         self._last_switch_ts: float = 0
-        self._metrics = {
-            "switch_count": 0,
-            "failed_switches": 0,
-            "last_error": None
-        }
+        self._metrics = {"switch_count": 0, "failed_switches": 0, "last_error": None}
 
     @property
     def active_model(self) -> str:
@@ -101,11 +97,10 @@ class OllamaService:
                     "model": model,
                     "prompt": "ping",
                     "stream": False,
-                    "options": {"num_predict": 1}
+                    "options": {"num_predict": 1},
                 }
                 response = await client.post(
-                    f"{self.settings.OLLAMA_BASE_URL}/api/generate",
-                    json=payload
+                    f"{self.settings.OLLAMA_BASE_URL}/api/generate", json=payload
                 )
                 return response.status_code == 200
         except Exception as e:
@@ -118,8 +113,9 @@ class OllamaService:
             "active_model": self._active_model,
             "last_switch": self._last_switch_ts,
             "metrics": self._metrics,
-            "head_sha": os.getenv("GIT_COMMIT_SHA", "unknown")
+            "head_sha": os.getenv("GIT_COMMIT_SHA", "unknown"),
         }
+
 
 # Singleton
 import os

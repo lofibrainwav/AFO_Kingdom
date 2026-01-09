@@ -21,7 +21,11 @@ async def serenity_node(state: GraphState) -> GraphState:
     automation_potential_score = _evaluate_automation_potential(query)
     error_recovery_score = _evaluate_error_recovery(skill_id)
     friction_reduction_score = _evaluate_friction_reduction(state)
-    heuristic_score = automation_potential_score * 0.4 + error_recovery_score * 0.3 + friction_reduction_score * 0.3
+    heuristic_score = (
+        automation_potential_score * 0.4
+        + error_recovery_score * 0.3
+        + friction_reduction_score * 0.3
+    )
 
     # 2. Scholar Assessment (Yeongdeok)
     import json
@@ -35,7 +39,7 @@ async def serenity_node(state: GraphState) -> GraphState:
     Plan:
     - Skill: {skill_id}
     - Query: {query}
-    - Command: {state.input.get('command', '')}
+    - Command: {state.input.get("command", "")}
 
     Guidelines:
     - Evaluate if this task can be automated safely.
@@ -58,12 +62,13 @@ async def serenity_node(state: GraphState) -> GraphState:
 
     try:
         response = await llm_router.execute_with_routing(
-            prompt,
-            context={"provider": "ollama", "quality_tier": "standard"}
+            prompt, context={"provider": "ollama", "quality_tier": "standard"}
         )
         if response and response.get("response"):
             try:
-                text = response["response"].strip().replace("```json", "").replace("```", "").strip()
+                text = (
+                    response["response"].strip().replace("```json", "").replace("```", "").strip()
+                )
                 data = json.loads(text)
                 scholar_score = data.get("score", heuristic_score)
                 reasoning = data.get("reasoning", reasoning)
@@ -82,11 +87,7 @@ async def serenity_node(state: GraphState) -> GraphState:
         "score": round(final_score, 3),
         "reasoning": reasoning,
         "issues": issues,
-        "metadata": {
-            "mode": assessment_mode,
-            "scholar": "Yeongdeok (孝)",
-            "model": scholar_model
-        }
+        "metadata": {"mode": assessment_mode, "scholar": "Yeongdeok (孝)", "model": scholar_model},
     }
 
     state.outputs["SERENITY"] = evaluation

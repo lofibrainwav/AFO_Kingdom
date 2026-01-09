@@ -10,13 +10,13 @@ if TYPE_CHECKING:
 
 async def parse_node(state: GraphState) -> GraphState:
     """Parse command into structured plan.
-te execution plan.
+    te execution plan.
 
-    Args:
-        state: Current graph state
+        Args:
+            state: Current graph state
 
-    Returns:
-        Updated graph state with execution plan
+        Returns:
+            Updated graph state with execution plan
     """
     command = state.plan.get("command", "")
 

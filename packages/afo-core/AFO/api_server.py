@@ -357,13 +357,15 @@ class AFOServer:
         @self.app.get("/api/logs/stream", tags=["Logs"])
         async def logs_stream(request: Request):
             """Stream real-time chancellor thoughts via Server-Sent Events."""
+
             async def event_generator():
                 """Generate SSE events for chancellor stream."""
                 import datetime
+
                 # Initial connection message
                 yield {
                     "event": "connected",
-                    "data": f'{{"message": "🏰 Chancellor Stream Connected", "timestamp": "{datetime.datetime.now(datetime.UTC).isoformat()}"}}'
+                    "data": f'{{"message": "🏰 Chancellor Stream Connected", "timestamp": "{datetime.datetime.now(datetime.UTC).isoformat()}"}}',
                 }
 
                 counter = 0
@@ -377,7 +379,7 @@ class AFOServer:
                     counter += 1
                     yield {
                         "event": "heartbeat",
-                        "data": f'{{"message": "💓 Chancellor Heartbeat #{counter}", "timestamp": "{datetime.datetime.now(datetime.UTC).isoformat()}"}}'
+                        "data": f'{{"message": "💓 Chancellor Heartbeat #{counter}", "timestamp": "{datetime.datetime.now(datetime.UTC).isoformat()}"}}',
                     }
 
             return EventSourceResponse(event_generator())
