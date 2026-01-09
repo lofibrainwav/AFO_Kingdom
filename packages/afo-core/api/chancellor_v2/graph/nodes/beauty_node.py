@@ -220,30 +220,4 @@ def _evaluate_modularity(skill_id: str) -> float:
     return max(modularity_score, 0.6)  # 기본 모듈화 수준
 
 
-def _evaluate_documentation_quality(query: str) -> float:
-    """문서화 품질 평가 (보조 메트릭)"""
-    if not query:
-        return 0.6
-
-    query_lower = query.lower()
-
-    # 문서화 관련 키워드 평가
-    doc_indicators = {
-        "docs": 0.9,
-        "documentation": 0.9,
-        "readme": 0.9,
-        "guide": 0.8,
-        "tutorial": 0.8,
-        "example": 0.8,
-        "reference": 0.7,
-        "comment": 0.6,
-        "docstring": 0.6,
-        "javadoc": 0.6,
-    }
-
-    doc_score = 0.0
-    for indicator, score in doc_indicators.items():
-        if indicator in query_lower:
-            doc_score = max(doc_score, score)
-
-    return max(doc_score, 0.6)  # 기본 문서화 수준
+    return max(modularity_score, 0.6)  # 기본 모듈화 수준

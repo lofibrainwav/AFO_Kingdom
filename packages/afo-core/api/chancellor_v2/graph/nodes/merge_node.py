@@ -56,7 +56,6 @@ async def merge_node(state: GraphState) -> GraphState:
     # SSOT validation: All 5 pillars must be present for valid Trinity Score
     pillars_present = {"truth", "goodness", "beauty"}
     if not pillars_present.issubset(pillar_scores.keys()):
-        missing_pillars = pillars_present - set(pillar_scores.keys())
         trinity_score = 0  # Force 0 if pillars missing
 
     # Risk Score (currently using goodness_score as proxy, can be enhanced)

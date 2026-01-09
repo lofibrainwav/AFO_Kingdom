@@ -12,7 +12,7 @@ import os
 import time
 import uuid
 from collections.abc import Awaitable, Callable
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from .state import GraphState
