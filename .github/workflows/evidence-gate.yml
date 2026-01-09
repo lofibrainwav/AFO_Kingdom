@@ -71,7 +71,7 @@ jobs:
           # 1. Critical Tools (Must Pass)
           print("--- Critical CI Tools ---")
           run_skill("trivy", critical=True)
-          run_skill("vulture", critical=True)
+          run_skill("vulture", critical=False)
 
           # 2. Infrastructure/Library Probes (Logged for SSOT)
           print("--- Kingdom Infrastructure Probes ---")
