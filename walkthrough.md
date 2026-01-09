@@ -1,4 +1,5 @@
 # AFO Kingdom: Phase 23 & 24 Unified Walkthrough
+
 기준일: 2026-01-08  
 상태: **SSOT LOCKED** (眞·善·美·孝·永 완전성 확보)
 
@@ -8,6 +9,7 @@
 ---
 
 ## 0) Executive Summary
+
 - **Phase 23 (Hardening)**: Ollama 스위칭 프로토콜, Zero Trust Vault, Dashboard Vitals 강화 완료.
 - **Phase 24 (Intelligence - Council of Minds)**:
     - **Architecture**: Chancellor Graph의 동기식 구조를 **Async 병렬 비동기** 체계로 전면 혁신.

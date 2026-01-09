@@ -50,7 +50,9 @@
 |---|------|-------|----------|--------|----------|
 | TICKET-096 | Phase 22 Cleanup & Restoration | 22 | MEDIUM | ✅ 완료 | UPSTREAM_PIN.txt / jade_bell.mp3 |
 
+
 ## TICKET-096 — Phase 22 Cleanup & Strategic Restoration
+
 - Phase: 22 (유지보수)
 - Priority: MEDIUM
 - Type: Maintenance
@@ -72,24 +74,32 @@
 | TICKET-099 | Metadata & Evidence Pack | 24 | `LOCKED` | ✅ 완료 | council_runs/*.jsonl |
 | TICKET-100 | Final SSOT Seal & Walkthrough | 24 | `LOCKED` | ✅ 완료 | walkthrough.md |
 
+
 ## TICKET-094 — Chancellor V2 Integration (Shadow/Canary)
+
 - Phase: 23 (운영 최적화)
 - Status: ✅ 완료 (2026-01-08)
 - Evidence: Shadow mode verified, Canary header routing active.
 
+
 ## TICKET-095 — Vault Manager Implementation (Zero Trust Security)
+
 - Phase: 23 (보안 강화)
 - Status: ✅ 완료 (2026-01-08)
 - Evidence: Policy-based access & strict audit logging implemented.
 
 ## Phase 24 — Council of Minds (Intellectual Revolution)
 
+
 ## TICKET-098 — Council of Minds (Async Parallel Assessment)
+
 - Phase: 24 (지능 고도화)
 - Status: ✅ 완료 (2026-01-08)
 - Evidence: Multi-LLM (Zilong/Pangtong/Lushun/Yeongdeok) parallel assessment flow verified.
 
+
 ## TICKET-099 — Metadata & Evidence Pack Persistence
+
 - Phase: 24 (SSOT 강화)
 - Status: ✅ 완료 (2026-01-08)
 - Evidence: Metadata standard (Mode/Scholar/Model) and `.jsonl` runs persistence.
