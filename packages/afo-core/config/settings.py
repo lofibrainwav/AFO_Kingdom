@@ -113,9 +113,7 @@ class AFOSettings(BaseSettings):
     # API Keys
     # Phase 15 Security Seal: 하드코딩된 시크릿 제거
     # ============================================================================
-    API_YUNGDEOK: str = Field(
-        default="", description="영덕 API 키 (환경변수 API_YUNGDEOK로 설정)"
-    )
+    API_YUNGDEOK: str = Field(default="", description="영덕 API 키 (환경변수 API_YUNGDEOK로 설정)")
     OPENAI_API_KEY: str | None = Field(default=None, description="OpenAI API 키")
     ANTHROPIC_API_KEY: str | None = Field(default=None, description="Anthropic (Claude) API 키")
     GEMINI_API_KEY: str | None = Field(default=None, description="Google Gemini API 키")

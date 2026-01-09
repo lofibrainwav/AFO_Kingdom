@@ -1,0 +1,16 @@
+{
+  "version": "tools/ssot/v1",
+  "anchor": "TICKETS.md",
+  "tools": [
+    {
+      "id": "trivy",
+      "pillar": "goodness",
+      "evidence_paths": ["trivy-results.json", "artifacts/trivy-results.json", "logs/trivy-results.json"]
+    },
+    {
+      "id": "vulture",
+      "pillar": "truth",
+      "evidence_paths": ["artifacts/vulture.json", "artifacts/vulture.txt"]
+    }
+  ]
+}

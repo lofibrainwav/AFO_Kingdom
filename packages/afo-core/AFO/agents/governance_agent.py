@@ -217,9 +217,7 @@ class GovernanceAgent:
 
     def _check_allowed_directories(self, path: str) -> PolicyCheck:
         """Check if path is in allowed directories."""
-        allowed = any(
-            path.startswith(allowed_dir) for allowed_dir in self.allowed_directories
-        )
+        allowed = any(path.startswith(allowed_dir) for allowed_dir in self.allowed_directories)
         return PolicyCheck(
             policy_name="directory_restrictions",
             passed=allowed,
@@ -302,9 +300,7 @@ class GovernanceAgent:
 governance_agent = GovernanceAgent()
 
 
-async def evaluate_action(
-    action: str, agent_name: str, **context: Any
-) -> GovernanceDecision:
+async def evaluate_action(action: str, agent_name: str, **context: Any) -> GovernanceDecision:
     """Convenience function to evaluate an action through governance."""
     return await governance_agent.evaluate_action(action, agent_name, context)
 

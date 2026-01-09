@@ -1,0 +1,108 @@
+name: Evidence Gate (Tool-to-Skill)
+
+on:
+  pull_request:
+  push:
+    branches: [ "**" ]
+
+jobs:
+  evidence:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Prepare dirs
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts logs
+
+      - name: Trivy FS scan -> JSON evidence
+        run: |
+          set -euo pipefail
+          docker run --rm \
+            -v "$PWD":/repo \
+            -w /repo \
+            aquasec/trivy:latest \
+            fs \
+            --format json \
+            --output artifacts/trivy-results.json \
+            --skip-dirs .git,node_modules,.venv,.next,dist,build,artifacts,logs \
+            .
+          test -s artifacts/trivy-results.json
+
+      - name: Vulture -> TXT evidence
+        run: |
+          set -euo pipefail
+          if [ -x scripts/tools/run_vulture_fixed.sh ]; then
+            bash scripts/tools/run_vulture_fixed.sh
+          elif [ -x scripts/tools/run_vulture.sh ]; then
+            bash scripts/tools/run_vulture.sh
+          else
+            python -m pip install --upgrade pip
+            python -m pip install vulture
+            {
+              echo "ts=$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+              python -m vulture --version || true
+              echo "---"
+              python -m vulture packages/afo-core/AFO --min-confidence 80 || true
+            } > artifacts/vulture.txt
+            test -s artifacts/vulture.txt
+          fi
+
+      - name: Generate tool skills
+        run: |
+          set -euo pipefail
+          python scripts/gen_tool_skills.py
+
+      - name: Smoke test generated skills (no import assumptions)
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import importlib.util
+
+          repo = Path(".").resolve()
+
+          def run_skill(name: str):
+            candidates = sorted(repo.glob(f"**/{name}_skill.py"))
+            if not candidates:
+              raise SystemExit(f"missing generated skill file: {name}_skill.py")
+            p = candidates[0]
+            spec = importlib.util.spec_from_file_location(f"{name}_skill", p)
+            mod = importlib.util.module_from_spec(spec)
+            assert spec and spec.loader
+            spec.loader.exec_module(mod)
+            if not hasattr(mod, "run"):
+              raise SystemExit(f"{p} missing run()")
+            out = mod.run(repo)
+            print(name, "=>", out)
+            if not isinstance(out, dict):
+              raise SystemExit(f"{name}: run() must return dict")
+            if out.get("status") != "healthy":
+              raise SystemExit(f"{name}: unhealthy")
+            if float(out.get("score", 0)) < 80:
+              raise SystemExit(f"{name}: score too low")
+            ev = out.get("evidence", "")
+            if not ev:
+              raise SystemExit(f"{name}: missing evidence path")
+            evp = (repo / ev).resolve()
+            if not evp.exists() or evp.stat().st_size == 0:
+              raise SystemExit(f"{name}: evidence missing/empty -> {ev}")
+
+          run_skill("trivy")
+          run_skill("vulture")
+          PY
+
+      - name: Upload evidence artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: tool-evidence
+          path: |
+            artifacts/trivy-results.json
+            artifacts/vulture.txt

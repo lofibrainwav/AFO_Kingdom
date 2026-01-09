@@ -13,7 +13,9 @@ class Step:
     content: str
 
 
-def run_reflexion(input_text: str, contract: ReflexionContract, *, dry_run: bool = True) -> dict[str, Any]:
+def run_reflexion(
+    input_text: str, contract: ReflexionContract, *, dry_run: bool = True
+) -> dict[str, Any]:
     """
     Core reflection execution loop.
     Supports a sequential loop of critique and improvement.
@@ -41,7 +43,9 @@ def run_reflexion(input_text: str, contract: ReflexionContract, *, dry_run: bool
         if dry_run:
             # Simulate critique and revision in dry-run mode
             critique = f"(Dry Run Critique {iters}): Ensure the solution is SSOT-compliant."
-            improved = f"(Dry Run Improved {iters}): Optimized for Trinity Pillars. Input: {input_text}"
+            improved = (
+                f"(Dry Run Improved {iters}): Optimized for Trinity Pillars. Input: {input_text}"
+            )
         else:
             # Future Engine integration (LangGraph/CrewAI) will go here
             raise RuntimeError(

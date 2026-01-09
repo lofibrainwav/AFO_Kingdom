@@ -127,23 +127,33 @@ export function TrinityGlowCard({
         </div>
       )}
 
-      {/* ICCLS + Sentiment Status */}
-      {(breakdown?.iccls_score !== undefined || breakdown?.sentiment_score !== undefined) && (
-        <div className="flex justify-between mt-2 text-xs border-t border-white/10 pt-2">
-          {breakdown.iccls_score !== undefined && breakdown.iccls_score !== null && (
-            <div className={`flex items-center gap-1 ${breakdown.iccls_score > 0.3 ? 'text-red-400' : 'text-green-400'}`}>
-              <span>🔗</span>
-              <span>ICCLS: {(breakdown.iccls_score * 100).toFixed(1)}%</span>
-            </div>
-          )}
-          {breakdown.sentiment_score !== undefined && breakdown.sentiment_score !== null && (
-            <div className="flex items-center gap-1">
-              <span>{breakdown.sentiment_score > 0.6 ? '🟢' : breakdown.sentiment_score > 0.4 ? '🟡' : '🔴'}</span>
-              <span>Sentiment: {(breakdown.sentiment_score * 100).toFixed(0)}%</span>
-            </div>
-          )}
+      {/* ICCLS + Sentiment Status (Always Visible) */}
+      <div className="flex justify-between mt-2 text-xs border-t border-white/10 pt-2">
+        <div className="flex items-center gap-1 text-gray-400">
+          <span>🔗</span>
+          <span>
+            ICCLS:{" "}
+            {breakdown?.iccls_score != null
+              ? `${(breakdown.iccls_score * 100).toFixed(1)}%`
+              : "---"}
+          </span>
         </div>
-      )}
+        <div className="flex items-center gap-1 text-gray-400">
+          <span>
+            {breakdown?.sentiment_score != null && breakdown.sentiment_score > 0.6
+              ? "🟢"
+              : breakdown?.sentiment_score != null && breakdown.sentiment_score > 0.4
+                ? "🟡"
+                : "🔴"}
+          </span>
+          <span>
+            Sentiment:{" "}
+            {breakdown?.sentiment_score != null
+              ? `${(breakdown.sentiment_score * 100).toFixed(0)}%`
+              : "---"}
+          </span>
+        </div>
+      </div>
 
       {/* Score Display (Summary) */}
       {!breakdown && (

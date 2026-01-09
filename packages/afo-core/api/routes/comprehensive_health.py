@@ -126,30 +126,32 @@ async def comprehensive_health_check() -> dict[str, Any]:
         automation_status = await _check_automation_tools()
 
         # 8. 종합 결과 구성
-        # health_data에서 trinity 정보 추출 (TrinityMetrics 객체 또는 dict)
-        trinity_info = health_data.get("trinity", {})
-        breakdown = {
-            "truth": 0.0,
-            "goodness": 0.0,
-            "beauty": 0.0,
-            "filial_serenity": 0.0,
-            "eternity": 0.0,
-            "iccls_gap": 0.0,
-            "sentiment": 0.0,
-        }
-
-        if isinstance(trinity_info, dict):
-            breakdown["truth"] = trinity_info.get("truth", 0.0)
-            breakdown["goodness"] = trinity_info.get("goodness", 0.0)
-            breakdown["beauty"] = trinity_info.get("beauty", 0.0)
-            breakdown["filial_serenity"] = trinity_info.get("filial_serenity", 0.0)
-            breakdown["eternity"] = trinity_info.get("eternity", 1.0)
-            # Use dynamic values from health_data (No Hardcoding)
-            breakdown["iccls_gap"] = health_data.get("iccls_gap", trinity_info.get("iccls_gap", 0.0))
-            breakdown["sentiment"] = health_data.get("sentiment", trinity_info.get("sentiment", 0.0))
-            trinity_score = trinity_info.get("trinity_score", health_data.get("health_percentage", 0) / 100.0)
-        else:
+        # Prioritize V2 Dynamic Breakdown (SSOT: health_service.py)
+        v2_breakdown = health_data.get("breakdown")
+        if v2_breakdown:
+            breakdown = {
+                "truth": v2_breakdown.get("truth", 0.0),
+                "goodness": v2_breakdown.get("goodness", 0.0),
+                "beauty": v2_breakdown.get("beauty", 0.0),
+                "filial_serenity": v2_breakdown.get("filial_serenity", 0.0),
+                "eternity": v2_breakdown.get("eternity", 1.0),
+                "iccls_gap": health_data.get("iccls_gap", 0.0),
+                "sentiment": health_data.get("sentiment", 0.0),
+            }
             trinity_score = health_data.get("health_percentage", 0) / 100.0
+        else:
+            # Legacy Fallback REMOVED for SSOT Purity (Friction Calculator v2.0)
+            # If V2 breakdown is missing, we must fail loud or show 0.0
+            breakdown = {
+                "truth": 0.0,
+                "goodness": 0.0,
+                "beauty": 0.0,
+                "filial_serenity": 0.0,
+                "eternity": 0.0,
+                "iccls_gap": 0.0,
+                "sentiment": 0.0,
+            }
+            trinity_score = 0.0
 
         config = health_check_config
         response_data = {
@@ -159,12 +161,17 @@ async def comprehensive_health_check() -> dict[str, Any]:
             "timestamp": datetime.now().isoformat(),
             "organs": health_data.get("organs", {}),
             "organs_v2": health_data.get("organs_v2"),
+            "security": health_data.get("security"),  # Added Security Field (Option A)
             "contract_v2": health_data.get("contract_v2"),
             "ts_v2": health_data.get("ts_v2"),
+            "healthy_organs": health_data.get("healthy_organs", 0),  # Pass-through SSOT
+            "total_organs": health_data.get("total_organs", 11),  # Pass-through SSOT
             "trinity_score": trinity_score,
             "health_percentage": round(trinity_score * 100, 2),
             "trinity_breakdown": breakdown,  # 5기둥 상세 점수 (Dashboard용)
             "breakdown": breakdown,  # Alias for fallback
+            "iccls_gap": health_data.get("iccls_gap", 0.0),  # T22: SSOT Contract (Option A)
+            "sentiment": health_data.get("sentiment", 0.0),  # T22: SSOT Contract (Option A)
             "skills": skills_status,
             "scholars": scholars_status,
             "mcp_tools": mcp_tools_status,

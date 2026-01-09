@@ -11,6 +11,7 @@ from starlette.responses import StreamingResponse
 # Optional SSE import
 try:
     from AFO.utils.metrics import sse_open_connections, update_sse_health_metrics
+
     METRICS_AVAILABLE = True
 except ImportError:
     METRICS_AVAILABLE = False
@@ -173,7 +174,6 @@ async def chancellor_stream(req: ChancellorRequest):
                 sse_open_connections.dec()
 
     return StreamingResponse(_gen_wrapper(), media_type="text/event-stream")
-
 
 
 @router.post("/stream_v2")

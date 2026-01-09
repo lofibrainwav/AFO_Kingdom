@@ -1,12 +1,2 @@
-S105 Possible hardcoded password assigned to: "_jwt_secret"
-  --> api/utils/auth.py:48:19
-   |
-46 |         stacklevel=2,
-47 |     )
-48 |     _jwt_secret = "dev-only-insecure-key-do-not-use-in-production"
-   |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-49 |
-50 | JWT_SECRET_KEY = _jwt_secret
-   |
-
-Found 1 error.
+All checks passed!
+467 files already formatted

@@ -220,6 +220,10 @@ async def get_comprehensive_health() -> dict[str, Any]:
 
     # T21: Use organs_truth (11 Organs) as the SSOT for Trinity Calculation
     # This ensures "Truthful" scores (e.g. 98, 92) rather than binary 100%
+    # Initialize variables safely to prevent UnboundLocalError
+    o2: dict[str, Any] = {}
+    v2_data: dict[str, Any] = {}
+
     try:
         import AFO.health.organs_truth
         from AFO.health.organs_truth import build_organs_final
@@ -227,7 +231,7 @@ async def get_comprehensive_health() -> dict[str, Any]:
         logger.warning(f"DEBUG: organs_truth loaded from {AFO.health.organs_truth.__file__}")
 
         v2_data = build_organs_final()
-        o2 = v2_data["organs"]
+        o2 = v2_data.get("organs", {})
 
         # 眞 (Truth 35%) - Knowledge Infrastructure
         # Redis(98), Postgres(99), Qdrant(94)
@@ -239,7 +243,9 @@ async def get_comprehensive_health() -> dict[str, Any]:
 
         # 善 (Goodness 35%) - Safety & Integrity
         # Trinity Gate(Variable), CI(88)
-        goodness_score = (o2["免疫_Trinity_Gate"]["score"] + o2["骨_CI"]["score"]) / 2.0 / 100.0
+        # T21: Security (Immunity) is now separated in V2 contract to maintain 11-Organs SSOT
+        sec_score = v2_data.get("security", {}).get("score", 10)
+        goodness_score = (sec_score + o2["骨_CI"]["score"]) / 2.0 / 100.0
 
         # 美 (Beauty 20%) - User Experience & Interface
         # Dashboard(92), Brain/API(100)
@@ -256,6 +262,7 @@ async def get_comprehensive_health() -> dict[str, Any]:
         # ICCLS (Inter-Component Consistency Level Score) - Dynamic Calculation
         # 점수들의 표준 편차를 역으로 환산 (편차가 적을수록 일관성 높음)
         import statistics
+
         all_scores = [o["score"] for o in o2.values()]
         if len(all_scores) > 1:
             stdev = statistics.stdev(all_scores)
@@ -272,16 +279,25 @@ async def get_comprehensive_health() -> dict[str, Any]:
 
         response_v2 = {
             "organs_v2": o2,
+            "security": v2_data.get("security"),  # Added Security Field (Option A)
             "contract_v2": v2_data["contract"],
             "ts_v2": v2_data["ts"],
-            "iccls_gap": iccls_score,     # Added Dynamic Metric
-            "sentiment": sentiment_score, # Added Dynamic Metric
+            "iccls_gap": iccls_score,  # Added Dynamic Metric
+            "sentiment": sentiment_score,  # Added Dynamic Metric
+            "breakdown": {
+                "truth": truth_score,
+                "goodness": goodness_score,
+                "beauty": beauty_score,
+                "filial_serenity": filial_score,
+                "eternity": eternity_score,
+            },
         }
     except Exception as e:
         logger.warning("organs_v2 generation failed: %s", e)
         # Fallback to binary logic if V2 fails
         response_v2 = {
             "organs_v2": None,
+            "security": None,
             "contract_v2": {"version": "organs/v2", "error": str(e)},
             "ts_v2": current_time,
         }
@@ -345,9 +361,14 @@ async def get_comprehensive_health() -> dict[str, Any]:
         service_name = "AFO Kingdom Soul Engine API"
         api_version = "unknown"
 
-    # Calculate healthy_organs and total_organs for the V1 organs
-    healthy_count = sum(1 for o in organs if o["healthy"])
-    total_organs = len(organs)
+    # Calculate healthy_organs and total_organs (Patch 2: Unified V2 Prioritization)
+    if response_v2.get("organs_v2"):
+        healthy_count = sum(1 for v in o2.values() if v.get("status") == "healthy")
+        total_organs = len(o2)
+    else:
+        # Fallback to V1 logic if V2 failed or missing
+        healthy_count = sum(1 for o in organs if o["healthy"])
+        total_organs = len(organs)
 
     # 최종 응답 구성 (안전하게 초기화)
     try:
@@ -371,13 +392,7 @@ async def get_comprehensive_health() -> dict[str, Any]:
         "decision_message": decision_message,
         "issues": issues or None,
         "suggestions": suggestions or None,
-        "organs": {
-            o["organ"]: {
-                "status": o["status"],
-                "output": str(o.get("output", ""))[:100],
-            }
-            for o in organs
-        },
+        "organs": o2,  # Unified to V2 11-Organs SSOT
         **response_v2,
         "method": "bridge_perspective_v2_jiphyeonjeon",
         "timestamp": current_time,
