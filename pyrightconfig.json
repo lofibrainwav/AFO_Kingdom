@@ -52,8 +52,7 @@
     }
   ],
   "include": [
-    "packages/afo-core/AFO",
-    "packages/trinity-os"
+    "packages/afo-core/AFO"
   ],
   "pythonVersion": "3.12",
   "reportMissingImports": "warning",
