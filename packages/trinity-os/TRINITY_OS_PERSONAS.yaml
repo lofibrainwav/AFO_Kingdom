@@ -145,7 +145,7 @@ infrastructure:
     dashboard: 3000
     ollama: 11434
     redis: 6379
-    postgresql: 15432
+    postgresql: 5432
     grafana: 3100
     prometheus: 9090
 
