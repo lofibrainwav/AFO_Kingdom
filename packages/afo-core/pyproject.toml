@@ -52,9 +52,9 @@ dependencies = [
     "pypdf (>=6.4.0)",
     "mcp (>=1.23.0)",
     "marshmallow (>=4.1.2)",
-    "langchain-core (>=1.2.5)",
     "fonttools (>=4.60.2)",
     "filelock (>=3.20.1)",
+    "langchain-core (>=1.2.5)",
 ]
 
 [tool.setuptools.packages.find]

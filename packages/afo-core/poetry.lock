@@ -8760,4 +8760,4 @@ dev = ["anyio", "pyright", "pytest", "pytest-asyncio", "ruff", "sentry-sdk", "tr
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12,<3.13"
-content-hash = "1e8984686ac789ae8895efe24efce3ee700ee33c7844eff90aaba72bb226d656"
+content-hash = "96cf0f451a7fbd065e0582976836c08d82579e11505a0a6cf67f7a2999a219e4"
