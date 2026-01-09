@@ -66,6 +66,7 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           import importlib.util
+          import sys
 
           repo = Path(".").resolve()
 
@@ -74,9 +75,16 @@ jobs:
             if not candidates:
               raise SystemExit(f"missing generated skill file: {name}_skill.py")
             p = candidates[0]
-            spec = importlib.util.spec_from_file_location(f"{name}_skill", p)
+            
+            # Robust dynamic import
+            module_name = f"{name}_skill"
+            spec = importlib.util.spec_from_file_location(module_name, p)
             mod = importlib.util.module_from_spec(spec)
             assert spec and spec.loader
+            
+            # Register in sys.modules for dataclasses
+            sys.modules[module_name] = mod
+            
             spec.loader.exec_module(mod)
             if not hasattr(mod, "run"):
               raise SystemExit(f"{p} missing run()")
