@@ -49,7 +49,7 @@ class VaultManager:
             val = os.getenv(key, default)
         else:
             val = os.getenv(key, default)
-        
+
         self._audit("GET", key, val is not None)
         return val
 

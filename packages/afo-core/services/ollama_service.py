@@ -52,7 +52,7 @@ class OllamaService:
                 return True
 
             logger.info(f"🔄 [Step 0] Switching started: {self._active_model} -> {target_model}")
-            
+
             try:
                 # 1. Health Check
                 if not await self._check_health(target_model):
@@ -69,7 +69,7 @@ class OllamaService:
                 self._active_model = target_model
                 self._last_switch_ts = time.time()
                 self._metrics["switch_count"] += 1
-                
+
                 logger.info(f"✅ [Step 3] Atomic Swap Success: {old_model} -> {target_model}")
                 return True
 
@@ -123,4 +123,5 @@ class OllamaService:
 
 # Singleton
 import os
+
 ollama_service = OllamaService()

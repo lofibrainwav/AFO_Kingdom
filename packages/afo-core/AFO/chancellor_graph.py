@@ -6,8 +6,6 @@ SSOT Contract: Sequential Thinking + Context7 are REQUIRED.
 
 from __future__ import annotations
 
-from api.chancellor_v2.graph import nodes
-
 import asyncio
 import json
 import os
@@ -15,9 +13,11 @@ import random
 import time
 from typing import Any
 
+from AFO.config.settings import get_settings
+from api.chancellor_v2.graph import nodes
+
 # Import Chancellor Graph V2 components
 from api.chancellor_v2.graph.runner import run_v2 as run_chancellor_v2
-from AFO.config.settings import get_settings
 
 
 # Create unified chancellor_graph interface
@@ -77,7 +77,7 @@ class ChancellorGraph:
                     ]
 
                     # Run MIPROv2 optimization
-                    # NOTE: If MIPRO compilation is slow/async, it should be awaited. 
+                    # NOTE: If MIPRO compilation is slow/async, it should be awaited.
                     # For now, keeping it sync as per original implementation but wrapped in async node.
                     optimized_program = mipro_optimizer.compile(
                         student=mock_program, trainset=mock_trainset
@@ -157,12 +157,12 @@ class ChancellorGraph:
         """
         settings = get_settings()
         headers = headers or {}
-        
+
         # Phase 24: Advanced Routing (Canary Override)
         force_v2 = headers.get("X-AFO-Engine", "").lower() == "v2"
         v2_enabled = settings.CHANCELLOR_V2_ENABLED or force_v2
         shadow_enabled = settings.CHANCELLOR_V2_SHADOW_ENABLED and not v2_enabled
-        
+
         # 1. Main Path
         if v2_enabled:
             # V2 execution
@@ -178,15 +178,14 @@ class ChancellorGraph:
                 "input": command,
                 "outputs": {"V1": "Executed via legacy V1 engine (Canary OFF)"}
             }
-            
+
             # 2. Shadow Path (PH24)
-            if shadow_enabled:
-                # Random sampling for shadow to reduce load
-                if random.random() < settings.CHANCELLOR_V2_DIFF_SAMPLING_RATE:
-                    asyncio.create_task(
-                        ChancellorGraph._run_shadow_diff(command, result, **kwargs)
-                    )
-            
+            # Combined condition per SIM102: shadow enabled AND random sampling
+            if shadow_enabled and random.random() < settings.CHANCELLOR_V2_DIFF_SAMPLING_RATE:
+                asyncio.create_task(
+                    ChancellorGraph._run_shadow_diff(command, result, **kwargs)
+                )
+
             return result
 
     @staticmethod
@@ -195,7 +194,7 @@ class ChancellorGraph:
         try:
             input_payload = {"command": command, **kwargs}
             v2_result = ChancellorGraph.run_v2(input_payload)
-            
+
             # Prepare diff Evidence
             diff_entry = {
                 "timestamp": time.time(),
@@ -206,15 +205,15 @@ class ChancellorGraph:
                 "v2_success": v2_result.get("success"),
                 "v2_error_count": v2_result.get("error_count", 0),
             }
-            
+
             # Save to artifacts for SSOT evidence
             diff_dir = "/Users/brnestrm/AFO_Kingdom/artifacts/chancellor_shadow_diff"
             os.makedirs(diff_dir, exist_ok=True)
             filename = f"diff_{v2_result.get('trace_id') or int(time.time())}.json"
-            
+
             with open(os.path.join(diff_dir, filename), "w") as f:
                 json.dump(diff_entry, f, indent=2)
-                
+
         except Exception as e:
             # Silent fail for shadow mode to avoid affecting production
             pass

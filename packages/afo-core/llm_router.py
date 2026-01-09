@@ -745,12 +745,15 @@ class LLMRouter:
 
         # Phase 23: Robust Switching Protocol
         settings = get_settings()
-        if settings.OLLAMA_SWITCHING_PROTOCOL_ENABLED and ollama_service:
-            # Ensure model is ready before calling
-            if not await ollama_service.ensure_model(model):
-                logger.error(f"❌ Failed to ensure model {model} via protocol")
-                # Fallback to current model if switch failed?
-                model = ollama_service.active_model
+        # Combined condition per SIM102
+        if (
+            settings.OLLAMA_SWITCHING_PROTOCOL_ENABLED
+            and ollama_service
+            and not await ollama_service.ensure_model(model)
+        ):
+            logger.error(f"❌ Failed to ensure model {model} via protocol")
+            # Fallback to current model if switch failed?
+            model = ollama_service.active_model
 
         try:
             async with httpx.AsyncClient(timeout=httpx.Timeout(timeout_seconds)) as client:

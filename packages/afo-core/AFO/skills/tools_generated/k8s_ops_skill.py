@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, asdict
-from pathlib import Path
 import json
+from dataclasses import asdict, dataclass
+from pathlib import Path
+
 
 @dataclass(frozen=True)
 class ToolSkillResult:
@@ -15,18 +16,18 @@ class ToolSkillResult:
 def run(repo_root: Path) -> dict:
     # Auto-generated evidence candidates
     candidates = [repo_root / "artifacts/k8s-ops-status.json"]
-    
+
     # Find first existing evidence
     hit = next((p for p in candidates if p.exists()), None)
-    
+
     if hit and hit.stat().st_size > 0:
         # Resolve relative path for cleaner output if possible
         try:
             rel = str(hit.relative_to(repo_root))
         except ValueError:
             rel = str(hit)
-            
+
         return asdict(ToolSkillResult("k8s_ops", "eternity", "healthy", 90, rel))
-    
+
     # Fail Loud if no evidence
     return asdict(ToolSkillResult("k8s_ops", "eternity", "unhealthy", 10, "missing"))

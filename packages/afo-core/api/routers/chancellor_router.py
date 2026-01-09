@@ -324,6 +324,7 @@ async def _execute_with_fallback(
     mode_used: Literal["offline", "fast", "lite", "full"],
     request: ChancellorInvokeRequest,
     llm_context: dict[str, Any],
+    headers: dict[str, str] | None = None,
 ) -> dict[str, Any]:
     """
     실행 모드에 따른 처리 및 폴백 (美: 순수 함수)
@@ -346,7 +347,7 @@ async def _execute_with_fallback(
         rag_result = await execute_rag_with_mode(
             query,
             request.headers if hasattr(request, "headers") else None,
-            request.headers if hasattr(request, "headers") else headers,
+            headers,
             {"llm_context": llm_context, "thread_id": request.thread_id, "mode_used": mode_used},
         )
 
@@ -488,7 +489,7 @@ async def _execute_with_fallback(
 
 
 async def _execute_full_mode(
-    request: ChancellorInvokeRequest, 
+    request: ChancellorInvokeRequest,
     llm_context: dict[str, Any],
     headers: dict[str, str] | None = None
 ) -> dict[str, Any]:
@@ -496,9 +497,9 @@ async def _execute_full_mode(
     FULL 모드 실행 - Phase 24: Unified ChancellorGraph 사용
     """
     from AFO.chancellor_graph import ChancellorGraph
-    
+
     query = request.query or request.input
-    
+
     # Unified Invoke (Handles Canary, Shadow, and Routine)
     result = await ChancellorGraph.invoke(
         query,
@@ -507,18 +508,18 @@ async def _execute_full_mode(
         thread_id=request.thread_id,
         max_strategists=getattr(request, "max_strategists", 3)
     )
-    
+
     # Extract response text from potentially complex graph outputs
     outputs = result.get("outputs", {})
     execute_result = outputs.get("EXECUTE", {})
     report_result = outputs.get("REPORT", {})
-    
+
     response_text = ""
     if isinstance(report_result, dict):
         response_text = report_result.get("result", "")
     if not response_text and isinstance(execute_result, dict):
         response_text = execute_result.get("result", "")
-        
+
     if not response_text:
         # Fallback to direct output if V1 or no standard node output
         response_text = outputs.get("V1", "Execution completed")
@@ -712,7 +713,7 @@ async def invoke_chancellor(
 ) -> ChancellorInvokeResponse:
     """
     Chancellor Graph 호출 엔드포인트 (Strangler Fig 적용)
-    
+
     Phase 24 Scaling:
     - X-AFO-Engine: v2 헤더 지원
     - Shadow 모드 자동 적용 (백그라운드 Diff)
@@ -720,12 +721,12 @@ async def invoke_chancellor(
     try:
         # FastAPI Headers extract
         headers = dict(http_request.headers)
-        
+
         # Strangler Fig Phase 2: 함수 분해 적용 (美: 우아한 구조)
         mode_used = _determine_execution_mode(request)
         llm_context = _build_llm_context(request)
         result = await _execute_with_fallback(mode_used, request, llm_context, headers)
-        
+
         # Pydantic Response Mapping (Fixing response -> result if needed)
         if "response" in result and "result" not in result:
             result["result"] = result["response"]
