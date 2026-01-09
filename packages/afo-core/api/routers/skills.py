@@ -401,6 +401,7 @@ async def skills_health() -> dict[str, Any]:
         # Skills Registry 초기화
         registry = SkillRegistry()
 
+        try:
             skills = registry.list_skills()
             health_status["skills_count"] = len(skills)
             health_status["registry_available"] = True
