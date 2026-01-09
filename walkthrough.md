@@ -50,6 +50,7 @@
 
 ### Council Score vs. Trinity Score
 - **Council Score (65.958)**: 현재 배심원단이 산출한 **Raw Consensus** 점수입니다. 
+- NOTE: 로그의 "Final Trinity Score"는 현재 Council Raw Consensus 점수(Council Score)와 동일한 값입니다.
 - **LOCKED Status**: 90점 미만임에도 봉인이 가능한 이유는 **'Async 병렬 아키텍처와 하이브리드 평가 체계' 자체가 철벽으로 구현되었음을 증명**했기 때문입니다.
 - **Future Note**: 향후 MIPRO 최적화 및 API Key 연결이 완료되면, 동일 아키텍처 위에서 점수(Goodness/Truth)가 자연스럽게 상승할 예정입니다.
 
@@ -64,6 +65,8 @@ Final Trinity Score: 65.958
 Decision Mode: ASK_COMMANDER (Risk Assessment: 36.000%)
 PASSED (Architecture & Hybrid Mode Verified)
 ```
+
+Evidence Pack: artifacts/council_runs/council_YYYYMMDD.jsonl (예: council_20260108.jsonl)
 
 > [!TIP]
 > **PASS 기준**: `asyncio.gather` 병렬 실행 + Pillar별 모드 표기(LLM/Heuristic) + 최종 Score/Decision Mode 산출이 모두 재현 가능함을 확인했습니다.
