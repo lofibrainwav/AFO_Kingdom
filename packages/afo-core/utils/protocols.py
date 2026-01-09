@@ -9,7 +9,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Protocol, TypeVar, runtime_checkable, Generic
+from typing import Any, TypeVar, Generic
 from abc import ABC, abstractmethod
 
 # 제네릭 타입 변수
@@ -18,8 +18,7 @@ TKey = TypeVar('TKey')
 TResult = TypeVar('TResult')
 
 
-@runtime_checkable
-class IService(Protocol[T]):
+class IService(ABC, Generic[T]):
     """서비스 인터페이스 프로토콜
 
     모든 서비스 클래스가 구현해야 하는 공통 인터페이스입니다.
@@ -51,8 +50,7 @@ class IService(Protocol[T]):
         ...
 
 
-@runtime_checkable
-class IRepository(Protocol[T, TKey]):
+class IRepository(ABC, Generic[T, TKey]):
     """리포지토리 인터페이스 프로토콜
 
     데이터 액세스 계층의 표준 인터페이스입니다.
@@ -94,8 +92,7 @@ class IRepository(Protocol[T, TKey]):
         ...
 
 
-@runtime_checkable
-class IValidator(Protocol[T]):
+class IValidator(ABC, Generic[T]):
     """검증 인터페이스 프로토콜
 
     데이터 검증 로직의 표준 인터페이스입니다.
@@ -124,8 +121,7 @@ class ValidationResult:
         return self.errors.copy()
 
 
-@runtime_checkable
-class ILogger(Protocol):
+class ILogger(ABC):
     """로깅 인터페이스 프로토콜"""
 
     @abstractmethod
@@ -154,8 +150,7 @@ class ILogger(Protocol):
         ...
 
 
-@runtime_checkable
-class ICache(Protocol[T]):
+class ICache(ABC, Generic[T]):
     """캐시 인터페이스 프로토콜"""
 
     @abstractmethod
@@ -184,8 +179,7 @@ class ICache(Protocol[T]):
         ...
 
 
-@runtime_checkable
-class IConfig(Protocol):
+class IConfig(ABC):
     """설정 인터페이스 프로토콜"""
 
     @abstractmethod

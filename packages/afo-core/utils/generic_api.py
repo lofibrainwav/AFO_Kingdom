@@ -190,7 +190,7 @@ def create_error_response(
     )
 
 
-def handle_api_errors(func_name: str):
+def handle_api_errors(func_name: str) -> Any:
     """API 에러 처리 데코레이터
 
     공통 에러 처리 패턴을 제공합니다.
@@ -201,8 +201,8 @@ def handle_api_errors(func_name: str):
     Returns:
         데코레이터 함수
     """
-    def decorator(func):
-        async def wrapper(*args, **kwargs):
+    def decorator(func: Any) -> Any:
+        async def wrapper(*args: Any, **kwargs: Any) -> Any:
             try:
                 return await func(*args, **kwargs)
             except HTTPException:

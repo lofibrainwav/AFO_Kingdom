@@ -176,7 +176,7 @@ def build_organs_final(
     print(f"SOUL ENGINE STATUS: {organs['腦_Soul_Engine']}", flush=True)
 
     ok, ms, t = _tcp_probe(ollama_host, ollama_port, timeout_tcp_s)
-    organs["脾_Ollama"] = _mk(ok, ms, t, "tcp", 95, 20, "Connected", "Disconnected")
+    organs["舌_Ollama"] = _mk(ok, ms, t, "tcp", 95, 20, "Connected", "Disconnected")
 
     ok, ms, t = _tcp_probe(qdrant_host, qdrant_port, timeout_tcp_s)
     organs["肺_Qdrant"] = _mk(ok, ms, t, "tcp", 94, 20, "Connected", "Disconnected")
@@ -281,7 +281,7 @@ def build_organs_final(
     if repo_root:
         evo_active = (repo_root / "docs" / "AFO_EVOLUTION_LOG.md").exists()
 
-    organs["膽_Evolution_Gate"] = OrganReport(
+    organs["胱_Evolution_Gate"] = OrganReport(
         status="healthy" if evo_active else "unhealthy",
         score=95 if evo_active else 30,
         output="Evolution Log Found" if evo_active else "Evolution Log Missing",
@@ -297,14 +297,14 @@ def build_organs_final(
         "心_Redis",
         "肝_PostgreSQL",
         "腦_Soul_Engine",
-        "脾_Ollama",
+        "舌_Ollama",
         "肺_Qdrant",
         "眼_Dashboard",
         "腎_MCP",
         "耳_Observability",
         "口_Docs",
         "骨_CI",
-        "膽_Evolution_Gate",
+        "胱_Evolution_Gate",
     ]
 
     return {

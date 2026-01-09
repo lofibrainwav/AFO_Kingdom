@@ -247,7 +247,7 @@ def is_dict_of_types(value: Any, key_type: type, value_type: type) -> bool:
 
 
 # 런타임 타입 검증 데코레이터
-def validate_types(**type_guards):
+def validate_types(**type_guards: Any) -> Any:
     """런타임 타입 검증 데코레이터
 
     함수 파라미터에 타입 가드를 적용합니다.
@@ -257,8 +257,8 @@ def validate_types(**type_guards):
     def create_user(name: str, age: int) -> User:
         ...
     """
-    def decorator(func):
-        def wrapper(*args, **kwargs):
+    def decorator(func: Any) -> Any:
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
             # 함수 시그니처에서 파라미터 이름 추출
             import inspect
             sig = inspect.signature(func)

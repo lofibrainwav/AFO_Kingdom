@@ -253,7 +253,7 @@ async def get_comprehensive_health() -> dict[str, Any]:
 
         # 孝 (Serenity 8%) - Agency & Automation
         # Ollama(95), MCP(85)
-        filial_score = (o2["脾_Ollama"]["score"] + o2["腎_MCP"]["score"]) / 2.0 / 100.0
+        filial_score = (o2["舌_Ollama"]["score"] + o2["腎_MCP"]["score"]) / 2.0 / 100.0
 
         # 永 (Eternity 2%) - Observability & Documentation
         # Observability(80), Docs(90)
