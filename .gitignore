@@ -63,6 +63,8 @@ debug_token.txt
 # Runtime files
 .api_server_pid
 *.pid
+server.pid
+server.log
 
 # Terraform
 terraform/.terraform/
