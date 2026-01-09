@@ -25,6 +25,7 @@ from typing import TYPE_CHECKING, Any, cast
 from fastapi import Header, HTTPException  # Added for security
 from starlette.requests import Request
 from starlette.responses import Response
+from sse_starlette.sse import EventSourceResponse
 
 # 2026 Debugging Super Agent
 from services.debugging_agent import HealingAgent
@@ -351,6 +352,35 @@ class AFOServer:
         @self.app.get("/metrics")
         async def metrics():
             return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)
+
+        # SSE Log Stream for Chancellor Real-time Thoughts (眞·美)
+        @self.app.get("/api/logs/stream", tags=["Logs"])
+        async def logs_stream(request: Request):
+            """Stream real-time chancellor thoughts via Server-Sent Events."""
+            async def event_generator():
+                """Generate SSE events for chancellor stream."""
+                import datetime
+                # Initial connection message
+                yield {
+                    "event": "connected",
+                    "data": f'{{"message": "🏰 Chancellor Stream Connected", "timestamp": "{datetime.datetime.now(datetime.timezone.utc).isoformat()}"}}'
+                }
+                
+                counter = 0
+                while True:
+                    # Check if client disconnected
+                    if await request.is_disconnected():
+                        break
+                    
+                    # Heartbeat every 15 seconds
+                    await asyncio.sleep(15)
+                    counter += 1
+                    yield {
+                        "event": "heartbeat", 
+                        "data": f'{{"message": "💓 Chancellor Heartbeat #{counter}", "timestamp": "{datetime.datetime.now(datetime.timezone.utc).isoformat()}"}}'
+                    }
+            
+            return EventSourceResponse(event_generator())
 
         logger.info("Application configured with security measures")
 
