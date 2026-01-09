@@ -192,13 +192,14 @@ class OllamaHealthChecker:
             return {"success": False, "error": str(e)}
 
     def get_trinity_score_contribution(self) -> dict[str, float]:
-        """Trinity Score 기여도 계산"""
+        """Trinity Score 기여도 계산 (SSOT 가중치 준수)"""
+        # SSOT 가중치: truth=0.35, goodness=0.35, beauty=0.2, serenity=0.08, eternity=0.02
         base_contribution = {
-            "truth": 0.0,  # Ollama 정확성
-            "goodness": 0.0,  # 안정성
-            "beauty": 0.0,  # 아키텍처 우아함
-            "serenity": 0.0,  # 사용자 경험
-            "eternity": 0.0,  # 영속성
+            "truth": 0.35,      # Ollama 정확성 (眞 가중치 준수)
+            "goodness": 0.35,   # 안정성 (善 가중치 준수)
+            "beauty": 0.2,      # 아키텍처 우아함 (美 가중치 준수)
+            "serenity": 0.08,   # 사용자 경험 (孝 가중치 준수)
+            "eternity": 0.02,   # 영속성 (永 가중치 준수)
         }
 
         # 연결성 성공 시 Truth +10%
