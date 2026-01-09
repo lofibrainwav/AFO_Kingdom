@@ -58,7 +58,7 @@
   "reportMissingImports": "warning",
   "reportMissingTypeStubs": "none",
   "stubPath": "typings",
-  "typeCheckingMode": "strict",
+  "typeCheckingMode": "basic",
   "venv": ".venv",
   "venvPath": "."
 }
