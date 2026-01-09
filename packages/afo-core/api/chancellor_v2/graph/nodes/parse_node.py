@@ -8,8 +8,9 @@ if TYPE_CHECKING:
     from api.chancellor_v2.graph.state import GraphState
 
 
-def parse_node(state: GraphState) -> GraphState:
-    """Parse command and create execution plan.
+async def parse_node(state: GraphState) -> GraphState:
+    """Parse command into structured plan.
+te execution plan.
 
     Args:
         state: Current graph state

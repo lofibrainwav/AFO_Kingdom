@@ -65,23 +65,33 @@
 
 | ID | 제목 | Phase | Priority | Status | Evidence |
 |---|------|-------|----------|--------|----------|
-| TICKET-094 | Chancellor V2 Integration | 23 | HIGH | [/] 진행 중 | PH22_03_V2_CUTOVER_SSOT.md |
-| TICKET-095 | Vault Manager Implementation | 23 | HIGH | [/] 진행 중 | vault_manager.py |
+| TICKET-094 | Chancellor V2 Integration | 23 | `LOCKED` | ✅ 완료 | PH22_03_V2_CUTOVER_SSOT.md |
+| TICKET-095 | Vault Manager Implementation | 23 | `LOCKED` | ✅ 완료 | vault_manager.py |
+| TICKET-097 | Shadow & Canary Tuning | 24 | `LOCKED` | ✅ 완료 | shadowing_results.json |
+| TICKET-098 | Council of Minds (Async) | 24 | `LOCKED` | ✅ 완료 | test_council_of_minds_audit.py |
+| TICKET-099 | Metadata & Evidence Pack | 24 | `LOCKED` | ✅ 완료 | council_runs/*.jsonl |
+| TICKET-100 | Final SSOT Seal & Walkthrough | 24 | `LOCKED` | ✅ 완료 | walkthrough.md |
 
 ## TICKET-094 — Chancellor V2 Integration (Shadow/Canary)
 - Phase: 23 (운영 최적화)
-- Priority: HIGH
-- Type: Architecture Enhancement
-- Status: [/] 진행 중 (Shadow 완료, Canary 준비)
-- Evidence: packages/afo-core/docs/chancellor/PH22_03_V2_CUTOVER_SSOT.md
-- Dependencies: LangGraph, Chancellor V1
+- Status: ✅ 완료 (2026-01-08)
+- Evidence: Shadow mode verified, Canary header routing active.
 
 ## TICKET-095 — Vault Manager Implementation (Zero Trust Security)
 - Phase: 23 (보안 강화)
-- Priority: HIGH
-- Type: Security Enhancement
-- Status: [/] 진행 중 (Draft 완료)
-- Evidence: packages/afo-core/AFO/security/vault_manager.py
-- Dependencies: Hashicorp Vault (optional), local encryption fallback
+- Status: ✅ 완료 (2026-01-08)
+- Evidence: Policy-based access & strict audit logging implemented.
+
+## Phase 24 — Council of Minds (Intellectual Revolution)
+
+## TICKET-098 — Council of Minds (Async Parallel Assessment)
+- Phase: 24 (지능 고도화)
+- Status: ✅ 완료 (2026-01-08)
+- Evidence: Multi-LLM (Zilong/Pangtong/Lushun/Yeongdeok) parallel assessment flow verified.
+
+## TICKET-099 — Metadata & Evidence Pack Persistence
+- Phase: 24 (SSOT 강화)
+- Status: ✅ 완료 (2026-01-08)
+- Evidence: Metadata standard (Mode/Scholar/Model) and `.jsonl` runs persistence.
 
 

@@ -77,8 +77,13 @@ fi
 # --- 3. Awaken the Soul (Backend) ---
 cd "$SCRIPT_DIR/packages/afo-core"
 if command -v poetry >/dev/null 2>&1; then
-  poetry install --without dev >/dev/null || true
+poetry install --without dev >/dev/null || true
 fi
+# Ensuring we use the correct environment
+VENV_PATH=$(poetry env info -p)
+export PATH="$VENV_PATH/bin:$PATH"
+echo "   -> Using Virtualenv: $VENV_PATH"
+
 poetry run uvicorn api_server:app --reload --port $BACKEND_PORT >/dev/null 2>&1 &
 BACKEND_PID=$!
 echo "✅ Soul (API)      : ONLINE (:8010, PID: $BACKEND_PID)"

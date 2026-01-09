@@ -226,7 +226,10 @@ async def get_kingdom_status() -> dict[str, Any]:
     """
     import psutil
 
+    from AFO.config.settings import get_settings
     from AFO.services.health_service import get_comprehensive_health
+
+    settings = get_settings()
 
     # 1. Get Truthful Health Data
     health_data = await get_comprehensive_health()
@@ -305,6 +308,10 @@ async def get_kingdom_status() -> dict[str, Any]:
         "organs": dashboard_organs,  # Dashboard format
         "entropy": int(cpu_percent),
         "timestamp": datetime.now().isoformat(),
+        # Phase 23: Dashboard Hardening (Always Exposed Vitals)
+        "head_sha": os.getenv("GIT_COMMIT_SHA", "unknown")[:7],
+        "chancellor_v2_enabled": settings.CHANCELLOR_V2_ENABLED,
+        "canary_status": "V2 (Canary)" if settings.CHANCELLOR_V2_ENABLED else "V1 (Stable)",
         # Include original health data for debugging
         "raw_health": health_data,
     }

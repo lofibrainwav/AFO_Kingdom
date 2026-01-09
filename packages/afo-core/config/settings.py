@@ -160,8 +160,12 @@ class AFOSettings(BaseSettings):
         default=None, description="AFO Soul Engine 홈 디렉토리 경로"
     )
     BASE_DIR: str = Field(
-        default=os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))),
+        default=os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))),
         description="프로젝트 루트 디렉토리",
+    )
+    ARTIFACTS_DIR: str = Field(
+        default=os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))), "artifacts"),
+        description="아티팩트 및 증거 저장 디렉토리",
     )
 
     # ============================================================================
@@ -176,6 +180,23 @@ class AFOSettings(BaseSettings):
     CHANCELLOR_MAX_MEMORY_ITEMS: int = Field(
         default=10, description="Chancellor 메모리 요약 트리거 임계값"
     )
+
+    # ============================================================================
+    # Phase 23: Operation Hardening & Canary
+    # ============================================================================
+    CHANCELLOR_V2_ENABLED: bool = Field(
+        default=False, description="Chancellor Graph V2 활성화 (Canary)"
+    )
+    CHANCELLOR_V2_SHADOW_ENABLED: bool = Field(
+        default=False, description="Chancellor Graph V2 Shadow 모드 활성화"
+    )
+    CHANCELLOR_V2_DIFF_SAMPLING_RATE: float = Field(
+        default=0.1, description="Shadow 모드 Diff 샘플링 비율 (0.0~1.0)"
+    )
+    OLLAMA_SWITCHING_PROTOCOL_ENABLED: bool = Field(
+        default=True, description="Ollama 3단계 스위칭 프로토콜 활성화"
+    )
+    VAULT_STRICT_AUDIT: bool = Field(default=True, description="Vault 접근 감사 로그 활성화")
 
     # ============================================================================
     # Helper Methods

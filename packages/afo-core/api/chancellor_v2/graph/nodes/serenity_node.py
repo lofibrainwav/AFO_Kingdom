@@ -8,47 +8,88 @@ if TYPE_CHECKING:
     from api.chancellor_v2.graph.state import GraphState
 
 
-def serenity_node(state: GraphState) -> GraphState:
+async def serenity_node(state: GraphState) -> GraphState:
     """Evaluate automation, error recovery, and user friction reduction aspects.
 
     孝 (Serenity) - 평온·연속성, 자동화, 실패 복구 용이성 (8% 가중치)
-
-    Args:
-        state: Current graph state
-
-    Returns:
-        Updated graph state with serenity evaluation
+    Scholar: Yeongdeok (Ollama / Local Scholar)
     """
     skill_id = state.plan.get("skill_id", "")
     query = state.plan.get("query", "")
 
-    # Evaluate automation potential
-    automation_score = _evaluate_automation_potential(query)
+    # 1. Heuristic Evaluation
+    automation_potential_score = _evaluate_automation_potential(query)
+    error_recovery_score = _evaluate_error_recovery(skill_id)
+    friction_reduction_score = _evaluate_friction_reduction(state)
+    heuristic_score = automation_potential_score * 0.4 + error_recovery_score * 0.3 + friction_reduction_score * 0.3
 
-    # Evaluate error recovery capabilities
-    recovery_score = _evaluate_error_recovery(skill_id)
+    # 2. Scholar Assessment (Yeongdeok)
+    import json
 
-    # Evaluate user friction reduction
-    friction_score = _evaluate_friction_reduction(state)
+    from llm_router import llm_router
 
-    # Overall serenity score (평균)
-    serenity_score = (automation_score + recovery_score + friction_score) / 3.0
+    prompt = f"""
+    You are Yeongdeok (孝), the Serenity Strategist of the AFO Kingdom.
+    Analyze the following execution plan for automation potential and friction reduction.
+
+    Plan:
+    - Skill: {skill_id}
+    - Query: {query}
+    - Command: {state.input.get('command', '')}
+
+    Guidelines:
+    - Evaluate if this task can be automated safely.
+    - Assess the risk of user friction or interruption.
+    - Check if error recovery paths are clear.
+
+    Provide your assessment in JSON:
+    {{
+      "score": float (0.0 to 1.0),
+      "reasoning": string,
+      "issues": list[string]
+    }}
+    """
+
+    scholar_score = heuristic_score
+    reasoning = "Heuristic assessment based on automation and friction indicators."
+    issues = []
+    assessment_mode = "Heuristic (Fallback)"
+    scholar_model = "None"
+
+    try:
+        response = await llm_router.execute_with_routing(
+            prompt,
+            context={"provider": "ollama", "quality_tier": "standard"}
+        )
+        if response and response.get("response"):
+            try:
+                text = response["response"].strip().replace("```json", "").replace("```", "").strip()
+                data = json.loads(text)
+                scholar_score = data.get("score", heuristic_score)
+                reasoning = data.get("reasoning", reasoning)
+                issues = data.get("issues", [])
+                assessment_mode = "LLM (Scholar)"
+                scholar_model = response.get("model", "Ollama/Yeongdeok")
+            except:
+                pass
+    except Exception as e:
+        state.errors.append(f"Yeongdeok (SERENITY) assessment failed: {e}")
+
+    # Combine: 30% Heuristic + 70% Scholar
+    final_score = (heuristic_score * 0.3) + (scholar_score * 0.7)
 
     evaluation = {
-        "skill_id": skill_id,
-        "automation_score": automation_score,
-        "recovery_score": recovery_score,
-        "friction_score": friction_score,
-        "serenity_score": serenity_score,
-        "issues": [],
+        "score": round(final_score, 3),
+        "reasoning": reasoning,
+        "issues": issues,
+        "metadata": {
+            "mode": assessment_mode,
+            "scholar": "Yeongdeok (孝)",
+            "model": scholar_model
+        }
     }
 
-    # Store evaluation results
-    if "SERENITY" not in state.outputs:
-        state.outputs["SERENITY"] = {}
-
     state.outputs["SERENITY"] = evaluation
-
     return state
 
 

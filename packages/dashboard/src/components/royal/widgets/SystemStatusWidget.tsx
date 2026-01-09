@@ -17,6 +17,15 @@ export const SystemStatusWidget = () => {
     return () => clearInterval(interval);
   }, []);
 
+  // Fetch kingdom status for SHA/Canary
+  const [status, setStatus] = useState<any>(null);
+  useEffect(() => {
+    fetch('/api/system/kingdom-status')
+      .then(res => res.json())
+      .then(data => setStatus(data))
+      .catch(() => {});
+  }, []);
+
   return (
     <div className="neu-card min-h-[200px]">
       <div className="flex items-center justify-between mb-4">
@@ -76,6 +85,16 @@ export const SystemStatusWidget = () => {
               style={{ width: `${Math.min(metrics.disk, 100)}%` }}
             />
           </div>
+        </div>
+      </div>
+
+      {/* Phase 23: Provenance & Canary Status */}
+      <div className="mt-6 pt-4 border-t border-slate-200/50 flex justify-between items-center opacity-70">
+        <div className="text-[10px] font-mono text-slate-400">
+          SHA: <span className="text-slate-500">{status?.head_sha || "unknown"}</span>
+        </div>
+        <div className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-500">
+          {status?.canary_status || "STABLE"}
         </div>
       </div>
     </div>

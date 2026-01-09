@@ -67,20 +67,4 @@ async def execute_node(state: GraphState) -> GraphState:
     return state
 
 
-def execute_node_sync(state: GraphState) -> GraphState:
-    """Synchronous wrapper for execute_node (for graph runner compatibility)."""
-    import asyncio
-
-    try:
-        loop = asyncio.get_event_loop()
-        if loop.is_running():
-            # Already in async context, create task
-            import concurrent.futures
-
-            with concurrent.futures.ThreadPoolExecutor() as pool:
-                future = pool.submit(asyncio.run, execute_node(state))
-                return future.result()
-        else:
-            return loop.run_until_complete(execute_node(state))
-    except RuntimeError:
-        return asyncio.run(execute_node(state))
+    return state

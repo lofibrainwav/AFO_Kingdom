@@ -8,8 +8,9 @@ if TYPE_CHECKING:
     from api.chancellor_v2.graph.state import GraphState
 
 
-def report_node(state: GraphState) -> GraphState:
-    """Generate final comprehensive report.
+async def report_node(state: GraphState) -> GraphState:
+    """Generate final report for the commander.
+sive report.
 
     Args:
         state: Current graph state

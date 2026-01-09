@@ -69,9 +69,12 @@ for url in \
    \
    \
   
+  
 do
   if curl -fsS --max-time 2 "$url" >/tmp/afo_health.json 2>/dev/null; then
-    if python3 - <<'PY' >/dev/null 2>&1
+    PYTHON_BIN="python3"
+    [ -f "packages/afo-core/.venv/bin/python" ] && PYTHON_BIN="packages/afo-core/.venv/bin/python"
+    if $PYTHON_BIN - <<'PY' >/dev/null 2>&1
 import json
 p="/tmp/afo_health.json"
 try:

@@ -2,6 +2,15 @@
 cd /Users/brnestrm/AFO_Kingdom
 set -u
 
+# --- Python Discovery ---
+PYTHON_BIN="python3"
+if [ -f "packages/afo-core/.venv/bin/python" ]; then
+    PYTHON_BIN="packages/afo-core/.venv/bin/python"
+elif [ -f ".venv/bin/python" ]; then
+    PYTHON_BIN=".venv/bin/python"
+fi
+echo "Using Python: $($PYTHON_BIN -V) at $PYTHON_BIN"
+
 echo "=== A) CHANGED FILES + HEAD ==="
 git status -sb
 git log -n 8 --oneline
@@ -17,7 +26,7 @@ fi
 
 echo
 echo "=== C) SHOW THE ACTUAL IMPLEMENTATION (first 260 lines around probes) ==="
-python3 - << 'PY'
+$PYTHON_BIN - << 'PY'
 import subprocess, shlex, os
 patterns = [
   "TICKETS.md", "trivy-results.json", "AFO_FINAL_SSOT.md",
@@ -64,14 +73,14 @@ fi
 echo
 echo "=== E) LIVE PAYLOAD (REAL NUMBERS) ==="
 if pgrep -f "api_server.py" > /dev/null; then
-    curl -sS http://127.0.0.1:8010/api/health/comprehensive | python3 -m json.tool | head -260 || echo "Curl failed"
+    curl -sS http://127.0.0.1:8010/api/health/comprehensive | $PYTHON_BIN -m json.tool | head -260 || echo "Curl failed"
 else
     echo "API Server not running"
 fi
 
 echo
 echo "=== F) CHECK THE 3 CLAIMS DIRECTLY ==="
-python3 - << 'PY'
+$PYTHON_BIN - << 'PY'
 import json, subprocess
 try:
     raw = subprocess.check_output("curl -sS http://127.0.0.1:8010/api/health/comprehensive", shell=True)
