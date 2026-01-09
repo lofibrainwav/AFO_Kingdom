@@ -162,7 +162,7 @@ async def get_comprehensive_health() -> dict[str, Any]:
 
     # 동시성 제한 적용
     async with _semaphore:
-        # 병렬 실행 (타임아웃 적용 - 전체 10초 제한)
+        # 병렬 실행 (타임아웃 적용 - 전체 15초 제한)
         try:
             results = await asyncio.wait_for(
                 asyncio.gather(
@@ -174,7 +174,7 @@ async def get_comprehensive_health() -> dict[str, Any]:
                     check_security(),
                     return_exceptions=True,
                 ),
-                timeout=10.0,  # 10초 타임아웃
+                timeout=15.0,  # 15초 타임아웃 (증가)
             )
         except TimeoutError:
             logger.warning("Health check timed out after 10 seconds")

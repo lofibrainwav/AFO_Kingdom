@@ -20,7 +20,7 @@ export const SystemStatusWidget = () => {
   // Fetch kingdom status for SHA/Canary
   const [status, setStatus] = useState<any>(null);
   useEffect(() => {
-    fetch('/api/system/kingdom-status')
+    fetch('/api/kingdom-status')
       .then(res => res.json())
       .then(data => setStatus(data))
       .catch(() => {});

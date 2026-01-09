@@ -12,19 +12,32 @@
  * Supports both client and server environments with environment variable fallback
  */
 export function buildSseUrl(path: string): string {
+  // 0. If path is already a full URL, return it as is
+  if (path.startsWith('http://') || path.startsWith('https://')) {
+    return path;
+  }
+
   // Remove leading slash if present
   const cleanPath = path.startsWith('/') ? path : `/${path}`;
 
-  // Check for environment variable (Docker/container environment)
+  // 1. Direct Backend Connection (Preferred for local stability)
+  const directApiUrl = process.env.NEXT_PUBLIC_API_URL;
+  if (directApiUrl) {
+    // Ensure directApiUrl doesn't have trailing slash if cleanPath has leading slash (cleanPath always does)
+    const baseUrl = directApiUrl.endsWith('/') ? directApiUrl.slice(0, -1) : directApiUrl;
+    return `${baseUrl}${cleanPath}`;
+  }
+
+  // 2. Server-side environment variable (Docker/container environment)
+  // Note: This only works if called during SSR, not in browser
   const soulEngineUrl = process.env.SOUL_ENGINE_URL;
   if (soulEngineUrl) {
-    // Use environment variable URL for container environments
     return `${soulEngineUrl}${cleanPath}`;
   }
 
-  // Fallback to current origin for client/browser environments
+  // 3. Fallback to current origin (Proxy via Next.js)
   if (typeof window === 'undefined') {
-    throw new Error('SSE URL must be built in the browser or with SOUL_ENGINE_URL env var. Use createEventSource() in useEffect.');
+    throw new Error('SSE URL must be built in the browser or with NEXT_PUBLIC_API_URL env var.');
   }
 
   return `${window.location.origin}${cleanPath}`;
