@@ -56,8 +56,28 @@ jobs:
           NODE_OPTIONS: "--max-old-space-size=8192"
         run: uv run pyright -p pyrightconfig.json
 
+      - name: Start API Server (Background)
+        run: |
+          cd packages/afo-core
+          uv run uvicorn api.api_server:app --host 127.0.0.1 --port 8010 &
+          echo $! > ../../../server.pid
+          sleep 5  # Wait for server to start
+
+      - name: Health Check (Server Ready)
+        run: |
+          timeout 30 bash -c 'until curl -f http://127.0.0.1:8010/api/health; do sleep 1; done'
+          echo "✅ API Server is ready"
+
       - name: Pytest 테스트 (병렬 실행)
         run: uv run pytest -v -n auto
+
+      - name: Stop API Server
+        if: always()
+        run: |
+          if [ -f ../../../server.pid ]; then
+            kill $(cat ../../../server.pid) || true
+            rm ../../../server.pid
+          fi
 
       - name: 4. SBOM & Security (永 - Eternity)
         run: make sbom
