@@ -12,7 +12,7 @@ import json
 import os
 import sys
 import time
-from typing import Any
+from typing import Any, Optional, Union
 
 import httpx
 
@@ -119,7 +119,7 @@ class OllamaHealthChecker:
 
         return self.health_metrics
 
-    async def _get_model_info(self) -> dict[str, Any] | None:
+    async def _get_model_info(self) -> Optional[dict[str, Any]]:
         """모델 정보 조회"""
         try:
             # 직접 API 호출로 모델 목록 조회
