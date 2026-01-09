@@ -357,6 +357,7 @@ class AFOServer:
         @self.app.get("/api/logs/stream", tags=["Logs"])
         async def logs_stream(request: Request):
             """Stream real-time chancellor thoughts via Server-Sent Events."""
+            print("DEBUG: logs_stream called!")
 
             async def event_generator():
                 """Generate SSE events for chancellor stream."""

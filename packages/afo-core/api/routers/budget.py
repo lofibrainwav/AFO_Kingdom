@@ -141,7 +141,15 @@ async def record_spending(request: SpendRequest) -> dict[str, Any]:
         if budget.category.lower() == request.category.lower():
             # 타입 안전한 변환: int()에 object 타입을 직접 전달하지 않음
             amount_value = request.amount
-            amount_int = int(amount_value) if isinstance(amount_value, (int, float, str)) else 0
+            if isinstance(amount_value, (int, float)):
+                amount_int = int(amount_value)
+            elif isinstance(amount_value, str):
+                try:
+                    amount_int = int(amount_value)
+                except ValueError:
+                    amount_int = 0
+            else:
+                amount_int = 0
             new_spent = budget.spent + amount_int
             new_remaining = budget.allocated - new_spent
 
