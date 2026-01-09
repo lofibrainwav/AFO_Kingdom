@@ -57,13 +57,11 @@ jobs:
         run: uv run pyright -p pyrightconfig.json
 
       - name: Start API Server (Background)
-        working-directory: .
+        working-directory: packages/afo-core
         shell: bash
         run: |
           set -euo pipefail
-          export PYTHONPATH="$GITHUB_WORKSPACE/packages/afo-core:$PYTHONPATH"
-          cd packages/afo-core
-          uv run uvicorn api.api_server:app --host 127.0.0.1 --port 8010 > "$GITHUB_WORKSPACE/server.log" 2>&1 &
+          uv run uvicorn api_server:app --host 127.0.0.1 --port 8010 > "$GITHUB_WORKSPACE/server.log" 2>&1 &
           echo $! > "$GITHUB_WORKSPACE/server.pid"
 
       - name: Check Server Startup (Debug)
