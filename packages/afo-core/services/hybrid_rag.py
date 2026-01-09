@@ -16,16 +16,19 @@ from redis.commands.search.query import Query as RedisQuery
 # 眞 (Truth): Neo4j Integration (GraphRAG)
 try:
     from neo4j import GraphDatabase
+    GraphDatabaseType = GraphDatabase
 except ImportError:
-    GraphDatabase = None
+    GraphDatabaseType = None
 
 # Qdrant Integration
 try:
     from qdrant_client import QdrantClient
     from qdrant_client.http import models as qmodels
+    QdrantClientType = QdrantClient
+    QdrantModelsType = qmodels
 except ImportError:
-    QdrantClient = None
-    qmodels = None  # type: ignore[assignment]
+    QdrantClientType = None
+    QdrantModelsType = None
 
 # Optional imports handling
 try:
@@ -242,7 +245,7 @@ def query_graph_context(entities: list[str], limit: int = 5) -> list[dict[str, A
     美 (Beauty): GraphRAG Context Retrieval
     Neo4j 지식 그래프에서 엔티티 간의 관계를 탐색.
     """
-    if GraphDatabase is None or not entities:
+    if GraphDatabaseType is None or not entities:
         return []
 
     uri = "bolt://localhost:7687"

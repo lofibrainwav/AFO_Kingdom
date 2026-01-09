@@ -142,7 +142,7 @@ async def record_spending(request: SpendRequest) -> dict[str, Any]:
             # 타입 안전한 변환: int()에 object 타입을 직접 전달하지 않음
             amount_value = request.amount
             if isinstance(amount_value, (int, float)):
-                amount_int = int(amount_value)
+                amount_int: int = int(amount_value)
             elif isinstance(amount_value, str):
                 try:
                     amount_int = int(amount_value)
@@ -414,7 +414,10 @@ async def get_budget_prediction() -> dict[str, Any]:
     """
     prediction = predict_next_month_spending(MOCK_HISTORY)
 
-    current_spending = int(cast("Any", MOCK_HISTORY[-1]["spent"]))
+    current_spending_raw = MOCK_HISTORY[-1]["spent"]
+    current_spending: int = (
+        int(current_spending_raw) if isinstance(current_spending_raw, (int, float)) else 0
+    )
     predicted_val = prediction.get("predicted_spending", 0)
     predicted: int = (
         int(predicted_val) if isinstance(predicted_val, (int, float)) else current_spending

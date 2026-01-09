@@ -40,6 +40,7 @@ exclude = ["*test*", "*tests*", "*__pycache__*", "*.egg-info*"]
 
 [tool.poetry.dependencies]
 afo-core = { path = "packages/afo-core", develop = true }
+playwright = "1.40.0"
 
 [dependency-groups]
 dev = [
