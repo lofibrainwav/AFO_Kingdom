@@ -85,7 +85,7 @@ class AFOSettings(BaseSettings):
     # NOTE: Defaults use host.docker.internal for Mac Docker. Override via env vars as needed.
     # ============================================================================
     OLLAMA_BASE_URL: str = Field(
-        default="http://host.docker.internal:11434", description="Ollama LLM 서버 URL"
+        default="http://localhost:11434", description="Ollama LLM 서버 URL"
     )
     OLLAMA_MODEL: str = Field(default="qwen3-vl:8b", description="Ollama 기본 모델")
 
