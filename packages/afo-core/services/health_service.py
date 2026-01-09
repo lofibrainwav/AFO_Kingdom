@@ -62,7 +62,7 @@ async def check_redis() -> dict[str, Any]:
         r = redis.from_url(get_redis_url())
         pong = await asyncio.wait_for(r.ping(), timeout=5.0)
         await r.close()
-        result = {"healthy": pong, "output": f"PING -> {pong}"}
+        result = {"healthy": bool(pong), "output": f"PING -> {pong}"}
 
         # Redis에 캐시 저장 (선택적)
         try:
