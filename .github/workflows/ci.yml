@@ -57,15 +57,18 @@ jobs:
         run: uv run pyright -p pyrightconfig.json
 
       - name: Start API Server (Background)
+        working-directory: packages/afo-core
+        shell: bash
         run: |
-          cd packages/afo-core
-          uv run uvicorn api.api_server:app --host 127.0.0.1 --port 8010 &
-          echo $! > ../../../server.pid
-          sleep 5  # Wait for server to start
+          set -euo pipefail
+          uv run uvicorn api.api_server:app --host 127.0.0.1 --port 8010 > "$GITHUB_WORKSPACE/server.log" 2>&1 &
+          echo $! > "$GITHUB_WORKSPACE/server.pid"
 
       - name: Health Check (Server Ready)
+        shell: bash
         run: |
-          timeout 30 bash -c 'until curl -f http://127.0.0.1:8010/api/health; do sleep 1; done'
+          set -euo pipefail
+          timeout 30 bash -c 'until curl -fsS http://127.0.0.1:8010/api/health >/dev/null; do sleep 1; done'
           echo "✅ API Server is ready"
 
       - name: Pytest 테스트 (병렬 실행)
@@ -73,11 +76,21 @@ jobs:
 
       - name: Stop API Server
         if: always()
+        shell: bash
         run: |
-          if [ -f ../../../server.pid ]; then
-            kill $(cat ../../../server.pid) || true
-            rm ../../../server.pid
+          set -euo pipefail
+          if [ -f "$GITHUB_WORKSPACE/server.pid" ]; then
+            PID="$(cat "$GITHUB_WORKSPACE/server.pid")"
+            kill "$PID" 2>/dev/null || true
+            rm -f "$GITHUB_WORKSPACE/server.pid"
           fi
+
+      - name: Dump server log (only if failed)
+        if: failure()
+        shell: bash
+        run: |
+          echo "----- server.log -----"
+          cat "$GITHUB_WORKSPACE/server.log" || true
 
       - name: 4. SBOM & Security (永 - Eternity)
         run: make sbom
