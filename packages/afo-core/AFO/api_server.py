@@ -23,9 +23,9 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, cast
 
 from fastapi import Header, HTTPException  # Added for security
+from sse_starlette.sse import EventSourceResponse
 from starlette.requests import Request
 from starlette.responses import Response
-from sse_starlette.sse import EventSourceResponse
 
 # 2026 Debugging Super Agent
 from services.debugging_agent import HealingAgent
@@ -365,7 +365,7 @@ class AFOServer:
                     "event": "connected",
                     "data": f'{{"message": "🏰 Chancellor Stream Connected", "timestamp": "{datetime.datetime.now(datetime.UTC).isoformat()}"}}'
                 }
-                
+
                 counter = 0
                 while True:
                     # Check if client disconnected
@@ -379,7 +379,7 @@ class AFOServer:
                         "event": "heartbeat",
                         "data": f'{{"message": "💓 Chancellor Heartbeat #{counter}", "timestamp": "{datetime.datetime.now(datetime.UTC).isoformat()}"}}'
                     }
-            
+
             return EventSourceResponse(event_generator())
 
         logger.info("Application configured with security measures")
