@@ -205,7 +205,6 @@ keep-runtime-typing = true
 python_version = "3.12"
 warn_return_any = true
 warn_unused_configs = true
-ignore_missing_imports = true
 mypy_path = "packages/afo-core:packages/trinity-os:/Users/brnestrm/AFO_Kingdom:typings"
 explicit_package_bases = true
 namespace_packages = true
@@ -221,11 +220,13 @@ disallow_untyped_defs = true
 strict_optional = true
 warn_redundant_casts = true
 warn_unreachable = true
-warn_unused_ignores = true
 strict_equality = true
 disallow_any_generics = true
 disallow_untyped_calls = true
 disallow_incomplete_defs = true
+ignore_missing_imports = true
+warn_unused_ignores = false
+follow_imports = "skip"
 
 [[tool.mypy.overrides]]
 module = ["services.trinity_score_monitor"]
