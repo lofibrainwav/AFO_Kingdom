@@ -68,7 +68,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          timeout 30 bash -c 'until curl -fsS http://127.0.0.1:8010/api/health >/dev/null; do sleep 1; done'
+          timeout 60 bash -c 'until curl -fsS http://127.0.0.1:8010/api/health/comprehensive >/dev/null; do sleep 1; done'
           echo "✅ API Server is ready"
 
       - name: Pytest 테스트 (병렬 실행)
@@ -82,6 +82,8 @@ jobs:
           if [ -f "$GITHUB_WORKSPACE/server.pid" ]; then
             PID="$(cat "$GITHUB_WORKSPACE/server.pid")"
             kill "$PID" 2>/dev/null || true
+            # 완전 봉인을 위한 하위 프로세스 정리
+            pkill -P "$PID" 2>/dev/null || true
             rm -f "$GITHUB_WORKSPACE/server.pid"
           fi
 
