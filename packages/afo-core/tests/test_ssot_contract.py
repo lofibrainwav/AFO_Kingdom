@@ -14,7 +14,7 @@ def test_ssot_contract_v2():
     """
     # 1. Fetch Data
     try:
-        raw = subprocess.check_output(["curl", "-s", API_URL], timeout=5)
+        raw = subprocess.check_output(["curl", "-fsS", API_URL], timeout=5)
         data = json.loads(raw)
     except Exception as e:
         pytest.fail(f"API Unreachable or Invalid JSON: {e}")
