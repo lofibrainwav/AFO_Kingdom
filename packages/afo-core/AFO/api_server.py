@@ -363,7 +363,7 @@ class AFOServer:
                 # Initial connection message
                 yield {
                     "event": "connected",
-                    "data": f'{{"message": "🏰 Chancellor Stream Connected", "timestamp": "{datetime.datetime.now(datetime.timezone.utc).isoformat()}"}}'
+                    "data": f'{{"message": "🏰 Chancellor Stream Connected", "timestamp": "{datetime.datetime.now(datetime.UTC).isoformat()}"}}'
                 }
                 
                 counter = 0
@@ -371,13 +371,13 @@ class AFOServer:
                     # Check if client disconnected
                     if await request.is_disconnected():
                         break
-                    
+
                     # Heartbeat every 15 seconds
                     await asyncio.sleep(15)
                     counter += 1
                     yield {
-                        "event": "heartbeat", 
-                        "data": f'{{"message": "💓 Chancellor Heartbeat #{counter}", "timestamp": "{datetime.datetime.now(datetime.timezone.utc).isoformat()}"}}'
+                        "event": "heartbeat",
+                        "data": f'{{"message": "💓 Chancellor Heartbeat #{counter}", "timestamp": "{datetime.datetime.now(datetime.UTC).isoformat()}"}}'
                     }
             
             return EventSourceResponse(event_generator())
