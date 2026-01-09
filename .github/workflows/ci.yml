@@ -61,7 +61,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          uv run uvicorn api_server:app --host 127.0.0.1 --port 8010 > "$GITHUB_WORKSPACE/server.log" 2>&1 &
+          python -m uvicorn api_server:app --host 127.0.0.1 --port 8010 > "$GITHUB_WORKSPACE/server.log" 2>&1 &
           echo $! > "$GITHUB_WORKSPACE/server.pid"
 
       - name: Check Server Startup (Debug)
