@@ -483,5 +483,6 @@ executionEnvironments = [
 [dependency-groups]
 dev = [
     "cyclonedx-bom (>=7.2.1,<8.0.0)",
-    "pytest-xdist (>=3.8.0,<4.0.0)"
+    "pytest-xdist (>=3.8.0,<4.0.0)",
+    "pyright (>=1.1.391,<2.0.0)"
 ]
