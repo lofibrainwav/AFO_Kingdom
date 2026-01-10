@@ -206,8 +206,12 @@ def compare_results(crag_result: dict[str, Any], hybrid_result: dict[str, Any]):
     print(f"│ 초기화 시간            │ {crag_init:>13.3f}초 │ {hybrid_init:>13.3f}초 │")
 
     # 평균 응답 시간
-    crag_avg = sum(r["time"] for r in crag_result["results"]) / len(crag_result["results"])
-    hybrid_avg = sum(r["time"] for r in hybrid_result["results"]) / len(hybrid_result["results"])
+    crag_avg = sum(r["time"] for r in crag_result["results"]) / len(
+        crag_result["results"]
+    )
+    hybrid_avg = sum(r["time"] for r in hybrid_result["results"]) / len(
+        hybrid_result["results"]
+    )
     print(f"│ 평균 응답 시간         │ {crag_avg:>13.3f}초 │ {hybrid_avg:>13.3f}초 │")
 
     # 검색 고침

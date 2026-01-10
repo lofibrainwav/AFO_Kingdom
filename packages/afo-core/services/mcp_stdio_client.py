@@ -77,7 +77,9 @@ def _load_cursor_mcp_json(repo_root: Path) -> dict[str, Any]:
         raise MCPStdioError(f"failed to parse {cfg_path}: {e}") from e
 
 
-def load_mcp_server_config(server_name: str, *, repo_root: Path | None = None) -> MCPServerConfig:
+def load_mcp_server_config(
+    server_name: str, *, repo_root: Path | None = None
+) -> MCPServerConfig:
     root = repo_root or _find_repo_root()
     data = _load_cursor_mcp_json(root)
     servers = data.get("mcpServers", {})
@@ -197,7 +199,9 @@ def _rpc_call(
 
         # MCP handshake requires a `notifications/initialized` notification after initialize.
         proc.stdin.write(
-            json.dumps({"jsonrpc": "2.0", "method": "notifications/initialized", "params": {}})
+            json.dumps(
+                {"jsonrpc": "2.0", "method": "notifications/initialized", "params": {}}
+            )
             + "\n"
         )
         proc.stdin.flush()
@@ -239,7 +243,9 @@ def list_tools(server_name: str, *, repo_root: Path | None = None) -> list[str]:
     if not isinstance(tools, list):
         return []
     return [
-        str(name) for t in tools if isinstance(t, dict) and isinstance((name := t.get("name")), str)
+        str(name)
+        for t in tools
+        if isinstance(t, dict) and isinstance((name := t.get("name")), str)
     ]
 
 

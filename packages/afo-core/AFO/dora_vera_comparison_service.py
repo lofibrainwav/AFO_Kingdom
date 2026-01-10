@@ -32,7 +32,10 @@ class DoRAVeRAComparisonService:
         start_memory = psutil.Process().memory_info().rss / 1024 / 1024
 
         self.base_model = AutoModelForCausalLM.from_pretrained(
-            self.model_name, device_map="auto", trust_remote_code=True, torch_dtype=torch.float16
+            self.model_name,
+            device_map="auto",
+            trust_remote_code=True,
+            torch_dtype=torch.float16,
         )
 
         load_time = time.time() - start_time
@@ -80,7 +83,9 @@ class DoRAVeRAComparisonService:
         end_memory = psutil.Process().memory_info().rss / 1024 / 1024
         memory_delta = end_memory - start_memory
 
-        trainable_params = sum(p.numel() for p in self.dora_model.parameters() if p.requires_grad)
+        trainable_params = sum(
+            p.numel() for p in self.dora_model.parameters() if p.requires_grad
+        )
         total_params = sum(p.numel() for p in self.dora_model.parameters())
         efficiency = 100 * trainable_params / total_params
 
@@ -120,7 +125,9 @@ class DoRAVeRAComparisonService:
         end_memory = psutil.Process().memory_info().rss / 1024 / 1024
         memory_delta = end_memory - start_memory
 
-        trainable_params = sum(p.numel() for p in self.vera_model.parameters() if p.requires_grad)
+        trainable_params = sum(
+            p.numel() for p in self.vera_model.parameters() if p.requires_grad
+        )
         total_params = sum(p.numel() for p in self.vera_model.parameters())
         efficiency = 100 * trainable_params / total_params
 
@@ -185,15 +192,19 @@ class DoRAVeRAComparisonService:
                     )
                 gen_time = time.time() - start_time
 
-                generated_text = model.tokenizer.decode(outputs[0], skip_special_tokens=True)
+                generated_text = model.tokenizer.decode(
+                    outputs[0], skip_special_tokens=True
+                )
 
                 results[name] = {
                     "success": True,
                     "generation_time": gen_time,
                     "output_length": len(generated_text),
-                    "generated_text": generated_text[:100] + "..."
-                    if len(generated_text) > 100
-                    else generated_text,
+                    "generated_text": (
+                        generated_text[:100] + "..."
+                        if len(generated_text) > 100
+                        else generated_text
+                    ),
                 }
 
             except Exception as e:
@@ -238,11 +249,15 @@ class DoRAVeRAComparisonService:
 
         for technique in ["dora", "vera"]:
             if technique in results and "efficiency" in results[technique]:
-                print(f"{technique.upper()}: {results[technique]['efficiency']:.2f}% efficiency")
+                print(
+                    f"{technique.upper()}: {results[technique]['efficiency']:.2f}% efficiency"
+                )
 
         qlora_comparison = results.get("qlora_adalora_comparison", {})
         if qlora_comparison.get("success"):
-            print(f"QLoRA-AdaLoRA: {qlora_comparison.get('efficiency', 0):.2f}% efficiency")
+            print(
+                f"QLoRA-AdaLoRA: {qlora_comparison.get('efficiency', 0):.2f}% efficiency"
+            )
 
         print("\n✅ Benchmark completed successfully!")
 

@@ -105,14 +105,15 @@ async def test_bulk_import_via_http_api():
             )
 
             # The input_server returns RedirectResponse(303)
-            assert response.status_code == 303, (
-                f"Response was {response.status_code}: {response.text}"
-            )
+            assert (
+                response.status_code == 303
+            ), f"Response was {response.status_code}: {response.text}"
             assert "success" in response.headers["location"]
             # Verify URL encoding logic implicitly by checking substring
             # "1개 저장 성공" might be percent encoded
             assert (
-                "saved" in response.headers["location"] or "success" in response.headers["location"]
+                "saved" in response.headers["location"]
+                or "success" in response.headers["location"]
             )
 
             # Verify HTTP calls were made

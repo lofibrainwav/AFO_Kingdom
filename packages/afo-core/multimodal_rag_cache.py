@@ -107,7 +107,9 @@ def set_cached_result(
 
         success = client.setex(cache_key, ttl_seconds, serialized_result)
         if success:
-            logger.debug(f"✅ Multimodal RAG Cache set: {query[:50]}... (TTL: {ttl_seconds}s)")
+            logger.debug(
+                f"✅ Multimodal RAG Cache set: {query[:50]}... (TTL: {ttl_seconds}s)"
+            )
         return bool(success)
 
     except Exception as e:
@@ -160,7 +162,11 @@ def get_cache_stats() -> dict[str, Any]:
 
     try:
         keys = client.keys("multimodal_rag:*")
-        return {"status": "healthy", "entries": len(keys), "keys_sample": keys[:5] if keys else []}
+        return {
+            "status": "healthy",
+            "entries": len(keys),
+            "keys_sample": keys[:5] if keys else [],
+        }
 
     except Exception as e:
         logger.warning(f"⚠️ Multimodal RAG Cache stats failed: {e}")

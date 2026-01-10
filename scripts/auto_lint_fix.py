@@ -16,9 +16,10 @@ import logging
 from pathlib import Path
 from typing import Any
 
-
 # 로깅 설정
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 logger = logging.getLogger(__name__)
 
 
@@ -65,7 +66,9 @@ class AutoLintFixSystem:
 
             # Phase 1.5: 최종 보고서 생성
             logger.info("Phase 1.5: 최종 보고서 생성 중...")
-            final_report = await self._generate_final_report(current_issues, fix_results, verification_results)
+            final_report = await self._generate_final_report(
+                current_issues, fix_results, verification_results
+            )
 
             logger.info("✅ 자동 Linting 수정 시스템 완료")
             return final_report
@@ -142,7 +145,9 @@ class AutoLintFixSystem:
             logger.exception("현재 이슈 분석 실패: %s", e)
             return {"error": str(e)}
 
-    async def _identify_fixable_issues(self, current_issues: dict[str, Any]) -> dict[str, Any]:
+    async def _identify_fixable_issues(
+        self, current_issues: dict[str, Any]
+    ) -> dict[str, Any]:
         """
         자동 수정 가능한 이슈 식별 (Phase 1.2)
         """
@@ -221,7 +226,9 @@ class AutoLintFixSystem:
             "isort_fix_needed": current_issues.get("isort_issues", False),
         }
 
-    async def _execute_auto_fixes(self, fixable_issues: dict[str, Any]) -> dict[str, Any]:
+    async def _execute_auto_fixes(
+        self, fixable_issues: dict[str, Any]
+    ) -> dict[str, Any]:
         """
         자동 수정 실행 (Phase 1.3)
         """
@@ -230,7 +237,9 @@ class AutoLintFixSystem:
         try:
             # Phase 1.3.1: Ruff 자동 수정
             if fixable_issues.get("fixable_count", 0) > 0:
-                logger.info(f"Ruff 자동 수정 실행 중... ({fixable_issues['fixable_count']}개 이슈)")
+                logger.info(
+                    f"Ruff 자동 수정 실행 중... ({fixable_issues['fixable_count']}개 이슈)"
+                )
                 cmd = ["python", "-m", "ruff", "check", "--fix", str(self.project_root)]
                 await self._run_command(cmd)
                 results["ruff_fixes"] = fixable_issues["fixable_count"]
@@ -308,7 +317,9 @@ class AutoLintFixSystem:
                     syntax_errors.append({"file": str(py_file), "error": str(e)})
 
             return {
-                "total_files_checked": len([f for f in python_files if ".venv" not in str(f)]),
+                "total_files_checked": len(
+                    [f for f in python_files if ".venv" not in str(f)]
+                ),
                 "syntax_errors": syntax_errors,
                 "syntax_ok": len(syntax_errors) == 0,
             }
@@ -347,7 +358,9 @@ class AutoLintFixSystem:
             try:
                 from AFO.config.antigravity import antigravity
 
-                is_eligible, reason = antigravity.check_auto_run_eligibility(final_score, 5.0)  # 낮은 리스크 가정
+                is_eligible, reason = antigravity.check_auto_run_eligibility(
+                    final_score, 5.0
+                )  # 낮은 리스크 가정
             except ImportError:
                 is_eligible, reason = True, "Antigravity not available"
 
@@ -409,7 +422,9 @@ class AutoLintFixSystem:
             # 코드 메트릭 계산
             total_files = len(list(self.project_root.rglob("*.py")))
             test_files = len(list(self.project_root.rglob("test_*.py")))
-            test_coverage_estimate = min(100.0, (test_files / total_files) * 100) if total_files > 0 else 0
+            test_coverage_estimate = (
+                min(100.0, (test_files / total_files) * 100) if total_files > 0 else 0
+            )
 
             # 구조적 품질 평가
             has_docs = len(list(self.project_root.glob("docs/"))) > 0
@@ -474,13 +489,19 @@ class AutoLintFixSystem:
         최종 보고서 생성 (Phase 1.5)
         """
         total_fixed = (
-            fix_results.get("ruff_fixes", 0) + fix_results.get("black_fixes", 0) + fix_results.get("isort_fixes", 0)
+            fix_results.get("ruff_fixes", 0)
+            + fix_results.get("black_fixes", 0)
+            + fix_results.get("isort_fixes", 0)
         )
 
         issues_before = current_issues.get("total_issues", 0)
         issues_after = verification.get("post_fix_issues", {}).get("total_issues", 0)
 
-        improvement_rate = ((issues_before - issues_after) / issues_before * 100) if issues_before > 0 else 0
+        improvement_rate = (
+            ((issues_before - issues_after) / issues_before * 100)
+            if issues_before > 0
+            else 0
+        )
 
         return {
             "summary": {
@@ -488,7 +509,9 @@ class AutoLintFixSystem:
                 "issues_after": issues_after,
                 "issues_fixed": total_fixed,
                 "improvement_rate": round(improvement_rate, 1),
-                "syntax_ok": verification.get("syntax_check", {}).get("syntax_ok", False),
+                "syntax_ok": verification.get("syntax_check", {}).get(
+                    "syntax_ok", False
+                ),
             },
             "details": {
                 "ruff_fixes": fix_results.get("ruff_fixes", 0),
@@ -510,13 +533,17 @@ class AutoLintFixSystem:
         recommendations = []
 
         if remaining_issues > 0:
-            recommendations.append(f"남은 {remaining_issues}개 이슈들에 대한 수동 검토 권장")
+            recommendations.append(
+                f"남은 {remaining_issues}개 이슈들에 대한 수동 검토 권장"
+            )
 
-        recommendations.extend([
-            "pre-commit 훅을 통한 자동 검증 설정 권장",
-            "CI/CD 파이프라인에 linting 검증 추가 권장",
-            "개발자 교육을 통한 코드 품질 문화 정착 권장",
-        ])
+        recommendations.extend(
+            [
+                "pre-commit 훅을 통한 자동 검증 설정 권장",
+                "CI/CD 파이프라인에 linting 검증 추가 권장",
+                "개발자 교육을 통한 코드 품질 문화 정착 권장",
+            ]
+        )
 
         return recommendations
 
@@ -568,7 +595,9 @@ async def main():
     print(f"  • 수정 후 이슈: {summary.get('issues_after', 0)}개")
     print(f"  • 자동 수정된 이슈: {summary.get('issues_fixed', 0)}개")
     print(f"  • 개선율: {summary.get('improvement_rate', 0)}%")
-    print(f"  • Syntax 상태: {'✅ 정상' if summary.get('syntax_ok', False) else '❌ 오류 있음'}")
+    print(
+        f"  • Syntax 상태: {'✅ 정상' if summary.get('syntax_ok', False) else '❌ 오류 있음'}"
+    )
 
     details = results.get("details", {})
     print("\n🔧 세부 수정 내역:")

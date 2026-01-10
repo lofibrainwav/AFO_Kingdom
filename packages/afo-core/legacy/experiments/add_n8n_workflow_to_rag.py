@@ -234,11 +234,15 @@ def add_to_rag():
         # 검색 테스트
         print("\n🔍 검색 테스트 중...")
         retriever = vectorstore.as_retriever(search_kwargs={"k": 1})
-        test_results = retriever.get_relevant_documents("Daily Notion Report 워크플로우")
+        test_results = retriever.get_relevant_documents(
+            "Daily Notion Report 워크플로우"
+        )
 
         if test_results:
             print(f"✅ 검색 성공: {len(test_results)}개 문서 발견")
-            print(f"   첫 번째 결과: {test_results[0].metadata.get('workflow_name', 'N/A')}")
+            print(
+                f"   첫 번째 결과: {test_results[0].metadata.get('workflow_name', 'N/A')}"
+            )
         else:
             print("⚠️ 검색 결과가 없습니다.")
 

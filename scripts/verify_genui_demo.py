@@ -2,7 +2,6 @@ import os
 import pathlib
 import sys
 
-
 sys.path.append(os.path.join(pathlib.Path.cwd(), "packages/afo-core"))
 sys.path.append(os.path.join(pathlib.Path.cwd(), "packages/trinity-os"))
 
@@ -46,7 +45,9 @@ def verify_genui():
         if vis.get("success"):
             print(f"✅ Vision Check: PASS (Screenshot taken at {vis.get('path')})")
         else:
-            print(f"⚠️ Vision Check: SKIPPED (Playwright not active or mocked: {vis.get('message')})")
+            print(
+                f"⚠️ Vision Check: SKIPPED (Playwright not active or mocked: {vis.get('message')})"
+            )
 
     except Exception as e:
         print(f"❌ Verification Error: {e}")

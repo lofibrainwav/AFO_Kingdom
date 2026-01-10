@@ -99,3 +99,5 @@ venv_musicgen/
 # MyPy cache directories (may contain sensitive path information)
 .mypy_cache/
 **/.mypy_cache/
+*.sqlite3
+*.sqlite3

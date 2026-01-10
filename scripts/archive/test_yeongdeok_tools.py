@@ -1,7 +1,6 @@
 import asyncio
 import sys
 
-
 # Set PYTHONPATH
 sys.path.append(str(Path(__file__).parent.parent / "packages" / "afo-core"))
 

@@ -3,7 +3,6 @@
 import sys
 from pathlib import Path
 
-
 # Add package root to path to verify imports
 current_dir = Path(__file__).resolve().parent
 package_root = current_dir.parent / "packages" / "afo-core"
@@ -20,7 +19,9 @@ def deploy():
     print(f"🚀 [AntiGravity] 배포 시퀀스 시작: {antigravity.ENVIRONMENT}")
 
     if antigravity.DRY_RUN_DEFAULT:
-        print(f"🛡️ [AntiGravity] {antigravity.ENVIRONMENT} 배포 시뮬레이션 완료 - 실제 실행 없음 (善: 안전 위주)")
+        print(
+            f"🛡️ [AntiGravity] {antigravity.ENVIRONMENT} 배포 시뮬레이션 완료 - 실제 실행 없음 (善: 안전 위주)"
+        )
         print("   -> Helm upgrade command skipped.")
         return
 
@@ -30,7 +31,9 @@ def deploy():
         #     "helm", "upgrade", "--install", "afo-kingdom", "./helm/afo-chart",
         #     "--set", f"environment={antigravity.ENVIRONMENT}"
         # ], check=True)
-        print(f"✅ [AntiGravity 로그] {antigravity.ENVIRONMENT} 배포 성공 - 마찰 제거 (孝)")
+        print(
+            f"✅ [AntiGravity 로그] {antigravity.ENVIRONMENT} 배포 성공 - 마찰 제거 (孝)"
+        )
     except Exception as e:
         print(f"❌ [AntiGravity] 배포 실패: {e}")
         sys.exit(1)

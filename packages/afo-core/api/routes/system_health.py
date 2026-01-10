@@ -38,7 +38,9 @@ except ImportError:
 router = APIRouter(prefix="/api/system", tags=["System Health"])
 
 
-@router.get("/health", include_in_schema=True)  # SSOT: Always available for health checks
+@router.get(
+    "/health", include_in_schema=True
+)  # SSOT: Always available for health checks
 async def system_health_alias():
     """Alias for /api/health to support legacy tests. Only available in dev environment."""
     # Truth: Return full comprehensive health data including organs_v2
@@ -49,7 +51,11 @@ async def system_health_alias():
         return await get_comprehensive_health()
     except Exception as e:
         logger.warning("System health alias failed: %s", e)
-        return {"status": "unknown", "timestamp": datetime.now().isoformat(), "error": str(e)}
+        return {
+            "status": "unknown",
+            "timestamp": datetime.now().isoformat(),
+            "error": str(e),
+        }
 
 
 logger = logging.getLogger(__name__)
@@ -225,7 +231,6 @@ async def get_kingdom_status() -> dict[str, Any]:
     SSOT: Uses get_comprehensive_health() to ensure consistency with /health
     """
     import psutil
-
     from AFO.config.settings import get_settings
     from AFO.services.health_service import get_comprehensive_health
 
@@ -311,7 +316,9 @@ async def get_kingdom_status() -> dict[str, Any]:
         # Phase 23: Dashboard Hardening (Always Exposed Vitals)
         "head_sha": os.getenv("GIT_COMMIT_SHA", "unknown")[:7],
         "chancellor_v2_enabled": settings.CHANCELLOR_V2_ENABLED,
-        "canary_status": "V2 (Canary)" if settings.CHANCELLOR_V2_ENABLED else "V1 (Stable)",
+        "canary_status": (
+            "V2 (Canary)" if settings.CHANCELLOR_V2_ENABLED else "V1 (Stable)"
+        ),
         # Include original health data for debugging
         "raw_health": health_data,
     }
@@ -372,9 +379,11 @@ async def _sse_log_generator(request: Request):
         + (" (Redis)" if redis_available else " (Fallback: File)"),
         "level": "SUCCESS",
         "source": "Chancellor Stream",
-        "timestamp": datetime.now().isoformat()
-        if not redis_available
-        else asyncio.get_event_loop().time(),
+        "timestamp": (
+            datetime.now().isoformat()
+            if not redis_available
+            else asyncio.get_event_loop().time()
+        ),
     }
     yield f"data: {json.dumps(initial_msg)}\n\n"
 
@@ -385,7 +394,9 @@ async def _sse_log_generator(request: Request):
                     logger.info("[SSE] Client disconnected (Redis mode)")
                     break
 
-                message = pubsub.get_message(ignore_subscribe_messages=True, timeout=1.0)
+                message = pubsub.get_message(
+                    ignore_subscribe_messages=True, timeout=1.0
+                )
                 if message and message["type"] == "message":
                     # message["data"] is already a JSON string from publish_thought
                     yield f"data: {message['data']}\n\n"
@@ -456,7 +467,9 @@ async def stream_logs_ssot(request: Request) -> StreamingResponse:
 
 # Cursor Compatibility Path: /api/stream/logs
 @sse_ssot_router.get("/stream/logs")
-async def stream_logs_cursor_compat(request: Request, limit: int = 0) -> RedirectResponse:
+async def stream_logs_cursor_compat(
+    request: Request, limit: int = 0
+) -> RedirectResponse:
     """[Alias] Cursor compatibility path for /api/stream/logs (Redirects to SSOT)"""
     return RedirectResponse("/api/logs/stream", status_code=308)
 

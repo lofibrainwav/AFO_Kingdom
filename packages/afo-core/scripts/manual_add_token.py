@@ -25,7 +25,9 @@ def main():
     print("Encryption Key Status: ✅ Configured (in .env)")
 
     wallet = APIWallet()
-    print(f"Storage: {wallet.storage_path if hasattr(wallet, 'storage_path') else 'DB'}")
+    print(
+        f"Storage: {wallet.storage_path if hasattr(wallet, 'storage_path') else 'DB'}"
+    )
 
     print("\nPlease paste your OPENAI_API_KEY (or session token):")
     token = input("> ").strip()

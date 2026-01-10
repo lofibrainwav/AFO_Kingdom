@@ -67,7 +67,11 @@ async def serenity_node(state: GraphState) -> GraphState:
         if response and response.get("response"):
             try:
                 text = (
-                    response["response"].strip().replace("```json", "").replace("```", "").strip()
+                    response["response"]
+                    .strip()
+                    .replace("```json", "")
+                    .replace("```", "")
+                    .strip()
                 )
                 data = json.loads(text)
                 scholar_score = data.get("score", heuristic_score)
@@ -87,7 +91,11 @@ async def serenity_node(state: GraphState) -> GraphState:
         "score": round(final_score, 3),
         "reasoning": reasoning,
         "issues": issues,
-        "metadata": {"mode": assessment_mode, "scholar": "Yeongdeok (孝)", "model": scholar_model},
+        "metadata": {
+            "mode": assessment_mode,
+            "scholar": "Yeongdeok (孝)",
+            "model": scholar_model,
+        },
     }
 
     state.outputs["SERENITY"] = evaluation

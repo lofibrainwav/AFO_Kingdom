@@ -2,16 +2,17 @@ import asyncio
 import json
 
 import pytest
-from httpx import ASGITransport, AsyncClient
 
 # DSPy 문제回避를 위해 직접 app 생성
 from AFO.api.config import get_app_config
+from httpx import ASGITransport, AsyncClient
 
 app = get_app_config()
 
 # RAG Query 라우터 등록 (query/stream 엔드포인트 포함)
 try:
     from AFO.api.routers.rag_query import router as rag_query_router
+
     app.include_router(rag_query_router, prefix="/api")
     print("✅ RAG Query Router registered successfully")
 except Exception as e:
@@ -46,7 +47,9 @@ async def test_rag_streaming_endpoint():
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
         # Use a longer timeout for LLM generation
-        async with ac.stream("POST", "/api/query/stream", json=payload, timeout=60.0) as response:
+        async with ac.stream(
+            "POST", "/api/query/stream", json=payload, timeout=60.0
+        ) as response:
             assert response.status_code == 200
             assert response.headers["content-type"].startswith("text/event-stream")
 
@@ -68,8 +71,8 @@ async def test_rag_streaming_endpoint():
             assert has_start, "❌ 'start' 이벤트가 누락되었습니다."
             assert has_token, "❌ 'token' 이벤트가 누락되었습니다. (실제 스트리밍 실패)"
             assert has_done, "❌ 'done' 이벤트가 누락되었습니다."
-            assert not has_error, (
-                f"❌ 스트림 중 에러가 발생하였습니다: {[e for e in events if 'error' in e]}"
-            )
+            assert (
+                not has_error
+            ), f"❌ 스트림 중 에러가 발생하였습니다: {[e for e in events if 'error' in e]}"
 
             print("✅ T2.1 RAG Streaming Verification Success (Tokens Received)")

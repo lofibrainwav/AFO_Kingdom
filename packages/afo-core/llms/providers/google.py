@@ -55,7 +55,9 @@ class GoogleProvider(BaseLLMProvider):
                         query,
                         model=model_name,
                         max_tokens=int(context.get("max_tokens", config.max_tokens)),
-                        temperature=float(context.get("temperature", config.temperature)),
+                        temperature=float(
+                            context.get("temperature", config.temperature)
+                        ),
                     )
                     return str(result)
                 except Exception as e:

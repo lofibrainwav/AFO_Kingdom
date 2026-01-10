@@ -9,13 +9,13 @@
 
 from __future__ import annotations
 
-from typing import Any, TypeVar, Generic
 from abc import ABC, abstractmethod
+from typing import Any, Generic, TypeVar
 
 # 제네릭 타입 변수
-T = TypeVar('T')
-TKey = TypeVar('TKey')
-TResult = TypeVar('TResult')
+T = TypeVar("T")
+TKey = TypeVar("TKey")
+TResult = TypeVar("TResult")
 
 
 class IService(ABC, Generic[T]):
@@ -324,14 +324,14 @@ class BaseRepository(ABC, Generic[T, TKey]):
 # 타입 가드 함수들
 def is_service_implementation(obj: Any, service_type: type[T]) -> bool:
     """객체가 특정 서비스 타입을 구현하는지 확인"""
-    return isinstance(obj, IService) and hasattr(obj, 'create')
+    return isinstance(obj, IService) and hasattr(obj, "create")
 
 
 def is_repository_implementation(obj: Any, repo_type: type[T]) -> bool:
     """객체가 특정 리포지토리 타입을 구현하는지 확인"""
-    return isinstance(obj, IRepository) and hasattr(obj, 'add')
+    return isinstance(obj, IRepository) and hasattr(obj, "add")
 
 
 def is_validator_implementation(obj: Any, validator_type: type[T]) -> bool:
     """객체가 특정 검증 타입을 구현하는지 확인"""
-    return isinstance(obj, IValidator) and hasattr(obj, 'validate')
+    return isinstance(obj, IValidator) and hasattr(obj, "validate")

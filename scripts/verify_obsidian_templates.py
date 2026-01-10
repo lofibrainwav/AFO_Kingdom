@@ -96,7 +96,9 @@ class ObsidianTemplateValidator:
 
         return results
 
-    def validate_single_template(self, template_name: str, template_path: Path) -> TemplateValidationResult:
+    def validate_single_template(
+        self, template_name: str, template_path: Path
+    ) -> TemplateValidationResult:
         """단일 템플릿 파일 검증"""
         errors = []
         warnings = []
@@ -115,7 +117,9 @@ class ObsidianTemplateValidator:
 
             # YAML Frontmatter 검증
             if template_name.endswith(".md"):
-                frontmatter_errors, frontmatter_warnings = self.validate_frontmatter(content)
+                frontmatter_errors, frontmatter_warnings = self.validate_frontmatter(
+                    content
+                )
                 errors.extend(frontmatter_errors)
                 warnings.extend(frontmatter_warnings)
 
@@ -125,7 +129,9 @@ class ObsidianTemplateValidator:
 
             # Dataview 쿼리 검증
             if template_name == "dataview_queries.md":
-                dataview_errors, dataview_warnings = self.validate_dataview_queries(content)
+                dataview_errors, dataview_warnings = self.validate_dataview_queries(
+                    content
+                )
                 errors.extend(dataview_errors)
                 warnings.extend(dataview_warnings)
 
@@ -163,7 +169,11 @@ class ObsidianTemplateValidator:
 
             # 필수 필드 검증
             required_fields = ["tags"]
-            errors.extend(f"필수 필드가 누락됨: {field}" for field in required_fields if field not in frontmatter)
+            errors.extend(
+                f"필수 필드가 누락됨: {field}"
+                for field in required_fields
+                if field not in frontmatter
+            )
 
             # 태그 형식 검증
             if "tags" in frontmatter and not isinstance(frontmatter["tags"], list):
@@ -244,7 +254,9 @@ class ObsidianTemplateValidator:
             # 기본 SELECT 절 검증 (TABLE, LIST, TASK)
             has_select = re.search(r"\b(TABLE|LIST|TASK)\b", block, re.IGNORECASE)
             if not has_select:
-                warnings.append(f"Dataview 쿼리 {i + 1}: SELECT 절이 명시되지 않았습니다")
+                warnings.append(
+                    f"Dataview 쿼리 {i + 1}: SELECT 절이 명시되지 않았습니다"
+                )
 
         return errors, warnings
 
@@ -366,7 +378,9 @@ class ObsidianTemplateValidator:
 
         # 템플릿 파일 수 확인
         if self.templates_path.exists():
-            template_files = list(self.templates_path.glob("*.md")) + list(self.templates_path.glob("*.html"))
+            template_files = list(self.templates_path.glob("*.md")) + list(
+                self.templates_path.glob("*.html")
+            )
             structure["templates_count"] = len(template_files)
         else:
             structure["templates_count"] = 0
@@ -385,15 +399,21 @@ class ObsidianTemplateValidator:
         """종합 결과 생성"""
         summary = {
             "total_templates": len(results.get("templates", [])),
-            "valid_templates": sum(1 for t in results.get("templates", []) if t.is_valid),
+            "valid_templates": sum(
+                1 for t in results.get("templates", []) if t.is_valid
+            ),
             "total_errors": sum(len(t.errors) for t in results.get("templates", [])),
-            "total_warnings": sum(len(t.warnings) for t in results.get("templates", [])),
+            "total_warnings": sum(
+                len(t.warnings) for t in results.get("templates", [])
+            ),
             "system_status": "unknown",
         }
 
         # 시스템 상태 결정
         template_success_rate = (
-            summary["valid_templates"] / summary["total_templates"] if summary["total_templates"] > 0 else 0
+            summary["valid_templates"] / summary["total_templates"]
+            if summary["total_templates"] > 0
+            else 0
         )
 
         if template_success_rate >= 0.9 and summary["total_errors"] == 0:
@@ -466,7 +486,9 @@ def main():
             "needs_attention": "🔴",
         }
 
-        print(f"  {status_emoji.get(summary['system_status'], '❓')} 시스템 상태: {summary['system_status'].upper()}")
+        print(
+            f"  {status_emoji.get(summary['system_status'], '❓')} 시스템 상태: {summary['system_status'].upper()}"
+        )
 
         # 검증 성공/실패 결정
         if summary["system_status"] in {"excellent", "good"}:

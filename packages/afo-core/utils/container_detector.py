@@ -51,7 +51,11 @@ class ContainerDetector:
                 check=False,
             )
             # grep {self.project_prefix} | head -1 로직을 파이썬으로 구현
-            names = [name for name in result.stdout.splitlines() if self.project_prefix in name]
+            names = [
+                name
+                for name in result.stdout.splitlines()
+                if self.project_prefix in name
+            ]
             container_name = names[0].strip() if names else ""
             if container_name:
                 self._cache["redis"] = str(container_name)
@@ -85,7 +89,11 @@ class ContainerDetector:
                 check=False,
             )
             # grep {self.project_prefix} | head -1 로직을 파이썬으로 구현
-            names = [name for name in result.stdout.splitlines() if self.project_prefix in name]
+            names = [
+                name
+                for name in result.stdout.splitlines()
+                if self.project_prefix in name
+            ]
             container_name = names[0].strip() if names else ""
             if container_name:
                 self._cache["postgres"] = container_name

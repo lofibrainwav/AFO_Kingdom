@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Boot-Swap 기능 테스트 스크립트"""
 
+import json
 import os
 import sys
-import json
 from pathlib import Path
 
 # Add AFO packages to path
@@ -102,7 +102,8 @@ def test_merge_node_logic():
 
         risk_score = (1.0 - pillar_scores["goodness"]) * 100
 
-        print(".1f"        print(f"   Risk Score: {risk_score:.1f}")
+        print(f"   Trinity Base: {trinity_base:.1f}")
+        print(f"   Risk Score: {risk_score:.1f}")
         print(f"   Base thresholds: trinity>={base_thresholds['auto_run_trinity']}, risk<={base_thresholds['auto_run_risk']}")
 
         decision_base = "AUTO_RUN" if (

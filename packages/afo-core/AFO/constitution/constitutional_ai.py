@@ -47,9 +47,7 @@ class AFOConstitution:
         # 1. 善 (Goodness) Check - Harmful Keywords
         for kw in cls.HARMFUL_KEYWORDS:
             if kw in query_lower or kw in action_lower:
-                reason = (
-                    f"⛔ VIOLATION: Principle 1 (Minimize Harm). Detected harmful keyword: '{kw}'"
-                )
+                reason = f"⛔ VIOLATION: Principle 1 (Minimize Harm). Detected harmful keyword: '{kw}'"
                 logger.warning(f"[Constitutional AI] {reason}")
                 return False, reason
 
@@ -67,11 +65,15 @@ class AFOConstitution:
             return False, reason
 
         # Pass
-        logger.info("[Constitutional AI] ✅ Compliance Verified. Action Align with 5 Pillars.")
+        logger.info(
+            "[Constitutional AI] ✅ Compliance Verified. Action Align with 5 Pillars."
+        )
         return True, "Aligned with AFO Constitution."
 
     @classmethod
-    async def critique_and_revise(cls, query: str, response: str) -> tuple[str, str, str]:
+    async def critique_and_revise(
+        cls, query: str, response: str
+    ) -> tuple[str, str, str]:
         """[CAI] Self-Critique and Revision Loop (Anthropic Style).
         Returns (critique, revised_response, type).
         """
@@ -90,7 +92,9 @@ class AFOConstitution:
             logger.info(log_msg)
 
             # Note: consult_grok handles its own caching and trinity logic
-            analysis = await consult_grok(prompt, market_context="moral_critique", trinity_score=98)
+            analysis = await consult_grok(
+                prompt, market_context="moral_critique", trinity_score=98
+            )
 
             critique = analysis.get("analysis", "No critique provided.")
             revised = (

@@ -29,7 +29,9 @@ async def check_infrastructure() -> None:
 
     # 1. Gunicorn Worker Count
     workers = (
-        os.popen("docker exec afo-soul-engine ps ax | grep gunicorn | grep -v grep | wc -l")
+        os.popen(
+            "docker exec afo-soul-engine ps ax | grep gunicorn | grep -v grep | wc -l"
+        )
         .read()
         .strip()
     )

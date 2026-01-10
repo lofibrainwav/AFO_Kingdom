@@ -8,7 +8,9 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 from typing import Any, Literal, Mapping, cast
 
-ContractStatus = Literal["DRAFT", "NEGOTIATED", "ACTIVE", "EXECUTING", "COMPLETED", "TERMINATED"]
+ContractStatus = Literal[
+    "DRAFT", "NEGOTIATED", "ACTIVE", "EXECUTING", "COMPLETED", "TERMINATED"
+]
 
 
 @dataclass
@@ -61,12 +63,20 @@ class DreamContractManager:
         guarantees = DreamGuarantee(
             min_trinity_score={
                 "truth": cast(Mapping[str, Any], guarantee_params).get("truth", 80.0),
-                "goodness": cast(Mapping[str, Any], guarantee_params).get("goodness", 80.0),
+                "goodness": cast(Mapping[str, Any], guarantee_params).get(
+                    "goodness", 80.0
+                ),
                 "beauty": cast(Mapping[str, Any], guarantee_params).get("beauty", 70.0),
-                "serenity": cast(Mapping[str, Any], guarantee_params).get("serenity", 80.0),
-                "eternity": cast(Mapping[str, Any], guarantee_params).get("eternity", 70.0),
+                "serenity": cast(Mapping[str, Any], guarantee_params).get(
+                    "serenity", 80.0
+                ),
+                "eternity": cast(Mapping[str, Any], guarantee_params).get(
+                    "eternity", 70.0
+                ),
             },
-            max_risk_threshold=cast(Mapping[str, Any], guarantee_params).get("risk_threshold", 30.0),
+            max_risk_threshold=cast(Mapping[str, Any], guarantee_params).get(
+                "risk_threshold", 30.0
+            ),
             max_execution_time=60,
             rollback_capability=True,
             bridge_logging=True,
@@ -102,11 +112,15 @@ class DreamContractManager:
         for pillar, required_score in contract.guarantees.min_trinity_score.items():
             current_score = trinity_score.get(pillar, 0)
             if current_score < required_score:
-                cast(list[Any], violations).append(f"{pillar}: {current_score}/{required_score}")
+                cast(list[Any], violations).append(
+                    f"{pillar}: {current_score}/{required_score}"
+                )
 
         # Check risk threshold
         if risk_score > contract.guarantees.max_risk_threshold:
-            cast(list[Any], violations).append(f"risk: {risk_score}/{contract.guarantees.max_risk_threshold}")
+            cast(list[Any], violations).append(
+                f"risk: {risk_score}/{contract.guarantees.max_risk_threshold}"
+            )
 
         if violations:
             contract.status = "TERMINATED"

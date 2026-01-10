@@ -3,10 +3,15 @@ import os
 import pathlib
 import sys
 
-
 # Setup path
-sys.path.append(pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages")).resolve())
-sys.path.append(pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")).resolve())
+sys.path.append(
+    pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages")).resolve()
+)
+sys.path.append(
+    pathlib.Path(
+        os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")
+    ).resolve()
+)
 
 from services.truth_metrics_calculator import truth_metrics
 
@@ -33,7 +38,9 @@ async def verify_truth_metrics():
 
     # 2. Calculate Score
     print("\n[Analyzing Perfect Code Candidate]...")
-    result = truth_metrics.calculate_technical_score(perfect_code, input_data, test_mode=True)
+    result = truth_metrics.calculate_technical_score(
+        perfect_code, input_data, test_mode=True
+    )
 
     print(f"🔹 Total Score: {result['total_score']} / {result['max_score']}")
     print(f"🔹 Trinity Conversion: {result['trinity_conversion']} / 100.0")

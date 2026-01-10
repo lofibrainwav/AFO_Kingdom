@@ -36,8 +36,17 @@ def _normalize_candidates(items: Any) -> list[dict[str, Any]]:
     for it in items:
         it = cast(Any, it)
         if isinstance(it, dict):
-            sid = str(cast(Mapping[str, Any], it).get("skill_id") or cast(Mapping[str, Any], it).get("id") or cast(Mapping[str, Any], it).get("name") or "")
-            title = str(cast(Mapping[str, Any], it).get("title") or cast(Mapping[str, Any], it).get("name") or sid)
+            sid = str(
+                cast(Mapping[str, Any], it).get("skill_id")
+                or cast(Mapping[str, Any], it).get("id")
+                or cast(Mapping[str, Any], it).get("name")
+                or ""
+            )
+            title = str(
+                cast(Mapping[str, Any], it).get("title")
+                or cast(Mapping[str, Any], it).get("name")
+                or sid
+            )
             out.append({"skill_id": sid, "title": title, **it})
     return out
 
@@ -70,7 +79,9 @@ def _find_registry() -> Any:
         except Exception:
             continue
 
-    raise RuntimeError("Could not construct a Skills Registry from afo_soul_engine.afo_skills_registry")
+    raise RuntimeError(
+        "Could not construct a Skills Registry from afo_soul_engine.afo_skills_registry"
+    )
 
 
 def _resolve_fn(mod, names: list[str]) -> Callable[..., Any] | None:
@@ -98,9 +109,13 @@ def build_deps_v1():
     except Exception:
         registry = None
 
-    mcp_tool_search = _resolve_fn(mcp_mod, ["tool_search", "search_tools", "search_tool"])
+    mcp_tool_search = _resolve_fn(
+        mcp_mod, ["tool_search", "search_tools", "search_tool"]
+    )
     mcp_get_card = _resolve_fn(mcp_mod, ["get_skill_card", "skill_card", "get_card"])
-    mcp_exec = _resolve_fn(mcp_mod, ["execute_skill_proxy", "execute_skill", "run_skill"])
+    mcp_exec = _resolve_fn(
+        mcp_mod, ["execute_skill_proxy", "execute_skill", "run_skill"]
+    )
 
     def tool_search(query: str, top_k: int) -> dict[str, Any]:
         if mcp_tool_search is not None:
@@ -133,7 +148,11 @@ def build_deps_v1():
         for meth in ("get_skill_card", "get_card", "get", "get_skill"):
             fn = getattr(registry, meth, None)
             if callable(fn):
-                out: Any = _call_flex(fn, skill_id) if meth in ("get", "get_skill") else _call_flex(fn, skill_id=skill_id)
+                out: Any = (
+                    _call_flex(fn, skill_id)
+                    if meth in ("get", "get_skill")
+                    else _call_flex(fn, skill_id=skill_id)
+                )
                 if isinstance(out, dict):
                     return out
         return {}
@@ -143,7 +162,9 @@ def build_deps_v1():
         if force in ("AUTO_RUN", "ASK", "BLOCK"):
             return {"decision": force}
 
-        def _load_latest_trinity_score() -> tuple[float | None, datetime | None, str | None]:
+        def _load_latest_trinity_score() -> (
+            tuple[float | None, datetime | None, str | None]
+        ):
             """SSOT 기반 Trinity 점수 로딩:
             - logs/trinity_health_*.json 중 "미래가 아닌" 최신 기록에서 overall_trinity_score를 읽는다.
             - 없거나 파싱 실패 시 None.
@@ -173,7 +194,9 @@ def build_deps_v1():
                 except Exception:
                     data = None
                 if isinstance(data, dict):
-                    raw_score = cast(Mapping[str, Any], data).get("overall_trinity_score")
+                    raw_score = cast(Mapping[str, Any], data).get(
+                        "overall_trinity_score"
+                    )
                     if isinstance(raw_score, (int, float)):
                         score = float(raw_score)
                     ts_raw = cast(Mapping[str, Any], data).get("timestamp")
@@ -230,7 +253,10 @@ def build_deps_v1():
                     out = _call_flex(fn, payload)
                 except Exception:
                     out: Any = None
-                if isinstance(out, dict) and (cast(Mapping[str, Any], out).get("decision") or cast(Mapping[str, Any], out).get("mode")):
+                if isinstance(out, dict) and (
+                    cast(Mapping[str, Any], out).get("decision")
+                    or cast(Mapping[str, Any], out).get("mode")
+                ):
                     return out
 
         # --- SSOT Serenity Gate fallback (Quantum Balance Lock) ---
@@ -247,7 +273,9 @@ def build_deps_v1():
             }
 
         # 점수의 신선도(Health First): 오래된 스코어는 AUTO_RUN 근거로 쓰지 않는다.
-        max_age_min = int(os.environ.get("TRINITY_TOOLFLOW_MAX_SCORE_AGE_MINUTES", "60"))
+        max_age_min = int(
+            os.environ.get("TRINITY_TOOLFLOW_MAX_SCORE_AGE_MINUTES", "60")
+        )
         is_stale = False
         if ts is not None:
             age_min = (datetime.now(UTC) - ts).total_seconds() / 60.0

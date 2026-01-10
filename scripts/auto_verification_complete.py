@@ -8,12 +8,13 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-
 # #region agent log
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 
 
-def log_debug(location: str, message: str, data: dict | None = None, hypothesis_id: str = "A") -> None:
+def log_debug(
+    location: str, message: str, data: dict | None = None, hypothesis_id: str = "A"
+) -> None:
     """Debug logging to NDJSON file"""
     try:
         log_entry = {
@@ -359,9 +360,15 @@ def main():
                 print(f"   - {name}: prefix={prefix}")
 
     # 엔드포인트 검증 결과
-    working_endpoints = [name for name, data in endpoint_results.items() if data.get("status_code") == 200]
+    working_endpoints = [
+        name
+        for name, data in endpoint_results.items()
+        if data.get("status_code") == 200
+    ]
     not_working_endpoints = [
-        name for name, data in endpoint_results.items() if data.get("status_code") != 200 and "error" not in data
+        name
+        for name, data in endpoint_results.items()
+        if data.get("status_code") != 200 and "error" not in data
     ]
     connection_error = any("error" in data for data in endpoint_results.values())
 
@@ -377,7 +384,9 @@ def main():
 
     if connection_error:
         print("\n💡 서버가 실행 중이지 않습니다. 서버를 시작한 후 다시 검증하세요.")
-        print("   명령: cd packages/afo-core && poetry run python -m uvicorn api_server:app --reload --port 8010")
+        print(
+            "   명령: cd packages/afo-core && poetry run python -m uvicorn api_server:app --reload --port 8010"
+        )
 
     # OpenAPI 스키마 결과
     if isinstance(openapi_results, dict) and "found" in openapi_results:

@@ -9,13 +9,13 @@ import time
 from collections import deque
 from dataclasses import dataclass
 
-
 logger = logging.getLogger(__name__)
 
 
 @dataclass
 class TrinityScoreSample:
     """Trinity Score 샘플 데이터"""
+
     timestamp: float
     trinity_score: float
     truth: float
@@ -56,15 +56,13 @@ class TrinityScoreMonitor:
             from prometheus_client import Gauge, Histogram
 
             self.trinity_score_gauge = Gauge(
-                "afo_trinity_score",
-                "Current Trinity Score (0.0-1.0)",
-                ["pillar"]
+                "afo_trinity_score", "Current Trinity Score (0.0-1.0)", ["pillar"]
             )
 
             self.trinity_score_histogram = Histogram(
                 "afo_trinity_score_change",
                 "Trinity Score change rate",
-                buckets=[-1.0, -0.5, -0.2, -0.1, 0.0, 0.1, 0.2, 0.5, 1.0]
+                buckets=[-1.0, -0.5, -0.2, -0.1, 0.0, 0.1, 0.2, 0.5, 1.0],
             )
 
         except ImportError:
@@ -95,7 +93,7 @@ class TrinityScoreMonitor:
             beauty=trinity_metrics.beauty,
             filial_serenity=trinity_metrics.filial_serenity,
             eternity=trinity_metrics.eternity,
-            balance_status=trinity_metrics.balance_status
+            balance_status=trinity_metrics.balance_status,
         )
 
         self.record_sample(sample)
@@ -112,7 +110,9 @@ class TrinityScoreMonitor:
             if abs(change) > self.anomaly_threshold:
                 self._log_anomaly(sample, prev_sample, change)
 
-    def _log_anomaly(self, current: TrinityScoreSample, previous: TrinityScoreSample, change: float):
+    def _log_anomaly(
+        self, current: TrinityScoreSample, previous: TrinityScoreSample, change: float
+    ):
         """이상 상황 로깅"""
         logger.warning(
             f"Trinity Score anomaly detected: {change:.3f} change "
@@ -167,9 +167,15 @@ class TrinityScoreMonitor:
             "window_minutes": window_minutes,
             "sample_count": len(window_samples),
             "overall_trend": total_change,
-            "trend_direction": "improving" if total_change > 0.05 else "declining" if total_change < -0.05 else "stable",
+            "trend_direction": (
+                "improving"
+                if total_change > 0.05
+                else "declining" if total_change < -0.05 else "stable"
+            ),
             "pillar_trends": pillar_trends,
-            "balance_status_distribution": self._get_balance_distribution(window_samples)
+            "balance_status_distribution": self._get_balance_distribution(
+                window_samples
+            ),
         }
 
     def _get_balance_distribution(self, samples: list[TrinityScoreSample]) -> dict:
@@ -195,7 +201,9 @@ class TrinityScoreMonitor:
             "min_score": min(scores),
             "max_score": max(scores),
             "score_volatility": self._calculate_volatility(scores),
-            "balance_status_summary": self._get_balance_distribution(list(self.samples))
+            "balance_status_summary": self._get_balance_distribution(
+                list(self.samples)
+            ),
         }
 
     def _calculate_volatility(self, scores: list[float]) -> float:
@@ -220,7 +228,7 @@ class TrinityScoreMonitor:
                     "beauty": s.beauty,
                     "serenity": s.filial_serenity,
                     "eternity": s.eternity,
-                }
+                },
             }
             for s in recent
         ]

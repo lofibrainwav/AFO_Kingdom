@@ -13,10 +13,9 @@ SSOT Integration: IRS/FTB 실시간 동기화 (TICKET-033)
 import logging
 from typing import Any, Dict
 
+from afo.julie import DepInput, DepOutput, julie_depreciation_calc
 from fastapi import APIRouter, BackgroundTasks, HTTPException
 from fastapi.responses import JSONResponse
-
-from afo.julie import DepInput, DepOutput, julie_depreciation_calc
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -74,7 +73,9 @@ async def calculate_depreciation(
         HTTPException: 입력 검증 실패 또는 계산 오류
     """
     try:
-        logger.info(f"Starting depreciation calculation for cost: ${input_data.total_cost:,.0f}")
+        logger.info(
+            f"Starting depreciation calculation for cost: ${input_data.total_cost:,.0f}"
+        )
 
         # Julie CPA 계산 실행
         result = julie_depreciation_calc(input_data)
@@ -134,7 +135,9 @@ async def get_julie_health() -> dict[str, Any]:
         return {"status": "unhealthy", "error": str(e), "engine_version": "1.0.0"}
 
 
-async def _log_calculation_evidence(input_data: dict[str, Any], result_data: dict[str, Any]):
+async def _log_calculation_evidence(
+    input_data: dict[str, Any], result_data: dict[str, Any]
+):
     """계산 증거 로깅 (백그라운드 태스크)"""
     try:
         import json

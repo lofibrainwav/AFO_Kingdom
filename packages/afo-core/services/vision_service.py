@@ -29,7 +29,9 @@ class VisionService:
     def __init__(self, model: str = "qwen3-vl:8b"):
         self.model = model
         self._ollama_available = self._check_ollama()
-        logger.info(f"VisionService initialized with model: {model} (host: {OLLAMA_HOST})")
+        logger.info(
+            f"VisionService initialized with model: {model} (host: {OLLAMA_HOST})"
+        )
 
     def _check_ollama(self) -> bool:
         """Check if Ollama is available (uses LOCAL Ollama via OLLAMA_HOST)"""
@@ -57,7 +59,10 @@ class VisionService:
             return base64.b64encode(f.read()).decode("utf-8")
 
     def analyze_image(
-        self, image_path: str, prompt: str = "Describe this image in detail.", language: str = "ko"
+        self,
+        image_path: str,
+        prompt: str = "Describe this image in detail.",
+        language: str = "ko",
     ) -> dict[str, Any]:
         """
         Analyze an image using Ollama VLM.
@@ -71,16 +76,24 @@ class VisionService:
             dict with description and metadata
         """
         if not self._ollama_available:
-            return {"error": "Ollama not available", "description": None, "model": self.model}
+            return {
+                "error": "Ollama not available",
+                "description": None,
+                "model": self.model,
+            }
 
         try:
             import ollama
 
             # Adjust prompt for language
             if language == "ko":
-                system_prompt = "당신은 이미지를 분석하는 AI입니다. 한국어로 상세히 설명하세요."
+                system_prompt = (
+                    "당신은 이미지를 분석하는 AI입니다. 한국어로 상세히 설명하세요."
+                )
             else:
-                system_prompt = "You are an AI that analyzes images. Describe in detail."
+                system_prompt = (
+                    "You are an AI that analyzes images. Describe in detail."
+                )
 
             response = ollama.chat(
                 model=self.model,
@@ -103,11 +116,18 @@ class VisionService:
 
         except Exception as e:
             logger.error(f"Image analysis failed: {e}")
-            return {"error": str(e), "description": None, "model": self.model, "success": False}
+            return {
+                "error": str(e),
+                "description": None,
+                "model": self.model,
+                "success": False,
+            }
 
     def detect_objects(self, image_path: str) -> dict[str, Any]:
         """Detect and list objects in an image"""
-        prompt = "List all objects visible in this image. Format: - object1\n- object2\n..."
+        prompt = (
+            "List all objects visible in this image. Format: - object1\n- object2\n..."
+        )
         return self.analyze_image(image_path, prompt, language="en")
 
     def extract_text(self, image_path: str) -> dict[str, Any]:

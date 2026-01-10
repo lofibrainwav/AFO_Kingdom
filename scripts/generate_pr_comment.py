@@ -11,7 +11,6 @@ import sys
 from pathlib import Path
 from typing import Any
 
-
 # Add project root to path
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
@@ -97,11 +96,15 @@ def main():
 
     parser = argparse.ArgumentParser(description="Generate PR comments for AFO Kingdom")
     parser.add_argument("--ssot-violations", nargs="*", help="SSOT violations")
-    parser.add_argument("--english-warnings", type=json.loads, help="English ratio warnings JSON")
+    parser.add_argument(
+        "--english-warnings", type=json.loads, help="English ratio warnings JSON"
+    )
 
     args = parser.parse_args()
 
-    comment = generate_combined_comment(ssot_violations=args.ssot_violations, english_warnings=args.english_warnings)
+    comment = generate_combined_comment(
+        ssot_violations=args.ssot_violations, english_warnings=args.english_warnings
+    )
 
     print(comment)
 

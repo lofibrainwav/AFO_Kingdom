@@ -3,12 +3,14 @@ import os
 import pathlib
 import sys
 
-
 # 프로젝트 루트 경로 추가
-sys.path.append(pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core/AFO")).resolve())
+sys.path.append(
+    pathlib.Path(
+        os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core/AFO")
+    ).resolve()
+)
 
 from utils.playwright_bridge import MockScenario, bridge
-
 
 # Force DRY_RUN off for this test if possible, or handle simulation
 # antigravity.DRY_RUN_DEFAULT = False # We will respect the default, but check for simulation
@@ -54,7 +56,9 @@ async def verify_advanced_features():
         print(f"UI Verification Result: {result}")
 
         if result["status"] == "simulation":
-            print("⚠️ Running in Simulation (DRY_RUN) mode. Full integration not tested, but logic flow is correct.")
+            print(
+                "⚠️ Running in Simulation (DRY_RUN) mode. Full integration not tested, but logic flow is correct."
+            )
         else:
             assert result["status"] == "PASS"
             assert "trace" in result

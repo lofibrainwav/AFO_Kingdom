@@ -8,7 +8,6 @@ SSOT 기반 정확성 검증:
 """
 
 import pytest
-
 from AFO.tax_engine.calculator import PersonFlags, TaxCalculator, TaxInput
 from AFO.tax_engine.validator import validate_tax_params_2025
 
@@ -25,7 +24,10 @@ def _get_test_params():
                 "HEAD_OF_HOUSEHOLD": 23625,
             },
             "dependent_standard_deduction": {"min": 1350, "add_earned_income": 450},
-            "additional_std_deduction_aged_blind": {"single_or_hoh": 2000, "married_or_qss": 1600},
+            "additional_std_deduction_aged_blind": {
+                "single_or_hoh": 2000,
+                "married_or_qss": 1600,
+            },
             "senior_bonus_deduction": {
                 "amount_per_person": 6000,
                 "phaseout_magi_single": 75000,
@@ -295,12 +297,18 @@ def test_itemized_vs_standard_deduction():
     calc = TaxCalculator(params)
 
     base_input = TaxInput(
-        filing_status="SINGLE", gross_income=100000, adjustments=0, flags=PersonFlags(), magi=100000
+        filing_status="SINGLE",
+        gross_income=100000,
+        adjustments=0,
+        flags=PersonFlags(),
+        magi=100000,
     )
 
     # 표준공제 사용
     standard_input = base_input
-    tax_std, taxable_std, deduction_std = calc.calculate_federal_tax_2025(standard_input)
+    tax_std, taxable_std, deduction_std = calc.calculate_federal_tax_2025(
+        standard_input
+    )
 
     # 항목별 공제 사용 ($20,000)
     itemized_input = TaxInput(
@@ -311,7 +319,9 @@ def test_itemized_vs_standard_deduction():
         flags=PersonFlags(),
         magi=100000,
     )
-    tax_item, taxable_item, deduction_item = calc.calculate_federal_tax_2025(itemized_input)
+    tax_item, taxable_item, deduction_item = calc.calculate_federal_tax_2025(
+        itemized_input
+    )
 
     # 항목별 공제가 선택되어야 함
     assert deduction_item == 20000
@@ -336,7 +346,9 @@ def test_zero_income_edge_case():
         flags=PersonFlags(),
     )
 
-    federal_tax, federal_taxable, federal_deduction = calc.calculate_federal_tax_2025(tax_input)
+    federal_tax, federal_taxable, federal_deduction = calc.calculate_federal_tax_2025(
+        tax_input
+    )
     ca_tax, ca_taxable, ca_deduction = calc.calculate_ca_tax_2025(tax_input)
     result = calc.calculate_total_tax_2025(tax_input)
 

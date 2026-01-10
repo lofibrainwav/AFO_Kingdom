@@ -1,9 +1,8 @@
 # Trinity Score: 90.0 (Established by Chancellor)
 from typing import Any
 
-from pydantic import BaseModel, Field
-
 from AFO.base import log_action, robust_execute
+from pydantic import BaseModel, Field
 
 
 # Defines the data contract for Truth verification (Modular Interface)

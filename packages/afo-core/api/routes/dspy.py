@@ -24,7 +24,6 @@ except ImportError:
 
 from afo.context7 import Context7Manager
 from afo.skills.skill_registry import SkillRegistry
-
 from afo.trinity_metric_wrapper import TrinityMetricWrapper
 
 router = APIRouter(prefix="/dspy", tags=["DSPy Optimization"])
@@ -132,7 +131,9 @@ class MIPROv2Optimizer:
             print(f"Trinity metric calculation failed: {e}")
             return 0.5  # Neutral score
 
-    def optimize_with_mipro(self, task_module, trainset, config: dict[str, Any]) -> dict[str, Any]:
+    def optimize_with_mipro(
+        self, task_module, trainset, config: dict[str, Any]
+    ) -> dict[str, Any]:
         """Execute MIPROv2 optimization"""
         if not DSPY_AVAILABLE or self.lm is None:
             raise HTTPException(status_code=503, detail="DSPy LLM not configured")
@@ -154,7 +155,9 @@ class MIPROv2Optimizer:
 
         # Execute optimization
         try:
-            optimized_module = teleprompter.compile(student=task_module, trainset=trainset)
+            optimized_module = teleprompter.compile(
+                student=task_module, trainset=trainset
+            )
 
             execution_time = time.time() - start_time
 
@@ -185,7 +188,9 @@ optimizer = MIPROv2Optimizer()
 
 
 @router.post("/optimize", response_model=OptimizationResponse)
-async def optimize_prompt(request: OptimizationRequest, background_tasks: BackgroundTasks):
+async def optimize_prompt(
+    request: OptimizationRequest, background_tasks: BackgroundTasks
+):
     """
     Execute MIPROv2 prompt optimization with AFO Kingdom integration
 
@@ -224,7 +229,8 @@ async def optimize_prompt(request: OptimizationRequest, background_tasks: Backgr
 
         if len(trainset) < 5:
             raise HTTPException(
-                status_code=400, detail="Insufficient training data. Need at least 5 examples."
+                status_code=400,
+                detail="Insufficient training data. Need at least 5 examples.",
             )
 
         # Configure optimization
@@ -247,7 +253,9 @@ async def optimize_prompt(request: OptimizationRequest, background_tasks: Backgr
         )
 
         # Background task: Save optimization result
-        background_tasks.add_task(save_optimization_result, request.task, result, trinity_scores)
+        background_tasks.add_task(
+            save_optimization_result, request.task, result, trinity_scores
+        )
 
         return OptimizationResponse(
             optimized_prompt=result["optimized_module"],

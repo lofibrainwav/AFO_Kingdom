@@ -2,7 +2,6 @@ import os
 import sys
 import traceback
 
-
 # Add package root to path
 sys.path.append(os.path.abspath("packages/afo-core"))
 

@@ -36,7 +36,9 @@ def calculate_consistency(predictions: list[str]) -> float:
     lengths = [len(pred.split()) for pred in predictions]
     avg_length = sum(lengths) / len(lengths)
     variance = sum((l - avg_length) ** 2 for l in lengths) / len(lengths)
-    consistency = max(0, 1 - (variance**0.5) / avg_length)  # 표준편차가 평균의 100% 이내
+    consistency = max(
+        0, 1 - (variance**0.5) / avg_length
+    )  # 표준편차가 평균의 100% 이내
 
     return consistency
 
@@ -132,12 +134,14 @@ def main():
         results = evaluate_quality(predictions, ground_truth)
 
         # 결과에 메타데이터 추가
-        results.update({
-            "model_type": args.model,
-            "evaluation_type": args.before_after,
-            "timestamp": "2025-12-31T20:12:00-08:00",
-            "schema_version": 3,
-        })
+        results.update(
+            {
+                "model_type": args.model,
+                "evaluation_type": args.before_after,
+                "timestamp": "2025-12-31T20:12:00-08:00",
+                "schema_version": 3,
+            }
+        )
 
         # 결과 출력
         print("=== 품질 평가 결과 ===")

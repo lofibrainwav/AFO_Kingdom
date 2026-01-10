@@ -3,9 +3,10 @@ import os
 import re
 from urllib.request import Request, urlopen
 
-
 BASE = os.environ.get("AFO_BASE_URL", "http://127.0.0.1:8010").rstrip("/")
-META_PATH = os.environ.get("CONTEXT7_META_JSON", "docs/context7_integration_metadata.json")
+META_PATH = os.environ.get(
+    "CONTEXT7_META_JSON", "docs/context7_integration_metadata.json"
+)
 
 
 def http_json(url: str) -> object:
@@ -54,14 +55,30 @@ def extract_items(payload: object) -> list[dict]:
 
 def pick_path(item: dict) -> str:
     # Prioritize explicit path fields
-    for k in ("source", "source_path", "path", "file_path", "filepath", "relpath", "file"):
+    for k in (
+        "source",
+        "source_path",
+        "path",
+        "file_path",
+        "filepath",
+        "relpath",
+        "file",
+    ):
         v = item.get(k)
         if isinstance(v, str) and v.strip():
             return v
     # nested metadata keys
     meta = item.get("metadata")
     if isinstance(meta, dict):
-        for k in ("source", "source_path", "path", "file_path", "filepath", "relpath", "file"):
+        for k in (
+            "source",
+            "source_path",
+            "path",
+            "file_path",
+            "filepath",
+            "relpath",
+            "file",
+        ):
             v = meta.get(k)
             if isinstance(v, str) and v.strip():
                 return v
@@ -131,7 +148,12 @@ def find_context7_endpoint(openapi: dict) -> str | None:
         if "context7" in p.lower() and isinstance(ops, dict) and "get" in ops:
             candidates.append(p)
     # prefer "list" endpoints
-    for want in ("/api/context7/list", "/context7/list", "/api/context7/items", "/api/context7"):
+    for want in (
+        "/api/context7/list",
+        "/context7/list",
+        "/api/context7/items",
+        "/api/context7",
+    ):
         if want in candidates:
             return want
     return candidates[0] if candidates else None

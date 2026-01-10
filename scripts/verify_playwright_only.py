@@ -60,7 +60,9 @@ def verify_playwright():
             resp = json.loads(response_line)
             content = json.loads(resp["result"]["content"][0]["text"])
 
-            if content.get("success") and "Example Domain" in content.get("content", ""):
+            if content.get("success") and "Example Domain" in content.get(
+                "content", ""
+            ):
                 print("✅ Browser Scrape Success")
             else:
                 print(f"❌ Scrape Failed: {content}")

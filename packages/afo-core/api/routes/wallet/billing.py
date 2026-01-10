@@ -10,9 +10,8 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any
 
-from fastapi import APIRouter, HTTPException
-
 from AFO.models import API_PROVIDERS
+from fastapi import APIRouter, HTTPException
 
 # Create router
 billing_router = APIRouter(prefix="/billing", tags=["Wallet Billing"])
@@ -36,11 +35,12 @@ async def get_api_usage(api_id: str) -> dict[str, Any]:
         # 사용량 조회 로직 - Redis 기반 구현
         try:
             import redis
-
             from AFO.config.settings import get_settings
 
             settings = get_settings()
-            redis_client = redis.from_url(settings.get_redis_url(), decode_responses=True)
+            redis_client = redis.from_url(
+                settings.get_redis_url(), decode_responses=True
+            )
 
             # API 사용량 키
             usage_key = f"wallet:usage:{api_id}"
@@ -76,9 +76,13 @@ async def get_api_usage(api_id: str) -> dict[str, Any]:
             }
 
     except ImportError:
-        raise HTTPException(status_code=503, detail="Wallet billing not available") from None
+        raise HTTPException(
+            status_code=503, detail="Wallet billing not available"
+        ) from None
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to get API usage: {e}") from e
+        raise HTTPException(
+            status_code=500, detail=f"Failed to get API usage: {e}"
+        ) from e
 
 
 @billing_router.get("/summary")
@@ -98,11 +102,12 @@ async def get_billing_summary() -> dict[str, Any]:
         # 청구 요약 로직 - Redis 기반 집계
         try:
             import redis
-
             from AFO.config.settings import get_settings
 
             settings = get_settings()
-            redis_client = redis.from_url(settings.get_redis_url(), decode_responses=True)
+            redis_client = redis.from_url(
+                settings.get_redis_url(), decode_responses=True
+            )
 
             # 모든 API 제공자에 대한 사용량 집계
             total_requests = 0
@@ -168,6 +173,10 @@ async def get_billing_summary() -> dict[str, Any]:
             }
 
     except ImportError:
-        raise HTTPException(status_code=503, detail="Wallet billing not available") from None
+        raise HTTPException(
+            status_code=503, detail="Wallet billing not available"
+        ) from None
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to get billing summary: {e}") from e
+        raise HTTPException(
+            status_code=500, detail=f"Failed to get billing summary: {e}"
+        ) from e

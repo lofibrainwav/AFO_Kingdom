@@ -86,7 +86,9 @@ async def get_git_status() -> dict[str, Any]:
                 if line.strip():
                     parts = line.split(" ", 1)
                     if len(parts) == 2:
-                        recent_commits.append({"hash": parts[0], "message": parts[1][:50]})
+                        recent_commits.append(
+                            {"hash": parts[0], "message": parts[1][:50]}
+                        )
 
         # 동기화 상태
         synced = not bool(status_output)
@@ -94,25 +96,33 @@ async def get_git_status() -> dict[str, Any]:
         # 추적 중인 파일 수
         tracked_files_output = _run_git_command("git ls-tree -r HEAD --name-only")
         if tracked_files_output:
-            tracked_files = str(len([f for f in tracked_files_output.split("\n") if f.strip()]))
+            tracked_files = str(
+                len([f for f in tracked_files_output.split("\n") if f.strip()])
+            )
         else:
             tracked_files = "0"
 
         return {
             "status": "success",
             "total_commits": int(total_commits) if total_commits.isdigit() else 0,
-            "today_commits": (int(today_commits.strip()) if today_commits.strip().isdigit() else 0),
+            "today_commits": (
+                int(today_commits.strip()) if today_commits.strip().isdigit() else 0
+            ),
             "head": head_sha,
             "branch": branch or "unknown",
             "synced": synced,
             "has_changes": not synced,
             "status_output": status_output,
-            "tracked_files": (int(tracked_files.strip()) if tracked_files.strip().isdigit() else 0),
+            "tracked_files": (
+                int(tracked_files.strip()) if tracked_files.strip().isdigit() else 0
+            ),
             "recent_commits": recent_commits,
         }
     except Exception as e:
         logger.error(f"Git status check failed: {e}")
-        raise HTTPException(status_code=500, detail=f"Failed to get git status: {e}") from e
+        raise HTTPException(
+            status_code=500, detail=f"Failed to get git status: {e}"
+        ) from e
 
 
 @router.get("/info")
@@ -132,7 +142,9 @@ async def get_git_info() -> dict[str, Any]:
         # 태그 목록
         tags_output = _run_git_command("git tag -l | tail -10")
         tags = (
-            [tag.strip() for tag in tags_output.split("\n") if tag.strip()] if tags_output else []
+            [tag.strip() for tag in tags_output.split("\n") if tag.strip()]
+            if tags_output
+            else []
         )
 
         # 사용자 정보
@@ -152,4 +164,6 @@ async def get_git_info() -> dict[str, Any]:
         }
     except Exception as e:
         logger.error(f"Git info check failed: {e}")
-        raise HTTPException(status_code=500, detail=f"Failed to get git info: {e}") from e
+        raise HTTPException(
+            status_code=500, detail=f"Failed to get git info: {e}"
+        ) from e

@@ -44,7 +44,9 @@ class ProtocolOfficer:
         pass
 
     @validate_with_trinity
-    def compose_diplomatic_message(self, content: str, audience: str = AUDIENCE_COMMANDER) -> str:
+    def compose_diplomatic_message(
+        self, content: str, audience: str = AUDIENCE_COMMANDER
+    ) -> str:
         """
         Wraps the raw content in the appropriate diplomatic protocol.
         1. Validates against Constitution (Goodness/Serenity).
@@ -55,7 +57,9 @@ class ProtocolOfficer:
 
         # 1. Constitutional Check (The Internal Education)
         # We assume the content *action* itself was already checked, but we check the *message* again for safety.
-        is_compliant, reason = AFOConstitution.evaluate_compliance("Protocol Check", content)
+        is_compliant, reason = AFOConstitution.evaluate_compliance(
+            "Protocol Check", content
+        )
         if not is_compliant:
             logger.warning(f"🚫 [Protocol] Content rejected by Constitution: {reason}")
             return f"🚫 [Protocol Block] The message cannot be delivered due to Constitutional Violation: {reason}"

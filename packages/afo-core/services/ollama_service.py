@@ -10,7 +10,6 @@ import time
 from typing import Any, Optional
 
 import httpx
-
 from AFO.config.settings import get_settings
 
 logger = logging.getLogger("AFO.OllamaService")
@@ -47,7 +46,9 @@ class OllamaService:
             if self._active_model == target_model:
                 return True
 
-            logger.info(f"🔄 [Step 0] Switching started: {self._active_model} -> {target_model}")
+            logger.info(
+                f"🔄 [Step 0] Switching started: {self._active_model} -> {target_model}"
+            )
 
             try:
                 # 1. Health Check
@@ -66,7 +67,9 @@ class OllamaService:
                 self._last_switch_ts = time.time()
                 self._metrics["switch_count"] += 1
 
-                logger.info(f"✅ [Step 3] Atomic Swap Success: {old_model} -> {target_model}")
+                logger.info(
+                    f"✅ [Step 3] Atomic Swap Success: {old_model} -> {target_model}"
+                )
                 return True
 
             except Exception as e:

@@ -17,7 +17,9 @@ logger = logging.getLogger(__name__)
 def _load_allowlist() -> dict[str, Any]:
     """Load and cache skills allowlist from YAML."""
     # Path relative to afo-core root: config/skills_allowlist.yaml
-    allowlist_path = Path(__file__).parent.parent.parent / "config" / "skills_allowlist.yaml"
+    allowlist_path = (
+        Path(__file__).parent.parent.parent / "config" / "skills_allowlist.yaml"
+    )
 
     if not allowlist_path.exists():
         logger.warning(f"Skills allowlist not found: {allowlist_path}")
@@ -27,7 +29,9 @@ def _load_allowlist() -> dict[str, Any]:
         import yaml
 
         data = yaml.safe_load(allowlist_path.read_text(encoding="utf-8")) or {}
-        logger.info(f"Skills allowlist loaded: {len(data.get('approved_skills', []))} approved")
+        logger.info(
+            f"Skills allowlist loaded: {len(data.get('approved_skills', []))} approved"
+        )
         return data
     except ImportError:
         logger.error("PyYAML not installed, allowlist disabled")

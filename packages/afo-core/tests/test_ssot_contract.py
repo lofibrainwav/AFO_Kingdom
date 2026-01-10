@@ -1,12 +1,14 @@
-import pytest
-import subprocess
 import json
+import subprocess
 import time
+
+import pytest
 
 # SSOT Contract Test
 # Enforces the 11-Organs Contract and Key Presence physically.
 
 API_URL = "http://127.0.0.1:8010/api/health/comprehensive"
+
 
 def test_ssot_contract_v2():
     """
@@ -21,9 +23,14 @@ def test_ssot_contract_v2():
 
     # 2. Key Presence (The Sealed List)
     expected_keys = [
-        "organs_v2", "security", "contract_v2", 
-        "healthy_organs", "total_organs", 
-        "trinity_breakdown", "iccls_gap", "sentiment"
+        "organs_v2",
+        "security",
+        "contract_v2",
+        "healthy_organs",
+        "total_organs",
+        "trinity_breakdown",
+        "iccls_gap",
+        "sentiment",
     ]
     for key in expected_keys:
         assert key in data, f"Missing SSOT Key: {key}"
@@ -31,11 +38,15 @@ def test_ssot_contract_v2():
     # 3. Organs Count (11)
     organs = data.get("organs_v2") or data.get("organs")
     assert isinstance(organs, dict), "Organs must be a dictionary (V2)"
-    assert len(organs) == 11, f"Organs Count Contract Violation: Found {len(organs)}, Expected 11"
+    assert (
+        len(organs) == 11
+    ), f"Organs Count Contract Violation: Found {len(organs)}, Expected 11"
 
     # 4. Security Separation
-    assert data.get("security") is not None, "Security Field Missing (Option A Violation)"
-    
+    assert (
+        data.get("security") is not None
+    ), "Security Field Missing (Option A Violation)"
+
     # 5. Breakdown Keys
     breakdown = data.get("trinity_breakdown") or data.get("breakdown")
     assert breakdown, "Breakdown Missing"

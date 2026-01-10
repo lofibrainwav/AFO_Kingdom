@@ -29,6 +29,7 @@ try:
     # Option A (AFO 패키지 내부인 경우 권장)
     from services.audio_service import get_audio_service
     from services.vision_service import get_vision_service
+
     # Option B (정말 top-level `services`가 따로 있을 때만)
     # from services.audio_service import get_audio_service
     # from services.vision_service import get_vision_service
@@ -235,16 +236,23 @@ class MultimodalRAGEngine:
                 )
 
                 # 3. 메모리 제한 확인 및 정리
-                if self._current_memory_mb + doc_memory_mb > _memory_config["max_memory_mb"]:
+                if (
+                    self._current_memory_mb + doc_memory_mb
+                    > _memory_config["max_memory_mb"]
+                ):
                     # 임계값 도달 시 자동 정리
                     threshold_memory = (
-                        _memory_config["max_memory_mb"] * _memory_config["cleanup_threshold"]
+                        _memory_config["max_memory_mb"]
+                        * _memory_config["cleanup_threshold"]
                     )
                     if self._current_memory_mb >= threshold_memory:
                         self._cleanup_old_documents(doc_memory_mb)
 
                     # 여전히 메모리 부족하면 실패
-                    if self._current_memory_mb + doc_memory_mb > _memory_config["max_memory_mb"]:
+                    if (
+                        self._current_memory_mb + doc_memory_mb
+                        > _memory_config["max_memory_mb"]
+                    ):
                         logger.warning(
                             "메모리 제한 초과: %.2fMB 요청, 현재 %.2fMB 사용",
                             doc_memory_mb,
@@ -278,7 +286,9 @@ class MultimodalRAGEngine:
             logger.error("문서 추가 실패 (예상치 못한 에러): %s", str(e))
             return False
 
-    def add_image(self, image_path: str, description: str = "", analyze: bool = True) -> bool:
+    def add_image(
+        self, image_path: str, description: str = "", analyze: bool = True
+    ) -> bool:
         """
         Add an image document with optional vision analysis.
 
@@ -304,12 +314,16 @@ class MultimodalRAGEngine:
                     full_description = description or ""
                     if full_description:
                         full_description += "\n\n"
-                    full_description += f"[AI Vision Analysis]\n{vision_result['description']}"
+                    full_description += (
+                        f"[AI Vision Analysis]\n{vision_result['description']}"
+                    )
 
                     # Also extract text/OCR
                     ocr_result = self.vision_service.extract_text(image_path)
                     if ocr_result.get("success") and ocr_result.get("description"):
-                        full_description += f"\n\n[Extracted Text]\n{ocr_result['description']}"
+                        full_description += (
+                            f"\n\n[Extracted Text]\n{ocr_result['description']}"
+                        )
 
                     content = full_description
                     metadata = {
@@ -337,7 +351,9 @@ class MultimodalRAGEngine:
             logger.error("Failed to add image: %s", str(e))
             return False
 
-    def add_audio(self, audio_path: str, description: str = "", transcribe: bool = True) -> bool:
+    def add_audio(
+        self, audio_path: str, description: str = "", transcribe: bool = True
+    ) -> bool:
         """
         Add an audio document with optional transcription.
 
@@ -403,7 +419,9 @@ class MultimodalRAGEngine:
             query_lower = query.lower()
             scored = []
             for doc in candidates:
-                score = sum(1 for word in query_lower.split() if word in doc.content.lower())
+                score = sum(
+                    1 for word in query_lower.split() if word in doc.content.lower()
+                )
                 if score > 0:
                     scored.append((score, doc))
 
@@ -468,7 +486,8 @@ class MultimodalRAGEngine:
             return {
                 "total_documents": len(self.documents),
                 "max_documents": _memory_config["max_documents"],
-                "documents_utilization": len(self.documents) / _memory_config["max_documents"],
+                "documents_utilization": len(self.documents)
+                / _memory_config["max_documents"],
                 "by_type": type_counts,
                 "embedding_model": self.embedding_model,
                 "memory_stats": {

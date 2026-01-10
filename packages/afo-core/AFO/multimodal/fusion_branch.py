@@ -117,9 +117,11 @@ class FusionBranch:
                     "success": True,
                     "mode": "dry_run",
                     "composition_created": True,
-                    "nodes_created": len(comp.GetToolList())
-                    if hasattr(comp, "GetToolList")
-                    else "unknown",
+                    "nodes_created": (
+                        len(comp.GetToolList())
+                        if hasattr(comp, "GetToolList")
+                        else "unknown"
+                    ),
                     "vfx_nodes_applied": len(vfx_nodes),
                     "output_path": output_path,
                     "render_ready": True,
@@ -150,7 +152,9 @@ class FusionBranch:
                 ),
             }
 
-    def _apply_vfx_effects(self, comp: Any, section: dict[str, Any], input_node: Any) -> list[Any]:
+    def _apply_vfx_effects(
+        self, comp: Any, section: dict[str, Any], input_node: Any
+    ) -> list[Any]:
         """
         섹션별 VFX 효과 적용
 
@@ -205,7 +209,10 @@ class FusionBranch:
         return vfx_nodes
 
     def _generate_dry_run_plan(
-        self, timeline_sections: list[dict[str, Any]], input_clips: list[str], output_path: str
+        self,
+        timeline_sections: list[dict[str, Any]],
+        input_clips: list[str],
+        output_path: str,
     ) -> dict[str, Any]:
         """
         Dry run용 계획 생성
@@ -274,7 +281,10 @@ def get_fusion_branch() -> FusionBranch:
 
 
 def fusion_composite(
-    timeline: list[dict[str, Any]], input_clips: list[str], output_path: str, dry_run: bool = True
+    timeline: list[dict[str, Any]],
+    input_clips: list[str],
+    output_path: str,
+    dry_run: bool = True,
 ) -> dict[str, Any]:
     """
     Fusion 컴포지팅 편의 함수
@@ -295,7 +305,9 @@ def fusion_composite(
         logger.warning("Fusion 연결 실패, dry run 모드로 진행")
         dry_run = True
 
-    return fusion.create_composition_from_timeline(timeline, input_clips, output_path, dry_run)
+    return fusion.create_composition_from_timeline(
+        timeline, input_clips, output_path, dry_run
+    )
 
 
 if __name__ == "__main__":

@@ -33,7 +33,9 @@ def _validate_bracket_structure(brackets: list[dict[str, Any]]) -> None:
 
         rate = bracket["rate"]
         if not isinstance(rate, (int, float)) or not (0.0 <= rate <= 1.0):
-            raise ValueError(f"브라켓 {i}: 세율이 유효하지 않음 (0.0-1.0 범위만 허용): {rate}")
+            raise ValueError(
+                f"브라켓 {i}: 세율이 유효하지 않음 (0.0-1.0 범위만 허용): {rate}"
+            )
 
         up_to = bracket.get("up_to")
         if up_to is None:
@@ -100,7 +102,9 @@ def _validate_federal_params(federal_params: dict[str, Any]) -> None:
         "QUALIFYING_SURVIVING_SPOUSE",
     }
     if not all(status in std_ded for status in required_statuses):
-        raise ValueError(f"표준공제 상태 누락: {required_statuses - set(std_ded.keys())}")
+        raise ValueError(
+            f"표준공제 상태 누락: {required_statuses - set(std_ded.keys())}"
+        )
 
     # 의존자 표준공제 검증
     dep_config = federal_params["dependent_standard_deduction"]
@@ -122,7 +126,9 @@ def _validate_federal_params(federal_params: dict[str, Any]) -> None:
         "QUALIFYING_SURVIVING_SPOUSE",
     }
     if not all(status in brackets for status in required_bracket_statuses):
-        raise ValueError(f"브라켓 상태 누락: {required_bracket_statuses - set(brackets.keys())}")
+        raise ValueError(
+            f"브라켓 상태 누락: {required_bracket_statuses - set(brackets.keys())}"
+        )
 
     for status, status_brackets in brackets.items():
         _validate_bracket_structure(status_brackets)
@@ -130,7 +136,11 @@ def _validate_federal_params(federal_params: dict[str, Any]) -> None:
     # 고령자 보너스 공제 검증 (선택 사항)
     senior_config = federal_params.get("senior_bonus_deduction")
     if senior_config:
-        required_senior_keys = {"amount_per_person", "phaseout_magi_single", "phaseout_magi_joint"}
+        required_senior_keys = {
+            "amount_per_person",
+            "phaseout_magi_single",
+            "phaseout_magi_joint",
+        }
         if not all(key in senior_config for key in required_senior_keys):
             raise ValueError(
                 f"고령자 보너스 공제 설정 불완전: {required_senior_keys - set(senior_config.keys())}"
@@ -155,7 +165,9 @@ def _validate_ca_params(ca_params: dict[str, Any]) -> None:
         "QUALIFYING_SURVIVING_SPOUSE",
     }
     if not all(status in std_ded for status in required_statuses):
-        raise ValueError(f"CA 표준공제 상태 누락: {required_statuses - set(std_ded.keys())}")
+        raise ValueError(
+            f"CA 표준공제 상태 누락: {required_statuses - set(std_ded.keys())}"
+        )
 
     # 브라켓 검증
     brackets = ca_params["brackets"]
@@ -167,7 +179,9 @@ def _validate_ca_params(ca_params: dict[str, Any]) -> None:
         "QUALIFYING_SURVIVING_SPOUSE",
     }
     if not all(status in brackets for status in required_bracket_statuses):
-        raise ValueError(f"CA 브라켓 상태 누락: {required_bracket_statuses - set(brackets.keys())}")
+        raise ValueError(
+            f"CA 브라켓 상태 누락: {required_bracket_statuses - set(brackets.keys())}"
+        )
 
     for status, status_brackets in brackets.items():
         _validate_bracket_structure(status_brackets)
@@ -213,7 +227,9 @@ def validate_tax_params_2025(params: dict[str, Any]) -> None:
     for status, expected in expected_obbba_values.items():
         actual = federal_std.get(status.upper())
         if actual != expected:
-            raise ValueError(f"OBBBA 표준공제 불일치: {status} = {actual}, 예상 = {expected}")
+            raise ValueError(
+                f"OBBBA 표준공제 불일치: {status} = {actual}, 예상 = {expected}"
+            )
 
 
 def validate_tax_calculation_result(
@@ -230,7 +246,13 @@ def validate_tax_calculation_result(
         ValueError: 계산 결과가 일관되지 않은 경우
     """
     # 기본 구조 검증
-    required_keys = {"federal", "california", "total_tax", "effective_rate", "input_summary"}
+    required_keys = {
+        "federal",
+        "california",
+        "total_tax",
+        "effective_rate",
+        "input_summary",
+    }
     if not all(key in result for key in required_keys):
         raise ValueError(f"결과 구조 불완전: {required_keys - set(result.keys())}")
 

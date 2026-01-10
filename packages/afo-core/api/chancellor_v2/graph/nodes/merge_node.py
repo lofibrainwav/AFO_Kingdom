@@ -32,7 +32,9 @@ async def merge_node(state: GraphState) -> GraphState:
 
     # Boot-Swap: Learning profile 적용
     profile = get_learning_profile()
-    effective_config = apply_learning_profile(BASE_CONFIG, profile.data.get("overrides", {}))
+    effective_config = apply_learning_profile(
+        BASE_CONFIG, profile.data.get("overrides", {})
+    )
     weights = effective_config["weights"]
     thresholds = effective_config["thresholds"]
 
@@ -68,7 +70,9 @@ async def merge_node(state: GraphState) -> GraphState:
     ):
         decision = DecisionResult.auto_run(trinity_score, risk_score, pillar_scores)
     else:
-        decision = DecisionResult.ask_commander(trinity_score, risk_score, pillar_scores)
+        decision = DecisionResult.ask_commander(
+            trinity_score, risk_score, pillar_scores
+        )
 
     # Store DecisionResult in state
     if "MERGE" not in state.outputs:

@@ -5,7 +5,6 @@ import os
 from typing import Any
 
 import httpx
-
 from AFO.base import BaseLLMProvider
 from AFO.llm_router import LLMConfig
 
@@ -44,16 +43,22 @@ class OllamaProvider(BaseLLMProvider):
         # Context overrides
         context = context or {}
         timeout_seconds = float(
-            context.get("ollama_timeout_seconds", os.getenv("OLLAMA_TIMEOUT_SECONDS", "30"))
+            context.get(
+                "ollama_timeout_seconds", os.getenv("OLLAMA_TIMEOUT_SECONDS", "30")
+            )
         )
         max_tokens = int(context.get("max_tokens", config.max_tokens))
         temperature = float(context.get("temperature", config.temperature))
         model = str(context.get("ollama_model", config.model))
-        num_ctx = int(context.get("ollama_num_ctx", getattr(config, "context_window", 4096)))
+        num_ctx = int(
+            context.get("ollama_num_ctx", getattr(config, "context_window", 4096))
+        )
         num_threads = context.get("ollama_num_thread")
 
         try:
-            async with httpx.AsyncClient(timeout=httpx.Timeout(timeout_seconds)) as client:
+            async with httpx.AsyncClient(
+                timeout=httpx.Timeout(timeout_seconds)
+            ) as client:
                 options: dict[str, Any] = {
                     "temperature": temperature,
                     "num_predict": max_tokens,

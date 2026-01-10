@@ -455,7 +455,8 @@ class CodeReviewCoordinator:
         overall_score = self._calculate_overall_score(parallel_results, consensus_ratio)
         confidence_level = self._calculate_confidence(parallel_results, consensus_ratio)
         is_approved = (
-            overall_score >= 0.7 and confidence_level >= self.config.min_confidence_threshold
+            overall_score >= 0.7
+            and confidence_level >= self.config.min_confidence_threshold
         )
 
         # Extract critical issues and recommendations
@@ -475,7 +476,9 @@ class CodeReviewCoordinator:
             recommendations=recommendations,
         )
 
-    async def _execute_parallel_review(self, code: str, file_path: str) -> list[dict[str, Any]]:
+    async def _execute_parallel_review(
+        self, code: str, file_path: str
+    ) -> list[dict[str, Any]]:
         """Execute parallel agent reviews"""
         tasks = []
         for agent in self.agents:
@@ -501,18 +504,23 @@ class CodeReviewCoordinator:
 
         return agent_results
 
-    async def _safe_agent_review(self, agent: CodeReviewAgent, code: str, file_path: str):
+    async def _safe_agent_review(
+        self, agent: CodeReviewAgent, code: str, file_path: str
+    ):
         """Safe agent review with timeout"""
         try:
             return await asyncio.wait_for(
-                agent.review_code(code, file_path, self.config), timeout=self.config.timeout_seconds
+                agent.review_code(code, file_path, self.config),
+                timeout=self.config.timeout_seconds,
             )
         except TimeoutError:
             raise RuntimeError(f"Agent {agent.agent_id} timed out")
         except Exception as e:
             raise RuntimeError(f"Agent {agent.agent_id} failed: {e}")
 
-    def _check_consensus(self, agent_results: list[dict[str, Any]]) -> tuple[float, float]:
+    def _check_consensus(
+        self, agent_results: list[dict[str, Any]]
+    ) -> tuple[float, float]:
         """Check consensus among agent results"""
         successful_results = [r for r in agent_results if r["success"]]
 
@@ -527,7 +535,9 @@ class CodeReviewCoordinator:
 
         # Find consensus score (weighted average)
         avg_score = sum(scores) / len(scores)
-        consensus_ratio = sum(1 for score in scores if abs(score - avg_score) < 0.2) / len(scores)
+        consensus_ratio = sum(
+            1 for score in scores if abs(score - avg_score) < 0.2
+        ) / len(scores)
 
         return avg_score, consensus_ratio
 
@@ -563,7 +573,9 @@ class CodeReviewCoordinator:
 
         return (consensus_ratio + success_ratio) / 2
 
-    def _extract_critical_issues(self, agent_results: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    def _extract_critical_issues(
+        self, agent_results: list[dict[str, Any]]
+    ) -> list[dict[str, Any]]:
         """Extract critical issues from all agents"""
         critical_issues = []
 
@@ -571,12 +583,18 @@ class CodeReviewCoordinator:
             if result["success"] and "result" in result:
                 issues = result["result"].get("issues", [])
                 critical_issues.extend(
-                    [issue for issue in issues if issue.get("severity") in ["critical", "high"]]
+                    [
+                        issue
+                        for issue in issues
+                        if issue.get("severity") in ["critical", "high"]
+                    ]
                 )
 
         return critical_issues
 
-    def _extract_recommendations(self, agent_results: list[dict[str, Any]]) -> list[str]:
+    def _extract_recommendations(
+        self, agent_results: list[dict[str, Any]]
+    ) -> list[str]:
         """Extract recommendations from all agents"""
         all_recommendations = set()
 
@@ -644,7 +662,9 @@ class CodeReviewNode(ChancellorNode):
         trinity_score = trinity_score.combine(review_score)
         context["trinity_score"] = trinity_score
 
-        logger.info(f"Code review completed in {review_result.execution_time:.2f} seconds")
+        logger.info(
+            f"Code review completed in {review_result.execution_time:.2f} seconds"
+        )
         return context
 
     def _calculate_review_trinity_score(self, result: CodeReviewResult) -> TrinityScore:
@@ -663,7 +683,9 @@ class CodeReviewNode(ChancellorNode):
             eternity=eternity_score,
         )
 
-    async def _log_review_results(self, result: CodeReviewResult, context: ChancellorContext):
+    async def _log_review_results(
+        self, result: CodeReviewResult, context: ChancellorContext
+    ):
         """Log review results to artifacts"""
         log_dir = Path("artifacts/code_validation_logs")
         log_dir.mkdir(parents=True, exist_ok=True)

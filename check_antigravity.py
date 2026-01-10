@@ -3,6 +3,7 @@
 
 try:
     from AFO.config.antigravity import antigravity
+
     print("✅ Antigravity loaded successfully")
     print(f"ENVIRONMENT: {antigravity.ENVIRONMENT}")
     print(f"AUTO_DEPLOY: {antigravity.AUTO_DEPLOY}")

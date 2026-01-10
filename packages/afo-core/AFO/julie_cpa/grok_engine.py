@@ -219,7 +219,9 @@ class GrokWebClient:
         await input_locator.page.wait_for_timeout(1000)
         await input_locator.press("Enter")
 
-    async def _extract_response(self, page: Any, budget_summary: dict[str, Any]) -> dict[str, Any]:
+    async def _extract_response(
+        self, page: Any, budget_summary: dict[str, Any]
+    ) -> dict[str, Any]:
         """Extract response from page."""
         page_text = await page.content()
 
@@ -282,9 +284,7 @@ class GrokAPIClient:
             api_key=self.config.XAI_API_KEY, base_url=self.config.XAI_BASE_URL
         )
 
-        system_prompt = (
-            "You are 'The Sage from the Stars', a cynical but brilliant economic strategist..."
-        )
+        system_prompt = "You are 'The Sage from the Stars', a cynical but brilliant economic strategist..."
         user_prompt = f"Analyze budget: {json.dumps(budget_summary)}"
 
         response = await self._client.chat.completions.create(
@@ -400,8 +400,12 @@ class GrokEngine:
 
         # 2. Smart routing based on Trinity Score
         if trinity_score < self.config.TRINITY_THRESHOLD:
-            logger.info(f"🛡️ Low Trinity Score ({trinity_score}), using cost-effective mode")
-            response = self.mock_client._create_mock_response(budget_summary, mood="ECONOMY_MODE")
+            logger.info(
+                f"🛡️ Low Trinity Score ({trinity_score}), using cost-effective mode"
+            )
+            response = self.mock_client._create_mock_response(
+                budget_summary, mood="ECONOMY_MODE"
+            )
         else:
             response = await self._consult_real_grok(budget_summary)
 
@@ -411,7 +415,9 @@ class GrokEngine:
 
         return response
 
-    async def _consult_real_grok(self, budget_summary: dict[str, Any]) -> dict[str, Any]:
+    async def _consult_real_grok(
+        self, budget_summary: dict[str, Any]
+    ) -> dict[str, Any]:
         """Consult real Grok with fallback strategy.
 
         Returns:

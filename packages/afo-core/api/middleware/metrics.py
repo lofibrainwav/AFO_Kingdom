@@ -27,7 +27,9 @@ except ImportError:
 class MetricsMiddleware(BaseHTTPMiddleware):
     """Middleware for collecting request metrics."""
 
-    async def dispatch(self, request: Request, call_next: Callable[..., Any]) -> Response:
+    async def dispatch(
+        self, request: Request, call_next: Callable[..., Any]
+    ) -> Response:
         """Process request and collect metrics."""
         start_time = time.perf_counter()
 
@@ -49,10 +51,16 @@ class MetricsMiddleware(BaseHTTPMiddleware):
 
         if PROMETHEUS_AVAILABLE:
             REQUEST_COUNT.labels(
-                method=method, endpoint=endpoint, status_code=status_code, service="afo-api"
+                method=method,
+                endpoint=endpoint,
+                status_code=status_code,
+                service="afo-api",
             ).inc()
             REQUEST_LATENCY.labels(
-                method=method, endpoint=endpoint, status_code=status_code, service="afo-api"
+                method=method,
+                endpoint=endpoint,
+                status_code=status_code,
+                service="afo-api",
             ).observe(duration)
 
         return response

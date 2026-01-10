@@ -21,7 +21,9 @@ class SecurityMiddleware(BaseHTTPMiddleware):
             r"(;)",
             r"(\bOR\b\s+\d+=\d+)",
         ]
-        self.sql_regex = re.compile("|".join(self.sql_injection_patterns), re.IGNORECASE)
+        self.sql_regex = re.compile(
+            "|".join(self.sql_injection_patterns), re.IGNORECASE
+        )
 
     async def dispatch(self, request: Request, call_next: Callable) -> Response:
         # Check Query Params

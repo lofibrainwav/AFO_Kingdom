@@ -2,9 +2,10 @@ import os
 import pathlib
 import sys
 
-
 # Add package root to sys.path
-sys.path.append(pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages")).resolve())
+sys.path.append(
+    pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages")).resolve()
+)
 
 try:
     from afo_core.commands.trinity_command import (
@@ -15,7 +16,11 @@ try:
     )
 except ImportError:
     # Adjust path if running from root relative to packages
-    sys.path.append(pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")).resolve())
+    sys.path.append(
+        pathlib.Path(
+            os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")
+        ).resolve()
+    )
     from commands.trinity_command import (
         AnalyzeCommand,
         ChancellorInvoker,

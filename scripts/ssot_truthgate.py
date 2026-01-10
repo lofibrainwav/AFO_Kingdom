@@ -1,12 +1,9 @@
 import argparse
 import hashlib
 import json
-import os
 import re
 import subprocess
-import sys
 from pathlib import Path
-
 
 REQ = {
     "T25": {
@@ -128,7 +125,12 @@ def seal(ticket: str, slug: str, ts: str):
     status = "UNVERIFIED"
     if functional_green:
         status = "SEALED (Functional Green)"
-    if functional_green and ticket == "T25" and bandit_exit is not None and bandit_exit != 0:
+    if (
+        functional_green
+        and ticket == "T25"
+        and bandit_exit is not None
+        and bandit_exit != 0
+    ):
         status = "SEALED (Functional Green) / BLOCKED-SECURITY (Bandit exit != 0)"
 
     done = False
@@ -143,11 +145,15 @@ def seal(ticket: str, slug: str, ts: str):
     files_meta = []
     for p in sorted(ev_dir.glob("*")):
         if p.is_file():
-            files_meta.append({
-                "name": p.name,
-                "bytes": p.stat().st_size,
-                "sha256": sha256_file(p) if p.stat().st_size <= 25_000_000 else None,
-            })
+            files_meta.append(
+                {
+                    "name": p.name,
+                    "bytes": p.stat().st_size,
+                    "sha256": (
+                        sha256_file(p) if p.stat().st_size <= 25_000_000 else None
+                    ),
+                }
+            )
 
     seal_json = {
         "ticket": ticket,
@@ -163,26 +169,32 @@ def seal(ticket: str, slug: str, ts: str):
 
     (ev_dir / "seal.json").write_text(json.dumps(seal_json, indent=2), encoding="utf-8")
 
-    auto = "\n".join([
-        "## AUTO Summary",
-        f"- Ticket: {ticket}",
-        f"- Slug: {slug}",
-        f"- Capture Timestamp: {ts}",
-        f"- Evidence Directory: {ev_dir.as_posix()}",
-        f"- Status: {status}",
-        "",
-        "### Missing files",
-        "- (none)" if not missing else "\n".join([f"- {m}" for m in missing]),
-        "",
-        "### JSON parse",
-        "\n".join([f"- {k}: {v}" for k, v in json_ok.items()]),
-        "",
-        "### Bandit",
-        f"- exitcode: {bandit_exit}" if bandit_exit is not None else "- not provided",
-        "",
-        "### Seal",
-        f"- seal.json: {(ev_dir / 'seal.json').as_posix()}",
-    ])
+    auto = "\n".join(
+        [
+            "## AUTO Summary",
+            f"- Ticket: {ticket}",
+            f"- Slug: {slug}",
+            f"- Capture Timestamp: {ts}",
+            f"- Evidence Directory: {ev_dir.as_posix()}",
+            f"- Status: {status}",
+            "",
+            "### Missing files",
+            "- (none)" if not missing else "\n".join([f"- {m}" for m in missing]),
+            "",
+            "### JSON parse",
+            "\n".join([f"- {k}: {v}" for k, v in json_ok.items()]),
+            "",
+            "### Bandit",
+            (
+                f"- exitcode: {bandit_exit}"
+                if bandit_exit is not None
+                else "- not provided"
+            ),
+            "",
+            "### Seal",
+            f"- seal.json: {(ev_dir / 'seal.json').as_posix()}",
+        ]
+    )
 
     replace_auto(report, auto)
     write_report_header(report, status=status, ts=ts, evidence=ev_dir.as_posix())
@@ -195,11 +207,17 @@ def seal(ticket: str, slug: str, ts: str):
 
 def gate():
     # 1) staged changed files
-    out = subprocess.check_output(["git", "diff", "--cached", "--name-only"], text=True).splitlines()
-    reports = [Path(p) for p in out if p.startswith("docs/reports/") and p.endswith("_SSOT.md")]
+    out = subprocess.check_output(
+        ["git", "diff", "--cached", "--name-only"], text=True
+    ).splitlines()
+    reports = [
+        Path(p) for p in out if p.startswith("docs/reports/") and p.endswith("_SSOT.md")
+    ]
 
     # 2) forbid docs outside docs/reports in staged additions
-    ns = subprocess.check_output(["git", "diff", "--cached", "--name-status"], text=True).splitlines()
+    ns = subprocess.check_output(
+        ["git", "diff", "--cached", "--name-status"], text=True
+    ).splitlines()
     for line in ns:
         parts = line.split()
         if len(parts) >= 2 and parts[0].startswith("A"):

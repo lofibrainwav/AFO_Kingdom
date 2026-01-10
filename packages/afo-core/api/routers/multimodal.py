@@ -89,7 +89,9 @@ async def analyze_image(
             raise HTTPException(status_code=503, detail="Vision service not available")
 
         # Save uploaded file temporarily
-        with tempfile.NamedTemporaryFile(delete=False, suffix=Path(file.filename).suffix) as tmp:
+        with tempfile.NamedTemporaryFile(
+            delete=False, suffix=Path(file.filename).suffix
+        ) as tmp:
             content = await file.read()
             tmp.write(content)
             tmp_path = tmp.name
@@ -130,7 +132,9 @@ async def transcribe_audio(
             raise HTTPException(status_code=503, detail="Whisper not available")
 
         # Save uploaded file temporarily
-        with tempfile.NamedTemporaryFile(delete=False, suffix=Path(file.filename).suffix) as tmp:
+        with tempfile.NamedTemporaryFile(
+            delete=False, suffix=Path(file.filename).suffix
+        ) as tmp:
             content = await file.read()
             tmp.write(content)
             tmp_path = tmp.name
@@ -173,14 +177,19 @@ async def process_video(
             raise HTTPException(status_code=503, detail="ffmpeg not available")
 
         # Save uploaded file temporarily
-        with tempfile.NamedTemporaryFile(delete=False, suffix=Path(file.filename).suffix) as tmp:
+        with tempfile.NamedTemporaryFile(
+            delete=False, suffix=Path(file.filename).suffix
+        ) as tmp:
             content = await file.read()
             tmp.write(content)
             tmp_path = tmp.name
 
         try:
             result = video.process_video(
-                tmp_path, num_frames=num_frames, transcribe=transcribe, language=language
+                tmp_path,
+                num_frames=num_frames,
+                transcribe=transcribe,
+                language=language,
             )
             return result
         finally:
@@ -240,7 +249,9 @@ async def generate_music(request: dict[str, Any]) -> dict[str, Any]:
             }
 
         except ImportError:
-            raise HTTPException(status_code=503, detail="Music generation service not available")
+            raise HTTPException(
+                status_code=503, detail="Music generation service not available"
+            )
 
     except HTTPException:
         raise
@@ -284,7 +295,9 @@ async def join_audio_video(request: dict[str, Any]) -> dict[str, Any]:
         timeline_state = request.get("timeline_state")
 
         if not video_path or not audio_path:
-            raise HTTPException(status_code=400, detail="video_path and audio_path are required")
+            raise HTTPException(
+                status_code=400, detail="video_path and audio_path are required"
+            )
 
         # AV Join Engine 사용
         try:
@@ -414,7 +427,10 @@ async def create_complete_av(request: dict[str, Any]) -> dict[str, Any]:
 
             engine = get_av_join_engine()
             av_result = engine.create_complete_av_from_timeline(
-                timeline_state, str(video_path), str(audio_path_for_av), str(final_av_path)
+                timeline_state,
+                str(video_path),
+                str(audio_path_for_av),
+                str(final_av_path),
             )
 
             if av_result.get("success"):
@@ -427,7 +443,11 @@ async def create_complete_av(request: dict[str, Any]) -> dict[str, Any]:
                         "video_path": str(video_path),
                         "final_path": str(final_av_path),
                         "pipeline": "complete_auto",
-                        "stages_completed": ["music_generation", "video_prep", "av_join"],
+                        "stages_completed": [
+                            "music_generation",
+                            "video_prep",
+                            "av_join",
+                        ],
                     }
                 )
 
@@ -452,13 +472,17 @@ async def create_complete_av(request: dict[str, Any]) -> dict[str, Any]:
                 }
 
         except ImportError as e:
-            raise HTTPException(status_code=503, detail=f"Required service not available: {e}")
+            raise HTTPException(
+                status_code=503, detail=f"Required service not available: {e}"
+            )
 
     except HTTPException:
         raise
     except Exception as e:
         logger.error(f"Complete AV creation failed: {e}")
-        raise HTTPException(status_code=500, detail=f"Complete AV creation failed: {e!s}")
+        raise HTTPException(
+            status_code=500, detail=f"Complete AV creation failed: {e!s}"
+        )
 
 
 async def _generate_sample_video(timeline_state: dict[str, Any]) -> str:

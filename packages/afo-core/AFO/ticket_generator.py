@@ -162,7 +162,9 @@ class TicketGenerator:
             goodness_score = 95.0  # 제약사항이 명시적이면 높음
 
         # 美 (Beauty): 단순함/우아함 - 파일 수 기반
-        total_files = len(parsed_md.files_to_create or []) + len(parsed_md.files_to_update or [])
+        total_files = len(parsed_md.files_to_create or []) + len(
+            parsed_md.files_to_update or []
+        )
         beauty_score = max(100 - (total_files * 5), 60)  # 파일이 많을수록 복잡도 증가
 
         # 孝 (Serenity): 형님 마찰 제거 - 자동화 수준 기반
@@ -211,12 +213,16 @@ class TicketGenerator:
         from .skeleton_index import SkeletonIndex
 
         # 임시 스켈레톤 인덱스 생성 (의존성 예측용)
-        temp_index = SkeletonIndex(packages={}, services={}, configs={}, docs={}, last_updated="")
+        temp_index = SkeletonIndex(
+            packages={}, services={}, configs={}, docs={}, last_updated=""
+        )
         engine = MatchingEngine(temp_index)
 
         # 키워드 추출 (매칭 엔진 로직 재사용)
         all_text = f"{parsed_md.goal} {parsed_md.raw_notes}"
-        all_files = (parsed_md.files_to_create or []) + (parsed_md.files_to_update or [])
+        all_files = (parsed_md.files_to_create or []) + (
+            parsed_md.files_to_update or []
+        )
         for file in all_files:
             all_text += f" {file}"
 

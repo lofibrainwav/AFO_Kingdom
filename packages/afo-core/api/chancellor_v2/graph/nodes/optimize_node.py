@@ -7,17 +7,15 @@ Implements DSPy MIPROv2 prompt optimization within the decision graph
 import asyncio
 from typing import Any
 
-from pydantic import BaseModel
-
 from afo.chancellor_graph import ChancellorContext, ChancellorNode
 from afo.trinity_metric_wrapper import TrinityMetricWrapper
+from pydantic import BaseModel
 
 # Try to import DSPy components
 try:
     import dspy
-    from dspy.teleprompt import MIPROv2
-
     from afo.api.routes.dspy import MIPROv2Optimizer
+    from dspy.teleprompt import MIPROv2
 
     DSPY_AVAILABLE = True
 except ImportError:
@@ -57,7 +55,9 @@ class OptimizeNode(ChancellorNode):
             self.optimizer = None
 
         self.node_type = "optimize"
-        self.description = "DSPy MIPROv2 prompt optimization with Trinity Score evaluation"
+        self.description = (
+            "DSPy MIPROv2 prompt optimization with Trinity Score evaluation"
+        )
 
     async def execute(self, context: ChancellorContext) -> dict[str, Any]:
         """
@@ -104,7 +104,8 @@ class OptimizeNode(ChancellorNode):
             # Execute optimization with timeout
             try:
                 result = await asyncio.wait_for(
-                    self._run_optimization(task_data), timeout=self.config.timeout_seconds
+                    self._run_optimization(task_data),
+                    timeout=self.config.timeout_seconds,
                 )
             except TimeoutError:
                 return {
@@ -112,7 +113,10 @@ class OptimizeNode(ChancellorNode):
                     "error": f"Optimization timeout after {self.config.timeout_seconds}s",
                     "node_type": self.node_type,
                     "trinity_score": self.trinity_metric.calculate_trinity_score(
-                        {"error": "timeout", "timeout_seconds": self.config.timeout_seconds}
+                        {
+                            "error": "timeout",
+                            "timeout_seconds": self.config.timeout_seconds,
+                        }
                     ),
                 }
 
@@ -172,19 +176,25 @@ class OptimizeNode(ChancellorNode):
                 if "question" in item and "answer" in item:
                     dataset.append(item)
                 elif "input" in item and "output" in item:
-                    dataset.append({"question": item["input"], "answer": item["output"]})
+                    dataset.append(
+                        {"question": item["input"], "answer": item["output"]}
+                    )
                 elif "text" in item:
                     # Split text into Q&A pairs if possible
                     text = item["text"]
                     if "?" in text:
                         parts = text.split("?", 1)
                         if len(parts) == 2:
-                            dataset.append({"question": parts[0] + "?", "answer": parts[1].strip()})
+                            dataset.append(
+                                {"question": parts[0] + "?", "answer": parts[1].strip()}
+                            )
                     else:
                         # Use text as both question and answer
                         dataset.append(
                             {
-                                "question": text[:100] + "..." if len(text) > 100 else text,
+                                "question": (
+                                    text[:100] + "..." if len(text) > 100 else text
+                                ),
                                 "answer": text,
                             }
                         )
@@ -202,7 +212,9 @@ class OptimizeNode(ChancellorNode):
             "dataset": dataset[:100],  # Limit dataset size
         }
 
-    async def _get_context7_data(self, context: ChancellorContext) -> list[dict[str, str]]:
+    async def _get_context7_data(
+        self, context: ChancellorContext
+    ) -> list[dict[str, str]]:
         """Get relevant data from Context7"""
         try:
             from afo.context7 import Context7Manager
@@ -220,7 +232,10 @@ class OptimizeNode(ChancellorNode):
                 content = item.get("content", "")
                 if content:
                     dataset_items.append(
-                        {"question": f"Context information: {content[:100]}...", "answer": content}
+                        {
+                            "question": f"Context information: {content[:100]}...",
+                            "answer": content,
+                        }
                     )
 
             return dataset_items

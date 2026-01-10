@@ -30,7 +30,9 @@ REQUEST_LATENCY = prom.Histogram(
 )
 
 # Business Logic Metrics
-ACTIVE_CONNECTIONS = prom.Gauge("active_connections", "Number of active connections", ["service"])
+ACTIVE_CONNECTIONS = prom.Gauge(
+    "active_connections", "Number of active connections", ["service"]
+)
 
 TRINITY_SCORE = prom.Gauge(
     "trinity_score",
@@ -51,7 +53,9 @@ API_ERRORS = prom.Counter(
 )
 
 # System Metrics
-MEMORY_USAGE = prom.Gauge("memory_usage_bytes", "Current memory usage in bytes", ["service"])
+MEMORY_USAGE = prom.Gauge(
+    "memory_usage_bytes", "Current memory usage in bytes", ["service"]
+)
 
 CPU_USAGE = prom.Gauge("cpu_usage_percent", "Current CPU usage percentage", ["service"])
 

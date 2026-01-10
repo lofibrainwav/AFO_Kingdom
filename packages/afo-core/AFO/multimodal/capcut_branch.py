@@ -30,12 +30,19 @@ class CapCutBranch:
             bool: MoviePy 사용 가능 여부
         """
         try:
-            from moviepy import ColorClip, CompositeVideoClip, ImageClip, concatenate_videoclips
+            from moviepy import (
+                ColorClip,
+                CompositeVideoClip,
+                ImageClip,
+                concatenate_videoclips,
+            )
 
             logger.info("MoviePy 라이브러리 사용 가능")
             return True
         except ImportError:
-            logger.warning("MoviePy 라이브러리를 찾을 수 없음 - pip install moviepy 필요")
+            logger.warning(
+                "MoviePy 라이브러리를 찾을 수 없음 - pip install moviepy 필요"
+            )
             return False
 
     def _load_capcut_templates(self) -> dict[str, Any]:
@@ -109,7 +116,12 @@ class CapCutBranch:
             }
 
         try:
-            from moviepy import CompositeVideoClip, TextClip, VideoFileClip, concatenate_videoclips
+            from moviepy import (
+                CompositeVideoClip,
+                TextClip,
+                VideoFileClip,
+                concatenate_videoclips,
+            )
 
             # 입력 비디오 로드
             if not Path(input_video).exists():
@@ -124,7 +136,9 @@ class CapCutBranch:
             video = VideoFileClip(input_video)
 
             # 템플릿 적용
-            template_config = self.templates.get(template, self.templates["tiktok_trend"])
+            template_config = self.templates.get(
+                template, self.templates["tiktok_trend"]
+            )
 
             # 클립 편집
             edited_clips = []
@@ -177,12 +191,16 @@ class CapCutBranch:
                     "render_ready": True,
                     "capcut_style_applied": True,
                 }
-                logger.info(f"CapCut 스타일 dry run 완료: {len(edited_clips)}개 클립 처리")
+                logger.info(
+                    f"CapCut 스타일 dry run 완료: {len(edited_clips)}개 클립 처리"
+                )
                 return result
 
             # 실제 렌더링 (WET 모드)
             logger.info(f"CapCut 스타일 렌더링 시작: {output_path}")
-            final_video.write_videofile(output_path, fps=30, codec="libx264", audio_codec="aac")
+            final_video.write_videofile(
+                output_path, fps=30, codec="libx264", audio_codec="aac"
+            )
 
             return {
                 "success": True,
@@ -228,7 +246,9 @@ class CapCutBranch:
                 return clip.speedx(lambda t: 1 + 0.5 * t / clip.duration)
             elif effect == "color_pop":
                 # 컬러 팝 효과
-                return clip.set_make_frame(lambda t, frame: self._apply_color_pop(frame))
+                return clip.set_make_frame(
+                    lambda t, frame: self._apply_color_pop(frame)
+                )
             elif effect == "blur_bg":
                 # 배경 블러 (텍스트 포커스)
                 return clip.resize(lambda t: 1.1 if t > clip.duration * 0.2 else 1.0)
@@ -347,7 +367,9 @@ def capcut_edit_video(
         편집 결과
     """
     capcut = get_capcut_branch()
-    return capcut.create_capcut_style_video(timeline, input_video, output_path, template, dry_run)
+    return capcut.create_capcut_style_video(
+        timeline, input_video, output_path, template, dry_run
+    )
 
 
 if __name__ == "__main__":

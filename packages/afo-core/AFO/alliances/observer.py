@@ -75,7 +75,8 @@ class AllianceObserver:
                 "id": alliance["id"],
                 "name": alliance["name"],
                 "type": alliance["type"],
-                "observed_at": datetime.now().isoformat() + "Z",  # Use now for local run
+                "observed_at": datetime.now().isoformat()
+                + "Z",  # Use now for local run
                 "status": "unknown",
             }
 

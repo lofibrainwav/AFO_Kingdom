@@ -151,7 +151,9 @@ def _calculate_federal_standard_deduction_2025(
     return base_deduction
 
 
-def _calculate_ca_standard_deduction_2025(params: dict[str, Any], tax_input: TaxInput) -> float:
+def _calculate_ca_standard_deduction_2025(
+    params: dict[str, Any], tax_input: TaxInput
+) -> float:
     """캘리포니아 주 표준공제 계산"""
     ca_params = params["ca"]
     deductions = ca_params["standard_deduction"]
@@ -166,13 +168,17 @@ class TaxCalculator:
     def __init__(self, params: dict[str, Any]) -> None:
         self.params = params
 
-    def calculate_federal_tax_2025(self, tax_input: TaxInput) -> tuple[float, float, float]:
+    def calculate_federal_tax_2025(
+        self, tax_input: TaxInput
+    ) -> tuple[float, float, float]:
         """연방 소득세 계산 (세금, 과세소득, 공제액 반환)"""
         # 조정총소득 계산
         agi = max(0.0, float(tax_input.gross_income) - float(tax_input.adjustments))
 
         # 공제액 결정 (표준공제 vs 항목별 공제)
-        standard_deduction = _calculate_federal_standard_deduction_2025(self.params, tax_input)
+        standard_deduction = _calculate_federal_standard_deduction_2025(
+            self.params, tax_input
+        )
         deduction = (
             standard_deduction
             if tax_input.itemized_deductions is None
@@ -209,7 +215,9 @@ class TaxCalculator:
 
     def calculate_total_tax_2025(self, tax_input: TaxInput) -> dict[str, Any]:
         """연방 + CA 총 세금 계산 (상세 결과 반환)"""
-        federal_tax, federal_taxable, federal_deduction = self.calculate_federal_tax_2025(tax_input)
+        federal_tax, federal_taxable, federal_deduction = (
+            self.calculate_federal_tax_2025(tax_input)
+        )
         ca_tax, ca_taxable, ca_deduction = self.calculate_ca_tax_2025(tax_input)
 
         return {
@@ -224,9 +232,11 @@ class TaxCalculator:
                 "deduction": ca_deduction,
             },
             "total_tax": federal_tax + ca_tax,
-            "effective_rate": (federal_tax + ca_tax) / tax_input.gross_income
-            if tax_input.gross_income > 0
-            else 0.0,
+            "effective_rate": (
+                (federal_tax + ca_tax) / tax_input.gross_income
+                if tax_input.gross_income > 0
+                else 0.0
+            ),
             "input_summary": {
                 "filing_status": tax_input.filing_status,
                 "gross_income": tax_input.gross_income,

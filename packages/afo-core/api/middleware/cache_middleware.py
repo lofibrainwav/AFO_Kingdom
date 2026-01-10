@@ -53,7 +53,9 @@ class CacheMiddleware(BaseHTTPMiddleware):
                     client.ping()
                     self.redis_client = client
                     self._initialized = True
-                    logger.debug("✅ API Cache Middleware 초기화 완료 (attempt %d)", attempt + 1)
+                    logger.debug(
+                        "✅ API Cache Middleware 초기화 완료 (attempt %d)", attempt + 1
+                    )
                     return
             except Exception as e:
                 if attempt < max_retries - 1:
@@ -61,7 +63,9 @@ class CacheMiddleware(BaseHTTPMiddleware):
 
                     time.sleep(retry_delay * (attempt + 1))
                     logger.warning(
-                        "⚠️ Redis 연결 재시도 중... (attempt %d/%d)", attempt + 1, max_retries
+                        "⚠️ Redis 연결 재시도 중... (attempt %d/%d)",
+                        attempt + 1,
+                        max_retries,
                     )
                 else:
                     logger.warning("⚠️ API Cache 비활성화 (Redis 없이 정상 작동): %s", e)
@@ -73,7 +77,9 @@ class CacheMiddleware(BaseHTTPMiddleware):
     def _generate_cache_key(self, request: Request) -> str:
         path = request.url.path
         query_string = str(request.url.query)
-        query_hash = hashlib.md5(query_string.encode(), usedforsecurity=False).hexdigest()[:8]
+        query_hash = hashlib.md5(
+            query_string.encode(), usedforsecurity=False
+        ).hexdigest()[:8]
         return f"{API_CACHE_CONFIG['key_prefix']}{request.method}:{path}:{query_hash}"
 
     async def dispatch(
@@ -106,7 +112,9 @@ class CacheMiddleware(BaseHTTPMiddleware):
                         hit_response.headers["X-Cache"] = "HIT"
                         hit_response.headers["X-Cache-Key"] = cache_key
                         if url_path == "/api/health/comprehensive":
-                            hit_response.headers["Cache-Control"] = "max-age=30, private"
+                            hit_response.headers["Cache-Control"] = (
+                                "max-age=30, private"
+                            )
                             hit_response.headers["X-Cache-Source"] = "server-cache"
                         return hit_response
                     except Exception:

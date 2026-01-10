@@ -20,7 +20,6 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Any
 
-
 # 로깅 설정
 logging.basicConfig(
     level=logging.INFO,
@@ -98,7 +97,9 @@ class RuffPurifier:
                         # 패턴: 문자로 시작하고 숫자가 포함 (최소 3자)
                         if len(potential_code) >= 3:
                             # 첫 문자가 알파벳이고, 나머지에 숫자가 포함
-                            if potential_code[0].isalpha() and any(c.isdigit() for c in potential_code[1:]):
+                            if potential_code[0].isalpha() and any(
+                                c.isdigit() for c in potential_code[1:]
+                            ):
                                 current_code = potential_code
                                 current_message = parts[1] if len(parts) > 1 else ""
 
@@ -106,7 +107,9 @@ class RuffPurifier:
                 if line.startswith("-->"):
                     # 형식: "--> file:line:col"
                     rest = line.replace("-->", "").strip()
-                    if ":" in rest and ("packages/afo-core" in rest or str(_PACKAGES_ROOT) in rest):
+                    if ":" in rest and (
+                        "packages/afo-core" in rest or str(_PACKAGES_ROOT) in rest
+                    ):
                         parts = rest.split(":")
                         if len(parts) >= 2:
                             file_path = parts[0].strip()
@@ -116,12 +119,14 @@ class RuffPurifier:
 
                                 # 현재 코드와 메시지가 있으면 오류 추가
                                 if current_code and current_file:
-                                    errors.append({
-                                        "file": current_file,
-                                        "line": line_num,
-                                        "code": current_code,
-                                        "message": current_message,
-                                    })
+                                    errors.append(
+                                        {
+                                            "file": current_file,
+                                            "line": line_num,
+                                            "code": current_code,
+                                            "message": current_message,
+                                        }
+                                    )
                                     # 다음 오류를 위해 초기화
                                     current_code = ""
                                     current_message = ""
@@ -145,13 +150,17 @@ class RuffPurifier:
             return errors
 
         except FileNotFoundError:
-            logger.exception("[美] Ruff가 설치되지 않았습니다. 'pip install ruff' 실행 필요")
+            logger.exception(
+                "[美] Ruff가 설치되지 않았습니다. 'pip install ruff' 실행 필요"
+            )
             return []
         except Exception as e:
             logger.exception("[美] 오류 수집 실패: %s", e)
             return []
 
-    def classify_errors(self, errors: list[dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:
+    def classify_errors(
+        self, errors: list[dict[str, Any]]
+    ) -> dict[str, list[dict[str, Any]]]:
         """오류 유형별 분류"""
         classified: dict[str, list[dict[str, Any]]] = defaultdict(list)
 
@@ -160,12 +169,16 @@ class RuffPurifier:
             classified[code].append(error)
 
         logger.info(f"[美] 오류 분류 완료: {len(classified)}개 유형")
-        for code, errs in sorted(classified.items(), key=lambda x: len(x[1]), reverse=True):
+        for code, errs in sorted(
+            classified.items(), key=lambda x: len(x[1]), reverse=True
+        ):
             logger.info(f"  - {code}: {len(errs)}개")
 
         return dict(classified)
 
-    def analyze_fixable_errors(self, classified: dict[str, list[dict[str, Any]]]) -> list[dict[str, Any]]:
+    def analyze_fixable_errors(
+        self, classified: dict[str, list[dict[str, Any]]]
+    ) -> list[dict[str, Any]]:
         """자동 수정 가능한 오류 분석"""
         # Ruff 자동 수정 가능한 코드 목록
         auto_fixable_codes = {
@@ -206,11 +219,13 @@ class RuffPurifier:
             by_file[error["file"]].append(error)
 
         for file_path, errors in by_file.items():
-            plan["fixes"].append({
-                "file": file_path,
-                "errors": errors,
-                "count": len(errors),
-            })
+            plan["fixes"].append(
+                {
+                    "file": file_path,
+                    "errors": errors,
+                    "count": len(errors),
+                }
+            )
 
         return plan
 
@@ -270,7 +285,9 @@ class RuffPurifier:
             "errors_before": self.total_errors,
             "errors_after": len(errors_after),
             "reduction": reduction,
-            "reduction_percent": ((reduction / self.total_errors * 100) if self.total_errors > 0 else 0),
+            "reduction_percent": (
+                (reduction / self.total_errors * 100) if self.total_errors > 0 else 0
+            ),
         }
 
     def run(self) -> dict[str, Any]:
@@ -317,8 +334,12 @@ def main() -> int:
     import argparse
 
     parser = argparse.ArgumentParser(description="AFO 왕국 Ruff Purifier (조운 장군)")
-    parser.add_argument("--dry-run", action="store_true", default=True, help="DRY_RUN 모드 (기본값)")
-    parser.add_argument("--wet-run", action="store_true", help="WET_RUN 모드 (실제 수정)")
+    parser.add_argument(
+        "--dry-run", action="store_true", default=True, help="DRY_RUN 모드 (기본값)"
+    )
+    parser.add_argument(
+        "--wet-run", action="store_true", help="WET_RUN 모드 (실제 수정)"
+    )
 
     args = parser.parse_args()
 

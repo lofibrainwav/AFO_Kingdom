@@ -3,9 +3,12 @@ import os
 import pathlib
 import sys
 
-
 # Add project root to path
-sys.path.append(pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")).resolve())
+sys.path.append(
+    pathlib.Path(
+        os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")
+    ).resolve()
+)
 
 from AFO.api.routers.rag_query import RAGQueryRequest, query_kingdom_memory
 

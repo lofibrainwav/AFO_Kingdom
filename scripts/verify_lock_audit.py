@@ -8,9 +8,12 @@ import os
 import pathlib
 import sys
 
-
 # Setup Path
-sys.path.append(pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")).resolve())
+sys.path.append(
+    pathlib.Path(
+        os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")
+    ).resolve()
+)
 
 from AFO.config.antigravity import antigravity
 from AFO.domain.metrics.trinity_ssot import TrinityWeights

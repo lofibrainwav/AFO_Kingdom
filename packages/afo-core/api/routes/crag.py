@@ -146,7 +146,9 @@ async def grade_documents(question: str, documents: list[str]) -> dict[str, floa
                 import re
 
                 numbers = re.findall(r"\b0?\.\d+|\b1\.0|\b0\.0|\b1\b", response_text)
-                value = float(numbers[0]) if numbers else float(response_text.split()[0])
+                value = (
+                    float(numbers[0]) if numbers else float(response_text.split()[0])
+                )
             except (ValueError, IndexError):
                 value = 0.0
             value = max(0.0, min(1.0, value))  # 0-1 범위로 클램핑
@@ -208,7 +210,9 @@ async def generate_answer(question: str, context: str) -> str:
         생성된 답변
     """
     if not llm_router:
-        return "CRAG LLM Router not available. Please check AFO LLM Router configuration."
+        return (
+            "CRAG LLM Router not available. Please check AFO LLM Router configuration."
+        )
 
     answer_prompt = (
         "You are an assistant that answers using the context when possible.\n"
@@ -238,7 +242,9 @@ async def generate_answer(question: str, context: str) -> str:
         answer_text = str(result.get("response", "")).strip()
 
         if not answer_text:
-            answer_text = "I could not generate an answer. Please try rephrasing your question."
+            answer_text = (
+                "I could not generate an answer. Please try rephrasing your question."
+            )
 
         return answer_text
     except Exception as e:

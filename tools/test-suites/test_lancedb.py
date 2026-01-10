@@ -10,11 +10,13 @@ import sys
 # LanceDB import (optional)
 try:
     import lancedb
+
     LANCEDB_AVAILABLE = True
     print("✅ LanceDB 라이브러리 사용 가능")
 except ImportError:
     LANCEDB_AVAILABLE = False
     print("❌ LanceDB 라이브러리 미설치")
+
 
 def test_lancedb_basic():
     """LanceDB 기본 기능 테스트"""
@@ -40,12 +42,15 @@ def test_lancedb_basic():
 
         # PyArrow 스키마 사용 (LanceDB 요구사항)
         import pyarrow as pa
-        schema = pa.schema([
-            ("id", pa.string()),
-            ("content", pa.string()),
-            ("source", pa.string()),
-            ("vector", pa.list_(pa.float32(), 1536))  # 고정 크기 벡터
-        ])
+
+        schema = pa.schema(
+            [
+                ("id", pa.string()),
+                ("content", pa.string()),
+                ("source", pa.string()),
+                ("vector", pa.list_(pa.float32(), 1536)),  # 고정 크기 벡터
+            ]
+        )
 
         table = db.create_table(table_name, schema=schema)
         print(f"✅ 테이블 생성: {table_name}")
@@ -55,13 +60,13 @@ def test_lancedb_basic():
             {
                 "id": "doc1",
                 "content": "AFO Kingdom is an AI operating system.",
-                "vector": [0.1] * 1536  # 더미 벡터
+                "vector": [0.1] * 1536,  # 더미 벡터
             },
             {
                 "id": "doc2",
                 "content": "LanceDB provides fast vector search.",
-                "vector": [0.2] * 1536  # 더미 벡터
-            }
+                "vector": [0.2] * 1536,  # 더미 벡터
+            },
         ]
 
         table.add(test_data)
@@ -82,10 +87,11 @@ def test_lancedb_basic():
         print(f"❌ LanceDB 테스트 실패: {e}")
         return False
 
+
 def test_vector_store_adapter():
     """벡터 스토어 어댑터 테스트"""
     try:
-        sys.path.append('packages/afo-core')
+        sys.path.append("packages/afo-core")
         from utils.vector_store import get_vector_store
 
         store = get_vector_store()
@@ -101,6 +107,7 @@ def test_vector_store_adapter():
     except Exception as e:
         print(f"❌ 벡터 스토어 어댑터 테스트 실패: {e}")
         return False
+
 
 if __name__ == "__main__":
     print("🏰 AFO Kingdom LanceDB 테스트 시작\n")

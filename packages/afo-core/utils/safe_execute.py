@@ -37,7 +37,9 @@ def safe_execute(func: Callable[..., Any]) -> Callable[..., dict[str, Any]]:
     async def async_wrapper(*args: Any, **kwargs: Any) -> dict[str, Any]:
         """비동기 함수 래퍼"""
         if antigravity.DRY_RUN_DEFAULT:
-            logger.info(f"[善: DRY_RUN] {func.__name__} - 실제 실행 없이 시뮬레이션 완료")
+            logger.info(
+                f"[善: DRY_RUN] {func.__name__} - 실제 실행 없이 시뮬레이션 완료"
+            )
             return {"status": "safe_simulation", "function": func.__name__}
 
         try:
@@ -55,7 +57,9 @@ def safe_execute(func: Callable[..., Any]) -> Callable[..., dict[str, Any]]:
     def sync_wrapper(*args: Any, **kwargs: Any) -> dict[str, Any]:
         """동기 함수 래퍼"""
         if antigravity.DRY_RUN_DEFAULT:
-            logger.info(f"[善: DRY_RUN] {func.__name__} - 실제 실행 없이 시뮬레이션 완료")
+            logger.info(
+                f"[善: DRY_RUN] {func.__name__} - 실제 실행 없이 시뮬레이션 완료"
+            )
             return {"status": "safe_simulation", "function": func.__name__}
 
         try:

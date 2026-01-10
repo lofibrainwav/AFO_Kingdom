@@ -9,9 +9,6 @@ Implements the Strangler Fig pattern for gradual migration from HTML to React.
 
 from typing import Any
 
-from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
-
 from AFO.api.compat import (
     get_personas_list,
     get_philosophy_pillars,
@@ -20,6 +17,8 @@ from AFO.api.compat import (
     get_service_ports,
     get_system_architecture,
 )
+from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel
 
 router = APIRouter(prefix="/compat", tags=["compat"])
 
@@ -92,7 +91,9 @@ async def get_royal_rules():
         data = get_royal_constitution()
         return data
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to load royal rules: {e!s}")
+        raise HTTPException(
+            status_code=500, detail=f"Failed to load royal rules: {e!s}"
+        )
 
 
 @router.get("/philosophy", response_model=PhilosophyResponse)
@@ -118,7 +119,9 @@ async def get_architecture():
         data = get_system_architecture()
         return data
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to load architecture: {e!s}")
+        raise HTTPException(
+            status_code=500, detail=f"Failed to load architecture: {e!s}"
+        )
 
 
 @router.get("/stats")

@@ -48,7 +48,11 @@ except ImportError as e:
 
 # RAG Shadow Mode import (TICKET-008 Phase 1)
 try:
-    from afo.rag_shadow import execute_rag_shadow, get_shadow_metrics, is_rag_shadow_enabled
+    from afo.rag_shadow import (
+        execute_rag_shadow,
+        get_shadow_metrics,
+        is_rag_shadow_enabled,
+    )
 
     _rag_shadow_available = True
     logger.info("✅ RAG shadow mode imported successfully")
@@ -60,7 +64,11 @@ except ImportError:
 
         sys.path.append(os.path.join(os.path.dirname(__file__), "../../../afo"))
 
-        from rag_shadow import execute_rag_shadow, get_shadow_metrics, is_rag_shadow_enabled
+        from rag_shadow import (
+            execute_rag_shadow,
+            get_shadow_metrics,
+            is_rag_shadow_enabled,
+        )
 
         _rag_shadow_available = True
         logger.info("✅ RAG shadow mode imported successfully (relative path)")
@@ -298,7 +306,10 @@ def _build_fallback_text(query: str, metrics: dict[str, Any]) -> str:
         )
     else:
         q_lower = query.lower()
-        if any(k in q_lower for k in ["자기소개", "who are you", "너는 누구", "당신은 누구"]):
+        if any(
+            k in q_lower
+            for k in ["자기소개", "who are you", "너는 누구", "당신은 누구"]
+        ):
             lines.append(
                 "- 오프라인 응답: 저는 AFO Kingdom의 승상(Chancellor)이며, 시스템 상태/전략/실행을 정리해 사령관의 결정을 돕습니다."
             )
@@ -348,7 +359,11 @@ async def _execute_with_fallback(
             query,
             request.headers if hasattr(request, "headers") else None,
             headers,
-            {"llm_context": llm_context, "thread_id": request.thread_id, "mode_used": mode_used},
+            {
+                "llm_context": llm_context,
+                "thread_id": request.thread_id,
+                "mode_used": mode_used,
+            },
         )
 
     # TICKET-008 Phase 1: RAG Shadow 실행 (위험 0, 메트릭만 기록)
@@ -357,7 +372,9 @@ async def _execute_with_fallback(
         query = request.query or request.input
         # Shadow 실행은 응답에 영향 없음 (비동기 실행)
         asyncio.create_task(
-            execute_rag_shadow(query, {"llm_context": llm_context, "thread_id": request.thread_id})
+            execute_rag_shadow(
+                query, {"llm_context": llm_context, "thread_id": request.thread_id}
+            )
         )
 
     async def _get_system_metrics_safe() -> dict[str, Any]:
@@ -373,10 +390,14 @@ async def _execute_with_fallback(
             return dict(await get_system_metrics())
         except (AttributeError, TypeError, ValueError) as e:
             logger.warning("시스템 메트릭 수집 실패 (속성/타입/값 에러): %s", str(e))
-            return {"error": f"failed to collect system metrics: {type(e).__name__}: {e}"}
+            return {
+                "error": f"failed to collect system metrics: {type(e).__name__}: {e}"
+            }
         except Exception as e:  # - Intentional fallback for unexpected errors
             logger.warning("시스템 메트릭 수집 실패 (예상치 못한 에러): %s", str(e))
-            return {"error": f"failed to collect system metrics: {type(e).__name__}: {e}"}
+            return {
+                "error": f"failed to collect system metrics: {type(e).__name__}: {e}"
+            }
 
     async def _single_shot_answer(
         query: str, budget_seconds: float, context: dict[str, Any]
@@ -624,7 +645,9 @@ async def _execute_full_mode_v1_legacy(
     from AFO.api.compat import get_antigravity_control
 
     antigravity = get_antigravity_control()
-    effective_auto_run = request.auto_run and not (antigravity and antigravity.DRY_RUN_DEFAULT)
+    effective_auto_run = request.auto_run and not (
+        antigravity and antigravity.DRY_RUN_DEFAULT
+    )
 
     initial_state_dict: dict[str, Any] = {
         "query": request.query or request.input,
@@ -635,7 +658,9 @@ async def _execute_full_mode_v1_legacy(
             "max_strategists": request.max_strategists,
             "antigravity": {
                 "AUTO_DEPLOY": antigravity.AUTO_DEPLOY if antigravity else True,
-                "DRY_RUN_DEFAULT": (antigravity.DRY_RUN_DEFAULT if antigravity else False),
+                "DRY_RUN_DEFAULT": (
+                    antigravity.DRY_RUN_DEFAULT if antigravity else False
+                ),
                 "ENVIRONMENT": antigravity.ENVIRONMENT if antigravity else "dev",
             },
             "auto_run_eligible": effective_auto_run,
@@ -654,7 +679,9 @@ async def _execute_full_mode_v1_legacy(
 
     from langchain_core.messages import HumanMessage
 
-    initial_state["messages"].append(HumanMessage(content=request.query or request.input))
+    initial_state["messages"].append(
+        HumanMessage(content=request.query or request.input)
+    )
 
     config = {"configurable": {"thread_id": request.thread_id}}
 
@@ -771,7 +798,9 @@ async def chancellor_health() -> dict[str, Any]:
             "strategists": ["Zhuge Liang", "Sima Yi", "Zhou Yu"],
         }
     except (ImportError, AttributeError, RuntimeError) as e:
-        logger.error("Chancellor Graph 초기화 실패 (import/속성/런타임 에러): %s", str(e))
+        logger.error(
+            "Chancellor Graph 초기화 실패 (import/속성/런타임 에러): %s", str(e)
+        )
         return {
             "status": "error",
             "message": f"Chancellor Graph 초기화 실패: {e!s}",
@@ -806,7 +835,9 @@ async def learning_profile_health() -> dict[str, Any]:
         response = profile.to_dict()
 
         # Boot-Swap: effective_config + applied_overrides 추가
-        effective_config = apply_learning_profile(BASE_CONFIG, profile.data.get("overrides", {}))
+        effective_config = apply_learning_profile(
+            BASE_CONFIG, profile.data.get("overrides", {})
+        )
         response["effective_config"] = effective_config
 
         return response

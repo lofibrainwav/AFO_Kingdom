@@ -6,10 +6,8 @@ TICKET-046 모듈화 검증 시스템 통합 테스트
 """
 
 import asyncio
-import subprocess
 import sys
 from pathlib import Path
-
 
 # 프로젝트 루트를 Python 경로에 추가
 project_root = Path(__file__).parent.parent
@@ -18,7 +16,6 @@ sys.path.insert(0, str(project_root / "packages" / "afo-core"))
 
 from validation.ast_analyzer import analyze_code
 from validation.logger import log_result
-
 
 # 테스트 코드 샘플들
 TEST_CODE_GOOD = """
@@ -69,12 +66,16 @@ async def main():
     try:
         # AST 분석 테스트
         result = analyze_code(TEST_CODE_GOOD)
-        print(f"✅ AST 분석 성공: score={result['score']:.2f}, approved={result['approved']}")
+        print(
+            f"✅ AST 분석 성공: score={result['score']:.2f}, approved={result['approved']}"
+        )
         print(f"   발견된 함수: {len(result['structure']['functions'])}개")
         print(f"   보안 취약점: {len(result['vulnerabilities'])}개")
 
         # 로그 저장 테스트
-        log_result({"ticket": "TICKET-046", "test": "ast_analysis_success", "result": result})
+        log_result(
+            {"ticket": "TICKET-046", "test": "ast_analysis_success", "result": result}
+        )
         print("✅ 로그 저장 성공")
 
     except Exception as e:

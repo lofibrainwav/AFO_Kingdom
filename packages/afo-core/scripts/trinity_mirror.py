@@ -111,7 +111,9 @@ class ChancellorMirror:
         """
         await self._init_redis()
         logger.info("🔍 승상의 거울 가동: Trinity Score 실시간 모니터링 시작")
-        await self._publish_thought("Chancellor Mirror initialized (Perpetual Surveillance Active)")
+        await self._publish_thought(
+            "Chancellor Mirror initialized (Perpetual Surveillance Active)"
+        )
 
         try:
             async with websockets.connect(
@@ -154,7 +156,9 @@ class ChancellorMirror:
         while True:
             try:
                 await self.check_current_trinity_score()
-                await self._publish_thought("System Pulse: All pillars monitored and stable.")
+                await self._publish_thought(
+                    "System Pulse: All pillars monitored and stable."
+                )
                 await asyncio.sleep(600)  # 10분 간격으로 체크 및 하트비트
 
             except Exception as e:
@@ -238,7 +242,9 @@ class ChancellorMirror:
                     f"⚠️ {pillar.upper()}: {normalized_score:.1f}점으로 기준치 {threshold}점 미만!",
                 )
 
-    async def raise_alert(self, pillar: str, score: float, threshold: float, message: str) -> None:
+    async def raise_alert(
+        self, pillar: str, score: float, threshold: float, message: str
+    ) -> None:
         """
         알람 발생
 
@@ -256,7 +262,9 @@ class ChancellorMirror:
             timestamp=datetime.now().isoformat(),
             message=message,
         )
-        await self._publish_thought(message, level="warning" if "⚠️" in message else "critical")
+        await self._publish_thought(
+            message, level="warning" if "⚠️" in message else "critical"
+        )
 
         # 중복 알람 방지
         if not self._is_duplicate_alert(alert):
@@ -288,7 +296,10 @@ class ChancellorMirror:
         cutoff_time = datetime.datetime.now() - datetime.timedelta(minutes=5)
 
         for alert in self.active_alerts:
-            if alert.pillar == new_alert.pillar and alert.timestamp > cutoff_time.isoformat():
+            if (
+                alert.pillar == new_alert.pillar
+                and alert.timestamp > cutoff_time.isoformat()
+            ):
                 return True
 
         return False
@@ -344,7 +355,9 @@ class ChancellorMirror:
                     logger.info(f"📊 Health Status: {health_data}")
 
                 # 시스템 메트릭
-                async with session.get(f"{self.api_base}/api/system/metrics") as response:
+                async with session.get(
+                    f"{self.api_base}/api/system/metrics"
+                ) as response:
                     if response.status == 200:
                         metrics_data = await response.json()
                         logger.info(f"📊 System Metrics: {metrics_data}")
@@ -396,7 +409,9 @@ class ChancellorMirror:
         cutoff_time = datetime.datetime.now() - datetime.timedelta(hours=1)
 
         self.active_alerts = [
-            alert for alert in self.active_alerts if alert.timestamp > cutoff_time.isoformat()
+            alert
+            for alert in self.active_alerts
+            if alert.timestamp > cutoff_time.isoformat()
         ]
 
         logger.info(f"🧹 해결된 알람 정리 완료, 남은 알람: {len(self.active_alerts)}개")

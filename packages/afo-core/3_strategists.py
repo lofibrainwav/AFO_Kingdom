@@ -46,7 +46,9 @@ class QueryModel(BaseModel):
     context: dict[str, Any] = Field(
         default_factory=dict, description="컨텍스트 데이터 - 아키텍처 검증용"
     )
-    validation_level: int = Field(1, ge=1, le=10, description="검증 강도 - 1: 기본, 10: 엄격")
+    validation_level: int = Field(
+        1, ge=1, le=10, description="검증 강도 - 1: 기본, 10: 엄격"
+    )
 
 
 class ThreeStrategists:
@@ -56,7 +58,9 @@ class ThreeStrategists:
     def zhuge_liang_truth_evaluate(query_data: dict[str, Any]) -> float:
         """제갈량 (眞): 아키텍처 설계 및 기술 타당성 상세 검증 - Pydantic/MyPy (PDF 기술적 완성도 25/25)"""
         try:
-            model = QueryModel(**query_data)  # 런타임 검증 상세 (Field description 활용)
+            model = QueryModel(
+                **query_data
+            )  # 런타임 검증 상세 (Field description 활용)
             arch_fit = (
                 1.0 if "valid_structure" in model.context else 0.8
             )  # 아키텍처 타당성 상세 평가
@@ -97,8 +101,12 @@ class ThreeStrategists:
         if not narrative:
             return 0.5
 
-        ux_score = 1.0 if "glassmorphism" in narrative.lower() else 0.9  # UX 미학 상세 평가
-        modularity = 1.0 if len(narrative) < 500 else 0.85  # 모듈화·간결성 상세 평가 (500자 기준)
+        ux_score = (
+            1.0 if "glassmorphism" in narrative.lower() else 0.9
+        )  # UX 미학 상세 평가
+        modularity = (
+            1.0 if len(narrative) < 500 else 0.85
+        )  # 모듈화·간결성 상세 평가 (500자 기준)
         clarity = 1.0 if "coherent" in query_data else 0.95  # 서사 명확성 상세
         return (ux_score + modularity + clarity) / 3  # Dry_Run 성공: 0.933~1.0
 
@@ -114,9 +122,15 @@ class ThreeStrategists:
             results[name] = await anyio.to_thread.run_sync(func, query_data)
 
         async with anyio.create_task_group() as tg:
-            tg.start_soon(run_evaluate, "truth", ThreeStrategists.zhuge_liang_truth_evaluate)
-            tg.start_soon(run_evaluate, "goodness", ThreeStrategists.sima_yi_goodness_review)
-            tg.start_soon(run_evaluate, "beauty", ThreeStrategists.zhou_yu_beauty_optimize)
+            tg.start_soon(
+                run_evaluate, "truth", ThreeStrategists.zhuge_liang_truth_evaluate
+            )
+            tg.start_soon(
+                run_evaluate, "goodness", ThreeStrategists.sima_yi_goodness_review
+            )
+            tg.start_soon(
+                run_evaluate, "beauty", ThreeStrategists.zhou_yu_beauty_optimize
+            )
 
         truth = results.get("truth", 0.0)
         goodness = results.get("goodness", 0.0)

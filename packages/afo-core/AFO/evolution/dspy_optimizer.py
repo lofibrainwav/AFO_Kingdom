@@ -1,8 +1,8 @@
-import antigravity
 import json
 import os
 from typing import Any, Optional
 
+import antigravity
 import dspy
 
 # Constants
@@ -29,7 +29,9 @@ def _pick_field(obj: Any, keys: list[str]) -> Any | None:
     return None
 
 
-def trinity_metric_fn(example: dspy.Example, prediction: dspy.Prediction, trace=None) -> float:
+def trinity_metric_fn(
+    example: dspy.Example, prediction: dspy.Prediction, trace=None
+) -> float:
     """
     Trinity Score Metric Wrapper (Fail-Closed).
     Compares prediction with ground truth using a basic string match or logic.
@@ -87,11 +89,15 @@ def compile_mipro(
                 raise ValueError("Saved file is 0 bytes.")
             print(f"[MIPRO][SUCCESS] Program saved to {save_path}")
         except Exception as e:
-            print(f"[MIPRO][SAVE_FALLBACK] dspy.save failed ({e}), using JSON fallback.")
+            print(
+                f"[MIPRO][SAVE_FALLBACK] dspy.save failed ({e}), using JSON fallback."
+            )
             # JSON Fallback serialization
             try:
                 state = {
-                    k: v for k, v in optimized_program.__dict__.items() if not k.startswith("_")
+                    k: v
+                    for k, v in optimized_program.__dict__.items()
+                    if not k.startswith("_")
                 }
                 with open(save_path, "w") as f:
                     json.dump(state, f, indent=2)

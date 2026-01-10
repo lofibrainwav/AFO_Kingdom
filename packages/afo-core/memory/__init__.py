@@ -34,5 +34,6 @@ except ImportError as e:
     import warnings
 
     warnings.warn(
-        f"Mem0 integration not available: {e}. Install with: pip install mem0ai", stacklevel=2
+        f"Mem0 integration not available: {e}. Install with: pip install mem0ai",
+        stacklevel=2,
     )

@@ -9,7 +9,6 @@ import json
 import sys
 from pathlib import Path
 
-
 # 프로젝트 루트를 Python 경로에 추가
 project_root = Path(__file__).resolve().parent.parent
 if str(project_root) not in sys.path:
@@ -131,7 +130,9 @@ Context7은 MCP (Model Context Protocol) 서버를 통해 통합됩니다.
 # 통합 상태 저장
 integration_status = {
     "total_docs": len(docs_to_integrate),
-    "ready_docs": len([d for d in docs_to_integrate if (project_root / d["file"]).exists()]),
+    "ready_docs": len(
+        [d for d in docs_to_integrate if (project_root / d["file"]).exists()]
+    ),
     "status": "ready_for_integration",
     "integration_method": "MCP Server (Context7)",
 }

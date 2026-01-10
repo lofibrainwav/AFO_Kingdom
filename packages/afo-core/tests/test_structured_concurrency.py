@@ -51,7 +51,9 @@ async def test_cancellation_propagation_case_a():
             tg.start_soon(failing_task, "Killer")
             tg.start_soon(victim)
 
-    assert cancelled_event.is_set(), "Killer task did not trigger cancellation of victim"
+    assert (
+        cancelled_event.is_set()
+    ), "Killer task did not trigger cancellation of victim"
 
 
 @pytest.mark.anyio

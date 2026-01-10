@@ -11,10 +11,9 @@ import os
 from pathlib import Path
 from typing import Any
 
+from AFO.config.health_check_config import health_check_config
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
-
-from AFO.config.health_check_config import health_check_config
 
 router = APIRouter(prefix="/api/mcp", tags=["MCP Tools"])
 
@@ -164,7 +163,9 @@ async def add_mcp_tool(request: MCPToolRequest) -> dict[str, Any]:
         }
     except Exception as e:
         logger.error(f"Failed to add MCP tool: {e}")
-        raise HTTPException(status_code=500, detail=f"Failed to add MCP tool: {e}") from e
+        raise HTTPException(
+            status_code=500, detail=f"Failed to add MCP tool: {e}"
+        ) from e
 
 
 @router.post("/test")
@@ -175,7 +176,9 @@ async def test_mcp_connection(request: MCPTestRequest) -> dict[str, Any]:
     """
     try:
         config = health_check_config
-        server = next((s for s in config.MCP_SERVERS if s.name == request.server_name), None)
+        server = next(
+            (s for s in config.MCP_SERVERS if s.name == request.server_name), None
+        )
 
         if not server:
             # MCP 설정 파일에서 확인

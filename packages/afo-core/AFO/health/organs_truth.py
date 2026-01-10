@@ -84,16 +84,20 @@ def _security_probe(repo_root: pathlib.Path | None = None) -> OrganReport:
     if ctx_file:
         sec_found = True
         try:
-            sec_path = str(ctx_file.relative_to(repo_root)) if repo_root else str(ctx_file)
+            sec_path = (
+                str(ctx_file.relative_to(repo_root)) if repo_root else str(ctx_file)
+            )
         except ValueError:
             sec_path = str(ctx_file)
 
     return OrganReport(
         status="healthy" if sec_found else "unhealthy",
         score=90 if sec_found else 10,
-        output=f"Security Scan Verified ({sec_path})"
-        if sec_found
-        else "No Security Evidence Found",
+        output=(
+            f"Security Scan Verified ({sec_path})"
+            if sec_found
+            else "No Security Evidence Found"
+        ),
         probe="file:trivy-results.json",
         latency_ms=0,
     )
@@ -139,6 +143,7 @@ def build_organs_final(
         # 3. 로컬 서비스 연결성으로 감지
         try:
             import socket
+
             with socket.create_connection(("localhost", 6379), timeout=0.1):
                 return "local"
         except:
@@ -175,7 +180,7 @@ def build_organs_final(
             "postgres_host": "localhost",  # 로컬 우선
             "timeout_tcp_s": 0.25,
             "skip_if_missing": False,
-        }
+        },
     }
 
     mode_config = mode_configs.get(infra_mode, mode_configs["minimal"])
@@ -185,20 +190,30 @@ def build_organs_final(
         from config.settings import get_settings
 
         settings = get_settings()
-        redis_host = redis_host or settings.REDIS_HOST or os.getenv("REDIS_HOST", mode_config["redis_host"])
+        redis_host = (
+            redis_host
+            or settings.REDIS_HOST
+            or os.getenv("REDIS_HOST", mode_config["redis_host"])
+        )
         postgres_host = (
-            postgres_host or settings.POSTGRES_HOST or os.getenv("POSTGRES_HOST", mode_config["postgres_host"])
+            postgres_host
+            or settings.POSTGRES_HOST
+            or os.getenv("POSTGRES_HOST", mode_config["postgres_host"])
         )
         qdrant_host = qdrant_host or os.getenv("QDRANT_HOST", "afo-qdrant")
         # Extract hostname from OLLAMA_BASE_URL if available
         ollama_base = settings.OLLAMA_BASE_URL
         if ollama_base and "://" in ollama_base:
-            ollama_host = ollama_host or ollama_base.split("://")[1].split(":")[0].split("/")[0]
+            ollama_host = (
+                ollama_host or ollama_base.split("://")[1].split(":")[0].split("/")[0]
+            )
         else:
             ollama_host = ollama_host or os.getenv("OLLAMA_HOST", "afo-ollama")
     except ImportError:
         redis_host = redis_host or os.getenv("REDIS_HOST", mode_config["redis_host"])
-        postgres_host = postgres_host or os.getenv("POSTGRES_HOST", mode_config["postgres_host"])
+        postgres_host = postgres_host or os.getenv(
+            "POSTGRES_HOST", mode_config["postgres_host"]
+        )
         qdrant_host = qdrant_host or os.getenv("QDRANT_HOST", "afo-qdrant")
         ollama_host = ollama_host or os.getenv("OLLAMA_HOST", "afo-ollama")
 
@@ -244,13 +259,21 @@ def build_organs_final(
         lancedb_ok = os.path.exists(lancedb_table)
 
         organs["肺_Vector_DB"] = _mk(
-            lancedb_ok, 0, f"file:{lancedb_table}", "file",
-            94, 20, "LanceDB Connected", "LanceDB Disconnected"
+            lancedb_ok,
+            0,
+            f"file:{lancedb_table}",
+            "file",
+            94,
+            20,
+            "LanceDB Connected",
+            "LanceDB Disconnected",
         )
     else:
         # Qdrant: TCP 기반 체크 (기존 호환성)
         ok, ms, t = _tcp_probe(qdrant_host, qdrant_port, timeout_tcp_s)
-        organs["肺_Vector_DB"] = _mk(ok, ms, t, "tcp", 94, 20, "Qdrant Connected", "Qdrant Disconnected")
+        organs["肺_Vector_DB"] = _mk(
+            ok, ms, t, "tcp", 94, 20, "Qdrant Connected", "Qdrant Disconnected"
+        )
 
     # Dashboard: Defaults to localhost, fallback to docker hostname if needed
     dash_host = os.getenv("DASHBOARD_HOST", "localhost")
@@ -320,7 +343,9 @@ def build_organs_final(
         ssot_file = repo_root / "docs" / "AFO_FINAL_SSOT.md"
         ssot_found = ssot_file.exists()
         ssot_msg = (
-            f"SSOT Canon Found at {ssot_file}" if ssot_found else f"SSOT Missing at {ssot_file}"
+            f"SSOT Canon Found at {ssot_file}"
+            if ssot_found
+            else f"SSOT Missing at {ssot_file}"
         )
     else:
         ssot_found = False

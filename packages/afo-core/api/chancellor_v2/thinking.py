@@ -45,12 +45,16 @@ def apply_sequential_thinking(state: GraphState, step: str) -> GraphState:
     Contract: Always called before each node. Failure = execution stops.
     """
     # Build thought for this step
-    thought = f"[Step {step}] Processing: {json.dumps(state.input, ensure_ascii=False)[:200]}"
+    thought = (
+        f"[Step {step}] Processing: {json.dumps(state.input, ensure_ascii=False)[:200]}"
+    )
 
     if step == "PARSE":
         thought = f"Parsing commander request: {state.input}"
     elif step == "TRUTH":
-        thought = f"Evaluating technical truth for: {state.plan.get('skill_id', 'unknown')}"
+        thought = (
+            f"Evaluating technical truth for: {state.plan.get('skill_id', 'unknown')}"
+        )
     elif step == "GOODNESS":
         thought = f"Checking ethical/security aspects for: {state.plan.get('skill_id', 'unknown')}"
     elif step == "BEAUTY":

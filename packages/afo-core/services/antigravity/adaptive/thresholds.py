@@ -72,11 +72,14 @@ class AdaptiveThresholds:
         adjustment_factor = size_multiplier * experience_multiplier * time_multiplier
 
         return {
-            "auto_run_min_score": base_thresholds["auto_run_min_score"] * adjustment_factor,
-            "auto_run_max_risk": base_thresholds["auto_run_max_risk"] / adjustment_factor,
+            "auto_run_min_score": base_thresholds["auto_run_min_score"]
+            * adjustment_factor,
+            "auto_run_max_risk": base_thresholds["auto_run_max_risk"]
+            / adjustment_factor,
             "manual_review_min_score": base_thresholds["manual_review_min_score"]
             * adjustment_factor,
-            "block_threshold_score": base_thresholds["block_threshold_score"] * adjustment_factor,
+            "block_threshold_score": base_thresholds["block_threshold_score"]
+            * adjustment_factor,
         }
 
     def adjust_for_context(
@@ -137,7 +140,9 @@ class AdaptiveThresholds:
             recent_decisions = quality_history[-50:]  # 최근 50개
 
             # AUTO_RUN 성공률 계산
-            auto_run_decisions = [d for d in recent_decisions if d["decision"] == "AUTO_RUN"]
+            auto_run_decisions = [
+                d for d in recent_decisions if d["decision"] == "AUTO_RUN"
+            ]
             successful_auto_runs = len(
                 [d for d in auto_run_decisions if d.get("outcome") == "success"]
             )

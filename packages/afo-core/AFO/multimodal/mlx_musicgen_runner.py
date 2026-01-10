@@ -14,7 +14,9 @@ def _repo_root() -> Path:
     if (p / ".git").exists():
         return p
     try:
-        out = subprocess.check_output(["git", "rev-parse", "--show-toplevel"], text=True).strip()
+        out = subprocess.check_output(
+            ["git", "rev-parse", "--show-toplevel"], text=True
+        ).strip()
         return Path(out)
     except Exception:
         return Path.cwd()
@@ -60,7 +62,9 @@ class MLXMusicGenRunner:
 
         model_name = os.environ.get("AFO_MLX_MUSICGEN_MODEL", "facebook/musicgen-small")
         steps_per_second = int(os.environ.get("AFO_MLX_MUSICGEN_STEPS_PER_SEC", "50"))
-        default_max_steps = int(os.environ.get("AFO_MLX_MUSICGEN_DEFAULT_MAX_STEPS", "500"))
+        default_max_steps = int(
+            os.environ.get("AFO_MLX_MUSICGEN_DEFAULT_MAX_STEPS", "500")
+        )
         timeout_sec = int(os.environ.get("AFO_MLX_MUSICGEN_TIMEOUT_SEC", "600"))
 
         cfg = MLXMusicGenConfig(
@@ -159,7 +163,9 @@ class MLXMusicGenRunner:
         if not python_path.exists():
             import sys
 
-            print(f"MLX Reality Gate: venv python not found, using system: {sys.executable}")
+            print(
+                f"MLX Reality Gate: venv python not found, using system: {sys.executable}"
+            )
             return Path(sys.executable)
 
         print(f"MLX Reality Gate: using venv python: {python_path}")

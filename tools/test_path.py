@@ -1,7 +1,8 @@
 import pathlib
-import os
 
-current_path = pathlib.Path("/Users/brnestrm/AFO_Kingdom/packages/afo-core/AFO/health/organs_truth.py").resolve()
+current_path = pathlib.Path(
+    "/Users/brnestrm/AFO_Kingdom/packages/afo-core/AFO/health/organs_truth.py"
+).resolve()
 print(f"Start: {current_path}")
 repo_root = None
 for parent in current_path.parents:

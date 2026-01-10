@@ -10,7 +10,6 @@ import subprocess
 import sys
 from pathlib import Path
 
-
 try:
     from cyclonedx.output import OutputFormat, get_instance
     from cyclonedx_py.parser.environment import EnvironmentParser
@@ -48,7 +47,9 @@ def generate_sbom_from_requirements(requirements_path: Path, output_path: Path) 
 
         # JSON 출력
         json_output = get_instance(bom=bom, output_format=OutputFormat.JSON)
-        json_output.output_to_file(output_path.with_suffix(".json"), allow_overwrite=True)
+        json_output.output_to_file(
+            output_path.with_suffix(".json"), allow_overwrite=True
+        )
 
         # XML 출력
         xml_output = get_instance(bom=bom, output_format=OutputFormat.XML)
@@ -72,7 +73,9 @@ def generate_sbom_from_environment(output_path: Path) -> bool:
 
         # JSON 출력
         json_output = get_instance(bom=bom, output_format=OutputFormat.JSON)
-        json_output.output_to_file(output_path.with_suffix(".json"), allow_overwrite=True)
+        json_output.output_to_file(
+            output_path.with_suffix(".json"), allow_overwrite=True
+        )
 
         # XML 출력
         xml_output = get_instance(bom=bom, output_format=OutputFormat.XML)
@@ -107,41 +110,49 @@ def main() -> int:
             output_base = output_dir / f"{req_file.parts[-2]}_{req_file.stem}_sbom"
 
             # JSON format
-            if run_command([
-                "cyclonedx-py",
-                "requirements",
-                str(req_file),
-                "--output-format",
-                "JSON",
-                "--output-file",
-                str(output_base.with_suffix(".json")),
-            ]):
+            if run_command(
+                [
+                    "cyclonedx-py",
+                    "requirements",
+                    str(req_file),
+                    "--output-format",
+                    "JSON",
+                    "--output-file",
+                    str(output_base.with_suffix(".json")),
+                ]
+            ):
                 print(f"✅ SBOM (JSON) generated: {output_base.with_suffix('.json')}")
 
             # XML format
-            if run_command([
-                "cyclonedx-py",
-                "requirements",
-                str(req_file),
-                "--output-format",
-                "XML",
-                "--output-file",
-                str(output_base.with_suffix(".xml")),
-            ]):
+            if run_command(
+                [
+                    "cyclonedx-py",
+                    "requirements",
+                    str(req_file),
+                    "--output-format",
+                    "XML",
+                    "--output-file",
+                    str(output_base.with_suffix(".xml")),
+                ]
+            ):
                 print(f"✅ SBOM (XML) generated: {output_base.with_suffix('.xml')}")
                 success_count += 1
 
     # 2. 현재 환경에서 SBOM 생성
     env_output = output_dir / "environment_sbom"
-    if run_command([
-        "cyclonedx-py",
-        "environment",
-        "--output-format",
-        "JSON",
-        "--output-file",
-        str(env_output.with_suffix(".json")),
-    ]):
-        print(f"✅ Environment SBOM (JSON) generated: {env_output.with_suffix('.json')}")
+    if run_command(
+        [
+            "cyclonedx-py",
+            "environment",
+            "--output-format",
+            "JSON",
+            "--output-file",
+            str(env_output.with_suffix(".json")),
+        ]
+    ):
+        print(
+            f"✅ Environment SBOM (JSON) generated: {env_output.with_suffix('.json')}"
+        )
         success_count += 1
 
     print()

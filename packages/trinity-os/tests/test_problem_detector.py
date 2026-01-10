@@ -9,13 +9,17 @@ from pathlib import Path
 
 def test_problem_detector() -> None:
     """문제 감지 스크립트 테스트"""
-    script_path = Path(__file__).parent.parent / "scripts" / "kingdom_problem_detector.py"
+    script_path = (
+        Path(__file__).parent.parent / "scripts" / "kingdom_problem_detector.py"
+    )
 
     # 스크립트 존재 확인
     assert script_path.exists(), f"Script not found: {script_path}"
 
     # 실행 가능 확인
-    result = subprocess.run([sys.executable, str(script_path)], capture_output=True, text=True, timeout=30)
+    result = subprocess.run(
+        [sys.executable, str(script_path)], capture_output=True, text=True, timeout=30
+    )
 
     # 실행 성공 확인
     assert result.returncode == 0, f"Script failed with return code {result.returncode}"
@@ -25,7 +29,9 @@ def test_problem_detector() -> None:
         data = json.loads(result.stdout.strip())
         assert "total_problems" in data, "Missing total_problems in output"
         assert "summary" in data, "Missing summary in output"
-        assert isinstance(data["total_problems"], int), "total_problems should be integer"
+        assert isinstance(
+            data["total_problems"], int
+        ), "total_problems should be integer"
     except json.JSONDecodeError as e:
         raise AssertionError(f"Invalid JSON output: {e}") from e
 
@@ -38,7 +44,9 @@ def test_health_report() -> None:
 
     assert script_path.exists(), f"Script not found: {script_path}"
 
-    result = subprocess.run([sys.executable, str(script_path)], capture_output=True, text=True, timeout=30)
+    result = subprocess.run(
+        [sys.executable, str(script_path)], capture_output=True, text=True, timeout=30
+    )
 
     assert result.returncode == 0, f"Script failed with return code {result.returncode}"
 
@@ -46,7 +54,9 @@ def test_health_report() -> None:
         data = json.loads(result.stdout.strip())
         assert "overall_score" in data, "Missing overall_score in output"
         assert "balanced" in data, "Missing balanced in output"
-        assert isinstance(data["overall_score"], (int, float)), "overall_score should be numeric"
+        assert isinstance(
+            data["overall_score"], (int, float)
+        ), "overall_score should be numeric"
     except json.JSONDecodeError as e:
         raise AssertionError(f"Invalid JSON output: {e}") from e
 
@@ -55,11 +65,15 @@ def test_health_report() -> None:
 
 def test_spirit_integration() -> None:
     """정신 통합 스크립트 테스트"""
-    script_path = Path(__file__).parent.parent / "scripts" / "kingdom_spirit_integration.py"
+    script_path = (
+        Path(__file__).parent.parent / "scripts" / "kingdom_spirit_integration.py"
+    )
 
     assert script_path.exists(), f"Script not found: {script_path}"
 
-    result = subprocess.run([sys.executable, str(script_path)], capture_output=True, text=True, timeout=30)
+    result = subprocess.run(
+        [sys.executable, str(script_path)], capture_output=True, text=True, timeout=30
+    )
 
     assert result.returncode == 0, f"Script failed with return code {result.returncode}"
 

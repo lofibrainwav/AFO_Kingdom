@@ -8,12 +8,13 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-
 # #region agent log
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 
 
-def log_debug(location: str, message: str, data: dict | None = None, hypothesis_id: str = "A") -> None:
+def log_debug(
+    location: str, message: str, data: dict | None = None, hypothesis_id: str = "A"
+) -> None:
     """Debug logging to NDJSON file"""
     try:
         log_entry = {
@@ -84,7 +85,8 @@ def verify_app_routes():
                     if any(
                         part in route
                         for part in missing.split("/")
-                        if part and part not in {"api", "chancellor", "learning", "grok"}
+                        if part
+                        and part not in {"api", "chancellor", "learning", "grok"}
                     ):
                         print(f"   {route}")
                         break
@@ -221,13 +223,19 @@ def main():
             for path in app_results["missing"]:
                 print(f"     - {path}")
 
-    working_endpoints = [name for name, data in endpoint_results.items() if data.get("status_code") == 200]
+    working_endpoints = [
+        name
+        for name, data in endpoint_results.items()
+        if data.get("status_code") == 200
+    ]
     print(f"\n✅ 작동하는 엔드포인트: {len(working_endpoints)}개")
     for name in working_endpoints:
         print(f"   - {name}")
 
     not_working = [
-        name for name, data in endpoint_results.items() if data.get("status_code") != 200 and "error" not in data
+        name
+        for name, data in endpoint_results.items()
+        if data.get("status_code") != 200 and "error" not in data
     ]
     if not_working:
         print(f"\n⚠️  작동하지 않는 엔드포인트: {len(not_working)}개")

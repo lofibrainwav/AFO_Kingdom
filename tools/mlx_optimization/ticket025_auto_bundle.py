@@ -1,10 +1,8 @@
-import os
 import subprocess
 import time
 
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
-
 
 ARTIFACTS = "artifacts"
 
@@ -13,10 +11,18 @@ class ReleaseHandler(FileSystemEventHandler):
     def on_created(self, event):
         src_path = str(event.src_path)
         if "release_" in src_path and src_path.endswith("Z"):
-            print(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] New release detected: {src_path}")
+            print(
+                f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] New release detected: {src_path}"
+            )
             print("Rebuilding bundle...")
             # 기존 ticket024_build_dashboard_bundle.py 호출
-            result = subprocess.run(["python", "tools/mlx_optimization/ticket024_build_dashboard_bundle.py"], check=False).returncode
+            result = subprocess.run(
+                [
+                    "python",
+                    "tools/mlx_optimization/ticket024_build_dashboard_bundle.py",
+                ],
+                check=False,
+            ).returncode
             if result == 0:
                 print("Bundle updated successfully! Dashboard SSOT synced.")
             else:

@@ -1,9 +1,7 @@
 import ast
 import json
-import re
 import time
 from pathlib import Path
-
 
 ROOT = Path(".").resolve()
 LOG_DIR = ROOT / "artifacts" / "code_validation_logs"
@@ -30,11 +28,15 @@ def simple_syntax_check(code: str) -> dict:
         functions = []
         for node in ast.walk(tree):
             if isinstance(node, ast.FunctionDef):
-                functions.append({
-                    "name": node.name,
-                    "args_count": len(node.args.args),
-                    "has_return": any(isinstance(n, ast.Return) for n in ast.walk(node)),
-                })
+                functions.append(
+                    {
+                        "name": node.name,
+                        "args_count": len(node.args.args),
+                        "has_return": any(
+                            isinstance(n, ast.Return) for n in ast.walk(node)
+                        ),
+                    }
+                )
 
         result["notes"].append(f"Found {len(functions)} functions")
 
@@ -116,7 +118,9 @@ def main():
     }
 
     out_path = LOG_DIR / f"smoke_code_review_{int(time.time())}.jsonl"
-    out_path.write_text(json.dumps(payload, ensure_ascii=False) + "\n", encoding="utf-8")
+    out_path.write_text(
+        json.dumps(payload, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
 
     print("\n" + "=" * 50)
     print("TICKET-045 SMOKE TEST RESULTS")

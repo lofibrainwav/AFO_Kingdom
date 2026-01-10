@@ -2,10 +2,6 @@
 import asyncio
 from typing import Any
 
-from fastapi import APIRouter, HTTPException
-from fastapi.responses import StreamingResponse
-from pydantic import BaseModel
-
 from AFO.services.hybrid_rag import (
     HybridRAG,
     generate_answer_async,
@@ -15,6 +11,9 @@ from AFO.services.hybrid_rag import (
     query_graph_context,
     query_qdrant_async,
 )
+from fastapi import APIRouter, HTTPException
+from fastapi.responses import StreamingResponse
+from pydantic import BaseModel
 
 
 class HybridRAGService:
@@ -99,7 +98,9 @@ async def query_knowledge_base(request: RAGRequest):
     search_query = request.query
     client = None
 
-    if request.use_hyde and getattr(HybridRAGService, "generate_hyde_query_async", None):
+    if request.use_hyde and getattr(
+        HybridRAGService, "generate_hyde_query_async", None
+    ):
         try:
             import os
 
@@ -109,7 +110,9 @@ async def query_knowledge_base(request: RAGRequest):
         except Exception:
             client = None
 
-        search_query = await HybridRAGService.generate_hyde_query_async(request.query, client)
+        search_query = await HybridRAGService.generate_hyde_query_async(
+            request.query, client
+        )
         logs.append(f"✨ HyDE Generated: {search_query[:50]}...")
     else:
         logs.append("ℹ️ HyDE Skipped")
@@ -136,7 +139,9 @@ async def query_knowledge_base(request: RAGRequest):
             from qdrant_client import QdrantClient
 
             q_client = QdrantClient("localhost", port=6333)
-            tasks.append(HybridRAGService.query_qdrant_async(embedding, request.top_k, q_client))
+            tasks.append(
+                HybridRAGService.query_qdrant_async(embedding, request.top_k, q_client)
+            )
         except Exception:
             pass
 
@@ -144,7 +149,9 @@ async def query_knowledge_base(request: RAGRequest):
     if tasks:
         retrieval_results = await asyncio.gather(*tasks, return_exceptions=True)
         for r_chunk in retrieval_results:
-            if isinstance(r_chunk, list) and all(isinstance(item, dict) for item in r_chunk):
+            if isinstance(r_chunk, list) and all(
+                isinstance(item, dict) for item in r_chunk
+            ):
                 results.extend(r_chunk)
             elif isinstance(r_chunk, Exception):
                 # Log exception but continue processing
@@ -160,15 +167,23 @@ async def query_knowledge_base(request: RAGRequest):
         entities = [w for w in request.query.split() if len(w) > 4]
         # Or use extracted entities from chunks payload if available
         for res in results:
-            if isinstance(res, dict) and "metadata" in res and "content" in res["metadata"]:
+            if (
+                isinstance(res, dict)
+                and "metadata" in res
+                and "content" in res["metadata"]
+            ):
                 # Extract capitalized words as heuristic
-                words = [w for w in res["metadata"]["content"].split() if w[0].isupper()]
+                words = [
+                    w for w in res["metadata"]["content"].split() if w[0].isupper()
+                ]
                 entities.extend(words[:3])
 
         entities = list(set(entities))[:5]  # Limit
         if entities:
             graph_context = HybridRAGService.query_graph_context(entities)
-            logs.append(f"🕸️ Graph Context: Found {len(graph_context)} connections for {entities}")
+            logs.append(
+                f"🕸️ Graph Context: Found {len(graph_context)} connections for {entities}"
+            )
 
     # 5. Rerank / Selection
     # Simple selection for now
@@ -254,8 +269,14 @@ async def query_knowledge_base_stream(request: RAGRequest):
     if request.use_graph:
         entities = [w for w in request.query.split() if len(w) > 4]
         for res in results:
-            if isinstance(res, dict) and "metadata" in res and "content" in res["metadata"]:
-                words = [w for w in res["metadata"]["content"].split() if w[0].isupper()]
+            if (
+                isinstance(res, dict)
+                and "metadata" in res
+                and "content" in res["metadata"]
+            ):
+                words = [
+                    w for w in res["metadata"]["content"].split() if w[0].isupper()
+                ]
                 entities.extend(words[:3])
         entities = list(set(entities))[:5]
         if entities:

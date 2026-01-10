@@ -1,10 +1,9 @@
 import logging
 from typing import Any, Dict, List
 
+from AFO.evolution.dgm_engine import EvolutionMetadata, dgm_engine
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
-
-from AFO.evolution.dgm_engine import EvolutionMetadata, dgm_engine
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +32,9 @@ async def seal_decree(run_id: str):
     if not success:
         raise HTTPException(status_code=404, detail="Decree not found")
 
-    logger.info(f"👑 Royal Decree SEALED for run_id: {run_id}. Execution pending WET deployment.")
+    logger.info(
+        f"👑 Royal Decree SEALED for run_id: {run_id}. Execution pending WET deployment."
+    )
     return {
         "status": "SEALED",
         "run_id": run_id,
@@ -48,7 +49,9 @@ async def veto_decree(run_id: str, reason: str | None = None):
     if not success:
         raise HTTPException(status_code=404, detail="Decree not found")
 
-    logger.info(f"🛡️ Royal Decree VETOED for run_id: {run_id}. Reason: {reason or 'None'}")
+    logger.info(
+        f"🛡️ Royal Decree VETOED for run_id: {run_id}. Reason: {reason or 'None'}"
+    )
     return {
         "status": "VETOED",
         "run_id": run_id,

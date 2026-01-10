@@ -48,7 +48,12 @@ class GenUIService:
         current_file = Path(__file__).resolve()
         self.project_root = current_file.parent.parent.parent.parent
         self.sandbox_dir = (
-            self.project_root / "packages" / "dashboard" / "src" / "components" / "genui"
+            self.project_root
+            / "packages"
+            / "dashboard"
+            / "src"
+            / "components"
+            / "genui"
         )
 
         # Ensure sandbox exists
@@ -75,9 +80,7 @@ class GenUIService:
             "Ensure the component is named exactly as requested. "
             "Use 'lucide-react' for icons if needed."
         )
-        user_prompt = (
-            f"Create a component named '{request.component_name}'. Requirements: {request.prompt}"
-        )
+        user_prompt = f"Create a component named '{request.component_name}'. Requirements: {request.prompt}"
 
         # 2. Call Scholar (The Execution)
         # Using Yeongdeok's localized logic or direct LLM Router
@@ -131,7 +134,9 @@ class GenUIService:
         from AFO.config.settings import settings
 
         if not is_valid_syntax and (settings.MOCK_MODE or antigravity.DRY_RUN_DEFAULT):
-            logger.warning("⚠️ [GenUI] Syntax check failed on LLM output. Using Mock Component.")
+            logger.warning(
+                "⚠️ [GenUI] Syntax check failed on LLM output. Using Mock Component."
+            )
             code = self._generate_mock_code(request.component_name)
             is_valid_syntax = True  # Now it is valid
 
@@ -556,7 +561,9 @@ export default function {component_name}() {{
 }}
 """
 
-    def _create_error_response(self, request: GenUIRequest, error_msg: str) -> GenUIResponse:
+    def _create_error_response(
+        self, request: GenUIRequest, error_msg: str
+    ) -> GenUIResponse:
         return GenUIResponse(
             component_id="error",
             component_name=request.component_name,
@@ -600,7 +607,9 @@ export default function {component_name}() {{
             # Update Registry (index.ts)
             self._update_registry(response.component_name)
 
-            logger.info(f"🚀 [GenUI] Deployed {response.component_name} to Sandbox: {file_path}")
+            logger.info(
+                f"🚀 [GenUI] Deployed {response.component_name} to Sandbox: {file_path}"
+            )
             return str(file_path)
         except Exception as e:
             logger.error(f"❌ [GenUI] Deployment failed: {e}")
@@ -612,12 +621,16 @@ export default function {component_name}() {{
         Format: export { default as ComponentName } from './ComponentName';
         """
         registry_path = self.sandbox_dir / "index.ts"
-        export_stmt = f"export {{ default as {component_name} }} from './{component_name}';\n"
+        export_stmt = (
+            f"export {{ default as {component_name} }} from './{component_name}';\n"
+        )
 
         try:
             # Create if not exists
             if not registry_path.exists():
-                registry_path.write_text("// GenUI Registry\nexport {};\n", encoding="utf-8")
+                registry_path.write_text(
+                    "// GenUI Registry\nexport {};\n", encoding="utf-8"
+                )
 
             current_content = registry_path.read_text(encoding="utf-8")
 

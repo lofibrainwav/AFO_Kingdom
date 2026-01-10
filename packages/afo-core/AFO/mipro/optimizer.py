@@ -64,7 +64,8 @@ class MIPROv2Teleprompter:
 
         # Mock optimization trials
         num_trials = (
-            self.config.num_trials or {"light": 30, "medium": 100, "heavy": 200}[self.config.auto]
+            self.config.num_trials
+            or {"light": 30, "medium": 100, "heavy": 200}[self.config.auto]
         )
 
         # Simulate optimization process

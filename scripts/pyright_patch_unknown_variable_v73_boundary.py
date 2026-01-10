@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from pathlib import Path
 import re
 import sys
+from pathlib import Path
 
 ROOT = Path.cwd()
 RULE = "reportUnknownVariableType"
@@ -10,7 +10,9 @@ RULE = "reportUnknownVariableType"
 # pyright output line:
 # path:line:col - error: ... (reportUnknownVariableType)
 RX = re.compile(
-    r'^(?P<path>.+?):(?P<line>\d+):(?P<col>\d+)\s+-\s+\w+:\s+(?P<msg>.*)\(' + re.escape(RULE) + r'\)\s*$'
+    r"^(?P<path>.+?):(?P<line>\d+):(?P<col>\d+)\s+-\s+\w+:\s+(?P<msg>.*)\("
+    + re.escape(RULE)
+    + r"\)\s*$"
 )
 
 BOUNDARY_TOKENS = (
@@ -25,14 +27,15 @@ BOUNDARY_TOKENS = (
 )
 
 RX_ASSIGN = re.compile(
-    r'^(?P<indent>\s*)(?P<name>[A-Za-z_]\w*)\s*=\s*(?P<expr>.+?)(?P<comment>\s+#.*)?$'
+    r"^(?P<indent>\s*)(?P<name>[A-Za-z_]\w*)\s*=\s*(?P<expr>.+?)(?P<comment>\s+#.*)?$"
 )
 
 # one-line def/async def without return annotation
 RX_DEF = re.compile(
-    r'^(?P<indent>\s*)(?P<async>async\s+)?def\s+'
-    r'(?P<name>[A-Za-z_]\w*)\s*\((?P<params>.*)\)\s*:\s*(?P<comment>#.*)?$'
+    r"^(?P<indent>\s*)(?P<async>async\s+)?def\s+"
+    r"(?P<name>[A-Za-z_]\w*)\s*\((?P<params>.*)\)\s*:\s*(?P<comment>#.*)?$"
 )
+
 
 def docstring_span(lines, i):
     if i >= len(lines):
@@ -51,6 +54,7 @@ def docstring_span(lines, i):
         j += 1
     return (i, len(lines) - 1)
 
+
 def insert_index_for_import(lines):
     idx = 0
     if idx < len(lines) and lines[idx].startswith("#!"):
@@ -60,11 +64,14 @@ def insert_index_for_import(lines):
     ds = docstring_span(lines, idx)
     if ds:
         idx = ds[1] + 1
-    while idx < len(lines) and (lines[idx].strip() == "" or lines[idx].lstrip().startswith("#")):
+    while idx < len(lines) and (
+        lines[idx].strip() == "" or lines[idx].lstrip().startswith("#")
+    ):
         idx += 1
     while idx < len(lines) and lines[idx].startswith("from __future__ import "):
         idx += 1
     return idx
+
 
 def ensure_typing_import(src: str, needed: set[str]) -> str:
     if not needed:
@@ -74,7 +81,11 @@ def ensure_typing_import(src: str, needed: set[str]) -> str:
     # merge existing typing import line if present
     for i, line in enumerate(lines):
         if line.startswith("from typing import "):
-            existing = [x.strip() for x in line[len("from typing import "):].strip().split(",") if x.strip()]
+            existing = [
+                x.strip()
+                for x in line[len("from typing import ") :].strip().split(",")
+                if x.strip()
+            ]
             merged = sorted(set(existing) | set(needed))
             lines[i] = "from typing import " + ", ".join(merged) + "\n"
             return "".join(lines)
@@ -82,6 +93,7 @@ def ensure_typing_import(src: str, needed: set[str]) -> str:
     ins = insert_index_for_import(lines)
     lines.insert(ins, "from typing import " + ", ".join(sorted(needed)) + "\n")
     return "".join(lines)
+
 
 def is_boundary_expr(expr: str) -> bool:
     e = expr.strip()
@@ -91,6 +103,7 @@ def is_boundary_expr(expr: str) -> bool:
         if t in e:
             return True
     return False
+
 
 def patch_def_line(line: str):
     # only patch one-line defs without -> annotation
@@ -112,10 +125,11 @@ def patch_def_line(line: str):
     new_line = f"{indent}{async_kw}def {name}({params}) -> Any:{(' ' + comment) if comment else ''}\n"
     return new_line, True
 
+
 def patch_assign_line(line: str):
     # annotate "x = <boundary>" => "x: Any = <boundary>"
     # only for simple name assignment
-    if re.match(r'^\s*[A-Za-z_]\w*\s*:\s*', line):
+    if re.match(r"^\s*[A-Za-z_]\w*\s*:\s*", line):
         return line, False
     m = RX_ASSIGN.match(line.rstrip("\n"))
     if not m:
@@ -129,6 +143,7 @@ def patch_assign_line(line: str):
     new_line = f"{indent}{name}: Any = {expr}{comment}\n"
     return new_line, True
 
+
 def normalize_path(p: str) -> Path | None:
     rp = Path(p)
     if rp.is_absolute():
@@ -137,6 +152,7 @@ def normalize_path(p: str) -> Path | None:
         except Exception:
             return None
     return rp
+
 
 def main(report_path: Path):
     txt = report_path.read_text(encoding="utf-8", errors="replace").splitlines()
@@ -206,12 +222,18 @@ def main(report_path: Path):
 
     # write unpatched report for precision follow-up
     out = ROOT / "artifacts" / "unpatched_unknownvar_v73.txt"
-    out.write_text("\n".join(sorted(set(unpatched))) + ("\n" if unpatched else ""), encoding="utf-8")
+    out.write_text(
+        "\n".join(sorted(set(unpatched))) + ("\n" if unpatched else ""),
+        encoding="utf-8",
+    )
     print("UNPATCHED_REPORT=", str(out))
     print("UNPATCHED_COUNT=", len(set(unpatched)))
 
+
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("usage: python3 scripts/pyright_patch_unknown_variable_v73_boundary.py <pyright_report.txt>")
+        print(
+            "usage: python3 scripts/pyright_patch_unknown_variable_v73_boundary.py <pyright_report.txt>"
+        )
         raise SystemExit(2)
     main(Path(sys.argv[1]))

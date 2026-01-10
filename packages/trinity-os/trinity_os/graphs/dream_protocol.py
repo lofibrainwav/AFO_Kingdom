@@ -90,12 +90,20 @@ class DreamProtocol:
             guarantees=DreamGuarantee(
                 min_trinity_score={
                     "truth": cast(Mapping[str, Any], requirements).get("truth", 80.0),
-                    "goodness": cast(Mapping[str, Any], requirements).get("goodness", 80.0),
+                    "goodness": cast(Mapping[str, Any], requirements).get(
+                        "goodness", 80.0
+                    ),
                     "beauty": cast(Mapping[str, Any], requirements).get("beauty", 70.0),
-                    "serenity": cast(Mapping[str, Any], requirements).get("serenity", 80.0),
-                    "eternity": cast(Mapping[str, Any], requirements).get("eternity", 70.0),
+                    "serenity": cast(Mapping[str, Any], requirements).get(
+                        "serenity", 80.0
+                    ),
+                    "eternity": cast(Mapping[str, Any], requirements).get(
+                        "eternity", 70.0
+                    ),
                 },
-                max_risk_threshold=cast(Mapping[str, Any], requirements).get("risk_threshold", 30.0),
+                max_risk_threshold=cast(Mapping[str, Any], requirements).get(
+                    "risk_threshold", 30.0
+                ),
                 max_execution_time=60,
                 rollback_capability=True,
                 bridge_logging=True,
@@ -118,7 +126,9 @@ class DreamProtocol:
         contract.status = "ANALYZED"
         return True
 
-    def execute_dream(self, dream_id: str, trinity_score: dict[str, float]) -> dict[str, Any]:
+    def execute_dream(
+        self, dream_id: str, trinity_score: dict[str, float]
+    ) -> dict[str, Any]:
         """Execute dream with Trinity Score validation"""
         if dream_id not in self.active_dreams:
             return {"status": "BLOCKED", "reason": "Dream not found"}

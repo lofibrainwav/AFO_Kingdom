@@ -41,11 +41,16 @@ class AssetType(str, Enum):
 class DepInput(BaseModel):
     """감가상각 계산 입력 모델"""
 
-    total_cost: float = Field(..., ge=0, le=1e7, description="총 취득 비용 ($)", examples=[300000])
+    total_cost: float = Field(
+        ..., ge=0, le=1e7, description="총 취득 비용 ($)", examples=[300000]
+    )
     state: State = Field(default=State.CA, description="세금 관할 구역")
     asset_type: AssetType = Field(default=AssetType.EQUIPMENT, description="자산 유형")
     business_income: float = Field(
-        default=0, ge=0, description="사업 소득 (§179 소득 한도 계산용)", examples=[150000]
+        default=0,
+        ge=0,
+        description="사업 소득 (§179 소득 한도 계산용)",
+        examples=[150000],
     )
     sec179_first: bool = Field(default=True, description="§179 우선 적용 여부")
 
@@ -63,8 +68,12 @@ class DepOutput(BaseModel):
     """감가상각 계산 출력 모델"""
 
     sec179_limit: float = Field(..., description="§179 한도 ($)", examples=[2560000])
-    phase_out: float = Field(..., description="Phase-out 시작 금액 ($)", examples=[4090000])
-    bonus_100: float = Field(..., description="Bonus 100% 적용 금액 ($)", examples=[44000])
+    phase_out: float = Field(
+        ..., description="Phase-out 시작 금액 ($)", examples=[4090000]
+    )
+    bonus_100: float = Field(
+        ..., description="Bonus 100% 적용 금액 ($)", examples=[44000]
+    )
     fed_saving: float = Field(..., description="연방세 절감액 ($)", examples=[63000])
     ca_addback: float = Field(..., description="CA add-back 금액 ($)", examples=[24300])
     net_saving: float = Field(..., description="순 절감액 ($)", examples=[38700])
@@ -110,7 +119,11 @@ class DepreciationCalculator:
         phase_out_start = self.PHASE_OUT_START_2026
 
         if not sec179_first:
-            return {"sec179_amount": 0, "bonus_amount": cost, "explanation": "§179 비적용 선택"}
+            return {
+                "sec179_amount": 0,
+                "bonus_amount": cost,
+                "explanation": "§179 비적용 선택",
+            }
 
         # 소득 한도 고려
         income_limit = min(sec179_limit, business_income)
@@ -184,7 +197,9 @@ class DepreciationCalculator:
             "ca_rate": self.CA_CORPORATE_RATE,
         }
 
-    def calculate_trinity_score(self, accuracy: float = 1.0, compliance: float = 0.95) -> dict:
+    def calculate_trinity_score(
+        self, accuracy: float = 1.0, compliance: float = 0.95
+    ) -> dict:
         """Trinity Score 계산"""
         return {
             "truth": accuracy,  # IRS 규정 정확성
@@ -206,7 +221,9 @@ class DepreciationCalculator:
         bonus_result = self.calculate_bonus_depreciation(sec179_result["bonus_amount"])
 
         # CA add-back 계산
-        ca_result = self.calculate_ca_addback(sec179_result["sec179_amount"], input_data.state)
+        ca_result = self.calculate_ca_addback(
+            sec179_result["sec179_amount"], input_data.state
+        )
 
         # 세금 절감 계산
         tax_result = self.calculate_tax_savings(
@@ -272,7 +289,9 @@ def julie_depreciation_calc(input_data: DepInput) -> DepOutput:
     try:
         dspy_result = compiled(dspy_input)
         # DSPy 결과로 Trinity Score 향상
-        enhanced_score = calculator.calculate_trinity_score(accuracy=1.0, compliance=1.0)
+        enhanced_score = calculator.calculate_trinity_score(
+            accuracy=1.0, compliance=1.0
+        )
         base_result.trinity_score = enhanced_score
     except Exception as e:
         # DSPy 실패 시 기본 결과 사용

@@ -5,12 +5,13 @@ LanceDB Vector Store Adapter for AFO Kingdom
 
 import os
 from abc import ABC, abstractmethod
-from typing import Any, Optional
+from typing import Any
 
 # LanceDB import (optional)
 try:
     import lancedb
     import pyarrow as pa
+
     LANCEDB_AVAILABLE = True
 except ImportError:
     lancedb = None
@@ -20,6 +21,7 @@ except ImportError:
 # Qdrant import (기존 호환성 유지)
 try:
     from qdrant_client import QdrantClient
+
     QDRANT_AVAILABLE = True
 except ImportError:
     QdrantClient = None
@@ -74,27 +76,34 @@ class LanceDBAdapter(VectorStoreAdapter):
                     self.embed_dim = 768
 
                 # PyArrow 스키마 정의 (동적 차원)
-                schema = pa.schema([
-                    ("id", pa.string()),
-                    ("content", pa.string()),
-                    ("source", pa.string()),
-                    ("vector", pa.list_(pa.float32(), self.embed_dim))  # 동적 크기 벡터
-                ])
+                schema = pa.schema(
+                    [
+                        ("id", pa.string()),
+                        ("content", pa.string()),
+                        ("source", pa.string()),
+                        (
+                            "vector",
+                            pa.list_(pa.float32(), self.embed_dim),
+                        ),  # 동적 크기 벡터
+                    ]
+                )
                 self.table = self.db.create_table(self.collection_name, schema=schema)
                 print(f"[LanceDB] 테이블 생성 완료: 차원={self.embed_dim}")
             else:
                 self.table = self.db.open_table(self.collection_name)
                 # 기존 테이블의 차원 확인
-                if hasattr(self.table, 'schema'):
+                if hasattr(self.table, "schema"):
                     vector_field = self.table.schema.field("vector")
-                    if vector_field and hasattr(vector_field.type, 'list_size'):
+                    if vector_field and hasattr(vector_field.type, "list_size"):
                         self.embed_dim = vector_field.type.list_size
                         print(f"[LanceDB] 기존 테이블 로드: 차원={self.embed_dim}")
-                    elif vector_field and hasattr(vector_field.type, 'value_type'):
+                    elif vector_field and hasattr(vector_field.type, "value_type"):
                         # 호환성을 위한 폴백
                         try:
                             self.embed_dim = vector_field.type.num_elements
-                            print(f"[LanceDB] 기존 테이블 로드 (폴백): 차원={self.embed_dim}")
+                            print(
+                                f"[LanceDB] 기존 테이블 로드 (폴백): 차원={self.embed_dim}"
+                            )
                         except AttributeError:
                             print("[LanceDB] 기존 테이블 차원 확인 실패")
 
@@ -108,14 +117,17 @@ class LanceDBAdapter(VectorStoreAdapter):
         try:
             # Ollama API로 실제 차원 확인
             import requests
+
             ollama_host = os.getenv("OLLAMA_HOST", "http://localhost:11434")
             embed_model = os.getenv("EMBED_MODEL", "embeddinggemma")
 
             # /api/embed 엔드포인트 시도
             try:
-                r = requests.post(f"{ollama_host}/api/embed",
-                                json={"model": embed_model, "input": "dimension check"},
-                                timeout=10)
+                r = requests.post(
+                    f"{ollama_host}/api/embed",
+                    json={"model": embed_model, "input": "dimension check"},
+                    timeout=10,
+                )
                 r.raise_for_status()
                 vec = r.json()["embeddings"][0]
                 dim = len(vec)
@@ -123,9 +135,11 @@ class LanceDBAdapter(VectorStoreAdapter):
                 return dim
             except Exception:
                 # 폴백: /api/embeddings 시도
-                r = requests.post(f"{ollama_host}/api/embeddings",
-                                json={"model": embed_model, "prompt": "dimension check"},
-                                timeout=10)
+                r = requests.post(
+                    f"{ollama_host}/api/embeddings",
+                    json={"model": embed_model, "prompt": "dimension check"},
+                    timeout=10,
+                )
                 r.raise_for_status()
                 vec = r.json()["embedding"]
                 dim = len(vec)
@@ -147,13 +161,17 @@ class LanceDBAdapter(VectorStoreAdapter):
             # 결과 포맷팅 (Qdrant 호환)
             formatted = []
             for i, result in enumerate(results):
-                formatted.append({
-                    "id": result.get("id", f"lancedb_{i}"),
-                    "content": result.get("content", ""),
-                    "score": result.get("_distance", 0.0),  # LanceDB는 _distance 사용
-                    "source": result.get("source", "lancedb"),
-                    "metadata": result
-                })
+                formatted.append(
+                    {
+                        "id": result.get("id", f"lancedb_{i}"),
+                        "content": result.get("content", ""),
+                        "score": result.get(
+                            "_distance", 0.0
+                        ),  # LanceDB는 _distance 사용
+                        "source": result.get("source", "lancedb"),
+                        "metadata": result,
+                    }
+                )
 
             return formatted
 
@@ -173,6 +191,7 @@ class LanceDBAdapter(VectorStoreAdapter):
         except Exception as e:
             print(f"[LanceDB] 삽입 실패: {e}")
             import traceback
+
             traceback.print_exc()
             return False
 
@@ -227,13 +246,15 @@ class QdrantAdapter(VectorStoreAdapter):
             formatted = []
             for hit in search_result:
                 payload = hit.payload or {}
-                formatted.append({
-                    "id": str(hit.id),
-                    "content": payload.get("content", ""),
-                    "score": float(hit.score),
-                    "source": payload.get("source", "qdrant"),
-                    "metadata": payload
-                })
+                formatted.append(
+                    {
+                        "id": str(hit.id),
+                        "content": payload.get("content", ""),
+                        "score": float(hit.score),
+                        "source": payload.get("source", "qdrant"),
+                        "metadata": payload,
+                    }
+                )
 
             return formatted
 
@@ -255,15 +276,12 @@ class QdrantAdapter(VectorStoreAdapter):
                     "vector": item.get("vector"),
                     "payload": {
                         "content": item.get("content", ""),
-                        "source": item.get("source", "unknown")
-                    }
+                        "source": item.get("source", "unknown"),
+                    },
                 }
                 points.append(point)
 
-            self.client.upsert(
-                collection_name=self.collection_name,
-                points=points
-            )
+            self.client.upsert(collection_name=self.collection_name, points=points)
             return True
 
         except Exception as e:
@@ -276,7 +294,7 @@ class QdrantAdapter(VectorStoreAdapter):
 
 
 # 전역 벡터 스토어 인스턴스
-_vector_store_instance: Optional[VectorStoreAdapter] = None
+_vector_store_instance: VectorStoreAdapter | None = None
 
 
 def get_vector_store() -> VectorStoreAdapter:

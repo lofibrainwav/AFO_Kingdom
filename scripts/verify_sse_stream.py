@@ -3,7 +3,6 @@ import json
 
 import aiohttp
 
-
 STREAM_URL = "http://localhost:8010/api/stream/mcp/thoughts"
 
 
@@ -37,7 +36,9 @@ async def verify_sse():
                         payload = json.loads(data_str)
                         print(f"📩 Event Received: {payload}")
                         # Close after first hello message or shortly after
-                        if payload.get("source") == "System" and "Neural Link" in payload.get("message", ""):
+                        if payload.get(
+                            "source"
+                        ) == "System" and "Neural Link" in payload.get("message", ""):
                             print("✅ Handshake confirmed. Stream is ALIVE.")
                             break
                     except Exception as e:

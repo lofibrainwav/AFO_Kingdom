@@ -31,7 +31,9 @@ class ReflexionContract:
     @property
     def fingerprint(self) -> str:
         """Unique ID for the contract state to ensure SSOT integrity"""
-        s = json.dumps(self.to_dict(), sort_keys=True, separators=(",", ":")).encode("utf-8")
+        s = json.dumps(self.to_dict(), sort_keys=True, separators=(",", ":")).encode(
+            "utf-8"
+        )
         return hashlib.sha256(s).hexdigest()[:16]
 
     def to_dict(self) -> dict[str, Any]:
@@ -69,10 +71,15 @@ def load_reflexion_contract(path: str | Path) -> ReflexionContract:
     # Strict SSOT validation
     _require(version >= 1, "contract_invalid: version must be >= 1")
     _require(1 <= max_iters <= 20, "contract_invalid: max_iters must be 1..20")
-    _require(1 <= time_budget_sec <= 300, "contract_invalid: time_budget_sec must be 1..300")
-    _require(0 <= risk_threshold <= 100, "contract_invalid: risk_threshold must be 0..100")
     _require(
-        isinstance(stop_conditions, list) and all(isinstance(x, dict) for x in stop_conditions),
+        1 <= time_budget_sec <= 300, "contract_invalid: time_budget_sec must be 1..300"
+    )
+    _require(
+        0 <= risk_threshold <= 100, "contract_invalid: risk_threshold must be 0..100"
+    )
+    _require(
+        isinstance(stop_conditions, list)
+        and all(isinstance(x, dict) for x in stop_conditions),
         "contract_invalid: stop_conditions must be list[dict]",
     )
     _require(isinstance(judge, dict), "contract_invalid: judge must be mapping")

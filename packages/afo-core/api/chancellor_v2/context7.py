@@ -68,7 +68,9 @@ def _resolve_library_id(query: str) -> str:
     TEMPORARY COMPLETE BYPASS: Return fallback result immediately.
     Skip MCP calls entirely for system stability.
     """
-    logger.info(f"Context7 Library Resolution BYPASS: {query} -> /langchain-ai/langchainjs")
+    logger.info(
+        f"Context7 Library Resolution BYPASS: {query} -> /langchain-ai/langchainjs"
+    )
     # Always return fallback for system stability
     return "/langchain-ai/langchainjs"
 
@@ -160,6 +162,8 @@ def inject_context(state: GraphState, step: str) -> GraphState:
         "length": len(context_text),
     }
 
-    logger.info(f"[V2] Context7 injected for {step} ({len(context_text)} chars from {library_id})")
+    logger.info(
+        f"[V2] Context7 injected for {step} ({len(context_text)} chars from {library_id})"
+    )
 
     return state

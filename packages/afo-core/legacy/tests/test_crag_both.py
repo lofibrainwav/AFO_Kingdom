@@ -193,8 +193,12 @@ def compare_results(class_result: dict[str, Any], langgraph_result: dict[str, An
     print(f"│ 초기화 시간         │ {class_init:>13.3f}초 │ {lg_init:>13.3f}초 │")
 
     # 평균 응답 시간
-    class_avg = sum(r["time"] for r in class_result["results"]) / len(class_result["results"])
-    lg_avg = sum(r["time"] for r in langgraph_result["results"]) / len(langgraph_result["results"])
+    class_avg = sum(r["time"] for r in class_result["results"]) / len(
+        class_result["results"]
+    )
+    lg_avg = sum(r["time"] for r in langgraph_result["results"]) / len(
+        langgraph_result["results"]
+    )
     print(f"│ 평균 응답 시간      │ {class_avg:>13.3f}초 │ {lg_avg:>13.3f}초 │")
 
     # 총 질문 수

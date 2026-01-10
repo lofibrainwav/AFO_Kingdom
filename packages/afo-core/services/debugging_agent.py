@@ -105,7 +105,9 @@ class HealingAgent:
         if "DTZ005" in self.state.known_errors:
             count = self.state.known_errors["DTZ005"]
             if count > 0:
-                logger.info("💡 [HealingAgent] Hypothesis: Timezone Naive Usage detected.")
+                logger.info(
+                    "💡 [HealingAgent] Hypothesis: Timezone Naive Usage detected."
+                )
                 sender = self._action_queue[0]
                 await sender.send({"type": "SELF_HEAL", "target": "DTZ005"})
                 # Reset entropy perception for this issue
@@ -125,12 +127,16 @@ class HealingAgent:
             # Simulation of patching (No file modification)
             await anyio.sleep(0.5)
             self.state.active_patches.append(target)
-            logger.info(f"✅ [HealingAgent] Patch SIMULATED: {target}. Pending Human Review.")
+            logger.info(
+                f"✅ [HealingAgent] Patch SIMULATED: {target}. Pending Human Review."
+            )
 
     # --- External Triggers (for Testing) ---
 
     async def trigger_anomaly(self, error_code: str):
         """Inject an anomaly to test Active Inference."""
         logger.warning(f"🔥 [HealingAgent] Anomaly injected: {error_code}")
-        self.state.known_errors[error_code] = self.state.known_errors.get(error_code, 0) + 1
+        self.state.known_errors[error_code] = (
+            self.state.known_errors.get(error_code, 0) + 1
+        )
         self.state.entropy = 0.9  # Spike entropy to trigger reasoning

@@ -24,7 +24,6 @@ import os
 from typing import TYPE_CHECKING, Any
 
 import httpx
-
 from AFO.afo_skills_registry import register_core_skills
 from AFO.scholars.libraries.obsidian_bridge import LocalObsidianBridge
 
@@ -100,7 +99,9 @@ class YeongdeokScholar:
 
         # Quick platform check: MLX only works on macOS with Apple Silicon
         if system != "darwin":
-            logger.info("ℹ️ [Yeongdeok] Non-macOS environment detected. Skipping MLX check.")
+            logger.info(
+                "ℹ️ [Yeongdeok] Non-macOS environment detected. Skipping MLX check."
+            )
             return False
 
         try:
@@ -119,14 +120,20 @@ class YeongdeokScholar:
                 )
                 return True  # Still available but warn
 
-            logger.info("✅ [Yeongdeok] MLX Acceleration Available (Apple Silicon Native)")
+            logger.info(
+                "✅ [Yeongdeok] MLX Acceleration Available (Apple Silicon Native)"
+            )
             return True
 
         except ImportError:
-            logger.info("ℹ️ [Yeongdeok] MLX Not Found (Running in Docker/Linux Standard Mode)")
+            logger.info(
+                "ℹ️ [Yeongdeok] MLX Not Found (Running in Docker/Linux Standard Mode)"
+            )
             return False
         except Exception as e:
-            logger.warning(f"⚠️ [Yeongdeok] MLX Check Failed: {e}. Disabling MLX Optimization.")
+            logger.warning(
+                f"⚠️ [Yeongdeok] MLX Check Failed: {e}. Disabling MLX Optimization."
+            )
             return False
 
     async def _call_ollama(
@@ -186,7 +193,6 @@ class YeongdeokScholar:
 
             # Map string type to Enum if needed, or assume caller provides compatible string/enum
             # Here we assume sage_type is valid for logging/logic
-
             # Enhanced prompt validation for Phase 2-2 fix
             validated_prompt = (
                 query.strip()
@@ -221,7 +227,9 @@ class YeongdeokScholar:
                     used_fallback = True
             else:
                 if custom_generator and not self._mlx_available:
-                    logger.debug(f"ℹ️ [{sage_type}] MLX not available. Using Standard Ollama Path.")
+                    logger.debug(
+                        f"ℹ️ [{sage_type}] MLX not available. Using Standard Ollama Path."
+                    )
 
                 # Standard Ollama Logic (Samahwi, Hwata)
                 response_content = await self._call_ollama(
@@ -229,13 +237,17 @@ class YeongdeokScholar:
                 )
 
             # 眞: Pydantic Validation (Output)
-            res = SageResponse(sage=sage_type, content=response_content, is_fallback=used_fallback)
+            res = SageResponse(
+                sage=sage_type, content=response_content, is_fallback=used_fallback
+            )
             return res.content
 
         except ImportError:
             # Fallback if Pydantic schemas missing
             logger.warning("Pydantic schemas not found. Using raw Fallback.")
-            return await self._call_ollama(query, model=model_id, temperature=temperature)
+            return await self._call_ollama(
+                query, model=model_id, temperature=temperature
+            )
         except Exception as e:
             logger.error(f"❌ [{sage_type}] System Error: {e}")
             return f"Error: {e}"
@@ -256,7 +268,10 @@ class YeongdeokScholar:
                 from AFO.llms.mlx_adapter import samahwi_sage
 
                 # Allow if path exists locally OR if it looks like a HF Hub ID (contains '/')
-                if os.path.exists(samahwi_sage.model_path) or "/" in samahwi_sage.model_path:
+                if (
+                    os.path.exists(samahwi_sage.model_path)
+                    or "/" in samahwi_sage.model_path
+                ):
                     # Logic is valid
                     async def _samahwi_mlx_logic(req: Any) -> str:
                         import asyncio
@@ -356,9 +371,7 @@ class YeongdeokScholar:
         """
         보안 스캔 (사마휘 담당)
         """
-        prompt = (
-            f"다음 내용에서 API 키, 비밀번호, 개인정보 등 민감 정보가 있는지 확인하시오:\n{content}"
-        )
+        prompt = f"다음 내용에서 API 키, 비밀번호, 개인정보 등 민감 정보가 있는지 확인하시오:\n{content}"
         return await self.consult_samahwi(prompt)
 
     async def use_tool(self, tool_name: str, **kwargs: Any) -> str:
@@ -415,10 +428,14 @@ class YeongdeokScholar:
                     tools = list_tools(server_name)
                     if not tools:
                         return f"⚠️ [Yeongdeok] MCP server '{server_name}' returned no tools."
-                    return f"✅ [Yeongdeok] MCP tools ({server_name}): " + ", ".join(sorted(tools))
+                    return f"✅ [Yeongdeok] MCP tools ({server_name}): " + ", ".join(
+                        sorted(tools)
+                    )
 
                 if action == "retrieve_context":
-                    query = kwargs.get("query") or kwargs.get("text") or "AFO Architecture"
+                    query = (
+                        kwargs.get("query") or kwargs.get("text") or "AFO Architecture"
+                    )
                     resp = call_tool(
                         server_name,
                         tool_name="retrieve_context",

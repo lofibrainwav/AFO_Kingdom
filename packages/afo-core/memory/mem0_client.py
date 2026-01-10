@@ -100,7 +100,9 @@ class AFO_MemoryClient:
                 enriched_metadata["run_id"] = run_id
 
             if self.initialized and self.memory:
-                result = self.memory.add(content, user_id=user_id, metadata=enriched_metadata)
+                result = self.memory.add(
+                    content, user_id=user_id, metadata=enriched_metadata
+                )
             else:
                 # Mock 모드: 인메모리 저장
                 if user_id not in self.mock_memories:
@@ -122,11 +124,21 @@ class AFO_MemoryClient:
             self.performance_stats["total_latency_ms"] += latency
             self.performance_stats["last_operation"] = "add"
 
-            return {"success": True, "result": result, "latency_ms": latency, "user_id": user_id}
+            return {
+                "success": True,
+                "result": result,
+                "latency_ms": latency,
+                "user_id": user_id,
+            }
 
         except Exception as e:
             latency = (time.time() - start_time) * 1000
-            return {"success": False, "error": str(e), "latency_ms": latency, "user_id": user_id}
+            return {
+                "success": False,
+                "error": str(e),
+                "latency_ms": latency,
+                "user_id": user_id,
+            }
 
     def search_memory(
         self, query: str, user_id: str, limit: int = 5, session_id: str | None = None
@@ -171,7 +183,9 @@ class AFO_MemoryClient:
             # 세션 필터링 (선택)
             if session_id:
                 results = [
-                    r for r in results if r.get("metadata", {}).get("session_id") == session_id
+                    r
+                    for r in results
+                    if r.get("metadata", {}).get("session_id") == session_id
                 ]
 
             # 제한 적용
@@ -194,9 +208,16 @@ class AFO_MemoryClient:
 
         except Exception as e:
             latency = (time.time() - start_time) * 1000
-            return {"success": False, "error": str(e), "latency_ms": latency, "user_id": user_id}
+            return {
+                "success": False,
+                "error": str(e),
+                "latency_ms": latency,
+                "user_id": user_id,
+            }
 
-    def get_all_memories(self, user_id: str, session_id: str | None = None) -> dict[str, Any]:
+    def get_all_memories(
+        self, user_id: str, session_id: str | None = None
+    ) -> dict[str, Any]:
         """
         모든 메모리 조회
 
@@ -219,7 +240,9 @@ class AFO_MemoryClient:
             # 세션 필터링
             if session_id:
                 memories = [
-                    m for m in memories if m.get("metadata", {}).get("session_id") == session_id
+                    m
+                    for m in memories
+                    if m.get("metadata", {}).get("session_id") == session_id
                 ]
 
             latency = (time.time() - start_time) * 1000
@@ -234,7 +257,12 @@ class AFO_MemoryClient:
 
         except Exception as e:
             latency = (time.time() - start_time) * 1000
-            return {"success": False, "error": str(e), "latency_ms": latency, "user_id": user_id}
+            return {
+                "success": False,
+                "error": str(e),
+                "latency_ms": latency,
+                "user_id": user_id,
+            }
 
     def get_performance_stats(self) -> dict[str, Any]:
         """

@@ -2,21 +2,20 @@ import os
 import pathlib
 import sys
 
-
 # Add package root to path
 sys.path.append(os.path.join(pathlib.Path.cwd(), "packages/afo-core"))
 
-from config.settings import settings
-
 from AFO.security.vault_manager import vault
-
+from config.settings import settings
 
 print("🛡️ Vault Integration Verification 🛡️")
 print("-" * 40)
 
 # 1. Test Fetching a known key (ENV fallback likely active)
 openai_key = vault.get_secret("OPENAI_API_KEY")
-print(f"🔑 OPENAI_API_KEY: {'[FOUND]' if openai_key else '[MISSING]'} (Length: {len(openai_key) if openai_key else 0})")
+print(
+    f"🔑 OPENAI_API_KEY: {'[FOUND]' if openai_key else '[MISSING]'} (Length: {len(openai_key) if openai_key else 0})"
+)
 
 # 2. Test Fetching a non-existent key
 dummy_key = vault.get_secret("NON_EXISTENT_KEY_12345")
@@ -40,7 +39,9 @@ try:
     if retrieved_val == test_val:
         print(f"✅ Vault Priority Check PASSED: Retrieved '{retrieved_val}'")
     else:
-        print(f"❌ Vault Priority Check FAILED: Expected '{test_val}', got '{retrieved_val}'")
+        print(
+            f"❌ Vault Priority Check FAILED: Expected '{test_val}', got '{retrieved_val}'"
+        )
 
     # Cleanup
     if vault.wallet:

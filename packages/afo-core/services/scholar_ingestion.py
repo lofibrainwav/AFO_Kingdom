@@ -5,6 +5,7 @@ import os
 # Try to import Qdrant/Neo4j via HybridRAG (or directly if not exposed)
 # We will use the hybrid_rag service functions where possible
 try:
+    from AFO.services.hybrid_rag import query_graph_context, query_qdrant
     from neo4j import GraphDatabase
 
     # We need UPSERT methods which might not be in hybrid_rag yet.
@@ -12,8 +13,6 @@ try:
     # and later refactor common logic if needed.
     from qdrant_client import QdrantClient
     from qdrant_client.http import models as models
-
-    from AFO.services.hybrid_rag import query_graph_context, query_qdrant
 
     _HAS_DEPS = True
 except ImportError:
@@ -44,7 +43,9 @@ class ScholarIngestionService:
         try:
             self.qdrant_client.recreate_collection(
                 collection_name=self.collection_name,
-                vectors_config=models.VectorParams(size=1536, distance=models.Distance.COSINE),
+                vectors_config=models.VectorParams(
+                    size=1536, distance=models.Distance.COSINE
+                ),
             )
             print(f"✅ Qdrant collection '{self.collection_name}' ready.")
         except Exception as e:
@@ -114,7 +115,9 @@ class ScholarIngestionService:
         found = [k for k in keywords if k in text]
         return list(set(found))
 
-    def _upsert_qdrant(self, filename: str, chunk_id: int, text: str, vector: list[float]):
+    def _upsert_qdrant(
+        self, filename: str, chunk_id: int, text: str, vector: list[float]
+    ):
         if not self.qdrant_client:
             return
         point_id = f"{filename}_{chunk_id}"
@@ -138,7 +141,9 @@ class ScholarIngestionService:
         except Exception as e:
             print(f"Error upserting Qdrant: {e}")
 
-    def _upsert_neo4j(self, filename: str, chunk_id: int, text: str, entities: list[str]):
+    def _upsert_neo4j(
+        self, filename: str, chunk_id: int, text: str, entities: list[str]
+    ):
         if not self.neo4j_driver:
             return
         try:

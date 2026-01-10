@@ -5,8 +5,19 @@ import re
 from dataclasses import dataclass
 from pathlib import Path
 
-
-BUILTIN_TYPES = {"str", "int", "float", "bool", "dict", "list", "tuple", "set", "object", "None", "Any"}
+BUILTIN_TYPES = {
+    "str",
+    "int",
+    "float",
+    "bool",
+    "dict",
+    "list",
+    "tuple",
+    "set",
+    "object",
+    "None",
+    "Any",
+}
 
 
 def extract_expected_type(msg: str) -> str | None:
@@ -59,7 +70,9 @@ def ensure_typing_imports(text: str, need_any: bool, need_cast: bool) -> str:
 
     for idx, line in enumerate(lines):
         if line.startswith("from typing import "):
-            imported = [x.strip() for x in line[len("from typing import ") :].split(",")]
+            imported = [
+                x.strip() for x in line[len("from typing import ") :].split(",")
+            ]
             s = set(imported)
             if need_any:
                 s.add("Any")
@@ -172,7 +185,11 @@ def main() -> int:
 
     # 핫스팟 1위 파일 먼저: trinity_toolflow_graph_v1.py 우선
     files = sorted(
-        by_file.items(), key=lambda kv: (0 if kv[0].endswith("trinity_toolflow_graph_v1.py") else 1, -len(kv[1]))
+        by_file.items(),
+        key=lambda kv: (
+            0 if kv[0].endswith("trinity_toolflow_graph_v1.py") else 1,
+            -len(kv[1]),
+        ),
     )
 
     for f, patches in files:
@@ -183,9 +200,13 @@ def main() -> int:
         total_changed += ch
         total_multi += mul
         total_cast += alc
-        print(f"{ch:>3} changed | {mul:>3} multiline_skip | {alc:>3} already_cast | {f}")
+        print(
+            f"{ch:>3} changed | {mul:>3} multiline_skip | {alc:>3} already_cast | {f}"
+        )
 
-    print(f"total_changed={total_changed} multiline_skipped={total_multi} already_cast_skipped={total_cast}")
+    print(
+        f"total_changed={total_changed} multiline_skipped={total_multi} already_cast_skipped={total_cast}"
+    )
     return 0
 
 

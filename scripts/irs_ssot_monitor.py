@@ -19,21 +19,22 @@ import logging
 import re
 import sys
 import uuid
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple
-from urllib.parse import urlparse
+from typing import Any
 
 import requests
 import yaml
 from bs4 import BeautifulSoup
 
-
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    handlers=[logging.FileHandler("logs/irs_monitor.log"), logging.StreamHandler(sys.stdout)],
+    handlers=[
+        logging.FileHandler("logs/irs_monitor.log"),
+        logging.StreamHandler(sys.stdout),
+    ],
 )
 logger = logging.getLogger(__name__)
 
@@ -46,7 +47,11 @@ class MetacognitionEngine:
 
     def validate_content(self, content: str, source_type: str) -> dict[str, Any]:
         """컨텐츠 메타인지 검증"""
-        insights = {"hallucination_risks": [], "validation_score": 1.0, "confidence_level": "high"}
+        insights = {
+            "hallucination_risks": [],
+            "validation_score": 1.0,
+            "confidence_level": "high",
+        }
 
         # IRA 참조 거부 규칙
         if "reject_ira_references" in [rule.split(":")[0] for rule in self.rules]:
@@ -57,11 +62,13 @@ class MetacognitionEngine:
             ]
             for pattern in ira_patterns:
                 if re.search(pattern, content, re.IGNORECASE):
-                    insights["hallucination_risks"].append({
-                        "type": "ira_reference",
-                        "pattern": pattern,
-                        "severity": "critical",
-                    })
+                    insights["hallucination_risks"].append(
+                        {
+                            "type": "ira_reference",
+                            "pattern": pattern,
+                            "severity": "critical",
+                        }
+                    )
                     insights["validation_score"] *= 0.1
                     insights["confidence_level"] = "low"
 
@@ -235,7 +242,9 @@ class IRSMonitorAgent:
             "impact_level": impact_level,
             "conflict_detected": False,  # 멀티 소스 검증에서 설정
             "validation_sources": [source_id],  # 관련 소스 목록
-            "trinity_score": self._calculate_trinity_score(impact_level, metacognition_insights),
+            "trinity_score": self._calculate_trinity_score(
+                impact_level, metacognition_insights
+            ),
             "metacognition_insights": metacognition_insights,
         }
 
@@ -261,13 +270,15 @@ class IRSMonitorAgent:
         if insights.get("hallucination_risks"):
             base_scores["truth"] *= 0.8
 
-        total = sum([
-            base_scores["truth"] * 0.35,
-            base_scores["goodness"] * 0.35,
-            base_scores["beauty"] * 0.20,
-            base_scores["serenity"] * 0.08,
-            base_scores["eternity"] * 0.02,
-        ])
+        total = sum(
+            [
+                base_scores["truth"] * 0.35,
+                base_scores["goodness"] * 0.35,
+                base_scores["beauty"] * 0.20,
+                base_scores["serenity"] * 0.08,
+                base_scores["eternity"] * 0.02,
+            ]
+        )
 
         base_scores["total"] = total
         return base_scores
@@ -369,7 +380,9 @@ class IRSMonitorAgent:
                         f"(Impact: {bundle['impact_level']})"
                     )
 
-        logger.info(f"Monitoring cycle completed. Changes detected: {len(detected_changes)}")
+        logger.info(
+            f"Monitoring cycle completed. Changes detected: {len(detected_changes)}"
+        )
         return detected_changes
 
 
@@ -379,7 +392,9 @@ async def main():
 
     parser = argparse.ArgumentParser(description="IRS SSOT Monitor Agent")
     parser.add_argument(
-        "--registry", default="ssot_sources/irs_registry.yaml", help="Path to IRS registry file"
+        "--registry",
+        default="ssot_sources/irs_registry.yaml",
+        help="Path to IRS registry file",
     )
     parser.add_argument(
         "--once", action="store_true", help="Run once instead of continuous monitoring"

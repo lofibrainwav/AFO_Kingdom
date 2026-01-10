@@ -9,10 +9,9 @@ from collections.abc import Mapping
 from datetime import datetime
 from typing import Any, cast
 
+from AFO.utils.redis_connection import get_redis_client
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-
-from AFO.utils.redis_connection import get_redis_client
 
 # 설정 및 유틸리티
 API_PROVIDERS = ["openai", "anthropic", "google", "ollama"]
@@ -62,7 +61,9 @@ async def get_wallet_session(session_id: str) -> dict[str, Any]:
             }
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to get wallet session: {e}") from e
+        raise HTTPException(
+            status_code=500, detail=f"Failed to get wallet session: {e}"
+        ) from e
 
 
 @session_router.post("/extract")
@@ -91,7 +92,9 @@ async def extract_wallet_session(request: WalletSessionRequest) -> dict[str, Any
         try:
             redis_client = get_redis_client()
             # MyPy compatible cast for Redis hset mapping
-            hset_mapping = cast("dict[str | bytes, str | bytes | float | int]", session_data)
+            hset_mapping = cast(
+                "dict[str | bytes, str | bytes | float | int]", session_data
+            )
             redis_client.hset(session_key, mapping=hset_mapping)
             redis_client.expire(session_key, 86400)
 
@@ -109,4 +112,6 @@ async def extract_wallet_session(request: WalletSessionRequest) -> dict[str, Any
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Wallet session extraction failed: {e}") from e
+        raise HTTPException(
+            status_code=500, detail=f"Wallet session extraction failed: {e}"
+        ) from e

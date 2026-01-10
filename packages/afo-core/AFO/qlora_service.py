@@ -47,7 +47,12 @@ class QLoRAService:
         lora_config = LoraConfig(
             r=r,
             lora_alpha=alpha,
-            target_modules=["q_proj", "v_proj", "k_proj", "o_proj"],  # LLaMA attention layers
+            target_modules=[
+                "q_proj",
+                "v_proj",
+                "k_proj",
+                "o_proj",
+            ],  # LLaMA attention layers
             lora_dropout=dropout,
             bias="none",
             task_type="CAUSAL_LM",
@@ -58,8 +63,12 @@ class QLoRAService:
 
         # 메모리 사용량 확인
         if torch.cuda.is_available():
-            print(f"GPU memory allocated: {torch.cuda.memory_allocated() / 1024**3:.2f} GB")
-            print(f"GPU memory reserved: {torch.cuda.memory_reserved() / 1024**3:.2f} GB")
+            print(
+                f"GPU memory allocated: {torch.cuda.memory_allocated() / 1024**3:.2f} GB"
+            )
+            print(
+                f"GPU memory reserved: {torch.cuda.memory_reserved() / 1024**3:.2f} GB"
+            )
 
         print("QLoRA applied successfully!")
         print(f"Trainable parameters: {self.get_trainable_params()}")
@@ -70,7 +79,9 @@ class QLoRAService:
             return "Model not initialized"
 
         total_params = sum(p.numel() for p in self.qlora_model.parameters())
-        trainable_params = sum(p.numel() for p in self.qlora_model.parameters() if p.requires_grad)
+        trainable_params = sum(
+            p.numel() for p in self.qlora_model.parameters() if p.requires_grad
+        )
         percentage = 100 * trainable_params / total_params
 
         return f"{trainable_params:,} ({percentage:.2f}%)"
@@ -118,7 +129,9 @@ class QLoRAService:
                 do_sample=True,
             )
 
-        generated_text = self.qlora_model.tokenizer.decode(outputs[0], skip_special_tokens=True)
+        generated_text = self.qlora_model.tokenizer.decode(
+            outputs[0], skip_special_tokens=True
+        )
         return generated_text
 
 

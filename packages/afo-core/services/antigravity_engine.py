@@ -87,7 +87,9 @@ class AntigravityEngine:
         dynamic_thresholds = await self._calculate_dynamic_thresholds(context)
 
         # 3. 컨텍스트 기반 조정
-        adjusted_thresholds = await self._adjust_for_context(dynamic_thresholds, context)
+        adjusted_thresholds = await self._adjust_for_context(
+            dynamic_thresholds, context
+        )
 
         # 4. 최종 의사결정
         decision = await self._make_intelligent_decision(
@@ -122,12 +124,17 @@ class AntigravityEngine:
 
         return result
 
-    async def _predict_future_quality(self, current_score: float, context: dict[str, Any]) -> float:
+    async def _predict_future_quality(
+        self, current_score: float, context: dict[str, Any]
+    ) -> float:
         """
         ML 기반 미래 품질 예측
         간단한 회귀 모델로 향후 Trinity Score 예측
         """
-        if len(self.quality_history) < self.dynamic_thresholds["min_samples_for_prediction"]:
+        if (
+            len(self.quality_history)
+            < self.dynamic_thresholds["min_samples_for_prediction"]
+        ):
             # 충분한 데이터가 없으면 현재 점수 반환
             return current_score
 
@@ -144,7 +151,9 @@ class AntigravityEngine:
                 return current_score
 
             # 간단한 추세 분석
-            scores = [h["trinity_score"] for h in self.quality_history[-10:]]  # 최근 10개
+            scores = [
+                h["trinity_score"] for h in self.quality_history[-10:]
+            ]  # 최근 10개
             if len(scores) >= 2:
                 trend_result = np.polyfit(range(len(scores)), scores, 1)
                 trend = float(trend_result[0])  # 선형 추세, 명시적 float 변환
@@ -161,7 +170,9 @@ class AntigravityEngine:
 
         return current_score
 
-    async def _calculate_dynamic_thresholds(self, context: dict[str, Any]) -> dict[str, float]:
+    async def _calculate_dynamic_thresholds(
+        self, context: dict[str, Any]
+    ) -> dict[str, float]:
         """
         동적 임계값 계산
         프로젝트 맥락과 히스토리를 기반으로 임계값 조정
@@ -199,11 +210,14 @@ class AntigravityEngine:
         adjustment_factor = size_multiplier * experience_multiplier * time_multiplier
 
         return {
-            "auto_run_min_score": base_thresholds["auto_run_min_score"] * adjustment_factor,
-            "auto_run_max_risk": base_thresholds["auto_run_max_risk"] / adjustment_factor,
+            "auto_run_min_score": base_thresholds["auto_run_min_score"]
+            * adjustment_factor,
+            "auto_run_max_risk": base_thresholds["auto_run_max_risk"]
+            / adjustment_factor,
             "manual_review_min_score": base_thresholds["manual_review_min_score"]
             * adjustment_factor,
-            "block_threshold_score": base_thresholds["block_threshold_score"] * adjustment_factor,
+            "block_threshold_score": base_thresholds["block_threshold_score"]
+            * adjustment_factor,
         }
 
     async def _adjust_for_context(
@@ -271,7 +285,9 @@ class AntigravityEngine:
         # 기본값
         return "ASK_COMMANDER"
 
-    async def _calculate_confidence(self, decision: str, context: dict[str, Any]) -> float:
+    async def _calculate_confidence(
+        self, decision: str, context: dict[str, Any]
+    ) -> float:
         """
         의사결정 신뢰도 계산
         """
@@ -286,14 +302,20 @@ class AntigravityEngine:
 
         # 맥락 명확성에 따른 조정
         context_completeness = (
-            sum(1 for key in ["project_size", "team_experience", "change_scope"] if key in context)
+            sum(
+                1
+                for key in ["project_size", "team_experience", "change_scope"]
+                if key in context
+            )
             / 3.0
         )
         base_confidence += (context_completeness - 0.5) * 0.2
 
         return max(0.1, min(1.0, base_confidence))
 
-    async def _generate_recommendations(self, decision: str, context: dict[str, Any]) -> list[str]:
+    async def _generate_recommendations(
+        self, decision: str, context: dict[str, Any]
+    ) -> list[str]:
         """
         개선 권장사항 생성
         [Phase B] Protocol Officer를 통한 포맷팅 강제
@@ -360,7 +382,9 @@ class AntigravityEngine:
         # 맥락 기반 추가 권장사항
         if context.get("test_coverage", 0) < 70:
             if report_lang == "ko":
-                recommendations.append("테스트 커버리지를 70% 이상으로 높이는 것을 권장합니다")
+                recommendations.append(
+                    "테스트 커버리지를 70% 이상으로 높이는 것을 권장합니다"
+                )
             else:
                 recommendations.append(
                     "It is recommended to increase test coverage to 70% or higher"
@@ -465,7 +489,9 @@ class AntigravityEngine:
             recent_decisions = self.quality_history[-50:]  # 최근 50개
 
             # AUTO_RUN 성공률 계산
-            auto_run_decisions = [d for d in recent_decisions if d["decision"] == "AUTO_RUN"]
+            auto_run_decisions = [
+                d for d in recent_decisions if d["decision"] == "AUTO_RUN"
+            ]
             successful_auto_runs = len(
                 [d for d in auto_run_decisions if d.get("outcome") == "success"]
             )
@@ -514,7 +540,9 @@ class AntigravityEngine:
             report += "## Context\n"
             report += f"- 상황: {context.get('situation', 'N/A')}\n"
             report += f"- 위치: {context.get('location', 'N/A')}\n"
-            report += f"- 시점: {context.get('timestamp', datetime.now().isoformat())}\n"
+            report += (
+                f"- 시점: {context.get('timestamp', datetime.now().isoformat())}\n"
+            )
             report += f"- 영향: {context.get('impact', 'N/A')}\n\n"
 
             report += "## Analysis\n"
@@ -540,7 +568,9 @@ class AntigravityEngine:
             report += "## Context\n"
             report += f"- Situation: {context.get('situation', 'N/A')}\n"
             report += f"- Location: {context.get('location', 'N/A')}\n"
-            report += f"- Timestamp: {context.get('timestamp', datetime.now().isoformat())}\n"
+            report += (
+                f"- Timestamp: {context.get('timestamp', datetime.now().isoformat())}\n"
+            )
             report += f"- Impact: {context.get('impact', 'N/A')}\n\n"
 
             report += "## Analysis\n"
@@ -592,7 +622,9 @@ class AntigravityEngine:
         if isinstance(evidence, dict):
             # 구조화된 키 확인
             commit_keys = ["commit", "git_commit", "commit_hash", "commit_id"]
-            has_commit = any(key in evidence and evidence[key] for key in commit_keys) or any(
+            has_commit = any(
+                key in evidence and evidence[key] for key in commit_keys
+            ) or any(
                 "commit" in str(k).lower() or "git" in str(k).lower() for k in evidence
             )
 
@@ -600,7 +632,9 @@ class AntigravityEngine:
         has_files = False
         if isinstance(evidence, dict):
             file_keys = ["file", "files", "file_path", "file_paths", "path", "paths"]
-            has_files = any(key in evidence and evidence[key] for key in file_keys) or any(
+            has_files = any(
+                key in evidence and evidence[key] for key in file_keys
+            ) or any(
                 "file" in str(k).lower() or "path" in str(k).lower() for k in evidence
             )
 
@@ -608,7 +642,9 @@ class AntigravityEngine:
         has_command = False
         if isinstance(evidence, dict):
             command_keys = ["command", "commands", "cmd", "exec", "result", "output"]
-            has_command = any(key in evidence and evidence[key] for key in command_keys) or any(
+            has_command = any(
+                key in evidence and evidence[key] for key in command_keys
+            ) or any(
                 "command" in str(k).lower()
                 or "cmd" in str(k).lower()
                 or "exec" in str(k).lower()
@@ -631,10 +667,14 @@ class AntigravityEngine:
             from pathlib import Path
 
             # 임시 리포트 생성 (검증용)
-            temp_report = self.generate_analysis_report(context, analysis, evidence, next_steps)
+            temp_report = self.generate_analysis_report(
+                context, analysis, evidence, next_steps
+            )
 
             # ssot_report_gate.py로 검증
-            script_path = Path(__file__).parent.parent.parent / "scripts" / "ssot_report_gate.py"
+            script_path = (
+                Path(__file__).parent.parent.parent / "scripts" / "ssot_report_gate.py"
+            )
             if script_path.exists():
                 result = subprocess.run(
                     [sys.executable, str(script_path), temp_report],
@@ -649,7 +689,9 @@ class AntigravityEngine:
                     )
                     return None  # FAIL이면 완료 리포트 생성 금지
         except Exception as e:
-            logger.warning(f"[SSOT] Report Gate 검증 실패: {e}. 분석 리포트로 다운그레이드.")
+            logger.warning(
+                f"[SSOT] Report Gate 검증 실패: {e}. 분석 리포트로 다운그레이드."
+            )
             return None
 
         # 완료 리포트 생성 (SSOT 증거 + Gate 통과)

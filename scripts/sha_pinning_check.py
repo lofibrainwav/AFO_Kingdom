@@ -9,7 +9,6 @@ import pathlib
 import re
 import sys
 
-
 WORKFLOW_DIR = ".github/workflows"
 SHA_PATTERN = re.compile(r"uses:\s+[^@]+@[a-f0-9]{40}")
 
@@ -39,7 +38,9 @@ def scan_workflows():
 
                 # Check for SHA
                 if not SHA_PATTERN.search(line):
-                    print(f"❌ [FAIL] {filename}:{i + 1} - Action not pinned to SHA: {line.strip()}")
+                    print(
+                        f"❌ [FAIL] {filename}:{i + 1} - Action not pinned to SHA: {line.strip()}"
+                    )
                     # In a real enforcement, we would set failed=True
                     # failed = True
                     # For now, just warn as existing workflows might use tags

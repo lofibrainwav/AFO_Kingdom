@@ -9,7 +9,6 @@ import sys
 from pathlib import Path
 from typing import Any
 
-
 # 프로젝트 루트를 Python 경로에 추가
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root / "packages" / "trinity-os"))
@@ -116,7 +115,9 @@ def register_to_context7(file_path: Path) -> bool:
     # Context7 KNOWLEDGE_BASE에 추가
     # 실제로는 MCP Memory 도구를 사용하거나 API를 호출해야 하지만,
     # 현재는 Context7MCP의 KNOWLEDGE_BASE를 직접 업데이트
-    doc_key = f"OBSIDIAN_DOC_{file_path.stem.upper().replace('-', '_').replace(' ', '_')}"
+    doc_key = (
+        f"OBSIDIAN_DOC_{file_path.stem.upper().replace('-', '_').replace(' ', '_')}"
+    )
 
     # Context7MCP.KNOWLEDGE_BASE에 동적으로 추가
     # (실제로는 영구 저장소에 저장해야 함)

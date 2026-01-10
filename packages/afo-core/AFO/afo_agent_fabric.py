@@ -28,7 +28,9 @@ class ChancellorRequest(BaseModel):
 
 
 def _sse(event: str, data_obj: Any) -> bytes:
-    return (f"event: {event}\ndata: {json.dumps(data_obj, ensure_ascii=False)}\n\n").encode()
+    return (
+        f"event: {event}\ndata: {json.dumps(data_obj, ensure_ascii=False)}\n\n"
+    ).encode()
 
 
 async def _stream_echo(text: str) -> AsyncIterator[bytes]:
@@ -318,4 +320,6 @@ async def chancellor_stream_v3(req: ChancellorRequest):
             if METRICS_AVAILABLE:
                 sse_open_connections.dec()
 
-    return StreamingResponse(_gen_wrapper(), media_type="text/event-stream", headers=yield_headers)
+    return StreamingResponse(
+        _gen_wrapper(), media_type="text/event-stream", headers=yield_headers
+    )

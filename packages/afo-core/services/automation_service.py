@@ -51,7 +51,10 @@ def get_automation_health() -> dict[str, Any]:
 
             # 프로젝트 루트 계산
             project_root = get_project_root(
-                Path(__file__).parent.parent.parent / "api" / "routes" / "comprehensive_health.py"
+                Path(__file__).parent.parent.parent
+                / "api"
+                / "routes"
+                / "comprehensive_health.py"
             )
 
             # AutomationTools 실행

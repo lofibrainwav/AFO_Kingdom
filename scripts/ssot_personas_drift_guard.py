@@ -4,6 +4,7 @@ from pathlib import Path
 
 PILLARS = ["truth", "goodness", "beauty", "serenity", "eternity"]
 
+
 def find_personas_yaml(repo: Path) -> Path:
     candidates = list(repo.rglob("TRINITY_OS_PERSONAS.yaml"))
     if candidates:
@@ -20,6 +21,7 @@ def find_personas_yaml(repo: Path) -> Path:
         return hits[0]
     raise FileNotFoundError("SSOT personas yaml not found")
 
+
 def extract_yaml_weights(text: str) -> dict:
     out = {}
     for k in PILLARS:
@@ -28,6 +30,7 @@ def extract_yaml_weights(text: str) -> dict:
             raise ValueError(f"missing weight for pillar: {k}")
         out[k] = float(m.group(1))
     return out
+
 
 def find_code_weight_sources(repo: Path) -> list[Path]:
     patterns = ["trinity", "ssot", "weights", "Friction Calculator v2.0"]
@@ -38,9 +41,12 @@ def find_code_weight_sources(repo: Path) -> list[Path]:
         except Exception:
             continue
         if any(s.lower() in t.lower() for s in patterns):
-            if any(k in t for k in ("beauty", "serenity", "eternity", "TRINITY", "WEIGHT")):
+            if any(
+                k in t for k in ("beauty", "serenity", "eternity", "TRINITY", "WEIGHT")
+            ):
                 files.append(p)
     return files[:30]
+
 
 def extract_code_weights(text: str) -> dict:
     out = {}
@@ -49,6 +55,7 @@ def extract_code_weights(text: str) -> dict:
         if m:
             out[k] = float(m.group(1))
     return out
+
 
 def main() -> int:
     repo = Path.cwd()
@@ -93,6 +100,7 @@ def main() -> int:
 
     print("DRIFT: NO")
     return 0
+
 
 if __name__ == "__main__":
     sys.exit(main())

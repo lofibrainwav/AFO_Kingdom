@@ -14,26 +14,27 @@ python scripts/lance_hybrid_qwen3.py ingest /path/to/receipt.jpg
 python scripts/lance_hybrid_qwen3.py search "비싼 커피" 50000 스타벅스
 """
 
+import base64
+import json
 import os
 import re
-import json
-import base64
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Optional, List, Dict, Any
+from typing import Any, Dict, List, Optional
 
-import requests
 import lancedb
+import requests
 from lancedb.pydantic import LanceModel, Vector
 from lancedb.rerankers import RRFReranker
-
 
 OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://127.0.0.1:11434")
 VISION_MODEL = os.getenv("VISION_MODEL", "qwen3-vl")
 EMBED_MODEL = os.getenv("EMBED_MODEL", "embeddinggemma")
 
-LANCEDB_URI = os.getenv("LANCEDB_URI", str(Path.home() / "AFO_Kingdom" / "lancedb_vault"))
+LANCEDB_URI = os.getenv(
+    "LANCEDB_URI", str(Path.home() / "AFO_Kingdom" / "lancedb_vault")
+)
 LANCEDB_TABLE = os.getenv("LANCEDB_TABLE", "receipts_v1")
 
 
@@ -86,6 +87,7 @@ def _safe_parse_amount_krw(text: str) -> Optional[float]:
 
 def make_receipt_model(dim: int):
     """LanceDB 스키마 생성 (LanceModel + Vector 패턴)"""
+
     class Receipt(LanceModel):
         id: str
         text: str
@@ -101,6 +103,7 @@ def make_receipt_model(dim: int):
 @dataclass
 class LanceHybridWarden:
     """LanceDB 하이브리드 검색 관리자"""
+
     db_uri: str = LANCEDB_URI
     table_name: str = LANCEDB_TABLE
 
@@ -120,7 +123,9 @@ class LanceHybridWarden:
             return self.table
 
         Receipt = make_receipt_model(dim)
-        self.table = self.db.create_table(self.table_name, schema=Receipt, mode="create")
+        self.table = self.db.create_table(
+            self.table_name, schema=Receipt, mode="create"
+        )
 
         # FTS 인덱스 (하이브리드용)
         try:
@@ -174,7 +179,9 @@ class LanceHybridWarden:
     ) -> List[Dict[str, Any]]:
         """하이브리드 검색 (LanceDB RRFReranker 적용)"""
         if self.table is None:
-            raise RuntimeError("테이블이 아직 없습니다. 먼저 ingest_receipt()로 1건 이상 넣어주세요.")
+            raise RuntimeError(
+                "테이블이 아직 없습니다. 먼저 ingest_receipt()로 1건 이상 넣어주세요."
+            )
 
         # 1. 쿼리 벡터화
         qvec = ollama_embed(query_text)
@@ -192,7 +199,7 @@ class LanceHybridWarden:
         # 3. Python 후처리 필터링
         out = []
         for r in rows:
-            t = (r.get("text") or "")
+            t = r.get("text") or ""
             amt = r.get("total_amount")
 
             if min_amount is not None and (amt is None or amt < min_amount):
@@ -201,14 +208,16 @@ class LanceHybridWarden:
                 if any(kw in t for kw in exclude_keywords):
                     continue
 
-            out.append({
-                "id": r.get("id"),
-                "preview": (t[:120] + "...") if len(t) > 120 else t,
-                "amount": amt,
-                "image_path": r.get("image_path"),
-                "score": r.get("_score") or r.get("_distance"),
-                "created_at": r.get("created_at"),
-            })
+            out.append(
+                {
+                    "id": r.get("id"),
+                    "preview": (t[:120] + "...") if len(t) > 120 else t,
+                    "amount": amt,
+                    "image_path": r.get("image_path"),
+                    "score": r.get("_score") or r.get("_distance"),
+                    "created_at": r.get("created_at"),
+                }
+            )
             if len(out) >= k:
                 break
 
@@ -225,7 +234,9 @@ if __name__ == "__main__":
 
     if cmd == "ingest":
         if len(sys.argv) < 3:
-            print("Usage: python scripts/lance_hybrid_qwen3.py ingest /path/to/receipt.jpg")
+            print(
+                "Usage: python scripts/lance_hybrid_qwen3.py ingest /path/to/receipt.jpg"
+            )
             sys.exit(1)
         path = sys.argv[2]
         print("🔍 영수증 분석 중...")
@@ -235,18 +246,19 @@ if __name__ == "__main__":
 
     elif cmd == "search":
         if len(sys.argv) < 3:
-            print('Usage: python scripts/lance_hybrid_qwen3.py search "비싼 커피" 50000 스타벅스')
+            print(
+                'Usage: python scripts/lance_hybrid_qwen3.py search "비싼 커피" 50000 스타벅스'
+            )
             sys.exit(1)
         query = sys.argv[2]
-        min_amt = float(sys.argv[3]) if len(sys.argv) > 3 and sys.argv[3] != "None" else None
+        min_amt = (
+            float(sys.argv[3]) if len(sys.argv) > 3 and sys.argv[3] != "None" else None
+        )
         excl = sys.argv[4:] if len(sys.argv) > 4 else None
 
         print(f"🔍 '{query}' 검색 중...")
         results = warden.hybrid_search(
-            query_text=query,
-            k=5,
-            min_amount=min_amt,
-            exclude_keywords=excl
+            query_text=query, k=5, min_amount=min_amt, exclude_keywords=excl
         )
         print("✅ 검색 결과:")
         print(json.dumps(results, ensure_ascii=False, indent=2))
@@ -256,7 +268,9 @@ if __name__ == "__main__":
         print("")
         print("사용법:")
         print("  python scripts/lance_hybrid_qwen3.py ingest /path/to/receipt.jpg")
-        print('  python scripts/lance_hybrid_qwen3.py search "비싼 커피" 50000 스타벅스')
+        print(
+            '  python scripts/lance_hybrid_qwen3.py search "비싼 커피" 50000 스타벅스'
+        )
         print("")
         print("환경변수:")
         print(f"  OLLAMA_HOST={OLLAMA_HOST}")

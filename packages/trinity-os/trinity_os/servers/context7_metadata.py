@@ -109,7 +109,9 @@ def load_context7_metadata(repo_root: Path) -> dict[str, Context7Meta]:
         keywords_raw: Any = m.get("keywords", [])
         keywords: tuple[str, ...]
         if isinstance(keywords_raw, list):
-            keywords: Any = tuple(str(t).strip() for t in keywords_raw if str(t).strip())
+            keywords: Any = tuple(
+                str(t).strip() for t in keywords_raw if str(t).strip()
+            )
         else:
             keywords = tuple(x for x in (str(keywords_raw).strip(),) if x)
 

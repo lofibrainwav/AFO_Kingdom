@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
+from __future__ import annotations
+
 from typing import Any, Mapping, cast
+
 """
 TRINITY-OS Autorun Gate Check (Light/Deep)
 
@@ -14,8 +17,6 @@ TRINITY-OS Autorun Gate Check (Light/Deep)
   기존 전용 스크립트의 **원문 출력/Exit Code**만 수집해 제공합니다.
 """
 
-from __future__ import annotations
-
 import argparse
 import json
 import subprocess
@@ -29,7 +30,9 @@ def find_afo_root(trinity_root: Path) -> tuple[Path, str]:
     AFO 루트 하위에 통합되어 실행되는 경우를 모두 지원한다.
     """
     # Standalone TRINITY-OS 내부에 AFO 코어가 같이 있는 경우
-    if (trinity_root / "afo_soul_engine").exists() and (trinity_root / ".claude").exists():
+    if (trinity_root / "afo_soul_engine").exists() and (
+        trinity_root / ".claude"
+    ).exists():
         return trinity_root, "standalone"
 
     # 통합 리포(AFO 루트/ TRINITY-OS 하위)인 경우
@@ -50,7 +53,7 @@ def run_command(
     cmd: list[str],
     cwd: Path,
     timeout: int,
-) -> dict:
+) -> dict[str, Any]:
     """서브 스크립트 실행 유틸 (stdout/stderr/exit code 수집)."""
     try:
         result = subprocess.run(
@@ -59,7 +62,7 @@ def run_command(
             capture_output=True,
             text=True,
             timeout=timeout,
-            check: Any = False,
+            check=False,
         )
         return {
             "status": "success" if result.returncode == 0 else "failed",
@@ -86,7 +89,7 @@ def run_command(
         }
 
 
-def try_parse_json(text: str) -> dict | None:
+def try_parse_json(text: str) -> dict[str, Any] | None:
     try:
         return json.loads(text)
     except json.JSONDecodeError:
@@ -122,7 +125,7 @@ def main() -> None:
     afo_root, mode = find_afo_root(trinity_root)
     python_exe = sys.executable or "python3"
 
-    report: dict = {
+    report: dict[str, Any] = {
         "timestamp": datetime.now().isoformat(),
         "mode": mode,
         "deep": args.deep,

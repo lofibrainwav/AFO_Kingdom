@@ -74,7 +74,9 @@ class LangGraphCheckpointer:
 
         except ImportError as e:
             logger.warning(f"⚠️ LangGraph checkpoint dependencies not available: {e}")
-            logger.info("Install with: uv add langgraph-checkpoint-postgres psycopg[binary]")
+            logger.info(
+                "Install with: uv add langgraph-checkpoint-postgres psycopg[binary]"
+            )
             return False
         except Exception as e:
             logger.error(f"❌ Failed to initialize AsyncPostgresSaver: {e}")
@@ -137,7 +139,9 @@ async def get_async_checkpointer() -> AsyncGenerator[Any, None]:
         pass
 
 
-async def create_graph_with_persistence(graph_builder: Any, thread_id: str | None = None) -> Any:
+async def create_graph_with_persistence(
+    graph_builder: Any, thread_id: str | None = None
+) -> Any:
     """Create a compiled LangGraph with PostgreSQL persistence.
 
     Args:

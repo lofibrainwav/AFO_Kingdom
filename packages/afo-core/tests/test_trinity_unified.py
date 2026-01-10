@@ -1,5 +1,4 @@
 import pytest
-
 from AFO.domain.metrics.trinity import TrinityMetrics, calculate_trinity
 from AFO.domain.metrics.trinity_ssot import (
     WEIGHT_BEAUTY,
@@ -12,7 +11,13 @@ from AFO.domain.metrics.trinity_ssot import (
 
 def test_trinity_weight_sum():
     """Ensure the sum of all weights is exactly 1.0"""
-    total = WEIGHT_TRUTH + WEIGHT_GOODNESS + WEIGHT_BEAUTY + WEIGHT_SERENITY + WEIGHT_ETERNITY
+    total = (
+        WEIGHT_TRUTH
+        + WEIGHT_GOODNESS
+        + WEIGHT_BEAUTY
+        + WEIGHT_SERENITY
+        + WEIGHT_ETERNITY
+    )
     assert abs(total - 1.0) < 1e-9
 
 

@@ -436,7 +436,9 @@ class SettingsManager:
                 "debug": os.getenv("AFO_DEBUG", "true").lower() == "true",
                 "host": os.getenv("AFO_HOST", "127.0.0.1"),
                 "port": int(os.getenv("AFO_PORT", "8010")),
-                "cors_origins": os.getenv("AFO_CORS_ORIGINS", "http://localhost:3000").split(","),
+                "cors_origins": os.getenv(
+                    "AFO_CORS_ORIGINS", "http://localhost:3000"
+                ).split(","),
                 "database_url": os.getenv("DATABASE_URL", "sqlite:///./test.db"),
                 "redis_url": os.getenv("REDIS_URL", "redis://localhost:6379"),
                 "ollama_url": os.getenv("OLLAMA_URL", "http://localhost:11434"),
@@ -547,7 +549,9 @@ def _safe_import_router(module_path: str, attr: str = "router") -> Any | None:
         module = __import__(module_path, fromlist=[attr])
         return getattr(module, attr, None)
     except Exception as e:
-        logging.getLogger(__name__).warning(f"Safe import failed for {module_path}: {e}")
+        logging.getLogger(__name__).warning(
+            f"Safe import failed for {module_path}: {e}"
+        )
         return None
 
 

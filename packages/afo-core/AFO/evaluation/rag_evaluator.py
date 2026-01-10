@@ -263,7 +263,12 @@ class RAGEvaluator:
     def _persist_evaluation(self, result: RAGEvalResult) -> None:
         """Persist RAG evaluation for audit."""
         try:
-            eval_dir = Path(__file__).parent.parent.parent.parent / "docs" / "ssot" / "evaluations"
+            eval_dir = (
+                Path(__file__).parent.parent.parent.parent
+                / "docs"
+                / "ssot"
+                / "evaluations"
+            )
             eval_dir.mkdir(parents=True, exist_ok=True)
 
             import json

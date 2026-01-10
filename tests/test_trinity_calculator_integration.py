@@ -13,7 +13,11 @@ import numpy as np
 import pytest
 
 # AFO 왕국 모듈 임포트
-from AFO..services.trinity_calculator import import SSOT_WEIGHTS, TrinityCalculator, trinity_calculator
+from AFO.services.trinity_calculator import (
+    SSOT_WEIGHTS,
+    TrinityCalculator,
+    trinity_calculator,
+)
 
 
 class TestTrinityCalculatorIntegration:

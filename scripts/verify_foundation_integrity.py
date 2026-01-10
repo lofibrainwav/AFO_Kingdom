@@ -27,7 +27,9 @@ def check_goodness():
             return False
     except ImportError:
         # Manually check file content if import fails due to path issues in script
-        with pathlib.Path("packages/afo-core/AFO/config/antigravity.py").open(encoding="utf-8") as f:
+        with pathlib.Path("packages/afo-core/AFO/config/antigravity.py").open(
+            encoding="utf-8"
+        ) as f:
             if "DRY_RUN_DEFAULT: bool = True" in f.read():
                 print("✅ AntiGravity DRY_RUN_DEFAULT = True (Static Check)")
             else:
@@ -97,9 +99,14 @@ def check_eternity():
             return False
     except ImportError:
         # Static check
-        with pathlib.Path("packages/afo-core/AFO/domain/metrics/trinity_ssot.py").open(encoding="utf-8") as f:
+        with pathlib.Path("packages/afo-core/AFO/domain/metrics/trinity_ssot.py").open(
+            encoding="utf-8"
+        ) as f:
             content = f.read()
-            if "TRUTH: Final[float] = 0.35" in content and "ETERNITY: Final[float] = 0.02" in content:
+            if (
+                "TRUTH: Final[float] = 0.35" in content
+                and "ETERNITY: Final[float] = 0.02" in content
+            ):
                 print("✅ SSOT Weights Verified (Static Check)")
             else:
                 print("❌ SSOT Weights Check Failed")
@@ -109,13 +116,15 @@ def check_eternity():
 
 if __name__ == "__main__":
     print("🏛️  Foundation Integrity Re-Inspection Started")
-    if all([
-        check_truth(),
-        check_goodness(),
-        check_beauty(),
-        check_serenity(),
-        check_eternity(),
-    ]):
+    if all(
+        [
+            check_truth(),
+            check_goodness(),
+            check_beauty(),
+            check_serenity(),
+            check_eternity(),
+        ]
+    ):
         print("\n✨ ALL PILLARS SECURE. READY FOR PHASE 14.")
         sys.exit(0)
     else:

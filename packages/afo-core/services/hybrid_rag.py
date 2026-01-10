@@ -16,6 +16,7 @@ from redis.commands.search.query import Query as RedisQuery
 # 眞 (Truth): Neo4j Integration (GraphRAG)
 try:
     from neo4j import GraphDatabase
+
     GraphDatabaseType = GraphDatabase
 except ImportError:
     GraphDatabaseType = None
@@ -24,6 +25,7 @@ except ImportError:
 try:
     from qdrant_client import QdrantClient
     from qdrant_client.http import models as qmodels
+
     QdrantClientType = QdrantClient
     QdrantModelsType = qmodels
 except ImportError:
@@ -112,7 +114,9 @@ def get_embedding(text: str, openai_client: Any) -> list[float]:
         return random_embedding()
 
 
-def query_pgvector(embedding: list[float], top_k: int, pg_pool: Any) -> list[dict[str, Any]]:
+def query_pgvector(
+    embedding: list[float], top_k: int, pg_pool: Any
+) -> list[dict[str, Any]]:
     """
     眞 (Truth): PostgreSQL pgvector를 이용한 벡터 검색
     善 (Goodness): 연결 풀 관리 및 예외 처리
@@ -180,7 +184,9 @@ def query_pgvector(embedding: list[float], top_k: int, pg_pool: Any) -> list[dic
     return scored[:top_k]
 
 
-def query_redis(embedding: list[float], top_k: int, redis_client: Any) -> list[dict[str, Any]]:
+def query_redis(
+    embedding: list[float], top_k: int, redis_client: Any
+) -> list[dict[str, Any]]:
     """
     眞 (Truth): Redis RediSearch를 이용한 KNN 벡터 검색
     善 (Goodness): 인덱스 확인 및 예외 차단
@@ -280,7 +286,9 @@ def query_graph_context(entities: list[str], limit: int = 5) -> list[dict[str, A
         return []
 
 
-def query_qdrant(embedding: list[float], top_k: int, qdrant_client: Any) -> list[dict[str, Any]]:
+def query_qdrant(
+    embedding: list[float], top_k: int, qdrant_client: Any
+) -> list[dict[str, Any]]:
     """
     眞 (Truth): 통합 벡터 검색 (Brain Organ) - 환경변수 기반 어댑터 사용
 
@@ -303,6 +311,7 @@ def query_qdrant(embedding: list[float], top_k: int, qdrant_client: Any) -> list
     try:
         # 환경변수 기반 벡터 스토어 선택
         from AFO.utils.vector_store import query_vector_store
+
         return query_vector_store(embedding, top_k)
 
     except Exception as exc:
@@ -495,7 +504,9 @@ def generate_answer(
     Returns:
         Union[str, dict]: 생성된 답변 또는 에러 정보
     """
-    context_block = "\n\n".join([f"Chunk {idx + 1}:\n{ctx}" for idx, ctx in enumerate(contexts)])
+    context_block = "\n\n".join(
+        [f"Chunk {idx + 1}:\n{ctx}" for idx, ctx in enumerate(contexts)]
+    )
 
     system_prompt = " ".join(
         part
@@ -557,7 +568,9 @@ async def blend_results_async(
 ) -> list[dict[str, Any]]:
     """비동기 결과 혼합 래퍼"""
     loop = asyncio.get_event_loop()
-    return await loop.run_in_executor(_executor, blend_results, pg_rows, redis_rows, top_k)
+    return await loop.run_in_executor(
+        _executor, blend_results, pg_rows, redis_rows, top_k
+    )
 
 
 async def query_qdrant_async(
@@ -605,7 +618,9 @@ async def generate_answer_async(
 def _sse_fmt(event: str, data: Any) -> bytes:
     import json
 
-    return (f"event: {event}\ndata: {json.dumps(data, ensure_ascii=False)}\n\n").encode()
+    return (
+        f"event: {event}\ndata: {json.dumps(data, ensure_ascii=False)}\n\n"
+    ).encode()
 
 
 async def generate_answer_stream_async(
@@ -620,7 +635,9 @@ async def generate_answer_stream_async(
     眞 (Truth): SSE 패턴을 따르는 비동기 스트리밍 답변 생성
     善 (Goodness): OpenAI 실패 시 Ollama로 자동 라우팅 (로컬 지능 주권)
     """
-    context_block = "\n\n".join([f"Chunk {idx + 1}:\n{ctx}" for idx, ctx in enumerate(contexts)])
+    context_block = "\n\n".join(
+        [f"Chunk {idx + 1}:\n{ctx}" for idx, ctx in enumerate(contexts)]
+    )
     system_prompt = " ".join(
         part
         for part in [
@@ -687,10 +704,13 @@ async def generate_answer_stream_async(
         }
 
         async with httpx.AsyncClient(timeout=60.0) as client:
-            async with client.stream("POST", f"{ollama_url}/api/chat", json=payload) as resp:
+            async with client.stream(
+                "POST", f"{ollama_url}/api/chat", json=payload
+            ) as resp:
                 if resp.status_code != 200:
                     yield _sse_fmt(
-                        "error", {"error": f"Ollama failed with status {resp.status_code}"}
+                        "error",
+                        {"error": f"Ollama failed with status {resp.status_code}"},
                     )
                     return
 
@@ -768,5 +788,10 @@ class HybridRAG:
         openai_client: Any = None,
     ) -> Any:
         return generate_answer_stream_async(
-            query, contexts, temperature, response_format, additional_instructions, openai_client
+            query,
+            contexts,
+            temperature,
+            response_format,
+            additional_instructions,
+            openai_client,
         )

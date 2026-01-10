@@ -1,0 +1,56 @@
+name: Weekly MonkeyType Harvest 🐵
+
+on:
+  schedule:
+    - cron: '0 5 * * 0' # Every Sunday at 5:00 AM UTC
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  harvest-and-report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install monkeytype pytest pytest-monkeytype
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          # Install package in editable mode if needed for imports to work
+          pip install -e packages/afo-core
+
+      - name: Run Deep Harvest
+        env:
+          MONKEYTYPE_TRACEBACKS: 1
+          MONKEYTYPE_MAX_TRACEBACKS: 100
+        run: |
+          echo "Runing full test suite with MonkeyType..."
+          python -m pytest packages/afo-core/tests --monkeytype-output=monkeytype.sqlite3
+
+      - name: Generate Reports
+        run: |
+          mkdir -p monkeytype_reports
+          echo "Harvest Complete. Database size:"
+          ls -lh monkeytype.sqlite3
+          # Generate stubs for key modules as preview
+          monkeytype stub AFO.domain.metrics.trinity > monkeytype_reports/trinity_stub.py || true
+          monkeytype stub services.trinity_score_monitor > monkeytype_reports/score_monitor_stub.py || true
+          
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: monkeytype-db-and-stubs
+          path: |
+            monkeytype.sqlite3
+            monkeytype_reports/
+
+      - name: Summary
+        run: |
+          echo "## 🐵 MonkeyType Weekly Harvest" >> $GITHUB_STEP_SUMMARY
+          echo "Harvested types from full test suite." >> $GITHUB_STEP_SUMMARY
+          echo "Download artifact 'monkeytype-db-and-stubs' to inspect or apply." >> $GITHUB_STEP_SUMMARY

@@ -72,7 +72,9 @@ async def rag_semaphore_context():
 
 
 async def execute_rag_with_flag(
-    query: str, request_headers: dict[str, str] | None = None, context: dict[str, Any] | None = None
+    query: str,
+    request_headers: dict[str, str] | None = None,
+    context: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """
     Flag 모드 기반 RAG 실행
@@ -145,7 +147,9 @@ async def execute_rag_with_flag(
     except Exception as e:
         # 최종 fallback
         result["fallback_reason"] = f"system_error: {e!s}"
-        result["latency_ms"] = round((asyncio.get_event_loop().time() - start_time) * 1000, 2)
+        result["latency_ms"] = round(
+            (asyncio.get_event_loop().time() - start_time) * 1000, 2
+        )
         return result
 
 
@@ -254,7 +258,9 @@ def should_apply_gradual(seed: str, percent: int) -> bool:
 
 
 async def execute_rag_with_mode(
-    query: str, request_headers: dict[str, str] | None = None, context: dict[str, Any] | None = None
+    query: str,
+    request_headers: dict[str, str] | None = None,
+    context: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """
     통합 RAG 실행 (Shadow + Flag + Gradual) - TICKET-008 Phase 3
@@ -293,9 +299,11 @@ async def execute_rag_with_mode(
         result.update(
             {
                 "rollout_percent": mode_decision.get("rollout_percent", 0),
-                "bucket_id": hashlib.sha256(bucket_seed.encode()).hexdigest()[:8]
-                if bucket_seed
-                else "",
+                "bucket_id": (
+                    hashlib.sha256(bucket_seed.encode()).hexdigest()[:8]
+                    if bucket_seed
+                    else ""
+                ),
                 "bucket_seed_source": mode_decision.get("bucket_seed_source", ""),
             }
         )
@@ -345,5 +353,7 @@ async def execute_rag_with_mode(
         # 최종 fallback
         result["fallback_reason"] = f"system_error: {e!s}"
         result["applied"] = False
-        result["latency_ms"] = round((asyncio.get_event_loop().time() - start_time) * 1000, 2)
+        result["latency_ms"] = round(
+            (asyncio.get_event_loop().time() - start_time) * 1000, 2
+        )
         return result

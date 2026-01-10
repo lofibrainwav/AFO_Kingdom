@@ -9,9 +9,12 @@ import os
 import pathlib
 import sys
 
-
 # Ensure AFO package is importable
-sys.path.append(pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")).resolve())
+sys.path.append(
+    pathlib.Path(
+        os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")
+    ).resolve()
+)
 
 
 async def verify_dashboard():
@@ -19,7 +22,9 @@ async def verify_dashboard():
     try:
         from playwright.async_api import async_playwright
     except ImportError:
-        print("❌ Playwright not installed. Run: pip install playwright && playwright install")
+        print(
+            "❌ Playwright not installed. Run: pip install playwright && playwright install"
+        )
         return False
 
     print("=== Browser Integration Test ===")
@@ -47,11 +52,15 @@ async def verify_dashboard():
 
             # 2. Check for Trinity-related text (e.g., "Trinity", "Score", "Health")
             content = await page.content()
-            has_trinity_text = "trinity" in content.lower() or "score" in content.lower()
+            has_trinity_text = (
+                "trinity" in content.lower() or "score" in content.lower()
+            )
             checks.append(("Trinity Text Present", has_trinity_text))
 
             # 3. Check for status indicator
-            status = await page.query_selector('[class*="status"], [data-testid="status"]')
+            status = await page.query_selector(
+                '[class*="status"], [data-testid="status"]'
+            )
             checks.append(("Status Indicator", status is not None))
 
             # Print Results

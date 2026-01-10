@@ -12,7 +12,9 @@ from scipy.stats import norm
 class GaussianProcess:
     """Gaussian Process for Bayesian Optimization"""
 
-    def __init__(self, kernel: str = "RBF", length_scale: float = 1.0, noise: float = 1e-6):
+    def __init__(
+        self, kernel: str = "RBF", length_scale: float = 1.0, noise: float = 1e-6
+    ):
         self.kernel = kernel
         self.length_scale = length_scale
         self.noise = noise
@@ -25,7 +27,9 @@ class GaussianProcess:
         """RBF (Radial Basis Function) Kernel"""
         X1 = X1.reshape(-1, 1) if X1.ndim == 1 else X1
         X2 = X2.reshape(-1, 1) if X2.ndim == 1 else X2
-        sqdist = np.sum(X1**2, 1).reshape(-1, 1) + np.sum(X2**2, 1) - 2 * np.dot(X1, X2.T)
+        sqdist = (
+            np.sum(X1**2, 1).reshape(-1, 1) + np.sum(X2**2, 1) - 2 * np.dot(X1, X2.T)
+        )
         return np.exp(-0.5 * sqdist / (self.length_scale**2))
 
     def fit(self, X: np.ndarray, y: np.ndarray) -> None:
@@ -152,7 +156,9 @@ if __name__ == "__main__":
 
     # 최적화 실행
     bounds = (0, 4)
-    optimal_x, optimal_y = bayesian_optimize(test_fn, bounds, n_initial=3, n_iterations=5)
+    optimal_x, optimal_y = bayesian_optimize(
+        test_fn, bounds, n_initial=3, n_iterations=5
+    )
 
     print(".2f")
     print(".4f")  # 실제 최적값: x=2, y=1

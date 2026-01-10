@@ -5,9 +5,8 @@ Centralized location for all Prometheus metrics to avoid circular imports and du
 
 from __future__ import annotations
 
-from prometheus_client import REGISTRY, Counter, Gauge, Histogram
-
 from AFO.domain.metrics.trinity_ssot import TrinityWeights
+from prometheus_client import REGISTRY, Counter, Gauge, Histogram
 
 # ============================================================
 # VibeCoding Metrics (Phase 3.2)
@@ -19,7 +18,9 @@ trinity_sbt_minted = Counter(
 )
 
 # 선확인, 후보고 (Scout First, Report After)
-dry_run_executions = Counter("afo_dry_run_executions_total", "DRY_RUN 시뮬레이션 실행 횟수")
+dry_run_executions = Counter(
+    "afo_dry_run_executions_total", "DRY_RUN 시뮬레이션 실행 횟수"
+)
 wet_executions = Counter("afo_wet_executions_total", "WET 실제 실행 횟수")
 
 # 선증명, 후확신 (Prove First, Confirm After)
@@ -236,11 +237,17 @@ truth_scan_total = Counter(
 truth_scan_failures = Gauge("truth_loop_scan_failures", "眞 루프 선확인 실패율 (%)")
 
 # 2단계: 증명 (證明) - 오류 원인 분석
-truth_prove_diversity = Gauge("truth_loop_prove_diversity", "眞 루프 증명 다양성 점수 (%)")
-truth_prove_certainty = Gauge("truth_loop_prove_certainty", "眞 루프 증명 확실성 점수 (%)")
+truth_prove_diversity = Gauge(
+    "truth_loop_prove_diversity", "眞 루프 증명 다양성 점수 (%)"
+)
+truth_prove_certainty = Gauge(
+    "truth_loop_prove_certainty", "眞 루프 증명 확실성 점수 (%)"
+)
 
 # 3단계: 정확성 (正確性) - 최종 眞 계산
-truth_accuracy_score = Gauge("truth_loop_accuracy_score", "眞 루프 정확성 최종 점수 (%)")
+truth_accuracy_score = Gauge(
+    "truth_loop_accuracy_score", "眞 루프 정확성 최종 점수 (%)"
+)
 
 # 4단계: 테스트 결과 - 순환 완료
 truth_loop_duration = Histogram(
@@ -334,7 +341,9 @@ trinity_beauty_score.labels(**init_labels).set(0.88)
 trinity_filial_serenity_score.labels(**init_labels).set(1.0)
 trinity_serenity_core.labels(**init_labels).set(0.91)  # ∛(0.95*0.92*0.88) ≈ 0.916
 trinity_score.labels(**init_labels).set(0.93)  # (0.95+0.92+0.88+1.0)/4 = 0.9375
-trinity_balance_delta.labels(**init_labels).set(max(0.95, 0.92, 0.88) - min(0.95, 0.92, 0.88))
+trinity_balance_delta.labels(**init_labels).set(
+    max(0.95, 0.92, 0.88) - min(0.95, 0.92, 0.88)
+)
 trinity_balance_status.labels(**init_labels, status="balanced").set(1)
 
 # Initialize counters

@@ -12,10 +12,9 @@ from unittest.mock import patch
 
 import pytest
 
-
 # AFO 왕국 모듈 임포트
 try:
-    from AFO..api.compat import import ChancellorInvokeRequest, ChancellorInvokeResponse
+    from AFO.api.compat import ChancellorInvokeRequest, ChancellorInvokeResponse
 except ImportError:
     ChancellorInvokeRequest = Any
     ChancellorInvokeResponse = Any

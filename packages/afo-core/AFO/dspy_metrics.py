@@ -40,7 +40,9 @@ class TrinityMetric:
             gold = example.get("gold", "")
         gold = gold or ""
 
-        output = getattr(pred, "output", None) or getattr(pred, "answer", None) or str(pred)
+        output = (
+            getattr(pred, "output", None) or getattr(pred, "answer", None) or str(pred)
+        )
 
         pillar_scores = {
             "truth": self._evaluate_truth(gold, output),
@@ -98,14 +100,20 @@ class TrinityMetric:
         if L == 0:
             return 0.0
         concise = 1.0 if L <= 800 else max(0.5, 800 / L)
-        structured = 0.2 if re.search(r"(^|\n)([-*•]\s|\d+\.\s|#{1,3}\s)", output) else 0.0
+        structured = (
+            0.2 if re.search(r"(^|\n)([-*•]\s|\d+\.\s|#{1,3}\s)", output) else 0.0
+        )
         return min(1.0, concise + structured)
 
     def _evaluate_serenity(self, gold: str, output: str) -> float:
         # 역할극 보상 제거: 존댓말/명확한 액션 중심만 가점
         polite = 0.2 if re.search(r"(습니다|세요|드립니다)", output) else 0.0
-        actionable = 0.2 if re.search(r"(다음|1\)|1\.|커맨드|명령|체크리스트)", output) else 0.0
-        too_roleplay = 0.2 if re.search(r"(왕이시여|아뢰나이다|받들어)", output) else 0.0
+        actionable = (
+            0.2 if re.search(r"(다음|1\)|1\.|커맨드|명령|체크리스트)", output) else 0.0
+        )
+        too_roleplay = (
+            0.2 if re.search(r"(왕이시여|아뢰나이다|받들어)", output) else 0.0
+        )
         base = 0.6
         return max(0.0, min(1.0, base + polite + actionable - too_roleplay))
 
@@ -123,7 +131,9 @@ class TrinityMetric:
         # 증거 키워드 카운트 (형님 제시대로)
         txt = output.lower()
         hits = sum(
-            1 for kw in ["artifacts/", "manifest", "sha256", "기록됨", "미관측"] if kw in txt
+            1
+            for kw in ["artifacts/", "manifest", "sha256", "기록됨", "미관측"]
+            if kw in txt
         )
 
         # 증거 태스크에서만 가점 적용

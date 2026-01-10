@@ -91,8 +91,12 @@ class PerformanceMiddleware(BaseHTTPMiddleware):
         # comprehensive health check는 11개 오장육부 체크로 3-4초 정상
         path = request.url.path
         is_comprehensive = "/comprehensive" in path
-        threshold_critical = 5000 if is_comprehensive else PERFORMANCE_THRESHOLDS["critical_ms"]
-        threshold_warning = 3000 if is_comprehensive else PERFORMANCE_THRESHOLDS["warning_ms"]
+        threshold_critical = (
+            5000 if is_comprehensive else PERFORMANCE_THRESHOLDS["critical_ms"]
+        )
+        threshold_warning = (
+            3000 if is_comprehensive else PERFORMANCE_THRESHOLDS["warning_ms"]
+        )
 
         if elapsed_ms >= threshold_critical:
             logger.warning(
@@ -125,7 +129,9 @@ class PerformanceMiddleware(BaseHTTPMiddleware):
             endpoint = request.url.path
             self._response_time_histogram.labels(
                 method=request.method, endpoint=endpoint, status_code=status_code
-            ).observe(elapsed_ms / 1000.0)  # 초 단위로 변환
+            ).observe(
+                elapsed_ms / 1000.0
+            )  # 초 단위로 변환
 
         except (ImportError, Exception) as e:
             # Prometheus가 없으면 무시
@@ -171,5 +177,7 @@ class PerformanceMiddleware(BaseHTTPMiddleware):
             "p50_ms": round(sorted_times[p50_idx] if p50_idx < total else 0, 2),
             "p95_ms": round(sorted_times[p95_idx] if p95_idx < total else 0, 2),
             "p99_ms": round(sorted_times[p99_idx] if p99_idx < total else 0, 2),
-            "slow_endpoints": sorted(slow_endpoints, key=lambda x: x["average_ms"], reverse=True),
+            "slow_endpoints": sorted(
+                slow_endpoints, key=lambda x: x["average_ms"], reverse=True
+            ),
         }

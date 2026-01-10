@@ -5,10 +5,9 @@ AFO Kingdom Skills API - Phase 2.5 Skills Registry Integration
 
 from typing import Any
 
+from api.guards.skills_allowlist_guard import is_skill_allowed
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
-
-from api.guards.skills_allowlist_guard import is_skill_allowed
 
 # Skills Registry
 # try:
@@ -214,7 +213,9 @@ class MockSkillRegistry:
                 return MockSkill(skill)
         return None
 
-    async def execute_skill(self, skill_id: str, parameters: dict, timeout_seconds: int = 30):
+    async def execute_skill(
+        self, skill_id: str, parameters: dict, timeout_seconds: int = 30
+    ):
         """Execute a skill with mock response"""
         skill = self.get_skill(skill_id)
         if not skill:
@@ -257,7 +258,9 @@ class SkillExecutionRequest(BaseModel):
     """Skill 실행 요청 모델"""
 
     skill_id: str = Field(..., description="실행할 Skill ID")
-    parameters: dict[str, Any] = Field(default_factory=dict, description="실행 파라미터")
+    parameters: dict[str, Any] = Field(
+        default_factory=dict, description="실행 파라미터"
+    )
     timeout_seconds: int = Field(default=30, ge=1, le=300, description="실행 제한 시간")
 
 
@@ -322,7 +325,9 @@ async def get_skill_detail(skill_id: str) -> dict[str, Any]:
     except HTTPException as e:
         raise e
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to get skill detail: {e!s}")
+        raise HTTPException(
+            status_code=500, detail=f"Failed to get skill detail: {e!s}"
+        )
 
 
 @router.post("/execute")

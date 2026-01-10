@@ -42,10 +42,10 @@ def run_reflexion(
 
         if dry_run:
             # Simulate critique and revision in dry-run mode
-            critique = f"(Dry Run Critique {iters}): Ensure the solution is SSOT-compliant."
-            improved = (
-                f"(Dry Run Improved {iters}): Optimized for Trinity Pillars. Input: {input_text}"
+            critique = (
+                f"(Dry Run Critique {iters}): Ensure the solution is SSOT-compliant."
             )
+            improved = f"(Dry Run Improved {iters}): Optimized for Trinity Pillars. Input: {input_text}"
         else:
             # Future Engine integration (LangGraph/CrewAI) will go here
             raise RuntimeError(

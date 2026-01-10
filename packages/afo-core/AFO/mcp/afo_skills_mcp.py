@@ -4,7 +4,9 @@ from typing import Any, cast
 import httpx
 from mcp.server.fastmcp import FastMCP
 
-AFO_API_BASE_URL = os.environ.get("AFO_API_BASE_URL", "http://127.0.0.1:8010").rstrip("/")
+AFO_API_BASE_URL = os.environ.get("AFO_API_BASE_URL", "http://127.0.0.1:8010").rstrip(
+    "/"
+)
 HTTP_TIMEOUT_S = float(os.environ.get("AFO_MCP_HTTP_TIMEOUT_S", "15"))
 
 mcp = FastMCP("AFO Skills MCP")

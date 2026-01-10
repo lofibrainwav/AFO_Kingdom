@@ -7,15 +7,14 @@ import os
 import time
 from typing import TYPE_CHECKING, Optional, cast
 
+from AFO.services.security.circuit_breaker import CircuitBreaker
+from AFO.services.security.rate_limit_policy import RedisDownPolicy
 from redis.asyncio import Redis
 from slowapi import Limiter
 from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import JSONResponse, Response
-
-from AFO.services.security.circuit_breaker import CircuitBreaker
-from AFO.services.security.rate_limit_policy import RedisDownPolicy
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -136,7 +135,9 @@ def _rate_limit_exceeded_handler(request: Request, exc: RateLimitExceeded) -> Re
 
 
 def setup_redis_rate_limiter(app: FastAPI) -> None:
-    redis_url = os.getenv("AFO_RATE_LIMIT_REDIS_URL", "redis://localhost:6379/0").strip()
+    redis_url = os.getenv(
+        "AFO_RATE_LIMIT_REDIS_URL", "redis://localhost:6379/0"
+    ).strip()
     strategy = os.getenv("AFO_RATE_LIMIT_STRATEGY", "fixed-window").strip()
     default_limit = os.getenv("AFO_RATE_LIMIT_DEFAULT", "10/minute").strip()
 

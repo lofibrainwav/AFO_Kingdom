@@ -56,7 +56,9 @@ class RedisBackend:
             try:
                 import redis.asyncio as aioredis
 
-                self.redis = aioredis.from_url(self._url, encoding="utf-8", decode_responses=True)
+                self.redis = aioredis.from_url(
+                    self._url, encoding="utf-8", decode_responses=True
+                )
                 await self.redis.ping()
                 self._connected = True
                 logger.debug(f"✅ L2 Cache Connected: {self._url}")
@@ -96,7 +98,11 @@ class RedisBackend:
         if self.redis is None:
             return
         try:
-            val = json.dumps(value) if not isinstance(value, (str, bytes, int, float)) else value
+            val = (
+                json.dumps(value)
+                if not isinstance(value, (str, bytes, int, float))
+                else value
+            )
             await self.redis.setex(key, ttl, val)
         except Exception as e:
             logger.debug(f"L2 Cache Set Error: {e}")

@@ -55,7 +55,9 @@ async def eternity_node(state: GraphState) -> GraphState:
     """
 
     scholar_score = heuristic_score
-    reasoning = "Heuristic assessment based on persistence and documentation indicators."
+    reasoning = (
+        "Heuristic assessment based on persistence and documentation indicators."
+    )
     issues = []
     assessment_mode = "Heuristic (Fallback)"
     scholar_model = "None"
@@ -67,7 +69,11 @@ async def eternity_node(state: GraphState) -> GraphState:
         if response and response.get("response"):
             try:
                 text = (
-                    response["response"].strip().replace("```json", "").replace("```", "").strip()
+                    response["response"]
+                    .strip()
+                    .replace("```json", "")
+                    .replace("```", "")
+                    .strip()
                 )
                 data = json.loads(text)
                 scholar_score = data.get("score", heuristic_score)
@@ -87,7 +93,11 @@ async def eternity_node(state: GraphState) -> GraphState:
         "score": round(final_score, 3),
         "reasoning": reasoning,
         "issues": issues,
-        "metadata": {"mode": assessment_mode, "scholar": "Yeongdeok (永)", "model": scholar_model},
+        "metadata": {
+            "mode": assessment_mode,
+            "scholar": "Yeongdeok (永)",
+            "model": scholar_model,
+        },
     }
 
     # Store evaluation results

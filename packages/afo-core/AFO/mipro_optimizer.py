@@ -32,4 +32,6 @@ class MiproOptimizer:
         best = self._tuner.select_best(scored)
         if best is None:
             return MiproOptimizeResult(best_prompt="", best_score=0.0)
-        return MiproOptimizeResult(best_prompt=best.prompt, best_score=float(best.score))
+        return MiproOptimizeResult(
+            best_prompt=best.prompt, best_score=float(best.score)
+        )

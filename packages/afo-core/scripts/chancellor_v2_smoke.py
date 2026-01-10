@@ -32,7 +32,16 @@ def verify_node(state: GraphState) -> GraphState:
 # Build all nodes
 NODES = {
     k: ok_node(k)
-    for k in ["CMD", "PARSE", "TRUTH", "GOODNESS", "BEAUTY", "MERGE", "EXECUTE", "REPORT"]
+    for k in [
+        "CMD",
+        "PARSE",
+        "TRUTH",
+        "GOODNESS",
+        "BEAUTY",
+        "MERGE",
+        "EXECUTE",
+        "REPORT",
+    ]
 }
 NODES["VERIFY"] = verify_node
 

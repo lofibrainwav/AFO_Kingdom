@@ -5,7 +5,6 @@ import sys
 import unittest
 from unittest.mock import MagicMock, patch
 
-
 # Path setup is critical for imports from packages
 sys.path.append(os.path.join(pathlib.Path.cwd(), "packages/afo-core"))
 
@@ -51,10 +50,12 @@ class TestScholarGovernance(unittest.TestCase):
         mock_flag.return_value = True
 
         # Mock successful API response
-        self.mock_api.generate_with_context.return_value = self._get_async_mock({
-            "success": True,
-            "content": "Analysis Complete",
-        })
+        self.mock_api.generate_with_context.return_value = self._get_async_mock(
+            {
+                "success": True,
+                "content": "Analysis Complete",
+            }
+        )
 
         # Action
         result = asyncio.run(self.jaryong.verify_logic("print('hello')"))
@@ -71,7 +72,9 @@ class TestScholarGovernance(unittest.TestCase):
         mock_flag.return_value = True
 
         # 'eval(' triggers local risk brake in jaryong.py
-        dangerous_code = "eval('__import__(\"subprocess\").run([\"echo\",\"blocked\"], check=False)')"
+        dangerous_code = (
+            'eval(\'__import__("subprocess").run(["echo","blocked"], check=False)\')'
+        )
 
         # Action
         result = asyncio.run(self.jaryong.verify_logic(dangerous_code))

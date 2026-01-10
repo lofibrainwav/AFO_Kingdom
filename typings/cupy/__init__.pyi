@@ -1,6 +1,9 @@
 from __future__ import annotations
+
 from typing import Any
+
 ndarray: Any
+
 def array(*args: Any, **kwargs: Any) -> Any: ...
 def asarray(*args: Any, **kwargs: Any) -> Any: ...
 def get_array_module(*args: Any, **kwargs: Any) -> Any: ...

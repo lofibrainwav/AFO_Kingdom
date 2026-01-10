@@ -12,11 +12,12 @@ from pathlib import Path
 
 import requests
 
-
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 
 
-def log_debug(location: str, message: str, data: dict | None = None, hypothesis_id: str = "A") -> None:
+def log_debug(
+    location: str, message: str, data: dict | None = None, hypothesis_id: str = "A"
+) -> None:
     """Debug logging to NDJSON file"""
     try:
         log_entry = {
@@ -105,7 +106,10 @@ def check_openapi_schema():
             print("\n📋 비슷한 경로들:")
             similar_paths = []
             for path in sorted(paths.keys()):
-                if any(keyword in path for keyword in ["health", "intake", "family", "comprehensive"]):
+                if any(
+                    keyword in path
+                    for keyword in ["health", "intake", "family", "comprehensive"]
+                ):
                     similar_paths.append(path)
                     print(f"   - {path}")
 

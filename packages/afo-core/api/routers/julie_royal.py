@@ -1,10 +1,9 @@
 # Trinity Score: 90.0 (Established by Chancellor)
 from typing import Any
 
+from AFO.julie_cpa.services.julie_service import JulieService
 from fastapi import APIRouter
 from pydantic import BaseModel
-
-from AFO.julie_cpa.services.julie_service import JulieService
 
 # [Legacy Merger]
 # This router exposes the same endpoints as the legacy 'julie.py'
@@ -41,7 +40,9 @@ async def calculate_tax(request: TaxCalcRequest) -> dict[str, Any]:
     Performs real-time tax simulation (Federal + CA + QBI).
     Source: JuliePerplexity Report (2025 Rules).
     """
-    return await julie_service.calculate_tax_scenario(request.income, request.filing_status)
+    return await julie_service.calculate_tax_scenario(
+        request.income, request.filing_status
+    )
 
 
 class TransactionRequest(BaseModel):

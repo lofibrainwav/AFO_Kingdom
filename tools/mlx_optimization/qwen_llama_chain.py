@@ -11,7 +11,6 @@ import subprocess
 import sys
 import time
 
-
 CUTLINE_BYTES = 20_000_000_000  # 20GB in bytes
 
 
@@ -34,7 +33,9 @@ def parse_maxrss_bytes(time_stderr: str):
     return None
 
 
-def run_qwen_vlm(image_path: str, prompt: str, max_tokens: int = 120) -> tuple[str, float, int]:
+def run_qwen_vlm(
+    image_path: str, prompt: str, max_tokens: int = 120
+) -> tuple[str, float, int]:
     """Qwen3-VL 이미지 분석 실행"""
     cmd = [
         sys.executable,
@@ -63,7 +64,9 @@ def run_qwen_vlm(image_path: str, prompt: str, max_tokens: int = 120) -> tuple[s
     return result.stdout.strip(), elapsed, 0  # max_rss 추후 개선
 
 
-def run_llama_summary(qwen_output: str, max_tokens: int = 200) -> tuple[str, float, int]:
+def run_llama_summary(
+    qwen_output: str, max_tokens: int = 200
+) -> tuple[str, float, int]:
     """Llama 텍스트 요약 실행"""
     prompt = f"시각 분석 결과: {qwen_output}\n\n해결책을 5줄로 요약해줘."
 
@@ -203,10 +206,16 @@ def main():
     parser = argparse.ArgumentParser(description="Qwen3-VL + Llama MLX 체인 실행")
     parser.add_argument("--image", required=True, help="분석할 이미지 파일 경로")
     parser.add_argument(
-        "--output", default="artifacts/ticket016_mlx_monitor_ssot.jsonl", help="SSOT 출력 파일"
+        "--output",
+        default="artifacts/ticket016_mlx_monitor_ssot.jsonl",
+        help="SSOT 출력 파일",
     )
-    parser.add_argument("--max-tokens-qwen", type=int, default=120, help="Qwen 최대 토큰 수")
-    parser.add_argument("--max-tokens-llama", type=int, default=200, help="Llama 최대 토큰 수")
+    parser.add_argument(
+        "--max-tokens-qwen", type=int, default=120, help="Qwen 최대 토큰 수"
+    )
+    parser.add_argument(
+        "--max-tokens-llama", type=int, default=200, help="Llama 최대 토큰 수"
+    )
 
     args = parser.parse_args()
 

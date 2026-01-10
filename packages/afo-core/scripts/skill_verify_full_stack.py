@@ -79,7 +79,9 @@ def run() -> dict:
         },
         "frontend": {
             "url": DASH,
-            "kingdom_status_http_head": get_headers_snippet(f"{DASH}/api/kingdom-status"),
+            "kingdom_status_http_head": get_headers_snippet(
+                f"{DASH}/api/kingdom-status"
+            ),
             "organs_len": len(f_organs),
             "organs_names": f_names,
         },

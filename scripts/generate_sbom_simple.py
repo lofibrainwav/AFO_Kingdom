@@ -14,7 +14,6 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-
 # 로깅 설정
 logging.basicConfig(
     level=logging.INFO,
@@ -67,11 +66,13 @@ def parse_requirements(requirements_path: Path) -> list[dict[str, Any]]:
                 name = line
                 version = None
 
-            components.append({
-                "type": "library",
-                "name": name,
-                "version": version or "unknown",
-            })
+            components.append(
+                {
+                    "type": "library",
+                    "name": name,
+                    "version": version or "unknown",
+                }
+            )
             logger.debug(f"[眞] 패키지 추가: {name} {version or 'unknown'}")
 
     logger.info(f"[眞] 파싱 완료: {len(components)}개 패키지 발견")
