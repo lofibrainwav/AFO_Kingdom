@@ -11,12 +11,14 @@
 ### ✅ 확인된 구조
 
 **API Wallet 저장 방식**:
+
 - 브라우저에서 토큰 인증 가져오기 (월구독제)
 - 암호화 저장 (Fernet/AES-256)
 - PostgreSQL DB에 저장
 - JSON 파일은 fallback
 
 **암호화 방식**:
+
 - Fernet (AES-256)
 - 암호화 키: `API_WALLET_ENCRYPTION_KEY` 환경 변수
 - 암호화된 키는 `encrypted_key` 필드에 저장
@@ -28,11 +30,13 @@
 ### ✅ 1. config.py 수정
 
 **변경 사항**:
+
 - PostgreSQL 연결 로직 추가
 - PostgreSQL → JSON 저장소 순서로 키 검색
 - 자동으로 환경 변수 설정
 
 **로직**:
+
 1. 환경 변수 `OPENAI_API_KEY` 확인
 2. PostgreSQL DB 연결 시도
 3. PostgreSQL에서 OpenAI 키 검색
@@ -42,6 +46,7 @@
 ### ✅ 2. PostgreSQL 연결 설정
 
 **기본 설정**:
+
 - Host: `localhost` (환경 변수: `POSTGRES_HOST`)
 - Port: `15432` (환경 변수: `POSTGRES_PORT`)
 - Database: `postgres` (환경 변수: `POSTGRES_DB`)
@@ -121,4 +126,3 @@ keys = wallet.list_keys()
 
 **상태**: ✅ PostgreSQL 통합 완료  
 **다음 단계**: PostgreSQL DB에 키가 있는지 확인 및 테스트
-
