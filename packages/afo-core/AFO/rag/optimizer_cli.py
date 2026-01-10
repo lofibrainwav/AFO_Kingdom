@@ -13,15 +13,8 @@ except ImportError:
     dspy = None  # type: ignore[assignment]
 
 from AFO.config.antigravity import antigravity
-from AFO.dspy_optimizer import compile_mipro
-
-
-def _pick_field(d: dict[str, Any], keys: list[str]) -> str:
-    for k in keys:
-        v = d.get(k)
-        if isinstance(v, str) and v.strip():
-            return v.strip()
-    return ""
+from AFO.config.local_dspy import configure_local_dspy
+from AFO.evolution.dspy_optimizer import _pick_field, compile_mipro
 
 
 def _load_jsonl(path: str) -> list[dict[str, Any]]:
@@ -87,9 +80,9 @@ def main() -> int:
     if dspy is None:
         raise RuntimeError("DSPy is not installed.")
 
-    # DRY_RUN 모드에서는 LM 설정 건너뛰기
+    # OLLAMA/Local DSPy 설정 우선
     if not antigravity.DRY_RUN:
-        _maybe_configure_lm()
+        configure_local_dspy()
     else:
         print("[DRY_RUN] Skipping LM configuration.")
 
