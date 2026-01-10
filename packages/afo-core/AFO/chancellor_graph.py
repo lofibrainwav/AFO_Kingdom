@@ -14,10 +14,10 @@ import time
 from typing import Any
 
 from AFO.config.settings import get_settings
-from api.chancellor_v2.graph import nodes
+from AFO.api.chancellor_v2.graph import nodes
 
 # Import Chancellor Graph V2 components
-from api.chancellor_v2.graph.runner import run_v2 as run_chancellor_v2
+from AFO.api.chancellor_v2.graph.runner import run_v2 as run_chancellor_v2
 
 
 # Create unified chancellor_graph interface

@@ -68,7 +68,32 @@ Decision Mode: ASK_COMMANDER (Risk Assessment: 36.000%)
 PASSED (Architecture & Hybrid Mode Verified)
 ```
 
-Evidence Pack: artifacts/council_runs/council_YYYYMMDD.jsonl (예: council_20260108.jsonl)
+Evidence Pack: artifacts/phase25_preflight_20260110_125359.txt
+
+---
+
+## 5) Phase 25: Digital Royal Palace Awakening (Frontend Integration)
+
+### 皇宮 (Royal Palace) Interface
+- **Trinity Glow**: `useChancellorStore` connected to real-time Trinity Score. Visual pulse animation based on score intensity.
+- **Council Orbits**: Dynamic visualization via `/api/5pillars/config` (Refactored to SSOT).
+- **Julie Tax Widget**: Integrated demo widget for financial policy visualization.
+- **Evidence**: `artifacts/phase25_preflight_20260110_125359.txt` (Port 8000/3000 unification verified)
+
+### Neural Stream (SSE) Restoration
+- **Service**: Backend Port 8000 (Unified).
+- **Endpoint**: `/api/stream/mcp/thoughts` (Verified source of `thought`/`trinity_score` events).
+- **Proxy**: Frontend Port 3000 -> Backend 8000 (Tested via `curl`).
+- **Status**: **SSOT CONTRACT VERIFIED** (Event flow confirmed on both ports).
+
+### Tooling: Auto-Ticket Generator (`TICKET-101`)
+- **Engine**: `packages/afo-core/AFO/auto_ticket_generator.py`
+- **Capability**: MD -> Context7 Search -> Trinity Impact Analysis -> JSON Ticket.
+- **Verification**: Dry-run successful on `task.md`.
+
+> [!TIP]
+> **Next Step**: The Royal Palace is awake and listening on the unified Port 8000 frequency.
+
 
 > [!TIP]
 > **PASS 기준**: `asyncio.gather` 병렬 실행 + Pillar별 모드 표기(LLM/Heuristic) + 최종 Score/Decision Mode 산출이 모두 재현 가능함을 확인했습니다.
