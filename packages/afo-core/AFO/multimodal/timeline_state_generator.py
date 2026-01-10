@@ -32,55 +32,86 @@ def absorb_node(state: TimelineState) -> dict[str, Any]:
 
 def timeline_generator_node(state: TimelineState) -> dict[str, Any]:
     """
-    TIMELINE_GENERATOR: 5구간 TimelineState 자동 생성
-    형님 정의 SSOT 기반 구조화
+    TIMELINE_GENERATOR: Intent 기반 동적 TimelineState 생성
+    형님 정의 SSOT 기반 구조화 (3구간/5구간 가변 대응)
     """
-    raw_intent = state.get("raw_intent", "")
+    raw_intent = state.get("raw_intent", "").lower()
 
-    # 5구간 기본 구조 (형님 SSOT 기반)
-    timeline_sections = [
-        {
-            "time": "0:00-0:15",
-            "intent": "intro",
-            "video": "fade_in",
-            "music": "slow_build",
-            "description": "작은 시작, 호기심 유발",
-        },
-        {
-            "time": "0:15-0:30",
-            "intent": "hook",
-            "video": "text_overlay",
-            "music": "drop_beat",
-            "description": "관심 집중, 리듬 시작",
-        },
-        {
-            "time": "0:30-0:45",
-            "intent": "content",
-            "video": "cut_sequence",
-            "music": "main_theme",
-            "description": "본론 전개, 메시지 전달",
-        },
-        {
-            "time": "0:45-1:00",
-            "intent": "climax",
-            "video": "zoom_effect",
-            "music": "peak_energy",
-            "description": "감정 고조, 클라이맥스",
-        },
-        {
-            "time": "1:00-1:15",
-            "intent": "outro",
-            "video": "fade_out",
-            "music": "resolve",
-            "description": "마무리, 여운 남기기",
-        },
-    ]
+    # 동적 템플릿 선택 (Simple Intent Analyzer)
+    is_short = any(k in raw_intent for k in ["짧은", "틱톡", "쇼츠", "short", "tiktok", "shorts"])
+
+    if is_short:
+        timeline_sections = [
+            {
+                "time": "0:00-0:10",
+                "intent": "hook",
+                "video": "fade_in_zoom",
+                "music": "drop_beat",
+                "description": "빠른 시선 강탈",
+            },
+            {
+                "time": "0:10-0:25",
+                "intent": "main",
+                "video": "cut_sequence",
+                "music": "main_theme",
+                "description": "핵심 메시지 전달",
+            },
+            {
+                "time": "0:25-0:30",
+                "intent": "outro",
+                "video": "fade_out",
+                "music": "resolve",
+                "description": "짧고 강한 여운",
+            },
+        ]
+        total_duration = "0:30"
+    else:
+        # Default 5-section (Standard)
+        timeline_sections = [
+            {
+                "time": "0:00-0:15",
+                "intent": "intro",
+                "video": "fade_in",
+                "music": "slow_build",
+                "description": "분위기 조성",
+            },
+            {
+                "time": "0:15-0:30",
+                "intent": "hook",
+                "video": "text_overlay",
+                "music": "drop_beat",
+                "description": "관심 유도",
+            },
+            {
+                "time": "0:30-0:45",
+                "intent": "content",
+                "video": "cut_sequence",
+                "music": "main_theme",
+                "description": "본론 전개",
+            },
+            {
+                "time": "0:45-1:00",
+                "intent": "climax",
+                "video": "zoom_effect",
+                "music": "peak_energy",
+                "description": "감정 고조",
+            },
+            {
+                "time": "1:00-1:15",
+                "intent": "outro",
+                "video": "fade_out",
+                "music": "resolve",
+                "description": "마무리",
+            },
+        ]
+        total_duration = "1:15"
 
     return {
         "timeline": {
             "sections": timeline_sections,
-            "total_duration": "1:15",
+            "total_duration": total_duration,
             "generated_from": raw_intent,
+            "template_type": "short" if is_short else "standard",
         },
         "sections": timeline_sections,
     }
