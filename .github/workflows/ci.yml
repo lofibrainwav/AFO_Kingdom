@@ -51,7 +51,7 @@ jobs:
           echo "Commit SHA: ${{ github.sha }}" >> artifacts/royal_build/build_status.txt
 
       - name: Ruff check (핵심 영역 검증)
-        run: uv run ruff check packages/afo-core/AFO
+        run: uv run ruff check packages/afo-core/AFO/
       - name: Ruff format check (핵심 영역 포맷 검증)
         run: uv run ruff format --check packages/afo-core/AFO
 
