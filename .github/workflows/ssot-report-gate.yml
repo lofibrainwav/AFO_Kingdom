@@ -132,7 +132,7 @@ jobs:
 
     - name: Post unified PR comment
       if: ${{ github.event_name == 'pull_request' && steps.pr_comment.outputs.comment }}
-      uses: actions/github-script@v7
+      uses: actions/github-script@v8
       with:
         script: |
           const commentB64 = `${{ steps.pr_comment.outputs.comment }}`;
