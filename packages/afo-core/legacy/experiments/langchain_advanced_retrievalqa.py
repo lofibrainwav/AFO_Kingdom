@@ -4,8 +4,7 @@
 # 이 파일은 AFO 왕국의 眞善美孝 철학을 구현합니다
 
 #!/usr/bin/env python3
-"""
-주유 책사 제안: Advanced RetrievalQA
+"""주유 책사 제안: Advanced RetrievalQA
 프롬프트 템플릿 + Chain Type + Source Documents
 """
 

@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Ollama CLI MCP Server Wrapper
+"""Ollama CLI MCP Server Wrapper
 AFO 왕국 - 자룡, 영덕 통합 (4단계 트리아지 2단계)
 
 이 스크립트는 Ollama CLI를 MCP 프로토콜로 래핑합니다.
@@ -14,8 +13,7 @@ import requests
 
 
 def invoke_ollama(prompt: str, model: str | None = None) -> str:
-    """
-    Ollama CLI를 통한 LLM 호출 (4단계 트리아지 2단계: 로컬 정예병)
+    """Ollama CLI를 통한 LLM 호출 (4단계 트리아지 2단계: 로컬 정예병)
 
     Args:
         prompt: 사용자 프롬프트
@@ -23,6 +21,7 @@ def invoke_ollama(prompt: str, model: str | None = None) -> str:
 
     Returns:
         Ollama의 응답
+
     """
     base_url = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
     model = model or os.getenv("OLLAMA_MODEL", "llama3.2:1b")
@@ -38,9 +37,7 @@ def invoke_ollama(prompt: str, model: str | None = None) -> str:
         return result.get("response", "")
     except requests.exceptions.ConnectionError:
         return json.dumps(
-            {
-                "error": f"Ollama 서버에 연결할 수 없습니다. '{base_url}'에서 서버가 실행 중인지 확인하세요."
-            }
+            {"error": f"Ollama 서버에 연결할 수 없습니다. '{base_url}'에서 서버가 실행 중인지 확인하세요."}
         )
     except requests.exceptions.Timeout:
         return json.dumps({"error": "Ollama API 호출 시간 초과"})
@@ -74,9 +71,7 @@ def main():
                             result = {
                                 "jsonrpc": "2.0",
                                 "id": request.get("id"),
-                                "result": {
-                                    "content": [{"type": "text", "text": response}]
-                                },
+                                "result": {"content": [{"type": "text", "text": response}]},
                             }
                             print(json.dumps(result))
                             sys.stdout.flush()
@@ -107,16 +102,8 @@ def main():
             print("   or: ollama_cli_mcp.py mcp  # MCP 서버 모드")
             sys.exit(1)
 
-        prompt = " ".join(
-            sys.argv[1:-1]
-            if len(sys.argv) > 2 and sys.argv[-1].startswith("llama")
-            else sys.argv[1:]
-        )
-        model = (
-            sys.argv[-1]
-            if len(sys.argv) > 2 and sys.argv[-1].startswith("llama")
-            else None
-        )
+        prompt = " ".join(sys.argv[1:-1] if len(sys.argv) > 2 and sys.argv[-1].startswith("llama") else sys.argv[1:])
+        model = sys.argv[-1] if len(sys.argv) > 2 and sys.argv[-1].startswith("llama") else None
         response = invoke_ollama(prompt, model)
         print(response)
 

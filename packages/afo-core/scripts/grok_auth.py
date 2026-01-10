@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Grok Browser Authentication Bridge
+"""Grok Browser Authentication Bridge
 Phase 15: The Grok Singularity (Web Mode)
 
 Usage:

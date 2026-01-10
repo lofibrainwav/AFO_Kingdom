@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Tests for services layer
+"""Tests for services layer
 서비스 레이어 테스트 - Phase 4
 """
 

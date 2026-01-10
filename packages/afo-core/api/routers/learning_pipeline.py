@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Learning Pipeline for AFO Kingdom (Phase 26)
+"""Learning Pipeline for AFO Kingdom (Phase 26)
 AI Self-Improvement - Samahwi's Autonomous Learning
 Analyzes evolution logs and suggests improvements.
 """

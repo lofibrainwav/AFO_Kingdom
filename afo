@@ -69,17 +69,50 @@ except:
 cmd_help() {
     banner
     echo "Commands:"
-    echo "  seal     - Generate SSOT evidence bundle"
-    echo "  trinity  - Check Trinity Score (≥90%)"
-    echo "  drift    - Monitor configuration drift"
-    echo "  protect  - Enforce branch protection"
-    echo "  status   - Show kingdom status"
-    echo "  help     - Show this help"
+    echo "  seal      - Generate SSOT evidence bundle"
+    echo "  trinity   - Check Trinity Score (≥90%)"
+    echo "  drift     - Monitor configuration drift"
+    echo "  protect   - Enforce branch protection"
+    echo "  status    - Show kingdom status"
+    echo "  alert     - Send notification (info|warning|error)"
+    echo "  release   - Create release tag (vX.Y.Z)"
+    echo "  dashboard - Show full status card"
+    echo "  evolve    - Run DGM evolution cycle [--dry-run]"
+    echo "  debug     - Integrated debug & ratchet [--seal]"
+    echo "  help      - Show this help"
     echo ""
     echo "Examples:"
     echo "  ./afo seal"
     echo "  ./afo trinity"
     echo "  ./afo status"
+    echo "  ./afo alert warning 'Title' 'Message'"
+    echo "  ./afo release v1.0.0"
+    echo "  ./afo dashboard"
+    echo "  ./afo evolve --dry-run"
+}
+
+cmd_alert() {
+    echo -e "${YELLOW}📢 Alert System${NC}"
+    "$SCRIPTS_DIR/afo_alert.sh" "$@"
+}
+
+cmd_release() {
+    echo -e "${YELLOW}🚀 Release System${NC}"
+    "$SCRIPTS_DIR/afo_release_tag.sh" "$@"
+}
+
+cmd_dashboard() {
+    "$SCRIPTS_DIR/afo_dashboard.sh"
+}
+
+cmd_debug() {
+    echo -e "${BLUE}🛡️ Integrated Debugging${NC}"
+    "$SCRIPTS_DIR/afo_debug.sh" "$@"
+}
+
+cmd_evolve() {
+    echo -e "${YELLOW}🧬 DGM Evolution Cycle${NC}"
+    "$SCRIPTS_DIR/afo_dgm_evolve.sh" "$@"
 }
 
 # Main
@@ -103,6 +136,25 @@ case "${1:-help}" in
     status)
         cmd_status
         ;;
+    alert)
+        shift || true
+        cmd_alert "$@"
+        ;;
+    release)
+        shift || true
+        cmd_release "$@"
+        ;;
+    dashboard)
+        cmd_dashboard
+        ;;
+    evolve)
+        shift || true
+        cmd_evolve "$@"
+        ;;
+    debug)
+        shift || true
+        cmd_debug "$@"
+        ;;
     help|--help|-h)
         cmd_help
         ;;
@@ -112,3 +164,4 @@ case "${1:-help}" in
         exit 1
         ;;
 esac
+

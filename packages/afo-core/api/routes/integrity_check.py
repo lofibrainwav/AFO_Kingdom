@@ -9,7 +9,9 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import subprocess
+from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
@@ -20,7 +22,44 @@ router = APIRouter(prefix="/api/integrity", tags=["Integrity Check"])
 
 logger = logging.getLogger(__name__)
 
-WORKSPACE_ROOT = Path("/Users/brnestrm/AFO_Kingdom")
+# Dynamic workspace root calculation
+@lru_cache(maxsize=1)
+def _find_workspace_root(anchor: Path) -> Path:
+    override = os.getenv("AFO_WORKSPACE_ROOT") or os.getenv("WORKSPACE_ROOT")
+    if override:
+        p = Path(override).expanduser().resolve()
+        if p.exists():
+            return p
+
+    try:
+        out = subprocess.check_output(
+            ["git", "rev-parse", "--show-toplevel"],
+            cwd=str(anchor.parent),
+            stderr=subprocess.DEVNULL,
+            text=True,
+        ).strip()
+        if out:
+            p = Path(out).resolve()
+            if p.exists():
+                return p
+    except Exception:
+        pass
+
+    markers = (
+        ".git",
+        "pyproject.toml",
+        "poetry.lock",
+        "package.json",
+        "pnpm-lock.yaml",
+    )
+    for p in (anchor, *anchor.parents):
+        if any((p / m).exists() for m in markers):
+            return p
+
+    return anchor
+
+
+WORKSPACE_ROOT = _find_workspace_root(Path(__file__).resolve())
 
 
 class IntegrityCheckRequest(BaseModel):

@@ -696,26 +696,6 @@ def register_core_skills() -> SkillRegistry:
         ),
     )
 
-    # Skill 7: Multi-Cloud Backup
-    skill_007 = AFOSkillCard(
-        skill_id="skill_007_multi_cloud",
-        name="Multi-Cloud Backup (Hetzner + AWS)",
-        description="High-availability backup system with 99.9% uptime and ICCLS gap healing",
-        category=SkillCategory.INTEGRATION,
-        tags=["backup", "cloud", "high-availability", "hetzner", "aws"],
-        version="1.0.0",
-        capabilities=["health_check", "failover", "gap_healing", "uptime_monitoring"],
-        dependencies=["boto3", "hcloud"],
-        execution_mode=ExecutionMode.ASYNC,
-        estimated_duration_ms=1500,
-        philosophy_scores=PhilosophyScore(
-            truth=95,  # Accurate monitoring
-            goodness=96,  # Backup safety
-            beauty=92,  # Clean integration
-            serenity=98,  # Peace of mind
-        ),
-    )
-
     # Skill 8: Soul Refine (Vibe Alignment)
     skill_008 = AFOSkillCard(
         skill_id="skill_008_soul_refine",
@@ -1136,12 +1116,12 @@ def register_core_skills() -> SkillRegistry:
     skill_026 = AFOSkillCard(
         skill_id="skill_026_vector_gardener",
         name="Vector Gardener",
-        description="Manages and re-indexes Qdrant vector database for optimal performance (Phase 2).",
+        description="Manages and re-indexes vector database for optimal performance (Phase 2).",
         category=SkillCategory.DATA_ENGINEERING,
-        tags=["vector-db", "qdrant", "reindex", "optimization"],
+        tags=["vector-db", "lancedb", "reindex", "optimization"],
         version="1.0.0",
         capabilities=["reindex", "optimize_segments", "vacuum"],
-        dependencies=["qdrant-client"],
+        dependencies=["lancedb"],
         execution_mode=ExecutionMode.BACKGROUND,
         estimated_duration_ms=10000,
         philosophy_scores=PhilosophyScore(truth=99, goodness=90, beauty=95, serenity=95),
@@ -1214,7 +1194,6 @@ def register_core_skills() -> SkillRegistry:
         skill_004,
         skill_005,
         skill_006,
-        skill_007,
         skill_008,
         skill_009,
         skill_010,

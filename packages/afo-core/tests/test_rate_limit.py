@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Test Rate Limiting
+"""Test Rate Limiting
 Tests the rate limiting functionality with Redis backend.
 """
 

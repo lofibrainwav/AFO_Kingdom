@@ -17,12 +17,12 @@ import logging
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any
 
 import numpy as np
 from numpy.typing import NDArray
 
-from afo.chancellor_graph import ChancellorNode, ChancellorContext
+from afo.chancellor_graph import ChancellorContext, ChancellorNode
 from afo.trinity_metric_wrapper import TrinityScore
 
 logger = logging.getLogger(__name__)
@@ -48,10 +48,10 @@ class ValidationResult:
     final_result: Any
     confidence_score: float
     execution_time: float
-    agent_results: List[Dict[str, Any]]
+    agent_results: list[dict[str, Any]]
     consensus_ratio: float
     retry_count: int
-    error_details: Optional[str] = None
+    error_details: str | None = None
 
 
 class CalculationAgent:
@@ -63,7 +63,7 @@ class CalculationAgent:
         self.calculation_count = 0
         self.error_count = 0
 
-    async def calculate(self, operation: str, *args, **kwargs) -> Tuple[Any, float]:
+    async def calculate(self, operation: str, *args, **kwargs) -> tuple[Any, float]:
         """Execute calculation with timing"""
         start_time = time.perf_counter()
 
@@ -84,13 +84,17 @@ class CalculationAgent:
             execution_time = time.perf_counter() - start_time
             raise RuntimeError(f"Agent {self.agent_id} calculation failed: {e}") from e
 
-    async def _matrix_multiply(self, A: NDArray[np.float64], B: NDArray[np.float64]) -> NDArray[np.float64]:
+    async def _matrix_multiply(
+        self, A: NDArray[np.float64], B: NDArray[np.float64]
+    ) -> NDArray[np.float64]:
         """Matrix multiplication with NumPy BLAS"""
         # Simulate slight variations to test consensus (in real implementation, this would be identical)
         await asyncio.sleep(0.001)  # Simulate computation time
         return np.dot(A, B)
 
-    async def _bayesian_update(self, prior: Dict[str, float], likelihood: Dict[str, float]) -> Dict[str, float]:
+    async def _bayesian_update(
+        self, prior: dict[str, float], likelihood: dict[str, float]
+    ) -> dict[str, float]:
         """Bayesian probability update"""
         await asyncio.sleep(0.001)
         # Simplified Bayesian update
@@ -111,15 +115,14 @@ class ValidationCoordinator:
         self.config = config
         self.agents = self._create_agents()
 
-    def _create_agents(self) -> List[CalculationAgent]:
+    def _create_agents(self) -> list[CalculationAgent]:
         """Create validation agents"""
         return [
-            CalculationAgent(f"truth_agent_{i}", "truth") for i in range(self.config.parallel_agents)
+            CalculationAgent(f"truth_agent_{i}", "truth")
+            for i in range(self.config.parallel_agents)
         ]
 
-    async def validate_calculation(
-        self, operation: str, *args, **kwargs
-    ) -> ValidationResult:
+    async def validate_calculation(self, operation: str, *args, **kwargs) -> ValidationResult:
         """Execute multi-agent validation"""
         start_time = time.perf_counter()
         retry_count = 0
@@ -160,7 +163,7 @@ class ValidationCoordinator:
                     execution_time=execution_time,
                     agent_results=parallel_results,
                     consensus_ratio=consensus_ratio,
-                    retry_count=retry_count
+                    retry_count=retry_count,
                 )
 
             except Exception as e:
@@ -177,10 +180,10 @@ class ValidationCoordinator:
             agent_results=[],
             consensus_ratio=0.0,
             retry_count=retry_count,
-            error_details=f"Validation failed after {retry_count} retries"
+            error_details=f"Validation failed after {retry_count} retries",
         )
 
-    async def _execute_parallel(self, operation: str, *args, **kwargs) -> List[Dict[str, Any]]:
+    async def _execute_parallel(self, operation: str, *args, **kwargs) -> list[dict[str, Any]]:
         """Execute parallel agent calculations"""
         tasks = []
         for agent in self.agents:
@@ -195,36 +198,41 @@ class ValidationCoordinator:
         agent_results = []
         for i, result in enumerate(results):
             if isinstance(result, Exception):
-                agent_results.append({
-                    "agent_id": self.agents[i].agent_id,
-                    "success": False,
-                    "error": str(result),
-                    "execution_time": self.config.timeout_seconds
-                })
+                agent_results.append(
+                    {
+                        "agent_id": self.agents[i].agent_id,
+                        "success": False,
+                        "error": str(result),
+                        "execution_time": self.config.timeout_seconds,
+                    }
+                )
             else:
                 result_data, exec_time = result
-                agent_results.append({
-                    "agent_id": self.agents[i].agent_id,
-                    "success": True,
-                    "result": result_data,
-                    "execution_time": exec_time
-                })
+                agent_results.append(
+                    {
+                        "agent_id": self.agents[i].agent_id,
+                        "success": True,
+                        "result": result_data,
+                        "execution_time": exec_time,
+                    }
+                )
 
         return agent_results
 
-    async def _safe_agent_calculation(self, agent: CalculationAgent, operation: str, *args, **kwargs):
+    async def _safe_agent_calculation(
+        self, agent: CalculationAgent, operation: str, *args, **kwargs
+    ):
         """Safe agent calculation with timeout"""
         try:
             return await asyncio.wait_for(
-                agent.calculate(operation, *args, **kwargs),
-                timeout=self.config.timeout_seconds
+                agent.calculate(operation, *args, **kwargs), timeout=self.config.timeout_seconds
             )
-        except asyncio.TimeoutError:
+        except TimeoutError:
             raise RuntimeError(f"Agent {agent.agent_id} timed out")
         except Exception as e:
             raise RuntimeError(f"Agent {agent.agent_id} failed: {e}")
 
-    def _check_consensus(self, agent_results: List[Dict[str, Any]]) -> Tuple[Any, float]:
+    def _check_consensus(self, agent_results: list[dict[str, Any]]) -> tuple[Any, float]:
         """Check consensus among agent results"""
         successful_results = [r for r in agent_results if r["success"]]
 
@@ -246,7 +254,9 @@ class ValidationCoordinator:
                 else:
                     # Try this result as new consensus
                     new_consensus_count = sum(
-                        1 for r in results if np.allclose(r, result, rtol=0, atol=self.config.tolerance)
+                        1
+                        for r in results
+                        if np.allclose(r, result, rtol=0, atol=self.config.tolerance)
                     )
                     if new_consensus_count > consensus_count:
                         consensus_result = result
@@ -284,13 +294,14 @@ class ValidationCoordinator:
             try:
                 verification_result, _ = await asyncio.wait_for(
                     reference_agent.calculate(operation, *args, **kwargs),
-                    timeout=self.config.timeout_seconds
+                    timeout=self.config.timeout_seconds,
                 )
 
                 # Compare with consensus
                 if isinstance(consensus_result, np.ndarray):
-                    if not np.allclose(verification_result, consensus_result,
-                                     rtol=0, atol=self.config.tolerance):
+                    if not np.allclose(
+                        verification_result, consensus_result, rtol=0, atol=self.config.tolerance
+                    ):
                         logger.warning(f"Serial verification iteration {iteration + 1} failed")
                         return False
                 else:
@@ -305,7 +316,7 @@ class ValidationCoordinator:
         return True
 
     def _calculate_confidence_score(
-        self, agent_results: List[Dict[str, Any]], consensus_ratio: float, retry_count: int
+        self, agent_results: list[dict[str, Any]], consensus_ratio: float, retry_count: int
     ) -> float:
         """Calculate confidence score for validation result"""
         successful_agents = sum(1 for r in agent_results if r["success"])
@@ -324,11 +335,11 @@ class ValidationCoordinator:
 class ValidationNode(ChancellorNode):
     """Chancellor V2 node for multi-agent calculation validation"""
 
-    def __init__(self, config: Optional[ValidationConfig] = None):
+    def __init__(self, config: ValidationConfig | None = None):
         super().__init__(
             node_id="validation_node",
             node_type="validation",
-            description="Multi-agent calculation validation for hallucination-free results"
+            description="Multi-agent calculation validation for hallucination-free results",
         )
         self.config = config or ValidationConfig()
         self.coordinator = ValidationCoordinator(self.config)
@@ -352,14 +363,16 @@ class ValidationNode(ChancellorNode):
             self.success_count += 1
 
         # Update context with results
-        context.update({
-            "validation_result": validation_result,
-            "validation_success": validation_result.is_valid,
-            "validation_confidence": validation_result.confidence_score,
-            "validation_execution_time": validation_result.execution_time,
-            "validation_consensus_ratio": validation_result.consensus_ratio,
-            "validation_retry_count": validation_result.retry_count
-        })
+        context.update(
+            {
+                "validation_result": validation_result,
+                "validation_success": validation_result.is_valid,
+                "validation_confidence": validation_result.confidence_score,
+                "validation_execution_time": validation_result.execution_time,
+                "validation_consensus_ratio": validation_result.consensus_ratio,
+                "validation_retry_count": validation_result.retry_count,
+            }
+        )
 
         # Log validation results
         await self._log_validation_results(validation_result, context)
@@ -370,7 +383,8 @@ class ValidationNode(ChancellorNode):
         trinity_score = trinity_score.combine(validation_score)
         context["trinity_score"] = trinity_score
 
-        logger.info(".2f"        return context
+        logger.info(f"Validation completed. Score: {validation_score}")
+        return context
 
     def _calculate_validation_trinity_score(self, result: ValidationResult) -> TrinityScore:
         """Calculate Trinity score based on validation results"""
@@ -385,7 +399,7 @@ class ValidationNode(ChancellorNode):
             goodness=goodness_score,
             beauty=beauty_score,
             serenity=serenity_score,
-            eternity=eternity_score
+            eternity=eternity_score,
         )
 
     async def _log_validation_results(self, result: ValidationResult, context: ChancellorContext):
@@ -409,8 +423,8 @@ class ValidationNode(ChancellorNode):
             "context_summary": {
                 "operation": context.get("validation_operation"),
                 "node_id": context.get("current_node_id"),
-                "trinity_score": str(context.get("trinity_score"))
-            }
+                "trinity_score": str(context.get("trinity_score")),
+            },
         }
 
         with open(log_file, "w") as f:

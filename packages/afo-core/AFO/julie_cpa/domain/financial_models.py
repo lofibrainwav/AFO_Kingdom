@@ -9,8 +9,7 @@ from AFO.julie_cpa.config import julie_config
 
 
 class FinancialTransaction(BaseModel):
-    """
-    [The Prince #25: Feared > Loved]
+    """[The Prince #25: Feared > Loved]
     Strict Model for Financial Transactions.
     Immutability and rigorous validation are enforced.
     """
@@ -41,8 +40,7 @@ class FinancialTransaction(BaseModel):
 
 
 class BudgetPlan(BaseModel):
-    """
-    [Sun Tzu #1: Laying Plans]
+    """[Sun Tzu #1: Laying Plans]
     Budget Plan Model.
     """
 

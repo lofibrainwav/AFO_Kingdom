@@ -52,21 +52,21 @@ fi
 TMUX_EOF
 
     echo "⏳ Waiting for training to complete (timeout: 1 hour)..."
-    START_TIME=\$(date +%s)
+    START_TIME=$(date +%s)
 
     # Wait for session to finish or timeout
     while tmux has-session -t "$SESSION_NAME" 2>/dev/null; do
         sleep 10
-        ELAPSED=\$(( \$(date +%s) - START_TIME ))
+        ELAPSED=$(( $(date +%s) - START_TIME ))
 
-        if [ \$ELAPSED -gt 3600 ]; then
+        if [ $ELAPSED -gt 3600 ]; then
             echo "⏰ Timeout reached (1 hour), killing session"
             tmux kill-session -t "$SESSION_NAME" 2>/dev/null || true
             break
         fi
 
         # Progress indicator
-        printf "\r⏳ Elapsed: \$((ELAPSED / 60))m \$((ELAPSED % 60))s"
+        printf "\r⏳ Elapsed: $((ELAPSED / 60))m $((ELAPSED % 60))s"
     done
 
     echo
@@ -74,8 +74,8 @@ TMUX_EOF
     # Check if training succeeded
     if [ -f "artifacts/training_success.flag" ]; then
         echo "🎉 Training succeeded on attempt $((RETRY_COUNT + 1))!"
-        SUCCESS_LOG=\$(cat artifacts/training_success.flag)
-        echo "📋 Success details: \$SUCCESS_LOG"
+        SUCCESS_LOG=$(cat artifacts/training_success.flag)
+        echo "📋 Success details: $SUCCESS_LOG"
 
         # SSOT 기록
         python - <<'PY'
@@ -108,7 +108,7 @@ PY
     tmux kill-session -t "$SESSION_NAME" 2>/dev/null || true
     rm -f artifacts/training_success.flag
 
-    RETRY_COUNT=\$((RETRY_COUNT + 1))
+    RETRY_COUNT=$((RETRY_COUNT + 1))
 
     if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
         echo "⏰ Waiting 30 seconds before retry..."

@@ -8,9 +8,7 @@ from typing import Any
 
 
 class Mediator(ABC):
-    """
-    Mediator Interface: Declares a method for communicating with components.
-    """
+    """Mediator Interface: Declares a method for communicating with components."""
 
     @abstractmethod
     def notify(self, sender: object, event: str, data: Any = None) -> None:
@@ -18,8 +16,7 @@ class Mediator(ABC):
 
 
 class Colleague(ABC):
-    """
-    Base Colleague: Components that communicate via the Mediator.
+    """Base Colleague: Components that communicate via the Mediator.
     They do not reference other Colleagues directly.
     """
 
@@ -50,9 +47,7 @@ class Colleague(ABC):
 
 
 class StrategistSquad(Colleague):
-    """
-    Concrete Colleague: Represents the 3 Strategists (Zhuge, Sima, Zhou).
-    """
+    """Concrete Colleague: Represents the 3 Strategists (Zhuge, Sima, Zhou)."""
 
     def deliberate(self, query: str):
         print(f"🧠 [Strategists] Deliberating on: {query}")
@@ -61,9 +56,7 @@ class StrategistSquad(Colleague):
 
 
 class TigerGeneralsUnit(Colleague):
-    """
-    Concrete Colleague: Represents the 5 Tigers (Execution).
-    """
+    """Concrete Colleague: Represents the 5 Tigers (Execution)."""
 
     def execute_order(self, strategy_data: dict):
         print(f"🐯 [Tigers] Received Order: {strategy_data.get('strategy')}")
@@ -77,8 +70,7 @@ class TigerGeneralsUnit(Colleague):
 
 
 class ChancellorMediator(Mediator):
-    """
-    Concrete Mediator: Coordinates the workflow between Strategists and Tigers.
+    """Concrete Mediator: Coordinates the workflow between Strategists and Tigers.
     The 'Brain' of the interaction.
     """
 

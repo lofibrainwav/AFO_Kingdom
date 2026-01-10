@@ -2,8 +2,7 @@
 # ⚔️ 점수는 Truth Engine (scripts/calculate_trinity_score.py)에서만 계산됩니다.
 # LLM은 consult_the_lens MCP 도구를 통해 점수를 확인하세요.
 
-"""
-AFO Kingdom - CRAG 통합 테스트
+"""AFO Kingdom - CRAG 통합 테스트
 제갈량 × 영덕 협력 테스트
 
 두 가지 CRAG 구현을 모두 테스트하고 비교:
@@ -42,9 +41,7 @@ def print_section(title: str):
 
 
 def test_class_based():
-    """
-    클래스 기반 CRAG 테스트 (영덕의 구현)
-    """
+    """클래스 기반 CRAG 테스트 (영덕의 구현)"""
     print_section("🏛️  클래스 기반 CRAG 테스트")
 
     try:
@@ -111,9 +108,7 @@ def test_class_based():
 
 
 def test_langgraph_based():
-    """
-    LangGraph 기반 CRAG 테스트 (제갈량 + 영덕의 구현)
-    """
+    """LangGraph 기반 CRAG 테스트 (제갈량 + 영덕의 구현)"""
     print_section("🔀 LangGraph 기반 CRAG 테스트")
 
     try:
@@ -180,9 +175,7 @@ def test_langgraph_based():
 
 
 def compare_results(class_result: dict[str, Any], langgraph_result: dict[str, Any]):
-    """
-    두 결과 비교 및 출력
-    """
+    """두 결과 비교 및 출력"""
     print_section("📊 비교 결과")
 
     if not class_result["success"] or not langgraph_result["success"]:
@@ -242,9 +235,7 @@ def compare_results(class_result: dict[str, Any], langgraph_result: dict[str, An
 
 
 def main():
-    """
-    메인 테스트 함수
-    """
+    """메인 테스트 함수"""
     print_header("🤖 AFO Kingdom CRAG 통합 테스트")
 
     # API 키 체크

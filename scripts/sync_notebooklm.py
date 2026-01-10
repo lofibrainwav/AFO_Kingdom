@@ -20,6 +20,7 @@ from pathlib import Path
 
 from qdrant_client import QdrantClient
 
+
 # Constants
 MANIFEST_PATH = Path("docs/kb/notebooklm/notebooklm.manifest.json")
 KB_ROOT = Path("docs/kb/notebooklm")
@@ -56,16 +57,8 @@ def ensure_structure(notebook: dict) -> dict | None:
     path_notes.mkdir(parents=True, exist_ok=True)
 
     # Count files
-    source_count = len(
-        [
-            f
-            for f in path_sources.glob("*")
-            if f.is_file() and not f.name.startswith(".")
-        ]
-    )
-    note_count = len(
-        [f for f in path_notes.glob("*") if f.is_file() and not f.name.startswith(".")]
-    )
+    source_count = len([f for f in path_sources.glob("*") if f.is_file() and not f.name.startswith(".")])
+    note_count = len([f for f in path_notes.glob("*") if f.is_file() and not f.name.startswith(".")])
 
     return {
         "slug": slug,
@@ -83,17 +76,14 @@ def update_readme(stats: list[dict]) -> None:
 
     with Path(readme_path).open("w", encoding="utf-8") as f:
         f.write("# 📚 NotebookLM Knowledge Base (Mirror)\n\n")
-        f.write(
-            "This directory contains the mirrored Knowledge Base for AFO's NotebookLM integration.\n"
-        )
+        f.write("This directory contains the mirrored Knowledge Base for AFO's NotebookLM integration.\n")
         f.write("Strategy: **Track A (SSOT Mirroring)**\n\n")
-        f.write(f"**Last Sync:** {datetime.now(UTC).strftime("%Y-%m-%d %H:%M:%S")}\n\n")
+        f.write(f"**Last Sync:** {datetime.now(UTC).strftime('%Y-%m-%d %H:%M:%S')}\n\n")
         f.write("| Notebook | Sources | Notes | Path |\n")
         f.write("|----------|:-------:|:-----:|------|\n")
 
         f.writelines(
-            f"| {s["title"]} | {s["source_count"]} | {s["note_count"]} | `{s["path_sources"]}` |\n"
-            for s in stats
+            f"| {s['title']} | {s['source_count']} | {s['note_count']} | `{s['path_sources']}` |\n" for s in stats
         )
 
         f.write("\n\n## Usage\n")
@@ -111,13 +101,13 @@ def main() -> None:
 
     stats = []
     for nb in notebooks:
-        print(f"   - Processing: {nb.get("title")} ({nb.get("slug")})")
+        print(f"   - Processing: {nb.get('title')} ({nb.get('slug')})")
         stat = ensure_structure(nb)
         if stat:
             stats.append(stat)
 
     update_readme(stats)
-    print(f"✅ Sync Complete. Index updated at {KB_ROOT / "README.md"}")
+    print(f"✅ Sync Complete. Index updated at {KB_ROOT / 'README.md'}")
 
 
 if __name__ == "__main__":

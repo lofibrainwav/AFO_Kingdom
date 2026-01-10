@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 set -euo pipefail
 
 echo "🔍 AFO 왕국 최종 SSOT 검증 시작..."

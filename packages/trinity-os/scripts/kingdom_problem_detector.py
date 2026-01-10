@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-AFO 왕국 Critical 문제 지속 파악 시스템 (Problem Detector)
+"""AFO 왕국 Critical 문제 지속 파악 시스템 (Problem Detector)
 
 眞善美孝 철학 기반 문제 감지 엔진
 - 성능 문제: Python 캐시, Node.js 모듈, 디스크 사용량
@@ -15,7 +14,17 @@ import subprocess
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, Mapping, cast
+
+def _as_mapping(x: object) -> Mapping[str, Any]:
+    return cast(Mapping[str, Any], x)
+
+def _as_list(x: object) -> list[Any]:
+    return cast(list[Any], x)
+
+def _as_any(x: object) -> Any:
+    return cast(Any, x)
+
 
 # AFO 루트 디렉토리 (TRINITY-OS의 부모 디렉토리)
 TRINITY_OS_ROOT = Path(__file__).resolve().parent.parent
@@ -45,7 +54,7 @@ class ProblemDetector:
             )
             cache_count = int(result.stdout.strip() or "0")
             if cache_count > 100:  # 100개 이상이면 문제
-                issues.append(
+                cast(list[Any], issues).append(
                     {
                         "category": "performance",
                         "type": "python_cache",
@@ -58,7 +67,7 @@ class ProblemDetector:
                     }
                 )
         except Exception as e:
-            issues.append(
+            cast(list[Any], issues).append(
                 {
                     "category": "performance",
                     "type": "python_cache_check_failed",
@@ -80,7 +89,7 @@ class ProblemDetector:
             )
             node_count = int(result.stdout.strip() or "0")
             if node_count > 0:
-                issues.append(
+                cast(list[Any], issues).append(
                     {
                         "category": "performance",
                         "type": "unnecessary_node_modules",
@@ -92,7 +101,7 @@ class ProblemDetector:
                     }
                 )
         except Exception as e:
-            issues.append(
+            cast(list[Any], issues).append(
                 {
                     "category": "performance",
                     "type": "node_modules_check_failed",
@@ -114,7 +123,7 @@ class ProblemDetector:
             )
             disk_usage = int(result.stdout.strip() or "0")
             if disk_usage > 80:
-                issues.append(
+                cast(list[Any], issues).append(
                     {
                         "category": "performance",
                         "type": "disk_usage",
@@ -127,7 +136,7 @@ class ProblemDetector:
                     }
                 )
         except Exception as e:
-            issues.append(
+            cast(list[Any], issues).append(
                 {
                     "category": "performance",
                     "type": "disk_usage_check_failed",
@@ -164,7 +173,7 @@ class ProblemDetector:
                 timeout=5,
             )
             if "PONG" not in result.stdout:
-                issues.append(
+                cast(list[Any], issues).append(
                     {
                         "category": "connection",
                         "type": "redis_connection",
@@ -177,7 +186,7 @@ class ProblemDetector:
                     }
                 )
         except Exception as e:
-            issues.append(
+            cast(list[Any], issues).append(
                 {
                     "category": "connection",
                     "type": "redis_check_failed",
@@ -206,7 +215,7 @@ class ProblemDetector:
                 timeout=5,
             )
             if "accepting" not in result.stdout:
-                issues.append(
+                cast(list[Any], issues).append(
                     {
                         "category": "connection",
                         "type": "postgresql_connection",
@@ -219,7 +228,7 @@ class ProblemDetector:
                     }
                 )
         except Exception as e:
-            issues.append(
+            cast(list[Any], issues).append(
                 {
                     "category": "connection",
                     "type": "postgresql_check_failed",
@@ -240,7 +249,7 @@ class ProblemDetector:
             )
             status = result.stdout.strip()
             if status != "healthy":
-                issues.append(
+                cast(list[Any], issues).append(
                     {
                         "category": "connection",
                         "type": "api_server_connection",
@@ -252,7 +261,7 @@ class ProblemDetector:
                     }
                 )
         except Exception as e:
-            issues.append(
+            cast(list[Any], issues).append(
                 {
                     "category": "connection",
                     "type": "api_server_check_failed",
@@ -291,12 +300,10 @@ class ProblemDetector:
                     gitignore_path = AFO_ROOT / ".gitignore"
                     gitignore_content = ""
                     if gitignore_path.exists():
-                        gitignore_content = gitignore_path.read_text(
-                            encoding="utf-8", errors="ignore"
-                        )
+                        gitignore_content = gitignore_path.read_text(encoding="utf-8", errors="ignore")
 
                     if pattern.replace("*", ".*") not in gitignore_content:
-                        issues.append(
+                        cast(list[Any], issues).append(
                             {
                                 "category": "security",
                                 "type": "cookie_file_exposed",
@@ -309,7 +316,7 @@ class ProblemDetector:
                             }
                         )
             except Exception as e:
-                issues.append(
+                cast(list[Any], issues).append(
                     {
                         "category": "security",
                         "type": "cookie_check_failed",
@@ -338,7 +345,7 @@ class ProblemDetector:
                 )
                 count = int(result.stdout.strip() or "0")
                 if count > 0:
-                    issues.append(
+                    cast(list[Any], issues).append(
                         {
                             "category": "security",
                             "type": "debug_files_in_root",
@@ -366,7 +373,7 @@ class ProblemDetector:
             )
             count = int(result.stdout.strip() or "0")
             if count > 0:
-                issues.append(
+                cast(list[Any], issues).append(
                     {
                         "category": "security",
                         "type": "hardcoded_secrets",
@@ -447,30 +454,16 @@ class ProblemDetector:
                 trinity_map[trinity_type].append(1.0 if is_healthy else 0.0)
 
         # 각 Trinity별 평균 계산
-        truth_score = (
-            sum(trinity_map["眞"]) / len(trinity_map["眞"])
-            if trinity_map["眞"]
-            else 0.0
-        )
-        goodness_score = (
-            sum(trinity_map["善"]) / len(trinity_map["善"])
-            if trinity_map["善"]
-            else 0.0
-        )
-        beauty_score = (
-            sum(trinity_map["美"]) / len(trinity_map["美"])
-            if trinity_map["美"]
-            else 0.0
-        )
+        truth_score = sum(trinity_map["眞"]) / len(trinity_map["眞"]) if trinity_map["眞"] else 0.0
+        goodness_score = sum(trinity_map["善"]) / len(trinity_map["善"]) if trinity_map["善"] else 0.0
+        beauty_score = sum(trinity_map["美"]) / len(trinity_map["美"]) if trinity_map["美"] else 0.0
 
         # 전체 건강도 = Filial Serenity (孝)
         health_percentage = self.health_report.get("health_percentage", 0.0)
         filial_serenity = health_percentage / 100.0
 
         # Trinity Score = (眞 + 善 + 美 + 孝) / 4
-        trinity_score = (
-            truth_score + goodness_score + beauty_score + filial_serenity
-        ) / 4.0
+        trinity_score = (truth_score + goodness_score + beauty_score + filial_serenity) / 4.0
 
         # Balance Delta = Max - Min
         values = [truth_score, goodness_score, beauty_score, filial_serenity]
@@ -487,7 +480,7 @@ class ProblemDetector:
         # 불균형 문제 자동 감지
         balance_issues = []
         if truth_score < 0.7:
-            balance_issues.append(
+            cast(list[Any], balance_issues).append(
                 {
                     "type": "truth_low",
                     "severity": "high",
@@ -500,7 +493,7 @@ class ProblemDetector:
                 }
             )
         if goodness_score < 0.7:
-            balance_issues.append(
+            cast(list[Any], balance_issues).append(
                 {
                     "type": "goodness_low",
                     "severity": "high",
@@ -513,7 +506,7 @@ class ProblemDetector:
                 }
             )
         if beauty_score < 0.7:
-            balance_issues.append(
+            cast(list[Any], balance_issues).append(
                 {
                     "type": "beauty_low",
                     "severity": "high",
@@ -526,7 +519,7 @@ class ProblemDetector:
                 }
             )
         if balance_delta > 0.3:
-            balance_issues.append(
+            cast(list[Any], balance_issues).append(
                 {
                     "type": "balance_imbalanced",
                     "severity": "high" if balance_delta > 0.5 else "medium",
@@ -620,9 +613,7 @@ class ProblemDetector:
             "recommendation": self._get_recommendation(summary, all_issues),
         }
 
-    def _get_recommendation(
-        self, summary: dict[str, Any], problems: list[dict[str, Any]]
-    ) -> str:
+    def _get_recommendation(self, summary: dict[str, Any], problems: list[dict[str, Any]]) -> str:
         """권장사항 생성"""
         if summary["critical"] > 0:
             return f"🚨 긴급: Critical 문제 {summary['critical']}개 즉시 해결 필요"

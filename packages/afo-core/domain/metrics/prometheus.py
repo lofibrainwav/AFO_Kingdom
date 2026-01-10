@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-AFO Prometheus Metrics Definitions
+"""AFO Prometheus Metrics Definitions
 Centralized location for all Prometheus metrics to avoid circular imports and duplication.
 """
 
@@ -253,13 +252,13 @@ truth_loop_duration = Histogram(
 
 # Phase 8.1.3: Trinity 점수 업데이트 헬퍼 함수
 def update_trinity_scores(truth: float, goodness: float, beauty: float) -> float:
-    """
-    Trinity 점수를 업데이트하고 Balance Delta를 자동 계산
+    """Trinity 점수를 업데이트하고 Balance Delta를 자동 계산
 
     Args:
         truth: 眞 (Truth) 점수 (0.0-1.0)
         goodness: 善 (Goodness) 점수 (0.0-1.0)
         beauty: 美 (Beauty) 점수 (0.0-1.0)
+
     """
     # Default labels for global score
     labels = {"service": "soul_engine", "component": "core"}
@@ -285,14 +284,14 @@ def update_trinity_scores(truth: float, goodness: float, beauty: float) -> float
 
 # Phase 8.1.3: VibeCoding 준수율 헬퍼 함수
 def update_vibecoding_compliance() -> float:
-    """
-    VibeCoding 준수율을 DRY_RUN/WET 비율로 자동 계산
+    """VibeCoding 준수율을 DRY_RUN/WET 비율로 자동 계산
 
     원칙: DRY_RUN 없이 WET 실행 금지 (선확인, 후보고)
     준수율 = DRY_RUN / (DRY_RUN + WET_without_DRY)
 
     Returns:
         float: 준수율 (0.0-1.0)
+
     """
     # REGISTRY는 이미 상단에서 import됨
 

@@ -3,12 +3,9 @@ import os
 import pathlib
 import sys
 
+
 # 프로젝트 루트 경로 추가
-sys.path.append(
-    pathlib.Path(
-        os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")
-    ).resolve()
-)
+sys.path.append(pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")).resolve())
 
 from AFO.utils.playwright_bridge import bridge
 
@@ -32,9 +29,9 @@ async def verify_genui_self_evolution():
         # Run the AI Scenario
         result = await bridge.run_ai_test_scenario(prompt)
 
-        print(f"\n[Result] Status: {result.get("status")}")
+        print(f"\n[Result] Status: {result.get('status')}")
         if "error" in result:
-            print(f"[Result] Error info: {result.get("error")}")
+            print(f"[Result] Error info: {result.get('error')}")
         else:
             print("[Result] Code Executed Successfully.")
 

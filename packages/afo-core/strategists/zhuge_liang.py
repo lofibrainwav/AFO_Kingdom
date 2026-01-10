@@ -3,7 +3,7 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from .base import log_action, robust_execute
+from AFO.base import log_action, robust_execute
 
 
 # Defines the data contract for Truth verification (Modular Interface)

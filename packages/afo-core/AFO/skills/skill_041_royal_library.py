@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-AFO 왕립 도서관 41선 Skill/MCP
+"""AFO 왕립 도서관 41선 Skill/MCP
 4대 고전(손자병법/삼국지/군주론/전쟁론)의 전략적 지혜를 실행 가능한 도구로
 
 Rule #0 지피지기: "眞 100% 확보 후 행동" - 야전교범 제1원칙
@@ -45,8 +44,7 @@ class PrincipleResult:
 
 
 class RoyalLibrarySkill:
-    """
-    AFO 왕립 도서관 41선 Skill
+    """AFO 왕립 도서관 41선 Skill
 
     4대 고전의 전략적 지혜:
     - 손자병법 (12선): 眞 70% / 孝 30%
@@ -66,8 +64,7 @@ class RoyalLibrarySkill:
     async def principle_01_preflight_check(
         self, context: dict[str, Any] | None = None, sources: list[str] | None = None
     ) -> PrincipleResult:
-        """
-        [01] 지피지기 (Know Thyself) - Rule #0
+        """[01] 지피지기 (Know Thyself) - Rule #0
 
         원칙: 모든 실행 전, Context7과 DB를 조회하여 현재 상태를 정확히 파악하라.
         코드: pre_flight_check() 필수 실행. Hallucination 원천 차단.
@@ -98,8 +95,7 @@ class RoyalLibrarySkill:
     async def principle_03_dry_run_simulation(
         self, action: Callable[..., T], *args: Any, simulate: bool = True, **kwargs: Any
     ) -> PrincipleResult:
-        """
-        [03] 병자궤도야 (All Warfare is Deception) - DRY_RUN
+        """[03] 병자궤도야 (All Warfare is Deception) - DRY_RUN
 
         원칙: 위험한 작업은 반드시 DRY_RUN (모의전)으로 결과를 미리 보여주어라.
         코드: mode='dry_run' 파라미터 기본값 True.
@@ -151,8 +147,7 @@ class RoyalLibrarySkill:
     async def principle_02_find_existing_solution(
         self, requirement: str, search_sources: list[str] | None = None
     ) -> PrincipleResult:
-        """
-        [02] 상병벌모 (Win Without Fighting)
+        """[02] 상병벌모 (Win Without Fighting)
 
         원칙: 코드를 짜는 것보다 기존 라이브러리/API를 활용하는 것이 상책이다.
         코드: import > def. 노가다(Friction) 회피.
@@ -169,8 +164,7 @@ class RoyalLibrarySkill:
         )
 
     async def principle_04_async_execute(self, tasks: list[Callable[..., Any]]) -> PrincipleResult:
-        """
-        [04] 병귀신속 (Speed is of Great Value)
+        """[04] 병귀신속 (Speed is of Great Value)
 
         원칙: 응답 속도는 UX의 핵심. 느린 로직은 비동기로 처리하라.
         코드: asyncio, Celery 활용.
@@ -188,8 +182,7 @@ class RoyalLibrarySkill:
     async def principle_05_trinity_alignment(
         self, truth_score: float, goodness_score: float, beauty_score: float
     ) -> PrincipleResult:
-        """
-        [05] 도천지장법 (The Five Factors)
+        """[05] 도천지장법 (The Five Factors)
 
         원칙: 프로젝트의 5요소가 정렬되었는지 확인하라.
         코드: Trinity Score 5기둥 정렬 체크.
@@ -327,8 +320,7 @@ class RoyalLibrarySkill:
         backoff_factor: float = 2.0,
         **kwargs: Any,
     ) -> PrincipleResult:
-        """
-        [14] 삼고초려 (Three Visits) - Retry with Exponential Backoff
+        """[14] 삼고초려 (Three Visits) - Retry with Exponential Backoff
 
         원칙: 외부 API나 리소스 요청 실패 시, 최소 3번은 정중하게 재시도하라.
         코드: Retry(max_attempts=3, backoff=exponential).
@@ -495,8 +487,7 @@ class RoyalLibrarySkill:
     async def principle_25_strict_typing(
         self, value: Any, expected_type: type, allow_none: bool = False
     ) -> PrincipleResult:
-        """
-        [25] 사랑보다 두려움 (Feared > Loved) - Strict Typing
+        """[25] 사랑보다 두려움 (Feared > Loved) - Strict Typing
 
         원칙: 느슨한 타입보다는 엄격한 타입(MyPy)이 낫다. 컴파일러가 두려워야 런타임이 안전하다.
         코드: Strict Typing, Validation.
@@ -641,8 +632,7 @@ class RoyalLibrarySkill:
     async def principle_34_null_check_validation(
         self, data: Any, required_fields: list[str] | None = None
     ) -> PrincipleResult:
-        """
-        [34] 전장의 안개 (Fog of War) - Null Check & Validation
+        """[34] 전장의 안개 (Fog of War) - Null Check & Validation
 
         원칙: 정보(Data)가 없으면 움직이지 말고(Block), 정찰(Fetch)하라.
         코드: Null Check, Data Validation.
@@ -687,8 +677,7 @@ class RoyalLibrarySkill:
     async def principle_36_root_cause_analysis(
         self, symptoms: list[str], context: dict[str, Any] | None = None
     ) -> PrincipleResult:
-        """
-        [36] 중심 (Center of Gravity) - Root Cause Analysis
+        """[36] 중심 (Center of Gravity) - Root Cause Analysis
 
         원칙: 문제의 핵심 원인(Root Cause) 하나를 타격하라. 주변부만 건드리지 마라.
         코드: Root Cause Analysis.

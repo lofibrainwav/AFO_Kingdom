@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Grok.com Static Cookie Dump
+"""Grok.com Static Cookie Dump
 Target: grok.com (Standalone, Chrome DB)
 Purpose: Extract session cookies without launching Chrome (bypassing lock issues).
 """

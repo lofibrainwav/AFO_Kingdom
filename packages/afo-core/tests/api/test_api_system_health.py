@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Tests for api/routes/system_health.py
+"""Tests for api/routes/system_health.py
 System Health API 테스트 (Real Module Import)
 """
 

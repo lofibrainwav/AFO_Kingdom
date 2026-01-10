@@ -1,0 +1,12 @@
+AS_OF=20260106_100720
+GIT_ROOT=/Users/brnestrm/AFO_Kingdom
+ABS_PATH_PATTERN=/Users/brnestrm/AFO_Kingdom
+ALLOW_UNTRACKED_REGEX=^(docs/ssot/evidence/|artifacts/|tools/dgm/|\.bruin\.yml$)
+RUFF_TARGET=.
+ALLOW_AHEAD=false
+
+RUFF=FAIL (version_rc=0, check_rc=1)
+ABS_PATH=FAIL (hits=454)
+GIT=FAIL (unstaged=9, staged=0, bad_untracked=3, ahead_or_behind=yes)
+
+EVIDENCE_DIR=/Users/brnestrm/AFO_Kingdom/docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_100720

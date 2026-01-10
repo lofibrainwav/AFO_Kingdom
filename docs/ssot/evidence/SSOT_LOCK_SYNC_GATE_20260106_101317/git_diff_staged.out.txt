@@ -1,0 +1,1 @@
+A	docs/ssot/allowlists/untracked_allowlist_regex.txt

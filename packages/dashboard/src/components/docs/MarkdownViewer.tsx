@@ -1,5 +1,6 @@
 'use client';
 
+import DOMPurify from 'isomorphic-dompurify';
 import { motion } from 'framer-motion';
 import { useMemo, useRef } from 'react';
 
@@ -40,7 +41,12 @@ export function MarkdownViewer({
       html = `<p class=\"mb-4 text-slate-600 leading-relaxed\">${html}</p>`;
     }
 
-    return html;
+    // XSS 방지: DOMPurify로 새니타이징 (Phase 15 Security Seal)
+    return DOMPurify.sanitize(html, {
+      USE_PROFILES: { html: true },
+      ALLOWED_TAGS: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'br', 'strong', 'em', 'code', 'a', 'ul', 'li'],
+      ALLOWED_ATTR: ['class', 'href', 'target', 'rel'],
+    });
   }, [content, loading]);
 
   if (loading) {

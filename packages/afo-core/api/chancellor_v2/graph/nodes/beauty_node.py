@@ -8,51 +8,91 @@ if TYPE_CHECKING:
     from api.chancellor_v2.graph.state import GraphState
 
 
-def beauty_node(state: GraphState) -> GraphState:
+async def beauty_node(state: GraphState) -> GraphState:
     """Evaluate UX and aesthetic aspects.
 
     美 (Beauty) - 구조적 단순함, 모듈화, 일관된 API/UI 평가
-
-    Args:
-        state: Current graph state
-
-    Returns:
-        Updated graph state with beauty evaluation
+    Scholar: Lushun (Gemini 2.0 Flash / Google)
     """
     skill_id = state.plan.get("skill_id", "")
     query = state.plan.get("query", "")
 
-    # 실제 UX/구조/일관성 평가 로직
-    ux_score = _evaluate_ux_friendliness(query)
-    simplicity_score = _evaluate_structural_simplicity(skill_id)
-    consistency_score = _evaluate_api_consistency(skill_id, query)
+    # 1. Heuristic Evaluation
+    ux_friendliness_score = _evaluate_ux_friendliness(query)
+    structural_simplicity_score = _evaluate_structural_simplicity(skill_id)
+    api_consistency_score = _evaluate_api_consistency(skill_id, query)
     modularity_score = _evaluate_modularity(skill_id)
-
-    # 종합 Beauty 점수 (가중 평균)
-    beauty_score = (
-        ux_score * 0.3  # UX 우선
-        + simplicity_score * 0.3  # 구조적 단순함
-        + consistency_score * 0.25  # API 일관성
-        + modularity_score * 0.15  # 모듈화
+    heuristic_score = (
+        ux_friendliness_score * 0.3
+        + structural_simplicity_score * 0.3
+        + api_consistency_score * 0.2
+        + modularity_score * 0.2
     )
 
+    # 2. Scholar Assessment (Lushun)
+    import json
+
+    from llm_router import llm_router
+
+    prompt = f"""
+    You are Lushun (美), the UX & Aesthetic Strategist of the AFO Kingdom.
+    Analyze the following execution plan for structure, simplicity, and user experience.
+
+    Plan:
+    - Skill: {skill_id}
+    - Query: {query}
+    - Command: {state.input.get("command", "")}
+
+    Guidelines:
+    - Evaluate the structural simplicity of the proposed plan.
+    - Assess if the query is UX-friendly (clear, non-confusing).
+    - Check for redundant complexity or "API clutter".
+
+    Provide your assessment in JSON:
+    {{
+      "score": float (0.0 to 1.0),
+      "reasoning": string,
+      "issues": list[string]
+    }}
+    """
+
+    scholar_score = heuristic_score
+    reasoning = "Heuristic assessment based on structural complexity analysis."
+    issues = []
+    assessment_mode = "Heuristic (Fallback)"
+    scholar_model = "None"
+
+    try:
+        response = await llm_router.execute_with_routing(
+            prompt, context={"provider": "gemini", "quality_tier": "standard"}
+        )
+        if response and response.get("response"):
+            try:
+                text = (
+                    response["response"].strip().replace("```json", "").replace("```", "").strip()
+                )
+                data = json.loads(text)
+                scholar_score = data.get("score", heuristic_score)
+                reasoning = data.get("reasoning", reasoning)
+                issues = data.get("issues", [])
+                assessment_mode = "LLM (Scholar)"
+                scholar_model = response.get("model", "Gemini/Lushun")
+            except:
+                pass
+    except Exception as e:
+        state.errors.append(f"Lushun (BEAUTY) assessment failed: {e}")
+
+    # Combine: 30% Heuristic + 70% Scholar
+    final_score = (heuristic_score * 0.3) + (scholar_score * 0.7)
+
     evaluation = {
-        "skill_id": skill_id,
-        "ux_friendly": ux_score >= 0.7,
-        "simple_design": simplicity_score >= 0.7,
-        "consistent_api": consistency_score >= 0.7,
-        "modular_design": modularity_score >= 0.7,
-        "documentation_quality": _evaluate_documentation_quality(query),
-        "score": beauty_score,
-        "issues": [],
+        "score": round(final_score, 3),
+        "reasoning": reasoning,
+        "issues": issues,
+        "metadata": {"mode": assessment_mode, "scholar": "Lushun (美)", "model": scholar_model},
     }
 
-    # Store evaluation results
-    if "BEAUTY" not in state.outputs:
-        state.outputs["BEAUTY"] = {}
-
     state.outputs["BEAUTY"] = evaluation
-
     return state
 
 
@@ -181,31 +221,4 @@ def _evaluate_modularity(skill_id: str) -> float:
 
     return max(modularity_score, 0.6)  # 기본 모듈화 수준
 
-
-def _evaluate_documentation_quality(query: str) -> float:
-    """문서화 품질 평가 (보조 메트릭)"""
-    if not query:
-        return 0.6
-
-    query_lower = query.lower()
-
-    # 문서화 관련 키워드 평가
-    doc_indicators = {
-        "docs": 0.9,
-        "documentation": 0.9,
-        "readme": 0.9,
-        "guide": 0.8,
-        "tutorial": 0.8,
-        "example": 0.8,
-        "reference": 0.7,
-        "comment": 0.6,
-        "docstring": 0.6,
-        "javadoc": 0.6,
-    }
-
-    doc_score = 0.0
-    for indicator, score in doc_indicators.items():
-        if indicator in query_lower:
-            doc_score = max(doc_score, score)
-
-    return max(doc_score, 0.6)  # 기본 문서화 수준
+    return max(modularity_score, 0.6)  # 기본 모듈화 수준

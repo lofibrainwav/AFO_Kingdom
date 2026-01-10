@@ -36,7 +36,11 @@ class SkeletonIndexer:
     4폴더 (afo/, afo_kingdom/, trinity-os/, sixxon/) 구조를 스캔
     """
 
-    def __init__(self, root_path: str = "/Users/brnestrm/AFO_Kingdom"):
+    def __init__(self, root_path: str | None = None):
+        if root_path is None:
+            # This file is at packages/afo-core/AFO/skeleton_index.py
+            # So repo root is 3 parents up
+            root_path = str(Path(__file__).resolve().parents[3])
         self.root_path = Path(root_path)
         self.target_folders = [
             "packages/afo-core",  # afo/

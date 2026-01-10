@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 
-from AFO.config.antigravity import antigravity
+from AFO..config.antigravity import import antigravity
 
 
 class TestPureAntigravity(unittest.TestCase):

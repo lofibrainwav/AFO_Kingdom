@@ -12,14 +12,17 @@ def test_get_settings():
     assert settings is not None
     assert hasattr(settings, "POSTGRES_HOST")
     assert hasattr(settings, "REDIS_URL")
-    assert hasattr(settings, "QDRANT_URL")
+    assert hasattr(settings, "VECTOR_DB")
+    assert hasattr(settings, "LANCEDB_PATH")
 
 
 def test_settings_defaults():
     """설정 기본값 테스트"""
     settings = get_settings()
-    assert settings.POSTGRES_HOST == "localhost"
-    assert settings.POSTGRES_PORT == 15432
+    # Default is "afo-postgres" for docker-compose, can be overridden via env
+    assert settings.POSTGRES_HOST in ("afo-postgres", "localhost")
+    # Port is 5432 (standard) or 15432 (docker-compose external mapping)
+    assert settings.POSTGRES_PORT in (5432, 15432)
     assert settings.REDIS_URL.startswith("redis://")
 
 
