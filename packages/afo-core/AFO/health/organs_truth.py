@@ -235,7 +235,7 @@ def build_organs_final(
     organs["舌_Ollama"] = _mk(ok, ms, t, "tcp", 95, 20, "Connected", "Disconnected")
 
     # 벡터 DB 건강도 체크 (환경변수 기반)
-    vector_db_type = os.getenv("VECTOR_DB", "qdrant").lower()
+    vector_db_type = os.getenv("VECTOR_DB", "lancedb").lower()
 
     if vector_db_type == "lancedb":
         # LanceDB: 파일 기반 체크
