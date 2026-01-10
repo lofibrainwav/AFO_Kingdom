@@ -4,13 +4,12 @@ LanceDB 멀티모달 파이프라인 완전 테스트
 眞善美孝永 - qwen3-vl + embeddinggemma + LanceDB 완전 검증
 """
 
+import asyncio
 import os
 import sys
-import asyncio
-from pathlib import Path
 
 # 환경변수 설정
-os.environ['VECTOR_DB'] = 'lancedb'
+os.environ["VECTOR_DB"] = "lancedb"
 
 # AFO 패키지 경로 추가
 current_file = os.path.abspath(__file__)
@@ -18,6 +17,7 @@ project_root = os.path.dirname(current_file)
 afo_core_path = os.path.join(project_root, "packages", "afo-core")
 if afo_core_path not in sys.path:
     sys.path.insert(0, afo_core_path)
+
 
 async def test_multimodal_pipeline():
     """멀티모달 파이프라인 완전 테스트"""
@@ -27,7 +27,7 @@ async def test_multimodal_pipeline():
     try:
         # 1. 벡터 스토어 초기화 확인
         print("1️⃣ 벡터 스토어 초기화 확인...")
-        from utils.vector_store import get_vector_store, LanceDBAdapter
+        from utils.vector_store import LanceDBAdapter, get_vector_store
 
         store = get_vector_store()
         if isinstance(store, LanceDBAdapter):
@@ -41,25 +41,28 @@ async def test_multimodal_pipeline():
 
         # LanceDB용 데이터 포맷 (PyArrow 호환)
         import numpy as np
+
         test_data = [
             {
                 "id": "test_doc_1",
                 "content": "AFO Kingdom is an advanced AI operating system with multimodal capabilities.",
                 "source": "test_pipeline",
-                "vector": np.array([0.1] * 1536, dtype=np.float32)  # NumPy 배열로 변환
+                "vector": np.array([0.1] * 1536, dtype=np.float32),  # NumPy 배열로 변환
             },
             {
                 "id": "test_doc_2",
                 "content": "LanceDB provides fast vector search for AI applications and knowledge bases.",
                 "source": "test_pipeline",
-                "vector": np.array([0.2] * 1536, dtype=np.float32)  # NumPy 배열로 변환
+                "vector": np.array([0.2] * 1536, dtype=np.float32),  # NumPy 배열로 변환
             },
             {
                 "id": "test_doc_3",
                 "content": "Qwen3-VL model excels at understanding both images and text simultaneously.",
                 "source": "test_pipeline",
-                "vector": np.array([0.15] * 1536, dtype=np.float32)  # NumPy 배열로 변환
-            }
+                "vector": np.array(
+                    [0.15] * 1536, dtype=np.float32
+                ),  # NumPy 배열로 변환
+            },
         ]
 
         insert_success = store.insert(test_data)
@@ -98,7 +101,10 @@ async def test_multimodal_pipeline():
         from services.hybrid_rag import generate_answer_async
 
         query = "What is AFO Kingdom?"
-        contexts = ["AFO Kingdom is an AI operating system", "It uses multimodal AI capabilities"]
+        contexts = [
+            "AFO Kingdom is an AI operating system",
+            "It uses multimodal AI capabilities",
+        ]
 
         try:
             answer = await generate_answer_async(
@@ -107,7 +113,7 @@ async def test_multimodal_pipeline():
                 temperature=0.3,
                 response_format="markdown",
                 additional_instructions="",
-                llm_provider="openai"
+                llm_provider="openai",
             )
 
             if answer and len(str(answer).strip()) > 10:
@@ -128,6 +134,7 @@ async def test_multimodal_pipeline():
         # 이미지 분석 시뮬레이션 (qwen3-vl)
         try:
             from services.vision_service import VisionService
+
             vision_service = VisionService()
             print("✅ Vision Service 초기화 성공")
         except Exception as e:
@@ -164,8 +171,10 @@ async def test_multimodal_pipeline():
     except Exception as e:
         print(f"❌ 멀티모달 파이프라인 테스트 실패: {e}")
         import traceback
+
         traceback.print_exc()
         return False
+
 
 async def main():
     """메인 함수"""
@@ -178,6 +187,7 @@ async def main():
         print("   추가 디버깅이 필요합니다.")
 
     return success
+
 
 if __name__ == "__main__":
     asyncio.run(main())

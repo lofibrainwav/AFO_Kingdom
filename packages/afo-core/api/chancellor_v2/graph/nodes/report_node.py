@@ -46,7 +46,9 @@ async def report_node(state: GraphState) -> GraphState:
         report["recommendations"].append("❌ Execution had issues - review errors")
 
     if merge_result.get("trinity_score", 0) < 90:
-        report["recommendations"].append("⚠️ Trinity Score below 90 - consider manual review")
+        report["recommendations"].append(
+            "⚠️ Trinity Score below 90 - consider manual review"
+        )
 
     # Store final report
     if "REPORT" not in state.outputs:

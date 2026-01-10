@@ -81,6 +81,8 @@ class SqlGuardMiddleware(BaseHTTPMiddleware):
             request._receive = _receive
 
         if suspicious and mode == "block":
-            return JSONResponse({"ok": False, "error": "suspicious_input"}, status_code=400)
+            return JSONResponse(
+                {"ok": False, "error": "suspicious_input"}, status_code=400
+            )
 
         return await call_next(request)  # type: ignore[no-any-return]

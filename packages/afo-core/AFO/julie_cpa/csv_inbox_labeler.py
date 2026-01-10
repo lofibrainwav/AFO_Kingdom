@@ -123,14 +123,30 @@ def _parse_amount(row: dict[str, str]) -> float | None:
 
 
 def _get_desc(row: dict[str, str]) -> str:
-    for k in ("description", "Description", "memo", "Memo", "name", "Name", "merchant", "Merchant"):
+    for k in (
+        "description",
+        "Description",
+        "memo",
+        "Memo",
+        "name",
+        "Name",
+        "merchant",
+        "Merchant",
+    ):
         if k in row and row[k].strip():
             return row[k].strip()
     return ""
 
 
 def _get_date(row: dict[str, str]) -> str:
-    for k in ("date", "Date", "posted", "Posted", "transaction_date", "Transaction Date"):
+    for k in (
+        "date",
+        "Date",
+        "posted",
+        "Posted",
+        "transaction_date",
+        "Transaction Date",
+    ):
         if k in row and row[k].strip():
             return row[k].strip()
     return ""
@@ -186,7 +202,9 @@ def label_csv_file(csv_path: Path, rules: Ruleset) -> dict[str, Any]:
         abs_amount = abs(amount)
         risk = "high" if abs_amount >= rules.high_risk_amount_usd else "normal"
 
-        priority = rules.high_risk_priority if risk == "high" else rules.default_priority
+        priority = (
+            rules.high_risk_priority if risk == "high" else rules.default_priority
+        )
 
         needs_review = (domain in rules.always_queue_labels) or (risk == "high")
 
@@ -246,16 +264,25 @@ def _iter_csv_inputs(p: Path) -> Iterable[Path]:
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--in", dest="inp", required=True, help="CSV file or directory")
-    ap.add_argument("--rules", default="config/julie_cpa/label_rules.json", help="Rules JSON path")
-    ap.add_argument("--out-dir", default="artifacts/fin/ph_fin_01", help="Output directory")
     ap.add_argument(
-        "--lock-env", default="AFO_FIN_ENABLED", help="Env var required to run (value must be '1')"
+        "--rules", default="config/julie_cpa/label_rules.json", help="Rules JSON path"
+    )
+    ap.add_argument(
+        "--out-dir", default="artifacts/fin/ph_fin_01", help="Output directory"
+    )
+    ap.add_argument(
+        "--lock-env",
+        default="AFO_FIN_ENABLED",
+        help="Env var required to run (value must be '1')",
     )
     ns = ap.parse_args(argv)
 
     lock_env = str(ns.lock_env)
     if os.getenv(lock_env, "0") != "1":
-        print(f"[LOCKED] {lock_env}!=1 (default OFF). Set {lock_env}=1 to run.", file=sys.stderr)
+        print(
+            f"[LOCKED] {lock_env}!=1 (default OFF). Set {lock_env}=1 to run.",
+            file=sys.stderr,
+        )
         return 3
 
     # Assuming we run from root usually, but let's be safe
@@ -277,7 +304,9 @@ def main(argv: list[str] | None = None) -> int:
         report = label_csv_file(csv_path, rules)
         safe_name = csv_path.stem.replace(" ", "_")
         out_path = out_dir / f"{safe_name}.report.{run_id}.json"
-        out_path.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+        out_path.write_text(
+            json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8"
+        )
         outputs.append(out_path)
 
         if report["queue_md"]:
@@ -289,7 +318,9 @@ def main(argv: list[str] | None = None) -> int:
 
     # Write MD Queue Report
     if all_queues:
-        md_content = f"# Julie CPA Queue Report ({run_id})\n\n" + "\n\n".join(all_queues)
+        md_content = f"# Julie CPA Queue Report ({run_id})\n\n" + "\n\n".join(
+            all_queues
+        )
         queue_report_md.write_text(md_content, encoding="utf-8")
         print(f"[INFO] Queue Report: {queue_report_md}")
 
@@ -304,7 +335,9 @@ def main(argv: list[str] | None = None) -> int:
         return 2
 
     index = {"run_id": run_id, "reports": [p.as_posix() for p in outputs]}
-    (out_dir / f"index.{run_id}.json").write_text(json.dumps(index, indent=2), encoding="utf-8")
+    (out_dir / f"index.{run_id}.json").write_text(
+        json.dumps(index, indent=2), encoding="utf-8"
+    )
     print(json.dumps(index, indent=2))
     return 0
 

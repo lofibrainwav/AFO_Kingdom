@@ -163,12 +163,16 @@ class SecurityAgent:
 
                 # Flag if deviation > 2x (200%) from baseline
                 if deviation > 2.0:
-                    anomalies.append(f"{metric_name}: {value:.2f} vs expected {expected:.2f}")
+                    anomalies.append(
+                        f"{metric_name}: {value:.2f} vs expected {expected:.2f}"
+                    )
 
         if anomalies:
             event = SecurityEvent(
                 event_type=SecurityEventType.ANOMALOUS_BEHAVIOR,
-                threat_level=ThreatLevel.MEDIUM if len(anomalies) < 3 else ThreatLevel.HIGH,
+                threat_level=(
+                    ThreatLevel.MEDIUM if len(anomalies) < 3 else ThreatLevel.HIGH
+                ),
                 source_agent=agent_name,
                 description=f"Anomalous behavior detected: {', '.join(anomalies)}",
                 metadata={"metrics": metrics, "baseline": baseline, "action": action},
@@ -213,7 +217,10 @@ class SecurityAgent:
                 threat_level=ThreatLevel.HIGH,
                 source_agent=source,
                 description="Potential injection attempt detected",
-                metadata={"patterns_found": detected_patterns, "input_preview": input_text[:200]},
+                metadata={
+                    "patterns_found": detected_patterns,
+                    "input_preview": input_text[:200],
+                },
             )
             self.record_event(event)
             return event
@@ -251,7 +258,9 @@ class SecurityAgent:
             return True
         return False
 
-    def _analyze_threat_patterns(self, latest_event: SecurityEvent) -> SecurityAlert | None:
+    def _analyze_threat_patterns(
+        self, latest_event: SecurityEvent
+    ) -> SecurityAlert | None:
         """Analyze recent events for threat patterns."""
         # Get events from last minute
         one_minute_ago = datetime.now(UTC).timestamp() - 60
@@ -265,16 +274,23 @@ class SecurityAgent:
         # Count by event type
         type_counts: dict[str, int] = {}
         for event in recent_events:
-            type_counts[event.event_type.value] = type_counts.get(event.event_type.value, 0) + 1
+            type_counts[event.event_type.value] = (
+                type_counts.get(event.event_type.value, 0) + 1
+            )
 
         # Check for alert-worthy patterns
         alerts_needed: list[tuple[str, ThreatLevel]] = []
 
-        if type_counts.get("auth_failure", 0) >= self.thresholds["max_auth_failures_per_minute"]:
+        if (
+            type_counts.get("auth_failure", 0)
+            >= self.thresholds["max_auth_failures_per_minute"]
+        ):
             alerts_needed.append(("Brute force attack suspected", ThreatLevel.HIGH))
 
         if type_counts.get("injection_attempt", 0) >= 2:
-            alerts_needed.append(("Multiple injection attempts detected", ThreatLevel.CRITICAL))
+            alerts_needed.append(
+                ("Multiple injection attempts detected", ThreatLevel.CRITICAL)
+            )
 
         if (
             type_counts.get("anomalous_behavior", 0)
@@ -287,9 +303,9 @@ class SecurityAgent:
             # Descriptions available: [desc for desc, _ in alerts_needed]
 
             return SecurityAlert(
-                alert_id=hashlib.sha256(f"{datetime.now(UTC).isoformat()}".encode()).hexdigest()[
-                    :12
-                ],
+                alert_id=hashlib.sha256(
+                    f"{datetime.now(UTC).isoformat()}".encode()
+                ).hexdigest()[:12],
                 events=recent_events,
                 threat_level=max_level,
                 recommended_action=self._get_recommended_action(max_level),
@@ -325,7 +341,10 @@ class SecurityAgent:
         """Persist security event to file."""
         try:
             security_dir = (
-                Path(__file__).parent.parent.parent.parent.parent / "docs" / "ssot" / "security"
+                Path(__file__).parent.parent.parent.parent.parent
+                / "docs"
+                / "ssot"
+                / "security"
             )
             security_dir.mkdir(parents=True, exist_ok=True)
 

@@ -5,7 +5,6 @@ import subprocess
 import sys
 import time
 
-
 SERVER_MODULE = os.environ.get("MCP_SERVER_MODULE", "AFO.mcp.afo_skills_mcp")
 TIMEOUT_S = float(os.environ.get("MCP_SMOKE_TIMEOUT_S", "10"))
 
@@ -68,12 +67,18 @@ def main():
     _ = read_until(sel, init_id, TIMEOUT_S)
     print("OK: initialize")
 
-    send(p.stdin, {"jsonrpc": "2.0", "id": tools_id, "method": "tools/list", "params": {}})
+    send(
+        p.stdin,
+        {"jsonrpc": "2.0", "id": tools_id, "method": "tools/list", "params": {}},
+    )
     tools_resp = read_until(sel, tools_id, TIMEOUT_S)
     tools = (tools_resp.get("result") or {}).get("tools") or []
     print(f"OK: tools/list ({len(tools)})")
 
-    send(p.stdin, {"jsonrpc": "2.0", "id": shutdown_id, "method": "shutdown", "params": {}})
+    send(
+        p.stdin,
+        {"jsonrpc": "2.0", "id": shutdown_id, "method": "shutdown", "params": {}},
+    )
     try:
         _ = read_until(sel, shutdown_id, TIMEOUT_S)
     except Exception:

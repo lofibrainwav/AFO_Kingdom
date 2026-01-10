@@ -100,18 +100,25 @@ class ASTAnalyzer:
                 elif isinstance(func, ast.Attribute) and func.attr == "open":
                     # mode 파라미터 확인
                     has_mode = any(
-                        isinstance(kw.arg, str) and kw.arg == "mode" for kw in node.keywords
+                        isinstance(kw.arg, str) and kw.arg == "mode"
+                        for kw in node.keywords
                     )
                     if not has_mode:
-                        vulnerabilities.append("Potential unsafe file open without explicit mode")
+                        vulnerabilities.append(
+                            "Potential unsafe file open without explicit mode"
+                        )
 
             # assert 문 탐지
             elif isinstance(node, ast.Assert):
-                vulnerabilities.append("Assert statement found - consider removing for production")
+                vulnerabilities.append(
+                    "Assert statement found - consider removing for production"
+                )
 
             # bare except 탐지
             elif isinstance(node, ast.ExceptHandler) and node.type is None:
-                vulnerabilities.append("Bare except clause found - specify exception types")
+                vulnerabilities.append(
+                    "Bare except clause found - specify exception types"
+                )
 
         return vulnerabilities
 
@@ -157,7 +164,9 @@ class ASTAnalyzer:
                     {
                         "name": node.name,
                         "args_count": len(node.args.args),
-                        "has_return": any(isinstance(n, ast.Return) for n in ast.walk(node)),
+                        "has_return": any(
+                            isinstance(n, ast.Return) for n in ast.walk(node)
+                        ),
                         "line_start": node.lineno,
                     }
                 )
@@ -177,7 +186,8 @@ class ASTAnalyzer:
                 else:
                     module = node.module or ""
                     imports.extend(
-                        f"{module}.{alias.name}" if module else alias.name for alias in node.names
+                        f"{module}.{alias.name}" if module else alias.name
+                        for alias in node.names
                     )
 
         return {

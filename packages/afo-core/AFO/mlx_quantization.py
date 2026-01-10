@@ -59,7 +59,9 @@ class MLXQuantizer:
         # 통계 기록
         original_params = self._count_parameters(model)
         quantized_params = self._count_parameters(quantized_model)
-        compression_ratio = original_params / quantized_params if quantized_params > 0 else 0
+        compression_ratio = (
+            original_params / quantized_params if quantized_params > 0 else 0
+        )
 
         self.quantization_stats["4bit"] = {
             "original_params": original_params,
@@ -69,7 +71,9 @@ class MLXQuantizer:
             "timestamp": self._get_timestamp(),
         }
 
-        logger.info(f"4-bit quantization completed. Compression ratio: {compression_ratio:.2f}")
+        logger.info(
+            f"4-bit quantization completed. Compression ratio: {compression_ratio:.2f}"
+        )
         return quantized_model
 
     def quantize_8bit(self, model: nn.Module) -> nn.Module:
@@ -91,7 +95,9 @@ class MLXQuantizer:
         # 통계 기록
         original_params = self._count_parameters(model)
         quantized_params = self._count_parameters(quantized_model)
-        compression_ratio = original_params / quantized_params if quantized_params > 0 else 0
+        compression_ratio = (
+            original_params / quantized_params if quantized_params > 0 else 0
+        )
 
         self.quantization_stats["8bit"] = {
             "original_params": original_params,
@@ -101,7 +107,9 @@ class MLXQuantizer:
             "timestamp": self._get_timestamp(),
         }
 
-        logger.info(f"8-bit quantization completed. Compression ratio: {compression_ratio:.2f}")
+        logger.info(
+            f"8-bit quantization completed. Compression ratio: {compression_ratio:.2f}"
+        )
         return quantized_model
 
     def quantize_DWQ(self, model: nn.Module) -> nn.Module:
@@ -123,7 +131,9 @@ class MLXQuantizer:
         # 통계 기록
         original_params = self._count_parameters(model)
         quantized_params = self._count_parameters(quantized_model)
-        compression_ratio = original_params / quantized_params if quantized_params > 0 else 0
+        compression_ratio = (
+            original_params / quantized_params if quantized_params > 0 else 0
+        )
 
         self.quantization_stats["dwq"] = {
             "original_params": original_params,
@@ -134,10 +144,14 @@ class MLXQuantizer:
             "timestamp": self._get_timestamp(),
         }
 
-        logger.info(f"DWQ quantization completed. Compression ratio: {compression_ratio:.2f}")
+        logger.info(
+            f"DWQ quantization completed. Compression ratio: {compression_ratio:.2f}"
+        )
         return quantized_model
 
-    def _apply_quantization(self, model: nn.Module, quant_type: QuantizationType) -> nn.Module:
+    def _apply_quantization(
+        self, model: nn.Module, quant_type: QuantizationType
+    ) -> nn.Module:
         """
         양자화 적용 (내부 구현)
 
@@ -165,7 +179,9 @@ class MLXQuantizer:
         # 양자화된 레이어로 새 모델 구성
         return self._rebuild_model(model, quantized_layers)
 
-    def _quantize_linear_layer(self, layer: nn.Linear, quant_type: QuantizationType) -> nn.Linear:
+    def _quantize_linear_layer(
+        self, layer: nn.Linear, quant_type: QuantizationType
+    ) -> nn.Linear:
         """
         Linear 레이어 양자화
 
@@ -197,7 +213,9 @@ class MLXQuantizer:
 
         # 양자화된 가중치로 새 레이어 생성
         quantized_layer = nn.Linear(
-            input_dims=layer.input_dims, output_dims=layer.output_dims, bias=layer.bias is not None
+            input_dims=layer.input_dims,
+            output_dims=layer.output_dims,
+            bias=layer.bias is not None,
         )
 
         # 가중치 설정 (dequantize는 추론 시 수행)
@@ -275,7 +293,9 @@ class MLXQuantizer:
 
         # 새 레이어 생성
         dwq_layer = nn.Linear(
-            input_dims=layer.input_dims, output_dims=layer.output_dims, bias=layer.bias is not None
+            input_dims=layer.input_dims,
+            output_dims=layer.output_dims,
+            bias=layer.bias is not None,
         )
 
         dwq_layer.weight = quantized_weight
@@ -400,7 +420,9 @@ class MLXQuantizer:
 
         # 새 레이어 생성
         dequantized_layer = nn.Linear(
-            input_dims=layer.input_dims, output_dims=layer.output_dims, bias=layer.bias is not None
+            input_dims=layer.input_dims,
+            output_dims=layer.output_dims,
+            bias=layer.bias is not None,
         )
 
         dequantized_layer.weight = dequantized_weight
@@ -440,7 +462,9 @@ class MLXQuantizer:
 
         # 새 레이어 생성
         dequantized_layer = nn.Linear(
-            input_dims=layer.input_dims, output_dims=layer.output_dims, bias=layer.bias is not None
+            input_dims=layer.input_dims,
+            output_dims=layer.output_dims,
+            bias=layer.bias is not None,
         )
 
         dequantized_layer.weight = dequantized_weight

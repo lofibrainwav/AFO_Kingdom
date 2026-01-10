@@ -2,12 +2,11 @@ import logging
 import os
 from typing import Any, Dict, List
 
-from fastapi import APIRouter, Depends, HTTPException
-
 from AFO.evolution.dgm_engine import EvolutionMetadata, dgm_engine
 from AFO.evolution.evolution_gate import EvolutionProposal, evolution_gate
 from AFO.governance.kill_switch import sentry
 from AFO.governance.persona_auth import persona_auth
+from fastapi import APIRouter, Depends, HTTPException
 
 logger = logging.getLogger(__name__)
 
@@ -25,7 +24,9 @@ async def trigger_evolution(component: str = "core"):
     Blocked by kill-switch if active.
     """
     if sentry.is_locked():
-        raise HTTPException(status_code=403, detail="Civilization in lockdown. Access denied.")
+        raise HTTPException(
+            status_code=403, detail="Civilization in lockdown. Access denied."
+        )
 
     try:
         metadata = await dgm_engine.evolve_step(component=component)

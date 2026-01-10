@@ -8,6 +8,7 @@ import json
 from collections.abc import Sequence
 from typing import Any
 
+from AFO.utils.cache_utils import cache
 from langchain_core.runnables import RunnableConfig
 from langgraph.checkpoint.base import (
     BaseCheckpointSaver,
@@ -16,8 +17,6 @@ from langgraph.checkpoint.base import (
     CheckpointTuple,
 )
 from langgraph.checkpoint.serde.jsonplus import JsonPlusSerializer
-
-from AFO.utils.cache_utils import cache
 
 
 class AsyncRedisSaver(BaseCheckpointSaver):
@@ -140,7 +139,9 @@ class AsyncRedisSaver(BaseCheckpointSaver):
                         return dict(o)
                     return str(o)
 
-                cache.redis.setex(key, 86400, json.dumps(data, default=json_default_wrapper))
+                cache.redis.setex(
+                    key, 86400, json.dumps(data, default=json_default_wrapper)
+                )
             except Exception as e:
                 print(f"⚠️ Failed to save checkpoint to Redis: {e}")
 

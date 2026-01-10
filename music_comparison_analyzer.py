@@ -14,7 +14,6 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any
 
-
 # PYTHONPATH 설정
 sys.path.insert(0, "/Users/brnestrm/Library/Python/3.9/lib/python/site-packages")
 
@@ -23,7 +22,9 @@ print("⚠️ Python 3.9 호환성 문제로 AFO 모듈 직접 import 생략 - �
 get_music_router = None
 run_suno_pipeline = None
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 logger = logging.getLogger(__name__)
 
 
@@ -190,14 +191,19 @@ class MusicComparisonAnalyzer:
 
         try:
             result = run_suno_pipeline(
-                timeline_state, dry_run=False, target_av_duration_sec=30, video_path_for_fusion=None
+                timeline_state,
+                dry_run=False,
+                target_av_duration_sec=30,
+                video_path_for_fusion=None,
             )
             return result
         except Exception as e:
             logger.error(f"Suno generation failed: {e}")
             return {"error": str(e), "success": False}
 
-    def generate_with_opensource(self, timeline_state: dict[str, Any]) -> dict[str, Any]:
+    def generate_with_opensource(
+        self, timeline_state: dict[str, Any]
+    ) -> dict[str, Any]:
         """
         오픈소스 Provider로 음악 생성
         """
@@ -205,7 +211,9 @@ class MusicComparisonAnalyzer:
             return {"error": "Music router not available", "success": False}
 
         try:
-            result = self.router.generate_music(timeline_state, quality="high", local_only=True, max_cost=0.0)
+            result = self.router.generate_music(
+                timeline_state, quality="high", local_only=True, max_cost=0.0
+            )
             return result
         except Exception as e:
             logger.error(f"Open source generation failed: {e}")
@@ -219,7 +227,9 @@ class MusicComparisonAnalyzer:
 
         # Suno 생성
         logger.info("🎵 Suno로 음악 생성 중...")
-        suno_result, suno_performance = self.measure_performance(self.generate_with_suno, timeline_state)
+        suno_result, suno_performance = self.measure_performance(
+            self.generate_with_suno, timeline_state
+        )
 
         # 오픈소스 생성
         logger.info("🎵 오픈소스로 음악 생성 중...")
@@ -243,7 +253,10 @@ class MusicComparisonAnalyzer:
 
         # 비교 계산
         quality_diff = suno_metrics.overall_quality - opensource_metrics.overall_quality
-        speed_diff = opensource_performance.generation_time_seconds - suno_performance.generation_time_seconds
+        speed_diff = (
+            opensource_performance.generation_time_seconds
+            - suno_performance.generation_time_seconds
+        )
 
         # 스타일 유사도 계산 (간단 버전)
         style_similarity = 0.5  # 실제로는 더 정교한 계산 필요
@@ -258,7 +271,10 @@ class MusicComparisonAnalyzer:
         else:
             opensource_strengths.append("로컬 실행으로 인한 프라이버시")
 
-        if suno_performance.generation_time_seconds < opensource_performance.generation_time_seconds:
+        if (
+            suno_performance.generation_time_seconds
+            < opensource_performance.generation_time_seconds
+        ):
             suno_strengths.append("더 빠른 생성 속도")
         else:
             opensource_strengths.append("무료 사용")
@@ -286,12 +302,16 @@ class MusicComparisonAnalyzer:
 
         return result
 
-    def save_comparison_result(self, result: ComparisonResult, filename: str = None) -> str:
+    def save_comparison_result(
+        self, result: ComparisonResult, filename: str = None
+    ) -> str:
         """
         비교 결과를 파일로 저장
         """
         if not filename:
-            timestamp = result.timestamp.replace(":", "").replace("-", "").replace(".", "_")
+            timestamp = (
+                result.timestamp.replace(":", "").replace("-", "").replace(".", "_")
+            )
             filename = f"comparison_{timestamp}.json"
 
         output_path = self.output_dir / filename
@@ -313,11 +333,30 @@ def create_test_timeline() -> dict[str, Any]:
     return {
         "title": "AFO Kingdom Victory Theme",
         "sections": [
-            {"start": 0, "end": 3, "text": "Epic orchestral introduction", "music_directive": "slow_heroic_build"},
-            {"start": 3, "end": 6, "text": "Intense battle climax", "music_directive": "powerful_orchestral_climax"},
-            {"start": 6, "end": 9, "text": "Triumphant victory fanfare", "music_directive": "triumphant_brass_fanfare"},
+            {
+                "start": 0,
+                "end": 3,
+                "text": "Epic orchestral introduction",
+                "music_directive": "slow_heroic_build",
+            },
+            {
+                "start": 3,
+                "end": 6,
+                "text": "Intense battle climax",
+                "music_directive": "powerful_orchestral_climax",
+            },
+            {
+                "start": 6,
+                "end": 9,
+                "text": "Triumphant victory fanfare",
+                "music_directive": "triumphant_brass_fanfare",
+            },
         ],
-        "music": {"style": "epic_orchestral_cinematic", "mood": "heroic_triumphant", "tempo": "dramatic"},
+        "music": {
+            "style": "epic_orchestral_cinematic",
+            "mood": "heroic_triumphant",
+            "tempo": "dramatic",
+        },
     }
 
 

@@ -7,12 +7,10 @@ Phase 2 Critical: T2.2 레거시 코드 정리
 """
 
 import json
-import os
 import re
 import shutil
 import time
 from pathlib import Path
-from typing import Dict, List, Set
 
 
 class LegacyCodeCleaner:
@@ -183,20 +181,26 @@ class LegacyCodeCleaner:
         for file_path, category in legacy_files:
             if dry_run:
                 print(f"🔍 발견: {file_path.relative_to(self.root_dir)} ({category})")
-                cleaned_files.append({
-                    "path": str(file_path.relative_to(self.root_dir)),
-                    "category": category,
-                    "size": file_path.stat().st_size,
-                    "dry_run": True,
-                })
+                cleaned_files.append(
+                    {
+                        "path": str(file_path.relative_to(self.root_dir)),
+                        "category": category,
+                        "size": file_path.stat().st_size,
+                        "dry_run": True,
+                    }
+                )
             elif self.cleanup_file(file_path, category):
-                cleaned_files.append({
-                    "path": str(file_path.relative_to(self.root_dir)),
-                    "category": category,
-                    "size": file_path.stat().st_size,
-                    "backup_path": str(self.backup_dir / file_path.relative_to(self.root_dir)),
-                    "dry_run": False,
-                })
+                cleaned_files.append(
+                    {
+                        "path": str(file_path.relative_to(self.root_dir)),
+                        "category": category,
+                        "size": file_path.stat().st_size,
+                        "backup_path": str(
+                            self.backup_dir / file_path.relative_to(self.root_dir)
+                        ),
+                        "dry_run": False,
+                    }
+                )
 
         # 결과 보고서 생성
         report = {
@@ -277,7 +281,9 @@ def main():
     print(
         f"   - 📊 정리 결과: {final_report['cleanup_summary']['total_files_cleaned']}개 파일 정리"
     )
-    print(f"   - 💾 절약 공간: {final_report['cleanup_summary']['total_bytes_saved']} bytes")
+    print(
+        f"   - 💾 절약 공간: {final_report['cleanup_summary']['total_bytes_saved']} bytes"
+    )
     print(
         f"   - 🎯 Trinity Score: {final_report['trinity_score_impact']['before_optimization']}% → {final_report['trinity_score_impact']['expected_after']}% 예상"
     )

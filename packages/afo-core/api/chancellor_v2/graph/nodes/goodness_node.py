@@ -23,7 +23,10 @@ async def goodness_node(state: GraphState) -> GraphState:
     cost_score = _evaluate_cost_efficiency(skill_id)
     ethical_score = _evaluate_ethical_considerations(query)
     heuristic_score = (
-        security_score * 0.4 + privacy_score * 0.2 + cost_score * 0.2 + ethical_score * 0.2
+        security_score * 0.4
+        + privacy_score * 0.2
+        + cost_score * 0.2
+        + ethical_score * 0.2
     )
 
     # 2. Scholar Assessment (Pangtong)
@@ -66,7 +69,11 @@ async def goodness_node(state: GraphState) -> GraphState:
         if response and response.get("response"):
             try:
                 text = (
-                    response["response"].strip().replace("```json", "").replace("```", "").strip()
+                    response["response"]
+                    .strip()
+                    .replace("```json", "")
+                    .replace("```", "")
+                    .strip()
                 )
                 data = json.loads(text)
                 scholar_score = data.get("score", heuristic_score)
@@ -86,7 +93,11 @@ async def goodness_node(state: GraphState) -> GraphState:
         "score": round(final_score, 3),
         "reasoning": reasoning,
         "issues": issues,
-        "metadata": {"mode": assessment_mode, "scholar": "Pangtong (善)", "model": scholar_model},
+        "metadata": {
+            "mode": assessment_mode,
+            "scholar": "Pangtong (善)",
+            "model": scholar_model,
+        },
     }
 
     state.outputs["GOODNESS"] = evaluation

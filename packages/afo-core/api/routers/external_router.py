@@ -1,11 +1,10 @@
 import logging
 
-from fastapi import APIRouter, Depends, HTTPException
-
 from AFO.config.antigravity import antigravity
 from AFO.evolution.dgm_engine import EvolutionMetadata, dgm_engine
 from AFO.governance.kill_switch import sentry
 from AFO.governance.narrative_sanitizer import sanitizer
+from fastapi import APIRouter, Depends, HTTPException
 
 logger = logging.getLogger(__name__)
 
@@ -15,10 +14,14 @@ router = APIRouter(prefix="/api/v1/public", tags=["External Interface"])
 def check_exposure_gate():
     """Ensure external exposure is permitted by the Sovereign."""
     if not antigravity.EXTERNAL_EXPOSURE_ENABLED:
-        raise HTTPException(status_code=403, detail="External Exposure Locked by Sovereign Decree.")
+        raise HTTPException(
+            status_code=403, detail="External Exposure Locked by Sovereign Decree."
+        )
 
 
-@router.get("/chronicle", response_model=list[dict], dependencies=[Depends(check_exposure_gate)])
+@router.get(
+    "/chronicle", response_model=list[dict], dependencies=[Depends(check_exposure_gate)]
+)
 async def get_public_chronicle():
     """Returns a sanitized, read-only summary of the kingdom's optimization history."""
     history = dgm_engine.chronicle.get_history()

@@ -1,35 +1,38 @@
 from __future__ import annotations
 
-from pathlib import Path
 import re
 import sys
+from pathlib import Path
 
 ROOT = Path.cwd()
 RULE = "reportUnknownVariableType"
 
 RX = re.compile(
-    r'^(?P<path>.+?):(?P<line>\d+):(?P<col>\d+)\s+-\s+\w+:\s+(?P<msg>.*)\(' + re.escape(RULE) + r'\)\s*$'
+    r"^(?P<path>.+?):(?P<line>\d+):(?P<col>\d+)\s+-\s+\w+:\s+(?P<msg>.*)\("
+    + re.escape(RULE)
+    + r"\)\s*$"
 )
 
 RX_ASSIGN_SIMPLE = re.compile(
-    r'^(?P<indent>\s*)(?P<name>[A-Za-z_]\w*)\s*=\s*(?P<expr>.+?)(?P<comment>\s+#.*)?$'
+    r"^(?P<indent>\s*)(?P<name>[A-Za-z_]\w*)\s*=\s*(?P<expr>.+?)(?P<comment>\s+#.*)?$"
 )
 
 RX_ASSIGN_MULTI = re.compile(
-    r'^(?P<indent>\s*)(?P<lhs>(?:[A-Za-z_]\w*\s*,\s*)+[A-Za-z_]\w*)\s*=\s*(?P<expr>.+?)(?P<comment>\s+#.*)?$'
+    r"^(?P<indent>\s*)(?P<lhs>(?:[A-Za-z_]\w*\s*,\s*)+[A-Za-z_]\w*)\s*=\s*(?P<expr>.+?)(?P<comment>\s+#.*)?$"
 )
 
 RX_DEF = re.compile(
-    r'^(?P<indent>\s*)(?P<async>async\s+)?def\s+(?P<name>[A-Za-z_]\w*)\s*\((?P<params>.*)\)\s*:\s*(?P<comment>#.*)?$'
+    r"^(?P<indent>\s*)(?P<async>async\s+)?def\s+(?P<name>[A-Za-z_]\w*)\s*\((?P<params>.*)\)\s*:\s*(?P<comment>#.*)?$"
 )
 
 RX_WITH_AS = re.compile(
-    r'^(?P<indent>\s*)with\s+.+?\s+as\s+(?P<name>[A-Za-z_]\w*)\s*:\s*(?P<comment>#.*)?$'
+    r"^(?P<indent>\s*)with\s+.+?\s+as\s+(?P<name>[A-Za-z_]\w*)\s*:\s*(?P<comment>#.*)?$"
 )
 
 RX_FOR_IN = re.compile(
-    r'^(?P<indent>\s*)for\s+(?P<name>[A-Za-z_]\w*)\s+in\s+.+:\s*(?P<comment>#.*)?$'
+    r"^(?P<indent>\s*)for\s+(?P<name>[A-Za-z_]\w*)\s+in\s+.+:\s*(?P<comment>#.*)?$"
 )
+
 
 def normalize_path(p: str):
     rp = Path(p)
@@ -39,6 +42,7 @@ def normalize_path(p: str):
         except Exception:
             return None
     return rp
+
 
 def docstring_span(lines, i):
     if i >= len(lines):
@@ -57,6 +61,7 @@ def docstring_span(lines, i):
         j += 1
     return (i, len(lines) - 1)
 
+
 def insert_index_for_import(lines):
     idx = 0
     if idx < len(lines) and lines[idx].startswith("#!"):
@@ -66,11 +71,14 @@ def insert_index_for_import(lines):
     ds = docstring_span(lines, idx)
     if ds:
         idx = ds[1] + 1
-    while idx < len(lines) and (lines[idx].strip() == "" or lines[idx].lstrip().startswith("#")):
+    while idx < len(lines) and (
+        lines[idx].strip() == "" or lines[idx].lstrip().startswith("#")
+    ):
         idx += 1
     while idx < len(lines) and lines[idx].startswith("from __future__ import "):
         idx += 1
     return idx
+
 
 def ensure_typing_import(src: str, needed):
     needed = set(needed)
@@ -79,7 +87,11 @@ def ensure_typing_import(src: str, needed):
     lines = src.splitlines(True)
     for i, line in enumerate(lines):
         if line.startswith("from typing import "):
-            existing = [x.strip() for x in line[len("from typing import "):].strip().split(",") if x.strip()]
+            existing = [
+                x.strip()
+                for x in line[len("from typing import ") :].strip().split(",")
+                if x.strip()
+            ]
             merged = sorted(set(existing) | needed)
             lines[i] = "from typing import " + ", ".join(merged) + "\n"
             return "".join(lines)
@@ -87,8 +99,10 @@ def ensure_typing_import(src: str, needed):
     lines.insert(ins, "from typing import " + ", ".join(sorted(needed)) + "\n")
     return "".join(lines)
 
+
 def already_has_any_annotation(line: str) -> bool:
-    return bool(re.match(r'^\s*[A-Za-z_]\w*\s*:\s*', line))
+    return bool(re.match(r"^\s*[A-Za-z_]\w*\s*:\s*", line))
+
 
 def patch_def(line: str):
     if "->" in line:
@@ -107,6 +121,7 @@ def patch_def(line: str):
     new += "\n"
     return new, True
 
+
 def patch_assign_simple(line: str):
     if already_has_any_annotation(line):
         return line, False
@@ -121,6 +136,7 @@ def patch_assign_simple(line: str):
         return line, False
     new = f"{indent}{name}: Any = {expr}{comment}\n"
     return new, True
+
 
 def patch_assign_multi(lines, idx):
     line = lines[idx].rstrip("\n")
@@ -138,6 +154,7 @@ def patch_assign_multi(lines, idx):
     lines.insert(idx, ann_line)
     return True
 
+
 def insert_cast_next_line(lines, idx, name: str, base_indent: str):
     indent = base_indent + "    "
     cast_line = f"{indent}{name} = cast(Any, {name})\n"
@@ -145,6 +162,7 @@ def insert_cast_next_line(lines, idx, name: str, base_indent: str):
         return False
     lines.insert(idx + 1, cast_line)
     return True
+
 
 def main(report_path: Path):
     txt = report_path.read_text(encoding="utf-8", errors="replace").splitlines()
@@ -252,7 +270,10 @@ def main(report_path: Path):
             changed_files += 1
 
     out = ROOT / "artifacts" / "unpatched_unknownvar_v731.txt"
-    out.write_text("\n".join(sorted(set(unpatched))) + ("\n" if unpatched else ""), encoding="utf-8")
+    out.write_text(
+        "\n".join(sorted(set(unpatched))) + ("\n" if unpatched else ""),
+        encoding="utf-8",
+    )
 
     print("PATCH_RULE=", RULE)
     print("CHANGED_FILES=", changed_files)
@@ -260,8 +281,11 @@ def main(report_path: Path):
     print("UNPATCHED_REPORT=", str(out))
     print("UNPATCHED_COUNT=", len(set(unpatched)))
 
+
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("usage: python3 scripts/pyright_patch_unknown_variable_v731_sniper.py <pyright_report.txt>")
+        print(
+            "usage: python3 scripts/pyright_patch_unknown_variable_v731_sniper.py <pyright_report.txt>"
+        )
         raise SystemExit(2)
     main(Path(sys.argv[1]))

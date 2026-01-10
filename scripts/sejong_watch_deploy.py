@@ -5,7 +5,6 @@ import time
 import urllib.error
 import urllib.request
 
-
 BASE = os.environ.get("AFO_BASE_URL", "http://localhost:18010").rstrip("/")
 OUT = os.environ.get("SEJONG_OUT", "artifacts/sejong/phase4_action2_watch.json")
 SLEEP = int(os.environ.get("SEJONG_SLEEP_SEC", "10"))
@@ -52,7 +51,9 @@ def main():
                 d = json.loads(h_body)
                 keys = set(d.keys()) if isinstance(d, dict) else set()
                 # Flexible check for key naming variations
-                ok_health = any(k in keys for k in ("organs_v2", "organsV2", "organs", "organs_v1"))
+                ok_health = any(
+                    k in keys for k in ("organs_v2", "organsV2", "organs", "organs_v1")
+                )
             except Exception:
                 ok_health = False
 

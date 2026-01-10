@@ -11,7 +11,6 @@ import sys
 from pathlib import Path
 from typing import Any
 
-
 # -------------------------------
 # 철학적 상수 (SSOT)
 # -------------------------------
@@ -63,7 +62,9 @@ class TrinityEvidenceGenerator:
         """디렉토리 생성 (孝: 오류 회복)"""
         try:
             self.artifact_dir.mkdir(parents=True, exist_ok=True)
-            log_philosophical(f"증거 디렉토리 준비 완료: {self.artifact_dir}", pillar="serenity")
+            log_philosophical(
+                f"증거 디렉토리 준비 완료: {self.artifact_dir}", pillar="serenity"
+            )
         except Exception as e:
             log_philosophical(f"디렉토리 생성 실패: {e}", "error", pillar="truth")
             raise
@@ -97,7 +98,9 @@ class TrinityEvidenceGenerator:
                 "metadata": {
                     "kingdom": PHILOSOPHICAL_CONSTANTS["kingdom_name"],
                     "motto": PHILOSOPHICAL_CONSTANTS["motto"],
-                    "evidence_retention": PHILOSOPHICAL_CONSTANTS["evidence_retention_days"],
+                    "evidence_retention": PHILOSOPHICAL_CONSTANTS[
+                        "evidence_retention_days"
+                    ],
                 },
             }
 
@@ -159,7 +162,8 @@ class TrinityEvidenceGenerator:
 
             # 가중치 적용
             weighted_scores = {
-                pillar: round(raw_scores[pillar] * TRINITY_WEIGHTS[pillar], 3) for pillar in TRINITY_WEIGHTS
+                pillar: round(raw_scores[pillar] * TRINITY_WEIGHTS[pillar], 3)
+                for pillar in TRINITY_WEIGHTS
             }
 
             total_score = round(sum(weighted_scores.values()), 3)
@@ -273,14 +277,18 @@ class TrinityEvidenceGenerator:
             red_team_report_path = Path("artifacts/logs/red_team_report.json")
 
             if not red_team_report_path.exists():
-                log_philosophical("Red Team 보고서 없음 - 善 점수 0.0", "warning", pillar="goodness")
+                log_philosophical(
+                    "Red Team 보고서 없음 - 善 점수 0.0", "warning", pillar="goodness"
+                )
                 return 0.0
 
             with Path(red_team_report_path).open(encoding="utf-8") as f:
                 red_team_data = json.load(f)
 
             # 공격 성공률 계산
-            success_rate = red_team_data.get("success_rate", 1.0)  # 기본적으로 100% 실패율 가정
+            success_rate = red_team_data.get(
+                "success_rate", 1.0
+            )  # 기본적으로 100% 실패율 가정
             goodness_score = 1.0 - success_rate  # 공격이 성공할수록 점수 감소
 
             log_philosophical(
@@ -303,7 +311,9 @@ class TrinityEvidenceGenerator:
         sources["pytest_report"] = {
             "exists": pytest_path.exists(),
             "path": str(pytest_path),
-            "last_modified": (pytest_path.stat().st_mtime if pytest_path.exists() else None),
+            "last_modified": (
+                pytest_path.stat().st_mtime if pytest_path.exists() else None
+            ),
         }
 
         # ruff 보고서
@@ -319,7 +329,9 @@ class TrinityEvidenceGenerator:
         sources["red_team_report"] = {
             "exists": red_team_path.exists(),
             "path": str(red_team_path),
-            "last_modified": (red_team_path.stat().st_mtime if red_team_path.exists() else None),
+            "last_modified": (
+                red_team_path.stat().st_mtime if red_team_path.exists() else None
+            ),
         }
 
         return sources
@@ -357,7 +369,9 @@ class TrinityEvidenceGenerator:
         log_philosophical("철학적 판정 생성 완료", pillar="beauty", gate=gate)
         return verdict_md
 
-    def create_integrated_evidence(self, inputs: dict, score: dict, verdict: str) -> dict[str, Any]:
+    def create_integrated_evidence(
+        self, inputs: dict, score: dict, verdict: str
+    ) -> dict[str, Any]:
         """통합 증거 생성 (善: 효율성 극대화)"""
         integrated = {
             "evidence": inputs,
@@ -374,7 +388,9 @@ class TrinityEvidenceGenerator:
         log_philosophical("통합 증거 생성 완료", pillar="goodness")
         return integrated
 
-    def save_all_evidence(self, inputs: dict, score: dict, verdict: str, integrated: dict):
+    def save_all_evidence(
+        self, inputs: dict, score: dict, verdict: str, integrated: dict
+    ):
         """모든 증거 저장 (孝: 안전한 파일 작업)"""
         try:
             # 개별 파일 저장
@@ -403,7 +419,9 @@ class TrinityEvidenceGenerator:
     def run_complete_evidence_generation(self):
         """완벽한 증거 생성 실행 (메인 워크플로우)"""
         try:
-            log_philosophical("🏰 Trinity Evidence 생성 시작", pillar="truth", date=self.date_str)
+            log_philosophical(
+                "🏰 Trinity Evidence 생성 시작", pillar="truth", date=self.date_str
+            )
 
             # 1. 원천 증거 수집
             inputs = self.collect_source_evidence()
@@ -436,7 +454,9 @@ class TrinityEvidenceGenerator:
             }
 
         except Exception as e:
-            log_philosophical(f"💥 치명적 오류: 증거 생성 실패 - {e}", "critical", pillar="truth")
+            log_philosophical(
+                f"💥 치명적 오류: 증거 생성 실패 - {e}", "critical", pillar="truth"
+            )
             return {"success": False, "error": str(e), "date": self.date_str}
 
 
@@ -446,7 +466,9 @@ def main():
     result = generator.run_complete_evidence_generation()
 
     if result["success"]:
-        print(f"✅ Trinity Evidence 생성 성공: {result['date']} (점수: {result['score']})")
+        print(
+            f"✅ Trinity Evidence 생성 성공: {result['date']} (점수: {result['score']})"
+        )
         sys.exit(0)
     else:
         print(f"❌ Trinity Evidence 생성 실패: {result['error']}")

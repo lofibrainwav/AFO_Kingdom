@@ -33,7 +33,9 @@ def planner_node(state: AgentState) -> dict:
     return {
         "current_plan": ["check_feasibility", "execute_task", "final_review"],
         "next_step": "check_feasibility",
-        "messages": [AIMessage(content="Plan generated: Feasibility -> Execute -> Review")],
+        "messages": [
+            AIMessage(content="Plan generated: Feasibility -> Execute -> Review")
+        ],
     }
 
 
@@ -66,7 +68,9 @@ def reviewer_node(state: AgentState) -> dict:
     return {
         "trinity_score": score,
         "risk_score": risk,
-        "messages": [AIMessage(content=f"Audit Complete. Score: {score}, Risk: {risk}")],
+        "messages": [
+            AIMessage(content=f"Audit Complete. Score: {score}, Risk: {risk}")
+        ],
         "audit_history": [f"Scored {score}"],
     }
 
@@ -127,7 +131,9 @@ def run_dream_hub(task: str, thread_id: str = "default") -> dict:
     config: Any = {"configurable": {"thread_id": thread_id}}
 
     # Run the graph
-    final_state: Any = cast(Any | None, app.invoke(cast(Any, initial_state)), config=config)
+    final_state: Any = cast(
+        Any | None, app.invoke(cast(Any, initial_state)), config=config
+    )
     # Extract key outputs for CLI
     return {
         "status": "OK",

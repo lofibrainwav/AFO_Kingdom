@@ -12,7 +12,6 @@ from pathlib import Path
 import psutil
 import torch
 
-
 # Add packages to path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "packages" / "afo-core"))
 
@@ -102,9 +101,15 @@ def benchmark_hybrid_service():
         print(f"\n❌ Benchmark failed: {e}")
 
     # Calculate memory differences
-    results["memory_init_delta"] = results["memory_after_init"] - results["memory_before"]
-    results["memory_load_delta"] = results["memory_after_load"] - results["memory_after_init"]
-    results["memory_hybrid_delta"] = results["memory_after_hybrid"] - results["memory_after_load"]
+    results["memory_init_delta"] = (
+        results["memory_after_init"] - results["memory_before"]
+    )
+    results["memory_load_delta"] = (
+        results["memory_after_load"] - results["memory_after_init"]
+    )
+    results["memory_hybrid_delta"] = (
+        results["memory_after_hybrid"] - results["memory_after_load"]
+    )
 
     print("\n" + "=" * 60)
     print("RESULTS SUMMARY")

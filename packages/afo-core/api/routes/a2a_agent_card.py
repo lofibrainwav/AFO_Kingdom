@@ -30,7 +30,9 @@ class AgentCard(BaseModel):
     """A2A Agent Card (Google A2A Protocol 2025 spec)"""
 
     name: str = "AFO Kingdom Chancellor Agent"
-    description: str = "眞善美孝永 철학 기반 중앙 의사결정 엔진 (AFO Kingdom Soul Engine)"
+    description: str = (
+        "眞善美孝永 철학 기반 중앙 의사결정 엔진 (AFO Kingdom Soul Engine)"
+    )
     version: str = "v2.5"
     capabilities: list[str] = ["task_management", "streaming", "multi_turn"]
     skills: list[AgentSkill] = []
@@ -48,10 +50,14 @@ def _get_dynamic_skills() -> list[AgentSkill]:
             description="Trinity Score 기반 라우팅 및 철학 평가",
         ),
         AgentSkill(
-            id="trinity_evaluate", name="철학 평가", description="眞善美孝永 5대 가치 점수 계산"
+            id="trinity_evaluate",
+            name="철학 평가",
+            description="眞善美孝永 5대 가치 점수 계산",
         ),
         AgentSkill(
-            id="health_check", name="건강 체크", description="시스템 상태 및 오장육부 모니터링"
+            id="health_check",
+            name="건강 체크",
+            description="시스템 상태 및 오장육부 모니터링",
         ),
         AgentSkill(
             id="multi_agent_orchestration",
@@ -67,7 +73,9 @@ def _get_dynamic_skills() -> list[AgentSkill]:
         registry = register_core_skills()
         for skill in registry.list_all():
             core_skills.append(
-                AgentSkill(id=skill.skill_id, name=skill.name, description=skill.description)
+                AgentSkill(
+                    id=skill.skill_id, name=skill.name, description=skill.description
+                )
             )
     except ImportError:
         logger.warning("Skills Registry not available, using core skills only")

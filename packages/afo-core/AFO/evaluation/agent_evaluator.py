@@ -141,7 +141,9 @@ class AgentEvaluator:
         self._stats["evaluations_run"] += 1
 
         # 1. Goal Fulfillment
-        goal_score = self._evaluate_goal_fulfillment(action, expected_outcome, actual_outcome)
+        goal_score = self._evaluate_goal_fulfillment(
+            action, expected_outcome, actual_outcome
+        )
         metrics.append(goal_score)
 
         # 2. Accuracy (if expected outcome provided)
@@ -334,14 +336,18 @@ class AgentEvaluator:
                         "Improve goal achievement - consider clearer task decomposition"
                     )
                 elif metric.metric_type == EvalMetricType.SAFETY:
-                    recommendations.append("Safety violation detected - add content filtering")
+                    recommendations.append(
+                        "Safety violation detected - add content filtering"
+                    )
                 elif metric.metric_type == EvalMetricType.POLICY_ADHERENCE:
                     recommendations.append(
                         f"Policy violations: {metric.details.get('violations', [])}"
                     )
 
         if overall_score < 0.7:
-            recommendations.append("Overall score below threshold - consider human review")
+            recommendations.append(
+                "Overall score below threshold - consider human review"
+            )
 
         return recommendations
 
@@ -360,7 +366,12 @@ class AgentEvaluator:
     def _persist_evaluation(self, report: EvaluationReport) -> None:
         """Persist evaluation report for audit."""
         try:
-            eval_dir = Path(__file__).parent.parent.parent.parent / "docs" / "ssot" / "evaluations"
+            eval_dir = (
+                Path(__file__).parent.parent.parent.parent
+                / "docs"
+                / "ssot"
+                / "evaluations"
+            )
             eval_dir.mkdir(parents=True, exist_ok=True)
 
             import json
@@ -402,10 +413,16 @@ agent_evaluator = AgentEvaluator()
 
 # Convenience functions
 async def evaluate_agent_action(
-    agent_name: str, action: str, expected: str | None = None, actual: str | None = None, **context
+    agent_name: str,
+    action: str,
+    expected: str | None = None,
+    actual: str | None = None,
+    **context,
 ) -> EvaluationReport:
     """Evaluate an agent action."""
-    return await agent_evaluator.evaluate_action(agent_name, action, expected, actual, context)
+    return await agent_evaluator.evaluate_action(
+        agent_name, action, expected, actual, context
+    )
 
 
 def get_evaluation_stats() -> dict[str, Any]:

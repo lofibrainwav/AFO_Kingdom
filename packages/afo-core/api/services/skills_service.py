@@ -38,15 +38,15 @@ except ImportError:
 
 # Import skill registry components for runtime
 try:
+    from AFO.afo_skills_registry import ExecutionMode
+    from AFO.afo_skills_registry import PhilosophyScore as RegistryPhilosophyScores
     from AFO.afo_skills_registry import (
-        ExecutionMode,
         SkillCategory,
         SkillFilterParams,
         SkillRegistry,
         SkillStatus,
         register_core_skills,
     )
-    from AFO.afo_skills_registry import PhilosophyScore as RegistryPhilosophyScores
 
     SKILL_REGISTRY_AVAILABLE = True
 except ImportError:
@@ -88,12 +88,16 @@ class SkillsService(BaseService):
 
             self.skill_registry = register_core_skills()
             skill_count = (
-                len(self.skill_registry._skills) if hasattr(self.skill_registry, "_skills") else 0
+                len(self.skill_registry._skills)
+                if hasattr(self.skill_registry, "_skills")
+                else 0
             )
             self.logger.info("✅ Skill Registry 초기화됨: %d개 스킬", skill_count)
 
             # 카테고리 통계 로깅
-            if self.skill_registry and hasattr(self.skill_registry, "get_category_stats"):
+            if self.skill_registry and hasattr(
+                self.skill_registry, "get_category_stats"
+            ):
                 category_stats = self.skill_registry.get_category_stats()
                 self.logger.info("📊 카테고리 통계: %s", category_stats)
 
@@ -119,7 +123,9 @@ class SkillsService(BaseService):
                 raise ValueError("Skill Registry not available")
 
             if AFOSkillCard is None:
-                raise ValueError("AFOSkillCard not available - skill registry module not loaded")
+                raise ValueError(
+                    "AFOSkillCard not available - skill registry module not loaded"
+                )
 
             # AFOSkillCard 생성
             # 문자열을 enum으로 변환
@@ -233,10 +239,14 @@ class SkillsService(BaseService):
                 parameters=skill.parameters,
                 execution_count=getattr(skill, "execution_count", 0),
                 created_at=(
-                    skill.created_at if hasattr(skill, "created_at") else datetime.utcnow()
+                    skill.created_at
+                    if hasattr(skill, "created_at")
+                    else datetime.utcnow()
                 ),
                 updated_at=(
-                    skill.updated_at if hasattr(skill, "updated_at") else datetime.utcnow()
+                    skill.updated_at
+                    if hasattr(skill, "updated_at")
+                    else datetime.utcnow()
                 ),
             )
 
@@ -244,7 +254,9 @@ class SkillsService(BaseService):
             self.logger.error("❌ 스킬 조회 실패: %s", e)
             return None
 
-    async def list_skills(self, filters: SkillFilterRequest | None = None) -> SkillListResponse:
+    async def list_skills(
+        self, filters: SkillFilterRequest | None = None
+    ) -> SkillListResponse:
         """
         스킬 목록 조회 (필터링 지원)
 
@@ -277,10 +289,14 @@ class SkillsService(BaseService):
                     )
 
                 # 문자열을 enum으로 변환
-                category_enum = SkillCategory(filters.category) if filters.category else None
+                category_enum = (
+                    SkillCategory(filters.category) if filters.category else None
+                )
                 status_enum = SkillStatus(filters.status) if filters.status else None
                 execution_mode_enum = (
-                    ExecutionMode(filters.execution_mode) if filters.execution_mode else None
+                    ExecutionMode(filters.execution_mode)
+                    if filters.execution_mode
+                    else None
                 )
 
                 filter_params = SkillFilterParams(
@@ -289,7 +305,9 @@ class SkillsService(BaseService):
                     tags=filters.tags,
                     search=filters.search,
                     min_philosophy_avg=(
-                        int(filters.min_philosophy_avg) if filters.min_philosophy_avg else None
+                        int(filters.min_philosophy_avg)
+                        if filters.min_philosophy_avg
+                        else None
                     ),
                     execution_mode=execution_mode_enum,
                     offset=filters.offset,
@@ -411,10 +429,13 @@ class SkillsService(BaseService):
                         truth=trinity_eval["trinity_scores"]["truth"] * 100,
                         goodness=trinity_eval["trinity_scores"]["goodness"] * 100,
                         beauty=trinity_eval["trinity_scores"]["beauty"] * 100,
-                        serenity=trinity_eval["trinity_scores"]["filial_serenity"] * 100,
+                        serenity=trinity_eval["trinity_scores"]["filial_serenity"]
+                        * 100,
                     )
                 except Exception as e:
-                    self.logger.warning("Trinity Score 계산 실패, 정적 점수 사용: %s", e)
+                    self.logger.warning(
+                        "Trinity Score 계산 실패, 정적 점수 사용: %s", e
+                    )
                     dynamic_trinity_score = None
 
             # 동적 점수가 없으면 정적 점수 사용
@@ -422,15 +443,25 @@ class SkillsService(BaseService):
             if final_philosophy_score is None:
                 final_philosophy_score = (
                     PhilosophyScores(
-                        truth=(base_philosophy_scores["truth"] if base_philosophy_scores else 85.0),
+                        truth=(
+                            base_philosophy_scores["truth"]
+                            if base_philosophy_scores
+                            else 85.0
+                        ),
                         goodness=(
-                            base_philosophy_scores["goodness"] if base_philosophy_scores else 80.0
+                            base_philosophy_scores["goodness"]
+                            if base_philosophy_scores
+                            else 80.0
                         ),
                         beauty=(
-                            base_philosophy_scores["beauty"] if base_philosophy_scores else 75.0
+                            base_philosophy_scores["beauty"]
+                            if base_philosophy_scores
+                            else 75.0
                         ),
                         serenity=(
-                            base_philosophy_scores["serenity"] if base_philosophy_scores else 90.0
+                            base_philosophy_scores["serenity"]
+                            if base_philosophy_scores
+                            else 90.0
                         ),
                     )
                     if base_philosophy_scores
@@ -451,7 +482,9 @@ class SkillsService(BaseService):
             # 실행 통계 기록
             self._record_execution_stats(request.skill_id, execution_result)
 
-            self.logger.info("✅ 스킬 실행 완료: %s (%.2fms)", request.skill_id, execution_time)
+            self.logger.info(
+                "✅ 스킬 실행 완료: %s (%.2fms)", request.skill_id, execution_time
+            )
 
             return execution_result
 
@@ -472,7 +505,9 @@ class SkillsService(BaseService):
             self.logger.error("❌ 스킬 실행 실패: %s - %s", request.skill_id, error_msg)
             return execution_result
 
-    async def _execute_skill_logic(self, skill: Any, parameters: dict[str, Any]) -> dict[str, Any]:
+    async def _execute_skill_logic(
+        self, skill: Any, parameters: dict[str, Any]
+    ) -> dict[str, Any]:
         """
         실제 스킬 실행 로직 (현재는 mock 구현)
 
@@ -515,7 +550,9 @@ class SkillsService(BaseService):
         # 실제로는 skill.local_function_name을 import해서 실행
         return {"message": f"Executed local function for {skill.skill_id}"}
 
-    async def _execute_n8n_workflow(self, skill: Any, parameters: dict[str, Any]) -> dict[str, Any]:
+    async def _execute_n8n_workflow(
+        self, skill: Any, parameters: dict[str, Any]
+    ) -> dict[str, Any]:
         """n8n 워크플로우 실행"""
         # 실제로는 n8n API 호출
         return {"message": f"Executed n8n workflow for {skill.skill_id}"}
@@ -527,12 +564,16 @@ class SkillsService(BaseService):
         # 실제로는 브라우저 자동화
         return {"message": f"Executed browser script for {skill.skill_id}"}
 
-    async def _execute_api_call(self, skill: Any, parameters: dict[str, Any]) -> dict[str, Any]:
+    async def _execute_api_call(
+        self, skill: Any, parameters: dict[str, Any]
+    ) -> dict[str, Any]:
         """API 호출 실행"""
         # 실제로는 HTTP 요청
         return {"message": f"Executed API call for {skill.skill_id}"}
 
-    def _record_execution_stats(self, skill_id: str, result: SkillExecutionResult) -> None:
+    def _record_execution_stats(
+        self, skill_id: str, result: SkillExecutionResult
+    ) -> None:
         """실행 통계 기록"""
         self.execution_stats[skill_id].update(
             {
@@ -627,7 +668,9 @@ class SkillsService(BaseService):
                     avg_philosophy = total_philosophy / len(category_skills)
 
                 # 실행 횟수 계산 (실제로는 execution_stats에서 가져와야 함)
-                execution_count = self.execution_stats.get(cat_name, {}).get("execution_count", 0)
+                execution_count = self.execution_stats.get(cat_name, {}).get(
+                    "execution_count", 0
+                )
 
                 cat_stat = SkillCategoryStats(
                     category=cat_name,
@@ -686,11 +729,16 @@ class SkillsService(BaseService):
     def _get_recent_executions(self) -> int:
         """최근 24시간 실행 횟수"""
         # 실제로는 타임스탬프 기반 계산 필요
-        return sum(stats.get("execution_count", 0) for stats in self.execution_stats.values())
+        return sum(
+            stats.get("execution_count", 0) for stats in self.execution_stats.values()
+        )
 
     def _get_avg_execution_time(self) -> float:
         """평균 실행 시간"""
-        times = [stats.get("avg_execution_time", 0) for stats in self.execution_stats.values()]
+        times = [
+            stats.get("avg_execution_time", 0)
+            for stats in self.execution_stats.values()
+        ]
         return sum(times) / len(times) if times else 0.0
 
     async def health_check(self) -> dict[str, Any]:

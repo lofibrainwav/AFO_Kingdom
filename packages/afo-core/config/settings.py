@@ -8,12 +8,11 @@ import os
 import sys
 from typing import ClassVar
 
-from pydantic import Field
-from pydantic_settings import BaseSettings, SettingsConfigDict
-
 from AFO.antigravity import antigravity
 from AFO.julie import JulieConfig, julie_config
 from AFO.trinity import TrinityConfig
+from pydantic import Field
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class AFOSettings(BaseSettings):
@@ -40,7 +39,9 @@ class AFOSettings(BaseSettings):
     julie: JulieConfig = Field(default_factory=lambda: julie_config)
 
     model_config = SettingsConfigDict(
-        env_file=os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), ".env"),
+        env_file=os.path.join(
+            os.path.dirname(os.path.dirname(os.path.dirname(__file__))), ".env"
+        ),
         env_file_encoding="utf-8",
         extra="ignore",
         case_sensitive=False,
@@ -54,12 +55,15 @@ class AFOSettings(BaseSettings):
     POSTGRES_PORT: int = Field(
         default=5432, description="PostgreSQL 포트 (Docker 내부 5432, 로컬 15432)"
     )
-    POSTGRES_DB: str = Field(default="afo_memory", description="PostgreSQL 데이터베이스 이름")
+    POSTGRES_DB: str = Field(
+        default="afo_memory", description="PostgreSQL 데이터베이스 이름"
+    )
     POSTGRES_USER: str = Field(default="afo", description="PostgreSQL 사용자")
     # Phase 15 Security Seal: 하드코딩된 시크릿 제거
     # 프로덕션에서는 반드시 환경변수로 설정 필요
     POSTGRES_PASSWORD: str = Field(
-        default="", description="PostgreSQL 비밀번호 (환경변수 POSTGRES_PASSWORD로 설정 필수)"
+        default="",
+        description="PostgreSQL 비밀번호 (환경변수 POSTGRES_PASSWORD로 설정 필수)",
     )
     DATABASE_URL: str | None = Field(
         default=None, description="PostgreSQL 연결 URL (선택적, 개별 설정보다 우선)"
@@ -69,21 +73,34 @@ class AFOSettings(BaseSettings):
     # Redis Settings
     # NOTE: Defaults are set for Docker environment. Override via env vars for local dev.
     # ============================================================================
-    REDIS_URL: str = Field(default="redis://afo-redis:6379", description="Redis 연결 URL")
+    REDIS_URL: str = Field(
+        default="redis://afo-redis:6379", description="Redis 연결 URL"
+    )
     REDIS_HOST: str = Field(
-        default="afo-redis", description="Redis 호스트 (Docker: afo-redis, 로컬: localhost)"
+        default="afo-redis",
+        description="Redis 호스트 (Docker: afo-redis, 로컬: localhost)",
     )
     REDIS_PORT: int = Field(default=6379, description="Redis 포트")
 
     # ============================================================================
     # Vector Store Settings (LanceDB)
     # ============================================================================
-    VECTOR_DB: str = Field(default="lancedb", description="벡터 DB 타입 (lancedb, qdrant, chroma)")
-    LANCEDB_PATH: str = Field(default="./data/lancedb", description="LanceDB 데이터베이스 경로")
-    EMBED_DIM: str = Field(default="dynamic", description="임베딩 차원 (dynamic=자동 감지, 숫자=고정값)")
+    VECTOR_DB: str = Field(
+        default="lancedb", description="벡터 DB 타입 (lancedb, qdrant, chroma)"
+    )
+    LANCEDB_PATH: str = Field(
+        default="./data/lancedb", description="LanceDB 데이터베이스 경로"
+    )
+    EMBED_DIM: str = Field(
+        default="dynamic", description="임베딩 차원 (dynamic=자동 감지, 숫자=고정값)"
+    )
     VISION_MODEL: str = Field(default="qwen3-vl", description="비전 모델 (qwen3-vl 등)")
-    EMBED_MODEL: str = Field(default="embeddinggemma", description="임베딩 모델 (embeddinggemma 등)")
-    BUILD_VECTOR_INDEX: str = Field(default="0", description="벡터 인덱스 생성 여부 (0=생성안함, 1=생성)")
+    EMBED_MODEL: str = Field(
+        default="embeddinggemma", description="임베딩 모델 (embeddinggemma 등)"
+    )
+    BUILD_VECTOR_INDEX: str = Field(
+        default="0", description="벡터 인덱스 생성 여부 (0=생성안함, 1=생성)"
+    )
 
     # ============================================================================
     # Ollama Settings
@@ -104,7 +121,9 @@ class AFOSettings(BaseSettings):
     # ============================================================================
     # API Wallet Settings
     # ============================================================================
-    API_WALLET_URL: str = Field(default="http://localhost:8000", description="API Wallet 서버 URL")
+    API_WALLET_URL: str = Field(
+        default="http://localhost:8000", description="API Wallet 서버 URL"
+    )
 
     # ============================================================================
     # MCP Server Settings
@@ -118,17 +137,29 @@ class AFOSettings(BaseSettings):
     # API Keys
     # Phase 15 Security Seal: 하드코딩된 시크릿 제거
     # ============================================================================
-    API_YUNGDEOK: str = Field(default="", description="영덕 API 키 (환경변수 API_YUNGDEOK로 설정)")
+    API_YUNGDEOK: str = Field(
+        default="", description="영덕 API 키 (환경변수 API_YUNGDEOK로 설정)"
+    )
     OPENAI_API_KEY: str | None = Field(default=None, description="OpenAI API 키")
-    ANTHROPIC_API_KEY: str | None = Field(default=None, description="Anthropic (Claude) API 키")
+    ANTHROPIC_API_KEY: str | None = Field(
+        default=None, description="Anthropic (Claude) API 키"
+    )
     GEMINI_API_KEY: str | None = Field(default=None, description="Google Gemini API 키")
     GOOGLE_API_KEY: str | None = Field(
         default=None, description="Google API 키 (GEMINI_API_KEY 대체용)"
     )
-    CHATGPT_SESSION_TOKEN_1: str | None = Field(default=None, description="ChatGPT 세션 토큰 1")
-    CHATGPT_SESSION_TOKEN_2: str | None = Field(default=None, description="ChatGPT 세션 토큰 2")
-    CHATGPT_SESSION_TOKEN_3: str | None = Field(default=None, description="ChatGPT 세션 토큰 3")
-    CURSOR_ACCESS_TOKEN: str | None = Field(default=None, description="Cursor 액세스 토큰")
+    CHATGPT_SESSION_TOKEN_1: str | None = Field(
+        default=None, description="ChatGPT 세션 토큰 1"
+    )
+    CHATGPT_SESSION_TOKEN_2: str | None = Field(
+        default=None, description="ChatGPT 세션 토큰 2"
+    )
+    CHATGPT_SESSION_TOKEN_3: str | None = Field(
+        default=None, description="ChatGPT 세션 토큰 3"
+    )
+    CURSOR_ACCESS_TOKEN: str | None = Field(
+        default=None, description="Cursor 액세스 토큰"
+    )
     REDIS_PASSWORD: str | None = Field(default=None, description="Redis 비밀번호")
 
     # ============================================================================
@@ -136,7 +167,9 @@ class AFOSettings(BaseSettings):
     # ============================================================================
     AFO_API_VERSION: str = Field(default="v1", description="AFO API 버전")
     INPUT_SERVER_PORT: int = Field(default=4200, description="Input Server 포트")
-    INPUT_SERVER_HOST: str = Field(default="127.0.0.1", description="Input Server 호스트")
+    INPUT_SERVER_HOST: str = Field(
+        default="127.0.0.1", description="Input Server 호스트"
+    )
     DASHBOARD_URL: str = Field(
         default="http://localhost:3000",
         description="프론트엔드 대시보드 URL (GenUI 등)",
@@ -145,21 +178,35 @@ class AFOSettings(BaseSettings):
     # ============================================================================
     # API Server Settings
     # ============================================================================
-    API_SERVER_PORT: int = Field(default=8010, description="API Server 포트 (Soul Engine)")
+    API_SERVER_PORT: int = Field(
+        default=8010, description="API Server 포트 (Soul Engine)"
+    )
     API_SERVER_HOST: str = Field(default="127.0.0.1", description="API Server 호스트")
-    SOUL_ENGINE_PORT: int = Field(default=8010, description="Soul Engine 포트 (5 Pillars 등)")
-    ASYNC_QUERY_ENABLED: bool = Field(default=True, description="비동기 쿼리 활성화 여부")
+    SOUL_ENGINE_PORT: int = Field(
+        default=8010, description="Soul Engine 포트 (5 Pillars 등)"
+    )
+    ASYNC_QUERY_ENABLED: bool = Field(
+        default=True, description="비동기 쿼리 활성화 여부"
+    )
     MOCK_MODE: bool = Field(default=False, description="Mock 모드 활성화 여부")
-    SENTRY_DSN: str | None = Field(default=None, description="Sentry DSN (에러 모니터링)")
+    SENTRY_DSN: str | None = Field(
+        default=None, description="Sentry DSN (에러 모니터링)"
+    )
     VAULT_ENABLED: bool = Field(default=False, description="Vault KMS 사용 여부")
     API_WALLET_ENCRYPTION_KEY: str | None = Field(
         default=None, description="API Wallet 암호화 키 (Fernet, 44자)"
     )
     # Vault Settings (Phase 3)
-    VAULT_URL: str = Field(default="http://localhost:8200", description="Vault 서버 URL")
+    VAULT_URL: str = Field(
+        default="http://localhost:8200", description="Vault 서버 URL"
+    )
     VAULT_TOKEN: str | None = Field(default=None, description="Vault 액세스 토큰")
-    TAVILY_API_KEY: str | None = Field(default=None, description="Tavily API 키 (웹 검색)")
-    REDIS_RAG_INDEX: str = Field(default="rag_docs", description="Redis RAG 인덱스 이름")
+    TAVILY_API_KEY: str | None = Field(
+        default=None, description="Tavily API 키 (웹 검색)"
+    )
+    REDIS_RAG_INDEX: str = Field(
+        default="rag_docs", description="Redis RAG 인덱스 이름"
+    )
     AFO_HOME: str | None = Field(default=None, description="AFO 홈 디렉토리 경로")
     AFO_SOUL_ENGINE_HOME: str | None = Field(
         default=None, description="AFO Soul Engine 홈 디렉토리 경로"
@@ -173,7 +220,9 @@ class AFOSettings(BaseSettings):
     ARTIFACTS_DIR: str = Field(
         default=os.path.join(
             os.path.dirname(
-                os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+                os.path.dirname(
+                    os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+                )
             ),
             "artifacts",
         ),
@@ -208,7 +257,9 @@ class AFOSettings(BaseSettings):
     OLLAMA_SWITCHING_PROTOCOL_ENABLED: bool = Field(
         default=True, description="Ollama 3단계 스위칭 프로토콜 활성화"
     )
-    VAULT_STRICT_AUDIT: bool = Field(default=True, description="Vault 접근 감사 로그 활성화")
+    VAULT_STRICT_AUDIT: bool = Field(
+        default=True, description="Vault 접근 감사 로그 활성화"
+    )
 
     # ============================================================================
     # Helper Methods
@@ -294,15 +345,29 @@ def get_settings(env: str | None = None) -> AFOSettings:
                 os.path.join(os.path.dirname(__file__), "..", "..", "trinity-os")
             )
 
-        if trinity_os_path and os.path.exists(trinity_os_path) and trinity_os_path not in sys.path:
+        if (
+            trinity_os_path
+            and os.path.exists(trinity_os_path)
+            and trinity_os_path not in sys.path
+        ):
             sys.path.insert(0, trinity_os_path)
-            print(f"✅ Context7 trinity-os 경로 추가: {trinity_os_path}", file=sys.stderr)
+            print(
+                f"✅ Context7 trinity-os 경로 추가: {trinity_os_path}", file=sys.stderr
+            )
         elif not os.path.exists(trinity_os_path):
-            print(f"ℹ️ Context7 trinity-os 경로 없음: {trinity_os_path}", file=sys.stderr)
+            print(
+                f"ℹ️ Context7 trinity-os 경로 없음: {trinity_os_path}", file=sys.stderr
+            )
         else:
-            print(f"✅ Context7 trinity-os 경로 이미 추가됨: {trinity_os_path}", file=sys.stderr)
+            print(
+                f"✅ Context7 trinity-os 경로 이미 추가됨: {trinity_os_path}",
+                file=sys.stderr,
+            )
 
-        print(f"✅ AFO 설정 로드 완료: {env} 환경 ({settings_class.__name__})", file=sys.stderr)
+        print(
+            f"✅ AFO 설정 로드 완료: {env} 환경 ({settings_class.__name__})",
+            file=sys.stderr,
+        )
 
     return _settings
 

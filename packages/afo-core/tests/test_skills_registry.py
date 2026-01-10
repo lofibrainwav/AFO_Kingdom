@@ -3,8 +3,12 @@ from typing import Any
 from unittest.mock import patch
 
 import pytest
-
-from AFO.afo_skills_registry import AFOSkillCard, PhilosophyScore, SkillCategory, SkillRegistry
+from AFO.afo_skills_registry import (
+    AFOSkillCard,
+    PhilosophyScore,
+    SkillCategory,
+    SkillRegistry,
+)
 
 
 class TestSkillRegistry:
@@ -28,7 +32,9 @@ class TestSkillRegistry:
             description="A test skill description that is long enough",
             category=SkillCategory.INTEGRATION,
             version="1.0.0",
-            philosophy_scores=PhilosophyScore(truth=10, goodness=10, beauty=10, serenity=10),
+            philosophy_scores=PhilosophyScore(
+                truth=10, goodness=10, beauty=10, serenity=10
+            ),
         )
         assert registry.register(skill) is True
         # Register again returns False
@@ -47,7 +53,9 @@ class TestSkillRegistry:
             description="Desc for S1.........",
             category=SkillCategory.INTEGRATION,
             version="1.0.0",
-            philosophy_scores=PhilosophyScore(truth=10, goodness=10, beauty=10, serenity=10),
+            philosophy_scores=PhilosophyScore(
+                truth=10, goodness=10, beauty=10, serenity=10
+            ),
         )
         s2 = AFOSkillCard(
             skill_id="skill_002_s2",
@@ -55,7 +63,9 @@ class TestSkillRegistry:
             description="Desc for S2.........",
             category=SkillCategory.HEALTH_MONITORING,
             version="1.0.0",
-            philosophy_scores=PhilosophyScore(truth=10, goodness=10, beauty=10, serenity=10),
+            philosophy_scores=PhilosophyScore(
+                truth=10, goodness=10, beauty=10, serenity=10
+            ),
         )
         registry.register(s1)
         registry.register(s2)
@@ -75,7 +85,9 @@ class TestSkillRegistry:
             description="A red fruit description",
             category=SkillCategory.INTEGRATION,
             version="1.0.0",
-            philosophy_scores=PhilosophyScore(truth=10, goodness=10, beauty=10, serenity=10),
+            philosophy_scores=PhilosophyScore(
+                truth=10, goodness=10, beauty=10, serenity=10
+            ),
         )
         registry.register(s1)
 
@@ -90,7 +102,9 @@ class TestSkillRegistry:
 
     def test_philosophy_score_properties(self) -> None:
         """美 (Beauty): 철학 점수 속성(평균, 요약) 검증"""
-        score: PhilosophyScore = PhilosophyScore(truth=100, goodness=50, beauty=50, serenity=0)
+        score: PhilosophyScore = PhilosophyScore(
+            truth=100, goodness=50, beauty=50, serenity=0
+        )
         assert score.average == 50.0
         # Check for Chinese characters as per implementation
         assert "眞" in score.summary
@@ -107,7 +121,9 @@ class TestSkillRegistry:
                 description="Bad desc.....",
                 category=SkillCategory.INTEGRATION,
                 version="v1.0",  # Invalid pattern
-                philosophy_scores=PhilosophyScore(truth=0, goodness=0, beauty=0, serenity=0),
+                philosophy_scores=PhilosophyScore(
+                    truth=0, goodness=0, beauty=0, serenity=0
+                ),
             )
 
     def test_stats(self) -> None:
@@ -120,7 +136,9 @@ class TestSkillRegistry:
                 description="D1..........",
                 category=SkillCategory.INTEGRATION,
                 version="1.0.0",
-                philosophy_scores=PhilosophyScore(truth=0, goodness=0, beauty=0, serenity=0),
+                philosophy_scores=PhilosophyScore(
+                    truth=0, goodness=0, beauty=0, serenity=0
+                ),
             )
         )
         assert registry.count() == 1

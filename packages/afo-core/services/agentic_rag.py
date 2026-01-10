@@ -154,7 +154,9 @@ class AgenticRAG:
                     decision_path=decision_path,
                     confidence=0.0,
                     original_query=user_query,
-                    rewritten_query=current_query if current_query != user_query else None,
+                    rewritten_query=(
+                        current_query if current_query != user_query else None
+                    ),
                 )
 
         # Step 5: Generate answer from relevant documents
@@ -263,7 +265,9 @@ class AgenticRAG:
 
         return RetrievalDecision.WEB_SEARCH
 
-    async def _rewrite_query(self, query: str, failed_docs: list[RetrievedDocument]) -> str:
+    async def _rewrite_query(
+        self, query: str, failed_docs: list[RetrievedDocument]
+    ) -> str:
         """Rewrite query to improve retrieval.
 
         Uses failed documents to understand what went wrong.
@@ -341,14 +345,19 @@ class AgenticRAG:
                 corrected = f"According to the sources: {source_text}..."
                 return corrected, True
             else:
-                return "I cannot provide a confident answer without reliable sources.", True
+                return (
+                    "I cannot provide a confident answer without reliable sources.",
+                    True,
+                )
 
         return answer, False
 
     def _persist_result(self, result: AgenticRAGResult) -> None:
         """Persist RAG result for analysis and improvement."""
         try:
-            rag_dir = Path(__file__).parent.parent.parent.parent / "docs" / "ssot" / "rag"
+            rag_dir = (
+                Path(__file__).parent.parent.parent.parent / "docs" / "ssot" / "rag"
+            )
             rag_dir.mkdir(parents=True, exist_ok=True)
 
             import json
@@ -359,7 +368,11 @@ class AgenticRAG:
                 entry = asdict(result)
                 # Convert sources to serializable format
                 entry["sources"] = [
-                    {"content": s.content[:200], "source": s.source, "score": s.relevance_score}
+                    {
+                        "content": s.content[:200],
+                        "source": s.source,
+                        "score": s.relevance_score,
+                    }
                     for s in result.sources
                 ]
                 f.write(json.dumps(entry, ensure_ascii=False) + "\n")

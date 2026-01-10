@@ -88,7 +88,11 @@ def infer_types_simple(func_node: ast.FunctionDef) -> dict:
                     # 두 번째 인자 (타입)
                     if isinstance(node.args[1], ast.Tuple):
                         # tuple 타입 (int, float) 등
-                        type_checks.extend(elt.id for elt in node.args[1].elts if isinstance(elt, ast.Name))
+                        type_checks.extend(
+                            elt.id
+                            for elt in node.args[1].elts
+                            if isinstance(elt, ast.Name)
+                        )
                     elif isinstance(node.args[1], ast.Name):
                         type_checks.append(node.args[1].id)
 
@@ -106,7 +110,9 @@ def infer_types_simple(func_node: ast.FunctionDef) -> dict:
     return types
 
 
-def calculate_simple_trinity_score(func_node: ast.FunctionDef, inferred_types: dict) -> float:
+def calculate_simple_trinity_score(
+    func_node: ast.FunctionDef, inferred_types: dict
+) -> float:
     """
     단순한 Trinity Score 계산
     """
@@ -118,7 +124,9 @@ def calculate_simple_trinity_score(func_node: ast.FunctionDef, inferred_types: d
     score += (typed_params / param_count) * 20 if param_count > 0 else 0
 
     # 함수 복잡도 점수 (라인 수 기반)
-    func_source = ast.get_source_segment(ast.parse(ast.get_source_segment(ast.parse(""), func_node)), func_node)
+    func_source = ast.get_source_segment(
+        ast.parse(ast.get_source_segment(ast.parse(""), func_node)), func_node
+    )
     lines = len(func_source.split("\n")) if func_source else 0
     if lines < 10:
         score += 10  # 간단한 함수

@@ -13,13 +13,12 @@ if os.getenv("AFO_WALLET_TESTS") != "1":
         allow_module_level=True,
     )
 
-from fastapi import FastAPI
-from fastapi.testclient import TestClient
-
 # Import wallet router
 from AFO.api.routes.wallet import wallet_router
 from AFO.api.routes.wallet.billing import billing_router
 from AFO.api.routes.wallet.browser_bridge import router as browser_router
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
 
 # Setup App
 app = FastAPI()
@@ -40,7 +39,9 @@ def test_list_keys_success():
     mock_module.APIWallet = mock_wallet_class
 
     # Inject our mock module into sys.modules so 'from AFO.api_wallet import APIWallet' finds it
-    with patch.dict(sys.modules, {"AFO.api_wallet": mock_module, "api_wallet": mock_module}):
+    with patch.dict(
+        sys.modules, {"AFO.api_wallet": mock_module, "api_wallet": mock_module}
+    ):
         response = client.get("/keys")
         assert response.status_code == 200
         assert len(response.json()) == 1
@@ -55,7 +56,9 @@ def test_add_key_success():
     mock_module = MagicMock()
     mock_module.APIWallet = mock_wallet_class
 
-    with patch.dict(sys.modules, {"AFO.api_wallet": mock_module, "api_wallet": mock_module}):
+    with patch.dict(
+        sys.modules, {"AFO.api_wallet": mock_module, "api_wallet": mock_module}
+    ):
         response = client.post(
             "/keys", json={"name": "new_k", "key": "sk-...", "service": "openai"}
         )
@@ -70,7 +73,9 @@ def test_add_key_exists():
     mock_module = MagicMock()
     mock_module.APIWallet = mock_wallet_class
 
-    with patch.dict(sys.modules, {"AFO.api_wallet": mock_module, "api_wallet": mock_module}):
+    with patch.dict(
+        sys.modules, {"AFO.api_wallet": mock_module, "api_wallet": mock_module}
+    ):
         response = client.post("/keys", json={"name": "existing", "key": "sk-..."})
         assert response.status_code == 400
         assert "already exists" in response.json()["detail"]
@@ -83,7 +88,9 @@ def test_delete_key_success():
     mock_module = MagicMock()
     mock_module.APIWallet = mock_wallet_class
 
-    with patch.dict(sys.modules, {"AFO.api_wallet": mock_module, "api_wallet": mock_module}):
+    with patch.dict(
+        sys.modules, {"AFO.api_wallet": mock_module, "api_wallet": mock_module}
+    ):
         response = client.delete("/keys/del_k")
         assert response.status_code == 200
 
@@ -95,7 +102,9 @@ def test_delete_key_not_found():
     mock_module = MagicMock()
     mock_module.APIWallet = mock_wallet_class
 
-    with patch.dict(sys.modules, {"AFO.api_wallet": mock_module, "api_wallet": mock_module}):
+    with patch.dict(
+        sys.modules, {"AFO.api_wallet": mock_module, "api_wallet": mock_module}
+    ):
         response = client.delete("/keys/missing")
         assert response.status_code == 404
 
@@ -166,10 +175,14 @@ def test_save_browser_token_success():
     mock_wallet.get.return_value = None
 
     with (
-        patch("AFO.api.routes.wallet.browser_bridge.APIWallet", return_value=mock_wallet),
+        patch(
+            "AFO.api.routes.wallet.browser_bridge.APIWallet", return_value=mock_wallet
+        ),
         patch("os.urandom", return_value=b"\x00\x00"),
     ):  # hex '0000'
-        response = client.post("/browser/save-token", json={"service": "n8n", "token": "abc"})
+        response = client.post(
+            "/browser/save-token", json={"service": "n8n", "token": "abc"}
+        )
         assert response.status_code == 200
         assert "session_0000" in response.json()["key_name"]
 

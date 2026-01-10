@@ -31,7 +31,9 @@ def apply_learning_profile(
     base_thresholds = base_config["thresholds"]
 
     # Safety 완화 금지 정책 (기본값) - 환경변수로 해제 가능
-    allow_weaken_safety = os.getenv("AFO_LEARNING_ALLOW_WEAKEN_SAFETY", "0").lower() in (
+    allow_weaken_safety = os.getenv(
+        "AFO_LEARNING_ALLOW_WEAKEN_SAFETY", "0"
+    ).lower() in (
         "1",
         "true",
         "yes",
@@ -68,11 +70,15 @@ def apply_learning_profile(
             new_trinity = thresholds_override.get(
                 "auto_run_trinity", base_thresholds["auto_run_trinity"]
             )
-            new_risk = thresholds_override.get("auto_run_risk", base_thresholds["auto_run_risk"])
+            new_risk = thresholds_override.get(
+                "auto_run_risk", base_thresholds["auto_run_risk"]
+            )
 
             safety_weaken_detected = (
-                new_trinity < base_thresholds["auto_run_trinity"]  # trinity threshold 낮춤 (완화)
-                or new_risk > base_thresholds["auto_run_risk"]  # risk threshold 높임 (완화)
+                new_trinity
+                < base_thresholds["auto_run_trinity"]  # trinity threshold 낮춤 (완화)
+                or new_risk
+                > base_thresholds["auto_run_risk"]  # risk threshold 높임 (완화)
             )
 
             if safety_weaken_detected and not allow_weaken_safety:

@@ -10,7 +10,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Any, TypeVar, Generic
+from typing import Any, Generic, TypeVar
 
 from fastapi import HTTPException
 from pydantic import BaseModel
@@ -19,8 +19,8 @@ from pydantic import BaseModel
 logger = logging.getLogger(__name__)
 
 # 제네릭 타입 변수
-T = TypeVar('T')
-U = TypeVar('U')
+T = TypeVar("T")
+U = TypeVar("U")
 
 
 class APIResponse(BaseModel, Generic[T]):
@@ -28,6 +28,7 @@ class APIResponse(BaseModel, Generic[T]):
 
     모든 API 엔드포인트에서 일관된 응답 형식을 제공합니다.
     """
+
     success: bool
     data: T | None = None
     message: str | None = None
@@ -40,6 +41,7 @@ class PaginatedResponse(BaseModel, Generic[T]):
 
     목록 조회 API에서 일관된 페이지네이션 형식을 제공합니다.
     """
+
     items: list[T]
     total: int
     page: int
@@ -53,6 +55,7 @@ class APIResult(BaseModel, Generic[T]):
 
     성공/실패 상태를 명확히 표현합니다.
     """
+
     success: bool
     value: T | None = None
     error_message: str | None = None
@@ -145,9 +148,7 @@ def safe_str_conversion(value: Any, default: str = "") -> str:
 
 
 def create_success_response(
-    data: T,
-    message: str | None = None,
-    metadata: dict[str, Any] | None = None
+    data: T, message: str | None = None, metadata: dict[str, Any] | None = None
 ) -> APIResponse[T]:
     """성공 응답 생성 헬퍼
 
@@ -159,18 +160,11 @@ def create_success_response(
     Returns:
         APIResponse 인스턴스
     """
-    return APIResponse(
-        success=True,
-        data=data,
-        message=message,
-        metadata=metadata
-    )
+    return APIResponse(success=True, data=data, message=message, metadata=metadata)
 
 
 def create_error_response(
-    error: str,
-    message: str | None = None,
-    metadata: dict[str, Any] | None = None
+    error: str, message: str | None = None, metadata: dict[str, Any] | None = None
 ) -> APIResponse[Any]:
     """에러 응답 생성 헬퍼
 
@@ -182,12 +176,7 @@ def create_error_response(
     Returns:
         APIResponse 인스턴스
     """
-    return APIResponse(
-        success=False,
-        error=error,
-        message=message,
-        metadata=metadata
-    )
+    return APIResponse(success=False, error=error, message=message, metadata=metadata)
 
 
 def handle_api_errors(func_name: str) -> Any:
@@ -201,6 +190,7 @@ def handle_api_errors(func_name: str) -> Any:
     Returns:
         데코레이터 함수
     """
+
     def decorator(func: Any) -> Any:
         async def wrapper(*args: Any, **kwargs: Any) -> Any:
             try:
@@ -212,16 +202,16 @@ def handle_api_errors(func_name: str) -> Any:
                 logger.error(f"{func_name} 실행 중 에러: {e}")
                 raise HTTPException(
                     status_code=500,
-                    detail=f"{func_name} 처리 중 내부 오류가 발생했습니다."
+                    detail=f"{func_name} 처리 중 내부 오류가 발생했습니다.",
                 ) from e
+
         return wrapper
+
     return decorator
 
 
 def validate_pagination_params(
-    page: int = 1,
-    page_size: int = 20,
-    max_page_size: int = 100
+    page: int = 1, page_size: int = 20, max_page_size: int = 100
 ) -> tuple[int, int]:
     """페이지네이션 파라미터 검증
 
@@ -245,10 +235,7 @@ def validate_pagination_params(
 
 
 def create_paginated_response(
-    items: list[T],
-    total: int,
-    page: int,
-    page_size: int
+    items: list[T], total: int, page: int, page_size: int
 ) -> PaginatedResponse[T]:
     """페이지네이션 응답 생성 헬퍼
 
@@ -269,7 +256,7 @@ def create_paginated_response(
         page=page,
         page_size=page_size,
         has_next=page < total_pages,
-        has_prev=page > 1
+        has_prev=page > 1,
     )
 
 
@@ -294,7 +281,8 @@ def is_valid_email(value: Any) -> bool:
         return False
 
     import re
-    email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+
+    email_pattern = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
     return bool(re.match(email_pattern, value))
 
 

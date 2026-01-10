@@ -10,7 +10,9 @@ class CommandRequest(BaseModel):
     """Command execution request"""
 
     command: str = Field(..., description="Command to execute")
-    thread_id: str | None = Field(default=None, description="Thread ID for conversation")
+    thread_id: str | None = Field(
+        default=None, description="Thread ID for conversation"
+    )
 
 
 class RAGQueryRequest(BaseModel):
@@ -34,7 +36,9 @@ class YeongdeokCommandRequest(BaseModel):
     mode: str = Field(default="wet", description="Execution mode ('dry_run' or 'wet')")
     use_eyes: bool = Field(default=False, description="Use browser (eyes)")
     use_arms: bool = Field(default=False, description="Use n8n (arms)")
-    url: str | None = Field(default=None, description="URL to view (when use_eyes=True)")
+    url: str | None = Field(
+        default=None, description="URL to view (when use_eyes=True)"
+    )
 
 
 class BrowserClickRequest(BaseModel):
@@ -59,20 +63,26 @@ class BrowserKeyRequest(BaseModel):
 class BrowserScrollRequest(BaseModel):
     """Browser scroll request"""
 
-    delta_y: int = Field(..., description="Scroll amount (positive: down, negative: up)")
+    delta_y: int = Field(
+        ..., description="Scroll amount (positive: down, negative: up)"
+    )
 
 
 class CrewAIExecuteRequest(BaseModel):
     """CrewAI execution request"""
 
-    role: str = Field(..., description="Agent role (e.g., 'AI Researcher', 'Technical Writer')")
+    role: str = Field(
+        ..., description="Agent role (e.g., 'AI Researcher', 'Technical Writer')"
+    )
     goal: str = Field(..., description="Agent goal (e.g., 'Research latest AI trends')")
     backstory: str = Field(..., description="Agent backstory")
     task_description: str = Field(..., description="Task description")
     tools: list[str] | None = Field(
         default=[], description="Tools to use (e.g., ['search', 'db_query'])"
     )
-    thread_id: str | None = Field(default=None, description="Conversation thread ID (optional)")
+    thread_id: str | None = Field(
+        default=None, description="Conversation thread ID (optional)"
+    )
 
 
 class LangChainToolsRequest(BaseModel):
@@ -87,6 +97,10 @@ class LangChainRetrievalQARequest(BaseModel):
 
     query: str = Field(..., description="User question")
     return_sources: bool = Field(default=True, description="Include source documents")
-    confidence_threshold: float = Field(default=0.7, description="Confidence threshold (0.0-1.0)")
+    confidence_threshold: float = Field(
+        default=0.7, description="Confidence threshold (0.0-1.0)"
+    )
     model_name: str = Field(default="gpt-4", description="LLM model to use")
-    use_local_embeddings: bool = Field(default=False, description="Use local embeddings")
+    use_local_embeddings: bool = Field(
+        default=False, description="Use local embeddings"
+    )

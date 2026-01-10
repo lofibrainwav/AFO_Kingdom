@@ -102,11 +102,15 @@ def benchmark_matmul(sizes, runs=3):
         results[size]["performance"] = {
             "numpy_gflops": float(gflops_numpy),
             "numba_gflops": float(gflops_numba),
-            "speedup_numba_vs_numpy": float(np.mean(times_numpy) / np.mean(times_numba)),
+            "speedup_numba_vs_numpy": float(
+                np.mean(times_numpy) / np.mean(times_numba)
+            ),
         }
 
         print(f"  NumPy BLAS: {np.mean(times_numpy):.3f}ms ({gflops_numpy:.2f} GFLOPS)")
-        print(f"  Numba parallel: {np.mean(times_numba):.3f}ms ({gflops_numba:.2f} GFLOPS)")
+        print(
+            f"  Numba parallel: {np.mean(times_numba):.3f}ms ({gflops_numba:.2f} GFLOPS)"
+        )
         if times_python:
             speedup_py = np.mean(times_python) / np.mean(times_numpy)
             print(

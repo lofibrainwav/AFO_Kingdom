@@ -1,7 +1,7 @@
 import pytest
+from AFO.domain.metrics.trinity import TrinityInputs, TrinityMetrics
 from pydantic import ValidationError
 
-from AFO.domain.metrics.trinity import TrinityInputs, TrinityMetrics
 from services.trinity_calculator import trinity_calculator
 
 
@@ -11,21 +11,27 @@ class TestTrinityEngine:
     def test_trinity_inputs_auto_clamping(self):
         """Verify that TrinityInputs auto-clamps out-of-bounds values (Goodness/Serenity)"""
         # Over-bounds
-        inputs = TrinityInputs(truth=1.5, goodness=2.0, beauty=100.0, filial_serenity=5.0)
+        inputs = TrinityInputs(
+            truth=1.5, goodness=2.0, beauty=100.0, filial_serenity=5.0
+        )
         assert inputs.truth == 1.0
         assert inputs.goodness == 1.0
         assert inputs.beauty == 1.0
         assert inputs.filial_serenity == 1.0
 
         # Under-bounds
-        inputs_neg = TrinityInputs(truth=-1.0, goodness=-0.5, beauty=-0.0, filial_serenity=-10.0)
+        inputs_neg = TrinityInputs(
+            truth=-1.0, goodness=-0.5, beauty=-0.0, filial_serenity=-10.0
+        )
         assert inputs_neg.truth == 0.0
         assert inputs_neg.goodness == 0.0
         assert inputs_neg.beauty == 0.0
         assert inputs_neg.filial_serenity == 0.0
 
         # Mixed types (should convert)
-        inputs_str = TrinityInputs(truth="0.9", goodness=0.8, beauty="1.0", filial_serenity=0)
+        inputs_str = TrinityInputs(
+            truth="0.9", goodness=0.8, beauty="1.0", filial_serenity=0
+        )
         assert inputs_str.truth == 0.9
         assert inputs_str.beauty == 1.0
 

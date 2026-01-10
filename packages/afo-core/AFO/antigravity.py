@@ -21,7 +21,9 @@ class Antigravity:
 
     ENVIRONMENT: str = field(default_factory=lambda: os.getenv("AFO_ENV", "production"))
     VERSION: str = "1.0.0"
-    DEBUG: bool = field(default_factory=lambda: os.getenv("AFO_DEBUG", "false").lower() == "true")
+    DEBUG: bool = field(
+        default_factory=lambda: os.getenv("AFO_DEBUG", "false").lower() == "true"
+    )
     DRY_RUN: bool = field(
         default_factory=lambda: os.getenv("AFO_DRY_RUN", "false").lower() == "true"
     )
@@ -29,7 +31,8 @@ class Antigravity:
         default_factory=lambda: os.getenv("AFO_AUTO_DEPLOY", "true").lower() == "true"
     )
     DRY_RUN_DEFAULT: bool = field(
-        default_factory=lambda: os.getenv("AFO_DRY_RUN_DEFAULT", "true").lower() == "true"
+        default_factory=lambda: os.getenv("AFO_DRY_RUN_DEFAULT", "true").lower()
+        == "true"
     )
 
     def get_version(self) -> str:
@@ -63,4 +66,11 @@ def get_config() -> dict[str, Any]:
     return antigravity.get_config()
 
 
-__all__ = ["Antigravity", "antigravity", "ENVIRONMENT", "VERSION", "get_version", "get_config"]
+__all__ = [
+    "Antigravity",
+    "antigravity",
+    "ENVIRONMENT",
+    "VERSION",
+    "get_version",
+    "get_config",
+]

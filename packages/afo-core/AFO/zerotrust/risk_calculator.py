@@ -92,11 +92,17 @@ class TrinityRiskCalculator:
             factors.append(f"Context Risk: {context_risk}")
 
         # 6. Determine recommendation
-        threshold = self.serenity_mode_threshold if serenity_mode else self.risk_threshold
+        threshold = (
+            self.serenity_mode_threshold if serenity_mode else self.risk_threshold
+        )
         if total_risk > threshold:
-            recommendation = f"ACCESS_DENIED: Risk {total_risk:.1f} > threshold {threshold}"
+            recommendation = (
+                f"ACCESS_DENIED: Risk {total_risk:.1f} > threshold {threshold}"
+            )
         else:
-            recommendation = f"ACCESS_GRANTED: Risk {total_risk:.1f} ≤ threshold {threshold}"
+            recommendation = (
+                f"ACCESS_GRANTED: Risk {total_risk:.1f} ≤ threshold {threshold}"
+            )
 
         return RiskAssessment(
             total_risk=total_risk,
@@ -195,7 +201,9 @@ def risk_guard(
         user_data: dict[str, Any], request_context: dict[str, Any] | None = None
     ) -> dict[str, Any]:
         assessment = risk_calc.calculate_risk(
-            user_data=user_data, request_context=request_context, serenity_mode=serenity_mode
+            user_data=user_data,
+            request_context=request_context,
+            serenity_mode=serenity_mode,
         )
 
         if assessment.should_deny:

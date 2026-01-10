@@ -12,10 +12,9 @@ import json
 import os
 import sys
 import time
-from typing import Any, Optional, Union
+from typing import Any, Optional
 
 import httpx
-
 
 # AFO 패키지 경로 추가 (루트에서 실행 시 필요)
 current_file = os.path.abspath(__file__)
@@ -74,7 +73,9 @@ class OllamaHealthChecker:
 
         # 환경변수에서 값 가져오기 (안티그라비티 설정 우선)
         for var_name, default_value in required_vars.items():
-            env_vars[var_name] = os.getenv(var_name, env_vars.get(var_name, default_value))
+            env_vars[var_name] = os.getenv(
+                var_name, env_vars.get(var_name, default_value)
+            )
 
         return env_vars
 
@@ -89,7 +90,9 @@ class OllamaHealthChecker:
         try:
             # 1. 기본 Ping 테스트 - 직접 API 호출
             async with httpx.AsyncClient(timeout=10.0) as client:
-                ping_response = await client.get(f"{self.env_vars['OLLAMA_BASE_URL']}/api/tags")
+                ping_response = await client.get(
+                    f"{self.env_vars['OLLAMA_BASE_URL']}/api/tags"
+                )
                 if ping_response.status_code == 200:
                     self.health_metrics["ollama_connectivity"] = True
 
@@ -112,7 +115,9 @@ class OllamaHealthChecker:
                     self.health_metrics["ollama_connectivity"] = False
 
         except Exception as e:
-            self.health_metrics["error_details"].append(f"Ollama connectivity failed: {e!s}")
+            self.health_metrics["error_details"].append(
+                f"Ollama connectivity failed: {e!s}"
+            )
             self.health_metrics["ollama_connectivity"] = False
 
         self.health_metrics["performance_ms"] = (time.time() - start_time) * 1000
@@ -124,7 +129,9 @@ class OllamaHealthChecker:
         try:
             # 직접 API 호출로 모델 목록 조회
             async with httpx.AsyncClient(timeout=5.0) as client:
-                response = await client.get(f"{self.env_vars['OLLAMA_BASE_URL']}/api/tags")
+                response = await client.get(
+                    f"{self.env_vars['OLLAMA_BASE_URL']}/api/tags"
+                )
                 if response.status_code == 200:
                     data = response.json()
                     models = data.get("models", [])
@@ -167,7 +174,10 @@ class OllamaHealthChecker:
                             "stream": False,
                             "options": {"temperature": 0.1, "num_ctx": 256},
                         }
-                        response = await client.post(f"{self.env_vars['OLLAMA_BASE_URL']}/api/generate", json=payload)
+                        response = await client.post(
+                            f"{self.env_vars['OLLAMA_BASE_URL']}/api/generate",
+                            json=payload,
+                        )
 
                         if response.status_code == 200:
                             result = response.json()
@@ -196,11 +206,11 @@ class OllamaHealthChecker:
         try:
             # Ollama 헬스 체크 결과 기반 기여도 계산
             base_contribution = {
-                "truth": 0.35,      # Ollama 정확성 (眞 가중치 준수)
-                "goodness": 0.35,   # 안정성 (善 가중치 준수)
-                "beauty": 0.2,      # 아키텍처 우아함 (美 가중치 준수)
-                "serenity": 0.08,   # 사용자 경험 (孝 가중치 준수)
-                "eternity": 0.02,   # 영속성 (永 가중치 준수)
+                "truth": 0.35,  # Ollama 정확성 (眞 가중치 준수)
+                "goodness": 0.35,  # 안정성 (善 가중치 준수)
+                "beauty": 0.2,  # 아키텍처 우아함 (美 가중치 준수)
+                "serenity": 0.08,  # 사용자 경험 (孝 가중치 준수)
+                "eternity": 0.02,  # 영속성 (永 가중치 준수)
             }
 
             # 연결성 성공 시 Truth +10%
@@ -229,14 +239,16 @@ class OllamaHealthChecker:
             return base_contribution
 
         except Exception as e:
-            print(f"[System Health Check] Trinity 기여도 계산 실패, 기본값으로 대체: {e}")
+            print(
+                f"[System Health Check] Trinity 기여도 계산 실패, 기본값으로 대체: {e}"
+            )
             # Fallback: 기본 기여도 (15% 목표 유지)
             return {
-                "truth": 0.35,      # Ollama 정확성
-                "goodness": 0.35,   # 안정성
-                "beauty": 0.2,      # 아키텍처 우아함
-                "serenity": 0.08,   # 사용자 경험
-                "eternity": 0.02,   # 영속성
+                "truth": 0.35,  # Ollama 정확성
+                "goodness": 0.35,  # 안정성
+                "beauty": 0.2,  # 아키텍처 우아함
+                "serenity": 0.08,  # 사용자 경험
+                "eternity": 0.02,  # 영속성
             }
 
 
@@ -254,8 +266,8 @@ async def check_system_health():
     total_contribution = sum(trinity_contribution.values())
 
     # 요약 결과 출력
-    connectivity = "✅" if ollama_health['ollama_connectivity'] else "❌"
-    fallback = "✅" if ollama_health['fallback_logic'] else "❌"
+    connectivity = "✅" if ollama_health["ollama_connectivity"] else "❌"
+    fallback = "✅" if ollama_health["fallback_logic"] else "❌"
     performance = f"{ollama_health['performance_ms']:.1f}ms"
 
     # 표시 정규화: 485% 같은 이상값을 98.8%로 자동 보정
@@ -264,7 +276,7 @@ async def check_system_health():
         if 0.0 <= contribution <= 1.0:
             return round(contribution * 100.0, 1)  # 0.988 → 98.8
         elif 100.0 <= contribution <= 500.0:
-            return round(contribution / 5.0, 1)    # 485.0 → 97.0
+            return round(contribution / 5.0, 1)  # 485.0 → 97.0
         else:
             return round(max(0.0, min(contribution, 100.0)), 1)
 
@@ -276,21 +288,23 @@ async def check_system_health():
         # SSOT Trinity Score calculation (眞善美孝永 5기둥 가중치)
         # Truth(35%) + Goodness(35%) + Beauty(20%) + Serenity(8%) + Eternity(2%) = 100%
         base_scores = {
-            "truth": 0.95,      # 기술적 확실성 (眞)
-            "goodness": 0.90,   # 윤리·안정성 (善)
-            "beauty": 0.85,     # 단순함·우아함 (美)
-            "serenity": 1.0,    # 평온·자동화 (孝)
-            "eternity": 0.90    # 영속성·레거시 (永)
+            "truth": 0.95,  # 기술적 확실성 (眞)
+            "goodness": 0.90,  # 윤리·안정성 (善)
+            "beauty": 0.85,  # 단순함·우아함 (美)
+            "serenity": 1.0,  # 평온·자동화 (孝)
+            "eternity": 0.90,  # 영속성·레거시 (永)
         }
 
         # 가중치 적용
         weights = [0.35, 0.35, 0.20, 0.08, 0.02]
-        weighted_sum = sum(score * weight for score, weight in zip(base_scores.values(), weights))
+        weighted_sum = sum(
+            score * weight for score, weight in zip(base_scores.values(), weights)
+        )
         overall_score = weighted_sum * 100  # 0-1 → 0-100 스케일
 
         print(f"Trinity Score (Overall): {overall_score:.1f}%")
-    except Exception as e:
-        print(f"Trinity Score (Overall): 98.8% (fallback)")
+    except Exception:
+        print("Trinity Score (Overall): 98.8% (fallback)")
     print(f"✅ Ollama 연결성: {connectivity} ({performance})")
     print(f"✅ Fallback 로직: {fallback}")
 
@@ -322,15 +336,20 @@ async def check_system_health():
             "green_items": green_items,
             "warn_items": warn_items,
         },
-        "overall_status": "healthy" if ollama_health["ollama_connectivity"] else "degraded",
+        "overall_status": (
+            "healthy" if ollama_health["ollama_connectivity"] else "degraded"
+        ),
     }
 
     # SSOT 저장 (화면 출력 생략)
     import pathlib
+
     artifacts_dir = pathlib.Path("artifacts")
     artifacts_dir.mkdir(exist_ok=True)
     ssot_path = artifacts_dir / f"t11_ollama_integration_ssot_{int(time.time())}.jsonl"
-    pathlib.Path(ssot_path).write_text(json.dumps(health_result, ensure_ascii=False) + "\n", encoding="utf-8")
+    pathlib.Path(ssot_path).write_text(
+        json.dumps(health_result, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
 
     print("✅ SSOT 저장 완료")
     return health_result
@@ -338,4 +357,3 @@ async def check_system_health():
 
 if __name__ == "__main__":
     asyncio.run(check_system_health())
-

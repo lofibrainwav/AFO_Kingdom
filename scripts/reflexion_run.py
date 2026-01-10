@@ -15,7 +15,11 @@ from AFO.self_expansion.reflexion_runner import run_reflexion
 
 def main() -> int:
     ap = argparse.ArgumentParser(description="AFO Reflection Runner CLI")
-    ap.add_argument("--contract", default="packages/afo-core/config/reflexion.yml", help="Path to contract YAML")
+    ap.add_argument(
+        "--contract",
+        default="packages/afo-core/config/reflexion.yml",
+        help="Path to contract YAML",
+    )
     ap.add_argument("--input", required=True, help="Input prompt for reflection")
     ap.add_argument("--dry-run", action="store_true", help="Force dry-run mode")
     args = ap.parse_args()

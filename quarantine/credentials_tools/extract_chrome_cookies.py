@@ -63,7 +63,9 @@ def find_chrome_cookies():
                 for name, value, host_key, _expires in cookies:
                     print(f"      • {name} ({host_key})")
                     print(f"        길이: {len(value)} 문자")
-                    found_tokens.append({"name": name, "value": value, "host": host_key})
+                    found_tokens.append(
+                        {"name": name, "value": value, "host": host_key}
+                    )
             else:
                 print("   (토큰 없음)")
 

@@ -19,7 +19,9 @@ class ChancellorRequestV2(BaseModel):
 
 
 def _sse(event: str, data_obj: Any) -> bytes:
-    return (f"event: {event}\ndata: {json.dumps(data_obj, ensure_ascii=False)}\n\n").encode()
+    return (
+        f"event: {event}\ndata: {json.dumps(data_obj, ensure_ascii=False)}\n\n"
+    ).encode()
 
 
 async def _stream_echo(text: str) -> AsyncIterator[bytes]:

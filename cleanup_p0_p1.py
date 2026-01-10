@@ -3,11 +3,10 @@
 AFO Kingdom Cleanup Script - P0/P1 Issues
 Handles: nested packages, misplaced files, pycache, venvs, WARP.md
 """
-import os
 import shutil
 import subprocess
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 
 ROOT = Path("/Users/brnestrm/AFO_Kingdom")
 QUARANTINE = ROOT / "quarantine" / "_cleanup_phase22"
@@ -38,7 +37,7 @@ for fname in misplaced_files:
             ["git", "rm", "--cached", str(fpath)],
             cwd=ROOT,
             capture_output=True,
-            text=True
+            text=True,
         )
         target = QUARANTINE / fname
         print(f"✓ Git rm --cached {fname} (exit {result.returncode})")

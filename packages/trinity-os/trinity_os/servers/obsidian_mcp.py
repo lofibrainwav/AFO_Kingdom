@@ -123,7 +123,9 @@ class ObsidianMCP:
             }
 
     @staticmethod
-    def write_note(note_path: str, content: str, metadata: dict[str, Any] = cast(Any, None)) -> dict[str, Any]:
+    def write_note(
+        note_path: str, content: str, metadata: dict[str, Any] = cast(Any, None)
+    ) -> dict[str, Any]:
         """옵시디언 노트 쓰기"""
         try:
             target = ObsidianMCP._validate_path(note_path)
@@ -145,7 +147,11 @@ class ObsidianMCP:
             # Context7에 자동 등록
             if CONTEXT7_AVAILABLE:
                 try:
-                    script_path = project_root / "scripts" / "register_obsidian_doc_to_context7.py"
+                    script_path = (
+                        project_root
+                        / "scripts"
+                        / "register_obsidian_doc_to_context7.py"
+                    )
                     if script_path.exists():
                         import subprocess
 
@@ -206,7 +212,11 @@ class ObsidianMCP:
             }
 
     @staticmethod
-    def apply_template(template_name: str, output_path: str, variables: dict[str, str] = cast(Any, None)) -> dict[str, Any]:
+    def apply_template(
+        template_name: str,
+        output_path: str,
+        variables: dict[str, str] = cast(Any, None),
+    ) -> dict[str, Any]:
         """템플릿 적용"""
         try:
             template_file = TEMPLATES_PATH / f"{template_name}.md"
@@ -221,13 +231,19 @@ class ObsidianMCP:
             # 변수 치환
             if variables:
                 for key, value in variables.items():
-                    template_content = template_content.replace(f"{{{{{key}}}}}", str(value))
+                    template_content = template_content.replace(
+                        f"{{{{{key}}}}}", str(value)
+                    )
 
             # 날짜 변수 자동 치환
             from datetime import datetime
 
-            template_content = template_content.replace("{{date}}", datetime.now().strftime("%Y-%m-%d"))
-            template_content = template_content.replace("{{time}}", datetime.now().strftime("%H:%M"))
+            template_content = template_content.replace(
+                "{{date}}", datetime.now().strftime("%Y-%m-%d")
+            )
+            template_content = template_content.replace(
+                "{{time}}", datetime.now().strftime("%H:%M")
+            )
 
             # 노트 쓰기
             result = ObsidianMCP.write_note(output_path, template_content)
@@ -479,7 +495,9 @@ class ObsidianMCP:
                                 arguments.get("limit", 10),
                             )
                         elif tool_name == "search_context7":
-                            tool_result = cls.search_context7(arguments.get("query", ""))
+                            tool_result = cls.search_context7(
+                                arguments.get("query", "")
+                            )
                         else:
                             tool_result = {
                                 "success": False,
@@ -502,10 +520,13 @@ class ObsidianMCP:
                     # Trinity Score 계산
                     if mcp_tool_trinity_evaluator:
                         try:
-                            trinity_eval = mcp_tool_trinity_evaluator.evaluate_execution_result(
-                                tool_name,
-                                cast(str, tool_result),                                execution_time_ms,
-                                is_error,
+                            trinity_eval = (
+                                mcp_tool_trinity_evaluator.evaluate_execution_result(
+                                    tool_name,
+                                    cast(str, tool_result),
+                                    execution_time_ms,
+                                    is_error,
+                                )
                             )
                             trinity_score = trinity_eval.get("combined_scores", {})
                         except Exception:
@@ -514,7 +535,9 @@ class ObsidianMCP:
                         trinity_score = None
 
                     # 결과 포맷팅
-                    result_content = json.dumps(tool_result, ensure_ascii=False, indent=2)
+                    result_content = json.dumps(
+                        tool_result, ensure_ascii=False, indent=2
+                    )
                     result = {
                         "content": [
                             {

@@ -12,12 +12,11 @@ import os
 from datetime import datetime, timedelta
 from typing import Any, cast
 
-from fastapi import APIRouter, Depends, Header, HTTPException, status
-from pydantic import BaseModel
-
 from AFO.config.settings import AFOSettings as Settings
 from AFO.services.antigravity_engine import AntigravityEngine
 from AFO.services.trinity_calculator import TrinityCalculator
+from fastapi import APIRouter, Depends, Header, HTTPException, status
+from pydantic import BaseModel
 
 # 로깅 설정 (손자병법: 지피지기)
 logger = logging.getLogger(__name__)
@@ -31,10 +30,13 @@ def require_internal_secret(
     expected = os.getenv("AFO_INTERNAL_SECRET")
     if not expected:
         raise HTTPException(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="internal secret not configured"
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="internal secret not configured",
         )
     if x_internal_secret != expected:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="unauthorized")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="unauthorized"
+        )
 
 
 # 의존성 주입
@@ -114,7 +116,9 @@ async def get_system_health():
         mcp_healthy = True  # TODO: 실제 MCP 연결 테스트 구현
 
         # 전체 상태 결정
-        overall_status = "번영" if all([api_healthy, database_healthy, mcp_healthy]) else "주의"
+        overall_status = (
+            "번영" if all([api_healthy, database_healthy, mcp_healthy]) else "주의"
+        )
 
         # 철학적 통찰 제공 (맹자의 인의)
         philosophical_insight = PHILOSOPHICAL_CONSTANTS["mencius_virtue"]
@@ -130,7 +134,9 @@ async def get_system_health():
 
     except Exception as e:
         logger.error("건강 체크 실패: %s", e)
-        raise HTTPException(status_code=500, detail="왕국의 맥박을 측정할 수 없습니다") from e
+        raise HTTPException(
+            status_code=500, detail="왕국의 맥박을 측정할 수 없습니다"
+        ) from e
 
 
 @router.post("/trinity/calculate", response_model=TrinityScoreResponse)
@@ -184,11 +190,15 @@ async def calculate_trinity_score(request: TrinityScoreRequest):
 
         # 철학적 인용 선택 (현재 상태에 맞게)
         if total_score >= 95:
-            wisdom_quote = "왕국의 철학적 조화가 완벽합니다 - 플라톤의 이데아가 실현되었습니다"
+            wisdom_quote = (
+                "왕국의 철학적 조화가 완벽합니다 - 플라톤의 이데아가 실현되었습니다"
+            )
         elif total_score >= 85:
             wisdom_quote = "안정적인 발전을 이어가고 있습니다 - 맹자의 인의를 따르세요"
         else:
-            wisdom_quote = "균형을 맞추는 전략이 필요합니다 - 손자병법의 지혜를 적용하세요"
+            wisdom_quote = (
+                "균형을 맞추는 전략이 필요합니다 - 손자병법의 지혜를 적용하세요"
+            )
 
         return TrinityScoreResponse(
             pillars=pillars,
@@ -199,7 +209,9 @@ async def calculate_trinity_score(request: TrinityScoreRequest):
 
     except Exception as e:
         logger.error("Trinity Score 계산 실패: %s", e)
-        raise HTTPException(status_code=500, detail="철학적 조화를 계산할 수 없습니다") from e
+        raise HTTPException(
+            status_code=500, detail="철학적 조화를 계산할 수 없습니다"
+        ) from e
 
 
 @router.get(
@@ -241,7 +253,9 @@ async def get_revalidate_status():
 
     except Exception as e:
         logger.error("Revalidate 상태 확인 실패: %s", e)
-        raise HTTPException(status_code=500, detail="재검증 상태를 확인할 수 없습니다") from e
+        raise HTTPException(
+            status_code=500, detail="재검증 상태를 확인할 수 없습니다"
+        ) from e
 
 
 @router.get("/philosophical/insights")
@@ -263,4 +277,6 @@ async def get_philosophical_insights():
 
     except Exception as e:
         logger.error("철학적 통찰 제공 실패: %s", e)
-        raise HTTPException(status_code=500, detail="철학적 통찰을 얻을 수 없습니다") from e
+        raise HTTPException(
+            status_code=500, detail="철학적 통찰을 얻을 수 없습니다"
+        ) from e

@@ -26,9 +26,7 @@ async def simulate_streaming_response(query: str):
     }
 
     # 콘텐츠 청크 전송 (스트리밍 시뮬레이션)
-    response_text = (
-        f"AFO 왕국의 {query}에 대한 답변입니다. 이 응답은 실시간으로 스트리밍되고 있습니다."
-    )
+    response_text = f"AFO 왕국의 {query}에 대한 답변입니다. 이 응답은 실시간으로 스트리밍되고 있습니다."
     words = response_text.split()
 
     for i, word in enumerate(words, 1):
@@ -88,11 +86,15 @@ async def test_streaming_simulation():
                 elif chunk["type"] == "content":
                     total_tokens = chunk["total_tokens"]
                     if chunks_received <= 3:  # 처음 3개만 표시
-                        print(f"📄 청크 {chunk['chunk_id']}: {chunk['content'][:30]}...")
+                        print(
+                            f"📄 청크 {chunk['chunk_id']}: {chunk['content'][:30]}..."
+                        )
                 elif chunk["type"] == "complete":
                     total_time = chunk["total_time"]
                     tokens_per_sec = chunk["tokens_per_second"]
-                    print(f"✅ 완료: {total_time}초, {total_tokens} 토큰, {tokens_per_sec} 토큰/초")
+                    print(
+                        f"✅ 완료: {total_time}초, {total_tokens} 토큰, {tokens_per_sec} 토큰/초"
+                    )
 
             result = {
                 "query_id": i,
@@ -107,12 +109,14 @@ async def test_streaming_simulation():
 
         except Exception as e:
             print(f"❌ 오류: {e}")
-            results.append({
-                "query_id": i,
-                "query": query,
-                "error": str(e),
-                "success": False,
-            })
+            results.append(
+                {
+                    "query_id": i,
+                    "query": query,
+                    "error": str(e),
+                    "success": False,
+                }
+            )
 
     # 결과 보고서 생성
     report = {
@@ -177,7 +181,9 @@ async def test_streaming_simulation():
     print(
         f"📊 테스트 완료: {report['performance_summary']['successful_queries']}/{report['performance_summary']['total_queries']} 성공"
     )
-    print(f"⚡ 평균 응답 시간: {report['performance_summary']['average_response_time']:.3f}초")
+    print(
+        f"⚡ 평균 응답 시간: {report['performance_summary']['average_response_time']:.3f}초"
+    )
 
     return report
 

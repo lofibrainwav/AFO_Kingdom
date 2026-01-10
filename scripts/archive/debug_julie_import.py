@@ -1,6 +1,5 @@
 import sys
 
-
 # Add package root to path
 sys.path.append(str(Path(__file__).parent.parent / "packages" / "afo-core"))
 

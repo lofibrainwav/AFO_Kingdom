@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
-import os
 import re
 from pathlib import Path
-
 
 # Configuration
 DOCS_DIR = Path("docs")

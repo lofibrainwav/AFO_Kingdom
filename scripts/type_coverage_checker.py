@@ -68,7 +68,9 @@ class TypeCoverageAnalyzer:
 
         # Calculate coverage
         if self.stats["total_functions"] > 0:
-            self.stats["coverage_percent"] = self.stats["typed_functions"] / self.stats["total_functions"] * 100
+            self.stats["coverage_percent"] = (
+                self.stats["typed_functions"] / self.stats["total_functions"] * 100
+            )
 
         return self.stats
 
@@ -107,7 +109,9 @@ class TypeCoverageAnalyzer:
         # Recommendations
         print("\n💡 Recommendations:")
         if self.stats["coverage_percent"] < 80:
-            remaining = int(self.stats["total_functions"] * 0.8 - self.stats["typed_functions"])
+            remaining = int(
+                self.stats["total_functions"] * 0.8 - self.stats["typed_functions"]
+            )
             print(f"   • Add type hints to ~{remaining} more functions to reach 80%")
         if self.stats["coverage_percent"] < 90:
             print("   • Focus on core modules (domain/, services/) first")

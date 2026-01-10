@@ -41,7 +41,7 @@ def dream_initiator(state: EnhancedAgentState) -> dict[str, Any]:
     last_message = state["messages"][-1]
 
     # Create dream contract
-    dream_id=cast(str, create_dream_contract(cast(Any, last_message.content)))
+    dream_id = cast(str, create_dream_contract(cast(Any, last_message.content)))
     return {
         "dream_id": dream_id,
         "dream_status": "INITIATED",
@@ -101,7 +101,11 @@ def dream_executor(state: EnhancedAgentState) -> dict[str, Any]:
 
     return {
         "current_phase": next_phase,
-        "messages": [AIMessage(content=f"Dream execution completed: {len(execution_results)} steps")],
+        "messages": [
+            AIMessage(
+                content=f"Dream execution completed: {len(execution_results)} steps"
+            )
+        ],
         "audit_history": execution_results,
     }
 
@@ -206,7 +210,9 @@ def build_enhanced_dream_hub():
 enhanced_dream_hub = build_enhanced_dream_hub()
 
 
-def run_enhanced_dream_hub(human_dream: str, thread_id: str = "default") -> dict[str, Any]:
+def run_enhanced_dream_hub(
+    human_dream: str, thread_id: str = "default"
+) -> dict[str, Any]:
     """Execute human dream through Enhanced Dream Hub
 
     Args:
@@ -232,13 +238,17 @@ def run_enhanced_dream_hub(human_dream: str, thread_id: str = "default") -> dict
     config = {"configurable": {"thread_id": thread_id}}
 
     try:
-        final_state = enhanced_dream_hub.invoke(cast(Any, initial_state), config=cast(Any, config))
+        final_state = enhanced_dream_hub.invoke(
+            cast(Any, initial_state), config=cast(Any, config)
+        )
 
         # Extract final result
         result = {
             "status": "COMPLETED",
             "dream_id": final_state.get("dream_id", ""),
-            "final_message": (final_state["messages"][-1].content if final_state["messages"] else ""),
+            "final_message": (
+                final_state["messages"][-1].content if final_state["messages"] else ""
+            ),
             "trinity_score": final_state.get("trinity_score", {}),
             "risk_score": final_state.get("risk_score", 0.0),
             "audit_history": final_state.get("audit_history", []),

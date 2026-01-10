@@ -22,7 +22,10 @@ def parse_cyclonedx_sbom(sbom_path: str) -> list[dict]:
             "version": comp.get("version", "0.0.0"),
             "type": comp.get("type", "library"),
             "purl": comp.get("purl", ""),
-            "licenses": [lic.get("license", {}).get("id", "unknown") for lic in comp.get("licenses", [])],
+            "licenses": [
+                lic.get("license", {}).get("id", "unknown")
+                for lic in comp.get("licenses", [])
+            ],
         }
         for comp in sbom.get("components", [])
     ]
@@ -34,7 +37,11 @@ def calculate_goodness_score(components: list[dict]) -> float:
         return 1.0
 
     approved_licenses = {"MIT", "Apache-2.0", "BSD-3-Clause", "ISC", "Python-2.0"}
-    compliant = sum(1 for c in components if any(lic in approved_licenses for lic in c.get("licenses", [])))
+    compliant = sum(
+        1
+        for c in components
+        if any(lic in approved_licenses for lic in c.get("licenses", []))
+    )
 
     return round(compliant / len(components), 2)
 

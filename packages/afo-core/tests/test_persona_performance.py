@@ -106,7 +106,9 @@ async def benchmark_trinity_score_calculation(iterations: int = 20) -> dict[str,
         median_time = statistics.median(calculation_times)
         min_time = min(calculation_times)
         max_time = max(calculation_times)
-        std_dev = statistics.stdev(calculation_times) if len(calculation_times) > 1 else 0.0
+        std_dev = (
+            statistics.stdev(calculation_times) if len(calculation_times) > 1 else 0.0
+        )
 
         print("\n📊 [성능 결과]")
         print(f"   평균: {avg_time:.2f}ms")
@@ -151,7 +153,8 @@ async def benchmark_concurrent_switches(concurrent_tasks: int = 5) -> dict[str, 
         start_time = time.perf_counter()
 
         tasks = [
-            switch_task(persona_types[i % len(persona_types)]) for i in range(concurrent_tasks)
+            switch_task(persona_types[i % len(persona_types)])
+            for i in range(concurrent_tasks)
         ]
         results = await asyncio.gather(*tasks)
 

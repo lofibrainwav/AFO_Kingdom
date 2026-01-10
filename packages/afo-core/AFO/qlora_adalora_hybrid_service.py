@@ -50,7 +50,12 @@ class QLoRAAdaLoRAHybridService:
             init_r=init_r,  # 초기 랭크
             target_r=target_r,  # 목표 랭크 (동적 조정)
             lora_alpha=alpha,
-            target_modules=["q_proj", "v_proj", "k_proj", "o_proj"],  # LLaMA attention layers
+            target_modules=[
+                "q_proj",
+                "v_proj",
+                "k_proj",
+                "o_proj",
+            ],  # LLaMA attention layers
             lora_dropout=0.05,
             bias="none",
             task_type="CAUSAL_LM",
@@ -60,13 +65,19 @@ class QLoRAAdaLoRAHybridService:
             orth_reg_weight=0.5,
         )
 
-        print(f"Applying QLoRA-AdaLoRA hybrid with init_r={init_r}, target_r={target_r}...")
+        print(
+            f"Applying QLoRA-AdaLoRA hybrid with init_r={init_r}, target_r={target_r}..."
+        )
         self.hybrid_model = get_peft_model(self.model, adalora_config)
 
         # 메모리 사용량 확인
         if torch.cuda.is_available():
-            print(f"GPU memory allocated: {torch.cuda.memory_allocated() / 1024**3:.2f} GB")
-            print(f"GPU memory reserved: {torch.cuda.memory_reserved() / 1024**3:.2f} GB")
+            print(
+                f"GPU memory allocated: {torch.cuda.memory_allocated() / 1024**3:.2f} GB"
+            )
+            print(
+                f"GPU memory reserved: {torch.cuda.memory_reserved() / 1024**3:.2f} GB"
+            )
 
         print("QLoRA-AdaLoRA hybrid applied successfully!")
         print(f"Trainable parameters: {self.get_trainable_params()}")
@@ -77,7 +88,9 @@ class QLoRAAdaLoRAHybridService:
             return "Model not initialized"
 
         total_params = sum(p.numel() for p in self.hybrid_model.parameters())
-        trainable_params = sum(p.numel() for p in self.hybrid_model.parameters() if p.requires_grad)
+        trainable_params = sum(
+            p.numel() for p in self.hybrid_model.parameters() if p.requires_grad
+        )
         percentage = 100 * trainable_params / total_params
 
         return f"{trainable_params:,} ({percentage:.2f}%)"
@@ -119,7 +132,9 @@ class QLoRAAdaLoRAHybridService:
         if self.hybrid_model is None:
             raise ValueError("Hybrid model must be initialized first")
 
-        inputs = self.hybrid_model.tokenizer(prompt, return_tensors="pt").to(self.device)
+        inputs = self.hybrid_model.tokenizer(prompt, return_tensors="pt").to(
+            self.device
+        )
 
         with torch.no_grad():
             outputs = self.hybrid_model.generate(
@@ -130,7 +145,9 @@ class QLoRAAdaLoRAHybridService:
                 do_sample=True,
             )
 
-        generated_text = self.hybrid_model.tokenizer.decode(outputs[0], skip_special_tokens=True)
+        generated_text = self.hybrid_model.tokenizer.decode(
+            outputs[0], skip_special_tokens=True
+        )
         return generated_text
 
 

@@ -1,7 +1,6 @@
 import sys
 from unittest.mock import MagicMock
 
-
 # Mock the entire api.chancellor_v2 package since we are in a documentation audit phase
 # and don't want to trigger actual long-running engine logic
 mock_engine = MagicMock()

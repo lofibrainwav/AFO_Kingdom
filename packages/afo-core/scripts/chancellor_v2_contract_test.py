@@ -40,7 +40,16 @@ def verify_node(state: GraphState) -> GraphState:
 # Build all nodes
 NODES = {
     k: ok_node(k)
-    for k in ["CMD", "PARSE", "TRUTH", "GOODNESS", "BEAUTY", "MERGE", "EXECUTE", "REPORT"]
+    for k in [
+        "CMD",
+        "PARSE",
+        "TRUTH",
+        "GOODNESS",
+        "BEAUTY",
+        "MERGE",
+        "EXECUTE",
+        "REPORT",
+    ]
 }
 NODES["VERIFY"] = verify_node
 
@@ -91,7 +100,9 @@ def test_contract_enforcement() -> bool:
     ]
     thinking_steps = set(thinking.keys())
     if all(step in thinking_steps for step in expected_steps):
-        print(f"✅ CHECK 3: Sequential Thinking applied to all {len(expected_steps)} steps")
+        print(
+            f"✅ CHECK 3: Sequential Thinking applied to all {len(expected_steps)} steps"
+        )
         checks_passed += 1
     else:
         missing = set(expected_steps) - thinking_steps

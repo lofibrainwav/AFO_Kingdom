@@ -6,10 +6,9 @@ import logging
 from typing import Any, Dict, Optional, cast
 
 import httpx
+from AFO.domain.janus.contract import VisualAction, VisualPlan
 from playwright.async_api import async_playwright
 from pydantic import ValidationError
-
-from AFO.domain.janus.contract import VisualAction, VisualPlan
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +18,9 @@ class VisualAgent:
     Integrates Brain (Qwen3-VL), Eye (BBox), and Hand (Playwright).
     """
 
-    def __init__(self, ollama_url: str = "http://localhost:11434", model: str = "qwen3-vl:8b"):
+    def __init__(
+        self, ollama_url: str = "http://localhost:11434", model: str = "qwen3-vl:8b"
+    ):
         self.ollama_url = ollama_url
         self.model = model
         self.system_prompt = """You are a GUI Agent.
@@ -28,7 +29,9 @@ class VisualAgent:
         Use "bbox" [x, y, w, h] normalized (0-1) for clicks.
         Output ONLY JSON."""
 
-    async def capture_screenshot(self, url: str = "http://localhost:3000") -> dict[str, Any]:
+    async def capture_screenshot(
+        self, url: str = "http://localhost:3000"
+    ) -> dict[str, Any]:
         """Eye (Screenshot Capture): Capture current screen state
         Returns: {image_b64, width, height, url, timestamp}
         """
@@ -58,7 +61,9 @@ class VisualAgent:
             finally:
                 await browser.close()
 
-    async def analyze_and_plan(self, screenshot_data: dict[str, Any], goal: str) -> VisualPlan:
+    async def analyze_and_plan(
+        self, screenshot_data: dict[str, Any], goal: str
+    ) -> VisualPlan:
         """Brain (Qwen3-VL): Analyze screenshot and create action plan"""
         try:
             image_b64 = screenshot_data["image_b64"]
@@ -81,7 +86,9 @@ class VisualAgent:
             }
 
             async with httpx.AsyncClient() as client:
-                resp = await client.post(f"{self.ollama_url}/api/chat", json=payload, timeout=60.0)
+                resp = await client.post(
+                    f"{self.ollama_url}/api/chat", json=payload, timeout=60.0
+                )
                 resp.raise_for_status()
                 result = resp.json()
                 content = result.get("message", {}).get("content", "")
@@ -106,7 +113,9 @@ class VisualAgent:
             )
         except Exception as e:
             logger.error(f"Brain analysis failed: {e}")
-            return VisualPlan(goal=goal, actions=[], stop=True, summary=f"Analysis error: {e!s}")
+            return VisualPlan(
+                goal=goal, actions=[], stop=True, summary=f"Analysis error: {e!s}"
+            )
 
     async def execute_action(
         self, action: VisualAction, screenshot_data: dict[str, Any]
@@ -114,8 +123,12 @@ class VisualAgent:
         """Hand (Playwright): Execute single validated action"""
         try:
             # Denormalize bbox for screen coordinates
-            screen_x = int(action.bbox.x * screenshot_data["width"]) if action.bbox else 0
-            screen_y = int(action.bbox.y * screenshot_data["height"]) if action.bbox else 0
+            screen_x = (
+                int(action.bbox.x * screenshot_data["width"]) if action.bbox else 0
+            )
+            screen_y = (
+                int(action.bbox.y * screenshot_data["height"]) if action.bbox else 0
+            )
 
             async with async_playwright() as p:
                 browser = await p.chromium.launch()
@@ -209,7 +222,11 @@ class VisualAgent:
             "iterations_completed": iteration,
             "total_actions": len(results),
             "successful_actions": len(
-                [r for r in results if cast("dict[str, Any]", r["result"]).get("success")]
+                [
+                    r
+                    for r in results
+                    if cast("dict[str, Any]", r["result"]).get("success")
+                ]
             ),
             "results": results,
             "final_goal": goal,

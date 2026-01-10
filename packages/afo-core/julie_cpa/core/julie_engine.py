@@ -7,6 +7,7 @@ from abc import ABC, abstractmethod
 from decimal import Decimal, getcontext
 
 from AFO.security.vault_manager import vault as vault_manager
+
 from services.trinity_calculator import trinity_calculator
 
 # Set Decimal Precision
@@ -90,7 +91,9 @@ class JulieCPA:
         trinity_score = trinity_calculator.calculate_trinity_score(raw_scores)
 
         if trinity_score < 70.0:
-            print(f"⛔ [Julie] Trinity Score Too Low ({trinity_score}). Action Blocked.")
+            print(
+                f"⛔ [Julie] Trinity Score Too Low ({trinity_score}). Action Blocked."
+            )
             return False
 
         # 2. Execute

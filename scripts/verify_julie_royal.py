@@ -4,7 +4,6 @@ import pathlib
 import sys
 from decimal import Decimal
 
-
 # Ensure pythonpath includes afo-core
 sys.path.append(os.path.join(pathlib.Path.cwd(), "packages/afo-core"))
 
@@ -25,7 +24,9 @@ async def verify_julie_royal():
         "description": "Family Dinner",
     }
     # [Refactor] Passing dynamic account_id
-    res1 = await service.process_transaction(valid_data, account_id="ACC-ROYAL-001", dry_run=True)
+    res1 = await service.process_transaction(
+        valid_data, account_id="ACC-ROYAL-001", dry_run=True
+    )
     if res1["success"] and res1["mode"] == "DRY_RUN":
         print("✅ Scenario 1 PASS")
     else:
@@ -53,7 +54,9 @@ async def verify_julie_royal():
     # Scenario 4: Three Kingdoms (Live Connect)
     print("\n🔹 [Scenario 4] Live Execution & Resilience")
     # Using valid data in live mode
-    res4 = await service.process_transaction(valid_data, account_id="ACC-ROYAL-001", dry_run=False)
+    res4 = await service.process_transaction(
+        valid_data, account_id="ACC-ROYAL-001", dry_run=False
+    )
     if res4["success"] and res4["bank_sync"]:
         print("✅ Scenario 4 PASS (Connected to Bank)")
     else:

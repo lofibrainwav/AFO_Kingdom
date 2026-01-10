@@ -49,7 +49,11 @@ class SequentialThinkingMCP:
         logger.info("SequentialThinkingMCP initialized")
 
     def process_thought(
-        self, thought: str, thought_number: int, total_thoughts: int, next_thought_needed: bool
+        self,
+        thought: str,
+        thought_number: int,
+        total_thoughts: int,
+        next_thought_needed: bool,
     ) -> dict[str, Any]:
         """단계별 사고 처리
 
@@ -186,11 +190,15 @@ class SequentialThinkingMCP:
                 score -= 0.1
 
             # 특수 문자나 코드 포함 보너스
-            if any(char in thought for char in ["=", "==", "!=", "<", ">", "and", "or"]):
+            if any(
+                char in thought for char in ["=", "==", "!=", "<", ">", "and", "or"]
+            ):
                 score += 0.1
 
             final_score = min(max(score, 0.0), MAX_IMPACT_SCORE)
-            logger.debug(f"Truth impact calculated: {final_score:.2f} for thought: {thought[:50]}...")
+            logger.debug(
+                f"Truth impact calculated: {final_score:.2f} for thought: {thought[:50]}..."
+            )
             return final_score
 
         except Exception as e:
@@ -266,11 +274,15 @@ class SequentialThinkingMCP:
 
             # 감정 표현 감소 보너스 (감정적인 표현이 적을수록 평온)
             emotional_words = ["!", "?", "urgent", "critical", "error", "fail"]
-            emotional_count = sum(1 for word in emotional_words if word in thought_lower)
+            emotional_count = sum(
+                1 for word in emotional_words if word in thought_lower
+            )
             score -= emotional_count * 0.05
 
             final_score = min(max(score, 0.0), MAX_IMPACT_SCORE)
-            logger.debug(f"Serenity impact calculated: {final_score:.2f} for thought: {thought[:50]}...")
+            logger.debug(
+                f"Serenity impact calculated: {final_score:.2f} for thought: {thought[:50]}..."
+            )
             return final_score
 
         except Exception as e:
@@ -287,12 +299,14 @@ class SequentialThinkingMCP:
             return "No thought process recorded."
 
         total_steps = len(self.thought_history)
-        avg_truth = sum(t.get("truth_impact", 0) for t in self.thought_history) / total_steps
-        avg_serenity = sum(t.get("serenity_impact", 0) for t in self.thought_history) / total_steps
-
-        return (
-            f"Total {total_steps} steps completed. Average truth: {avg_truth:.2f}, Average serenity: {avg_serenity:.2f}"
+        avg_truth = (
+            sum(t.get("truth_impact", 0) for t in self.thought_history) / total_steps
         )
+        avg_serenity = (
+            sum(t.get("serenity_impact", 0) for t in self.thought_history) / total_steps
+        )
+
+        return f"Total {total_steps} steps completed. Average truth: {avg_truth:.2f}, Average serenity: {avg_serenity:.2f}"
 
     def get_thought_history(self) -> list[dict[str, Any]]:
         """사고 기록 반환"""

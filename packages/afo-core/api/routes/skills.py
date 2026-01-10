@@ -20,8 +20,6 @@ from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from typing import Annotated, Any, cast
 
-from fastapi import APIRouter, Body, Depends, HTTPException, Query
-
 from AFO.afo_skills_registry import (
     AFOSkillCard,
     SkillExecutionResult,
@@ -29,6 +27,7 @@ from AFO.afo_skills_registry import (
     SkillRegistry,
     register_core_skills,
 )
+from fastapi import APIRouter, Body, Depends, HTTPException, Query
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -79,7 +78,9 @@ async def execute_skill(
             from services.health_service import get_comprehensive_health
 
             health_data = await get_comprehensive_health()
-            json_content = json.dumps(health_data)  # Prepare JSON string for 'content' field
+            json_content = json.dumps(
+                health_data
+            )  # Prepare JSON string for 'content' field
             return SkillExecutionResult(
                 skill_id=skill_id,
                 status="completed",

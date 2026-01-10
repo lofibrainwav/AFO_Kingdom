@@ -1,7 +1,7 @@
-
 import asyncio
+
 import httpx
-import sys
+
 
 async def simulate_stream():
     url = "http://127.0.0.1:8010/api/logs/stream"
@@ -18,7 +18,7 @@ async def simulate_stream():
                     if "afo_sse_open_connections" in line:
                         print(line)
                 print("------------------------")
-                
+
                 # Consume some events
                 count = 0
                 async for line in response.aiter_lines():
@@ -28,7 +28,7 @@ async def simulate_stream():
                     if count >= 3:
                         break
         print("Stream closed.")
-        
+
         # Verify metrics after close
         async with httpx.AsyncClient() as client:
             metrics_resp = await client.get(metrics_url)
@@ -37,9 +37,10 @@ async def simulate_stream():
                 if "afo_sse_open_connections" in line:
                     print(line)
             print("------------------------------")
-            
+
     except Exception as e:
         print(f"Error: {e}")
+
 
 if __name__ == "__main__":
     asyncio.run(simulate_stream())

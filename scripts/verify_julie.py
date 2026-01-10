@@ -2,7 +2,6 @@ import sys
 
 import requests
 
-
 BASE_URL = "http://localhost:8010/api/finance"
 
 
@@ -15,7 +14,9 @@ def verify_dashboard():
             return False
 
         data = res.json()
-        print(f"Dashboard Data: Health={data.get('financial_health_score')}, Advice='{data.get('advice')[:30]}...'")
+        print(
+            f"Dashboard Data: Health={data.get('financial_health_score')}, Advice='{data.get('advice')[:30]}...'"
+        )
 
         # Note: 'advice' might be the key, checking source.
 

@@ -11,7 +11,6 @@ from typing import Final, Literal
 # 🏛️ SSOT Trinity Weights (眞善美孝永)
 from AFO.config.trinity import Pillar, TrinityConfig
 
-
 # 🏛️ SSOT Trinity Weights (眞善美孝永)
 WEIGHTS = {
     "truth": TrinityConfig.get_weight(Pillar.TRUTH),

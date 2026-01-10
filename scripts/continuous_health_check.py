@@ -15,7 +15,6 @@ from typing import Any
 
 import requests
 
-
 # #region agent log
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 SERVER_ENDPOINT = "http://127.0.0.1:7242/ingest/dc91dd33-03ef-4e50-91e7-6560c8e60280"
@@ -163,7 +162,9 @@ def check_comprehensive_health() -> tuple[bool, dict[str, Any]]:
                     "trinity_score": data.get("trinity_score"),
                     "skills_count": len(data.get("skills", {}).get("skills", [])),
                     "scholars_count": data.get("scholars", {}).get("total_scholars", 0),
-                    "mcp_tools_count": data.get("mcp_tools", {}).get("total_servers", 0),
+                    "mcp_tools_count": data.get("mcp_tools", {}).get(
+                        "total_servers", 0
+                    ),
                 },
                 "B",
             )
@@ -196,11 +197,13 @@ def check_lancedb_status() -> tuple[bool, dict[str, Any]]:
         # 환경변수 확인
         vector_db = os.getenv("VECTOR_DB", "qdrant")
         if vector_db != "lancedb":
-            return False, {"error": f"VECTOR_DB 환경변수가 lancedb가 아님 (현재: {vector_db})"}
+            return False, {
+                "error": f"VECTOR_DB 환경변수가 lancedb가 아님 (현재: {vector_db})"
+            }
 
         # LanceDB 어댑터 직접 확인
         sys.path.append(str(Path(__file__).parent.parent / "packages" / "afo-core"))
-        from utils.vector_store import get_vector_store, LanceDBAdapter
+        from utils.vector_store import LanceDBAdapter, get_vector_store
 
         store = get_vector_store()
         if isinstance(store, LanceDBAdapter):
@@ -215,7 +218,7 @@ def check_lancedb_status() -> tuple[bool, dict[str, Any]]:
                     "status": "LanceDB Connected",
                     "adapter": "LanceDBAdapter",
                     "database_file": db_file,
-                    "file_exists": file_exists
+                    "file_exists": file_exists,
                 }
             else:
                 return False, {"error": "LanceDB 어댑터 연결 실패"}
@@ -306,7 +309,9 @@ def print_status(component: str, is_healthy: bool, data: dict[str, Any]) -> None
 
 def continuous_health_check() -> None:
     """지속적인 건강 상태 검증"""
-    print(f"\n{COLORS['BOLD']}{COLORS['BLUE']}🏰 AFO Kingdom Continuous Health Check 🏰{COLORS['RESET']}\n")
+    print(
+        f"\n{COLORS['BOLD']}{COLORS['BLUE']}🏰 AFO Kingdom Continuous Health Check 🏰{COLORS['RESET']}\n"
+    )
 
     # #region agent log
     log_debug(
@@ -325,7 +330,9 @@ def continuous_health_check() -> None:
     print_status("API Server", api_healthy, api_data)
     if not api_healthy:
         all_healthy = False
-        print(f"   {COLORS['YELLOW']}⚠️  API 서버가 응답하지 않습니다. 서버가 실행 중인지 확인하세요.{COLORS['RESET']}")
+        print(
+            f"   {COLORS['YELLOW']}⚠️  API 서버가 응답하지 않습니다. 서버가 실행 중인지 확인하세요.{COLORS['RESET']}"
+        )
         print(
             f"   {COLORS['YELLOW']}   실행 명령: cd AFO && python -m uvicorn api_server:app --reload --port 8010{COLORS['RESET']}\n"
         )
@@ -390,9 +397,13 @@ def continuous_health_check() -> None:
     # 최종 결과
     print("=" * 60)
     if all_healthy:
-        print(f"{COLORS['GREEN']}{COLORS['BOLD']}🎉 All Systems Operational! 🎉{COLORS['RESET']}")
+        print(
+            f"{COLORS['GREEN']}{COLORS['BOLD']}🎉 All Systems Operational! 🎉{COLORS['RESET']}"
+        )
     else:
-        print(f"{COLORS['YELLOW']}{COLORS['BOLD']}⚠️  Some Systems Require Attention! ⚠️{COLORS['RESET']}")
+        print(
+            f"{COLORS['YELLOW']}{COLORS['BOLD']}⚠️  Some Systems Require Attention! ⚠️{COLORS['RESET']}"
+        )
     print("=" * 60)
 
     # #region agent log

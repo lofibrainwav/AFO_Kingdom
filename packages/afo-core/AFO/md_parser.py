@@ -72,7 +72,9 @@ class MDParser:
         constraints_section = self._extract_section(content, "constraints")
 
         # 파일 목록 파싱
-        parsed.files_to_create, parsed.files_to_update = self._parse_files_section(files_section)
+        parsed.files_to_create, parsed.files_to_update = self._parse_files_section(
+            files_section
+        )
 
         # 제약사항 파싱
         parsed.constraints = self._parse_constraints_section(constraints_section)
@@ -181,7 +183,9 @@ class MDParser:
         from collections import Counter
 
         word_counts = Counter(keywords)
-        top_keywords = [word for word, count in word_counts.most_common(10) if count > 1]
+        top_keywords = [
+            word for word, count in word_counts.most_common(10) if count > 1
+        ]
 
         return top_keywords
 
@@ -195,11 +199,17 @@ class MDParser:
         content_lower = content.lower()
 
         for section in required_sections:
-            if f"[{section}]" not in content_lower and f"## {section}" not in content_lower:
+            if (
+                f"[{section}]" not in content_lower
+                and f"## {section}" not in content_lower
+            ):
                 errors.append(f"Required section '{section}' is missing")
 
         for section in recommended_sections:
-            if f"[{section}]" not in content_lower and f"## {section}" not in content_lower:
+            if (
+                f"[{section}]" not in content_lower
+                and f"## {section}" not in content_lower
+            ):
                 errors.append(f"Recommended section '{section}' is missing")
 
         return errors

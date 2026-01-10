@@ -8,9 +8,8 @@ ABSORB → GENERATE → FANOUT(VideoBranch + MusicBranch) → JOIN → RENDER
 import json
 from typing import Any, Dict, List, TypedDict
 
-from langgraph.graph import END, StateGraph
-
 from AFO.multimodal.timeline_state_generator import timeline_generator_node
+from langgraph.graph import END, StateGraph
 
 
 class MultimodalState(TypedDict):
@@ -41,15 +40,25 @@ def video_branch_node(state: MultimodalState) -> dict[str, Any]:
     expansion_map = {
         "fade_in": {"effect": "opacity_transition", "duration": 2.0, "ease": "in_out"},
         "fade_in_zoom": {"effect": "zoom_in_fade", "duration": 1.5, "scale": 1.1},
-        "text_overlay": {"effect": "text_overlay", "position": "center", "animation": "slide_up"},
-        "cut_sequence": {"effect": "cut_sequence", "interval": 0.5, "transition": "hard_cut"},
+        "text_overlay": {
+            "effect": "text_overlay",
+            "position": "center",
+            "animation": "slide_up",
+        },
+        "cut_sequence": {
+            "effect": "cut_sequence",
+            "interval": 0.5,
+            "transition": "hard_cut",
+        },
         "zoom_effect": {"effect": "zoom", "scale_factor": 1.2, "duration": 1.0},
         "fade_out": {"effect": "fade_out", "duration": 3.0},
     }
 
     for section in sections:
         instr = section.get("video", "default")
-        video_params = expansion_map.get(instr, {"effect": "default", "instruction": instr})
+        video_params = expansion_map.get(
+            instr, {"effect": "default", "instruction": instr}
+        )
 
         video_plan["sections"].append(
             {
@@ -79,7 +88,11 @@ def music_branch_node(state: MultimodalState) -> dict[str, Any]:
 
     # Parameter Expansion Map
     expansion_map = {
-        "slow_build": {"energy": "low", "instruments": ["ambient", "pads"], "reverb": "large"},
+        "slow_build": {
+            "energy": "low",
+            "instruments": ["ambient", "pads"],
+            "reverb": "large",
+        },
         "drop_beat": {"energy": "high", "kick_intensity": 0.9, "sidechain": True},
         "main_theme": {"energy": "medium", "lead": "synth_brass", "resonance": 0.5},
         "peak_energy": {"energy": "peak", "distortion": 0.2, "compression": "heavy"},
@@ -88,7 +101,9 @@ def music_branch_node(state: MultimodalState) -> dict[str, Any]:
 
     for section in sections:
         instr = section.get("music", "default")
-        music_params = expansion_map.get(instr, {"energy": "medium", "instruction": instr})
+        music_params = expansion_map.get(
+            instr, {"energy": "medium", "instruction": instr}
+        )
 
         music_plan["sections"].append(
             {

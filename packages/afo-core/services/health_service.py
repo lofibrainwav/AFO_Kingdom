@@ -228,31 +228,95 @@ async def get_comprehensive_health() -> dict[str, Any]:
         # Use mock data for organs_v2 to avoid Python version compatibility issues
         # This provides the 11-organ contract without breaking on Python type annotations
         mock_organs = {
-            "心_Redis": {"status": "healthy", "score": 98, "output": "Connected", "latency_ms": 5},
-            "肝_PostgreSQL": {"status": "healthy", "score": 99, "output": "Connected", "latency_ms": 10},
-            "腦_Soul_Engine": {"status": "healthy", "score": 100, "output": "Active", "latency_ms": 0},
-            "舌_Ollama": {"status": "healthy", "score": 95, "output": "Connected", "latency_ms": 15},
-            "肺_Vector_DB": {"status": "healthy", "score": 94, "output": "Connected", "latency_ms": 8},
-            "眼_Dashboard": {"status": "healthy", "score": 92, "output": "Active", "latency_ms": 3},
-            "腎_MCP": {"status": "healthy", "score": 88, "output": "Configured", "latency_ms": 0},
-            "耳_Observability": {"status": "healthy", "score": 90, "output": "Active", "latency_ms": 0},
-            "口_Docs": {"status": "healthy", "score": 95, "output": "Available", "latency_ms": 0},
-            "骨_CI": {"status": "healthy", "score": 90, "output": "Active", "latency_ms": 0},
-            "胱_Evolution_Gate": {"status": "healthy", "score": 95, "output": "Active", "latency_ms": 0},
+            "心_Redis": {
+                "status": "healthy",
+                "score": 98,
+                "output": "Connected",
+                "latency_ms": 5,
+            },
+            "肝_PostgreSQL": {
+                "status": "healthy",
+                "score": 99,
+                "output": "Connected",
+                "latency_ms": 10,
+            },
+            "腦_Soul_Engine": {
+                "status": "healthy",
+                "score": 100,
+                "output": "Active",
+                "latency_ms": 0,
+            },
+            "舌_Ollama": {
+                "status": "healthy",
+                "score": 95,
+                "output": "Connected",
+                "latency_ms": 15,
+            },
+            "肺_Vector_DB": {
+                "status": "healthy",
+                "score": 94,
+                "output": "Connected",
+                "latency_ms": 8,
+            },
+            "眼_Dashboard": {
+                "status": "healthy",
+                "score": 92,
+                "output": "Active",
+                "latency_ms": 3,
+            },
+            "腎_MCP": {
+                "status": "healthy",
+                "score": 88,
+                "output": "Configured",
+                "latency_ms": 0,
+            },
+            "耳_Observability": {
+                "status": "healthy",
+                "score": 90,
+                "output": "Active",
+                "latency_ms": 0,
+            },
+            "口_Docs": {
+                "status": "healthy",
+                "score": 95,
+                "output": "Available",
+                "latency_ms": 0,
+            },
+            "骨_CI": {
+                "status": "healthy",
+                "score": 90,
+                "output": "Active",
+                "latency_ms": 0,
+            },
+            "胱_Evolution_Gate": {
+                "status": "healthy",
+                "score": 95,
+                "output": "Active",
+                "latency_ms": 0,
+            },
         }
 
         v2_data = {
             "organs": mock_organs,
-            "security": {"status": "healthy", "score": 90, "output": "Verified", "latency_ms": 0},
+            "security": {
+                "status": "healthy",
+                "score": 90,
+                "output": "Verified",
+                "latency_ms": 0,
+            },
             "contract": {"version": "organs/v2", "organs_keys_expected": 11},
-            "ts": current_time
+            "ts": current_time,
         }
         o2 = mock_organs
 
         # 眞 (Truth 35%) - Knowledge Infrastructure
         # Redis(98), Postgres(99), Vector_DB(94)
         truth_score = (
-            (o2["心_Redis"]["score"] + o2["肝_PostgreSQL"]["score"] + o2["肺_Vector_DB"]["score"])
+            (
+                o2["心_Redis"]["score"]
+                + o2["肝_PostgreSQL"]["score"]
+                + o2["肺_Vector_DB"]["score"]
+            )
             / 3.0
             / 100.0
         )
@@ -265,7 +329,9 @@ async def get_comprehensive_health() -> dict[str, Any]:
 
         # 美 (Beauty 20%) - User Experience & Interface
         # Dashboard(92), Brain/API(100)
-        beauty_score = (o2["眼_Dashboard"]["score"] + o2["腦_Soul_Engine"]["score"]) / 2.0 / 100.0
+        beauty_score = (
+            (o2["眼_Dashboard"]["score"] + o2["腦_Soul_Engine"]["score"]) / 2.0 / 100.0
+        )
 
         # 孝 (Serenity 8%) - Agency & Automation
         # Ollama(95), MCP(85)
@@ -273,7 +339,9 @@ async def get_comprehensive_health() -> dict[str, Any]:
 
         # 永 (Eternity 2%) - Observability & Documentation
         # Observability(80), Docs(90)
-        eternity_score = (o2["耳_Observability"]["score"] + o2["口_Docs"]["score"]) / 2.0 / 100.0
+        eternity_score = (
+            (o2["耳_Observability"]["score"] + o2["口_Docs"]["score"]) / 2.0 / 100.0
+        )
 
         # ICCLS (Inter-Component Consistency Level Score) - Dynamic Calculation
         # 점수들의 표준 편차를 역으로 환산 (편차가 적을수록 일관성 높음)
@@ -388,7 +456,9 @@ async def get_comprehensive_health() -> dict[str, Any]:
 
     # 최종 응답 구성 (안전하게 초기화)
     try:
-        balance_status = trinity_metrics.balance_status if trinity_metrics else "unknown"
+        balance_status = (
+            trinity_metrics.balance_status if trinity_metrics else "unknown"
+        )
         trinity_score = trinity_metrics.trinity_score if trinity_metrics else 0.0
     except Exception:
         balance_status = "unknown"

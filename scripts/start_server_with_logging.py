@@ -8,11 +8,12 @@ import json
 from datetime import datetime
 from pathlib import Path
 
-
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 
 
-def log_debug(location: str, message: str, data: dict | None = None, hypothesis_id: str = "A") -> None:
+def log_debug(
+    location: str, message: str, data: dict | None = None, hypothesis_id: str = "A"
+) -> None:
     """Debug logging to NDJSON file"""
     try:
         log_entry = {

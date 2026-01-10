@@ -63,7 +63,9 @@ def run_dream_hub_command(args: argparse.Namespace) -> int:
         print("🚀 Executing Dream through Enhanced Dream Hub...")
         thread_id = "dream_safe_thread"
 
-        result: dict[str, Any] = enhanced_dream_hub_module.run_enhanced_dream_hub(human_dream, thread_id)
+        result: dict[str, Any] = enhanced_dream_hub_module.run_enhanced_dream_hub(
+            human_dream, thread_id
+        )
 
         if result.get("status") == "ERROR":
             error_msg = result.get("error", "Unknown error")
@@ -75,8 +77,10 @@ def run_dream_hub_command(args: argparse.Namespace) -> int:
         trinity_score: dict[str, float] = result.get("trinity_score", {})
         risk_score: float = result.get("risk_score", 0.0)
 
-        validation: dict[str, Any] = dream_contract_module.contract_manager.validate_execution(
-            contract_id, trinity_score, risk_score
+        validation: dict[str, Any] = (
+            dream_contract_module.contract_manager.validate_execution(
+                contract_id, trinity_score, risk_score
+            )
         )
 
         if not validation.get("valid", False):
@@ -100,7 +104,9 @@ def run_dream_hub_command(args: argparse.Namespace) -> int:
             "final_message": result.get("final_message", ""),
         }
 
-        if dream_contract_module.contract_manager.complete_contract(contract_id, final_result):
+        if dream_contract_module.contract_manager.complete_contract(
+            contract_id, final_result
+        ):
             print("✅ Dream contract completed successfully")
 
         # Step 5: Display Results (3-line output philosophy)
@@ -111,8 +117,12 @@ def run_dream_hub_command(args: argparse.Namespace) -> int:
         status = "OK" if validation["valid"] else "BLOCK"
         decision = "COMPLETED" if result["status"] == "COMPLETED" else "INCOMPLETE"
 
-        avg_score = sum(trinity_score.values()) / len(trinity_score) if trinity_score else 0
-        next_action = "View Bridge logs" if result.get("bridge_logs") else "Check audit history"
+        avg_score = (
+            sum(trinity_score.values()) / len(trinity_score) if trinity_score else 0
+        )
+        next_action = (
+            "View Bridge logs" if result.get("bridge_logs") else "Check audit history"
+        )
         receipt_info = f"Dream ID: {result.get('dream_id', 'N/A')}"
 
         print(f"Status: {status} | Decision: {decision} | Trinity: {avg_score:.1f}")

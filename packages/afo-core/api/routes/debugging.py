@@ -12,9 +12,8 @@ import logging
 from datetime import datetime
 from typing import Any
 
-from fastapi import APIRouter, HTTPException
-
 from AFO.services.automated_debugging_system import run_automated_debugging
+from fastapi import APIRouter, HTTPException
 
 router = APIRouter(prefix="/api/debugging", tags=["Automated Debugging"])
 

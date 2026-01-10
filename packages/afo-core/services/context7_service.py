@@ -105,7 +105,9 @@ def _load_with_lazy_loader(trinity_os_path: str) -> None:
     """
     import importlib.util
 
-    module_path = os.path.join(trinity_os_path, "trinity_os", "servers", "context7_mcp.py")
+    module_path = os.path.join(
+        trinity_os_path, "trinity_os", "servers", "context7_mcp.py"
+    )
 
     if os.path.exists(module_path):
         spec = importlib.util.spec_from_file_location(
@@ -152,7 +154,9 @@ def get_context7_health() -> dict[str, Any]:
 
         # 기본 건강 체크
         knowledge_base = getattr(instance, "knowledge_base", [])
-        knowledge_keys = [item.get("id", f"item_{i}") for i, item in enumerate(knowledge_base)]
+        knowledge_keys = [
+            item.get("id", f"item_{i}") for i, item in enumerate(knowledge_base)
+        ]
 
         # 검색 기능 테스트
         try:

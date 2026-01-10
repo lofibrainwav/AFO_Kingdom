@@ -140,12 +140,18 @@ class AIGuardrails:
 
     def _compile_patterns(self) -> None:
         """Compile all regex patterns for performance."""
-        self._pii_compiled = {k: re.compile(v, re.IGNORECASE) for k, v in self.pii_patterns.items()}
+        self._pii_compiled = {
+            k: re.compile(v, re.IGNORECASE) for k, v in self.pii_patterns.items()
+        }
         self._cred_compiled = {
             k: re.compile(v, re.IGNORECASE) for k, v in self.credential_patterns.items()
         }
-        self._toxic_compiled = [re.compile(p, re.IGNORECASE) for p in self.toxic_patterns]
-        self._injection_compiled = [re.compile(p, re.IGNORECASE) for p in self.injection_patterns]
+        self._toxic_compiled = [
+            re.compile(p, re.IGNORECASE) for p in self.toxic_patterns
+        ]
+        self._injection_compiled = [
+            re.compile(p, re.IGNORECASE) for p in self.injection_patterns
+        ]
 
     def filter_input(self, content: str) -> FilterResult:
         """Filter user input before AI processing.
@@ -237,7 +243,9 @@ class AIGuardrails:
             if matches:
                 categories.append(ContentCategory.CREDENTIALS)
                 for match in matches:
-                    filtered = filtered.replace(match, f"[REDACTED_{cred_type.upper()}]")
+                    filtered = filtered.replace(
+                        match, f"[REDACTED_{cred_type.upper()}]"
+                    )
                     masks_applied += 1
                 details[f"cred_{cred_type}"] = len(matches)
 
@@ -296,7 +304,11 @@ class AIGuardrails:
         logger.info(f"[{self.name}] Added custom filter: {name}")
 
     def _persist_filter_result(
-        self, original: str, filtered: str, action: FilterAction, categories: list[ContentCategory]
+        self,
+        original: str,
+        filtered: str,
+        action: FilterAction,
+        categories: list[ContentCategory],
     ) -> None:
         """Persist filter results for audit."""
         if action == FilterAction.ALLOW:
@@ -304,7 +316,10 @@ class AIGuardrails:
 
         try:
             guardrails_dir = (
-                Path(__file__).parent.parent.parent.parent / "docs" / "ssot" / "guardrails"
+                Path(__file__).parent.parent.parent.parent
+                / "docs"
+                / "ssot"
+                / "guardrails"
             )
             guardrails_dir.mkdir(parents=True, exist_ok=True)
 
@@ -317,7 +332,9 @@ class AIGuardrails:
                 "categories": [c.value for c in categories],
                 "original_length": len(original),
                 "filtered_length": len(filtered),
-                "content_preview": original[:100] if action != FilterAction.BLOCK else "[blocked]",
+                "content_preview": (
+                    original[:100] if action != FilterAction.BLOCK else "[blocked]"
+                ),
             }
 
             with log_file.open("a", encoding="utf-8") as f:

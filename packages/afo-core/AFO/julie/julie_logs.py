@@ -24,7 +24,9 @@ class JulieLogEntry(BaseModel):
     """Julie CPA 로그 엔트리 (JULIE_CPA_2_010126.md 기반)"""
 
     log_id: str = Field(..., description="고유 식별자 (UUID)")
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC), description="생성 시각")
+    timestamp: datetime = Field(
+        default_factory=lambda: datetime.now(UTC), description="생성 시각"
+    )
     agent: str = Field(..., description="Associate/Manager/Auditor")
     action: str = Field(..., description="데이터 수집/점검/판정")
     input_hash: str = Field(..., description="입력 데이터 SHA256")
@@ -70,7 +72,9 @@ class JulieLogManager:
     def __init__(self, database_url: str = "sqlite:///julie_logs.db"):
         self.engine = create_engine(database_url, echo=False)
         Base.metadata.create_all(self.engine)
-        self.SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=self.engine)
+        self.SessionLocal = sessionmaker(
+            autocommit=False, autoflush=False, bind=self.engine
+        )
 
     def log_agent_action(self, log_entry: JulieLogEntry) -> bool:
         """AI 에이전트 액션 로깅"""
@@ -278,9 +282,9 @@ def log_auditor_action(
         metacognition_insights={
             "compliance_score": compliance_score,
             "determination": determination.get("determination", "PENDING"),
-            "two_source_verification": output_data.get("two_source_verification", {}).get(
-                "verification_score", 0.0
-            ),
+            "two_source_verification": output_data.get(
+                "two_source_verification", {}
+            ).get("verification_score", 0.0),
             "evidence_bundle_created": bool(output_data.get("evidence_bundle")),
         },
     )

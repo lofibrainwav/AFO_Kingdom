@@ -1,15 +1,18 @@
 from __future__ import annotations
 
-from pathlib import Path
 import re
 import sys
+from pathlib import Path
 
 ROOT = Path.cwd()
 
-RX = re.compile(r'^(?P<path>.+?):(?P<line>\d+):(?P<col>\d+)\s+-\s+\w+:\s+(?P<msg>.*)\((?P<rule>report[A-Za-z0-9_]+)\)\s*$')
+RX = re.compile(
+    r"^(?P<path>.+?):(?P<line>\d+):(?P<col>\d+)\s+-\s+\w+:\s+(?P<msg>.*)\((?P<rule>report[A-Za-z0-9_]+)\)\s*$"
+)
 RX_NAME = re.compile(r'"([A-Za-z_]\w*)"')
 
 TARGET_RULES = {"reportUnusedImport", "reportUnusedVariable"}
+
 
 def normalize_path(p: str) -> Path | None:
     rp = Path(p)
@@ -20,13 +23,21 @@ def normalize_path(p: str) -> Path | None:
             return None
     return rp
 
+
 def prune_from_import_line(line: str, drop: set[str]) -> str | None:
     s = line.rstrip("\n")
-    if not (s.startswith("from typing import ") or s.startswith("from typing_extensions import ")):
+    if not (
+        s.startswith("from typing import ")
+        or s.startswith("from typing_extensions import ")
+    ):
         return None
 
-    prefix = "from typing import " if s.startswith("from typing import ") else "from typing_extensions import "
-    rest = s[len(prefix):].strip()
+    prefix = (
+        "from typing import "
+        if s.startswith("from typing import ")
+        else "from typing_extensions import "
+    )
+    rest = s[len(prefix) :].strip()
     if "(" in rest or ")" in rest:
         return None
 
@@ -36,6 +47,7 @@ def prune_from_import_line(line: str, drop: set[str]) -> str | None:
     if not kept:
         return ""
     return prefix + ", ".join(kept) + "\n"
+
 
 def main(report_path: Path):
     txt = report_path.read_text(encoding="utf-8", errors="replace").splitlines()
@@ -92,8 +104,11 @@ def main(report_path: Path):
     print("CHANGED_FILES=", changed_files)
     print("CHANGED_LINES=", changed_lines)
 
+
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("usage: python3 scripts/pyright_prune_unused_typing_imports_v733.py <pyright_report.txt>")
+        print(
+            "usage: python3 scripts/pyright_prune_unused_typing_imports_v733.py <pyright_report.txt>"
+        )
         raise SystemExit(2)
     main(Path(sys.argv[1]))

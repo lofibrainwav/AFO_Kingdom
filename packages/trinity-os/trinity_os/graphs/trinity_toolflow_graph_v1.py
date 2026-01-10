@@ -18,16 +18,21 @@ from typing import Any, Literal, TypedDict, cast
 Decision = Literal["AUTO_RUN", "ASK", "BLOCK"]
 
 
-from typing import Any, Callable, cast
+from typing import Callable
+
+
 def _wrap_langgraph_node(fn: Callable[..., Any], deps: Any) -> Callable[..., Any]:
-    def _node(state: Any, *, config: RunnableConfig | None = None, store: object | None = None) -> Any:
+    def _node(
+        state: Any, *, config: RunnableConfig | None = None, store: object | None = None
+    ) -> Any:
         _ = config
         _: Any = store
         return fn(cast(FlowState, state), deps)
+
     return _node
 
 
-def _as_flow_state(x: 'NodeInputT') -> 'FlowState':
+def _as_flow_state(x: "NodeInputT") -> "FlowState":
     return cast(FlowState, x)
 
 
@@ -266,22 +271,34 @@ def build_trinity_toolflow_graph(deps: Deps):
     from langgraph.graph import END, StateGraph
 
     graph = StateGraph(FlowState)
-    cast(Any, graph).add_node("TOOL_SEARCH", _wrap_langgraph_node(node_tool_search, deps))
+    cast(Any, graph).add_node(
+        "TOOL_SEARCH", _wrap_langgraph_node(node_tool_search, deps)
+    )
     cast(Any, graph).add_node("SELECT", _wrap_langgraph_node(node_select, deps))
     cast(Any, graph).add_node("GET_CARD", _wrap_langgraph_node(node_get_card, deps))
-    cast(Any, graph).add_node("SERENITY_GATE", _wrap_langgraph_node(node_serenity_gate, deps))
+    cast(Any, graph).add_node(
+        "SERENITY_GATE", _wrap_langgraph_node(node_serenity_gate, deps)
+    )
     cast(Any, graph).add_node("DRY_RUN", _wrap_langgraph_node(node_dry_run, deps))
     cast(Any, graph).add_node("EXECUTE", _wrap_langgraph_node(node_execute, deps))
     cast(Any, graph).add_node("ASK", _wrap_langgraph_node(node_ask, deps))
-    cast(Any, graph).add_node("FINAL_BLOCK", _wrap_langgraph_node(node_final_block, deps))
-    cast(Any, graph).add_node("FINAL_NO_CANDIDATES", _wrap_langgraph_node(node_final_no_candidates, deps))
+    cast(Any, graph).add_node(
+        "FINAL_BLOCK", _wrap_langgraph_node(node_final_block, deps)
+    )
+    cast(Any, graph).add_node(
+        "FINAL_NO_CANDIDATES", _wrap_langgraph_node(node_final_no_candidates, deps)
+    )
     cast(Any, graph).add_node("FINAL_OK", _wrap_langgraph_node(node_final_ok, deps))
 
     graph.set_entry_point("TOOL_SEARCH")
     graph.add_edge("TOOL_SEARCH", "SELECT")
 
     def route_after_select(state: FlowState) -> str:
-        return "FINAL_NO_CANDIDATES" if not (state.get("selected_skill_id") or "") else "GET_CARD"
+        return (
+            "FINAL_NO_CANDIDATES"
+            if not (state.get("selected_skill_id") or "")
+            else "GET_CARD"
+        )
 
     graph.add_conditional_edges(
         "SELECT",

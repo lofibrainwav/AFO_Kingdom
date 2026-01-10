@@ -111,7 +111,9 @@ class MatchingEngine:
 
         # 모든 텍스트에서 키워드 추출
         all_text = f"{parsed_md.goal} {parsed_md.raw_notes}"
-        all_files = (parsed_md.files_to_create or []) + (parsed_md.files_to_update or [])
+        all_files = (parsed_md.files_to_create or []) + (
+            parsed_md.files_to_update or []
+        )
         for file in all_files:
             all_text += f" {file}"
 
@@ -229,11 +231,15 @@ class MatchingEngine:
 
         return score
 
-    def _calculate_file_similarity(self, parsed_md: ParsedMD, module: ModuleInfo) -> float:
+    def _calculate_file_similarity(
+        self, parsed_md: ParsedMD, module: ModuleInfo
+    ) -> float:
         """파일 경로 유사성 계산"""
         score = 0.0
 
-        all_files = (parsed_md.files_to_create or []) + (parsed_md.files_to_update or [])
+        all_files = (parsed_md.files_to_create or []) + (
+            parsed_md.files_to_update or []
+        )
         for file_path in all_files:
             # 경로 구조 유사성
             file_parts = set(file_path.split("/"))
@@ -245,7 +251,9 @@ class MatchingEngine:
 
         return min(score, 0.3)  # 최대 0.3
 
-    def _analyze_dependency_patterns(self, keywords: list[str], module: ModuleInfo) -> float:
+    def _analyze_dependency_patterns(
+        self, keywords: list[str], module: ModuleInfo
+    ) -> float:
         """의존성 패턴 분석"""
         score = 0.0
 
@@ -282,24 +290,36 @@ class MatchingEngine:
         recommendations = []
 
         if not candidates:
-            recommendations.append("기존 구현 패턴을 찾을 수 없습니다. 새로운 모듈을 생성하세요.")
+            recommendations.append(
+                "기존 구현 패턴을 찾을 수 없습니다. 새로운 모듈을 생성하세요."
+            )
             return recommendations
 
         # 최고 매칭 기반 추천
         best = candidates[0]
         if best.similarity_score > 0.7:
-            recommendations.append(f"높은 확률로 {best.module.path} 패턴을 재사용하세요.")
+            recommendations.append(
+                f"높은 확률로 {best.module.path} 패턴을 재사용하세요."
+            )
         elif best.similarity_score > 0.4:
-            recommendations.append(f"{best.module.path}를 참고하여 새로운 구현을 시작하세요.")
+            recommendations.append(
+                f"{best.module.path}를 참고하여 새로운 구현을 시작하세요."
+            )
         else:
-            recommendations.append("여러 후보를 검토하여 가장 적합한 패턴을 선택하세요.")
+            recommendations.append(
+                "여러 후보를 검토하여 가장 적합한 패턴을 선택하세요."
+            )
 
         # 파일 생성/업데이트 추천
         if parsed_md.files_to_create:
-            recommendations.append(f"새 파일 생성: {', '.join(parsed_md.files_to_create[:3])}")
+            recommendations.append(
+                f"새 파일 생성: {', '.join(parsed_md.files_to_create[:3])}"
+            )
 
         if parsed_md.files_to_update:
-            recommendations.append(f"기존 파일 수정: {', '.join(parsed_md.files_to_update[:3])}")
+            recommendations.append(
+                f"기존 파일 수정: {', '.join(parsed_md.files_to_update[:3])}"
+            )
 
         # 제약사항 고려
         if parsed_md.constraints:

@@ -75,7 +75,11 @@ def compile_mipro(
     # Trinity Metric Wrapper (Fail-Closed)
     def trinity_metric_fn(example, prediction, trace=None):
         gt = _pick_field(example, truth_key_candidates)
-        pred = _pick_field(prediction, pred_key_candidates) if prediction is not None else None
+        pred = (
+            _pick_field(prediction, pred_key_candidates)
+            if prediction is not None
+            else None
+        )
 
         # Fail-closed: Return 0.0 if critical fields are missing
         if not gt or not pred:
@@ -137,8 +141,12 @@ def compile_mipro(
                         # Extract serializable parts
                         state = {
                             "type": type(optimized).__name__,
-                            "module_keys": list(getattr(optimized, "__dict__", {}).keys()),
-                            "timestamp": __import__("datetime").datetime.now().isoformat(),
+                            "module_keys": list(
+                                getattr(optimized, "__dict__", {}).keys()
+                            ),
+                            "timestamp": __import__("datetime")
+                            .datetime.now()
+                            .isoformat(),
                         }
 
                     if state is not None:
@@ -165,7 +173,9 @@ def compile_mipro(
                 meta = {
                     "error": str(e),
                     "model": os.getenv("AFO_DSPY_MODEL", "unknown"),
-                    "dspy_version": getattr(__import__("dspy"), "__version__", "unknown"),
+                    "dspy_version": getattr(
+                        __import__("dspy"), "__version__", "unknown"
+                    ),
                     "timestamp": __import__("datetime").datetime.now().isoformat(),
                     "save_path": str(p),
                 }

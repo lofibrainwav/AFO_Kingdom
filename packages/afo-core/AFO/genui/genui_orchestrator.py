@@ -33,7 +33,9 @@ class GenUIOrchestrator:
             # This file is at packages/afo-core/AFO/genui/genui_orchestrator.py (4 parents up)
             workspace_root = str(Path(__file__).resolve().parents[4])
         self.workspace_root = workspace_root
-        self.sandbox_path = os.path.join(workspace_root, "packages/dashboard/src/app/genui")
+        self.sandbox_path = os.path.join(
+            workspace_root, "packages/dashboard/src/app/genui"
+        )
         os.makedirs(self.sandbox_path, exist_ok=True)
 
         # Check Self-Expanding Mode (Eternity Check via Governance)
@@ -79,13 +81,17 @@ class GenUIOrchestrator:
             f"🛡️ [Trinity] Score for generated code: {trinity_result['trinity_score']} (Risk: {trinity_result['risk_score']})"
         )
         if not trinity_result["passed"]:
-            print("⚠️ [GenUI] Generated code failed Trinity Check! (Proceeding for demo purposes)")
+            print(
+                "⚠️ [GenUI] Generated code failed Trinity Check! (Proceeding for demo purposes)"
+            )
 
         # 3. Render Wait (Simulate Hot Reload)
         time.sleep(2)
 
         # 4. See (Screenshot) - Governance Gated (Vision)
-        screenshot_path = os.path.join(self.workspace_root, "artifacts", f"genui_{project_id}.png")
+        screenshot_path = os.path.join(
+            self.workspace_root, "artifacts", f"genui_{project_id}.png"
+        )
         vision_result = {
             "success": False,
             "message": "Playwright not loaded or blocked",
@@ -104,9 +110,13 @@ class GenUIOrchestrator:
                 if nav_res.get("success"):
                     vision_result = PlaywrightBridgeMCP.screenshot(path=screenshot_path)
             else:
-                print("⚠️ [GenUI] PlaywrightBridgeMCP not available despite governance approval.")
+                print(
+                    "⚠️ [GenUI] PlaywrightBridgeMCP not available despite governance approval."
+                )
         else:
-            print("🛡️ [GenUI] Vision verification blocked by Governance ('genui_vision').")
+            print(
+                "🛡️ [GenUI] Vision verification blocked by Governance ('genui_vision')."
+            )
 
         return {
             "project_id": project_id,
@@ -144,7 +154,9 @@ class GenUIOrchestrator:
                 if "Trinity Score:" in line:
                     with contextlib.suppress(builtins.BaseException):
                         trinity_score = float(line.split(":")[1].strip())
-                if "Risk Score:" in line:  # Script output might differ slightly "100 (Risk: 0)"
+                if (
+                    "Risk Score:" in line
+                ):  # Script output might differ slightly "100 (Risk: 0)"
                     # "善 (Goodness): 100 (Risk: 0)"
                     pass
                 if "BLOCKED" in line:

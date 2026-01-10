@@ -8,7 +8,7 @@ import os
 import sys
 
 # 환경변수 설정
-os.environ['VECTOR_DB'] = 'lancedb'
+os.environ["VECTOR_DB"] = "lancedb"
 
 # AFO 패키지 경로 추가
 current_file = os.path.abspath(__file__)
@@ -17,13 +17,14 @@ afo_core_path = os.path.join(project_root, "packages", "afo-core")
 if afo_core_path not in sys.path:
     sys.path.insert(0, afo_core_path)
 
+
 def test_lancedb_adapter_integration():
     """LanceDB 어댑터 통합 테스트"""
     print("🏰 LanceDB 어댑터 통합 테스트 시작\n")
 
     try:
         # 벡터 스토어 어댑터 테스트
-        from utils.vector_store import get_vector_store, LanceDBAdapter, QdrantAdapter
+        from utils.vector_store import LanceDBAdapter, get_vector_store
 
         store = get_vector_store()
         print(f"✅ 벡터 스토어 타입: {type(store).__name__}")
@@ -46,6 +47,7 @@ def test_lancedb_adapter_integration():
     except Exception as e:
         print(f"❌ 어댑터 테스트 실패: {e}")
         return False
+
 
 def test_hybrid_rag_integration():
     """하이브리드 RAG 시스템 LanceDB 통합 테스트"""
@@ -73,29 +75,31 @@ def test_hybrid_rag_integration():
         print(f"❌ RAG 통합 테스트 실패: {e}")
         return False
 
+
 def test_environment_variables():
     """환경변수 적용 상태 검증"""
     print("\n⚙️ 환경변수 검증")
 
-    vector_db_env = os.getenv('VECTOR_DB', 'qdrant')
-    lancedb_path_env = os.getenv('LANCEDB_PATH', './data/lancedb')
+    vector_db_env = os.getenv("VECTOR_DB", "qdrant")
+    lancedb_path_env = os.getenv("LANCEDB_PATH", "./data/lancedb")
 
     print(f"   VECTOR_DB: {vector_db_env}")
     print(f"   LANCEDB_PATH: {lancedb_path_env}")
 
-    if vector_db_env == 'lancedb':
+    if vector_db_env == "lancedb":
         print("✅ 환경변수 LanceDB로 설정됨")
         return True
     else:
         print("❌ 환경변수 설정 실패")
         return False
 
+
 def test_lancedb_database_files():
     """LanceDB 데이터베이스 파일 존재 확인"""
     print("\n💾 LanceDB 데이터베이스 파일 확인")
 
-    lancedb_path = os.getenv('LANCEDB_PATH', './data/lancedb')
-    db_file = os.path.join(lancedb_path, 'afokingdom_knowledge.lance')
+    lancedb_path = os.getenv("LANCEDB_PATH", "./data/lancedb")
+    db_file = os.path.join(lancedb_path, "afokingdom_knowledge.lance")
 
     if os.path.exists(db_file):
         print(f"✅ LanceDB 데이터베이스 존재: {db_file}")
@@ -103,6 +107,7 @@ def test_lancedb_database_files():
     else:
         print(f"❌ LanceDB 데이터베이스 없음: {db_file}")
         return False
+
 
 def main():
     """메인 테스트 함수"""
@@ -141,6 +146,7 @@ def main():
     else:
         print("\n⚠️ 일부 테스트 실패 - 추가 조치 필요")
         return False
+
 
 if __name__ == "__main__":
     success = main()

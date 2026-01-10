@@ -11,7 +11,6 @@ AFO 왕국의 역사를 영원히 기록합니다.
 from datetime import datetime
 from pathlib import Path
 
-
 CHRONICLE_SUMMARY = """
 ---
 

@@ -48,7 +48,9 @@ def _doc_text(doc: Any) -> str:
 
 async def rerank(query: str, docs: list[Any]) -> tuple[list[Any], RerankResult]:
     if not _enabled():
-        return docs[: _top_k()], RerankResult(ok=True, reason="disabled", latency_ms=0.0)
+        return docs[: _top_k()], RerankResult(
+            ok=True, reason="disabled", latency_ms=0.0
+        )
 
     start = time.time()
 
@@ -60,10 +62,15 @@ async def rerank(query: str, docs: list[Any]) -> tuple[list[Any], RerankResult]:
             return docs[: _top_k()]
 
         def _predict_sync() -> list[Any]:
-            reranker = CrossEncoder(_model_name(), device=os.getenv("AFO_RAG_RERANK_DEVICE", "cpu"))
+            reranker = CrossEncoder(
+                _model_name(), device=os.getenv("AFO_RAG_RERANK_DEVICE", "cpu")
+            )
             pairs = [[query, _doc_text(d)] for d in docs]
             scores = reranker.predict(pairs)
-            ranked = [d for _, d in sorted(zip(scores, docs), key=lambda x: x[0], reverse=True)]
+            ranked = [
+                d
+                for _, d in sorted(zip(scores, docs), key=lambda x: x[0], reverse=True)
+            ]
             return ranked[: _top_k()]
 
         return await asyncio.to_thread(_predict_sync)
@@ -83,7 +90,9 @@ async def rerank(query: str, docs: list[Any]) -> tuple[list[Any], RerankResult]:
                     raise TimeoutError("rerank timeout")
 
         ranked = await asyncio.to_thread(_run_with_timeout)
-        return ranked, RerankResult(ok=True, reason="ok", latency_ms=(time.time() - start) * 1000.0)
+        return ranked, RerankResult(
+            ok=True, reason="ok", latency_ms=(time.time() - start) * 1000.0
+        )
     except Exception:
         return docs[: _top_k()], RerankResult(
             ok=False, reason="fail_open", latency_ms=(time.time() - start) * 1000.0

@@ -5,7 +5,6 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-
 # Add package root to path
 sys.path.append(os.path.join(Path.cwd(), "packages/afo-core"))
 
@@ -58,7 +57,9 @@ class AutoRecon:
 
         report["summary"]["total"] = len(self.targets)
         self._save_report(report)
-        print(f"🛡️ [AutoRecon] Patrol complete. Health: {report['summary']['passed']}/{report['summary']['total']}")
+        print(
+            f"🛡️ [AutoRecon] Patrol complete. Health: {report['summary']['passed']}/{report['summary']['total']}"
+        )
 
         return report["summary"]["failed"] == 0
 

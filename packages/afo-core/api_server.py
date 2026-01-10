@@ -56,7 +56,9 @@ def _patch_typing_inspection_if_needed() -> None:
     if "alias_name = getattr(alias" in text:
         return
 
-    needle = "if (te_alias := getattr(typing_extensions, alias._name, None)) is not None:"
+    needle = (
+        "if (te_alias := getattr(typing_extensions, alias._name, None)) is not None:"
+    )
     if needle not in text:
         return
 
@@ -77,18 +79,19 @@ _patch_typing_inspection_if_needed()
 
 import uvicorn
 
-# Core FastAPI imports with type hints
-from slowapi import Limiter, _rate_limit_exceeded_handler
-from slowapi.errors import RateLimitExceeded
-from slowapi.util import get_remote_address
-
 # AFO Kingdom imports (clear and organized)
 from AFO.api.config import get_app_config, get_server_config
 from AFO.api.middleware import setup_middleware
 from AFO.api.router_manager import setup_routers
 
+# Core FastAPI imports with type hints
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.util import get_remote_address
+
 if TYPE_CHECKING:
     from fastapi import FastAPI
+
 from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
 from starlette.responses import Response
 
@@ -149,7 +152,9 @@ class AFOServer:
                 integrations=[
                     FastApiIntegration(transaction_style="endpoint"),
                     StarletteIntegration(),
-                    LoggingIntegration(level=logging.ERROR, event_level=logging.CRITICAL),
+                    LoggingIntegration(
+                        level=logging.ERROR, event_level=logging.CRITICAL
+                    ),
                 ],
                 send_default_pii=False,
             )
@@ -167,7 +172,9 @@ class AFOServer:
         try:
             # Local imports to prevent ModuleNotFoundError if dependencies are missing
             from opentelemetry import trace
-            from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+            from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import (
+                OTLPSpanExporter,
+            )
             from opentelemetry.instrumentation.logging import LoggingInstrumentor
             from opentelemetry.sdk.resources import Resource
             from opentelemetry.sdk.trace import TracerProvider
@@ -182,7 +189,9 @@ class AFOServer:
 
             # 3. Configure OTLP Exporter (gRPC)
             # Default: http://localhost:4317 or env OTEL_EXPORTER_OTLP_ENDPOINT
-            otlp_endpoint = os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT", "http://localhost:4317")
+            otlp_endpoint = os.getenv(
+                "OTEL_EXPORTER_OTLP_ENDPOINT", "http://localhost:4317"
+            )
             otlp_exporter = OTLPSpanExporter(endpoint=otlp_endpoint, insecure=True)
 
             # 4. Add Span Processor
@@ -334,7 +343,9 @@ class AFOServer:
 
             # 1. Gate: Feature Flag Check
             if os.getenv("AFO_DEBUG_AGENT_ENABLED") != "1":
-                raise HTTPException(status_code=403, detail="Debugging Agent is disabled.")
+                raise HTTPException(
+                    status_code=403, detail="Debugging Agent is disabled."
+                )
 
             # 2. Gate: Secret Header Check (Simple protection for prototype)
             required_secret = os.getenv("AFO_DEBUG_SECRET", "default-dev-secret")

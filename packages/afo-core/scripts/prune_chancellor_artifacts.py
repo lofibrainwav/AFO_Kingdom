@@ -120,7 +120,9 @@ def _human(n: int) -> str:
 
 def main() -> int:
     """Main entry point."""
-    ap = argparse.ArgumentParser(description="Prune old Chancellor artifacts per retention policy")
+    ap = argparse.ArgumentParser(
+        description="Prune old Chancellor artifacts per retention policy"
+    )
     ap.add_argument(
         "--keep-traces",
         type=int,

@@ -12,7 +12,6 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any
 
-
 # Add project root to path
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
@@ -68,13 +67,18 @@ def collect_ssot_violation_metrics() -> dict[str, Any]:
         for log_file in logs_dir.glob("*.log"):
             with Path(log_file).open(encoding="utf-8", errors="ignore") as f:
                 content = f.read()
-                if "SSOT violation detected" in content or "Report gate failed" in content:
+                if (
+                    "SSOT violation detected" in content
+                    or "Report gate failed" in content
+                ):
                     violations.append(log_file.name)
 
     return {
         "total_violations": len(violations),
         "violation_files": violations[:10],  # 최근 10개만
-        "compliance_rate": max(0, 1 - (len(violations) / max(1, len(list(logs_dir.glob("*.log")))))),
+        "compliance_rate": max(
+            0, 1 - (len(violations) / max(1, len(list(logs_dir.glob("*.log")))))
+        ),
         "trend": "monitoring",
     }
 
@@ -90,12 +94,17 @@ def collect_chaos_test_metrics() -> dict[str, Any]:
     for log_file in workflow_dir.glob(f"{chaos_log_pattern}.log"):
         with Path(log_file).open(encoding="utf-8", errors="ignore") as f:
             content = f.read()
-            success = "Chaos #1 - kill one pod (expect self-heal)" in content and "SUCCESS" in content
-            chaos_results.append({
-                "date": log_file.stat().st_mtime,
-                "success": success,
-                "log_file": log_file.name,
-            })
+            success = (
+                "Chaos #1 - kill one pod (expect self-heal)" in content
+                and "SUCCESS" in content
+            )
+            chaos_results.append(
+                {
+                    "date": log_file.stat().st_mtime,
+                    "success": success,
+                    "log_file": log_file.name,
+                }
+            )
 
     success_count = sum(1 for r in chaos_results if r["success"])
     total_count = len(chaos_results)
@@ -181,7 +190,9 @@ def main():
     try:
         # 주 정보 수집
         week_info = get_current_week_info()
-        print(f"📅 대상 주: {week_info['week']} ({week_info['start']} ~ {week_info['end']})")
+        print(
+            f"📅 대상 주: {week_info['week']} ({week_info['start']} ~ {week_info['end']})"
+        )
 
         # 메트릭 수집
         metrics = {

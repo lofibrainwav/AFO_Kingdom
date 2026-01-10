@@ -10,9 +10,10 @@
 from __future__ import annotations
 
 import re
-from typing import Any, TypeGuard, Union
 from datetime import datetime
+from typing import Any, TypeGuard
 from uuid import UUID
+
 
 # 기본 타입 가드들
 def is_string(value: Any) -> TypeGuard[str]:
@@ -62,7 +63,7 @@ def is_email(value: Any) -> TypeGuard[str]:
         return False
 
     # RFC 5322 준수 이메일 패턴 (간소화)
-    pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    pattern = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
     return bool(re.match(pattern, value.strip()))
 
 
@@ -72,7 +73,7 @@ def is_url(value: Any) -> TypeGuard[str]:
         return False
 
     # 기본 URL 패턴 (http/https)
-    pattern = r'^https?://[^\s/$.?#].[^\s]*$'
+    pattern = r"^https?://[^\s/$.?#].[^\s]*$"
     return bool(re.match(pattern, value.strip()))
 
 
@@ -104,7 +105,7 @@ def is_datetime_string(value: Any) -> TypeGuard[str]:
     if not isinstance(value, str):
         return False
     try:
-        datetime.fromisoformat(value.replace('Z', '+00:00'))
+        datetime.fromisoformat(value.replace("Z", "+00:00"))
         return True
     except ValueError:
         return False
@@ -132,7 +133,7 @@ def is_valid_skill_category(value: Any) -> TypeGuard[str]:
     if not isinstance(value, str):
         return False
 
-    valid_categories = {'truth', 'goodness', 'beauty', 'serenity', 'eternity'}
+    valid_categories = {"truth", "goodness", "beauty", "serenity", "eternity"}
     return value.lower() in valid_categories
 
 
@@ -153,23 +154,36 @@ def is_valid_priority(value: Any) -> TypeGuard[str]:
     """값이 유효한 우선순위인지 확인"""
     if not isinstance(value, str):
         return False
-    return value.lower() in {'high', 'medium', 'low'}
+    return value.lower() in {"high", "medium", "low"}
 
 
 def is_valid_status(value: Any) -> TypeGuard[str]:
     """값이 유효한 상태값인지 확인"""
     if not isinstance(value, str):
         return False
-    valid_statuses = {'pending', 'in_progress', 'completed', 'cancelled', 'deferred', 'planning', 'in-development', 'archived'}
+    valid_statuses = {
+        "pending",
+        "in_progress",
+        "completed",
+        "cancelled",
+        "deferred",
+        "planning",
+        "in-development",
+        "archived",
+    }
     return value.lower() in valid_statuses
 
 
 # API 요청 검증 타입 가드들
-def is_valid_pagination_params(page: Any, page_size: Any, max_page_size: int = 100) -> bool:
+def is_valid_pagination_params(
+    page: Any, page_size: Any, max_page_size: int = 100
+) -> bool:
     """페이지네이션 파라미터가 유효한지 확인"""
-    return (is_positive_int(page) and
-            is_positive_int(page_size) and
-            page_size <= max_page_size)
+    return (
+        is_positive_int(page)
+        and is_positive_int(page_size)
+        and page_size <= max_page_size
+    )
 
 
 def is_valid_api_request_data(data: Any) -> TypeGuard[dict[str, Any]]:
@@ -221,7 +235,7 @@ def safe_to_bool(value: Any, default: bool = False) -> bool:
     if is_bool(value):
         return value
     elif isinstance(value, str):
-        return value.lower() in ('true', '1', 'yes', 'on')
+        return value.lower() in ("true", "1", "yes", "on")
     elif isinstance(value, (int, float)):
         return bool(value)
     else:
@@ -236,14 +250,18 @@ def is_instance_of_type(value: Any, expected_type: type) -> bool:
 
 def is_list_of_type(value: Any, item_type: type) -> bool:
     """특정 타입의 리스트인지 확인"""
-    return isinstance(value, list) and all(isinstance(item, item_type) for item in value)
+    return isinstance(value, list) and all(
+        isinstance(item, item_type) for item in value
+    )
 
 
 def is_dict_of_types(value: Any, key_type: type, value_type: type) -> bool:
     """특정 타입들의 딕셔너리인지 확인"""
-    return (isinstance(value, dict) and
-            all(isinstance(k, key_type) for k in value.keys()) and
-            all(isinstance(v, value_type) for v in value.values()))
+    return (
+        isinstance(value, dict)
+        and all(isinstance(k, key_type) for k in value.keys())
+        and all(isinstance(v, value_type) for v in value.values())
+    )
 
 
 # 런타임 타입 검증 데코레이터
@@ -257,10 +275,12 @@ def validate_types(**type_guards: Any) -> Any:
     def create_user(name: str, age: int) -> User:
         ...
     """
+
     def decorator(func: Any) -> Any:
         def wrapper(*args: Any, **kwargs: Any) -> Any:
             # 함수 시그니처에서 파라미터 이름 추출
             import inspect
+
             sig = inspect.signature(func)
             param_names = list(sig.parameters.keys())
 
@@ -279,5 +299,7 @@ def validate_types(**type_guards: Any) -> Any:
                         )
 
             return func(*args, **kwargs)
+
         return wrapper
+
     return decorator

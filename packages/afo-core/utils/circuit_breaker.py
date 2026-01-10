@@ -174,13 +174,21 @@ class CircuitBreaker:
             self._state = CircuitState.HALF_OPEN
             self._half_open_calls = 0
             self._stats.state_changes += 1
-            logger.info("[Circuit Breaker] %s: HALF_OPEN (복구 시도 중)", self.service_name)
+            logger.info(
+                "[Circuit Breaker] %s: HALF_OPEN (복구 시도 중)", self.service_name
+            )
         except (AttributeError, TypeError) as e:
-            logger.debug("Circuit Breaker HALF_OPEN 전환 실패 (속성/타입 에러): %s", str(e))
+            logger.debug(
+                "Circuit Breaker HALF_OPEN 전환 실패 (속성/타입 에러): %s", str(e)
+            )
         except Exception as e:  # - Intentional fallback for unexpected errors
-            logger.debug("Circuit Breaker HALF_OPEN 전환 중 예상치 못한 에러: %s", str(e))
+            logger.debug(
+                "Circuit Breaker HALF_OPEN 전환 중 예상치 못한 에러: %s", str(e)
+            )
 
-    async def call(self, func: Callable[..., Awaitable[T]], *args: Any, **kwargs: Any) -> T:
+    async def call(
+        self, func: Callable[..., Awaitable[T]], *args: Any, **kwargs: Any
+    ) -> T:
         """Execute a function through the circuit breaker."""
         async with self._lock:
             # Check if we should transition from OPEN to HALF_OPEN
@@ -223,7 +231,9 @@ class CircuitBreaker:
                 if self._state == CircuitState.HALF_OPEN:
                     # Failed during recovery - back to open
                     self._state = CircuitState.OPEN
-                    print(f"❌ [Circuit Breaker] {self.service_name}: 복구 실패, 다시 OPEN")
+                    print(
+                        f"❌ [Circuit Breaker] {self.service_name}: 복구 실패, 다시 OPEN"
+                    )
                 elif self._failure_count >= self.failure_threshold:
                     self._trip()
 
@@ -241,10 +251,14 @@ class CircuitBreaker:
             wrapper.circuit_breaker = self  # type: ignore[attr-defined]
             return wrapper
         except (AttributeError, TypeError) as e:
-            logger.debug("Circuit Breaker 데코레이터 생성 실패 (속성/타입 에러): %s", str(e))
+            logger.debug(
+                "Circuit Breaker 데코레이터 생성 실패 (속성/타입 에러): %s", str(e)
+            )
             return func
         except Exception as e:  # - Intentional fallback for unexpected errors
-            logger.debug("Circuit Breaker 데코레이터 생성 중 예상치 못한 에러: %s", str(e))
+            logger.debug(
+                "Circuit Breaker 데코레이터 생성 중 예상치 못한 에러: %s", str(e)
+            )
             return func
 
     def get_status(self) -> dict[str, Any]:
@@ -265,14 +279,17 @@ class CircuitBreaker:
                 "time_until_reset": (
                     max(
                         0.0,
-                        self.recovery_timeout - (time.time() - (self._last_failure_time or 0.0)),
+                        self.recovery_timeout
+                        - (time.time() - (self._last_failure_time or 0.0)),
                     )
                     if self._last_failure_time and self._state == CircuitState.OPEN
                     else None
                 ),
             }
         except (AttributeError, TypeError, KeyError) as e:
-            logger.debug("Circuit Breaker 상태 조회 실패 (속성/타입/키 에러): %s", str(e))
+            logger.debug(
+                "Circuit Breaker 상태 조회 실패 (속성/타입/키 에러): %s", str(e)
+            )
             return {"service": self.service_name, "state": "error"}
         except Exception as e:  # - Intentional fallback for unexpected errors
             logger.debug("Circuit Breaker 상태 조회 중 예상치 못한 에러: %s", str(e))

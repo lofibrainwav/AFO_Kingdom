@@ -8,7 +8,6 @@ import re
 import sys
 from pathlib import Path
 
-
 # 프로젝트 루트를 Python 경로에 추가
 project_root = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(project_root / "packages" / "afo-core"))
@@ -54,7 +53,10 @@ def check_forbidden_expressions(file_path: Path) -> list[tuple[int, str]]:
                 continue
 
             # 허용 컨텍스트 체크
-            is_allowed = any(re.search(pattern, line, re.IGNORECASE) for pattern in ALLOWED_IN_CONTEXT)
+            is_allowed = any(
+                re.search(pattern, line, re.IGNORECASE)
+                for pattern in ALLOWED_IN_CONTEXT
+            )
             if is_allowed:
                 continue
 
@@ -95,7 +97,9 @@ def verify_reporting_agent_ssot():
             print(f"   ❌ {len(violations)}개 금지 표현 발견:")
             for line_num, line in violations[:5]:  # 최대 5개만 표시
                 print(f"      Line {line_num}: {line[:80]}...")
-            all_violations.extend([(file_path, line_num, line) for line_num, line in violations])
+            all_violations.extend(
+                [(file_path, line_num, line) for line_num, line in violations]
+            )
         else:
             print("   ✅ 금지 표현 없음")
 

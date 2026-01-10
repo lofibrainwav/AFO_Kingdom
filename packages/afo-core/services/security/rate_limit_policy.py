@@ -54,8 +54,12 @@ class RedisDownPolicy:
             )
         )
 
-        fail_closed_status = int(os.getenv("AFO_REDIS_DOWN_FAIL_CLOSED_STATUS", "503").strip())
-        warning_header_name = os.getenv("AFO_REDIS_DOWN_WARNING_HEADER", "X-AFO-Redis-Down").strip()
+        fail_closed_status = int(
+            os.getenv("AFO_REDIS_DOWN_FAIL_CLOSED_STATUS", "503").strip()
+        )
+        warning_header_name = os.getenv(
+            "AFO_REDIS_DOWN_WARNING_HEADER", "X-AFO-Redis-Down"
+        ).strip()
         cb_state_header_name = os.getenv(
             "AFO_REDIS_CB_STATE_HEADER", "X-AFO-Redis-CB-State"
         ).strip()

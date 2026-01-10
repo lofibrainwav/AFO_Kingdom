@@ -155,7 +155,9 @@ class GovernanceAgent:
             policy_checks.append(trinity_check)
 
         # Determine overall risk level
-        max_risk: RiskLevel = max((c.risk_level for c in policy_checks), key=lambda x: x.value)
+        max_risk: RiskLevel = max(
+            (c.risk_level for c in policy_checks), key=lambda x: x.value
+        )
         all_passed = all(c.passed for c in policy_checks)
 
         # Make decision
@@ -217,7 +219,9 @@ class GovernanceAgent:
 
     def _check_allowed_directories(self, path: str) -> PolicyCheck:
         """Check if path is in allowed directories."""
-        allowed = any(path.startswith(allowed_dir) for allowed_dir in self.allowed_directories)
+        allowed = any(
+            path.startswith(allowed_dir) for allowed_dir in self.allowed_directories
+        )
         return PolicyCheck(
             policy_name="directory_restrictions",
             passed=allowed,
@@ -241,7 +245,10 @@ class GovernanceAgent:
         try:
             # Dynamic path calculation
             audit_dir = (
-                Path(__file__).parent.parent.parent.parent.parent / "docs" / "ssot" / "audit"
+                Path(__file__).parent.parent.parent.parent.parent
+                / "docs"
+                / "ssot"
+                / "audit"
             )
             audit_dir.mkdir(parents=True, exist_ok=True)
 
@@ -300,7 +307,9 @@ class GovernanceAgent:
 governance_agent = GovernanceAgent()
 
 
-async def evaluate_action(action: str, agent_name: str, **context: Any) -> GovernanceDecision:
+async def evaluate_action(
+    action: str, agent_name: str, **context: Any
+) -> GovernanceDecision:
     """Convenience function to evaluate an action through governance."""
     return await governance_agent.evaluate_action(action, agent_name, context)
 

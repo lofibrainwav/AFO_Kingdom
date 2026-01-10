@@ -130,7 +130,9 @@ def example_streaming_guard() -> None:
         return
 
     client = StreamingGuardrailsOpenAI(
-        config={"output": [{"name": "StreamingModeration", "config": {"threshold": "low"}}]},
+        config={
+            "output": [{"name": "StreamingModeration", "config": {"threshold": "low"}}]
+        },
         api_key=os.getenv("OPENAI_API_KEY"),
         model=os.getenv("GUARDRAILS_MODEL", "gpt-4o-mini"),
     )

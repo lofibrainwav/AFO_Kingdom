@@ -54,7 +54,6 @@ class TrinityScoreMonitor:
             # 기존 메트릭에서 가져오기 또는 생성
             try:
                 from prometheus_client import Histogram
-
                 from utils.metrics import get_or_create_metric
 
                 self.trinity_score_histogram = get_or_create_metric(
@@ -64,7 +63,9 @@ class TrinityScoreMonitor:
                     buckets=[-1.0, -0.5, -0.2, -0.1, 0.0, 0.1, 0.2, 0.5, 1.0],
                 )
 
-                logger.info("Trinity Score monitoring initialized with existing metrics")
+                logger.info(
+                    "Trinity Score monitoring initialized with existing metrics"
+                )
             except Exception as e:
                 logger.warning(f"Failed to initialize histogram metric: {e}")
                 self.trinity_score_histogram = None
@@ -170,7 +171,8 @@ class TrinityScoreMonitor:
             "trend": trend,
             "total_change": total_change,
             "samples": len(recent_samples),
-            "avg_score": sum(s.trinity_score for s in recent_samples) / len(recent_samples),
+            "avg_score": sum(s.trinity_score for s in recent_samples)
+            / len(recent_samples),
             "time_range_minutes": window_minutes,
         }
 

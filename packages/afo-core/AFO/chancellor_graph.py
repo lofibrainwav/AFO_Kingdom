@@ -13,11 +13,11 @@ import random
 import time
 from typing import Any
 
-from AFO.config.settings import get_settings
 from AFO.api.chancellor_v2.graph import nodes
 
 # Import Chancellor Graph V2 components
 from AFO.api.chancellor_v2.graph.runner import run_v2 as run_chancellor_v2
+from AFO.config.settings import get_settings
 
 
 # Create unified chancellor_graph interface
@@ -90,12 +90,17 @@ class ChancellorGraph:
                         "score": getattr(optimized_program, "_mipro_score", 0.8),
                         "trials": getattr(optimized_program, "_mipro_trials", 0),
                         "config": getattr(optimized_program, "_mipro_config", {}),
-                        "optimized": getattr(optimized_program, "_mipro_optimized", False),
+                        "optimized": getattr(
+                            optimized_program, "_mipro_optimized", False
+                        ),
                     }
 
                 except ImportError as e:
                     # MIPRO modules not available
-                    state.outputs["_mipro"] = {"status": "modules_missing", "error": str(e)}
+                    state.outputs["_mipro"] = {
+                        "status": "modules_missing",
+                        "error": str(e),
+                    }
                 except Exception as e:
                     # MIPRO execution failed
                     state.outputs["_mipro"] = {"status": "failed", "error": str(e)}
@@ -127,7 +132,8 @@ class ChancellorGraph:
                 "step": state.step,
                 "started_at": state.started_at,
                 "updated_at": state.updated_at,
-                "success": decision_dict.get("mode") == "AUTO_RUN",  # Use DecisionResult mode
+                "success": decision_dict.get("mode")
+                == "AUTO_RUN",  # Use DecisionResult mode
                 "error_count": len(state.errors),
                 # Add DecisionResult fields for transparency
                 "decision": decision_dict,
@@ -144,7 +150,9 @@ class ChancellorGraph:
             }
 
     @staticmethod
-    async def invoke(command: str, headers: dict[str, str] | None = None, **kwargs) -> dict:
+    async def invoke(
+        command: str, headers: dict[str, str] | None = None, **kwargs
+    ) -> dict:
         """Simple invoke method for backward compatibility.
 
         Args:
@@ -181,8 +189,13 @@ class ChancellorGraph:
 
             # 2. Shadow Path (PH24)
             # Combined condition per SIM102: shadow enabled AND random sampling
-            if shadow_enabled and random.random() <= settings.CHANCELLOR_V2_DIFF_SAMPLING_RATE:
-                asyncio.create_task(ChancellorGraph._run_shadow_diff(command, result, **kwargs))
+            if (
+                shadow_enabled
+                and random.random() <= settings.CHANCELLOR_V2_DIFF_SAMPLING_RATE
+            ):
+                asyncio.create_task(
+                    ChancellorGraph._run_shadow_diff(command, result, **kwargs)
+                )
 
             return result
 

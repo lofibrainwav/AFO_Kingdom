@@ -20,7 +20,9 @@ def test_mipro_disabled_returns_default():
 
 
 def test_mipro_selects_best():
-    metric = TrinityMetricWrapper(lambda prompt, target: 1.0 if prompt == "best" else 0.1)
+    metric = TrinityMetricWrapper(
+        lambda prompt, target: 1.0 if prompt == "best" else 0.1
+    )
     opt = MiproOptimizer(metric)
     os.environ["AFO_MIPRO_ENABLED"] = "1"
     res = opt.optimize(["bad", "best"], "t")
@@ -138,5 +140,9 @@ def test_mipro_node_noop_when_disabled():
     result_state = mipro_node(state)
 
     # Verify NO-OP: outputs should be unchanged
-    assert result_state.outputs == initial_outputs, "MIPRO node should be NO-OP when disabled"
-    assert "_mipro" not in result_state.outputs, "No MIPRO output should be added when disabled"
+    assert (
+        result_state.outputs == initial_outputs
+    ), "MIPRO node should be NO-OP when disabled"
+    assert (
+        "_mipro" not in result_state.outputs
+    ), "No MIPRO output should be added when disabled"

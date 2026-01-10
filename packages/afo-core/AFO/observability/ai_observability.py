@@ -158,7 +158,11 @@ class AIObservability:
             self._check_compliance(span)
 
     def record_metric(
-        self, name: str, value: float, unit: str = "count", labels: dict[str, str] | None = None
+        self,
+        name: str,
+        value: float,
+        unit: str = "count",
+        labels: dict[str, str] | None = None,
     ) -> None:
         """Record a metric data point."""
         metric = Metric(
@@ -182,12 +186,20 @@ class AIObservability:
         success: bool = True,
     ) -> None:
         """Record LLM call metrics."""
-        self.record_metric("llm.calls", 1, labels={"model": model, "success": str(success)})
-        self.record_metric("llm.prompt_tokens", prompt_tokens, labels={"model": model})
-        self.record_metric("llm.completion_tokens", completion_tokens, labels={"model": model})
-        self.record_metric("llm.latency", latency_ms, unit="ms", labels={"model": model})
         self.record_metric(
-            "llm.total_tokens", prompt_tokens + completion_tokens, labels={"model": model}
+            "llm.calls", 1, labels={"model": model, "success": str(success)}
+        )
+        self.record_metric("llm.prompt_tokens", prompt_tokens, labels={"model": model})
+        self.record_metric(
+            "llm.completion_tokens", completion_tokens, labels={"model": model}
+        )
+        self.record_metric(
+            "llm.latency", latency_ms, unit="ms", labels={"model": model}
+        )
+        self.record_metric(
+            "llm.total_tokens",
+            prompt_tokens + completion_tokens,
+            labels={"model": model},
         )
 
     def record_agent_action(
@@ -224,18 +236,26 @@ class AIObservability:
         # Check if governance approval was obtained for certain operations
         if self.compliance_rules["require_governance_approval"]:
             sensitive_ops = ["file_write", "api_call", "execute_code"]
-            if span.name in sensitive_ops and "governance_approved" not in span.attributes:
+            if (
+                span.name in sensitive_ops
+                and "governance_approved" not in span.attributes
+            ):
                 violations.append("missing_governance_approval")
 
         if violations:
-            logger.warning(f"[Observability] Compliance violations in {span.name}: {violations}")
+            logger.warning(
+                f"[Observability] Compliance violations in {span.name}: {violations}"
+            )
             span.attributes["compliance_violations"] = violations
 
     def _persist_span(self, span: Span) -> None:
         """Persist span to file for analysis."""
         try:
             traces_dir = (
-                Path(__file__).parent.parent.parent.parent.parent / "docs" / "ssot" / "traces"
+                Path(__file__).parent.parent.parent.parent.parent
+                / "docs"
+                / "ssot"
+                / "traces"
             )
             traces_dir.mkdir(parents=True, exist_ok=True)
 
@@ -257,7 +277,8 @@ class AIObservability:
         recent_metrics = [
             m
             for m in self._metrics
-            if datetime.fromisoformat(m.timestamp.replace("Z", "+00:00")).timestamp() > cutoff
+            if datetime.fromisoformat(m.timestamp.replace("Z", "+00:00")).timestamp()
+            > cutoff
         ]
 
         # Aggregate by name

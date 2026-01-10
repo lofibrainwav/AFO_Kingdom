@@ -70,10 +70,14 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--train", required=True, help="Path to JSONL train set.")
     ap.add_argument("--auto", default="light", choices=["light", "medium", "heavy"])
-    ap.add_argument("--out", default="artifacts/dspy/RAG_OPTIMIZED.json", help="Output save path.")
+    ap.add_argument(
+        "--out", default="artifacts/dspy/RAG_OPTIMIZED.json", help="Output save path."
+    )
     ap.add_argument("--val-size", type=int, default=20)
     ap.add_argument(
-        "--strict", action="store_true", help="Fail fast (if compile_mipro supports strict)."
+        "--strict",
+        action="store_true",
+        help="Fail fast (if compile_mipro supports strict).",
     )
     args = ap.parse_args()
 

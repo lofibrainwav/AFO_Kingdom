@@ -105,7 +105,9 @@ MUSIC_EFFECT_MAP = {
 }
 
 
-def music_branch_processor(timeline_sections: list[dict[str, Any]]) -> list[dict[str, Any]]:
+def music_branch_processor(
+    timeline_sections: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
     """
     TimelineState의 music 지시어 → 실제 오디오 생성 파라미터 변환
 
@@ -244,4 +246,6 @@ if __name__ == "__main__":
 
     for section in music_plan:
         params = section.get("music_params", {})
-        print(f"  {section['time']}: {params.get('energy')} energy, {params.get('tempo')} tempo")
+        print(
+            f"  {section['time']}: {params.get('energy')} energy, {params.get('tempo')} tempo"
+        )

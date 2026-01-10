@@ -34,7 +34,11 @@ VIDEO_EFFECT_MAP = {
         "color": "#FFFFFF",
         "duration": 3.0,
         "ffmpeg_filter": "drawtext=text='TITLE':fontsize=48:fontcolor=white:x=(w-text_w)/2:y=h-100*t/3.0",
-        "runwayml_params": {"text": "TITLE", "animation": "slide_up", "position": "center"},
+        "runwayml_params": {
+            "text": "TITLE",
+            "animation": "slide_up",
+            "position": "center",
+        },
     },
     "zoom_effect": {
         "effect": "zoom",
@@ -102,7 +106,11 @@ VIDEO_EFFECT_MAP = {
         "start_opacity": 1.0,
         "end_opacity": 1.0,
         "ffmpeg_filter": "eq=saturation=1.3:contrast=1.1:brightness=0.05",
-        "runwayml_params": {"filter": "color_boost", "saturation": 1.3, "contrast": 1.1},
+        "runwayml_params": {
+            "filter": "color_boost",
+            "saturation": 1.3,
+            "contrast": 1.1,
+        },
     },
     "hollywood_transition": {
         "effect": "advanced_transition",
@@ -116,7 +124,9 @@ VIDEO_EFFECT_MAP = {
 }
 
 
-def video_branch_processor(timeline_sections: list[dict[str, Any]]) -> list[dict[str, Any]]:
+def video_branch_processor(
+    timeline_sections: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
     """
     TimelineState의 video 지시어 → 실제 렌더링 파라미터 변환
 

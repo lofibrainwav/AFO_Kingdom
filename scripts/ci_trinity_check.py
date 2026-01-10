@@ -47,7 +47,12 @@ def analyze_risk(directory: str) -> float:
 
         # Skip known false positive paths
         skip_patterns = [
-            "node_modules", ".git", "__pycache__", "venv", ".venv", ".next",
+            "node_modules",
+            ".git",
+            "__pycache__",
+            "venv",
+            ".venv",
+            ".next",
             "tools/dgm",  # DGM upstream test fixtures
             "/quarantine/",  # Quarantined/deprecated code
             "/red_team/",  # Intentional security test patterns
@@ -117,7 +122,13 @@ def main():
     serenity = 100.0
     eternity = 100.0
 
-    trinity_score = (truth * 0.35) + (goodness * 0.35) + (beauty * 0.20) + (serenity * 0.08) + (eternity * 0.02)
+    trinity_score = (
+        (truth * 0.35)
+        + (goodness * 0.35)
+        + (beauty * 0.20)
+        + (serenity * 0.08)
+        + (eternity * 0.02)
+    )
 
     print("\n📊 [Scorecard]")
     print(f"   - 眞 (Truth): {truth}")

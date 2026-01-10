@@ -35,7 +35,9 @@ class RCAteWorkflow(BaseModel):
     """R.C.A.T.E. 구조화 워크플로우"""
 
     role: str = Field(..., description="에이전트 역할 정의")
-    context: dict[str, Any] = Field(..., description="IRS/FTB SSOT + 고객 데이터 + 비즈니스 목적")
+    context: dict[str, Any] = Field(
+        ..., description="IRS/FTB SSOT + 고객 데이터 + 비즈니스 목적"
+    )
     action: str = Field(..., description="구체적인 실행 계획")
     task: list[str] = Field(..., description="세부 작업 분해")
     execution: dict[str, Any] = Field(..., description="단계별 실행 결과")
@@ -55,7 +57,9 @@ class EvidenceBundle(BaseModel):
     evidence_links: list[str] = Field(..., description="IRS/FTB 근거 링크")
     calculation_log: dict[str, Any] = Field(..., description="계산 수식 및 파라미터")
     trinity_score: dict[str, float] = Field(..., description="Trinity Score 평가")
-    impact_level: str = Field(default="medium", description="Critical/High/Medium 영향도")
+    impact_level: str = Field(
+        default="medium", description="Critical/High/Medium 영향도"
+    )
     metacognition_insights: dict[str, Any] = Field(
         default_factory=dict, description="메타인지 검증 결과"
     )
@@ -129,10 +133,15 @@ class AssociateAgent:
         return {
             "entity_info": f"{structured_data['entity_type']} for tax year {structured_data['tax_year']}",
             "key_assets": [
-                asset.get("description", "Unknown") for asset in structured_data["assets"]
+                asset.get("description", "Unknown")
+                for asset in structured_data["assets"]
             ],
             "estimated_income": structured_data["income"],
-            "potential_strategies": ["§179 deduction", "Bonus depreciation", "R&D credit"],
+            "potential_strategies": [
+                "§179 deduction",
+                "Bonus depreciation",
+                "R&D credit",
+            ],
             "disclaimer": "This is a preliminary analysis. Final determination requires professional review.",
         }
 
@@ -193,21 +202,29 @@ class ManagerAgent:
                 "quality_gate": quality_gate,
                 "recommendations": self._generate_recommendations(quality_gate),
             },
-            "next_actions": ["Auditor 감사 요청"]
-            if quality_gate["passed"]
-            else ["Associate 수정 요청"],
+            "next_actions": (
+                ["Auditor 감사 요청"]
+                if quality_gate["passed"]
+                else ["Associate 수정 요청"]
+            ),
             "evidence_id": self.evidence_id,
         }
 
     def _assess_risks(self, associate_output: dict[str, Any]) -> dict[str, Any]:
         """리스크 사전 평가"""
         return {
-            "high_risk": ["ERC refund claims", "R&D credit stacking", "International tax issues"],
+            "high_risk": [
+                "ERC refund claims",
+                "R&D credit stacking",
+                "International tax issues",
+            ],
             "medium_risk": ["Bonus depreciation timing", "§179 phase-out calculation"],
             "low_risk": ["Standard deduction optimization", "State tax credits"],
         }
 
-    def _perform_risk_assessment(self, associate_output: dict[str, Any]) -> dict[str, Any]:
+    def _perform_risk_assessment(
+        self, associate_output: dict[str, Any]
+    ) -> dict[str, Any]:
         """상세 리스크 평가"""
         return {
             "tax_compliance": "LOW",
@@ -217,7 +234,9 @@ class ManagerAgent:
             "overall_risk_score": 0.65,
         }
 
-    def _check_strategy_alignment(self, associate_output: dict[str, Any]) -> dict[str, Any]:
+    def _check_strategy_alignment(
+        self, associate_output: dict[str, Any]
+    ) -> dict[str, Any]:
         """전략 적합성 검토"""
         business_purpose = (
             associate_output.get("output", {})
@@ -227,7 +246,9 @@ class ManagerAgent:
 
         return {
             "business_purpose": business_purpose,
-            "strategy_match": "HIGH" if business_purpose == "tax_optimization" else "MEDIUM",
+            "strategy_match": (
+                "HIGH" if business_purpose == "tax_optimization" else "MEDIUM"
+            ),
             "implementation_feasibility": "HIGH",
             "expected_benefits": "SUBSTANTIAL",
         }
@@ -299,7 +320,9 @@ class AuditorAgent:
         final_determination = self._make_final_determination(
             regulation_check, two_source_verification
         )
-        evidence_bundle = self._create_evidence_bundle(manager_output, final_determination)
+        evidence_bundle = self._create_evidence_bundle(
+            manager_output, final_determination
+        )
 
         rcate.execution = {
             "regulation_check": regulation_check,
@@ -322,7 +345,9 @@ class AuditorAgent:
             "evidence_id": self.evidence_id,
         }
 
-    def _perform_regulation_check(self, manager_output: dict[str, Any]) -> dict[str, Any]:
+    def _perform_regulation_check(
+        self, manager_output: dict[str, Any]
+    ) -> dict[str, Any]:
         """규정 준수 검사"""
         return {
             "irs_compliance": {
@@ -387,7 +412,10 @@ class AuditorAgent:
             ],
             "calculation_log": {
                 "methodology": "OBBBA 2025/2026 §179 + Bonus Depreciation",
-                "assumptions": ["US domestic manufacturing", "Placed-in-service timing"],
+                "assumptions": [
+                    "US domestic manufacturing",
+                    "Placed-in-service timing",
+                ],
                 "parameters": {"federal_rate": 0.21, "ca_rate": 0.0884},
             },
             "trinity_score": {
@@ -446,9 +474,11 @@ class HumilityProtocol:
             return {
                 "DOING": "리스크 평가 및 전략 검토 중",
                 "DONE": f"품질 게이트 {'통과' if quality_gate.get('passed', False) else '실패'} (증거 ID: {agent_output.get('evidence_id', '')[:8]})",
-                "NEXT": "Auditor 감사 요청"
-                if quality_gate.get("passed", False)
-                else "Associate 수정 요청",
+                "NEXT": (
+                    "Auditor 감사 요청"
+                    if quality_gate.get("passed", False)
+                    else "Associate 수정 요청"
+                ),
             }
         elif level == AgentLevel.AUDITOR:
             determination = status.get("final_determination", {})
@@ -458,7 +488,11 @@ class HumilityProtocol:
                 "NEXT": "Julie 승인 대기",
             }
         else:
-            return {"DOING": "처리 중", "DONE": "알 수 없음", "NEXT": "다음 단계 확인 필요"}
+            return {
+                "DOING": "처리 중",
+                "DONE": "알 수 없음",
+                "NEXT": "다음 단계 확인 필요",
+            }
 
 
 class JulieAgentOrchestrator:
@@ -495,7 +529,9 @@ class JulieAgentOrchestrator:
             },
             "humility_report": final_report,
             "final_output": auditor_result["output"],
-            "trinity_score": auditor_result["output"]["evidence_bundle"]["trinity_score"],
+            "trinity_score": auditor_result["output"]["evidence_bundle"][
+                "trinity_score"
+            ],
             "processing_complete": True,
         }
 
@@ -569,7 +605,9 @@ class AICPAFunctionInterface:
         tax = 0
         for min_income, max_income, rate in brackets:
             if taxable_income > min_income:
-                taxable_in_bracket = min(taxable_income - min_income, max_income - min_income)
+                taxable_in_bracket = min(
+                    taxable_income - min_income, max_income - min_income
+                )
                 tax += taxable_in_bracket * rate
 
         return tax
@@ -594,7 +632,9 @@ class AICPAFunctionInterface:
         tax = 0
         for min_income, max_income, rate in brackets:
             if taxable_income > min_income:
-                taxable_in_bracket = min(taxable_income - min_income, max_income - min_income)
+                taxable_in_bracket = min(
+                    taxable_income - min_income, max_income - min_income
+                )
                 tax += taxable_in_bracket * rate
 
         return tax
@@ -648,7 +688,9 @@ AFO Kingdom
             "status": "drafted",
         }
 
-    def _generate_turbotax_csv(self, client_name: str, tax_data: dict[str, Any]) -> dict[str, Any]:
+    def _generate_turbotax_csv(
+        self, client_name: str, tax_data: dict[str, Any]
+    ) -> dict[str, Any]:
         """Form Filler: TurboTax CSV 생성"""
         import csv
         import io
@@ -668,10 +710,20 @@ AFO Kingdom
             ]
         )
         writer.writerow(
-            ["Gross Income", tax_data.get("gross_income", 0), "W-2/1099", "Verify with Documents"]
+            [
+                "Gross Income",
+                tax_data.get("gross_income", 0),
+                "W-2/1099",
+                "Verify with Documents",
+            ]
         )
         writer.writerow(
-            ["Deductions", tax_data.get("deductions", 0), "Calculated", "Standard/Itemized"]
+            [
+                "Deductions",
+                tax_data.get("deductions", 0),
+                "Calculated",
+                "Standard/Itemized",
+            ]
         )
 
         csv_content = output.getvalue()
@@ -694,7 +746,9 @@ AFO Kingdom
         output = io.StringIO()
         writer = csv.writer(output)
 
-        writer.writerow(["Date", "Description", "Debit Account", "Credit Account", "Amount"])
+        writer.writerow(
+            ["Date", "Description", "Debit Account", "Credit Account", "Amount"]
+        )
         writer.writerow(
             [
                 datetime.now().strftime("%m/%d/%Y"),

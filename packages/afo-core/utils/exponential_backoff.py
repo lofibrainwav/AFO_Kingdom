@@ -54,7 +54,9 @@ try:
     PROMETHEUS_AVAILABLE = True
 
     # 재시도 메트릭 (중복 등록 방지)
-    def _get_or_create_counter(name: str, description: str, labels: list[str]) -> Counter | None:
+    def _get_or_create_counter(
+        name: str, description: str, labels: list[str]
+    ) -> Counter | None:
         """Counter를 가져오거나 생성 (중복 등록 방지)"""
         try:
             # 이미 등록된 메트릭이 있는지 확인
@@ -326,7 +328,9 @@ class ExponentialBackoff:
             "total_successes": self.total_successes,
             "total_failures": self.total_failures,
             "success_rate": (
-                self.total_successes / self.total_attempts if self.total_attempts > 0 else 0.0
+                self.total_successes / self.total_attempts
+                if self.total_attempts > 0
+                else 0.0
             ),
         }
 
@@ -512,7 +516,9 @@ class BackoffStrategies:
 
 
 # Async wrapper for ExponentialBackoff (for use in async contexts)
-async def exponential_backoff[TResult](
+async def exponential_backoff[
+    TResult
+](
     func: Callable[..., TResult],
     max_retries: int = 5,
     base_delay: float = 1.0,

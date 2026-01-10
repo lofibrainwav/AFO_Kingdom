@@ -1,8 +1,10 @@
-import sys
 import os
-sys.path.insert(0, 'packages/afo-core/AFO/multimodal')
+import sys
+
+sys.path.insert(0, "packages/afo-core/AFO/multimodal")
 from pathlib import Path
-from mlx_musicgen_runner import MLXMusicGenRunner, MLXMusicGenConfig
+
+from mlx_musicgen_runner import MLXMusicGenConfig, MLXMusicGenRunner
 
 print("🐛 MLX Runner 환경 변수 디버깅")
 print("=" * 40)

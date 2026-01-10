@@ -7,7 +7,6 @@ from unittest.mock import patch
 
 import pytest
 
-
 # Ensure AFO package is importable
 sys.path.append(
     pathlib.Path(
@@ -15,7 +14,7 @@ sys.path.append(
     ).resolve()
 )
 
-from AFO..utils.cache_utils import import cache, cached
+from AFO.utils.cache_utils import cache, cached
 
 
 # Mock Redis Client

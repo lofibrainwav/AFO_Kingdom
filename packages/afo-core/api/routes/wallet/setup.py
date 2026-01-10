@@ -10,9 +10,8 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any
 
-from fastapi import APIRouter, HTTPException
-
 from AFO.models import API_PROVIDERS, WalletAPIKeyRequest, WalletStatusResponse
+from fastapi import APIRouter, HTTPException
 
 # Create router
 setup_router = APIRouter(prefix="/setup", tags=["Wallet Setup"])
@@ -57,7 +56,9 @@ async def set_api_key(request: WalletAPIKeyRequest) -> dict[str, Any]:
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to set API key: {e}") from e
+        raise HTTPException(
+            status_code=500, detail=f"Failed to set API key: {e}"
+        ) from e
 
 
 @setup_router.get("/status", response_model=WalletStatusResponse)
@@ -84,6 +85,10 @@ async def get_wallet_status() -> WalletStatusResponse:
         )
 
     except ImportError:
-        raise HTTPException(status_code=503, detail="Wallet system not available") from None
+        raise HTTPException(
+            status_code=503, detail="Wallet system not available"
+        ) from None
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to get wallet status: {e}") from e
+        raise HTTPException(
+            status_code=500, detail=f"Failed to get wallet status: {e}"
+        ) from e

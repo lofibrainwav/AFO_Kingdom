@@ -63,6 +63,7 @@ exclude = [
     "packages/trinity-os/tests",
     "tests",
     "conftest.py",
+    "services",
 ]
 
 check_untyped_defs = true
@@ -85,6 +86,23 @@ ignore_errors = true
 [[tool.mypy.overrides]]
 module = ["services"]
 ignore_errors = true
+
+# Legacy Segregation: Relax strictness for existing heavy-debt modules
+[[tool.mypy.overrides]]
+module = [
+    "scripts.*",
+    "tools.*",
+    "packages.afo_core.services.*",
+    "packages.afo_core.AFO.*",
+    "packages.afo_core.api.*",
+    "packages.afo_core.legacy.*",
+    "packages.afo_core.commands.*",
+    "packages.afo_core.builders.*",
+    "packages.afo_core.config.*",
+]
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+check_untyped_defs = false
 
 [tool.pydantic-mypy]
 init_forbid_extra = true

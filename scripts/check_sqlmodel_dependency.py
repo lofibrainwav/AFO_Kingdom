@@ -8,12 +8,13 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-
 # #region agent log
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 
 
-def log_debug(location: str, message: str, data: dict | None = None, hypothesis_id: str = "A") -> None:
+def log_debug(
+    location: str, message: str, data: dict | None = None, hypothesis_id: str = "A"
+) -> None:
     """Debug logging to NDJSON file"""
     try:
         log_entry = {
@@ -170,10 +171,14 @@ def main():
     sqlmodel_available = step1_check_sqlmodel_import()
 
     # Step 2: LearningLog 모델 import 확인
-    learning_log_available = step2_check_learning_log_import() if sqlmodel_available else False
+    learning_log_available = (
+        step2_check_learning_log_import() if sqlmodel_available else False
+    )
 
     # Step 3: Learning Log Router import 확인
-    router_available = step3_check_learning_log_router_import() if learning_log_available else False
+    router_available = (
+        step3_check_learning_log_router_import() if learning_log_available else False
+    )
 
     # 최종 요약
     print("\n" + "=" * 60)
@@ -181,8 +186,12 @@ def main():
     print("=" * 60)
 
     print(f"\n✅ sqlmodel: {'사용 가능' if sqlmodel_available else '❌ 설치 필요'}")
-    print(f"✅ LearningLog 모델: {'사용 가능' if learning_log_available else '❌ import 실패'}")
-    print(f"✅ Learning Log Router: {'사용 가능' if router_available else '❌ import 실패'}")
+    print(
+        f"✅ LearningLog 모델: {'사용 가능' if learning_log_available else '❌ import 실패'}"
+    )
+    print(
+        f"✅ Learning Log Router: {'사용 가능' if router_available else '❌ import 실패'}"
+    )
 
     if not sqlmodel_available:
         print("\n💡 해결 방법:")

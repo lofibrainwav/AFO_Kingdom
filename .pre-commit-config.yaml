@@ -49,7 +49,8 @@ repos:
         pass_filenames: false
         exclude: .venv/
 
-  # Trinity Score 검증
+  # Trinity Score 검증 (성능 최적화: Manual Only)
+  # 수동 실행: pre-commit run trinity-score-check --hook-stage manual
   - repo: local
     hooks:
       - id: trinity-score-check
@@ -58,6 +59,7 @@ repos:
         language: system
         files: \.py$
         pass_filenames: false
+        stages: [manual]
 
   # 보안 취약점 검사 (선택적)
   - repo: https://github.com/PyCQA/bandit
@@ -67,6 +69,17 @@ repos:
         args: ["-c", "pyproject.toml"]
         exclude: ^(tests/|scripts/|docs/)
         types: [python]
+
+  # MonkeyType Fast Harvest (Preview)
+  - repo: local
+    hooks:
+      - id: monkeytype-harvest
+        name: MonkeyType Fast Harvest
+        entry: ./scripts/monkeytype_harvest_fast.sh
+        language: system
+        pass_filenames: false
+        always_run: true
+        verbose: true
 
 # ============================================================================
 # 설정 설명

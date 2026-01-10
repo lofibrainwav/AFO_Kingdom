@@ -38,7 +38,9 @@ def timeline_generator_node(state: TimelineState) -> dict[str, Any]:
     raw_intent = state.get("raw_intent", "").lower()
 
     # 동적 템플릿 선택 (Simple Intent Analyzer)
-    is_short = any(k in raw_intent for k in ["짧은", "틱톡", "쇼츠", "short", "tiktok", "shorts"])
+    is_short = any(
+        k in raw_intent for k in ["짧은", "틱톡", "쇼츠", "short", "tiktok", "shorts"]
+    )
 
     if is_short:
         timeline_sections = [
@@ -160,7 +162,9 @@ timeline_workflow = build_timeline_workflow()
 timeline_app = timeline_workflow.compile()
 
 
-def generate_timeline_state(intent: str = "흥겨운 인트로 + 클라이맥스 드롭") -> dict[str, Any]:
+def generate_timeline_state(
+    intent: str = "흥겨운 인트로 + 클라이맥스 드롭",
+) -> dict[str, Any]:
     """
     TimelineState 생성 편의 함수
 

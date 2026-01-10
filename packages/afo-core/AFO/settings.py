@@ -21,12 +21,18 @@ class AFOSettings:
 
     # Core settings
     environment: str = field(default_factory=lambda: os.getenv("AFO_ENV", "production"))
-    debug: bool = field(default_factory=lambda: os.getenv("AFO_DEBUG", "false").lower() == "true")
+    debug: bool = field(
+        default_factory=lambda: os.getenv("AFO_DEBUG", "false").lower() == "true"
+    )
     version: str = "1.0.0"
 
     # API settings
-    api_host: str = field(default_factory=lambda: os.getenv("AFO_API_HOST", "127.0.0.1"))
-    api_port: int = field(default_factory=lambda: int(os.getenv("AFO_API_PORT", "8010")))
+    api_host: str = field(
+        default_factory=lambda: os.getenv("AFO_API_HOST", "127.0.0.1")
+    )
+    api_port: int = field(
+        default_factory=lambda: int(os.getenv("AFO_API_PORT", "8010"))
+    )
 
     # LLM settings
     openai_api_key: str = field(default_factory=lambda: os.getenv("OPENAI_API_KEY", ""))

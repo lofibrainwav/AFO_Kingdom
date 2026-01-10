@@ -19,7 +19,9 @@ def _overlap() -> int:
         return 75
 
 
-def smart_chunk(text: str, chunk_size: int | None = None, overlap: int | None = None) -> list[str]:
+def smart_chunk(
+    text: str, chunk_size: int | None = None, overlap: int | None = None
+) -> list[str]:
     if not _enabled():
         return [text]
 

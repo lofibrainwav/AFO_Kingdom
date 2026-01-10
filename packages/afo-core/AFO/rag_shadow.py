@@ -13,7 +13,9 @@ _shadow_metrics = []
 _metrics_lock = asyncio.Lock()
 
 
-async def execute_rag_shadow(query: str, context: dict[str, Any] | None = None) -> dict[str, Any]:
+async def execute_rag_shadow(
+    query: str, context: dict[str, Any] | None = None
+) -> dict[str, Any]:
     """
     RAG Shadow 실행 - 사용자 응답에 영향 없음, 메트릭만 기록
 

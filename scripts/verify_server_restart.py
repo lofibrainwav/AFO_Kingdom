@@ -10,11 +10,12 @@ from pathlib import Path
 
 import requests
 
-
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 
 
-def log_debug(location: str, message: str, data: dict | None = None, hypothesis_id: str = "A") -> None:
+def log_debug(
+    location: str, message: str, data: dict | None = None, hypothesis_id: str = "A"
+) -> None:
     """Debug logging to NDJSON file"""
     try:
         log_entry = {
@@ -113,15 +114,21 @@ def main():
     if "/api/health/comprehensive" in not_working:
         print("\n⚠️  Comprehensive Health 엔드포인트가 작동하지 않습니다.")
         print("   서버를 재시작했는지 확인하세요.")
-        print("   서버 시작 로그에서 '✅ Comprehensive Health Check 라우터 등록 완료' 메시지를 확인하세요.")
+        print(
+            "   서버 시작 로그에서 '✅ Comprehensive Health Check 라우터 등록 완료' 메시지를 확인하세요."
+        )
 
     if "/api/intake/health" in not_working:
         print("\n⚠️  Intake 엔드포인트가 작동하지 않습니다.")
         print("   서버를 재시작했는지 확인하세요.")
-        print("   서버 시작 로그에서 '✅ Intake API 라우터 등록 완료' 메시지를 확인하세요.")
+        print(
+            "   서버 시작 로그에서 '✅ Intake API 라우터 등록 완료' 메시지를 확인하세요."
+        )
 
     if "/api/family/health" in not_working and "/family/health" in working:
-        print("\n⚠️  Family 엔드포인트는 /family/health로 작동하지만 /api/family/health는 작동하지 않습니다.")
+        print(
+            "\n⚠️  Family 엔드포인트는 /family/health로 작동하지만 /api/family/health는 작동하지 않습니다."
+        )
         print("   이는 정상일 수 있습니다 (Family 라우터가 /family prefix로 등록됨).")
 
     # #region agent log

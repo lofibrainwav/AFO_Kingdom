@@ -40,7 +40,9 @@ class MusicProvider(ABC):
         pass
 
     @abstractmethod
-    def generate_music(self, timeline_state: dict[str, Any], **kwargs) -> dict[str, Any]:
+    def generate_music(
+        self, timeline_state: dict[str, Any], **kwargs
+    ) -> dict[str, Any]:
         """
         TimelineState를 기반으로 음악 생성
 
@@ -101,7 +103,9 @@ class AudioCraftProvider(MusicProvider):
     def version(self) -> str:
         return "v1.4.1"
 
-    def generate_music(self, timeline_state: dict[str, Any], **kwargs) -> dict[str, Any]:
+    def generate_music(
+        self, timeline_state: dict[str, Any], **kwargs
+    ) -> dict[str, Any]:
         """
         AudioCraft를 사용한 음악 생성
         TimelineState의 시간별 세그먼트를 개별로 생성하고 합성
@@ -138,7 +142,9 @@ class AudioCraftProvider(MusicProvider):
 
             # 오디오 저장
             output_path = kwargs.get("output_path", "artifacts/audiocraft_output.wav")
-            audio_write(output_path, wav[0].cpu(), model.sample_rate, strategy="loudness")
+            audio_write(
+                output_path, wav[0].cpu(), model.sample_rate, strategy="loudness"
+            )
 
             return {
                 "success": True,
@@ -199,7 +205,9 @@ class MusicGenProvider(MusicProvider):
     def version(self) -> str:
         return "v1.2.0"
 
-    def generate_music(self, timeline_state: dict[str, Any], **kwargs) -> dict[str, Any]:
+    def generate_music(
+        self, timeline_state: dict[str, Any], **kwargs
+    ) -> dict[str, Any]:
         """
         MusicGen을 사용한 음악 생성
         빠르고 간단한 텍스트-음악 변환
@@ -229,7 +237,9 @@ class MusicGenProvider(MusicProvider):
                 # 가장 빈번한 directive를 메인으로
                 from collections import Counter
 
-                directives = [s.get("music_directive", "instrumental") for s in sections]
+                directives = [
+                    s.get("music_directive", "instrumental") for s in sections
+                ]
                 main_directive = Counter(directives).most_common(1)[0][0]
 
                 final_prompt = f"{main_directive}, {len(sections)} sections composition"
@@ -238,7 +248,8 @@ class MusicGenProvider(MusicProvider):
 
             # 음악 생성
             model.set_generation_params(
-                duration=kwargs.get("duration", 30), temperature=kwargs.get("temperature", 0.8)
+                duration=kwargs.get("duration", 30),
+                temperature=kwargs.get("temperature", 0.8),
             )
 
             wav = model.generate([final_prompt], progress=True)
@@ -247,7 +258,9 @@ class MusicGenProvider(MusicProvider):
             from audiocraft.data.audio import audio_write
 
             output_path = kwargs.get("output_path", "artifacts/musicgen_output.wav")
-            audio_write(output_path, wav[0].cpu(), model.sample_rate, strategy="loudness")
+            audio_write(
+                output_path, wav[0].cpu(), model.sample_rate, strategy="loudness"
+            )
 
             return {
                 "success": True,
@@ -310,7 +323,9 @@ class StableAudioProvider(MusicProvider):
     def version(self) -> str:
         return "v1.0.0"
 
-    def generate_music(self, timeline_state: dict[str, Any], **kwargs) -> dict[str, Any]:
+    def generate_music(
+        self, timeline_state: dict[str, Any], **kwargs
+    ) -> dict[str, Any]:
         """
         Stable Audio Open을 사용한 음악 생성
         """
@@ -418,7 +433,9 @@ class MLXMusicGenProvider(MusicProvider):
     def version(self) -> str:
         return "v1.0.0"
 
-    def generate_music(self, timeline_state: dict[str, Any], **kwargs) -> dict[str, Any]:
+    def generate_music(
+        self, timeline_state: dict[str, Any], **kwargs
+    ) -> dict[str, Any]:
         """
         MLX MusicGen을 사용한 음악 생성
         venv 환경에서 Apple Silicon 최적화 모델 실행
@@ -443,7 +460,7 @@ class MLXMusicGenProvider(MusicProvider):
                 prompt = music.get("prompt", "epic orchestral music")
 
             # MLX MusicGen 실행 스크립트 생성
-            script_content = f'''
+            script_content = f"""
 import sys
 import json
 sys.path.insert(0, "/Users/brnestrm/AFO_Kingdom/mlx-examples-official/musicgen")
@@ -495,7 +512,7 @@ except Exception as e:
         "traceback": traceback.format_exc()
     }}
     print(json.dumps(error_result))
-'''
+"""
 
             # 임시 스크립트 파일 생성
             with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
@@ -651,7 +668,9 @@ class SunoProvider(MusicProvider):
     def version(self) -> str:
         return "API"
 
-    def generate_music(self, timeline_state: dict[str, Any], **kwargs) -> dict[str, Any]:
+    def generate_music(
+        self, timeline_state: dict[str, Any], **kwargs
+    ) -> dict[str, Any]:
         """
         Suno API를 통한 음악 생성
         기존 suno_branch 모듈 활용
@@ -671,7 +690,9 @@ class SunoProvider(MusicProvider):
                     "success": True,
                     "provider": self.name,
                     "output_path": result.get("outputs", {}).get("audio_raw"),
-                    "duration": (result.get("outputs", {}).get("audio_aligned") and "aligned")
+                    "duration": (
+                        result.get("outputs", {}).get("audio_aligned") and "aligned"
+                    )
                     or "original",
                 }
             else:
@@ -732,7 +753,9 @@ class MusicProviderRouter:
         for provider in candidates:
             if provider.is_available():
                 self.providers[provider.name] = provider
-                logger.info(f"Loaded music provider: {provider.name} v{provider.version}")
+                logger.info(
+                    f"Loaded music provider: {provider.name} v{provider.version}"
+                )
 
     def get_available_providers(self) -> list[str]:
         """사용 가능한 Provider 이름 목록"""
@@ -788,7 +811,9 @@ class MusicProviderRouter:
         candidates.sort(key=lambda x: x[0], reverse=True)
         return candidates[0][1]
 
-    def generate_music(self, timeline_state: dict[str, Any], **kwargs) -> dict[str, Any]:
+    def generate_music(
+        self, timeline_state: dict[str, Any], **kwargs
+    ) -> dict[str, Any]:
         """
         자동 Provider 선택 후 음악 생성
 
@@ -850,7 +875,9 @@ def get_music_router() -> MusicProviderRouter:
     return _music_router
 
 
-def generate_music_with_router(timeline_state: dict[str, Any], **kwargs) -> dict[str, Any]:
+def generate_music_with_router(
+    timeline_state: dict[str, Any], **kwargs
+) -> dict[str, Any]:
     """
     MusicProviderRouter를 사용한 음악 생성 편의 함수
 
@@ -877,8 +904,18 @@ def test_music_providers():
     test_timeline = {
         "title": "AFO Test Music",
         "sections": [
-            {"start": 0, "end": 3, "text": "Epic intro", "music_directive": "slow_build"},
-            {"start": 3, "end": 6, "text": "Action scene", "music_directive": "drop_beat"},
+            {
+                "start": 0,
+                "end": 3,
+                "text": "Epic intro",
+                "music_directive": "slow_build",
+            },
+            {
+                "start": 3,
+                "end": 6,
+                "text": "Action scene",
+                "music_directive": "drop_beat",
+            },
         ],
     }
 

@@ -7,7 +7,6 @@ import json
 
 import requests
 
-
 BASE_URL = "http://localhost:8010"
 
 COLORS = {"GREEN": "\033[92m", "RED": "\033[91m", "RESET": "\033[0m", "BOLD": "\033[1m"}
@@ -16,7 +15,9 @@ COLORS = {"GREEN": "\033[92m", "RED": "\033[91m", "RESET": "\033[0m", "BOLD": "\
 def print_status(component, status_code, data):
     status_icon = "✅" if status_code == 200 else "❌"
     color = COLORS["GREEN"] if status_code == 200 else COLORS["RED"]
-    print(f"{status_icon} {COLORS['BOLD']}[{component}]{COLORS['RESET']} Status: {color}{status_code}{COLORS['RESET']}")
+    print(
+        f"{status_icon} {COLORS['BOLD']}[{component}]{COLORS['RESET']} Status: {color}{status_code}{COLORS['RESET']}"
+    )
     if status_code != 200:
         print(f"   Error: {json.dumps(data, indent=2, ensure_ascii=False)}")
     # else:
@@ -24,7 +25,9 @@ def print_status(component, status_code, data):
 
 
 def verify_kingdom_core():
-    print(f"\n{COLORS['BOLD']}🏰 AFO Kingdom Core Health Inspection 🏰{COLORS['RESET']}\n")
+    print(
+        f"\n{COLORS['BOLD']}🏰 AFO Kingdom Core Health Inspection 🏰{COLORS['RESET']}\n"
+    )
 
     endpoints = [
         ("Chancellor (Brain)", "/chancellor/health"),
@@ -46,14 +49,20 @@ def verify_kingdom_core():
             if res.status_code != 200:
                 all_passed = False
         except Exception as e:
-            print(f"❌ {COLORS['BOLD']}[{name}]{COLORS['RESET']} Connection Failed: {e}")
+            print(
+                f"❌ {COLORS['BOLD']}[{name}]{COLORS['RESET']} Connection Failed: {e}"
+            )
             all_passed = False
 
     print("\n" + "=" * 40)
     if all_passed:
-        print(f"{COLORS['GREEN']}{COLORS['BOLD']}🎉 All Kingdom Core Systems Operational! 🎉{COLORS['RESET']}")
+        print(
+            f"{COLORS['GREEN']}{COLORS['BOLD']}🎉 All Kingdom Core Systems Operational! 🎉{COLORS['RESET']}"
+        )
     else:
-        print(f"{COLORS['RED']}{COLORS['BOLD']}⚠️  Some Systems Require Attention! ⚠️{COLORS['RESET']}")
+        print(
+            f"{COLORS['RED']}{COLORS['BOLD']}⚠️  Some Systems Require Attention! ⚠️{COLORS['RESET']}"
+        )
     print("=" * 40 + "\n")
 
 

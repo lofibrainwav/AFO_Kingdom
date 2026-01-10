@@ -23,7 +23,9 @@ except ImportError:
 
 
 try:
-    from ...config.friction_calibrator import friction_calibrator as _friction_calibrator
+    from ...config.friction_calibrator import (
+        friction_calibrator as _friction_calibrator,
+    )
 
     friction_calibrator: Any = _friction_calibrator
 except ImportError:
@@ -143,7 +145,9 @@ class TrinityCalculator:
         else:
             # Fallback to pure dynamic if no static provided (Legacy compatibility)
             final_score = dynamic_score
-            logger.info(f"[TrinityCalculator] Raw: {raw_scores} -> Score: {final_score:.1f}")
+            logger.info(
+                f"[TrinityCalculator] Raw: {raw_scores} -> Score: {final_score:.1f}"
+            )
 
         return float(round(final_score, 1))
 
@@ -203,7 +207,9 @@ class TrinityCalculator:
             record_trinity_score("serenity", scores[3])
             record_trinity_score("eternity", scores[4])
         except ImportError:
-            logger.warning("Prometheus middleware not available for Trinity score recording")
+            logger.warning(
+                "Prometheus middleware not available for Trinity score recording"
+            )
 
         return {
             "truth": scores[0],

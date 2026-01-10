@@ -8,11 +8,7 @@ Integrated with AGENTS.md (SSOT for Trinity Pillars)
 import logging
 import os
 from pathlib import Path
-from typing import (
-    Any,
-    Literal,
-    cast,
-)
+from typing import Any, Literal, cast
 
 from pydantic_settings import BaseSettings
 
@@ -145,7 +141,9 @@ class AntiGravitySettings(BaseSettings):
 
         try:
             # 1. Create a fresh instance to read new env values
-            new_settings = cast("Any", AntiGravitySettings)(_env_file=".env.antigravity")
+            new_settings = cast("Any", AntiGravitySettings)(
+                _env_file=".env.antigravity"
+            )
 
             # 2. Update current instance attributes
             # effectively becoming the new settings while keeping the same object reference

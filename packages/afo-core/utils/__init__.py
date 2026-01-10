@@ -84,10 +84,14 @@ except ImportError:
     update_trinity_scores = None
     _metrics_items = []
 
-__all__ = [
-    "CIRCUIT_BREAKER_AVAILABLE",
-    "METRICS_AVAILABLE",
-    "BackoffStrategies",
-    "ExponentialBackoff",
-    "retry_with_exponential_backoff",
-] + _circuit_breaker_items + _metrics_items
+__all__ = (
+    [
+        "CIRCUIT_BREAKER_AVAILABLE",
+        "METRICS_AVAILABLE",
+        "BackoffStrategies",
+        "ExponentialBackoff",
+        "retry_with_exponential_backoff",
+    ]
+    + _circuit_breaker_items
+    + _metrics_items
+)

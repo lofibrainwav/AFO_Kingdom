@@ -81,7 +81,9 @@ async def search_context7(
 
     except Exception as e:
         logger.error("Context7 search failed: %s", e)
-        raise HTTPException(status_code=500, detail=f"Context7 search failed: {e!s}") from e
+        raise HTTPException(
+            status_code=500, detail=f"Context7 search failed: {e!s}"
+        ) from e
 
 
 @router.get("/health")

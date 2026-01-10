@@ -295,7 +295,9 @@ class Context7MemoryManager:
             str: Context7 지식으로 강화된 쿼리
         """
         # 관련 Context7 지식 검색
-        search_result = self.search_context7_knowledge(query=query, user_id=user_id, limit=3)
+        search_result = self.search_context7_knowledge(
+            query=query, user_id=user_id, limit=3
+        )
 
         if not search_result["success"] or not search_result["results"]:
             return query
@@ -309,7 +311,9 @@ class Context7MemoryManager:
             context_parts.append(memory)
 
         if context_parts:
-            enhanced_query = f"{query} [Context7 Knowledge: {' | '.join(context_parts)}]"
+            enhanced_query = (
+                f"{query} [Context7 Knowledge: {' | '.join(context_parts)}]"
+            )
             return enhanced_query
 
         return query

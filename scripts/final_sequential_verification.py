@@ -8,12 +8,13 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-
 # #region agent log
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 
 
-def log_debug(location: str, message: str, data: dict | None = None, hypothesis_id: str = "A") -> None:
+def log_debug(
+    location: str, message: str, data: dict | None = None, hypothesis_id: str = "A"
+) -> None:
     """Debug logging to NDJSON file"""
     try:
         log_entry = {
@@ -142,7 +143,11 @@ def verify_endpoints():
                 "status_code": response.status_code,
                 "ok": is_ok,
             }
-            status = "✅" if response.status_code == 200 else "⚠️" if response.status_code == 404 else "❌"
+            status = (
+                "✅"
+                if response.status_code == 200
+                else "⚠️" if response.status_code == 404 else "❌"
+            )
             print(f"{status} {name}: {endpoint} - {response.status_code}")
 
             # #region agent log
@@ -186,12 +191,18 @@ def main():
     print("📊 최종 요약")
     print("=" * 60)
 
-    correct_prefixes = [name for name, data in prefix_results.items() if data.get("correct", False)]
+    correct_prefixes = [
+        name for name, data in prefix_results.items() if data.get("correct", False)
+    ]
     print(f"\n✅ Prefix가 올바른 라우터: {len(correct_prefixes)}개")
     for name in correct_prefixes:
         print(f"   - {name}")
 
-    working_endpoints = [name for name, data in endpoint_results.items() if data.get("status_code") == 200]
+    working_endpoints = [
+        name
+        for name, data in endpoint_results.items()
+        if data.get("status_code") == 200
+    ]
     print(f"\n✅ 작동하는 엔드포인트: {len(working_endpoints)}개")
     for name in working_endpoints:
         print(f"   - {name}")

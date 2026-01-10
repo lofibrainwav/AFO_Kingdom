@@ -20,10 +20,9 @@ from pathlib import Path
 from typing import Any
 
 import numpy as np
-from numpy.typing import NDArray
-
 from afo.chancellor_graph import ChancellorContext, ChancellorNode
 from afo.trinity_metric_wrapper import TrinityScore
+from numpy.typing import NDArray
 
 logger = logging.getLogger(__name__)
 
@@ -122,7 +121,9 @@ class ValidationCoordinator:
             for i in range(self.config.parallel_agents)
         ]
 
-    async def validate_calculation(self, operation: str, *args, **kwargs) -> ValidationResult:
+    async def validate_calculation(
+        self, operation: str, *args, **kwargs
+    ) -> ValidationResult:
         """Execute multi-agent validation"""
         start_time = time.perf_counter()
         retry_count = 0
@@ -130,10 +131,14 @@ class ValidationCoordinator:
         while retry_count < self.config.max_retries:
             try:
                 # Parallel execution
-                parallel_results = await self._execute_parallel(operation, *args, **kwargs)
+                parallel_results = await self._execute_parallel(
+                    operation, *args, **kwargs
+                )
 
                 # Consensus check
-                consensus_result, consensus_ratio = self._check_consensus(parallel_results)
+                consensus_result, consensus_ratio = self._check_consensus(
+                    parallel_results
+                )
 
                 if consensus_result is None:
                     retry_count += 1
@@ -183,7 +188,9 @@ class ValidationCoordinator:
             error_details=f"Validation failed after {retry_count} retries",
         )
 
-    async def _execute_parallel(self, operation: str, *args, **kwargs) -> list[dict[str, Any]]:
+    async def _execute_parallel(
+        self, operation: str, *args, **kwargs
+    ) -> list[dict[str, Any]]:
         """Execute parallel agent calculations"""
         tasks = []
         for agent in self.agents:
@@ -225,18 +232,24 @@ class ValidationCoordinator:
         """Safe agent calculation with timeout"""
         try:
             return await asyncio.wait_for(
-                agent.calculate(operation, *args, **kwargs), timeout=self.config.timeout_seconds
+                agent.calculate(operation, *args, **kwargs),
+                timeout=self.config.timeout_seconds,
             )
         except TimeoutError:
             raise RuntimeError(f"Agent {agent.agent_id} timed out")
         except Exception as e:
             raise RuntimeError(f"Agent {agent.agent_id} failed: {e}")
 
-    def _check_consensus(self, agent_results: list[dict[str, Any]]) -> tuple[Any, float]:
+    def _check_consensus(
+        self, agent_results: list[dict[str, Any]]
+    ) -> tuple[Any, float]:
         """Check consensus among agent results"""
         successful_results = [r for r in agent_results if r["success"]]
 
-        if len(successful_results) < self.config.parallel_agents * self.config.consensus_threshold:
+        if (
+            len(successful_results)
+            < self.config.parallel_agents * self.config.consensus_threshold
+        ):
             return None, 0.0
 
         # Extract results
@@ -249,7 +262,9 @@ class ValidationCoordinator:
             consensus_count = 1
 
             for result in results[1:]:
-                if np.allclose(result, consensus_result, rtol=0, atol=self.config.tolerance):
+                if np.allclose(
+                    result, consensus_result, rtol=0, atol=self.config.tolerance
+                ):
                     consensus_count += 1
                 else:
                     # Try this result as new consensus
@@ -300,23 +315,35 @@ class ValidationCoordinator:
                 # Compare with consensus
                 if isinstance(consensus_result, np.ndarray):
                     if not np.allclose(
-                        verification_result, consensus_result, rtol=0, atol=self.config.tolerance
+                        verification_result,
+                        consensus_result,
+                        rtol=0,
+                        atol=self.config.tolerance,
                     ):
-                        logger.warning(f"Serial verification iteration {iteration + 1} failed")
+                        logger.warning(
+                            f"Serial verification iteration {iteration + 1} failed"
+                        )
                         return False
                 else:
                     if verification_result != consensus_result:
-                        logger.warning(f"Serial verification iteration {iteration + 1} failed")
+                        logger.warning(
+                            f"Serial verification iteration {iteration + 1} failed"
+                        )
                         return False
 
             except Exception as e:
-                logger.warning(f"Serial verification iteration {iteration + 1} error: {e}")
+                logger.warning(
+                    f"Serial verification iteration {iteration + 1} error: {e}"
+                )
                 return False
 
         return True
 
     def _calculate_confidence_score(
-        self, agent_results: list[dict[str, Any]], consensus_ratio: float, retry_count: int
+        self,
+        agent_results: list[dict[str, Any]],
+        consensus_ratio: float,
+        retry_count: int,
     ) -> float:
         """Calculate confidence score for validation result"""
         successful_agents = sum(1 for r in agent_results if r["success"])
@@ -356,7 +383,9 @@ class ValidationNode(ChancellorNode):
         kwargs = context.get("validation_kwargs", {})
 
         # Execute validation
-        validation_result = await self.coordinator.validate_calculation(operation, *args, **kwargs)
+        validation_result = await self.coordinator.validate_calculation(
+            operation, *args, **kwargs
+        )
 
         self.validation_count += 1
         if validation_result.is_valid:
@@ -386,7 +415,9 @@ class ValidationNode(ChancellorNode):
         logger.info(f"Validation completed. Score: {validation_score}")
         return context
 
-    def _calculate_validation_trinity_score(self, result: ValidationResult) -> TrinityScore:
+    def _calculate_validation_trinity_score(
+        self, result: ValidationResult
+    ) -> TrinityScore:
         """Calculate Trinity score based on validation results"""
         truth_score = 1.0 if result.is_valid else 0.5
         goodness_score = result.confidence_score
@@ -402,7 +433,9 @@ class ValidationNode(ChancellorNode):
             eternity=eternity_score,
         )
 
-    async def _log_validation_results(self, result: ValidationResult, context: ChancellorContext):
+    async def _log_validation_results(
+        self, result: ValidationResult, context: ChancellorContext
+    ):
         """Log validation results to artifacts"""
         log_dir = Path("artifacts/multi_agent_validation_logs")
         log_dir.mkdir(parents=True, exist_ok=True)

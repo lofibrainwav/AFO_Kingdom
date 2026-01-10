@@ -130,7 +130,9 @@ class OpenAIAPIWrapper:
                         "full_response": result,
                     }
             else:
-                error_msg = response.json().get("error", {}).get("message", "Unknown error")
+                error_msg = (
+                    response.json().get("error", {}).get("message", "Unknown error")
+                )
                 logger.error(f"OpenAI API error: {error_msg}")
 
                 return {
@@ -197,7 +199,9 @@ class OpenAIAPIWrapper:
                 else:
                     return {"error": "No choices in OpenAI response"}
             else:
-                error_msg = response.json().get("error", {}).get("message", "Unknown error")
+                error_msg = (
+                    response.json().get("error", {}).get("message", "Unknown error")
+                )
                 return {
                     "error": f"OpenAI API error: {error_msg}",
                     "status_code": response.status_code,

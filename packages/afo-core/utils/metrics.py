@@ -9,7 +9,13 @@ import time
 from functools import wraps
 
 try:
-    from prometheus_client import CONTENT_TYPE_LATEST, Counter, Gauge, Histogram, generate_latest
+    from prometheus_client import (
+        CONTENT_TYPE_LATEST,
+        Counter,
+        Gauge,
+        Histogram,
+        generate_latest,
+    )
 
     PROMETHEUS_AVAILABLE = True
 except ImportError:
@@ -171,9 +177,9 @@ class MetricsMiddleware(BaseHTTPMiddleware):
                 method=request.method, endpoint=endpoint, status_code=status_code
             ).inc()
 
-            http_request_duration_seconds.labels(method=request.method, endpoint=endpoint).observe(
-                duration
-            )
+            http_request_duration_seconds.labels(
+                method=request.method, endpoint=endpoint
+            ).observe(duration)
 
     def _normalize_endpoint(self, path: str) -> str:
         """Normalize endpoint to avoid high cardinality."""
@@ -440,7 +446,9 @@ def update_sse_health_metrics(
 async def get_metrics_response() -> Response:
     """Generate Prometheus metrics response."""
     if not PROMETHEUS_AVAILABLE:
-        return Response(content="# prometheus_client not installed", media_type="text/plain")
+        return Response(
+            content="# prometheus_client not installed", media_type="text/plain"
+        )
 
     return Response(content=generate_latest(), media_type=CONTENT_TYPE_LATEST)
 

@@ -49,7 +49,9 @@ async def test_health_response_contains_trinity_score():
 
     # Trinity score must be a valid percentage
     assert "trinity_score" in trinity, "trinity_score missing from trinity breakdown"
-    assert 0 <= trinity["trinity_score"] <= 1, f"Invalid trinity_score: {trinity['trinity_score']}"
+    assert (
+        0 <= trinity["trinity_score"] <= 1
+    ), f"Invalid trinity_score: {trinity['trinity_score']}"
 
     print(f"Trinity Score: {trinity['trinity_score']}")
 
@@ -89,6 +91,10 @@ async def test_health_response_decision_field():
 
     # decision field must exist
     assert "decision" in health, "decision field missing from health report"
-    assert health["decision"] in ["AUTO_RUN", "ASK_COMMANDER", "TRY_AGAIN"], f"Invalid decision: {health['decision']}"
+    assert health["decision"] in [
+        "AUTO_RUN",
+        "ASK_COMMANDER",
+        "TRY_AGAIN",
+    ], f"Invalid decision: {health['decision']}"
 
     print(f"Decision: {health['decision']}")

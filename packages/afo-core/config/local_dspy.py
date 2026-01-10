@@ -11,7 +11,9 @@ def configure_local_dspy():
     ollama_model = os.getenv("OLLAMA_MODEL", "llama3.2")
     ollama_base_url = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 
-    print(f"[DSPy][LOCAL] Configuring Ollama: model={ollama_model}, url={ollama_base_url}")
+    print(
+        f"[DSPy][LOCAL] Configuring Ollama: model={ollama_model}, url={ollama_base_url}"
+    )
 
     try:
         lm = dspy.OllamaLocal(model=ollama_model, base_url=ollama_base_url)

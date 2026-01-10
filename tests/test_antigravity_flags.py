@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import MagicMock, patch
 
-from AFO..config.antigravity import import antigravity
+from AFO.config.antigravity import antigravity
 
 
 class TestAntigravityFlags(unittest.TestCase):

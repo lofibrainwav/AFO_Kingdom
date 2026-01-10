@@ -5,7 +5,6 @@ import re
 import sys
 from pathlib import Path
 
-
 # Adjust CWD to root if running from scripts/
 if Path.cwd().name == "scripts":
     ROOT = Path("..")
@@ -71,11 +70,15 @@ def main() -> int:
     for name in REQUIRED_CORE:
         p = DOCS / name
         if not p.exists():
-            errors.append(f"MISSING CORE DOC: {p.relative_to(ROOT) if p.is_absolute() else p}")
+            errors.append(
+                f"MISSING CORE DOC: {p.relative_to(ROOT) if p.is_absolute() else p}"
+            )
 
     # 2) scan files
     if args.core_only:
-        files_to_scan = [DOCS / name for name in REQUIRED_CORE if (DOCS / name).exists()]
+        files_to_scan = [
+            DOCS / name for name in REQUIRED_CORE if (DOCS / name).exists()
+        ]
     else:
         # Full scan excluding specified dirs
         exclude_paths = [ROOT / p for p in args.exclude]
@@ -118,9 +121,13 @@ def main() -> int:
                     candidate = (f.parent / target).resolve()
 
                 if not candidate.exists():
-                    errors.append(f"BROKEN LINK in {f.relative_to(ROOT)}: ({raw}) -> {target}")
+                    errors.append(
+                        f"BROKEN LINK in {f.relative_to(ROOT)}: ({raw}) -> {target}"
+                    )
             except Exception as e:
-                errors.append(f"ERROR resolving link {f.relative_to(ROOT)} ({raw}): {e}")
+                errors.append(
+                    f"ERROR resolving link {f.relative_to(ROOT)} ({raw}): {e}"
+                )
 
     if errors:
         print("SSOT DOC AUDIT: FAIL")

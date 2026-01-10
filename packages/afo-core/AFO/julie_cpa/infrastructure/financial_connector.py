@@ -114,10 +114,14 @@ class FinancialConnector:
             "monthly_spending": monthly_spending,
             "budget_remaining": budget_remaining,
             "recent_transactions": transactions,
-            "risk_alerts": self._generate_dynamic_alerts(monthly_spending, total_budget),
+            "risk_alerts": self._generate_dynamic_alerts(
+                monthly_spending, total_budget
+            ),
         }
 
-    def _generate_dynamic_alerts(self, spending: int, budget: int) -> list[dict[str, str]]:
+    def _generate_dynamic_alerts(
+        self, spending: int, budget: int
+    ) -> list[dict[str, str]]:
         alerts = []
         utilization = (spending / budget) * 100
 
@@ -129,7 +133,9 @@ class FinancialConnector:
             alerts.append({"level": "info", "message": "Spending on track"})
 
         if random.random() < 0.3:
-            alerts.append({"level": "warning", "message": "Unusual subscription detected"})
+            alerts.append(
+                {"level": "warning", "message": "Unusual subscription detected"}
+            )
 
         return alerts
 

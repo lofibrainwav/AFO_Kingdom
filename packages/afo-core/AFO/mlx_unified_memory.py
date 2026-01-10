@@ -41,10 +41,14 @@ class MLXUnifiedMemoryManager:
         """
         self.initial_pool_size = initial_pool_size
         self.memory_pool = mx.zeros((initial_pool_size // 4,))  # float32 기준
-        self.allocated_blocks: dict[str, tuple[int, int]] = {}  # block_id -> (start_idx, size)
+        self.allocated_blocks: dict[str, tuple[int, int]] = (
+            {}
+        )  # block_id -> (start_idx, size)
         self.stats = MemoryStats(0, 0, 0, self._detect_metal_device())
 
-        logger.info(f"MLX Unified Memory Manager initialized with {initial_pool_size} bytes")
+        logger.info(
+            f"MLX Unified Memory Manager initialized with {initial_pool_size} bytes"
+        )
         logger.info(f"Metal device: {self.stats.metal_device}")
 
     def _detect_metal_device(self) -> str:
@@ -61,7 +65,10 @@ class MLXUnifiedMemoryManager:
             return "Unknown"
 
     def allocate_shared_memory(
-        self, shape: tuple[int, ...], dtype: mx.Dtype = mx.float32, key: str | None = None
+        self,
+        shape: tuple[int, ...],
+        dtype: mx.Dtype = mx.float32,
+        key: str | None = None,
     ) -> mx.array:
         """
         통합 메모리에 공유 메모리 할당
@@ -110,17 +117,23 @@ class MLXUnifiedMemoryManager:
             self.stats.active_bytes += bytes_needed
             self.stats.peak_bytes = max(self.stats.peak_bytes, self.stats.active_bytes)
 
-            logger.debug(f"Allocated {bytes_needed} bytes in unified memory (key: {key})")
+            logger.debug(
+                f"Allocated {bytes_needed} bytes in unified memory (key: {key})"
+            )
             return allocated
         else:
-            raise MemoryError(f"Insufficient unified memory: {bytes_needed} bytes requested")
+            raise MemoryError(
+                f"Insufficient unified memory: {bytes_needed} bytes requested"
+            )
 
     def _has_available_memory(self, bytes_needed: int) -> bool:
         """사용 가능한 메모리 확인"""
         # Apple Silicon 통합 메모리는 일반적으로 8GB 이상
         # 실제로는 시스템 메모리 상태를 확인해야 하지만 간단히 구현
         total_system_memory = 8 * 1024 * 1024 * 1024  # 8GB 가정 (M4 기준)
-        return self.stats.active_bytes + bytes_needed < total_system_memory * 0.8  # 80% 제한
+        return (
+            self.stats.active_bytes + bytes_needed < total_system_memory * 0.8
+        )  # 80% 제한
 
     def zero_copy_transfer(self, data: Any) -> mx.array:
         """
@@ -191,7 +204,9 @@ class MLXMemoryOptimizer:
         self.memory_manager = memory_manager
         self.model_cache: dict[str, mx.array] = {}
 
-    def preload_model_weights(self, model_name: str, weights: dict[str, mx.array]) -> None:
+    def preload_model_weights(
+        self, model_name: str, weights: dict[str, mx.array]
+    ) -> None:
         """
         모델 가중치를 통합 메모리에 미리 로드
 
@@ -227,7 +242,9 @@ class MLXMemoryOptimizer:
             model_name: 특정 모델만 정리 (None이면 전체 정리)
         """
         if model_name:
-            keys_to_remove = [k for k in self.model_cache.keys() if k.startswith(f"{model_name}.")]
+            keys_to_remove = [
+                k for k in self.model_cache.keys() if k.startswith(f"{model_name}.")
+            ]
             for key in keys_to_remove:
                 del self.model_cache[key]
             logger.info(f"Cleared cache for model: {model_name}")

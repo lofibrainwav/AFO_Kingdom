@@ -32,7 +32,9 @@ class VaultKMS:
                         role_id=self.role_id, secret_id=self.secret_id
                     )
                     self.client.token = auth_response["auth"]["client_token"]
-                    print("✅ Vault AppRole authentication successful")  # TICKET W3: Debug logging
+                    print(
+                        "✅ Vault AppRole authentication successful"
+                    )  # TICKET W3: Debug logging
                 elif self.token:
                     # Token authentication (legacy)
                     self.client.token = self.token

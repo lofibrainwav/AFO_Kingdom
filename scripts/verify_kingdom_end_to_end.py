@@ -3,9 +3,10 @@ import os
 import pathlib
 import sys
 
-
 # Add package root to sys.path
-core_path = pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")).resolve()
+core_path = pathlib.Path(
+    os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")
+).resolve()
 sys.path.append(core_path)
 
 
@@ -31,7 +32,6 @@ class MockYeongdeok:
 
 # Patching modules before importing chancellor_graph
 import chancellor_graph as graph_module
-
 
 # Inject Mocks
 graph_module.llm_router = MockLLMRouter()
@@ -116,7 +116,9 @@ async def run_end_to_end_test():
     state.update(final_res)
     print(f"📜 Final Seal: {state['messages'][-1].content[:100]}...")
 
-    print("\n🎉 [Grand Verification] End-to-End Simulation Complete. Kingdom v100.0 is STABLE.")
+    print(
+        "\n🎉 [Grand Verification] End-to-End Simulation Complete. Kingdom v100.0 is STABLE."
+    )
 
 
 if __name__ == "__main__":

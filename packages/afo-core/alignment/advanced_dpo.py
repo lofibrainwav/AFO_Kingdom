@@ -31,7 +31,9 @@ def run_advanced_dpo_lora(
     logger.info(f"🚀 [Advanced DPO] Initializing LoRA Strategy for: {model_name}")
 
     # 1. Load Model & Tokenizer
-    model = AutoModelForCausalLM.from_pretrained(model_name, revision="main")  # nosec B615
+    model = AutoModelForCausalLM.from_pretrained(
+        model_name, revision="main"
+    )  # nosec B615
     tokenizer = AutoTokenizer.from_pretrained(model_name, revision="main")  # nosec B615
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token

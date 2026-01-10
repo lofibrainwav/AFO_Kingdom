@@ -14,10 +14,9 @@ AFO Kingdom AICPA 엔드포인트
 import logging
 from typing import Any
 
+from AFO.aicpa import get_aicpa_service
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
-
-from AFO.aicpa import get_aicpa_service
 
 logger = logging.getLogger(__name__)
 
@@ -181,7 +180,10 @@ async def generate_client_report(request: ReportRequest) -> dict[str, Any]:
 
         # Roth 시뮬레이션 (옵션)
         roth_sim = None
-        if request.include_roth_simulation and client_data.get("traditional_ira_balance", 0) > 0:
+        if (
+            request.include_roth_simulation
+            and client_data.get("traditional_ira_balance", 0) > 0
+        ):
             roth_sim = service.generate_roth_strategy(
                 ira_balance=client_data.get("traditional_ira_balance", 0),
                 filing_status=client_data.get("filing_status", "single"),
@@ -225,7 +227,9 @@ async def get_client_data(client_name: str) -> dict[str, Any]:
 
     except Exception as e:
         logger.error(f"[AICPA] Client lookup failed: {e!s}")
-        raise HTTPException(status_code=404, detail=f"Client not found: {client_name}") from e
+        raise HTTPException(
+            status_code=404, detail=f"Client not found: {client_name}"
+        ) from e
 
 
 @router.get("/status")

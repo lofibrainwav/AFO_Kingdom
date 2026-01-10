@@ -65,7 +65,9 @@ class QLoRATrainerService:
         print("Loading model and tokenizer for QLoRA training...")
 
         start_time = time.time()
-        start_memory = torch.cuda.memory_allocated() / 1024**3 if torch.cuda.is_available() else 0
+        start_memory = (
+            torch.cuda.memory_allocated() / 1024**3 if torch.cuda.is_available() else 0
+        )
 
         # Setup configurations
         bnb_config = self.setup_qlora_config()
@@ -88,7 +90,9 @@ class QLoRATrainerService:
         self.model = prepare_model_for_kbit_training(self.model)
 
         load_time = time.time() - start_time
-        end_memory = torch.cuda.memory_allocated() / 1024**3 if torch.cuda.is_available() else 0
+        end_memory = (
+            torch.cuda.memory_allocated() / 1024**3 if torch.cuda.is_available() else 0
+        )
         memory_usage = end_memory - start_memory
 
         print(f"Model loaded in {load_time:.2f}s")
@@ -100,21 +104,29 @@ class QLoRATrainerService:
             "model_params": sum(p.numel() for p in self.model.parameters()),
         }
 
-    def apply_lora_adapter(self, lora_config: LoraConfig | None = None) -> dict[str, Any]:
+    def apply_lora_adapter(
+        self, lora_config: LoraConfig | None = None
+    ) -> dict[str, Any]:
         """Apply LoRA adapter to the model"""
         if lora_config is None:
             lora_config = self.setup_lora_config()
 
         print("Applying LoRA adapter...")
 
-        start_memory = torch.cuda.memory_allocated() / 1024**3 if torch.cuda.is_available() else 0
+        start_memory = (
+            torch.cuda.memory_allocated() / 1024**3 if torch.cuda.is_available() else 0
+        )
 
         self.model = get_peft_model(self.model, lora_config)
 
-        end_memory = torch.cuda.memory_allocated() / 1024**3 if torch.cuda.is_available() else 0
+        end_memory = (
+            torch.cuda.memory_allocated() / 1024**3 if torch.cuda.is_available() else 0
+        )
         memory_delta = end_memory - start_memory
 
-        trainable_params = sum(p.numel() for p in self.model.parameters() if p.requires_grad)
+        trainable_params = sum(
+            p.numel() for p in self.model.parameters() if p.requires_grad
+        )
         total_params = sum(p.numel() for p in self.model.parameters())
         efficiency = 100 * trainable_params / total_params
 
@@ -133,7 +145,9 @@ class QLoRATrainerService:
         print(f"Loading dataset from {dataset_path}")
 
         if not TRL_AVAILABLE:
-            raise ImportError("TRL is required for dataset loading. Install with: pip install trl")
+            raise ImportError(
+                "TRL is required for dataset loading. Install with: pip install trl"
+            )
 
         # Load dataset
         if dataset_path.endswith(".json"):
@@ -157,7 +171,9 @@ class QLoRATrainerService:
         """Setup SFTTrainer for QLoRA training"""
 
         if not TRL_AVAILABLE:
-            raise ImportError("TRL is required for training. Install with: pip install trl")
+            raise ImportError(
+                "TRL is required for training. Install with: pip install trl"
+            )
 
         print("Setting up SFTTrainer...")
 

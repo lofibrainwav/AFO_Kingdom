@@ -145,7 +145,10 @@ class SkeletonIndexer:
 
         for pattern in config_patterns:
             for config_file in folder_path.glob(pattern):
-                if "config" in str(config_file).lower() or "settings" in str(config_file).lower():
+                if (
+                    "config" in str(config_file).lower()
+                    or "settings" in str(config_file).lower()
+                ):
                     config_name = config_file.stem
 
                     configs.append(
@@ -255,7 +258,9 @@ class SkeletonIndexer:
 
         return datetime.now().isoformat()
 
-    def save_index(self, index: SkeletonIndex, output_path: str = "skeleton_index.json"):
+    def save_index(
+        self, index: SkeletonIndex, output_path: str = "skeleton_index.json"
+    ):
         """인덱스를 JSON 파일로 저장"""
         data = {
             "packages": {k: [vars(m) for m in v] for k, v in index.packages.items()},

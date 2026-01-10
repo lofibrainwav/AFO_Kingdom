@@ -10,7 +10,6 @@ import asyncio
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
-
 from AFO.domain.persona import PersonaType
 
 # AFO 왕국 모듈 임포트

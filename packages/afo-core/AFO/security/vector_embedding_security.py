@@ -94,7 +94,9 @@ class VectorEmbeddingSecurity:
         ]
 
         # Compiled patterns for performance
-        self._compiled_patterns = [re.compile(p, re.IGNORECASE) for p in self.injection_patterns]
+        self._compiled_patterns = [
+            re.compile(p, re.IGNORECASE) for p in self.injection_patterns
+        ]
 
         # Trusted sources whitelist
         self.trusted_sources = {
@@ -149,7 +151,9 @@ class VectorEmbeddingSecurity:
         source_trusted = self._verify_source(source)
         details["source_trusted"] = source_trusted
         if not source_trusted and not injection_matches:
-            details["source_warning"] = "Untrusted source - additional review recommended"
+            details["source_warning"] = (
+                "Untrusted source - additional review recommended"
+            )
 
         # 3. Detect semantic anomalies (statistical outliers)
         anomaly_score = self._calculate_anomaly_score(content)
@@ -241,7 +245,8 @@ class VectorEmbeddingSecurity:
         html_comments = re.findall(r"<!--.*?-->", content, re.DOTALL)
         for comment in html_comments:
             if any(
-                word in comment.lower() for word in ["ignore", "override", "system", "instruction"]
+                word in comment.lower()
+                for word in ["ignore", "override", "system", "instruction"]
             ):
                 hidden.append(f"Suspicious HTML comment: {comment[:100]}")
 
@@ -285,7 +290,10 @@ class VectorEmbeddingSecurity:
         """Persist verification result for audit."""
         try:
             security_dir = (
-                Path(__file__).parent.parent.parent.parent / "docs" / "ssot" / "vector_security"
+                Path(__file__).parent.parent.parent.parent
+                / "docs"
+                / "ssot"
+                / "vector_security"
             )
             security_dir.mkdir(parents=True, exist_ok=True)
 
@@ -296,7 +304,9 @@ class VectorEmbeddingSecurity:
             with log_file.open("a", encoding="utf-8") as f:
                 entry = asdict(verification)
                 entry["risk_level"] = verification.risk_level.value
-                entry["threats_detected"] = [t.value for t in verification.threats_detected]
+                entry["threats_detected"] = [
+                    t.value for t in verification.threats_detected
+                ]
                 f.write(json.dumps(entry, ensure_ascii=False) + "\n")
 
         except Exception as e:

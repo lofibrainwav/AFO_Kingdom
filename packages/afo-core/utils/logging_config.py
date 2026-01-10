@@ -60,9 +60,7 @@ class AFOFormatter(logging.Formatter):
         logger_name = record.name.split(".")[-1] if "." in record.name else record.name
 
         # 메시지 포맷
-        message = (
-            f"{color}[{levelname:8}]{reset} {timestamp} | {logger_name:20} | {record.getMessage()}"
-        )
+        message = f"{color}[{levelname:8}]{reset} {timestamp} | {logger_name:20} | {record.getMessage()}"
 
         # 예외 정보 추가
         if record.exc_info:
@@ -128,7 +126,9 @@ def setup_logging(
     # 콘솔 핸들러 (항상 추가)
     console_handler = logging.StreamHandler(sys.stdout)
     console_handler.setLevel(level)
-    console_handler.setFormatter(AFOFormatter(use_colors=use_colors, structured=structured))
+    console_handler.setFormatter(
+        AFOFormatter(use_colors=use_colors, structured=structured)
+    )
     root_logger.addHandler(console_handler)
 
     # 파일 핸들러 (선택적)

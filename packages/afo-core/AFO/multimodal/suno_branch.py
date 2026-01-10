@@ -52,7 +52,9 @@ class SunoClient:
         data = None
         if payload is not None:
             data = json.dumps(payload).encode("utf-8")
-        req = urllib.request.Request(url=url, data=data, method=method, headers=self._headers())
+        req = urllib.request.Request(
+            url=url, data=data, method=method, headers=self._headers()
+        )
         try:
             with urllib.request.urlopen(req, timeout=self.cfg.timeout_sec) as resp:
                 body = resp.read().decode("utf-8", errors="replace")
@@ -80,10 +82,14 @@ class SunoClient:
 
     def record_info(self, task_id: str) -> dict[str, Any]:
         q = urllib.parse.urlencode({"taskId": task_id})
-        url = urllib.parse.urljoin(self.cfg.base_url, f"/api/v1/generate/record-info?{q}")
+        url = urllib.parse.urljoin(
+            self.cfg.base_url, f"/api/v1/generate/record-info?{q}"
+        )
         return self._request_json("GET", url)
 
-    def wait_for_success(self, task_id: str, timeout_sec: int | None = None) -> dict[str, Any]:
+    def wait_for_success(
+        self, task_id: str, timeout_sec: int | None = None
+    ) -> dict[str, Any]:
         timeout = timeout_sec if timeout_sec is not None else self.cfg.timeout_sec
         t0 = time.time()
         while True:
@@ -93,13 +99,17 @@ class SunoClient:
             if status in {"SUCCESS", "FAILED"}:
                 return res
             if (time.time() - t0) > timeout:
-                raise TimeoutError(f"Suno polling timeout after {timeout}s (taskId={task_id})")
+                raise TimeoutError(
+                    f"Suno polling timeout after {timeout}s (taskId={task_id})"
+                )
             time.sleep(self.cfg.poll_interval_sec)
 
 
 def _which(cmd: str) -> str | None:
     try:
-        out = subprocess.check_output(["bash", "-lc", f"command -v {cmd}"], text=True).strip()
+        out = subprocess.check_output(
+            ["bash", "-lc", f"command -v {cmd}"], text=True
+        ).strip()
         return out or None
     except Exception:
         return None
@@ -140,10 +150,17 @@ def ffprobe_summary(media_path: str) -> dict[str, Any]:
     fmt = j.get("format") or {}
     streams = j.get("streams") or []
     dur = fmt.get("duration")
-    return {"ok": True, "duration": float(dur) if dur else None, "streams": streams, "format": fmt}
+    return {
+        "ok": True,
+        "duration": float(dur) if dur else None,
+        "streams": streams,
+        "format": fmt,
+    }
 
 
-def make_silence_audio(out_path: str, duration_sec: float, sample_rate: int = 44100) -> str:
+def make_silence_audio(
+    out_path: str, duration_sec: float, sample_rate: int = 44100
+) -> str:
     if not _which("ffmpeg"):
         raise RuntimeError("ffmpeg not found (needed for silence fallback)")
     Path(out_path).parent.mkdir(parents=True, exist_ok=True)
@@ -221,7 +238,9 @@ def trim_or_loop_audio_to_duration(
     return out_audio
 
 
-def fuse_av(video_path: str, audio_path: str, out_path: str, prefer_moviepy: bool = True) -> str:
+def fuse_av(
+    video_path: str, audio_path: str, out_path: str, prefer_moviepy: bool = True
+) -> str:
     Path(out_path).parent.mkdir(parents=True, exist_ok=True)
 
     if prefer_moviepy:
@@ -232,7 +251,10 @@ def fuse_av(video_path: str, audio_path: str, out_path: str, prefer_moviepy: boo
             a = AudioFileClip(audio_path)
             out = v.with_audio(a)
             out.write_videofile(
-                out_path, codec="libx264", audio_codec="aac", fps=getattr(v, "fps", None) or 30
+                out_path,
+                codec="libx264",
+                audio_codec="aac",
+                fps=getattr(v, "fps", None) or 30,
             )
             v.close()
             a.close()
@@ -261,7 +283,9 @@ def fuse_av(video_path: str, audio_path: str, out_path: str, prefer_moviepy: boo
     return out_path
 
 
-def timeline_to_suno_request(timeline_state: dict[str, Any], cfg: SunoConfig) -> dict[str, Any]:
+def timeline_to_suno_request(
+    timeline_state: dict[str, Any], cfg: SunoConfig
+) -> dict[str, Any]:
     music = timeline_state.get("music") or {}
     template = timeline_state.get("template") or music.get("template") or "default"
 
@@ -269,8 +293,12 @@ def timeline_to_suno_request(timeline_state: dict[str, Any], cfg: SunoConfig) ->
     instrumental = bool(music.get("instrumental", music.get("is_instrumental", True)))
 
     style = str(music.get("style") or template).strip()[:1000]
-    title = str(music.get("title") or (timeline_state.get("title") or "AFO Track")).strip()[:100]
-    negative_tags = str(music.get("negative_tags", music.get("negativeTags", ""))).strip()
+    title = str(
+        music.get("title") or (timeline_state.get("title") or "AFO Track")
+    ).strip()[:100]
+    negative_tags = str(
+        music.get("negative_tags", music.get("negativeTags", ""))
+    ).strip()
 
     sections = timeline_state.get("sections") or []
     parts: list[str] = []
@@ -309,7 +337,9 @@ def timeline_to_suno_request(timeline_state: dict[str, Any], cfg: SunoConfig) ->
     return payload
 
 
-def trinity_quality_score(audio_path: str, expected_min_sec: float | None = None) -> dict[str, Any]:
+def trinity_quality_score(
+    audio_path: str, expected_min_sec: float | None = None
+) -> dict[str, Any]:
     info = ffprobe_summary(audio_path)
     if not info.get("ok"):
         return {"score": 0.0, "reason": "ffprobe_failed", "detail": info}
@@ -356,7 +386,9 @@ def run_suno_pipeline(
             "customMode": req_payload.get("customMode"),
             "instrumental": req_payload.get("instrumental"),
         },
-        "request_payload": {k: v for k, v in req_payload.items() if k != "Authorization"},
+        "request_payload": {
+            k: v for k, v in req_payload.items() if k != "Authorization"
+        },
         "outputs": {},
     }
 
@@ -366,7 +398,9 @@ def run_suno_pipeline(
     if not cfg.api_key:
         raise ValueError("SUNO_API_KEY is required for WET mode")
     if not cfg.callback_url:
-        raise ValueError("SUNO_CALLBACK_URL is required by docs for WET mode (set a valid URL)")
+        raise ValueError(
+            "SUNO_CALLBACK_URL is required by docs for WET mode (set a valid URL)"
+        )
 
     client = SunoClient(cfg)
     task_id = client.generate(req_payload)
@@ -399,7 +433,9 @@ def run_suno_pipeline(
     final_audio_path = raw_audio_path
     if target_av_duration_sec is not None:
         aligned = str(out_dir_p / "suno_aligned.m4a")
-        trim_or_loop_audio_to_duration(raw_audio_path, aligned, float(target_av_duration_sec))
+        trim_or_loop_audio_to_duration(
+            raw_audio_path, aligned, float(target_av_duration_sec)
+        )
         final_audio_path = aligned
         plan["outputs"]["audio_aligned"] = final_audio_path
 

@@ -38,7 +38,7 @@ class TrinityInputs:
     beauty: float
     filial_serenity: float
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Validate an auto-clamp values to 0.0-1.0 range (Serenity Logic)"""
         # Since frozen=True, we must use object.__setattr__
         object.__setattr__(self, "truth", self._clamp(self.truth))
@@ -116,7 +116,9 @@ class TrinityMetrics:
     balance_status: Literal["balanced", "warning", "imbalanced"]
 
     @classmethod
-    def from_inputs(cls, inputs: TrinityInputs, eternity: float = 1.0) -> TrinityMetrics:
+    def from_inputs(
+        cls, inputs: TrinityInputs, eternity: float = 1.0
+    ) -> TrinityMetrics:
         """입력값으로부터 Trinity 메트릭 계산 (5기둥 SSOT 가중치)"""
         try:
             x = inputs
@@ -152,7 +154,9 @@ class TrinityMetrics:
 
             # Balance status (SSOT threshold: 0.30)
             if balance_delta < 0.3:
-                balance_status: Literal["balanced", "warning", "imbalanced"] = "balanced"
+                balance_status: Literal["balanced", "warning", "imbalanced"] = (
+                    "balanced"
+                )
             elif balance_delta < 0.5:
                 balance_status = "warning"
             else:
@@ -243,7 +247,9 @@ def calculate_trinity(
     """Trinity 메트릭 계산 헬퍼 함수 (5기둥 SSOT 가중치)"""
     try:
         if from_100_scale:
-            inputs = TrinityInputs.from_100_scale(truth, goodness, beauty, filial_serenity)
+            inputs = TrinityInputs.from_100_scale(
+                truth, goodness, beauty, filial_serenity
+            )
             eternity_normalized = eternity / 100.0
         else:
             inputs = TrinityInputs(

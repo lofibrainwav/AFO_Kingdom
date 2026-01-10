@@ -22,7 +22,9 @@ async def truth_node(state: GraphState) -> GraphState:
     test_coverage_score = _evaluate_test_coverage(skill_id)
     code_quality_score = _evaluate_code_quality(query)
     heuristic_score = (
-        type_checking_score * 0.4 + test_coverage_score * 0.35 + code_quality_score * 0.25
+        type_checking_score * 0.4
+        + test_coverage_score * 0.35
+        + code_quality_score * 0.25
     )
 
     # 2. Scholar Assessment (Zilong)
@@ -66,7 +68,11 @@ async def truth_node(state: GraphState) -> GraphState:
             try:
                 # Basic JSON cleaning (in case of markdown blocks)
                 text = (
-                    response["response"].strip().replace("```json", "").replace("```", "").strip()
+                    response["response"]
+                    .strip()
+                    .replace("```json", "")
+                    .replace("```", "")
+                    .strip()
                 )
                 data = json.loads(text)
                 scholar_score = data.get("score", heuristic_score)
@@ -86,7 +92,11 @@ async def truth_node(state: GraphState) -> GraphState:
         "score": round(final_score, 3),
         "reasoning": reasoning,
         "issues": issues,
-        "metadata": {"mode": assessment_mode, "scholar": "Zilong (眞)", "model": scholar_model},
+        "metadata": {
+            "mode": assessment_mode,
+            "scholar": "Zilong (眞)",
+            "model": scholar_model,
+        },
     }
 
     state.outputs["TRUTH"] = evaluation

@@ -37,7 +37,9 @@ class AVJoinEngine:
             logger.info("✅ MoviePy 라이브러리 사용 가능")
             return True
         except ImportError:
-            logger.warning("❌ MoviePy 라이브러리를 찾을 수 없음 - pip install moviepy 필요")
+            logger.warning(
+                "❌ MoviePy 라이브러리를 찾을 수 없음 - pip install moviepy 필요"
+            )
             return False
 
     def _check_ffmpeg(self) -> bool:
@@ -97,10 +99,16 @@ class AVJoinEngine:
 
             # 파일 존재 확인
             if not Path(video_path).exists():
-                return {"success": False, "error": f"비디오 파일을 찾을 수 없음: {video_path}"}
+                return {
+                    "success": False,
+                    "error": f"비디오 파일을 찾을 수 없음: {video_path}",
+                }
 
             if not Path(audio_path).exists():
-                return {"success": False, "error": f"오디오 파일을 찾을 수 없음: {audio_path}"}
+                return {
+                    "success": False,
+                    "error": f"오디오 파일을 찾을 수 없음: {audio_path}",
+                }
 
             # 비디오와 오디오 로드
             logger.info(f"🎬 비디오 로드 중: {video_path}")
@@ -192,10 +200,15 @@ class AVJoinEngine:
                     "audio_codec": "aac",
                     "av_join_completed": True,
                 }
-                logger.info(f"✅ AV JOIN 완료: {output_path} ({result['file_size_mb']}MB)")
+                logger.info(
+                    f"✅ AV JOIN 완료: {output_path} ({result['file_size_mb']}MB)"
+                )
                 return result
             else:
-                return {"success": False, "error": f"출력 파일이 생성되지 않음: {output_path}"}
+                return {
+                    "success": False,
+                    "error": f"출력 파일이 생성되지 않음: {output_path}",
+                }
 
         except Exception as e:
             logger.error(f"❌ AV JOIN 실패: {e}")
@@ -228,14 +241,18 @@ class AVJoinEngine:
         Returns:
             AV JOIN 결과 + TimelineState 메타데이터
         """
-        result = self.join_audio_video(video_path, audio_path, output_path, dry_run=dry_run)
+        result = self.join_audio_video(
+            video_path, audio_path, output_path, dry_run=dry_run
+        )
 
         if result["success"]:
             # TimelineState 메타데이터 추가
             result["timeline_state"] = timeline_state
             result["title"] = timeline_state.get("title", "AFO Kingdom AV")
             result["sections_count"] = len(timeline_state.get("sections", []))
-            result["music_style"] = timeline_state.get("music", {}).get("style", "epic_orchestral")
+            result["music_style"] = timeline_state.get("music", {}).get(
+                "style", "epic_orchestral"
+            )
 
         return result
 
@@ -326,7 +343,9 @@ if __name__ == "__main__":
 
     # Dry run 테스트
     print("🎬 Dry run 테스트...")
-    dry_result = engine.join_audio_video(test_video, test_audio, test_output, dry_run=True)
+    dry_result = engine.join_audio_video(
+        test_video, test_audio, test_output, dry_run=True
+    )
 
     print("📊 Dry run 결과:")
     print(f"✅ 성공: {dry_result.get('success', False)}")
@@ -337,7 +356,9 @@ if __name__ == "__main__":
 
     if dry_result.get("success"):
         print("\n🎬 Wet run 테스트...")
-        wet_result = engine.join_audio_video(test_video, test_audio, test_output, dry_run=False)
+        wet_result = engine.join_audio_video(
+            test_video, test_audio, test_output, dry_run=False
+        )
 
         print("📊 Wet run 결과:")
         print(f"✅ 성공: {wet_result.get('success', False)}")

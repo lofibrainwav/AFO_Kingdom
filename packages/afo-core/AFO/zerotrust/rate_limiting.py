@@ -262,7 +262,11 @@ class RateLimitMiddleware:
                 key = key_func(request)
             else:
                 # 기본: 클라이언트 IP
-                key = getattr(request.client, "host", "unknown") if request.client else "unknown"
+                key = (
+                    getattr(request.client, "host", "unknown")
+                    if request.client
+                    else "unknown"
+                )
 
             # Rate Limit 체크
             result = await self.check_request(key)
@@ -341,7 +345,8 @@ class SecretZeroGuard:
 
         for key, value in os.environ.items():
             is_sensitive = any(
-                pattern in key.lower() for pattern in ["secret", "key", "token", "password"]
+                pattern in key.lower()
+                for pattern in ["secret", "key", "token", "password"]
             )
             if is_sensitive and len(value) > 10:  # 의미 있는 값이 있는 경우
                 results["violations"].append(f"Environment variable: {key}")

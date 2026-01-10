@@ -8,10 +8,9 @@ import os
 from contextlib import asynccontextmanager
 
 import uvicorn
+from AFO.api.routes.wallet import wallet_router
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
-from AFO.api.routes.wallet import wallet_router
 
 
 @asynccontextmanager
@@ -25,7 +24,9 @@ async def lifespan(app: FastAPI):
 
             test_wallet = APIWallet()
             if not test_wallet.use_vault:
-                raise RuntimeError("Vault mode required but vault initialization failed")
+                raise RuntimeError(
+                    "Vault mode required but vault initialization failed"
+                )
             print("✅ Vault connectivity validated")
     except Exception as e:
         print(f"❌ Startup validation failed: {e}")

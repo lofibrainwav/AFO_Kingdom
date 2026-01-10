@@ -14,8 +14,6 @@ import re
 import selectors
 import subprocess
 import sys
-import time
-
 
 REPO_ROOT = pathlib.Path(__file__).resolve().parent.parent
 
@@ -42,7 +40,9 @@ def _load_server_command() -> tuple[list[str], dict[str, str]]:
                 env[str(k)] = _expand_default_vars(str(v))
 
             env.setdefault("WORKSPACE_ROOT", str(REPO_ROOT))
-            env.setdefault("PYTHONPYCACHEPREFIX", str(REPO_ROOT / ".pycache_mcp_verify"))
+            env.setdefault(
+                "PYTHONPYCACHEPREFIX", str(REPO_ROOT / ".pycache_mcp_verify")
+            )
 
             return [*cmd, *args], env
 
@@ -107,7 +107,12 @@ def verify_mcp():
         print("✅ Initialize Success")
 
         # MCP handshake requires notifications/initialized after initialize.
-        process.stdin.write(json.dumps({"jsonrpc": "2.0", "method": "notifications/initialized", "params": {}}) + "\n")
+        process.stdin.write(
+            json.dumps(
+                {"jsonrpc": "2.0", "method": "notifications/initialized", "params": {}}
+            )
+            + "\n"
+        )
         process.stdin.flush()
 
         # 2. List Tools

@@ -15,7 +15,9 @@ logger = logging.getLogger(__name__)
 _SSE_HEARTBEAT_PAYLOAD = "event: heartbeat\ndata: ping\n\n"
 
 
-async def with_heartbeat(source: AsyncIterator[Any], interval_s: float = 5.0) -> AsyncIterator[Any]:
+async def with_heartbeat(
+    source: AsyncIterator[Any], interval_s: float = 5.0
+) -> AsyncIterator[Any]:
     while True:
         try:
             chunk = await asyncio.wait_for(source.__anext__(), timeout=interval_s)

@@ -5,11 +5,10 @@ RAG Streaming API Routes - Contract v3 준수
 
 from typing import Any, Dict
 
+from AFO.services.rag_streaming_service import RAGStreamingService
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
-
-from AFO.services.rag_streaming_service import RAGStreamingService
 
 router = APIRouter(prefix="/rag", tags=["rag_streaming"])
 
