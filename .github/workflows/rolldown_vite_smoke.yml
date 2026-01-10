@@ -41,9 +41,9 @@ jobs:
         if: matrix.mode == 'rolldown_vite'
         working-directory: packages/aicpa-core
         env:
-          ROLLDOWN_VITE_VERSION: ${{ github.event.inputs.rolldownViteVersion }}
+          ROLLDOWN_VITE_VERSION: ${{ github.event.inputs.rolldownViteVersion || 'latest' }}
         run: |
-          node -e "const fs=require('fs');const p='./package.json';const j=JSON.parse(fs.readFileSync(p,'utf8'));j.devDependencies=j.devDependencies||{};j.devDependencies.vite=`npm:rolldown-vite@${process.env.ROLLDOWN_VITE_VERSION}`;fs.writeFileSync(p,JSON.stringify(j,null,2)+'\n');"
+          node -e 'const fs=require("fs");const p="./package.json";const j=JSON.parse(fs.readFileSync(p,"utf8"));j.devDependencies=j.devDependencies||{};j.devDependencies.vite=`npm:rolldown-vite@${process.env.ROLLDOWN_VITE_VERSION}`;fs.writeFileSync(p,JSON.stringify(j,null,2)+"\n");'
 
       - name: Install (no frozen; smoke only)
         working-directory: packages/aicpa-core
