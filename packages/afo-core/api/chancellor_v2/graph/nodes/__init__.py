@@ -7,9 +7,7 @@ from .beauty_node import beauty_node
 # Node exports
 from .cmd_node import cmd_node
 from .eternity_node import eternity_node
-from .execute_node import (
-    execute_node_sync as execute_node,  # Use sync wrapper for graph compatibility
-)
+from .execute_node import execute_node
 from .goodness_node import goodness_node
 from .merge_node import merge_node
 from .parse_node import parse_node

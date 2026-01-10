@@ -34,6 +34,16 @@ export async function GET(request: NextRequest) {
       status: 'healthy',
       backend_available: true,
       trinity_score: data.trinity_score,
+      risk_score: data.risk_score ?? 0.05,
+      breakdown: {
+        truth: data.breakdown?.truth ?? data.metrics?.truth ?? 0.85,
+        goodness: data.breakdown?.goodness ?? data.metrics?.goodness ?? 0.85,
+        beauty: data.breakdown?.beauty ?? data.metrics?.beauty ?? 0.75,
+        filial_serenity: data.breakdown?.filial_serenity ?? data.metrics?.filial_serenity ?? 0.80,
+        eternity: data.breakdown?.eternity ?? data.metrics?.eternity ?? 0.80,
+        iccls_gap: data.iccls_gap ?? 0.10,
+        sentiment: data.sentiment ?? 0.70,
+      },
       organs: data.organs,
       timestamp: new Date().toISOString(),
       dashboard_health: 'healthy'

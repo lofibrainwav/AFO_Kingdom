@@ -1,0 +1,89 @@
+name: Evidence Gate (Tool-to-Skill)
+
+on:
+  pull_request:
+  push:
+    branches: [ "**" ]
+
+jobs:
+  evidence:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Prepare dirs
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts logs
+
+      - name: Run Kingdom Probes (Batch)
+        run: |
+          set -euo pipefail
+          # Vulture fix for CI environment
+          python -m pip install vulture langgraph optuna fairlearn
+          
+          # Run the batch probe script
+          bash scripts/tools/run_probes_batch.sh
+
+      - name: Generate tool skills
+        run: |
+          set -euo pipefail
+          python scripts/gen_tool_skills.py
+
+      - name: Smoke test generated skills (SSOT Seal)
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import importlib.util
+          import sys
+
+          repo = Path(".").resolve()
+
+          def run_skill(name: str, critical: bool = False):
+            candidates = sorted(repo.glob(f"**/AFO/skills/tools_generated/{name}_skill.py"))
+            if not candidates:
+              if critical: raise SystemExit(f"CRITICAL: {name}_skill.py missing")
+              print(f"SKIP: {name}_skill.py not found")
+              return
+            
+            p = candidates[0]
+            module_name = f"{name}_skill"
+            spec = importlib.util.spec_from_file_location(module_name, p)
+            mod = importlib.util.module_from_spec(spec)
+            sys.modules[module_name] = mod
+            spec.loader.exec_module(mod)
+            
+            out = mod.run(repo)
+            status = out.get("status")
+            score = out.get("score", 0)
+            print(f"Skill: {name} => Status: {status}, Score: {score}")
+            
+            if critical and status != "healthy":
+              raise SystemExit(f"CRITICAL FAIL: {name} must be healthy in CI")
+
+          # 1. Critical Tools (Must Pass)
+          print("--- Critical CI Tools ---")
+          run_skill("trivy", critical=True)
+          run_skill("vulture", critical=False)
+
+          # 2. Infrastructure/Library Probes (Logged for SSOT)
+          print("--- Kingdom Infrastructure Probes ---")
+          probes = ["penpot", "coolify", "mattermost", "langgraph", "optuna", "fairlearn", "tflite", "k8s_ops"]
+          for p in probes:
+            run_skill(p, critical=False)
+          PY
+
+      - name: Upload evidence artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: tool-evidence
+          path: |
+            artifacts/*.json
+            artifacts/*.txt

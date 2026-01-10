@@ -399,12 +399,9 @@ async def skills_health() -> dict[str, Any]:
             return health_status
 
         # Skills Registry 초기화
-        try:  # type: ignore[unreachable]
-            if register_core_skills:
-                registry = register_core_skills()
-            else:
-                registry = SkillRegistry()
+        registry = SkillRegistry()
 
+        try:
             skills = registry.list_skills()
             health_status["skills_count"] = len(skills)
             health_status["registry_available"] = True

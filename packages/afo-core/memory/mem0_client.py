@@ -32,14 +32,12 @@ class AFO_MemoryClient:
             config: Mem0 설정 (backend, API key 등)
         """
         self.config = config or {
-            # 로컬 백엔드 설정 (OpenAI API 키 없이 사용)
+            # 로컬 백엔드 설정 (LanceDB 사용)
             "vector_store": {
-                "provider": "qdrant",
+                "provider": "lancedb",
                 "config": {
                     "collection_name": "afo_memory",
-                    "host": None,  # 로컬 모드
-                    "port": None,
-                    "path": ":memory:",  # 인메모리 Qdrant
+                    "uri": "./data/lancedb/afo_memory.lance",  # LanceDB 파일 경로
                 },
             },
             "llm": {
@@ -309,4 +307,5 @@ def get_memory_client(config: dict[str, Any] | None = None) -> AFO_MemoryClient:
     if _default_client is None:
         _default_client = AFO_MemoryClient(config)
 
+    return _default_client
     return _default_client

@@ -297,7 +297,6 @@ class DependencyVerifier:
             "pgvector": "pgvector",
             "ragas": "ragas",
             "boto3": "boto3",
-            "hcloud": "hcloud",
             "google-genai": "google.genai",
         }
 

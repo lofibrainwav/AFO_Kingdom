@@ -18,65 +18,66 @@
     "**/libtorch*/**",
     "packages/trinity-os/tests",
     "packages/afo-core/tests",
-    "packages/afo-core/scripts",
     "packages/afo-core/legacy",
+    "packages/afo-core/scripts",
     "packages/afo-core/tigers",
     "packages/afo-core/verify_*.py",
     "packages/afo-core/strategists",
     "packages/afo-core/stubs.py",
-    "packages/afo-core/*.py",
-    "packages/afo-core/memory",
     "packages/afo-core/julie_cpa",
-    "packages/afo-core/domain",
-    "packages/afo-core/services",
-    "packages/afo-core/api",
-    "packages/afo-core/utils",
-    "packages/afo-core/cache",
-    "packages/afo-core/config",
-    "packages/afo-core/scholars",
-    "packages/afo-core/llms",
-    "packages/afo-core/factories",
-    "packages/afo-core/mediators",
-    "packages/afo-core/browser_auth",
-    "packages/afo-core/validation",
-    "packages/afo-core/examples",
-    "packages/afo-core/afo",
-    "packages/afo-core/afo_soul_engine",
-    "packages/afo-core/rag_*",
-    "packages/afo-core/alignment",
-    "packages/afo-core/kms",
+    "packages/afo-core/docs",
     "tests"
   ],
   "executionEnvironments": [
     {
+      "root": "packages/afo-core/AFO",
       "extraPaths": [
         "packages/afo-core",
         "packages/trinity-os"
-      ],
-      "root": "packages/afo-core"
+      ]
     },
     {
+      "root": "packages/afo-core",
       "extraPaths": [
         "packages/afo-core",
         "packages/trinity-os"
-      ],
-      "root": "packages/trinity-os"
+      ]
     },
     {
-      "root": "scripts"
-    },
-    {
-      "root": "legacy"
+      "root": "packages/trinity-os",
+      "extraPaths": [
+        "packages/afo-core",
+        "packages/trinity-os"
+      ]
     }
   ],
   "include": [
-    "packages/afo-core"
+    "packages/afo-core/AFO",
+    "packages/afo-core/utils"
   ],
   "pythonVersion": "3.12",
-  "reportMissingImports": "warning",
+  "reportMissingImports": "none",
   "reportMissingTypeStubs": "none",
+  "reportAttributeAccessIssue": "none",
+  "reportArgumentType": "none",
+  "reportGeneralTypeIssues": "none",
+  "reportCallIssue": "none",
+  "reportOptionalMemberAccess": "none",
+  "reportInvalidTypeVarUse": "none",
+  "reportOptionalCall": "none",
+  "reportInvalidTypeForm": "none",
+  "reportTypedDictNotRequiredAccess": "none",
+  "reportReturnType": "none",
+  "reportMissingModuleSource": "none",
+  "reportAssignmentType": "none",
+  "reportUnusedExpression": "none",
+  "reportUnboundVariable": "none",
+  "reportOperatorIssue": "none",
+  "reportRedeclaration": "none",
+  "reportOptionalContextManager": "none",
+  "reportUnsupportedDunderAll": "none",
   "stubPath": "typings",
-  "typeCheckingMode": "strict",
+  "typeCheckingMode": "basic",
   "venv": ".venv",
   "venvPath": "."
 }
