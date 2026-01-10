@@ -118,6 +118,16 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: "pip 캐시 설정 (성능 최적화)"
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.local/lib/python3.12/site-packages
+          key: ${{ runner.os }}-pip-${{ hashFiles('packages/afo-core/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
       - name: "FastAPI 의존성 설치"
         working-directory: packages/afo-core
         run: pip install -r requirements.txt
@@ -156,6 +166,16 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+
+      - name: "pip 캐시 설정 (성능 최적화)"
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.local/lib/python3.12/site-packages
+          key: ${{ runner.os }}-pip-${{ hashFiles('packages/afo-core/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
 
       - name: "FastAPI 서버 기동 (왕국의 심장)"
         working-directory: packages/afo-core

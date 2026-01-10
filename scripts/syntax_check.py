@@ -2,36 +2,48 @@
 """
 AFO 왕국 Syntax 검증 스크립트
 pre-commit hook용 간단한 syntax checker
+
+성능 최적화: Staged 파일만 검사 (전체 프로젝트 스캔 대신)
 """
 
+import subprocess
 import sys
 from pathlib import Path
 
 
-def main():
-    project_root = Path()
-    python_files = list(project_root.rglob("*.py"))
-    exclude_dirs = {
-        ".venv",
-        "__pycache__",
-        "node_modules",
-        ".next",
-        ".git",
-        "build",
-        "dist",
-    }
-    project_files = [
-        f
-        for f in python_files
-        if not any(excluded in f.parts for excluded in exclude_dirs)
-    ]
+def get_staged_python_files() -> list[Path]:
+    """Git staged Python 파일 목록 가져오기"""
+    try:
+        result = subprocess.run(
+            ["git", "diff", "--cached", "--name-only", "--diff-filter=ACM"],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        files = [
+            Path(f)
+            for f in result.stdout.strip().splitlines()
+            if f.endswith(".py") and Path(f).exists()
+        ]
+        return files
+    except Exception:
+        return []
 
-    print(f"AFO 왕국 Syntax 검증: {len(project_files)}개 파일 검사 중...")
+
+def main():
+    # 성능 최적화: Staged 파일만 검사
+    staged_files = get_staged_python_files()
+
+    if not staged_files:
+        print("ℹ️  No staged Python files to check, skipping syntax validation")
+        sys.exit(0)
+
+    print(f"AFO 왕국 Syntax 검증: {len(staged_files)}개 staged 파일 검사 중...")
 
     errors = []
-    for py_file in project_files:
+    for py_file in staged_files:
         try:
-            content = Path(py_file).read_text(encoding="utf-8")
+            content = py_file.read_text(encoding="utf-8")
             compile(content, str(py_file), "exec")
         except UnicodeDecodeError:
             print(f"⚠️  건너뜀 (디코딩 실패): {py_file}")
@@ -47,7 +59,7 @@ def main():
             print(f"  {error}")
         sys.exit(1)
     else:
-        print("✅ 모든 Python 파일 Syntax 정상!")
+        print("✅ 모든 staged Python 파일 Syntax 정상!")
 
 
 if __name__ == "__main__":
