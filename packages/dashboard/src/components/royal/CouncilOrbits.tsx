@@ -24,11 +24,11 @@ export function CouncilOrbits() {
 
   // Fallback if loading or empty
   const displayNodes = nodes.length > 0 ? nodes : [
-      { name: "Zhuge Liang", role: "Truth" },
-      { name: "Sima Yi", role: "Goodness" },
-      { name: "Zhou Yu", role: "Beauty" },
-      { name: "Julie", role: "Guardian" },
-      { name: "Yeongdeok", role: "Guardian" },
+    { name: "Zhuge Liang", role: "Truth" },
+    { name: "Sima Yi", role: "Goodness" },
+    { name: "Zhou Yu", role: "Beauty" },
+    { name: "Julie", role: "Guardian" },
+    { name: "Yeongdeok", role: "Guardian" },
   ];
 
   return (
