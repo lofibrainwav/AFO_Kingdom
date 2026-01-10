@@ -9,7 +9,7 @@
 ⚠️ Context7 trinity-os 경로 없음: /Users/brnestrm/AFO_Kingdom/packages/afo-core/trinity-os
 ✅ AFO 설정 로드 완료: dev 환경 (AFOSettings)
 Safe import failed for AFO.api.routers.aicpa: No module named 'AFO.service'
-/Users/brnestrm/AFO_Kingdom/packages/afo-core/AFO/api/routers/auth.py:15: UserWarning: JWT_SECRET_KEY 환경변수가 설정되지 않았습니다. 개발용 임시 키를 사용합니다. 프로덕션에서는 반드시 설정하세요.
+/Users/brnestrm/AFO_Kingdom/packages/afo-core/AFO/api/routers/auth.py:16: UserWarning: JWT_SECRET_KEY 환경변수가 설정되지 않았습니다. 개발용 임시 키를 사용합니다. 프로덕션에서는 반드시 설정하세요.
   from AFO.api.utils.auth import create_access_token, hash_password, verify_password, verify_token
 Safe import failed for AFO.api.routers.got: No module named 'AFO.api.routers.got'
 Safe import failed for AFO.api.routers.learning_log_router: No module named 'sqlmodel'
@@ -25,37 +25,37 @@ Safe import failed for AFO.api.routers.evolution_router: No module named 'AFO.ev
 Safe import failed for AFO.api.routers.decree_router: No module named 'AFO.evolution.dgm_engine'
 Safe import failed for AFO.api.routers.external_router: No module named 'AFO.evolution.dgm_engine'
 Safe import failed for api.routes.julie: No module named 'afo'
-2026-01-08 17:27:22,796 - AFO.api_server - WARNING - ⚠️ Sentry SDK not installed, skipping initialization
-2026-01-08 17:27:22,824 - AFO.api_server - WARNING - ⚠️ OpenTelemetry setup failed: No module named 'opentelemetry.instrumentation'
-2026-01-08 17:27:22,824 - AFO.api.config - INFO - FastAPI application created successfully
-2026-01-08 17:27:22,824 - AFO.api_server - INFO - FastAPI application created
-2026-01-08 17:27:22,824 - AFO.api.routers.chancellor_router - WARNING - ⚠️ Learning profile loader import failed: No module named 'afo'
-2026-01-08 17:27:22,824 - AFO.api.routers.chancellor_router - WARNING - ⚠️ RAG shadow mode import failed: No module named 'rag_shadow'
-2026-01-08 17:27:22,824 - AFO.api.routers.chancellor_router - WARNING - ⚠️ RAG flag + gradual mode import failed: No module named 'rag_flag'
-2026-01-08 17:27:22,827 - AFO.api.routers.chancellor_router - INFO - ✅ Chancellor V2 runner loaded successfully
-2026-01-08 17:27:22,831 - AFO.api_server - INFO - Chancellor Router registered successfully
-2026-01-08 17:27:22,838 - AFO.api_server - INFO - Multimodal Router registered successfully
-2026-01-08 17:27:22,838 - AFO.api_server - INFO - RAG Router registered successfully
-2026-01-08 17:27:22,838 - AFO.api_server - WARNING - Auth Router registration failed: No module named 'AFO.api.routes.auth'
-2026-01-08 17:27:22,839 - AFO.api_server - INFO - Rate limiter configured
-2026-01-08 17:27:22,839 - AFO.api_server - WARNING - ⚠️ APIKeyAuthMiddleware not available
-2026-01-08 17:27:22,839 - AFO.api_server - WARNING - ⚠️ API Key ACL not available
-2026-01-08 17:27:22,840 - AFO.api_server - INFO - Application configured with security measures
-2026-01-08 17:27:22,840 - AFO.setup - INFO - CORS middleware configured
-2026-01-08 17:27:22,840 - AFO.setup - INFO - Middleware setup complete
-2026-01-08 17:27:22,840 - AFO.api_server - INFO - Middleware setup completed
-2026-01-08 17:27:22,840 - AFO.api.router_manager - INFO - AFO Router Manager initialized with beautiful code principles
-2026-01-08 17:27:22,840 - AFO.api.router_manager - INFO - Starting router registration process...
-2026-01-08 17:27:22,862 - AFO.julie_cpa.grok_engine - INFO - Redis cache client initialized
-2026-01-08 17:27:22,863 - AFO.julie_cpa.grok_engine - INFO - Grok Engine initialized with beautiful code principles
-2026-01-08 17:27:22,869 - AFO.api.router_manager - WARNING - Time Travel Router not available
-2026-01-08 17:27:22,870 - AFO.api.router_manager - WARNING - RAG Stream Router not available
-2026-01-08 17:27:22,874 - AFO.api.router_manager - INFO - Skills API registered successfully (6 routes)
-2026-01-08 17:27:22,881 - AFO.api.router_manager - WARNING - Intake API router not available
-2026-01-08 17:27:22,892 - AFO.api.router_manager - WARNING - Cache Metrics router not available
-2026-01-08 17:27:22,895 - AFO.api.router_manager - INFO - Router registration completed. Total: 116 routers
-2026-01-08 17:27:22,895 - AFO.api_server - INFO - Router setup completed
-2026-01-08 17:27:22,895 - AFO.api_server - INFO - AFO Kingdom API Server initialized with beautiful code principles
+2026-01-08 07:22:47,482 - AFO.api_server - WARNING - ⚠️ Sentry SDK not installed, skipping initialization
+2026-01-08 07:22:47,507 - AFO.api_server - WARNING - ⚠️ OpenTelemetry setup failed: No module named 'opentelemetry.instrumentation'
+2026-01-08 07:22:47,507 - AFO.api.config - INFO - FastAPI application created successfully
+2026-01-08 07:22:47,507 - AFO.api_server - INFO - FastAPI application created
+2026-01-08 07:22:47,507 - AFO.api.routers.chancellor_router - WARNING - ⚠️ Learning profile loader import failed: No module named 'afo'
+2026-01-08 07:22:47,507 - AFO.api.routers.chancellor_router - WARNING - ⚠️ RAG shadow mode import failed: No module named 'rag_shadow'
+2026-01-08 07:22:47,508 - AFO.api.routers.chancellor_router - WARNING - ⚠️ RAG flag + gradual mode import failed: No module named 'rag_flag'
+2026-01-08 07:22:47,512 - AFO.api.routers.chancellor_router - INFO - ✅ Chancellor V2 runner loaded successfully
+2026-01-08 07:22:47,514 - AFO.api_server - INFO - Chancellor Router registered successfully
+2026-01-08 07:22:47,521 - AFO.api_server - INFO - Multimodal Router registered successfully
+2026-01-08 07:22:47,521 - AFO.api_server - INFO - RAG Router registered successfully
+2026-01-08 07:22:47,521 - AFO.api_server - WARNING - Auth Router registration failed: No module named 'AFO.api.routes.auth'
+2026-01-08 07:22:47,521 - AFO.api_server - INFO - Rate limiter configured
+2026-01-08 07:22:47,522 - AFO.api_server - WARNING - ⚠️ APIKeyAuthMiddleware not available
+2026-01-08 07:22:47,522 - AFO.api_server - WARNING - ⚠️ API Key ACL not available
+2026-01-08 07:22:47,523 - AFO.api_server - INFO - Application configured with security measures
+2026-01-08 07:22:47,523 - AFO.setup - INFO - CORS middleware configured
+2026-01-08 07:22:47,523 - AFO.setup - INFO - Middleware setup complete
+2026-01-08 07:22:47,523 - AFO.api_server - INFO - Middleware setup completed
+2026-01-08 07:22:47,523 - AFO.api.router_manager - INFO - AFO Router Manager initialized with beautiful code principles
+2026-01-08 07:22:47,523 - AFO.api.router_manager - INFO - Starting router registration process...
+2026-01-08 07:22:47,538 - AFO.julie_cpa.grok_engine - INFO - Redis cache client initialized
+2026-01-08 07:22:47,538 - AFO.julie_cpa.grok_engine - INFO - Grok Engine initialized with beautiful code principles
+2026-01-08 07:22:47,543 - AFO.api.router_manager - WARNING - Time Travel Router not available
+2026-01-08 07:22:47,544 - AFO.api.router_manager - WARNING - RAG Stream Router not available
+2026-01-08 07:22:47,547 - AFO.api.router_manager - INFO - Skills API registered successfully (6 routes)
+2026-01-08 07:22:47,554 - AFO.api.router_manager - WARNING - Intake API router not available
+2026-01-08 07:22:47,561 - AFO.api.router_manager - WARNING - Cache Metrics router not available
+2026-01-08 07:22:47,564 - AFO.api.router_manager - INFO - Router registration completed. Total: 116 routers
+2026-01-08 07:22:47,564 - AFO.api_server - INFO - Router setup completed
+2026-01-08 07:22:47,564 - AFO.api_server - INFO - AFO Kingdom API Server initialized with beautiful code principles
 ERROR: usage: pytest [options] [file_or_dir] [file_or_dir] [...]
 pytest: error: unrecognized arguments: -n --dist
   inifile: /Users/brnestrm/AFO_Kingdom/packages/afo-core/pyproject.toml
