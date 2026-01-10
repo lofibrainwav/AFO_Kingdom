@@ -26,7 +26,7 @@ uvicorn \
     --reload-include "*.py" \
     --reload-include "*.md" \
     --host 127.0.0.1 \
-    --port 8010 \
+    --port 8000 \
     --log-level info
 
 echo "✅ AFO 왕국 서버 중지됨"
