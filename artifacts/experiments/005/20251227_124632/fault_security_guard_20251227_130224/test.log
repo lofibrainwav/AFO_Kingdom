@@ -1,3 +1,0 @@
-ERROR: AFO_INTERNAL_SECRET is not set in this shell.
-Set it first, then re-run:
-export AFO_INTERNAL_SECRET="YOUR_REAL_SECRET"
