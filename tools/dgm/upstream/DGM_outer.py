@@ -1,4 +1,5 @@
 import argparse
+import subprocess
 import datetime
 import json
 import math
@@ -28,7 +29,7 @@ def initialize_run(output_dir, prevrun_dir=None, polyglot=False):
     initial_folder_name = 'initial' if not polyglot else 'initial_polyglot'
     if not prevrun_dir and not os.path.exists(f"{output_dir}/{initial_folder_name}"):
         if os.path.exists(initial_folder_name):
-            os.system(f"cp -r {initial_folder_name}/ {output_dir}/initial")
+            subprocess.run(["cp", "-R", f"{initial_folder_name}/", f"{output_dir}/initial"], check=True)
         else:
             raise RuntimeError("Error: Need to properly configure evaluation results for the initial version.")
     

@@ -71,7 +71,7 @@ class TestScholarGovernance(unittest.TestCase):
         mock_flag.return_value = True
 
         # 'eval(' triggers local risk brake in jaryong.py
-        dangerous_code = "eval('os.system(\"rm -rf /\")')"
+        dangerous_code = "eval('__import__(\"subprocess\").run([\"echo\",\"blocked\"], check=False)')"
 
         # Action
         result = asyncio.run(self.jaryong.verify_logic(dangerous_code))

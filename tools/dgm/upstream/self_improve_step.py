@@ -1,4 +1,5 @@
 import argparse
+import subprocess
 import datetime
 import json
 import os
@@ -431,7 +432,7 @@ def main():
     args = parser.parse_args()
 
     # Copy cached initial version into experiment dir
-    os.system(f"cp -r initial/ {args.output_dir}")
+    subprocess.run(["cp", "-R", "initial/", str(args.output_dir)], check=True)
 
     metadata = self_improve(
         parent_commit=args.parent_commit,

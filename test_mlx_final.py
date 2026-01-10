@@ -1,4 +1,5 @@
 import sys
+import subprocess
 import os
 sys.path.insert(0, 'packages/afo-core/AFO/multimodal')
 from pathlib import Path
@@ -39,9 +40,12 @@ if r.is_available():
         print(f"❌ Generation failed: {e}")
         # venv에서 직접 테스트
         print("🔧 Testing venv directly...")
-        os.system("venv_musicgen/bin/python3 --version")
-        os.system("venv_musicgen/bin/python3 -c 'import numpy; print(\"numpy OK\")' 2>/dev/null || echo 'numpy missing'")
-        os.system("venv_musicgen/bin/python3 -c 'import mlx; print(\"mlx OK\")' 2>/dev/null || echo 'mlx missing'")
+        subprocess.run(["venv_musicgen/bin/python3", "--version"], check=False)
+        py = "venv_musicgen/bin/python3"
+        r = subprocess.run([py, "-c", 'import numpy; print("numpy OK")'], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True)
+        print(r.stdout.strip() if r.returncode == 0 else "numpy missing")
+        r = subprocess.run([py, "-c", 'import mlx; print("mlx OK")'], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True)
+        print(r.stdout.strip() if r.returncode == 0 else "mlx missing")
 else:
     print("❌ MLX MusicGen Runner not available")
     print("   Check venv and musicgen paths")
