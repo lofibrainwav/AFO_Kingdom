@@ -57,7 +57,7 @@ jobs:
           echo "sha=$HEAD_SHA" >> $GITHUB_OUTPUT
       
       - name: Upload Seal Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: ssot-seal-${{ steps.seal.outputs.sha }}
           path: ${{ steps.seal.outputs.out }}/
