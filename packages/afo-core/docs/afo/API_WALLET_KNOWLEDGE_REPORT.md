@@ -71,7 +71,7 @@
 - Port: `15432` (환경 변수: `POSTGRES_PORT`)
 - Database: `postgres` (환경 변수: `POSTGRES_DB`)
 - User: `postgres` (환경 변수: `POSTGRES_USER`)
-- Password: `postgres` (환경 변수: `POSTGRES_PASSWORD`)
+- Password: `$POSTGRES_PASSWORD` (환경 변수 필수)
 
 ---
 
@@ -115,6 +115,7 @@ python3 scripts/rag/index_obsidian_to_qdrant.py --clear
 ### 수동 확인
 
 ```python
+import os
 from api_wallet import APIWallet
 import psycopg2
 
@@ -123,7 +124,7 @@ conn = psycopg2.connect(
     port=15432,
     database="postgres",
     user="postgres",
-    password="postgres"
+    password=os.getenv("POSTGRES_PASSWORD", "")
 )
 
 wallet = APIWallet(db_connection=conn)

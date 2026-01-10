@@ -1,0 +1,75 @@
+name: AFO Evidence Guard (Contract V1)
+
+on:
+pull_request:
+paths:
+- "docs/ops/**"
+- "reports/**"
+- "docs/ssot/**"
+- "scripts/**"
+- ".github/workflows/afo_evidence_guard.yml"
+push:
+paths:
+- "docs/ops/**"
+- "reports/**"
+- "docs/ssot/**"
+- "scripts/**"
+- ".github/workflows/afo_evidence_guard.yml"
+
+jobs:
+evidence-contract-v1:
+runs-on: ubuntu-latest
+steps:
+- uses: actions/checkout@v4
+with:
+fetch-depth: 0
+
+- uses: actions/setup-python@v5
+with:
+python-version: "3.11"
+
+- name: Run evidence script (format only)
+run: |
+set -euo pipefail
+bash scripts/afo_report_evidence_v1.sh | tee /tmp/afo_evidence.txt
+test "$(wc -l < /tmp/afo_evidence.txt)" -eq 6
+grep -Eq '^E1_REF: ' /tmp/afo_evidence.txt
+grep -Eq '^E2_INFRA: ' /tmp/afo_evidence.txt
+grep -Eq '^E3_HTTP: ' /tmp/afo_evidence.txt
+grep -Eq '^E4_VIEW: ' /tmp/afo_evidence.txt
+grep -Eq '^E5_ENV: ' /tmp/afo_evidence.txt
+grep -Eq '^E6_SEAL: ' /tmp/afo_evidence.txt
+
+- name: Enforce evidence block inside changed reports
+if: github.event_name == 'pull_request'
+run: |
+set -euo pipefail
+base="${{ github.event.pull_request.base.sha }}"
+head="${{ github.event.pull_request.head.sha }}"
+files="$(git diff --name-only "$base...$head" | grep -E '^reports/.*\.md$' || true)"
+if [ -z "$files" ]; then exit 0; fi
+for f in $files; do
+grep -Eq '^E1_REF: ' "$f"
+grep -Eq '^E2_INFRA: ' "$f"
+grep -Eq '^E3_HTTP: ' "$f"
+grep -Eq '^E4_VIEW: ' "$f"
+grep -Eq '^E5_ENV: ' "$f"
+grep -Eq '^E6_SEAL: ' "$f"
+done
+
+- name: Enforce evidence block inside changed reports (push)
+if: github.event_name == 'push'
+run: |
+set -euo pipefail
+before="${{ github.event.before }}"
+head="${{ github.sha }}"
+files="$(git diff --name-only "$before...$head" | grep -E '^reports/.*\.md$' || true)"
+if [ -z "$files" ]; then exit 0; fi
+for f in $files; do
+grep -Eq '^E1_REF: ' "$f"
+grep -Eq '^E2_INFRA: ' "$f"
+grep -Eq '^E3_HTTP: ' "$f"
+grep -Eq '^E4_VIEW: ' "$f"
+grep -Eq '^E5_ENV: ' "$f"
+grep -Eq '^E6_SEAL: ' "$f"
+done

@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 set -euo pipefail
 cd "$(git rev-parse --show-toplevel)"
 
@@ -99,19 +100,23 @@ PY
 echo
 echo "=== grep where html is referenced (best-effort) ==="
 if command -v rg >/dev/null 2>&1; then
-  python3 - <<'PY'
+  p_base=$(python3 - <<'PY'
 import re, pathlib
-log = pathlib.Path("artifacts/phase6_dashboard_build_error.log").read_text(encoding="utf-8", errors="ignore")
+import sys
+log_path = pathlib.Path("artifacts/phase6_dashboard_build_error.log")
+if not log_path.exists():
+    sys.exit(0)
+log = log_path.read_text(encoding="utf-8", errors="ignore")
 m = re.search(r"(?:open ['\"])([^'\"]+\.html)(?:['\"])", log)
 if not m:
     m = re.search(r"Cannot find module ['\"]([^'\"]+\.html)['\"]", log)
-if not m:
-    print("no single html path extracted for rg")
-else:
-    p=m.group(1)
-    base=pathlib.Path(p).name
-    print(base)
-PY | xargs -I{} rg -n --hidden -S "{}" "$NEXT_DIR" || true
+if m:
+    print(pathlib.Path(m.group(1)).name)
+PY
+)
+  if [ -n "$p_base" ]; then
+    rg -n --hidden -S "$p_base" "$NEXT_DIR" || true
+  fi
 else
   echo "rg not installed. skipping."
 fi

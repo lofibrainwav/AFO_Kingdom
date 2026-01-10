@@ -1,7 +1,6 @@
-from __future__ import annotations
-
 """
 TRINITY Graph Toolflow v1 (Thin Layer)
+from langchain_core.runnables import RunnableConfig
 
 Search → Card → Gate → (DryRun?) → Execute
 
@@ -10,11 +9,26 @@ Search → Card → Gate → (DryRun?) → Execute
 - 점수/판정은 새로 만들지 않고, 기존 SSOT(Registry/Gate/Proxy)만 호출한다.
 """
 
+from __future__ import annotations
+
 from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Any, Literal, TypedDict
+from typing import Any, Literal, TypedDict, cast
 
 Decision = Literal["AUTO_RUN", "ASK", "BLOCK"]
+
+
+from typing import Any, Callable, cast
+def _wrap_langgraph_node(fn: Callable[..., Any], deps: Any) -> Callable[..., Any]:
+    def _node(state: Any, *, config: RunnableConfig | None = None, store: object | None = None) -> Any:
+        _ = config
+        _: Any = store
+        return fn(cast(FlowState, state), deps)
+    return _node
+
+
+def _as_flow_state(x: 'NodeInputT') -> 'FlowState':
+    return cast(FlowState, x)
 
 
 class Candidate(TypedDict, total=False):
@@ -49,8 +63,7 @@ class FlowState(TypedDict, total=False):
 
 @dataclass(frozen=True)
 class Deps:
-    """
-    외부 의존성(실제 MCP/Registry/Gate/Proxy)을 얇게 주입받는 구조.
+    """외부 의존성(실제 MCP/Registry/Gate/Proxy)을 얇게 주입받는 구조.
 
     - tool_search: 검색 결과 후보군 반환
     - get_skill_card: 단일 스킬 카드 반환
@@ -66,7 +79,7 @@ class Deps:
 
 def _pick_candidates(payload: dict[str, Any]) -> list[dict[str, Any]]:
     for key in ("candidates", "results", "items"):
-        value = payload.get(key)
+        value: Any = payload.get(key)
         if isinstance(value, list):
             return [v for v in value if isinstance(v, dict)]
     return []
@@ -247,33 +260,28 @@ def node_final_ok(state: FlowState, deps: Deps) -> FlowState:
 
 
 def build_trinity_toolflow_graph(deps: Deps):
-    """
-    LangGraph로 Toolflow를 컴파일한다.
+    """LangGraph로 Toolflow를 컴파일한다.
     LangGraph가 없는 환경이면 ImportError를 올려 호출자가 처리하도록 한다.
     """
     from langgraph.graph import END, StateGraph
 
     graph = StateGraph(FlowState)
-    graph.add_node("TOOL_SEARCH", lambda s: node_tool_search(s, deps))
-    graph.add_node("SELECT", lambda s: node_select(s, deps))
-    graph.add_node("GET_CARD", lambda s: node_get_card(s, deps))
-    graph.add_node("SERENITY_GATE", lambda s: node_serenity_gate(s, deps))
-    graph.add_node("DRY_RUN", lambda s: node_dry_run(s, deps))
-    graph.add_node("EXECUTE", lambda s: node_execute(s, deps))
-    graph.add_node("ASK", lambda s: node_ask(s, deps))
-    graph.add_node("FINAL_BLOCK", lambda s: node_final_block(s, deps))
-    graph.add_node("FINAL_NO_CANDIDATES", lambda s: node_final_no_candidates(s, deps))
-    graph.add_node("FINAL_OK", lambda s: node_final_ok(s, deps))
+    cast(Any, graph).add_node("TOOL_SEARCH", _wrap_langgraph_node(node_tool_search, deps))
+    cast(Any, graph).add_node("SELECT", _wrap_langgraph_node(node_select, deps))
+    cast(Any, graph).add_node("GET_CARD", _wrap_langgraph_node(node_get_card, deps))
+    cast(Any, graph).add_node("SERENITY_GATE", _wrap_langgraph_node(node_serenity_gate, deps))
+    cast(Any, graph).add_node("DRY_RUN", _wrap_langgraph_node(node_dry_run, deps))
+    cast(Any, graph).add_node("EXECUTE", _wrap_langgraph_node(node_execute, deps))
+    cast(Any, graph).add_node("ASK", _wrap_langgraph_node(node_ask, deps))
+    cast(Any, graph).add_node("FINAL_BLOCK", _wrap_langgraph_node(node_final_block, deps))
+    cast(Any, graph).add_node("FINAL_NO_CANDIDATES", _wrap_langgraph_node(node_final_no_candidates, deps))
+    cast(Any, graph).add_node("FINAL_OK", _wrap_langgraph_node(node_final_ok, deps))
 
     graph.set_entry_point("TOOL_SEARCH")
     graph.add_edge("TOOL_SEARCH", "SELECT")
 
     def route_after_select(state: FlowState) -> str:
-        return (
-            "FINAL_NO_CANDIDATES"
-            if not (state.get("selected_skill_id") or "")
-            else "GET_CARD"
-        )
+        return "FINAL_NO_CANDIDATES" if not (state.get("selected_skill_id") or "") else "GET_CARD"
 
     graph.add_conditional_edges(
         "SELECT",
@@ -310,7 +318,7 @@ def build_trinity_toolflow_graph(deps: Deps):
     graph.add_edge("FINAL_NO_CANDIDATES", END)
     graph.add_edge("FINAL_OK", END)
 
-    return graph.compile()
+    return cast(Any, graph).compile()
 
 
 def run_trinity_toolflow(

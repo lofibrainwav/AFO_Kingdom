@@ -7,8 +7,7 @@ logger = logging.getLogger("AFO.LLMs.CLI")
 
 
 class CLIWrapper:
-    """
-    Wraps local CLI tools (codex, claude, ollama) to act as LLM providers.
+    """Wraps local CLI tools (codex, claude, ollama) to act as LLM providers.
     Uses subprocess to execute commands and capture stdout.
     This enables usage of 'Monthly Subscription' accounts without API Keys.
     """
@@ -53,8 +52,7 @@ class CLIWrapper:
 
     @staticmethod
     async def execute_codex(prompt: str) -> dict:
-        """
-        Call Codex CLI (OpenAI).
+        """Call Codex CLI (OpenAI).
         Uses 'codex exec' to run the agent.
         """
         if not CLIWrapper.is_available("codex"):
@@ -76,8 +74,7 @@ class CLIWrapper:
 
     @staticmethod
     async def execute_claude(prompt: str) -> dict:
-        """
-        Call Claude CLI (Anthropic).
+        """Call Claude CLI (Anthropic).
         Uses 'claude <prompt>' which acts as a REPL but accepts prompt as arg.
         """
         if not CLIWrapper.is_available("claude"):

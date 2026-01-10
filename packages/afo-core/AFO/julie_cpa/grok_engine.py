@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-AFO Kingdom Grok Engine (아름다운 코드 적용)
+"""AFO Kingdom Grok Engine (아름다운 코드 적용)
 Julie CPA Grok Analysis Engine - The Sage from the Stars
 
 Phase 15: Real-time External Intelligence via xAI
@@ -78,8 +77,7 @@ class GrokConfig:
 
 
 class CacheManager:
-    """
-    Redis Cache Manager (아름다운 코드 적용)
+    """Redis Cache Manager (아름다운 코드 적용)
 
     Trinity Score: 孝 (Serenity) - 비용 절감을 통한 안정성 확보
     """
@@ -136,8 +134,7 @@ class CacheManager:
 
 
 class GrokWebClient:
-    """
-    Grok Web Interface Client (아름다운 코드 적용)
+    """Grok Web Interface Client (아름다운 코드 적용)
 
     Trinity Score: 眞 (Truth) - 실제 Grok 웹 인터페이스와의 정확한 연동
     """
@@ -146,8 +143,7 @@ class GrokWebClient:
         self.config = config
 
     async def consult_grok(self, budget_summary: dict[str, Any]) -> dict[str, Any]:
-        """
-        Consult Grok via web interface.
+        """Consult Grok via web interface.
 
         Args:
             budget_summary: Budget data to analyze
@@ -157,6 +153,7 @@ class GrokWebClient:
 
         Raises:
             Exception: When web interaction fails
+
         """
         if not PLAYWRIGHT_AVAILABLE:
             raise Exception("Playwright not available")
@@ -259,8 +256,7 @@ class GrokWebClient:
 
 
 class GrokAPIClient:
-    """
-    Grok API Client (아름다운 코드 적용)
+    """Grok API Client (아름다운 코드 적용)
 
     Trinity Score: 美 (Beauty) - 깔끔하고 직관적인 API 연동
     """
@@ -270,14 +266,14 @@ class GrokAPIClient:
         self._client: AsyncOpenAI | None = None
 
     async def consult_grok(self, budget_summary: dict[str, Any]) -> dict[str, Any]:
-        """
-        Consult Grok via official API.
+        """Consult Grok via official API.
 
         Args:
             budget_summary: Budget data to analyze
 
         Returns:
             Analysis result dictionary
+
         """
         if not OPENAI_AVAILABLE or not self.config.XAI_API_KEY:
             raise Exception("OpenAI client not available or API key missing")
@@ -305,8 +301,7 @@ class GrokAPIClient:
 
 
 class MockGrokClient:
-    """
-    Mock Grok Client for fallback (아름다운 코드 적용)
+    """Mock Grok Client for fallback (아름다운 코드 적용)
 
     Trinity Score: 善 (Goodness) - 비용 절감과 안정성 확보
     """
@@ -351,8 +346,7 @@ class MockGrokClient:
 
 
 class GrokEngine:
-    """
-    AFO Kingdom Grok Engine (아름다운 코드 적용)
+    """AFO Kingdom Grok Engine (아름다운 코드 적용)
 
     Trinity Score 기반 외부 인텔리전스 엔진.
     Smart Routing과 Cost Guardian을 통한 효율적 운영.
@@ -363,6 +357,7 @@ class GrokEngine:
         web_client: Web interface client
         api_client: API client
         mock_client: Fallback mock client
+
     """
 
     def __init__(self) -> None:
@@ -381,8 +376,7 @@ class GrokEngine:
         market_context: str = "general",
         trinity_score: int = 85,
     ) -> dict[str, Any]:
-        """
-        Consult Grok for economic analysis with smart routing.
+        """Consult Grok for economic analysis with smart routing.
 
         Trinity Score: 智 (Wisdom) - 상황에 맞는 최적의 분석 방법 선택
 
@@ -393,6 +387,7 @@ class GrokEngine:
 
         Returns:
             Comprehensive analysis result
+
         """
         # 1. Check cache first (Cost Guardian)
         cache_key = self.cache.generate_cache_key(budget_summary)
@@ -417,11 +412,11 @@ class GrokEngine:
         return response
 
     async def _consult_real_grok(self, budget_summary: dict[str, Any]) -> dict[str, Any]:
-        """
-        Consult real Grok with fallback strategy.
+        """Consult real Grok with fallback strategy.
 
         Returns:
             Analysis result from best available method
+
         """
         # Try web interface first (preferred for latest capabilities)
         if self.config.SESSION_PATH.exists() and PLAYWRIGHT_AVAILABLE:
@@ -444,8 +439,7 @@ class GrokEngine:
         return self.mock_client._create_mock_response(budget_summary)
 
     async def generate_genui_component(self, prompt: str) -> str:
-        """
-        Generate React component using Grok.
+        """Generate React component using Grok.
 
         Trinity Score: 美 (Beauty) - 아름다운 UI 컴포넌트 생성
 
@@ -454,6 +448,7 @@ class GrokEngine:
 
         Returns:
             Generated React component code
+
         """
         logger.info(f"🎨 Generating component for: {prompt}")
 

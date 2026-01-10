@@ -11,32 +11,21 @@
 | [sixXon](packages/sixXon/) | SixXon 모듈 |
 | [dashboard](packages/dashboard/) | Next.js 대시보드 |
 
-## Quick Start
+## 🚀 Quick Start (딱 이것만 기억하세요)
+
+이미 떠 있으면 스킵하고, 없으면 알아서 켜줍니다.
 
 ```bash
-# Python 의존성
-pip install -e .
-
-# 개발 의존성
-pip install -e ".[dev]"
-
-# 테스트
-# 단위 테스트 (기본)
-make test
-
-# 통합 테스트 (PostgreSQL, Redis 필요)
-make test-integration
-
-# 외부 API 테스트
-make test-external
-
-# 또는 직접 실행
-pytest --cov=packages
-
-# 린팅
-ruff check packages/
-mypy packages/afo-core --strict
+./start_kingdom_v2.sh
 ```
+
+**실행되는 것들 (Local Kingdom):**
+*   ✅ **Redis** (brew): 심장 (자동 실행)
+*   ✅ **Qdrant** (local): 폐 (자동 실행)
+*   ✅ **API** (:8010): 영혼
+*   ✅ **UI** (:3000): 얼굴
+*   ⏸ **Postgres** (docker): 간 (옵션 - 데이터 영속성 필요시 `brew install postgresql` 권장)
+
 
 ## CI/CD
 
@@ -50,6 +39,7 @@ mypy packages/afo-core --strict
 
 - **[Final Handover Report (MUST READ)](docs/AFO_FINAL_HANDOVER.md)**
 - **[대시보드 가이드](DASHBOARD_README.md)** - 메인 대시보드 사용법
+- **[Claude Code AFO 가이드](docs/CLAUDE_CODE_AFO_GUIDE.md)** - 10초 프로토콜 + 커스텀 명령어
 - [CI/CD Pipeline](docs/CI_CD_PIPELINE.md)
 - [OSS Strategy (세종대왕 정신)](docs/OSS_STRATEGY.md)
 - [Security Policy](SECURITY.md)

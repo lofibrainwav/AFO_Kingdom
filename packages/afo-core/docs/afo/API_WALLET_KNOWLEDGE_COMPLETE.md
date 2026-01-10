@@ -33,7 +33,7 @@
 - Port: `15432`
 - Database: `afo_memory`
 - User: `afo`
-- Password: `your-secure-password-here`
+- Password: `$POSTGRES_PASSWORD` (환경 변수 필수)
 
 **테이블 구조**:
 - 테이블명: `api_keys`
@@ -117,7 +117,7 @@ python3 scripts/rag/index_obsidian_to_qdrant.py --clear
 ```bash
 export POSTGRES_DB="afo_memory"
 export POSTGRES_USER="afo"
-export POSTGRES_PASSWORD="your-secure-password-here"
+export POSTGRES_PASSWORD="<YOUR_SECURE_PASSWORD>"
 ```
 
 ---

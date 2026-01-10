@@ -17,7 +17,7 @@ echo ">> 🧹 Cleaning ports: ${PORTS[*]}"
 for PORT in "${PORTS[@]}"; do
     echo "   -> Checking Port $PORT..."
     # Kill all PIDs on this port, suppressing errors if empty
-    lsof -t -i :$PORT | xargs -r kill -9 2>/dev/null || true
+    lsof -t -i :"$PORT" | xargs -r kill -9 2>/dev/null || true
 done
 
 echo ">> ⏳ Waiting for ports to clear..."

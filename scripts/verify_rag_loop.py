@@ -3,12 +3,9 @@ import os
 import pathlib
 import sys
 
+
 # Add project root to path
-sys.path.append(
-    pathlib.Path(
-        os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")
-    ).resolve()
-)
+sys.path.append(pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")).resolve())
 
 from AFO.api.routers.rag_query import RAGQueryRequest, query_kingdom_memory
 
@@ -23,8 +20,8 @@ async def verify_rag_loop():
     req1 = RAGQueryRequest(question=q1)
     res1 = await query_kingdom_memory(req1)
 
-    print(f"✅ Answer: {res1.get("answer")}")
-    print(f"📚 Sources: {res1.get("sources")}")
+    print(f"✅ Answer: {res1.get('answer')}")
+    print(f"📚 Sources: {res1.get('sources')}")
 
     # Assertions
     if "98.25%" in res1.get("answer"):
@@ -40,8 +37,8 @@ async def verify_rag_loop():
     req2 = RAGQueryRequest(question=q2)
     res2 = await query_kingdom_memory(req2)
 
-    print(f"✅ Answer: {res2.get("answer")}")
-    print(f"📚 Sources: {res2.get("sources")}")
+    print(f"✅ Answer: {res2.get('answer')}")
+    print(f"📚 Sources: {res2.get('sources')}")
 
     if "Matrix Stream" in res2.get("answer"):
         print("   -> Phase 10 context verified.")

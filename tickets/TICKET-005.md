@@ -68,8 +68,8 @@ def save_mipro_result(result, learning_profile_path):
 ## ✅ Acceptance Criteria
 
 - [x] MIPROv2 팩트 확인: Optuna TPE 기반 (GP+EI 아님)
-- [ ] DSPy 설치 및 Upstream MIPROv2 연동 (의존성 충돌로 보류)
-- [x] 커스텀 GP+EI BO 구현 (별도 파일: `custom_bo_gp.py`)
+- [x] DSPy 설치 및 Upstream MIPROv2 연동 ✅ (환경 불일치 해결)
+- [x] 커스텀 GP+EI BO 구현 ✅ (`packages/afo-core/AFO/custom_bo_gp.py`)
 - [ ] Boot-Swap 저장 포맷 구현 (DSPy 설치 후 진행)
 - [x] SSOT 문서화 (MIPROv2 ≠ GP+EI)
 

@@ -5,6 +5,7 @@ Phase 3: 인증 라우터 (心 시스템 - 인증)
 JWT 토큰 및 비밀번호 해시 지원
 """
 
+import secrets
 from typing import Any
 
 from fastapi import APIRouter, HTTPException, Query
@@ -107,8 +108,13 @@ async def login(request: LoginRequest) -> dict[str, Any]:
 
             password_valid = verify_password(request.password, user_result["hashed_password"])
         else:
-            # Fallback 검증
-            password_valid = user_result["hashed_password"] == f"hashed_{hash(request.password)}"
+            # Phase 15 Security Seal: Fallback 시 인증 거부 (hash() 취약점 제거)
+            # AUTH_UTILS가 없으면 안전한 비밀번호 검증 불가
+            await conn.close()
+            raise HTTPException(
+                status_code=503,
+                detail="인증 시스템 초기화 중입니다. 잠시 후 다시 시도해주세요.",
+            )
 
         if not password_valid:
             await conn.close()
@@ -127,8 +133,8 @@ async def login(request: LoginRequest) -> dict[str, Any]:
             access_token = create_access_token(data=token_data)
             session_token = access_token  # JWT를 세션 토큰으로 사용
         else:
-            # Fallback 토큰
-            session_token = f"temp_token_{request.username}_{hash(request.password)}"
+            # Phase 15 Security Seal: secrets.token_urlsafe 사용 (hash() 취약점 제거)
+            session_token = f"temp_token_{request.username}_{secrets.token_urlsafe(32)}"
             access_token = session_token
 
         # DB 세션 생성 (저장 프로시저 사용)
@@ -169,7 +175,8 @@ async def login(request: LoginRequest) -> dict[str, Any]:
             token_data = {"sub": request.username, "username": request.username}
             access_token = create_access_token(data=token_data)
         else:
-            access_token = f"temp_token_{request.username}_{hash(request.password)}"
+            # Phase 15 Security Seal: secrets.token_urlsafe 사용 (hash() 취약점 제거)
+            access_token = f"temp_token_{request.username}_{secrets.token_urlsafe(32)}"
 
         return {
             "access_token": access_token,

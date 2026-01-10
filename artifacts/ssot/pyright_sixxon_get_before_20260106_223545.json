@@ -1,0 +1,3294 @@
+{
+    "version": "1.1.407",
+    "time": "1767767746965",
+    "generalDiagnostics": [
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Import \"argparse\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 10,
+                    "character": 7
+                },
+                "end": {
+                    "line": 10,
+                    "character": 15
+                }
+            },
+            "rule": "reportUnusedImport"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"run_trinity_toolflow\" is partially unknown\n  Type of \"run_trinity_toolflow\" is \"(app: Unknown, user_prompt: str, *, query: str | None = None, top_k: int = 5, risk_score: float | None = None) -> FlowState\"",
+            "range": {
+                "start": {
+                    "line": 23,
+                    "character": 86
+                },
+                "end": {
+                    "line": 23,
+                    "character": 106
+                }
+            },
+            "rule": "reportUnknownVariableType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"next_actions\" is partially unknown\n  Type of \"next_actions\" is \"Any | list[Unknown]\"",
+            "range": {
+                "start": {
+                    "line": 29,
+                    "character": 4
+                },
+                "end": {
+                    "line": 29,
+                    "character": 16
+                }
+            },
+            "rule": "reportUnknownVariableType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"next_one\" is partially unknown\n  Type of \"next_one\" is \"Unknown | Literal['']\"",
+            "range": {
+                "start": {
+                    "line": 30,
+                    "character": 4
+                },
+                "end": {
+                    "line": 30,
+                    "character": 12
+                }
+            },
+            "rule": "reportUnknownVariableType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Function \"_find_repo_root\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 94,
+                    "character": 4
+                },
+                "end": {
+                    "line": 94,
+                    "character": 19
+                }
+            },
+            "rule": "reportUnusedFunction"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Function \"_resolve_receipt_dir\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 109,
+                    "character": 4
+                },
+                "end": {
+                    "line": 109,
+                    "character": 24
+                }
+            },
+            "rule": "reportUnusedFunction"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"k\" is unknown",
+            "range": {
+                "start": {
+                    "line": 177,
+                    "character": 8
+                },
+                "end": {
+                    "line": 177,
+                    "character": 9
+                }
+            },
+            "rule": "reportUnknownVariableType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"get\" is partially unknown\n  Type of \"get\" is \"Overload[(key: Unknown, default: None = None, /) -> (Unknown | None), (key: Unknown, default: Unknown, /) -> Unknown, (key: Unknown, default: _T@get, /) -> (Unknown | _T@get)]\"",
+            "range": {
+                "start": {
+                    "line": 180,
+                    "character": 11
+                },
+                "end": {
+                    "line": 180,
+                    "character": 16
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"get\" is partially unknown\n  Type of \"get\" is \"Overload[(key: Unknown, default: None = None, /) -> (Unknown | None), (key: Unknown, default: Unknown, /) -> Unknown, (key: Unknown, default: _T@get, /) -> (Unknown | _T@get)]\"",
+            "range": {
+                "start": {
+                    "line": 184,
+                    "character": 24
+                },
+                "end": {
+                    "line": 184,
+                    "character": 29
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"get\" is partially unknown\n  Type of \"get\" is \"Overload[(key: Unknown, default: None = None, /) -> (Unknown | None), (key: Unknown, default: Unknown, /) -> Unknown, (key: Unknown, default: _T@get, /) -> (Unknown | _T@get)]\"",
+            "range": {
+                "start": {
+                    "line": 185,
+                    "character": 27
+                },
+                "end": {
+                    "line": 185,
+                    "character": 32
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"get\" is partially unknown\n  Type of \"get\" is \"Overload[(key: Unknown, default: None = None, /) -> (Unknown | None), (key: Unknown, default: Unknown, /) -> Unknown, (key: Unknown, default: _T@get, /) -> (Unknown | _T@get)]\"",
+            "range": {
+                "start": {
+                    "line": 186,
+                    "character": 29
+                },
+                "end": {
+                    "line": 186,
+                    "character": 34
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"get\" is partially unknown\n  Type of \"get\" is \"Overload[(key: Unknown, default: None = None, /) -> (Unknown | None), (key: Unknown, default: Unknown, /) -> Unknown, (key: Unknown, default: _T@get, /) -> (Unknown | _T@get)]\"",
+            "range": {
+                "start": {
+                    "line": 187,
+                    "character": 31
+                },
+                "end": {
+                    "line": 187,
+                    "character": 36
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"get\" is partially unknown\n  Type of \"get\" is \"Overload[(key: Unknown, default: None = None, /) -> (Unknown | None), (key: Unknown, default: Unknown, /) -> Unknown, (key: Unknown, default: _T@get, /) -> (Unknown | _T@get)]\"",
+            "range": {
+                "start": {
+                    "line": 188,
+                    "character": 30
+                },
+                "end": {
+                    "line": 188,
+                    "character": 35
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"get\" is partially unknown\n  Type of \"get\" is \"Overload[(key: Unknown, default: None = None, /) -> (Unknown | None), (key: Unknown, default: Unknown, /) -> Unknown, (key: Unknown, default: _T@get, /) -> (Unknown | _T@get)]\"",
+            "range": {
+                "start": {
+                    "line": 213,
+                    "character": 27
+                },
+                "end": {
+                    "line": 213,
+                    "character": 38
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"get\" is partially unknown\n  Type of \"get\" is \"Overload[(key: Unknown, default: None = None, /) -> (Unknown | None), (key: Unknown, default: Unknown, /) -> Unknown, (key: Unknown, default: _T@get, /) -> (Unknown | _T@get)]\"",
+            "range": {
+                "start": {
+                    "line": 214,
+                    "character": 20
+                },
+                "end": {
+                    "line": 214,
+                    "character": 31
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Argument type is partially unknown\n  Argument corresponds to parameter \"obj\" in function \"len\"\n  Argument type is \"Unknown | list[Any]\"",
+            "range": {
+                "start": {
+                    "line": 214,
+                    "character": 20
+                },
+                "end": {
+                    "line": 214,
+                    "character": 48
+                }
+            },
+            "rule": "reportUnknownArgumentType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Unnecessary isinstance call; \"dict[str, Any]\" is always an instance of \"dict[Unknown, Unknown]\"",
+            "range": {
+                "start": {
+                    "line": 264,
+                    "character": 73
+                },
+                "end": {
+                    "line": 264,
+                    "character": 92
+                }
+            },
+            "rule": "reportUnnecessaryIsInstance"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Unnecessary isinstance call; \"dict[str, Any]\" is always an instance of \"dict[Unknown, Unknown]\"",
+            "range": {
+                "start": {
+                    "line": 279,
+                    "character": 78
+                },
+                "end": {
+                    "line": 279,
+                    "character": 97
+                }
+            },
+            "rule": "reportUnnecessaryIsInstance"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Unnecessary isinstance call; \"dict[str, Any] | dict[str, str]\" is always an instance of \"dict[Unknown, Unknown]\"",
+            "range": {
+                "start": {
+                    "line": 398,
+                    "character": 14
+                },
+                "end": {
+                    "line": 398,
+                    "character": 38
+                }
+            },
+            "rule": "reportUnnecessaryIsInstance"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Unnecessary isinstance call; \"dict[str, Any] | dict[str, str]\" is always an instance of \"dict[Unknown, Unknown]\"",
+            "range": {
+                "start": {
+                    "line": 403,
+                    "character": 28
+                },
+                "end": {
+                    "line": 403,
+                    "character": 52
+                }
+            },
+            "rule": "reportUnnecessaryIsInstance"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Function \"_auth_capture\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 426,
+                    "character": 4
+                },
+                "end": {
+                    "line": 426,
+                    "character": 17
+                }
+            },
+            "rule": "reportUnusedFunction"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Unnecessary isinstance call; \"dict[str, Any]\" is always an instance of \"dict[Unknown, Unknown]\"",
+            "range": {
+                "start": {
+                    "line": 442,
+                    "character": 7
+                },
+                "end": {
+                    "line": 442,
+                    "character": 29
+                }
+            },
+            "rule": "reportUnnecessaryIsInstance"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Function \"_auth_open\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 454,
+                    "character": 4
+                },
+                "end": {
+                    "line": 454,
+                    "character": 14
+                }
+            },
+            "rule": "reportUnusedFunction"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Unnecessary isinstance call; \"dict[str, Any] | dict[str, bool | str]\" is always an instance of \"dict[Unknown, Unknown]\"",
+            "range": {
+                "start": {
+                    "line": 530,
+                    "character": 14
+                },
+                "end": {
+                    "line": 530,
+                    "character": 38
+                }
+            },
+            "rule": "reportUnnecessaryIsInstance"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Unnecessary isinstance call; \"dict[str, Any] | dict[str, bool | str]\" is always an instance of \"dict[Unknown, Unknown]\"",
+            "range": {
+                "start": {
+                    "line": 535,
+                    "character": 28
+                },
+                "end": {
+                    "line": 535,
+                    "character": 52
+                }
+            },
+            "rule": "reportUnnecessaryIsInstance"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Function \"_auth_doctor\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 556,
+                    "character": 4
+                },
+                "end": {
+                    "line": 556,
+                    "character": 16
+                }
+            },
+            "rule": "reportUnusedFunction"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Function \"_auth_ask\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 627,
+                    "character": 4
+                },
+                "end": {
+                    "line": 627,
+                    "character": 13
+                }
+            },
+            "rule": "reportUnusedFunction"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Function \"_latest_receipt_dir\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 786,
+                    "character": 4
+                },
+                "end": {
+                    "line": 786,
+                    "character": 23
+                }
+            },
+            "rule": "reportUnusedFunction"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"get\" is partially unknown\n  Type of \"get\" is \"Overload[(key: Unknown, default: None = None, /) -> (Unknown | None), (key: Unknown, default: Unknown, /) -> Unknown, (key: Unknown, default: _T@get, /) -> (Unknown | _T@get)]\"",
+            "range": {
+                "start": {
+                    "line": 803,
+                    "character": 37
+                },
+                "end": {
+                    "line": 803,
+                    "character": 45
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"get\" is partially unknown\n  Type of \"get\" is \"Overload[(key: Unknown, default: None = None, /) -> (Unknown | None), (key: Unknown, default: Unknown, /) -> Unknown, (key: Unknown, default: _T@get, /) -> (Unknown | _T@get)]\"",
+            "range": {
+                "start": {
+                    "line": 804,
+                    "character": 52
+                },
+                "end": {
+                    "line": 804,
+                    "character": 60
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Return type, \"dict[Unknown, Unknown]\", is partially unknown",
+            "range": {
+                "start": {
+                    "line": 805,
+                    "character": 11
+                },
+                "end": {
+                    "line": 805,
+                    "character": 15
+                }
+            },
+            "rule": "reportUnknownVariableType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"services\" is partially unknown\n  Type of \"services\" is \"Any | dict[Unknown, Unknown]\"",
+            "range": {
+                "start": {
+                    "line": 815,
+                    "character": 4
+                },
+                "end": {
+                    "line": 815,
+                    "character": 12
+                }
+            },
+            "rule": "reportUnknownVariableType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"ports\" is partially unknown\n  Type of \"ports\" is \"Unknown | Any | dict[Unknown, Unknown]\"",
+            "range": {
+                "start": {
+                    "line": 816,
+                    "character": 4
+                },
+                "end": {
+                    "line": 816,
+                    "character": 9
+                }
+            },
+            "rule": "reportUnknownVariableType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"get\" is partially unknown\n  Type of \"get\" is \"Any | Overload[(key: Unknown, default: None = None, /) -> (Unknown | None), (key: Unknown, default: Unknown, /) -> Unknown, (key: Unknown, default: _T@get, /) -> (Unknown | _T@get)]\"",
+            "range": {
+                "start": {
+                    "line": 816,
+                    "character": 12
+                },
+                "end": {
+                    "line": 816,
+                    "character": 24
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"http\" is partially unknown\n  Type of \"http\" is \"Unknown | Any | dict[Unknown, Unknown]\"",
+            "range": {
+                "start": {
+                    "line": 817,
+                    "character": 4
+                },
+                "end": {
+                    "line": 817,
+                    "character": 8
+                }
+            },
+            "rule": "reportUnknownVariableType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"get\" is partially unknown\n  Type of \"get\" is \"Any | Overload[(key: Unknown, default: None = None, /) -> (Unknown | None), (key: Unknown, default: Unknown, /) -> Unknown, (key: Unknown, default: _T@get, /) -> (Unknown | _T@get)]\"",
+            "range": {
+                "start": {
+                    "line": 817,
+                    "character": 11
+                },
+                "end": {
+                    "line": 817,
+                    "character": 23
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"infra_checks\" is partially unknown\n  Type of \"infra_checks\" is \"list[tuple[str, Unknown | Any | None]]\"",
+            "range": {
+                "start": {
+                    "line": 820,
+                    "character": 4
+                },
+                "end": {
+                    "line": 820,
+                    "character": 16
+                }
+            },
+            "rule": "reportUnknownVariableType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"get\" is partially unknown\n  Type of \"get\" is \"Unknown | Any | Overload[(key: Unknown, default: None = None, /) -> (Unknown | None), (key: Unknown, default: Unknown, /) -> Unknown, (key: Unknown, default: _T@get, /) -> (Unknown | _T@get)]\"",
+            "range": {
+                "start": {
+                    "line": 821,
+                    "character": 27
+                },
+                "end": {
+                    "line": 821,
+                    "character": 36
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"get\" is partially unknown\n  Type of \"get\" is \"Unknown | Any | Overload[(key: Unknown, default: None = None, /) -> (Unknown | None), (key: Unknown, default: Unknown, /) -> Unknown, (key: Unknown, default: _T@get, /) -> (Unknown | _T@get)]\"",
+            "range": {
+                "start": {
+                    "line": 822,
+                    "character": 23
+                },
+                "end": {
+                    "line": 822,
+                    "character": 32
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"get\" is partially unknown\n  Type of \"get\" is \"Unknown | Any | Overload[(key: Unknown, default: None = None, /) -> (Unknown | None), (key: Unknown, default: Unknown, /) -> Unknown, (key: Unknown, default: _T@get, /) -> (Unknown | _T@get)]\"",
+            "range": {
+                "start": {
+                    "line": 823,
+                    "character": 29
+                },
+                "end": {
+                    "line": 823,
+                    "character": 37
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"get\" is partially unknown\n  Type of \"get\" is \"Unknown | Any | Overload[(key: Unknown, default: None = None, /) -> (Unknown | None), (key: Unknown, default: Unknown, /) -> Unknown, (key: Unknown, default: _T@get, /) -> (Unknown | _T@get)]\"",
+            "range": {
+                "start": {
+                    "line": 824,
+                    "character": 29
+                },
+                "end": {
+                    "line": 824,
+                    "character": 37
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"check\" is partially unknown\n  Type of \"check\" is \"Unknown | Any | None\"",
+            "range": {
+                "start": {
+                    "line": 829,
+                    "character": 14
+                },
+                "end": {
+                    "line": 829,
+                    "character": 19
+                }
+            },
+            "rule": "reportUnknownVariableType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"get\" is partially unknown\n  Type of \"get\" is \"Overload[(key: Unknown, default: None = None, /) -> (Unknown | None), (key: Unknown, default: Unknown, /) -> Unknown, (key: Unknown, default: _T@get, /) -> (Unknown | _T@get)]\"",
+            "range": {
+                "start": {
+                    "line": 830,
+                    "character": 39
+                },
+                "end": {
+                    "line": 830,
+                    "character": 48
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"get\" is partially unknown\n  Type of \"get\" is \"Overload[(key: Unknown, default: None = None, /) -> (Unknown | None), (key: Unknown, default: Unknown, /) -> Unknown, (key: Unknown, default: _T@get, /) -> (Unknown | _T@get)]\"",
+            "range": {
+                "start": {
+                    "line": 834,
+                    "character": 43
+                },
+                "end": {
+                    "line": 834,
+                    "character": 52
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"check\" is partially unknown\n  Type of \"check\" is \"Unknown | Any | None\"",
+            "range": {
+                "start": {
+                    "line": 839,
+                    "character": 14
+                },
+                "end": {
+                    "line": 839,
+                    "character": 19
+                }
+            },
+            "rule": "reportUnknownVariableType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"response_time\" is unknown",
+            "range": {
+                "start": {
+                    "line": 841,
+                    "character": 12
+                },
+                "end": {
+                    "line": 841,
+                    "character": 25
+                }
+            },
+            "rule": "reportUnknownVariableType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"get\" is partially unknown\n  Type of \"get\" is \"Overload[(key: Unknown, default: None = None, /) -> (Unknown | None), (key: Unknown, default: Unknown, /) -> Unknown, (key: Unknown, default: _T@get, /) -> (Unknown | _T@get)]\"",
+            "range": {
+                "start": {
+                    "line": 841,
+                    "character": 28
+                },
+                "end": {
+                    "line": 841,
+                    "character": 37
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"check\" is partially unknown\n  Type of \"check\" is \"Unknown | Any | None\"",
+            "range": {
+                "start": {
+                    "line": 864,
+                    "character": 15
+                },
+                "end": {
+                    "line": 864,
+                    "character": 20
+                }
+            },
+            "rule": "reportUnknownVariableType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"version\" is unknown",
+            "range": {
+                "start": {
+                    "line": 866,
+                    "character": 12
+                },
+                "end": {
+                    "line": 866,
+                    "character": 19
+                }
+            },
+            "rule": "reportUnknownVariableType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"get\" is partially unknown\n  Type of \"get\" is \"Overload[(key: Unknown, default: None = None, /) -> (Unknown | None), (key: Unknown, default: Unknown, /) -> Unknown, (key: Unknown, default: _T@get, /) -> (Unknown | _T@get)]\"",
+            "range": {
+                "start": {
+                    "line": 866,
+                    "character": 22
+                },
+                "end": {
+                    "line": 866,
+                    "character": 31
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"check\" is partially unknown\n  Type of \"check\" is \"Unknown | Any | None\"",
+            "range": {
+                "start": {
+                    "line": 882,
+                    "character": 17
+                },
+                "end": {
+                    "line": 882,
+                    "character": 22
+                }
+            },
+            "rule": "reportUnknownVariableType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"get\" is partially unknown\n  Type of \"get\" is \"Overload[(key: Unknown, default: None = None, /) -> (Unknown | None), (key: Unknown, default: Unknown, /) -> Unknown, (key: Unknown, default: _T@get, /) -> (Unknown | _T@get)]\"",
+            "range": {
+                "start": {
+                    "line": 882,
+                    "character": 75
+                },
+                "end": {
+                    "line": 882,
+                    "character": 84
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"services\" is partially unknown\n  Type of \"services\" is \"Any | dict[Unknown, Unknown]\"",
+            "range": {
+                "start": {
+                    "line": 943,
+                    "character": 4
+                },
+                "end": {
+                    "line": 943,
+                    "character": 12
+                }
+            },
+            "rule": "reportUnknownVariableType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"ports\" is partially unknown\n  Type of \"ports\" is \"Unknown | Any | dict[Unknown, Unknown]\"",
+            "range": {
+                "start": {
+                    "line": 944,
+                    "character": 4
+                },
+                "end": {
+                    "line": 944,
+                    "character": 9
+                }
+            },
+            "rule": "reportUnknownVariableType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"get\" is partially unknown\n  Type of \"get\" is \"Any | Overload[(key: Unknown, default: None = None, /) -> (Unknown | None), (key: Unknown, default: Unknown, /) -> Unknown, (key: Unknown, default: _T@get, /) -> (Unknown | _T@get)]\"",
+            "range": {
+                "start": {
+                    "line": 944,
+                    "character": 12
+                },
+                "end": {
+                    "line": 944,
+                    "character": 24
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"http\" is partially unknown\n  Type of \"http\" is \"Unknown | Any | dict[Unknown, Unknown]\"",
+            "range": {
+                "start": {
+                    "line": 945,
+                    "character": 4
+                },
+                "end": {
+                    "line": 945,
+                    "character": 8
+                }
+            },
+            "rule": "reportUnknownVariableType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"get\" is partially unknown\n  Type of \"get\" is \"Any | Overload[(key: Unknown, default: None = None, /) -> (Unknown | None), (key: Unknown, default: Unknown, /) -> Unknown, (key: Unknown, default: _T@get, /) -> (Unknown | _T@get)]\"",
+            "range": {
+                "start": {
+                    "line": 945,
+                    "character": 11
+                },
+                "end": {
+                    "line": 945,
+                    "character": 23
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"required_paths\" is partially unknown\n  Type of \"required_paths\" is \"list[tuple[str, Unknown | Any | None]]\"",
+            "range": {
+                "start": {
+                    "line": 947,
+                    "character": 4
+                },
+                "end": {
+                    "line": 947,
+                    "character": 18
+                }
+            },
+            "rule": "reportUnknownVariableType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"get\" is partially unknown\n  Type of \"get\" is \"Unknown | Any | Overload[(key: Unknown, default: None = None, /) -> (Unknown | None), (key: Unknown, default: Unknown, /) -> Unknown, (key: Unknown, default: _T@get, /) -> (Unknown | _T@get)]\"",
+            "range": {
+                "start": {
+                    "line": 948,
+                    "character": 33
+                },
+                "end": {
+                    "line": 948,
+                    "character": 42
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"get\" is partially unknown\n  Type of \"get\" is \"Unknown | Any | Overload[(key: Unknown, default: None = None, /) -> (Unknown | None), (key: Unknown, default: Unknown, /) -> Unknown, (key: Unknown, default: _T@get, /) -> (Unknown | _T@get)]\"",
+            "range": {
+                "start": {
+                    "line": 949,
+                    "character": 29
+                },
+                "end": {
+                    "line": 949,
+                    "character": 38
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"get\" is partially unknown\n  Type of \"get\" is \"Unknown | Any | Overload[(key: Unknown, default: None = None, /) -> (Unknown | None), (key: Unknown, default: Unknown, /) -> Unknown, (key: Unknown, default: _T@get, /) -> (Unknown | _T@get)]\"",
+            "range": {
+                "start": {
+                    "line": 950,
+                    "character": 41
+                },
+                "end": {
+                    "line": 950,
+                    "character": 49
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"get\" is partially unknown\n  Type of \"get\" is \"Unknown | Any | Overload[(key: Unknown, default: None = None, /) -> (Unknown | None), (key: Unknown, default: Unknown, /) -> Unknown, (key: Unknown, default: _T@get, /) -> (Unknown | _T@get)]\"",
+            "range": {
+                "start": {
+                    "line": 951,
+                    "character": 41
+                },
+                "end": {
+                    "line": 951,
+                    "character": 49
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"obj\" is partially unknown\n  Type of \"obj\" is \"Unknown | Any | None\"",
+            "range": {
+                "start": {
+                    "line": 955,
+                    "character": 14
+                },
+                "end": {
+                    "line": 955,
+                    "character": 17
+                }
+            },
+            "rule": "reportUnknownVariableType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"get\" is partially unknown\n  Type of \"get\" is \"Overload[(key: Unknown, default: None = None, /) -> (Unknown | None), (key: Unknown, default: Unknown, /) -> Unknown, (key: Unknown, default: _T@get, /) -> (Unknown | _T@get)]\"",
+            "range": {
+                "start": {
+                    "line": 958,
+                    "character": 25
+                },
+                "end": {
+                    "line": 958,
+                    "character": 32
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Argument type is partially unknown\n  Argument corresponds to parameter \"object\" in function \"__new__\"\n  Argument type is \"Unknown | Literal['']\"",
+            "range": {
+                "start": {
+                    "line": 958,
+                    "character": 25
+                },
+                "end": {
+                    "line": 958,
+                    "character": 48
+                }
+            },
+            "rule": "reportUnknownArgumentType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"env\" is partially unknown\n  Type of \"env\" is \"Any | dict[Unknown, Unknown]\"",
+            "range": {
+                "start": {
+                    "line": 1010,
+                    "character": 4
+                },
+                "end": {
+                    "line": 1010,
+                    "character": 7
+                }
+            },
+            "rule": "reportUnknownVariableType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"get\" is partially unknown\n  Type of \"get\" is \"Any | Overload[(key: Unknown, default: None = None, /) -> (Unknown | None), (key: Unknown, default: Unknown, /) -> Unknown, (key: Unknown, default: _T@get, /) -> (Unknown | _T@get)]\"",
+            "range": {
+                "start": {
+                    "line": 1011,
+                    "character": 16
+                },
+                "end": {
+                    "line": 1011,
+                    "character": 23
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Argument type is partially unknown\n  Argument corresponds to parameter \"object\" in function \"__new__\"\n  Argument type is \"Unknown | Any | Literal['']\"",
+            "range": {
+                "start": {
+                    "line": 1011,
+                    "character": 16
+                },
+                "end": {
+                    "line": 1011,
+                    "character": 38
+                }
+            },
+            "rule": "reportUnknownArgumentType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"details\" is partially unknown\n  Type of \"details\" is \"Any | list[Unknown]\"",
+            "range": {
+                "start": {
+                    "line": 1018,
+                    "character": 4
+                },
+                "end": {
+                    "line": 1018,
+                    "character": 11
+                }
+            },
+            "rule": "reportUnknownVariableType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"d\" is unknown",
+            "range": {
+                "start": {
+                    "line": 1020,
+                    "character": 12
+                },
+                "end": {
+                    "line": 1020,
+                    "character": 13
+                }
+            },
+            "rule": "reportUnknownVariableType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"next_actions\" is partially unknown\n  Type of \"next_actions\" is \"Any | list[Unknown]\"",
+            "range": {
+                "start": {
+                    "line": 1029,
+                    "character": 4
+                },
+                "end": {
+                    "line": 1029,
+                    "character": 16
+                }
+            },
+            "rule": "reportUnknownVariableType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"next_one\" is partially unknown\n  Type of \"next_one\" is \"Unknown | Literal['']\"",
+            "range": {
+                "start": {
+                    "line": 1030,
+                    "character": 4
+                },
+                "end": {
+                    "line": 1030,
+                    "character": 12
+                }
+            },
+            "rule": "reportUnknownVariableType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"card\" is partially unknown\n  Type of \"card\" is \"dict[str, str | Unknown | dict[str, str | Unknown]]\"",
+            "range": {
+                "start": {
+                    "line": 1032,
+                    "character": 4
+                },
+                "end": {
+                    "line": 1032,
+                    "character": 8
+                }
+            },
+            "rule": "reportUnknownVariableType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Return type, \"dict[str, str | Unknown | dict[str, str | Unknown]]\", is partially unknown",
+            "range": {
+                "start": {
+                    "line": 1046,
+                    "character": 11
+                },
+                "end": {
+                    "line": 1046,
+                    "character": 15
+                }
+            },
+            "rule": "reportUnknownVariableType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Function \"_edu_from_receipt\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1049,
+                    "character": 4
+                },
+                "end": {
+                    "line": 1049,
+                    "character": 21
+                }
+            },
+            "rule": "reportUnusedFunction"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"env\" is partially unknown\n  Type of \"env\" is \"Any | dict[Unknown, Unknown]\"",
+            "range": {
+                "start": {
+                    "line": 1055,
+                    "character": 4
+                },
+                "end": {
+                    "line": 1055,
+                    "character": 7
+                }
+            },
+            "rule": "reportUnknownVariableType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"get\" is partially unknown\n  Type of \"get\" is \"Any | Overload[(key: Unknown, default: None = None, /) -> (Unknown | None), (key: Unknown, default: Unknown, /) -> Unknown, (key: Unknown, default: _T@get, /) -> (Unknown | _T@get)]\"",
+            "range": {
+                "start": {
+                    "line": 1056,
+                    "character": 16
+                },
+                "end": {
+                    "line": 1056,
+                    "character": 23
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Argument type is partially unknown\n  Argument corresponds to parameter \"object\" in function \"__new__\"\n  Argument type is \"Unknown | Any | Literal['']\"",
+            "range": {
+                "start": {
+                    "line": 1056,
+                    "character": 16
+                },
+                "end": {
+                    "line": 1056,
+                    "character": 38
+                }
+            },
+            "rule": "reportUnknownArgumentType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"details\" is partially unknown\n  Type of \"details\" is \"Any | list[Unknown]\"",
+            "range": {
+                "start": {
+                    "line": 1061,
+                    "character": 4
+                },
+                "end": {
+                    "line": 1061,
+                    "character": 11
+                }
+            },
+            "rule": "reportUnknownVariableType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"detail0\" is partially unknown\n  Type of \"detail0\" is \"Unknown | Literal['']\"",
+            "range": {
+                "start": {
+                    "line": 1062,
+                    "character": 4
+                },
+                "end": {
+                    "line": 1062,
+                    "character": 11
+                }
+            },
+            "rule": "reportUnknownVariableType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Unnecessary isinstance call; \"str\" is always an instance of \"str\"",
+            "range": {
+                "start": {
+                    "line": 1087,
+                    "character": 44
+                },
+                "end": {
+                    "line": 1087,
+                    "character": 68
+                }
+            },
+            "rule": "reportUnnecessaryIsInstance"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Condition will always evaluate to True since the types \"Literal['환경(권한/네트워크) 제약이므로 실환경에서 Receipt 재측정', '환경/서비스 상태를 먼저 복구하고 Receipt 재측정', '현 환경 유지(변경 최소) + 동일 조건에서 작업 진행']\" and \"Literal['출력은 3줄로 유지하고, Receipt 경로만 공유', 'Next 1개만 남기고, 장문 설명은 --json에서만', '작업 로그는 Receipt로 남기고, 결과는 3줄 요약으로 공유']\" have no overlap",
+            "range": {
+                "start": {
+                    "line": 1098,
+                    "character": 29
+                },
+                "end": {
+                    "line": 1098,
+                    "character": 57
+                }
+            },
+            "rule": "reportUnnecessaryComparison"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Unnecessary isinstance call; \"str\" is always an instance of \"str\"",
+            "range": {
+                "start": {
+                    "line": 1103,
+                    "character": 39
+                },
+                "end": {
+                    "line": 1103,
+                    "character": 63
+                }
+            },
+            "rule": "reportUnnecessaryIsInstance"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Function \"_print_detail_report\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1110,
+                    "character": 4
+                },
+                "end": {
+                    "line": 1110,
+                    "character": 24
+                }
+            },
+            "rule": "reportUnusedFunction"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Function \"_verify_run\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1126,
+                    "character": 4
+                },
+                "end": {
+                    "line": 1126,
+                    "character": 15
+                }
+            },
+            "rule": "reportUnusedFunction"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "\"verify_fact\" is unknown import symbol",
+            "range": {
+                "start": {
+                    "line": 1136,
+                    "character": 56
+                },
+                "end": {
+                    "line": 1136,
+                    "character": 67
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"verify_fact\" is unknown",
+            "range": {
+                "start": {
+                    "line": 1136,
+                    "character": 56
+                },
+                "end": {
+                    "line": 1136,
+                    "character": 67
+                }
+            },
+            "rule": "reportUnknownVariableType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"result\" is unknown",
+            "range": {
+                "start": {
+                    "line": 1142,
+                    "character": 8
+                },
+                "end": {
+                    "line": 1142,
+                    "character": 14
+                }
+            },
+            "rule": "reportUnknownVariableType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"payload\" is partially unknown\n  Type of \"payload\" is \"dict[str, str | int | Unknown]\"",
+            "range": {
+                "start": {
+                    "line": 1144,
+                    "character": 8
+                },
+                "end": {
+                    "line": 1144,
+                    "character": 15
+                }
+            },
+            "rule": "reportUnknownVariableType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Argument type is unknown\n  Argument corresponds to parameter \"x\" in function \"__new__\"",
+            "range": {
+                "start": {
+                    "line": 1148,
+                    "character": 31
+                },
+                "end": {
+                    "line": 1148,
+                    "character": 58
+                }
+            },
+            "rule": "reportUnknownArgumentType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Argument type is partially unknown\n  Argument corresponds to parameter \"payload\" in function \"_attach_toolflow_result\"\n  Argument type is \"dict[str, str | int | Unknown] | dict[str, str | int | list[str]]\"",
+            "range": {
+                "start": {
+                    "line": 1166,
+                    "character": 53
+                },
+                "end": {
+                    "line": 1166,
+                    "character": 60
+                }
+            },
+            "rule": "reportUnknownArgumentType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Return type, \"dict[str, str | int | Unknown] | dict[str, str | int | list[str]]\", is partially unknown",
+            "range": {
+                "start": {
+                    "line": 1168,
+                    "character": 11
+                },
+                "end": {
+                    "line": 1168,
+                    "character": 18
+                }
+            },
+            "rule": "reportUnknownVariableType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Function \"_dream_run\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1171,
+                    "character": 4
+                },
+                "end": {
+                    "line": 1171,
+                    "character": 14
+                }
+            },
+            "rule": "reportUnusedFunction"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Function \"_toolflow_run\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1191,
+                    "character": 4
+                },
+                "end": {
+                    "line": 1191,
+                    "character": 17
+                }
+            },
+            "rule": "reportUnusedFunction"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"run_dream_hub\" is partially unknown\n  Type of \"run_dream_hub\" is \"(task: str, thread_id: str = \"default\") -> dict[Unknown, Unknown]\"",
+            "range": {
+                "start": {
+                    "line": 1210,
+                    "character": 66
+                },
+                "end": {
+                    "line": 1210,
+                    "character": 79
+                }
+            },
+            "rule": "reportUnknownVariableType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"graph_out\" is partially unknown\n  Type of \"graph_out\" is \"dict[Unknown, Unknown]\"",
+            "range": {
+                "start": {
+                    "line": 1212,
+                    "character": 12
+                },
+                "end": {
+                    "line": 1212,
+                    "character": 21
+                }
+            },
+            "rule": "reportUnknownVariableType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"get\" is partially unknown\n  Type of \"get\" is \"Overload[(key: Unknown, default: None = None, /) -> (Unknown | None), (key: Unknown, default: Unknown, /) -> Unknown, (key: Unknown, default: _T@get, /) -> (Unknown | _T@get)]\"",
+            "range": {
+                "start": {
+                    "line": 1218,
+                    "character": 26
+                },
+                "end": {
+                    "line": 1218,
+                    "character": 39
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"get\" is partially unknown\n  Type of \"get\" is \"Overload[(key: Unknown, default: None = None, /) -> (Unknown | None), (key: Unknown, default: Unknown, /) -> Unknown, (key: Unknown, default: _T@get, /) -> (Unknown | _T@get)]\"",
+            "range": {
+                "start": {
+                    "line": 1220,
+                    "character": 31
+                },
+                "end": {
+                    "line": 1220,
+                    "character": 44
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"get\" is partially unknown\n  Type of \"get\" is \"Overload[(key: Unknown, default: None = None, /) -> (Unknown | None), (key: Unknown, default: Unknown, /) -> Unknown, (key: Unknown, default: _T@get, /) -> (Unknown | _T@get)]\"",
+            "range": {
+                "start": {
+                    "line": 1222,
+                    "character": 31
+                },
+                "end": {
+                    "line": 1222,
+                    "character": 44
+                }
+            },
+            "rule": "reportUnknownMemberType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Type of \"run_trinity_toolflow\" is partially unknown\n  Type of \"run_trinity_toolflow\" is \"(app: Unknown, user_prompt: str, *, query: str | None = None, top_k: int = 5, risk_score: float | None = None) -> FlowState\"",
+            "range": {
+                "start": {
+                    "line": 1239,
+                    "character": 98
+                },
+                "end": {
+                    "line": 1239,
+                    "character": 118
+                }
+            },
+            "rule": "reportUnknownVariableType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Function \"_run_toolflow\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1272,
+                    "character": 4
+                },
+                "end": {
+                    "line": 1272,
+                    "character": 17
+                }
+            },
+            "rule": "reportUnusedFunction"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Unnecessary isinstance call; \"dict[str, Any] | FlowState\" is always an instance of \"dict[Unknown, Unknown]\"",
+            "range": {
+                "start": {
+                    "line": 1316,
+                    "character": 7
+                },
+                "end": {
+                    "line": 1316,
+                    "character": 35
+                }
+            },
+            "rule": "reportUnnecessaryIsInstance"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Unnecessary isinstance call; \"dict[str, object | str] | dict[str, Any] | FlowState\" is always an instance of \"dict[Unknown, Unknown]\"",
+            "range": {
+                "start": {
+                    "line": 1338,
+                    "character": 51
+                },
+                "end": {
+                    "line": 1338,
+                    "character": 79
+                }
+            },
+            "rule": "reportUnnecessaryIsInstance"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Function \"_handoff\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1342,
+                    "character": 4
+                },
+                "end": {
+                    "line": 1342,
+                    "character": 12
+                }
+            },
+            "rule": "reportUnusedFunction"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Code is too complex to analyze; reduce complexity by refactoring into subroutines or reducing conditional code paths",
+            "range": {
+                "start": {
+                    "line": 1388,
+                    "character": 4
+                },
+                "end": {
+                    "line": 1388,
+                    "character": 8
+                }
+            },
+            "rule": "reportGeneralTypeIssues"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"ap\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1389,
+                    "character": 4
+                },
+                "end": {
+                    "line": 1389,
+                    "character": 6
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"sub\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1390,
+                    "character": 4
+                },
+                "end": {
+                    "line": 1390,
+                    "character": 7
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"toolflow_p\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1393,
+                    "character": 4
+                },
+                "end": {
+                    "line": 1393,
+                    "character": 14
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"receipt_p\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1424,
+                    "character": 4
+                },
+                "end": {
+                    "line": 1424,
+                    "character": 13
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"status_p\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1433,
+                    "character": 4
+                },
+                "end": {
+                    "line": 1433,
+                    "character": 12
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"verify_p\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1463,
+                    "character": 4
+                },
+                "end": {
+                    "line": 1463,
+                    "character": 12
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"dream_p\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1483,
+                    "character": 4
+                },
+                "end": {
+                    "line": 1483,
+                    "character": 11
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"explain_p\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1492,
+                    "character": 4
+                },
+                "end": {
+                    "line": 1492,
+                    "character": 13
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"edu_p\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1511,
+                    "character": 4
+                },
+                "end": {
+                    "line": 1511,
+                    "character": 9
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"auth_p\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1530,
+                    "character": 4
+                },
+                "end": {
+                    "line": 1530,
+                    "character": 10
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"auth_sub\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1531,
+                    "character": 4
+                },
+                "end": {
+                    "line": 1531,
+                    "character": 12
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"auth_status_p\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1533,
+                    "character": 4
+                },
+                "end": {
+                    "line": 1533,
+                    "character": 17
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"auth_login_p\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1553,
+                    "character": 4
+                },
+                "end": {
+                    "line": 1553,
+                    "character": 16
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"auth_ask_p\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1591,
+                    "character": 4
+                },
+                "end": {
+                    "line": 1591,
+                    "character": 14
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"auth_capture_p\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1640,
+                    "character": 4
+                },
+                "end": {
+                    "line": 1640,
+                    "character": 18
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"auth_open_p\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1681,
+                    "character": 4
+                },
+                "end": {
+                    "line": 1681,
+                    "character": 15
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"auth_doctor_p\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1722,
+                    "character": 4
+                },
+                "end": {
+                    "line": 1722,
+                    "character": 17
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"handoff_p\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1748,
+                    "character": 4
+                },
+                "end": {
+                    "line": 1748,
+                    "character": 13
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"args\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1754,
+                    "character": 4
+                },
+                "end": {
+                    "line": 1754,
+                    "character": 8
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"repo_root\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1758,
+                    "character": 12
+                },
+                "end": {
+                    "line": 1758,
+                    "character": 21
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"receipt_dir\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1762,
+                    "character": 16
+                },
+                "end": {
+                    "line": 1762,
+                    "character": 27
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"e\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1763,
+                    "character": 32
+                },
+                "end": {
+                    "line": 1763,
+                    "character": 33
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"payload\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1764,
+                    "character": 16
+                },
+                "end": {
+                    "line": 1764,
+                    "character": 23
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"payload\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1772,
+                    "character": 16
+                },
+                "end": {
+                    "line": 1772,
+                    "character": 23
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"repo_root\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1779,
+                    "character": 12
+                },
+                "end": {
+                    "line": 1779,
+                    "character": 21
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"receipt_dir\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1780,
+                    "character": 12
+                },
+                "end": {
+                    "line": 1780,
+                    "character": 23
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"out_name\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1786,
+                    "character": 20
+                },
+                "end": {
+                    "line": 1786,
+                    "character": 28
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"out_name\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1788,
+                    "character": 24
+                },
+                "end": {
+                    "line": 1788,
+                    "character": 32
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"receipt_dir\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1789,
+                    "character": 20
+                },
+                "end": {
+                    "line": 1789,
+                    "character": 31
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"receipt_dir\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1791,
+                    "character": 20
+                },
+                "end": {
+                    "line": 1791,
+                    "character": 31
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"receipt_dir\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1793,
+                    "character": 20
+                },
+                "end": {
+                    "line": 1793,
+                    "character": 31
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"card\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1795,
+                    "character": 12
+                },
+                "end": {
+                    "line": 1795,
+                    "character": 16
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"repo_root\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1807,
+                    "character": 12
+                },
+                "end": {
+                    "line": 1807,
+                    "character": 21
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"receipt_dir\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1811,
+                    "character": 12
+                },
+                "end": {
+                    "line": 1811,
+                    "character": 23
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"out_name\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1813,
+                    "character": 16
+                },
+                "end": {
+                    "line": 1813,
+                    "character": 24
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"out_name\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1815,
+                    "character": 20
+                },
+                "end": {
+                    "line": 1815,
+                    "character": 28
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"receipt_dir\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1817,
+                    "character": 20
+                },
+                "end": {
+                    "line": 1817,
+                    "character": 31
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"e\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1818,
+                    "character": 36
+                },
+                "end": {
+                    "line": 1818,
+                    "character": 37
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"payload\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1819,
+                    "character": 20
+                },
+                "end": {
+                    "line": 1819,
+                    "character": 27
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"receipt_dir\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1828,
+                    "character": 16
+                },
+                "end": {
+                    "line": 1828,
+                    "character": 27
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"receipt_dir\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1830,
+                    "character": 16
+                },
+                "end": {
+                    "line": 1830,
+                    "character": 27
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"payload\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1833,
+                    "character": 16
+                },
+                "end": {
+                    "line": 1833,
+                    "character": 23
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"receipt\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1845,
+                    "character": 12
+                },
+                "end": {
+                    "line": 1845,
+                    "character": 19
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"card\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1846,
+                    "character": 12
+                },
+                "end": {
+                    "line": 1846,
+                    "character": 16
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"repo_root\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1857,
+                    "character": 12
+                },
+                "end": {
+                    "line": 1857,
+                    "character": 21
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"receipt_dir\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1861,
+                    "character": 12
+                },
+                "end": {
+                    "line": 1861,
+                    "character": 23
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"out_name\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1864,
+                    "character": 20
+                },
+                "end": {
+                    "line": 1864,
+                    "character": 28
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"out_name\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1866,
+                    "character": 24
+                },
+                "end": {
+                    "line": 1866,
+                    "character": 32
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"receipt_dir\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1867,
+                    "character": 20
+                },
+                "end": {
+                    "line": 1867,
+                    "character": 31
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"receipt_dir\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1869,
+                    "character": 20
+                },
+                "end": {
+                    "line": 1869,
+                    "character": 31
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"receipt_dir\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1871,
+                    "character": 20
+                },
+                "end": {
+                    "line": 1871,
+                    "character": 31
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"result\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1873,
+                    "character": 12
+                },
+                "end": {
+                    "line": 1873,
+                    "character": 18
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"result\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1883,
+                    "character": 12
+                },
+                "end": {
+                    "line": 1883,
+                    "character": 18
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"repo_root\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1888,
+                    "character": 12
+                },
+                "end": {
+                    "line": 1888,
+                    "character": 21
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"receipt_dir\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1892,
+                    "character": 12
+                },
+                "end": {
+                    "line": 1892,
+                    "character": 23
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"out_name\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1894,
+                    "character": 16
+                },
+                "end": {
+                    "line": 1894,
+                    "character": 24
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"out_name\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1896,
+                    "character": 20
+                },
+                "end": {
+                    "line": 1896,
+                    "character": 28
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"receipt_dir\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1898,
+                    "character": 20
+                },
+                "end": {
+                    "line": 1898,
+                    "character": 31
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"e\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1899,
+                    "character": 36
+                },
+                "end": {
+                    "line": 1899,
+                    "character": 37
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"payload\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1900,
+                    "character": 20
+                },
+                "end": {
+                    "line": 1900,
+                    "character": 27
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"receipt_dir\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1909,
+                    "character": 16
+                },
+                "end": {
+                    "line": 1909,
+                    "character": 27
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"receipt_dir\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1911,
+                    "character": 16
+                },
+                "end": {
+                    "line": 1911,
+                    "character": 27
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"payload\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1914,
+                    "character": 16
+                },
+                "end": {
+                    "line": 1914,
+                    "character": 23
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"receipt\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1926,
+                    "character": 12
+                },
+                "end": {
+                    "line": 1926,
+                    "character": 19
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"card\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1928,
+                    "character": 16
+                },
+                "end": {
+                    "line": 1928,
+                    "character": 20
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"card\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1930,
+                    "character": 16
+                },
+                "end": {
+                    "line": 1930,
+                    "character": 20
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"three\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1935,
+                    "character": 16
+                },
+                "end": {
+                    "line": 1935,
+                    "character": 21
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"repo_root\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1945,
+                    "character": 12
+                },
+                "end": {
+                    "line": 1945,
+                    "character": 21
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"receipt_dir\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1949,
+                    "character": 12
+                },
+                "end": {
+                    "line": 1949,
+                    "character": 23
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"out_name\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1957,
+                    "character": 16
+                },
+                "end": {
+                    "line": 1957,
+                    "character": 24
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"out_name\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1959,
+                    "character": 20
+                },
+                "end": {
+                    "line": 1959,
+                    "character": 28
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"receipt_dir\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1960,
+                    "character": 16
+                },
+                "end": {
+                    "line": 1960,
+                    "character": 27
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"receipt_dir\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1962,
+                    "character": 16
+                },
+                "end": {
+                    "line": 1962,
+                    "character": 27
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"receipt_dir\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1964,
+                    "character": 16
+                },
+                "end": {
+                    "line": 1964,
+                    "character": 27
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"prov\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1971,
+                    "character": 16
+                },
+                "end": {
+                    "line": 1971,
+                    "character": 20
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"suffix\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1972,
+                    "character": 16
+                },
+                "end": {
+                    "line": 1972,
+                    "character": 22
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"receipt_dir\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1973,
+                    "character": 16
+                },
+                "end": {
+                    "line": 1973,
+                    "character": 27
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"card\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1979,
+                    "character": 16
+                },
+                "end": {
+                    "line": 1979,
+                    "character": 20
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"old_engine\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1993,
+                    "character": 16
+                },
+                "end": {
+                    "line": 1993,
+                    "character": 26
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"old_keep\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 1994,
+                    "character": 16
+                },
+                "end": {
+                    "line": 1994,
+                    "character": 24
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"card\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 2001,
+                    "character": 16
+                },
+                "end": {
+                    "line": 2001,
+                    "character": 20
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"old_engine\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 2027,
+                    "character": 16
+                },
+                "end": {
+                    "line": 2027,
+                    "character": 26
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"old_keep\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 2028,
+                    "character": 16
+                },
+                "end": {
+                    "line": 2028,
+                    "character": 24
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"card\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 2035,
+                    "character": 16
+                },
+                "end": {
+                    "line": 2035,
+                    "character": 20
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"old_engine\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 2063,
+                    "character": 16
+                },
+                "end": {
+                    "line": 2063,
+                    "character": 26
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"old_keep\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 2064,
+                    "character": 16
+                },
+                "end": {
+                    "line": 2064,
+                    "character": 24
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"keep_open\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 2066,
+                    "character": 16
+                },
+                "end": {
+                    "line": 2066,
+                    "character": 25
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"card\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 2072,
+                    "character": 16
+                },
+                "end": {
+                    "line": 2072,
+                    "character": 20
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"resp\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 2106,
+                    "character": 20
+                },
+                "end": {
+                    "line": 2106,
+                    "character": 24
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"old_engine\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 2116,
+                    "character": 16
+                },
+                "end": {
+                    "line": 2116,
+                    "character": 26
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"old_keep\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 2117,
+                    "character": 16
+                },
+                "end": {
+                    "line": 2117,
+                    "character": 24
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"card\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 2124,
+                    "character": 16
+                },
+                "end": {
+                    "line": 2124,
+                    "character": 20
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"card\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 2152,
+                    "character": 16
+                },
+                "end": {
+                    "line": 2152,
+                    "character": 20
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"repo_root\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 2169,
+                    "character": 12
+                },
+                "end": {
+                    "line": 2169,
+                    "character": 21
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"receipt_dir\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 2170,
+                    "character": 12
+                },
+                "end": {
+                    "line": 2170,
+                    "character": 23
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"receipt_dir\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 2173,
+                    "character": 20
+                },
+                "end": {
+                    "line": 2173,
+                    "character": 31
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"receipt_dir\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 2175,
+                    "character": 20
+                },
+                "end": {
+                    "line": 2175,
+                    "character": 31
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"e\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 2185,
+                    "character": 26
+                },
+                "end": {
+                    "line": 2185,
+                    "character": 27
+                }
+            },
+            "rule": "reportUnusedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Import \"traceback\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 2186,
+                    "character": 15
+                },
+                "end": {
+                    "line": 2186,
+                    "character": 24
+                }
+            },
+            "rule": "reportUnusedImport"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Variable \"e\" is not accessed",
+            "range": {
+                "start": {
+                    "line": 2196,
+                    "character": 24
+                },
+                "end": {
+                    "line": 2196,
+                    "character": 25
+                }
+            },
+            "rule": "reportUnusedVariable"
+        }
+    ],
+    "summary": {
+        "filesAnalyzed": 1,
+        "errorCount": 205,
+        "warningCount": 0,
+        "informationCount": 0,
+        "timeInSec": 0.591
+    }
+}
+

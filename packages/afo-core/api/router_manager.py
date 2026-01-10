@@ -22,7 +22,10 @@ from AFO.api.compat import (
     chancellor_router,
     chat_router,
     council_router,
+    decree_router,
     education_system_router,
+    evolution_router,
+    external_router,
     finance_router,
     got_router,
     grok_stream_router,
@@ -49,6 +52,18 @@ from AFO.api.compat import (
     voice_router,
     wallet_router,
 )
+
+# Import RAG Stream Router (Ticket-076)
+try:
+    from AFO.api.routes.rag_stream import router as rag_stream_router
+except ImportError:
+    rag_stream_router = None
+
+# Import Time Travel Router (TICKET-078)
+try:
+    from api.routes.time_travel import router as time_travel_router
+except ImportError:
+    time_travel_router = None
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -176,6 +191,7 @@ class AFORouterManager:
 
         # Advanced AI systems
         self._safe_register_router(rag_query_router, prefix="/api", tags=["Brain Organ (RAG)"])
+        self._safe_register_router(rag_stream_router, prefix="/api", tags=["Brain Organ (RAG)"])
         self._safe_register_router(personas_router, tags=["Phase 2: Family Hub OS"])
 
     def _register_phase_routers(self) -> None:
@@ -197,6 +213,9 @@ class AFORouterManager:
         self._safe_register_router(voice_router, prefix="/api", tags=["Voice Interface"])
         self._safe_register_router(council_router, prefix="/api", tags=["Council of Minds"])
         self._safe_register_router(learning_pipeline, prefix="/api", tags=["AI Self-Improvement"])
+        self._safe_register_router(evolution_router, tags=["Evolution (DGM)"])
+        self._safe_register_router(decree_router, tags=["Royal Decrees (Phase 12)"])
+        self._safe_register_router(external_router, tags=["Phase 13: External Interface"])
         self._safe_register_router(serenity_router, prefix="/api", tags=["Serenity (GenUI)"])
 
         # Philosophical Copilot (眞善美孝永 철학 실시간 모니터링)
@@ -209,6 +228,29 @@ class AFORouterManager:
 
         # Chancellor and streaming systems
         self._safe_register_router(chancellor_router, tags=["LangGraph Optimized"])
+
+        # Time Travel Router (TICKET-078 - 북극성)
+        if time_travel_router:
+            self._safe_register_router(time_travel_router, tags=["Time Travel"])
+        else:
+            logger.warning("Time Travel Router not available")
+
+        # RAG Streaming for T2.1
+        try:
+            from AFO.api.routers.rag_query import router as rag_router
+
+            self._safe_register_router(rag_router, prefix="/api", tags=["RAG Streaming"])
+        except ImportError:
+            logger.warning("RAG Router not available")
+
+        # RAG Stream Router (TICKET-079 - 스트리밍 중 interrupt → fork → resume)
+        try:
+            from AFO.api.routes.rag_stream import router as rag_stream_router
+
+            self._safe_register_router(rag_stream_router, tags=["RAG Streaming"])
+        except ImportError:
+            logger.warning("RAG Stream Router not available")
+
         # NOTE: system_stream router is deprecated. SSE is now consolidated in sse_ssot_router (system_health.py)
         # Keeping import as fallback but not registering to prevent route conflicts.
         # try:

@@ -168,7 +168,7 @@ class Context7MemoryManager:
         sections = []
         for line in lines:
             if line.startswith("## "):
-                sections.append(line.strip("## \t"))
+                sections.append(line.lstrip("#").strip())
 
         if sections:
             summary_parts.append(f"주요 섹션: {', '.join(sections[:5])}")

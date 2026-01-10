@@ -79,9 +79,7 @@ class DependencyVerifier:
         ]
 
         for module_name, package_name in core_packages:
-            result = await self._test_single_package(
-                module_name, package_name, is_core=True
-            )
+            result = await self._test_single_package(module_name, package_name, is_core=True)
             self.results["core_packages"].append(result)
 
     async def _verify_dev_packages(self) -> None:
@@ -96,14 +94,10 @@ class DependencyVerifier:
         ]
 
         for module_name, package_name in dev_packages:
-            result = await self._test_single_package(
-                module_name, package_name, is_core=False
-            )
+            result = await self._test_single_package(module_name, package_name, is_core=False)
             self.results["dev_packages"].append(result)
 
-    async def _test_single_package(
-        self, module_name: str, package_name: str, is_core: bool = True
-    ) -> dict[str, Any]:
+    async def _test_single_package(self, module_name: str, package_name: str, is_core: bool = True) -> dict[str, Any]:
         """
         단일 패키지 테스트 (타임아웃 방지)
         """
@@ -111,9 +105,7 @@ class DependencyVerifier:
 
         try:
             # 타임아웃으로 보호된 import 테스트
-            result = await asyncio.wait_for(
-                self._async_import_test(module_name), timeout=self.timeout_seconds
-            )
+            result = await asyncio.wait_for(self._async_import_test(module_name), timeout=self.timeout_seconds)
 
             if result["success"]:
                 version = result.get("version", "버전 확인 불가")
@@ -127,13 +119,11 @@ class DependencyVerifier:
                 }
             error_msg = result.get("error", "알 수 없는 오류")
             print(f"  ❌ {package_name}: {error_msg}")
-            self.results["import_errors"].append(
-                {
-                    "package": package_name,
-                    "error": error_msg,
-                    "is_core": is_core,
-                }
-            )
+            self.results["import_errors"].append({
+                "package": package_name,
+                "error": error_msg,
+                "is_core": is_core,
+            })
             return {
                 "name": package_name,
                 "status": "error",
@@ -143,13 +133,11 @@ class DependencyVerifier:
 
         except TimeoutError:
             print(f"  ⏰ {package_name}: 타임아웃 ({self.timeout_seconds}s)")
-            self.results["import_errors"].append(
-                {
-                    "package": package_name,
-                    "error": f"타임아웃 ({self.timeout_seconds}s)",
-                    "is_core": is_core,
-                }
-            )
+            self.results["import_errors"].append({
+                "package": package_name,
+                "error": f"타임아웃 ({self.timeout_seconds}s)",
+                "is_core": is_core,
+            })
             return {
                 "name": package_name,
                 "status": "timeout",
@@ -159,13 +147,11 @@ class DependencyVerifier:
         except Exception as e:
             error_msg = str(e)
             print(f"  ⚠️  {package_name}: 예외 발생 - {error_msg}")
-            self.results["import_errors"].append(
-                {
-                    "package": package_name,
-                    "error": error_msg,
-                    "is_core": is_core,
-                }
-            )
+            self.results["import_errors"].append({
+                "package": package_name,
+                "error": error_msg,
+                "is_core": is_core,
+            })
             return {
                 "name": package_name,
                 "status": "exception",
@@ -206,30 +192,18 @@ class DependencyVerifier:
                     pyproject_data = tomllib.load(f)
 
                 # [tool.poetry.dependencies]에서 의존성 추출
-                poetry_deps = (
-                    pyproject_data.get("tool", {})
-                    .get("poetry", {})
-                    .get("dependencies", {})
-                )
+                poetry_deps = pyproject_data.get("tool", {}).get("poetry", {}).get("dependencies", {})
                 # python 버전 선언 제외
-                declared_deps = [
-                    dep_name for dep_name in poetry_deps if dep_name != "python"
-                ]
+                declared_deps = [dep_name for dep_name in poetry_deps if dep_name != "python"]
 
                 # 실제 설치된 것과 비교
                 for dep in declared_deps:
                     # 이미 테스트한 패키지는 건너뜀
-                    tested_packages = [
-                        p["name"]
-                        for p in self.results["core_packages"]
-                        + self.results["dev_packages"]
-                    ]
+                    tested_packages = [p["name"] for p in self.results["core_packages"] + self.results["dev_packages"]]
                     if dep not in tested_packages:
                         # 모듈 이름 변환 로직
                         module_name = self._convert_package_to_module_name(dep)
-                        result = await self._test_single_package(
-                            module_name, dep, is_core=True
-                        )
+                        result = await self._test_single_package(module_name, dep, is_core=True)
                         if result["status"] != "success":
                             self.results["missing_packages"].append(result)
 
@@ -241,14 +215,10 @@ class DependencyVerifier:
         최종 보고서 생성 (Phase 4)
         """
         # 통계 계산
-        core_success = len(
-            [p for p in self.results["core_packages"] if p["status"] == "success"]
-        )
+        core_success = len([p for p in self.results["core_packages"] if p["status"] == "success"])
         core_total = len(self.results["core_packages"])
 
-        dev_success = len(
-            [p for p in self.results["dev_packages"] if p["status"] == "success"]
-        )
+        dev_success = len([p for p in self.results["dev_packages"] if p["status"] == "success"])
         dev_total = len(self.results["dev_packages"])
 
         total_missing = len(self.results["missing_packages"])
@@ -258,22 +228,20 @@ class DependencyVerifier:
         print(f"  • 코어 패키지: {core_success}/{core_total} 성공")
         print(f"  • 개발 패키지: {dev_success}/{dev_total} 성공")
         print(f"  • 누락 패키지: {total_missing}개")
-        print(f"  • 총 테스트: {self.results["total_tested"]}개")
-        print(
-            f"  • 성공률: {(self.results["success_count"] / self.results["total_tested"] * 100):.1f}%"
-        )
+        print(f"  • 총 테스트: {self.results['total_tested']}개")
+        print(f"  • 성공률: {(self.results['success_count'] / self.results['total_tested'] * 100):.1f}%")
 
         if self.results["import_errors"]:
             print("\n⚠️  import 오류가 있는 패키지들:")
             for error in self.results["import_errors"]:
-                print(f"    - {error["package"]}: {error["error"]}")
+                print(f"    - {error['package']}: {error['error']}")
 
         if self.results["missing_packages"]:
             print("\n💡 설치 제안:")
             missing_names = [p["name"] for p in self.results["missing_packages"]]
-            print(f"    pip install {" ".join(missing_names)}")
+            print(f"    pip install {' '.join(missing_names)}")
             print("    # 또는")
-            print(f"    poetry add {" ".join(missing_names)}")
+            print(f"    poetry add {' '.join(missing_names)}")
 
         return {
             "summary": {
@@ -329,7 +297,6 @@ class DependencyVerifier:
             "pgvector": "pgvector",
             "ragas": "ragas",
             "boto3": "boto3",
-            "hcloud": "hcloud",
             "google-genai": "google.genai",
         }
 
@@ -347,20 +314,16 @@ class DependencyVerifier:
         recommendations = []
 
         if self.results["import_errors"]:
-            recommendations.append(
-                "import 오류가 있는 패키지들을 우선 설치하거나 재설치"
-            )
+            recommendations.append("import 오류가 있는 패키지들을 우선 설치하거나 재설치")
 
         if self.results["missing_packages"]:
             recommendations.append("pyproject.toml에 선언된 누락 패키지들을 설치")
 
-        recommendations.extend(
-            [
-                "Poetry 대신 pip을 사용하여 더 빠른 의존성 관리 고려",
-                "가상환경을 재생성하여 깨끗한 상태에서 시작",
-                "requirements.txt 파일을 생성하여 명시적 의존성 관리",
-            ]
-        )
+        recommendations.extend([
+            "Poetry 대신 pip을 사용하여 더 빠른 의존성 관리 고려",
+            "가상환경을 재생성하여 깨끗한 상태에서 시작",
+            "requirements.txt 파일을 생성하여 명시적 의존성 관리",
+        ])
 
         return recommendations
 
@@ -377,7 +340,7 @@ async def main():
     results = await verifier.run_full_verification()
 
     if "error" in results:
-        print(f"\n❌ 검증 실패: {results["error"]}")
+        print(f"\n❌ 검증 실패: {results['error']}")
         sys.exit(1)
     else:
         summary = results.get("summary", {})
@@ -388,9 +351,7 @@ async def main():
         elif success_rate >= 60:
             print(f"\n⚠️  의존성 상태 보통 (성공률: {success_rate:.1f}%)")
         else:
-            print(
-                f"\n❌ 의존성 상태 불량 (성공률: {success_rate:.1f}%) - 즉시 조치 필요"
-            )
+            print(f"\n❌ 의존성 상태 불량 (성공률: {success_rate:.1f}%) - 즉시 조치 필요")
 
 
 if __name__ == "__main__":

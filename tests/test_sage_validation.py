@@ -1,7 +1,8 @@
 import contextlib
 
-from AFO.schemas.sage import SageRequest, SageType
 from pydantic import ValidationError
+
+from AFO.schemas.sage import SageRequest, SageType
 
 
 def test_sage_schema_validation():

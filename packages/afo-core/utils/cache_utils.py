@@ -53,7 +53,7 @@ class CacheManager:
                     self.redis = None
                     self.enabled = False
                 except Exception as e2:  # - Intentional fallback
-                    logger.debug("Redis 직접 연결 중 예상치 못한 에러: %s", str(e2))
+                    logger.warning("Redis 직접 연결 중 예상치 못한 에러: %s", str(e2))
                     self.redis = None
                     self.enabled = False
         except (ImportError, AttributeError) as e:
@@ -81,7 +81,7 @@ class CacheManager:
             logger.warning("Redis 연결 에러 (키: %s): %s", key, str(e))
             return None
         except Exception as e:  # - Intentional fallback for unexpected errors
-            logger.debug("캐시 조회 중 예상치 못한 에러 (키: %s): %s", key, str(e))
+            logger.warning("캐시 조회 중 예상치 못한 에러 (키: %s): %s", key, str(e))
             return None
 
     def set(self, key: str, value: Any, expire: int = 300) -> bool:
@@ -99,7 +99,7 @@ class CacheManager:
             logger.warning("Redis 연결 에러 (키: %s): %s", key, str(e))
             return False
         except Exception as e:  # - Intentional fallback for unexpected errors
-            logger.debug("캐시 저장 중 예상치 못한 에러 (키: %s): %s", key, str(e))
+            logger.warning("캐시 저장 중 예상치 못한 에러 (키: %s): %s", key, str(e))
             return False
 
     def delete(self, key: str) -> bool:

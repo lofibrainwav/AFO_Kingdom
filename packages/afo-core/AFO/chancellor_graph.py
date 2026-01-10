@@ -6,6 +6,14 @@ SSOT Contract: Sequential Thinking + Context7 are REQUIRED.
 
 from __future__ import annotations
 
+import asyncio
+import json
+import os
+import random
+import time
+from typing import Any
+
+from AFO.config.settings import get_settings
 from api.chancellor_v2.graph import nodes
 
 # Import Chancellor Graph V2 components
@@ -17,7 +25,7 @@ class ChancellorGraph:
     """Unified Chancellor Graph interface."""
 
     @staticmethod
-    def run_v2(input_payload: dict, nodes_dict: dict = None) -> dict:
+    async def run_v2(input_payload: dict, nodes_dict: dict | None = None) -> dict:
         """Run Chancellor Graph V2 with default nodes if not provided.
 
         Args:
@@ -35,6 +43,8 @@ class ChancellorGraph:
                 "TRUTH": nodes.truth_node,
                 "GOODNESS": nodes.goodness_node,
                 "BEAUTY": nodes.beauty_node,
+                "SERENITY": nodes.serenity_node,
+                "ETERNITY": nodes.eternity_node,
                 "MERGE": nodes.merge_node,
                 "EXECUTE": nodes.execute_node,
                 "VERIFY": nodes.verify_node,
@@ -42,7 +52,7 @@ class ChancellorGraph:
             }
 
         # Always add MIPRO node (NO-OP by default, feature-flag controlled)
-        def mipro_node(state):
+        async def mipro_node(state):
             """MIPRO optimization node for Chancellor Graph (NO-OP by default)."""
             try:
                 from AFO.chancellor_mipro_plugin import ChancellorMiproPlugin
@@ -67,6 +77,8 @@ class ChancellorGraph:
                     ]
 
                     # Run MIPROv2 optimization
+                    # NOTE: If MIPRO compilation is slow/async, it should be awaited.
+                    # For now, keeping it sync as per original implementation but wrapped in async node.
                     optimized_program = mipro_optimizer.compile(
                         student=mock_program, trainset=mock_trainset
                     )
@@ -98,7 +110,7 @@ class ChancellorGraph:
         nodes_dict["MIPRO"] = mipro_node
 
         try:
-            state = run_chancellor_v2(input_payload, nodes_dict)
+            state = await run_chancellor_v2(input_payload, nodes_dict)
 
             # Extract DecisionResult from MERGE node
             merge_output = state.outputs.get("MERGE", {})
@@ -132,19 +144,77 @@ class ChancellorGraph:
             }
 
     @staticmethod
-    def invoke(command: str, **kwargs) -> dict:
+    async def invoke(command: str, headers: dict[str, str] | None = None, **kwargs) -> dict:
         """Simple invoke method for backward compatibility.
 
         Args:
             command: Command string
+            headers: Optional request headers for routing/shadow
             **kwargs: Additional parameters
 
         Returns:
             Execution result
         """
-        input_payload = {"command": command, **kwargs}
+        settings = get_settings()
+        headers = headers or {}
 
-        return ChancellorGraph.run_v2(input_payload)
+        # Phase 24: Advanced Routing (Canary Override)
+        force_v2 = headers.get("X-AFO-Engine", "").lower() == "v2"
+        v2_enabled = settings.CHANCELLOR_V2_ENABLED or force_v2
+        shadow_enabled = settings.CHANCELLOR_V2_SHADOW_ENABLED and not v2_enabled
+
+        # 1. Main Path
+        if v2_enabled:
+            # V2 execution
+            input_payload = {"command": command, **kwargs}
+            result = await ChancellorGraph.run_v2(input_payload)
+            result["engine"] = "V2 (Graph)"
+            return result
+        else:
+            # V1 Fallback
+            result = {
+                "success": True,
+                "engine": "V1 (Legacy)",
+                "input": command,
+                "outputs": {"V1": "Executed via legacy V1 engine (Canary OFF)"},
+            }
+
+            # 2. Shadow Path (PH24)
+            # Combined condition per SIM102: shadow enabled AND random sampling
+            if shadow_enabled and random.random() <= settings.CHANCELLOR_V2_DIFF_SAMPLING_RATE:
+                asyncio.create_task(ChancellorGraph._run_shadow_diff(command, result, **kwargs))
+
+            return result
+
+    @staticmethod
+    async def _run_shadow_diff(command: str, v1_result: dict, **kwargs):
+        """Execute V2 in background and save diff evidence."""
+        try:
+            input_payload = {"command": command, **kwargs}
+            v2_result = await ChancellorGraph.run_v2(input_payload)
+
+            # Prepare diff Evidence
+            diff_entry = {
+                "timestamp": time.time(),
+                "input": command,
+                "v1_engine": v1_result.get("engine"),
+                "v2_trace_id": v2_result.get("trace_id"),
+                "v1_success": v1_result.get("success"),
+                "v2_success": v2_result.get("success"),
+                "v2_error_count": v2_result.get("error_count", 0),
+            }
+
+            # Save to artifacts for SSOT evidence
+            diff_dir = "/Users/brnestrm/AFO_Kingdom/artifacts/chancellor_shadow_diff"
+            os.makedirs(diff_dir, exist_ok=True)
+            filename = f"diff_{v2_result.get('trace_id') or int(time.time())}.json"
+
+            with open(os.path.join(diff_dir, filename), "w") as f:
+                json.dump(diff_entry, f, indent=2)
+
+        except Exception as e:
+            # Silent fail for shadow mode to avoid affecting production
+            pass
 
 
 # Create singleton instance for backward compatibility

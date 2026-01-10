@@ -22,7 +22,7 @@ class ValidationLogger:
     - 로그 파일 경로 관리
     """
 
-    def __init__(self, log_dir: Path = None):
+    def __init__(self, log_dir: Path | None = None):
         """
         로거 초기화
 

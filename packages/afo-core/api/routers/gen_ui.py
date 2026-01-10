@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-GenUI Router
+"""GenUI Router
 Phase 9: Self-Expanding Kingdom (Serenity)
 
 API Endpoints for generating and previewing UI components.
@@ -20,8 +19,7 @@ router = APIRouter(prefix="/api/gen-ui", tags=["GenUI"])
 
 @router.post("/create", response_model=GenUIResponse)
 async def create_component(request: GenUIRequest) -> GenUIResponse:
-    """
-    Generate a new UI component.
+    """Generate a new UI component.
     Calls Samahwi (Scholar) to write code based on the prompt.
     """
     try:
@@ -35,8 +33,7 @@ async def create_component(request: GenUIRequest) -> GenUIResponse:
 async def preview_component(
     request: GenUIRequest, background_tasks: BackgroundTasks
 ) -> GenUIResponse:
-    """
-    Generate and deploy a component to the Sandbox.
+    """Generate and deploy a component to the Sandbox.
     Target: packages/dashboard/src/components/genui/
     """
     try:
@@ -63,9 +60,7 @@ async def preview_component(
 
 @router.get("/health")
 async def gen_ui_health() -> dict[str, Any]:
-    """
-    Check status of the GenUI engine.
-    """
+    """Check status of the GenUI engine."""
     return {
         "status": "online",
         "service": "GenUI (Self-Expansion Engine)",

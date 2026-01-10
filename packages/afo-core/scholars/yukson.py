@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Yukson (Gemini) - The Strategy Scholar (Strategy & Philosophy)
+"""Yukson (Gemini) - The Strategy Scholar (Strategy & Philosophy)
 
 Identity:
 - Name: Yukson (Lu Xun)
@@ -24,8 +23,7 @@ logger = logging.getLogger(__name__)
 
 
 class YuksonScholar:
-    """
-    육손 (Yukson) - 전략 및 철학 담당 학자
+    """육손 (Yukson) - 전략 및 철학 담당 학자
     Gemini 1.5 Pro 기반의 전략가
     """
 
@@ -48,9 +46,7 @@ class YuksonScholar:
         self.model = "gemini-1.5-pro"
 
     async def advise_strategy(self, goal: str, context: str | None = None) -> str:
-        """
-        전략 조언 및 기획
-        """
+        """전략 조언 및 기획"""
         request_msg = f"다음 목표를 달성하기 위한 전략적 로드맵을 수립하시오:\n{goal}"
         if context:
             request_msg += f"\n\n[Context]\n{context}"

@@ -19,6 +19,7 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Any
 
+
 # 로깅 설정
 logging.basicConfig(
     level=logging.INFO,
@@ -95,14 +96,12 @@ class MyPyPurifier:
                                     error_code = error_msg[code_start + 1 : code_end]
                                     error_msg = error_msg[:code_start].strip()
 
-                                errors.append(
-                                    {
-                                        "file": file_path,
-                                        "line": line_num,
-                                        "message": error_msg,
-                                        "code": error_code,
-                                    }
-                                )
+                                errors.append({
+                                    "file": file_path,
+                                    "line": line_num,
+                                    "message": error_msg,
+                                    "code": error_code,
+                                })
                             except (ValueError, IndexError) as e:
                                 # 파싱 실패 시 전체 라인 저장
                                 logger.debug("[眞] 파싱 실패: %s - %s", line, e)
@@ -113,17 +112,13 @@ class MyPyPurifier:
             return errors
 
         except FileNotFoundError:
-            logger.exception(
-                "[眞] MyPy가 설치되지 않았습니다. 'pip install mypy' 실행 필요"
-            )
+            logger.exception("[眞] MyPy가 설치되지 않았습니다. 'pip install mypy' 실행 필요")
             return []
         except Exception as e:
             logger.exception("[眞] 오류 수집 실패: %s", e)
             return []
 
-    def classify_errors(
-        self, errors: list[dict[str, Any]]
-    ) -> dict[str, list[dict[str, Any]]]:
+    def classify_errors(self, errors: list[dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:
         """오류 유형별 분류"""
         classified: dict[str, list[dict[str, Any]]] = defaultdict(list)
 
@@ -132,16 +127,12 @@ class MyPyPurifier:
             classified[code].append(error)
 
         logger.info(f"[眞] 오류 분류 완료: {len(classified)}개 유형")
-        for code, errs in sorted(
-            classified.items(), key=lambda x: len(x[1]), reverse=True
-        ):
+        for code, errs in sorted(classified.items(), key=lambda x: len(x[1]), reverse=True):
             logger.info(f"  - {code}: {len(errs)}개")
 
         return dict(classified)
 
-    def analyze_fixable_errors(
-        self, classified: dict[str, list[dict[str, Any]]]
-    ) -> list[dict[str, Any]]:
+    def analyze_fixable_errors(self, classified: dict[str, list[dict[str, Any]]]) -> list[dict[str, Any]]:
         """자동 수정 가능한 오류 분석"""
         fixable_patterns = {
             "unused-ignore": 'Unused "type: ignore"',
@@ -178,13 +169,11 @@ class MyPyPurifier:
             by_file[error["file"]].append(error)
 
         for file_path, errors in by_file.items():
-            plan["fixes"].append(
-                {
-                    "file": file_path,
-                    "errors": errors,
-                    "count": len(errors),
-                }
-            )
+            plan["fixes"].append({
+                "file": file_path,
+                "errors": errors,
+                "count": len(errors),
+            })
 
         return plan
 
@@ -220,9 +209,9 @@ class MyPyPurifier:
                         original = lines[line_idx]
                         # Unused type: ignore 제거
                         if "unused-ignore" in error.get("fix_type", ""):
-                            lines[line_idx] = original.replace(
-                                "  # type: ignore", ""
-                            ).replace("  # type: ignore[", "  # type: ignore[")
+                            lines[line_idx] = original.replace("  # type: ignore", "").replace(
+                                "  # type: ignore[", "  # type: ignore["
+                            )
                             modified = True
 
                 if modified:
@@ -230,13 +219,11 @@ class MyPyPurifier:
                     file_path.write_text("\n".join(lines), encoding="utf-8")
                     results["fixed_files"].append(str(file_path))
                     results["total_fixed"] += len(fix["errors"])
-                    logger.info(f"[眞] 수정 완료: {file_path} ({len(fix["errors"])}개)")
+                    logger.info(f"[眞] 수정 완료: {file_path} ({len(fix['errors'])}개)")
 
             except Exception as e:
                 logger.exception("[眞] 수정 실패: %s - %s", file_path, e)
-                results["failed_files"].append(
-                    {"file": str(file_path), "error": str(e)}
-                )
+                results["failed_files"].append({"file": str(file_path), "error": str(e)})
 
         return results
 
@@ -251,9 +238,7 @@ class MyPyPurifier:
             "errors_before": self.total_errors,
             "errors_after": len(errors_after),
             "reduction": reduction,
-            "reduction_percent": (
-                (reduction / self.total_errors * 100) if self.total_errors > 0 else 0
-            ),
+            "reduction_percent": ((reduction / self.total_errors * 100) if self.total_errors > 0 else 0),
         }
 
     def run(self) -> dict[str, Any]:
@@ -300,12 +285,8 @@ def main() -> int:
     import argparse
 
     parser = argparse.ArgumentParser(description="AFO 왕국 MyPy Purifier (관우 장군)")
-    parser.add_argument(
-        "--dry-run", action="store_true", default=True, help="DRY_RUN 모드 (기본값)"
-    )
-    parser.add_argument(
-        "--wet-run", action="store_true", help="WET_RUN 모드 (실제 수정)"
-    )
+    parser.add_argument("--dry-run", action="store_true", default=True, help="DRY_RUN 모드 (기본값)")
+    parser.add_argument("--wet-run", action="store_true", help="WET_RUN 모드 (실제 수정)")
 
     args = parser.parse_args()
 

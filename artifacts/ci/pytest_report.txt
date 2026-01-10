@@ -1,52 +1,63 @@
-============================= test session starts ==============================
-platform darwin -- Python 3.12.12, pytest-9.0.2, pluggy-1.6.0
-rootdir: /Users/brnestrm/AFO_Kingdom/packages/afo-core
-configfile: pyproject.toml
-testpaths: tests, tests/health, tests/llm, tests/api
-plugins: anyio-4.11.0, web3-6.15.0, hypothesis-6.148.7, asyncio-1.3.0, langsmith-0.4.42, cov-7.0.0
-asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
-collected 313 items / 4 deselected / 1 skipped / 309 selected
+✅ 5기둥 API Router loaded successfully
+   - GET /api/5pillars/current (현재 5기둥 점수 조회)
+   - POST /api/5pillars/live (LangFlow 실시간 평가 - Phase 23-D)
+   - GET /api/5pillars/family/hub (가족 허브 전체 상태 - Phase 23-E)
+   - POST /api/5pillars/family/hub/member/update (가족 구성원 데이터 업데이트)
+   - GET /api/5pillars/family/hub/data (실시간 가족 허브 데이터)
+[TRINITY-OS] 페르소나 전환 → 불굴의 사령관 (활성화)
+🔥 [DEBUG] AFO.services.gen_ui is being loaded!
+⚠️ Context7 trinity-os 경로 없음: /Users/brnestrm/AFO_Kingdom/packages/afo-core/trinity-os
+✅ AFO 설정 로드 완료: dev 환경 (AFOSettings)
+Safe import failed for AFO.api.routers.aicpa: No module named 'AFO.service'
+/Users/brnestrm/AFO_Kingdom/packages/afo-core/AFO/api/routers/auth.py:16: UserWarning: JWT_SECRET_KEY 환경변수가 설정되지 않았습니다. 개발용 임시 키를 사용합니다. 프로덕션에서는 반드시 설정하세요.
+  from AFO.api.utils.auth import create_access_token, hash_password, verify_password, verify_token
+Safe import failed for AFO.api.routers.got: No module named 'AFO.api.routers.got'
+Safe import failed for AFO.api.routers.learning_log_router: No module named 'sqlmodel'
+Safe import failed for AFO.api.routers.modal_data: No module named 'AFO.api.routers.modal_data'
+Safe import failed for AFO.api.routers.multi_agent: No module named 'AFO.api.routers.multi_agent'
+Safe import failed for AFO.api.routers.n8n: No module named 'AFO.api.routers.n8n'
+Safe import failed for AFO.api.routers.ssot: cannot import name 'TrinityInputs' from 'AFO.trinity' (/Users/brnestrm/AFO_Kingdom/packages/afo-core/AFO/trinity/__init__.py)
+Safe import failed for api.routes.tax: No module named 'afo'
+Safe import failed for AFO.api.routes.trinity_policy: No module named 'AFO.api.routes.trinity_policy'
+Safe import failed for AFO.api.routes.trinity_sbt: No module named 'AFO.api.routes.trinity_sbt'
+Safe import failed for AFO.api.routes.wallet: cannot import name 'API_PROVIDERS' from 'AFO.models' (unknown location)
+Safe import failed for AFO.api.routers.evolution_router: No module named 'AFO.evolution.dgm_engine'
+Safe import failed for AFO.api.routers.decree_router: No module named 'AFO.evolution.dgm_engine'
+Safe import failed for AFO.api.routers.external_router: No module named 'AFO.evolution.dgm_engine'
+Safe import failed for api.routes.julie: No module named 'afo'
+2026-01-08 07:22:47,482 - AFO.api_server - WARNING - ⚠️ Sentry SDK not installed, skipping initialization
+2026-01-08 07:22:47,507 - AFO.api_server - WARNING - ⚠️ OpenTelemetry setup failed: No module named 'opentelemetry.instrumentation'
+2026-01-08 07:22:47,507 - AFO.api.config - INFO - FastAPI application created successfully
+2026-01-08 07:22:47,507 - AFO.api_server - INFO - FastAPI application created
+2026-01-08 07:22:47,507 - AFO.api.routers.chancellor_router - WARNING - ⚠️ Learning profile loader import failed: No module named 'afo'
+2026-01-08 07:22:47,507 - AFO.api.routers.chancellor_router - WARNING - ⚠️ RAG shadow mode import failed: No module named 'rag_shadow'
+2026-01-08 07:22:47,508 - AFO.api.routers.chancellor_router - WARNING - ⚠️ RAG flag + gradual mode import failed: No module named 'rag_flag'
+2026-01-08 07:22:47,512 - AFO.api.routers.chancellor_router - INFO - ✅ Chancellor V2 runner loaded successfully
+2026-01-08 07:22:47,514 - AFO.api_server - INFO - Chancellor Router registered successfully
+2026-01-08 07:22:47,521 - AFO.api_server - INFO - Multimodal Router registered successfully
+2026-01-08 07:22:47,521 - AFO.api_server - INFO - RAG Router registered successfully
+2026-01-08 07:22:47,521 - AFO.api_server - WARNING - Auth Router registration failed: No module named 'AFO.api.routes.auth'
+2026-01-08 07:22:47,521 - AFO.api_server - INFO - Rate limiter configured
+2026-01-08 07:22:47,522 - AFO.api_server - WARNING - ⚠️ APIKeyAuthMiddleware not available
+2026-01-08 07:22:47,522 - AFO.api_server - WARNING - ⚠️ API Key ACL not available
+2026-01-08 07:22:47,523 - AFO.api_server - INFO - Application configured with security measures
+2026-01-08 07:22:47,523 - AFO.setup - INFO - CORS middleware configured
+2026-01-08 07:22:47,523 - AFO.setup - INFO - Middleware setup complete
+2026-01-08 07:22:47,523 - AFO.api_server - INFO - Middleware setup completed
+2026-01-08 07:22:47,523 - AFO.api.router_manager - INFO - AFO Router Manager initialized with beautiful code principles
+2026-01-08 07:22:47,523 - AFO.api.router_manager - INFO - Starting router registration process...
+2026-01-08 07:22:47,538 - AFO.julie_cpa.grok_engine - INFO - Redis cache client initialized
+2026-01-08 07:22:47,538 - AFO.julie_cpa.grok_engine - INFO - Grok Engine initialized with beautiful code principles
+2026-01-08 07:22:47,543 - AFO.api.router_manager - WARNING - Time Travel Router not available
+2026-01-08 07:22:47,544 - AFO.api.router_manager - WARNING - RAG Stream Router not available
+2026-01-08 07:22:47,547 - AFO.api.router_manager - INFO - Skills API registered successfully (6 routes)
+2026-01-08 07:22:47,554 - AFO.api.router_manager - WARNING - Intake API router not available
+2026-01-08 07:22:47,561 - AFO.api.router_manager - WARNING - Cache Metrics router not available
+2026-01-08 07:22:47,564 - AFO.api.router_manager - INFO - Router registration completed. Total: 116 routers
+2026-01-08 07:22:47,564 - AFO.api_server - INFO - Router setup completed
+2026-01-08 07:22:47,564 - AFO.api_server - INFO - AFO Kingdom API Server initialized with beautiful code principles
+ERROR: usage: pytest [options] [file_or_dir] [file_or_dir] [...]
+pytest: error: unrecognized arguments: -n --dist
+  inifile: /Users/brnestrm/AFO_Kingdom/packages/afo-core/pyproject.toml
+  rootdir: /Users/brnestrm/AFO_Kingdom/packages/afo-core
 
-tests/api/test_api_chat.py ...........                                   [  3%]
-tests/api/test_api_health.py .........                                   [  6%]
-tests/api/test_api_pillars.py .........                                  [  9%]
-tests/api/test_api_skills.py ....                                        [ 10%]
-tests/api/test_api_system_health.py ...                                  [ 11%]
-tests/api/test_api_wallet_routes.py ....                                 [ 12%]
-tests/health/test_fingerprint_contract.py ....                           [ 14%]
-tests/llm/test_llm_apis.py ...............                               [ 19%]
-tests/llm/test_llm_implementations.py ............                       [ 22%]
-tests/llm/test_llm_router.py ............                                [ 26%]
-tests/test_api_health.py ...                                             [ 27%]
-tests/test_api_server.py ........                                        [ 30%]
-tests/test_api_server_lifespan.py .                                      [ 30%]
-tests/test_api_wallet.py ................                                [ 35%]
-tests/test_api_wallet_advanced.py .....                                  [ 37%]
-tests/test_api_wallet_cli.py ......                                      [ 39%]
-tests/test_api_wallet_db_mock.py .......                                 [ 41%]
-tests/test_api_wallet_imports.py ..                                      [ 42%]
-tests/test_api_wallet_vault_fallback.py sss                              [ 43%]
-tests/test_circuit_breaker.py ....                                       [ 44%]
-tests/test_crag.py ..........                                            [ 47%]
-tests/test_goodness_serenity.py ..........                               [ 51%]
-tests/test_hybrid_rag_advanced.py ............                           [ 55%]
-tests/test_input_server.py ............                                  [ 58%]
-tests/test_input_server_advanced.py ..                                   [ 59%]
-tests/test_integration_api_endpoints.py .....                            [ 61%]
-tests/test_integration_services.py ....                                  [ 62%]
-tests/test_kms_advanced.py .........                                     [ 65%]
-tests/test_llm_router_advanced.py .........                              [ 68%]
-tests/test_mcp_client_debug.py ..                                        [ 68%]
-tests/test_mcp_integration.py ..                                         [ 69%]
-tests/test_persona_service_integration.py ..                             [ 70%]
-tests/test_rate_limit.py ...                                             [ 71%]
-tests/test_redis_optimized.py .....                                      [ 72%]
-tests/test_services.py ................                                  [ 77%]
-tests/test_settings.py ....                                              [ 79%]
-tests/test_skills_registry.py ........                                   [ 81%]
-tests/test_structured_concurrency.py ...............                     [ 86%]
-tests/test_trinity_engine.py ...                                         [ 87%]
-tests/test_utils.py ..........................                           [ 96%]
-tests/test_utils_advanced.py ............                                [100%]
-
-================= 306 passed, 4 skipped, 4 deselected in 4.75s =================

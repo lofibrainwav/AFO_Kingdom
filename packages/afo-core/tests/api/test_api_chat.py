@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Tests for api/routes/chat.py
+"""Tests for api/routes/chat.py
 Chat API 엔드포인트 테스트
 """
 
@@ -24,12 +23,14 @@ class TestChatEndpoint:
 
         return TestClient(app)
 
+    @pytest.mark.slow
     def test_chat_message_post(self, client: TestClient) -> None:
         """POST /api/chat/message 테스트"""
         response = client.post("/api/chat/message", json={"message": "Hello"})
         # 200 (성공) 또는 422 (검증 오류) 또는 500/503 (백엔드 문제)
         assert response.status_code in [200, 422, 500, 503]
 
+    @pytest.mark.slow
     def test_chat_message_has_response(self, client: TestClient) -> None:
         """Chat 응답에 response 필드가 있는지 테스트"""
         response = client.post("/api/chat/message", json={"message": "test"})
@@ -111,10 +112,11 @@ class TestChatValidation:
         assert response.status_code in [200, 422, 500]
 
     def test_missing_message_field(self, client: TestClient) -> None:
-        """message 필드 누락 시 422 반환 테스트"""
+        """Message 필드 누락 시 422 반환 테스트"""
         response = client.post("/api/chat/message", json={})
         assert response.status_code == 422
 
+    @pytest.mark.slow
     def test_long_message_handled(self, client: TestClient) -> None:
         """긴 메시지 처리 테스트"""
         long_message = "test " * 1000

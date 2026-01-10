@@ -8,7 +8,7 @@ import random
 import struct
 import warnings
 from concurrent.futures import ThreadPoolExecutor
-from typing import Any, cast
+from typing import Any, Optional, Union, cast
 
 from pydantic import BaseModel
 from redis.commands.search.query import Query as RedisQuery
@@ -16,23 +16,26 @@ from redis.commands.search.query import Query as RedisQuery
 # 眞 (Truth): Neo4j Integration (GraphRAG)
 try:
     from neo4j import GraphDatabase
+    GraphDatabaseType = GraphDatabase
 except ImportError:
-    GraphDatabase = None  # type: ignore[assignment, misc]
+    GraphDatabaseType = None
 
 # Qdrant Integration
 try:
     from qdrant_client import QdrantClient
     from qdrant_client.http import models as qmodels
+    QdrantClientType = QdrantClient
+    QdrantModelsType = qmodels
 except ImportError:
-    QdrantClient = None  # type: ignore[assignment, misc]
-    qmodels = None  # type: ignore[assignment]
+    QdrantClientType = None
+    QdrantModelsType = None
 
 # Optional imports handling
 try:
     from pgvector.psycopg2 import register_vector
     from psycopg2.extras import RealDictCursor
 except ImportError:
-    RealDictCursor = None  # type: ignore[assignment, misc]
+    RealDictCursor = None
     register_vector = None
 
 # Suppress Pydantic warnings locally
@@ -242,7 +245,7 @@ def query_graph_context(entities: list[str], limit: int = 5) -> list[dict[str, A
     美 (Beauty): GraphRAG Context Retrieval
     Neo4j 지식 그래프에서 엔티티 간의 관계를 탐색.
     """
-    if GraphDatabase is None or not entities:
+    if GraphDatabaseType is None or not entities:
         return []
 
     uri = "bolt://localhost:7687"
@@ -279,57 +282,31 @@ def query_graph_context(entities: list[str], limit: int = 5) -> list[dict[str, A
 
 def query_qdrant(embedding: list[float], top_k: int, qdrant_client: Any) -> list[dict[str, Any]]:
     """
-    眞 (Truth): Qdrant 벡터 검색 (Brain Organ)
+    眞 (Truth): 통합 벡터 검색 (Brain Organ) - 환경변수 기반 어댑터 사용
+
+    환경변수 VECTOR_DB에 따라 자동으로 적절한 벡터 스토어 선택:
+    - VECTOR_DB=lancedb: LanceDB 사용
+    - VECTOR_DB=chroma: Chroma 사용
+    - 그 외: Qdrant 사용 (기존 호환성 유지)
 
     Args:
         embedding: 검색할 벡터
         top_k: 반환할 상위 항목 수
-        qdrant_client: Qdrant 클라이언트
+        qdrant_client: 기존 호환성을 위한 Qdrant 클라이언트 (사용되지 않음)
 
     Returns:
         list[dict]: 검색 결과 리스트
     """
-    if qdrant_client is None or not embedding:
+    if not embedding:
         return []
 
     try:
-        from AFO.config.settings import get_settings
+        # 환경변수 기반 벡터 스토어 선택
+        from AFO.utils.vector_store import query_vector_store
+        return query_vector_store(embedding, top_k)
 
-        settings = get_settings()
-        collection_name = "afokingdom_knowledge"  # Default collection
-    except Exception:
-        collection_name = "afokingdom_knowledge"
-
-    try:
-        # 1. Search in Qdrant
-        search_result = qdrant_client.search(
-            collection_name=collection_name,
-            query_vector=embedding,
-            limit=top_k,
-            with_payload=True,
-        )
-
-        # 2. Format results
-        rows: list[dict[str, Any]] = []
-        for hit in search_result:
-            payload = hit.payload or {}
-            content = payload.get("content") or ""
-            if not content:
-                continue
-
-            rows.append(
-                {
-                    "id": str(hit.id),
-                    "content": content,
-                    "score": float(hit.score),
-                    "source": payload.get("source") or "qdrant",
-                    "metadata": payload,
-                }
-            )
-
-        return rows
     except Exception as exc:
-        print(f"[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): {exc}")
+        print(f"[Hybrid RAG] 벡터 검색 실패: {exc}")
         return []
 
 
@@ -516,7 +493,7 @@ def generate_answer(
         graph_context: 그래프 RAG에서 추출된 컨텍스트 (선택 사항)
 
     Returns:
-        str | dict: 생성된 답변 또는 에러 정보
+        Union[str, dict]: 생성된 답변 또는 에러 정보
     """
     context_block = "\n\n".join([f"Chunk {idx + 1}:\n{ctx}" for idx, ctx in enumerate(contexts)])
 
@@ -623,3 +600,173 @@ async def generate_answer_async(
         openai_client,
         graph_context,
     )
+
+
+def _sse_fmt(event: str, data: Any) -> bytes:
+    import json
+
+    return (f"event: {event}\ndata: {json.dumps(data, ensure_ascii=False)}\n\n").encode()
+
+
+async def generate_answer_stream_async(
+    query: str,
+    contexts: list[str],
+    temperature: float,
+    response_format: str,
+    additional_instructions: str,
+    openai_client: Any = None,
+) -> Any:  # AsyncIterator[bytes]
+    """
+    眞 (Truth): SSE 패턴을 따르는 비동기 스트리밍 답변 생성
+    善 (Goodness): OpenAI 실패 시 Ollama로 자동 라우팅 (로컬 지능 주권)
+    """
+    context_block = "\n\n".join([f"Chunk {idx + 1}:\n{ctx}" for idx, ctx in enumerate(contexts)])
+    system_prompt = " ".join(
+        part
+        for part in [
+            "You are the Brnestrm Hybrid RAG assistant.",
+            "Answer using ONLY the provided chunks. If unsure, say you do not know.",
+            "Reference the source when possible.",
+            additional_instructions,
+        ]
+        if part
+    )
+
+    # 1. Start event
+    yield _sse_fmt("start", {"engine": "hybrid_rag_stream"})
+
+    # 2. Try OpenAI if client available
+    if openai_client:
+        try:
+            messages = [
+                {"role": "system", "content": system_prompt},
+                {
+                    "role": "user",
+                    "content": f"Context:\n{context_block}\n\nQuestion: {query}",
+                },
+            ]
+
+            response = openai_client.chat.completions.create(
+                model="gpt-4",
+                messages=messages,
+                temperature=temperature,
+                stream=True,
+            )
+
+            for i, chunk in enumerate(response):
+                if chunk.choices and chunk.choices[0].delta.content:
+                    token = chunk.choices[0].delta.content
+                    yield _sse_fmt("token", {"i": i, "t": token})
+
+            yield _sse_fmt("done", {"ok": True, "provider": "openai"})
+            return
+        except Exception as e:
+            print(f"[Hybrid RAG] OpenAI Streaming failed, falling back to Ollama: {e}")
+
+    # 3. Fallback to Ollama (Local Sovereignty)
+    try:
+        import json
+
+        import httpx
+
+        # Default Ollama config from AFO environment
+        ollama_url = os.getenv("AFO_OLLAMA_BASE_URL", "http://localhost:11434")
+        ollama_model = os.getenv("AFO_DSPY_MODEL", "deepseek-r1:14b")
+
+        payload = {
+            "model": ollama_model,
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {
+                    "role": "user",
+                    "content": f"Context:\n{context_block}\n\nQuestion: {query}",
+                },
+            ],
+            "stream": True,
+            "options": {"temperature": temperature},
+        }
+
+        async with httpx.AsyncClient(timeout=60.0) as client:
+            async with client.stream("POST", f"{ollama_url}/api/chat", json=payload) as resp:
+                if resp.status_code != 200:
+                    yield _sse_fmt(
+                        "error", {"error": f"Ollama failed with status {resp.status_code}"}
+                    )
+                    return
+
+                i = 0
+                async for line in resp.aiter_lines():
+                    if not line:
+                        continue
+                    try:
+                        chunk = json.loads(line)
+                        if "message" in chunk and "content" in chunk["message"]:
+                            token = chunk["message"]["content"]
+                            yield _sse_fmt("token", {"i": i, "t": token})
+                            i += 1
+                        if chunk.get("done"):
+                            break
+                    except json.JSONDecodeError:
+                        continue
+
+        yield _sse_fmt("done", {"ok": True, "provider": "ollama"})
+
+    except Exception as e:
+        yield _sse_fmt("error", {"error": f"All LLM providers failed: {e!s}"})
+
+
+class HybridRAG:
+    """Wrapper class for HybridRAG functional implementation."""
+
+    available = True
+
+    @staticmethod
+    async def generate_answer_async(
+        query: str,
+        contexts: list[str],
+        temperature: float,
+        response_format: str,
+        additional_instructions: str,
+        openai_client: Any = None,
+        graph_context: list[dict[str, Any]] | None = None,
+    ) -> str | dict[str, Any]:
+        return await generate_answer_async(
+            query,
+            contexts,
+            temperature,
+            response_format,
+            additional_instructions,
+            openai_client=openai_client,
+            graph_context=graph_context,
+        )
+
+    @staticmethod
+    async def generate_hyde_query_async(query: str, client: Any) -> str:
+        return await generate_hyde_query_async(query, client)
+
+    @staticmethod
+    async def get_embedding_async(text: str, client: Any) -> list[float]:
+        return await get_embedding_async(text, client)
+
+    @staticmethod
+    async def query_qdrant_async(
+        embedding: list[float], top_k: int, client: Any
+    ) -> list[dict[str, Any]]:
+        return await query_qdrant_async(embedding, top_k, client)
+
+    @staticmethod
+    def query_graph_context(entities: list[str]) -> list[dict[str, Any]]:
+        return query_graph_context(entities)
+
+    @staticmethod
+    async def generate_answer_stream_async(
+        query: str,
+        contexts: list[str],
+        temperature: float,
+        response_format: str,
+        additional_instructions: str,
+        openai_client: Any = None,
+    ) -> Any:
+        return generate_answer_stream_async(
+            query, contexts, temperature, response_format, additional_instructions, openai_client
+        )

@@ -1,10 +1,10 @@
 import json
 import sys
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any
 
 # Lazy import for performance: CuPy/NumPy are only imported when needed
-_GPU_AVAILABLE: Optional[bool] = None
+_GPU_AVAILABLE: bool | None = None
 _cp = None
 _np = None
 
@@ -34,8 +34,7 @@ def _get_numpy():
 
 
 class TrinityScoreEngineHybrid:
-    """
-    Trinity Score Engine Hybrid (Truth, Goodness, Beauty, Serenity, Eternity).
+    """Trinity Score Engine Hybrid (Truth, Goodness, Beauty, Serenity, Eternity).
     Automatically switches to CuPy (GPU) for large-scale metrics if available.
     """
 
@@ -60,8 +59,8 @@ class TrinityScoreEngineHybrid:
         if gpu_available and n > TrinityScoreEngineHybrid.THRESHOLD:
             # CuPy GPU Acceleration (only for large arrays)
             w_gpu = _cp.array(weights)
-            s_gpu = _cp.array(scores)
-            result = _cp.sum(w_gpu * s_gpu)
+            s_gpu: Any = _cp.array(scores)
+            result: Any = _cp.sum(w_gpu * s_gpu)
             return float(result.get())
         elif gpu_available and n <= TrinityScoreEngineHybrid.THRESHOLD:
             # Small arrays: use NumPy even if CuPy is available (lower overhead)
@@ -78,9 +77,7 @@ class TrinityScoreEngineHybrid:
         # Simplified calculation for MVP
         scores = {
             "Truth": min(100, metrics.get("truth_base", 100)),
-            "Goodness": min(
-                100, metrics.get("goodness_base", 100) - metrics.get("risk_score", 0)
-            ),
+            "Goodness": min(100, metrics.get("goodness_base", 100) - metrics.get("risk_score", 0)),
             "Beauty": min(100, metrics.get("beauty_base", 100)),
             "Serenity": min(100, 100 - metrics.get("friction", 0)),
             "Eternity": min(100, metrics.get("eternity_base", 100)),

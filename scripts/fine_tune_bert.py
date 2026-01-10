@@ -27,9 +27,7 @@ def run_simulation(data_file):
 
     # Write log
     with pathlib.Path("AFO_EVOLUTION_LOG.md").open("a", encoding="utf-8") as f:
-        f.write(
-            f"\n- **2025-12-19 Phase 11**: BERT fine-tune with 500 samples. Accuracy: {final_acc:.4f}\n"
-        )
+        f.write(f"\n- **2025-12-19 Phase 11**: BERT fine-tune with 500 samples. Accuracy: {final_acc:.4f}\n")
 
     return final_acc
 
@@ -40,9 +38,14 @@ try:
     from sklearn.metrics import accuracy_score
     from sklearn.model_selection import train_test_split
     from torch.utils.data import DataLoader, Dataset
+
     # Try importing transformers but handle failure gracefully
-    from transformers import (AdamW, BertForSequenceClassification,
-                              BertTokenizer, get_linear_schedule_with_warmup)
+    from transformers import (
+        AdamW,
+        BertForSequenceClassification,
+        BertTokenizer,
+        get_linear_schedule_with_warmup,
+    )
 
     print("✅ ML Libraries Detected. Initiating Real Training...")
 

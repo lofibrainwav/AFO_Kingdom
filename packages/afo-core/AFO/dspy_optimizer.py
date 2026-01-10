@@ -1,115 +1,193 @@
 """
-DSPy MIPROv2 최적화 모듈 - AFO 왕국 Trinity Score 통합
+DSPy MIPROv2 Optimizer Module for AFO Kingdom.
+Combines AFO Philosophy (Trinity Score) with DSPy's automated optimization.
+Robust implementation with Strict Mode for CI/CD gates.
 """
 
+from pathlib import Path
+
+from AFO.config.antigravity import antigravity
+from AFO.services.trinity_calculator import calculate_trinity_score
+
 try:
-    import dspy
     from dspy.teleprompt import MIPROv2
-
-    DSPY_AVAILABLE = True
 except ImportError:
-    DSPY_AVAILABLE = False
-
     # DSPy가 설치되지 않은 경우 모의 클래스 제공
-    class MIPROv2:
+    class MockMIPROv2:
         def __init__(self, **kwargs):
             pass
 
         def compile(self, program, trainset=None, valset=None):
             return program
 
+    MIPROv2 = MockMIPROv2
 
-class AFOMIPROv2(MIPROv2):
-    """AFO 왕국 MIPROv2 최적화 클래스 - Trinity Score 통합"""
-
-    def __init__(self, trinity_score: float = 78.3, auto: str = "medium"):
-        if not DSPY_AVAILABLE:
-            self.trinity_score = trinity_score
-            return
-
-        super().__init__(auto=auto)
-        self.trinity_score = trinity_score
-
-    def compile(self, program, trainset=None, valset=None):
-        """Trinity Score를 반영한 최적화 컴파일"""
-        if not DSPY_AVAILABLE:
-            # DSPy가 없으면 기본 프로그램 반환 (Trinity Score 로깅)
-            print(f"⚠️  DSPy 미설치: Trinity Score {self.trinity_score}로 기본 최적화")
-            return program
-
-        # 실제 MIPROv2 최적화 (Optuna TPE 기반)
-        optimized_program = super().compile(program, trainset=trainset, valset=valset)
-
-        # Trinity Score 적용
-        return self._apply_trinity_score(optimized_program)
-
-    def _apply_trinity_score(self, program):
-        """Trinity Score 기반 최적화 후처리"""
-        if hasattr(program, "signature"):
-            # DSPy 프로그램에 Trinity Score 메타데이터 추가
-            program._trinity_score = self.trinity_score
-            program._optimized_by = "AFOMIPROv2"
-
-        print(f"🏰 AFOMIPROv2 최적화 완료 - Trinity Score: {self.trinity_score}")
-        return program
+# Inferred strict mode from environment or existing config
+STRICT_MODE = True if antigravity.ENVIRONMENT == "test" else False
 
 
-def optimize_rag_with_mipro_v2(rag_module, trainset, eval_fn=None, trinity_score: float = 78.3):
+def compile_mipro(
+    program,
+    trainset,
+    auto="light",  # light/medium/heavy
+    valset=None,
+    teacher=None,
+    save_path="artifacts/dspy/optimized_program.json",
+    truth_key_candidates=("ground_truth", "answer", "label", "y", "output"),
+    pred_key_candidates=("answer", "output", "prediction", "text"),
+    strict=STRICT_MODE,
+):
     """
-    RAG 모듈 MIPROv2 최적화 (DSPy + Trinity Score)
+    AFO Kingdom MIPROv2 Optimization (Trinity Score Integrated).
+    Robust against missing fields and environmental issues.
 
     Args:
-        rag_module: 최적화할 RAG 모듈
-        trainset: 학습 데이터셋
-        eval_fn: 평가 함수
-        trinity_score: 현재 Trinity Score
-
-    Returns:
-        최적화된 RAG 모듈
+        strict (bool): If True, raise exceptions on failure instead of fallback.
+                       Defaults to True in 'test' environment.
     """
+    if antigravity.DRY_RUN:
+        print(
+            f"[DRY_RUN] compile_mipro called with {len(trainset)} examples. Returning original program."
+        )
+        return program.deepcopy()
 
-    if not DSPY_AVAILABLE:
-        print(f"⚠️  DSPy 미설치: Trinity Score {trinity_score}로 기본 RAG 반환")
-        return rag_module
+    if MIPROv2 is None:
+        msg = "DSPy not installed or MIPROv2 not available."
+        if strict:
+            raise ImportError(msg)
+        print(f"[MIPRO][FALLBACK] reason={msg}")
+        return program.deepcopy()
 
-    # AFOMIPROv2 최적화 실행
-    optimizer = AFOMIPROv2(trinity_score=trinity_score, auto="medium")
+    # Robust field extractor
+    def _pick_field(obj, keys):
+        for k in keys:
+            if hasattr(obj, k):
+                v = getattr(obj, k)
+                if v is not None:
+                    return v
+            try:
+                if isinstance(obj, dict) and k in obj and obj[k] is not None:
+                    return obj[k]
+            except Exception:
+                pass
+        return None
 
+    # Trinity Metric Wrapper (Fail-Closed)
+    def trinity_metric_fn(example, prediction, trace=None):
+        gt = _pick_field(example, truth_key_candidates)
+        pred = _pick_field(prediction, pred_key_candidates) if prediction is not None else None
+
+        # Fail-closed: Return 0.0 if critical fields are missing
+        if not gt or not pred:
+            # You might want to log this in debug mode
+            return 0.0
+
+        # Cast to string safely ensuring no 'None' gets passed if picked value was not None
+        # (Though checks above ensure truthiness, strict existence is safer)
+        gt_str = str(gt)
+        pred_str = str(pred)
+
+        score_result = calculate_trinity_score(pred_str, gt_str)
+        return score_result.overall
+
+    optimizer = MIPROv2(
+        metric=trinity_metric_fn,
+        auto=auto,
+    )
+
+    # Auto-split valset if not provided
+    if valset is None:
+        valset = trainset[-20:] if len(trainset) >= 20 else None
+
+    print(f"[AFO] Starting MIPROv2 Optimization (auto={auto})...")
     try:
-        optimized_rag = optimizer.compile(rag_module, trainset=trainset)
-        print(f"✅ RAG MIPROv2 최적화 성공 - Trinity Score: {trinity_score}")
-        return optimized_rag
+        optimized = optimizer.compile(
+            program.deepcopy(),
+            trainset=trainset,
+            valset=valset,
+            teacher=teacher,
+        )
+
+        if save_path:
+            p = Path(save_path)
+            try:
+                p.parent.mkdir(parents=True, exist_ok=True)
+
+                # Safe-Save: try multiple methods to serialize the optimized program
+                saved = False
+
+                # Method 1: DSPy native save() if available
+                if hasattr(optimized, "save") and callable(optimized.save):
+                    try:
+                        optimized.save(str(p))
+                        saved = p.exists() and p.stat().st_size > 0
+                    except Exception as save_err:
+                        print(f"[AFO] DSPy save() failed: {save_err}")
+
+                # Method 2: JSON fallback using state_dict or __dict__
+                if not saved:
+                    import json
+
+                    state = None
+                    if hasattr(optimized, "state_dict"):
+                        state = optimized.state_dict()
+                    elif hasattr(optimized, "dump_state"):
+                        state = optimized.dump_state()
+                    elif hasattr(optimized, "__dict__"):
+                        # Extract serializable parts
+                        state = {
+                            "type": type(optimized).__name__,
+                            "module_keys": list(getattr(optimized, "__dict__", {}).keys()),
+                            "timestamp": __import__("datetime").datetime.now().isoformat(),
+                        }
+
+                    if state is not None:
+                        with open(p, "w", encoding="utf-8") as f:
+                            json.dump(state, f, indent=2, default=str)
+                        saved = p.exists() and p.stat().st_size > 0
+
+                # Validation: 0-byte is failure
+                if not saved or not p.exists() or p.stat().st_size == 0:
+                    raise RuntimeError(
+                        f"[AFO][FATAL] Artifact save failed: {p} is empty or missing"
+                    )
+
+                print(
+                    f"[AFO] Optimization complete. Program saved to {save_path} ({p.stat().st_size} bytes)"
+                )
+
+            except Exception as e:
+                # Write meta file for debugging
+                meta_path = p.with_suffix(".meta.json")
+                import json
+                import os
+
+                meta = {
+                    "error": str(e),
+                    "model": os.getenv("AFO_DSPY_MODEL", "unknown"),
+                    "dspy_version": getattr(__import__("dspy"), "__version__", "unknown"),
+                    "timestamp": __import__("datetime").datetime.now().isoformat(),
+                    "save_path": str(p),
+                }
+                with open(meta_path, "w", encoding="utf-8") as f:
+                    json.dump(meta, f, indent=2)
+                print(f"[AFO][ERROR] Save failed. Meta written to {meta_path}")
+
+                if strict:
+                    raise
+
+        return optimized
 
     except Exception as e:
-        print(f"❌ MIPROv2 최적화 실패: {e}")
-        print("🔄 기본 RAG 모듈 반환")
-        return rag_module
+        if strict:
+            raise e
+        print(f"[MIPRO][FALLBACK] reason={e}")
+        return program.deepcopy()
 
 
-# Trinity Score 기반 메트릭 함수
-def trinity_metric(example, prediction, trinity_score: float = 78.3):
-    """
-    Trinity Score 기반 평가 메트릭
-
-    DSPy MIPROv2에서 사용되는 메트릭 함수
-    """
-    # 기본 정확도 평가 (실제로는 더 복잡한 Trinity Score 계산)
-    accuracy = len(prediction.split()) / max(len(example.get("question", "").split()), 1)
-
-    # Trinity Score 가중치 적용
-    weighted_score = accuracy * (trinity_score / 100.0)
-
-    return weighted_score
-
-
-# 사용 예시 (DSPy 설치된 경우)
+# Simple Test Block
 if __name__ == "__main__":
-    if DSPY_AVAILABLE:
-        # 실제 DSPy MIPROv2 사용
-        optimizer = AFOMIPROv2(trinity_score=87.3)
-        print(f"🏰 AFO MIPROv2 준비 완료 - Trinity Score: {optimizer.trinity_score}")
+    if antigravity.DRY_RUN:
+        print("Dry Run Check: OK")
     else:
-        # DSPy 미설치 시뮬레이션
-        print("⚠️  DSPy 미설치 - 시뮬레이션 모드")
-        optimizer = AFOMIPROv2(trinity_score=78.3)
-        print(f"🏰 AFO MIPROv2 시뮬레이션 - Trinity Score: {optimizer.trinity_score}")
+        print("Live Run Check: Ready (Requires DSPy + Data)")

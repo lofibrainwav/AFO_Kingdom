@@ -1,5 +1,6 @@
 import sys
 
+
 # Add project root to path
 sys.path.insert(0, "/Users/brnestrm/AFO_Kingdom/packages/afo-core")
 
@@ -41,10 +42,7 @@ if not all_passed:
 # 2. Verify TrinityMetrics usage of SSOT
 print("\n[LOCK 2] Checking TrinityMetrics usage...")
 metrics = TrinityMetrics
-if (
-    metrics.WEIGHT_TRUTH == TrinityWeights.TRUTH
-    and metrics.WEIGHT_BEAUTY == TrinityWeights.BEAUTY
-):
+if metrics.WEIGHT_TRUTH == TrinityWeights.TRUTH and metrics.WEIGHT_BEAUTY == TrinityWeights.BEAUTY:
     print("✅ TrinityMetrics is using SSOT weights.")
 else:
     print("❌ TrinityMetrics is NOT using SSOT weights!")

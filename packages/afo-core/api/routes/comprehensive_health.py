@@ -126,13 +126,31 @@ async def comprehensive_health_check() -> dict[str, Any]:
         automation_status = await _check_automation_tools()
 
         # 8. 종합 결과 구성
-        # health_data에서 trinity 정보 추출
-        trinity_info = health_data.get("trinity", {})
-        if isinstance(trinity_info, dict) and "trinity_score" in trinity_info:
-            trinity_score = trinity_info["trinity_score"]
-        elif "health_percentage" in health_data:
-            trinity_score = health_data["health_percentage"] / 100.0
+        # Prioritize V2 Dynamic Breakdown (SSOT: health_service.py)
+        v2_breakdown = health_data.get("breakdown")
+        if v2_breakdown:
+            breakdown = {
+                "truth": v2_breakdown.get("truth", 0.0),
+                "goodness": v2_breakdown.get("goodness", 0.0),
+                "beauty": v2_breakdown.get("beauty", 0.0),
+                "filial_serenity": v2_breakdown.get("filial_serenity", 0.0),
+                "eternity": v2_breakdown.get("eternity", 1.0),
+                "iccls_gap": health_data.get("iccls_gap", 0.0),
+                "sentiment": health_data.get("sentiment", 0.0),
+            }
+            trinity_score = health_data.get("health_percentage", 0) / 100.0
         else:
+            # Legacy Fallback REMOVED for SSOT Purity (Friction Calculator v2.0)
+            # If V2 breakdown is missing, we must fail loud or show 0.0
+            breakdown = {
+                "truth": 0.0,
+                "goodness": 0.0,
+                "beauty": 0.0,
+                "filial_serenity": 0.0,
+                "eternity": 0.0,
+                "iccls_gap": 0.0,
+                "sentiment": 0.0,
+            }
             trinity_score = 0.0
 
         config = health_check_config
@@ -143,11 +161,17 @@ async def comprehensive_health_check() -> dict[str, Any]:
             "timestamp": datetime.now().isoformat(),
             "organs": health_data.get("organs", {}),
             "organs_v2": health_data.get("organs_v2"),
+            "security": health_data.get("security"),  # Added Security Field (Option A)
             "contract_v2": health_data.get("contract_v2"),
             "ts_v2": health_data.get("ts_v2"),
+            "healthy_organs": health_data.get("healthy_organs", 0),  # Pass-through SSOT
+            "total_organs": health_data.get("total_organs", 11),  # Pass-through SSOT
             "trinity_score": trinity_score,
             "health_percentage": round(trinity_score * 100, 2),
-            "trinity_breakdown": trinity_info if isinstance(trinity_info, dict) else {},
+            "trinity_breakdown": breakdown,  # 5기둥 상세 점수 (Dashboard용)
+            "breakdown": breakdown,  # Alias for fallback
+            "iccls_gap": health_data.get("iccls_gap", 0.0),  # T22: SSOT Contract (Option A)
+            "sentiment": health_data.get("sentiment", 0.0),  # T22: SSOT Contract (Option A)
             "skills": skills_status,
             "scholars": scholars_status,
             "mcp_tools": mcp_tools_status,
@@ -197,13 +221,14 @@ def _extract_services_status(health_data: dict[str, Any]) -> dict[str, bool]:
             "api_server": False,
         }
 
-    # SSOT 표준: 5개 오장육부 매핑
+    # SSOT 표준: 5개 오장육부 매핑 (大一統)
     service_mapping = {
-        "redis": "心_Redis",  # 세션/캐시 저장소
-        "postgres": "肝_PostgreSQL",  # 메인 데이터베이스
-        "ollama": "脾_Ollama",  # AI 모델 서빙
-        "api_server": "肺_API_Server",  # API 서버 상태
-        "mcp": "肾_MCP",  # 외부 서비스 연결
+        "redis": "心_Redis",  # 세션/캐시 저장소 (Heart)
+        "postgres": "肝_PostgreSQL",  # 메인 데이터베이스 (Liver)
+        "ollama": "脾_Ollama",  # AI 모델 서빙 (Spleen)
+        "qdrant": "肺_Qdrant",  # 벡터 데이터베이스 (Lungs)
+        "mcp": "腎_MCP",  # 외부 서비스 연결 (Kidney)
+        "api_server": "腦_Soul_Engine",  # API 서버 상태 (Brain)
     }
 
     return {

@@ -2,92 +2,121 @@
 name = "afo-kingdom"
 version = "1.0.0"
 description = "AFO Kingdom - Unified Monorepo (AFO Core, TRINITY-OS, SixXon, Dashboard)"
-requires-python = ">=3.12"
-authors = [
-    {name = "AFO Kingdom", email = "afo@kingdom.dev"}
-]
-license = {text = "MIT"}
+authors = [{ name = "AFO Kingdom", email = "afo@kingdom.dev" }]
+package-mode = false
+requires-python = ">=3.12,<3.13"
 readme = "README.md"
+license = { text = "MIT" }
+dependencies = [
+    "google-genai>=1.56.0,<2",
+    # "ragas>=0.4.1,<0.5",
+    "boto3>=1.42.14,<2",
+    "python-frontmatter>=1.1.0,<2",
+    "kafka-python>=2.3.0,<3",
+    "sentence-transformers>=5.2.0,<6",
+    "sqlmodel>=0.0.14,<0.0.15",
+    "sunoai>=1.0.7,<2",
+    "neo4j>=6.0.3,<7",
+    "fastapi>=0.128.0",
+    "uvicorn>=0.38.0",
+    "afo-core",
+    "dspy-ai>=3.0.4",
+    "dspy>=3.0.4",
+    # mlx-examples[musicgen] - removed (local submodule, not on PyPI)
+]
 
 [project.urls]
 homepage = "https://github.com/afo-kingdom"
 documentation = "https://afo-kingdom.dev/docs"
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
-[tool.poetry]
-name = "afo-kingdom"
-version = "1.0.0"
-description = "眞善美孝永 Kingdom Monorepo"
-packages = [
-    { include = "packages/afo-core" },
-    { include = "packages/trinity-os" },
-    { include = "packages/sixXon" },
-]
+[tool.setuptools.packages.find]
+where = ["packages"]
+include = ["afo-core*", "trinity-os*", "dashboard*"]
+exclude = ["*test*", "*tests*", "*__pycache__*", "*.egg-info*"]
 
 [tool.poetry.dependencies]
-python = ">=3.12,<3.14"
-google-genai = "^1.56.0"
-ragas = "^0.4.2"
-boto3 = "^1.42.17"
-python-frontmatter = "^1.1.0"
-hcloud = "^2.13.0"
-kafka-python = "^2.3.0"
-sentence-transformers = "^5.2.0"
-sqlmodel = "^0.0.30"
-sunoai = "^1.0.7"
-neo4j = "^6.0.3"
-playwright = "^1.40.0"
-dspy-ai = "^3.0.4"
-optuna = "^3.6.1"
-trl = "^0.26.2"
+afo-core = { path = "packages/afo-core", develop = true }
+playwright = "1.40.0"
 
-[tool.poetry.group.dev.dependencies]
-pytest = "^9.0"
-pytest-cov = "^7.0"
-pytest-asyncio = "^1.3"
-mypy = "^1.0"
-ruff = "^0.14.10"
-psutil = "^7.2.0"
-redis = "^7.1.0"
+[dependency-groups]
+dev = [
+    "pytest>=7.0,<8",
+    "pytest-cov>=4.0,<6",
+    "pytest-asyncio>=0.23,<1.0",
+    "mypy>=1.0,<2",
+    "ruff>=0.12.0",
+    "psutil>=7.1.3,<8",
+    "redis>=7.1.0,<8",
+    "langchain>=1.2.0,<2",
+    "openai>=2.14.0,<3",
+    "uvicorn>=0.38.0,<0.39",
+    "black>=25.12.0,<26",
+    "isort>=7.0.0,<8",
+    "pre-commit>=4.5.1,<5",
+    "qdrant-client>=1.16.2,<2",
+    "pgvector>=0.4.2,<0.5",
+    "pymongo>=4.15.5,<5",
+    # "ragas>=0.4.1,<0.5",
+    "chromadb>=1.3.7,<2",
+    "eth-account>=0.13.7,<0.14",
+    "markdown>=3.10,<4",
+    "neo4j>=6.0.3,<7",
+    "web3>=7.14.0,<8",
+    "python-frontmatter>=1.1.0,<2",
+    "kafka-python>=2.3.0,<3",
+    "sunoai>=1.0.7,<2",
+    "docker>=7.1.0,<8",
+    "gitpython>=3.1.45,<4",
+    "python-docx>=1.2.0,<2",
+    "pytest-xdist>=3.8.0",
+    "radon>=6.0.0",
+    "dspy-ai>=2.5.0",
+]
 
-[tool.poetry.group.smoke.dependencies]
-transformers = "^5.0.0rc1"
-torch = "^2.9.1"
-huggingface-hub = "^1.2.0"
-sentence-transformers = "^5.2.0"
-langchain = "^1.2.0"
-openai = "^2.14.0"
-uvicorn = "^0.40.0"
-black = "^25.12.0"
-isort = "^7.0.0"
-pre-commit = "^4.5.1"
-qdrant-client = "^1.16.2"
-pgvector = "^0.4.2"
-pymongo = "^4.15.5"
-ragas = "^0.4.2"
-chromadb = "^1.4.0"
-eth-account = "^0.13.7"
-markdown = "^3.10"
-neo4j = "^6.0.3"
-web3 = "^7.14.0"
-python-frontmatter = "^1.1.0"
-kafka-python = "^2.3.0"
-sunoai = "^1.0.7"
-docker = "^7.1.0"
-gitpython = "^3.1.45"
-trl = "^0.26.2"
+[tool.hatch.build.targets.sdist]
+include = [
+    "packages/afo-core",
+    "packages/trinity-os",
+    "packages/sixXon",
+]
+
+[tool.hatch.build.targets.wheel]
+include = [
+    "packages/afo-core",
+    "packages/trinity-os",
+    "packages/sixXon",
+]
 
 [tool.ruff]
-target-version = "py312"
 line-length = 100
-preview = true                     # 최신 규칙 즉시 적용 (眞: Red Knot 준비)
-cache-dir = ".ruff_cache"          # CI 속도 3배↑ (孝: 개발자 평온)
+target-version = "py312"n
+[tool.ruff.lint]
+select = ["E", "F", "W", "C90", "I", "N", "UP", "B", "A", "C4", "DTZ", "T10", "DJ", "EM", "EXE", "FA", "ISC", "ICN", "G", "INP", "PIE", "T20", "PYI", "PT", "Q", "RSE", "RET", "SLF", "SLOT", "SIM", "TID", "TCH", "INT", "ARG", "PTH", "ERA", "PD", "PGH", "PL", "TRY", "FLY", "NPY", "AIR", "PERF", "FURB", "LOG", "RUF"]
+ignore = ["E501", "W503", "PLR0913", "PLR2004"]n
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
+"test_*.py" = ["S101", "PLR2004"]n
+[tool.ruff.lint.isort]
+known-first-party = ["AFO"]
+force-sort-within-sections = truen
+[tool.ruff.lint.flake8-tidy-imports]
+ban-relative-imports = "all"n
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "auto"
+target-version = "py312"
+line-length = 120
+preview = false
+cache-dir = ".ruff_cache"
 exclude = [
     ".git",
     ".venv",
+    ".venv*",
     "venv",
     "venv_rag",
     "__pycache__",
@@ -95,39 +124,55 @@ exclude = [
     "*.egg-info",
     "dist",
     "build",
+    ".mypy_cache",
+    ".pytest_cache",
+    ".ruff_cache",
+    "site-packages",
+    "packages/trinity-os/tests",
+    "tests",
+    "**/*.metallib",
+    "**/*.dylib",
+    "tools",
+    "test_*.py",
+    "conftest.py",
+    "packages/afo-core/tests",
+    "packages/afo-core/scripts"
 ]
 
 [tool.ruff.lint]
-select = ["ALL"]  # 극한 품질 모드 (眞善美孝永)
+select = ["ALL"]
 ignore = [
-    "E501",    # line too long → Ruff format이 관리
-    "E402",    # module import not at top (sys.path 필요)
-    "D203",    # Google style과 충돌 (1 blank line before class)
-    "D212",    # Google style과 충돌 (multi-line docstring)
-    "COM812",  # trailing comma → Ruff format이 더 우아하게 처리
-    "B008",    # function calls in defaults (FastAPI Depends)
-    "B904",    # raise without from (FastAPI HTTPException unchained)
-    "RUF001",  # ambiguous unicode (allow 眞善美孝永)
-    "RUF002",  # ambiguous unicode
-    "RUF003",  # ambiguous unicode
-    "ANN401",  # dynamically typed Any (때때로 필요)
-    "CPY001",  # Copyright notice (No policy yet)
-    "PLC0415", # Import outside top level (Lazy loading pattern)
-    "DOC201",  # Docstring returns (Pending verification)
-    "BLE001",  # Blind except (Pending verification)
-    "PLR2004", # Magic values (Pending verification)
-    "PTH",     # Use os.path (Stability)
+    "E501",
+    "E402",
+    "D203",
+    "D212",
+    "COM812",
+    "B008",
+    "B904",
+    "RUF001",
+    "RUF002",
+    "RUF003",
+    "ANN401",
+    "CPY001",
+    "PLC0415",
+    "DOC201",
+    "BLE001",
+    "PLR2004",
+    "PTH",
+    "C901",
+    "PLR0912",
+    "PLR0915",
 ]
 
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401", "F403", "D104"]
-"scripts/**" = ["T201", "D", "ANN", "E402", "F401", "F811"]
+"scripts/**" = ["T201", "D", "ANN", "E402", "F811"]
 "verify_full_stack.py" = ["T201", "D", "E402", "S106"]
-"tests/**" = ["S101", "ARG", "PLR0913", "D", "ANN", "PLR2004", "BLE001", "DOC201", "F401", "E402", "SLF001", "PLR6301", "SIM102"]
-"packages/*/tests/**" = ["S101", "ARG", "PLR0913", "D", "ANN", "PLR2004", "BLE001", "DOC201", "F401", "E402", "SLF001"]
+"tests/**" = ["S101", "ARG", "PLR0913", "D", "ANN", "PLR2004", "BLE001", "DOC201", "E402", "SLF001", "PLR6301", "SIM102"]
+"packages/*/tests/**" = ["S101", "ARG", "PLR0913", "D", "ANN", "PLR2004", "BLE001", "DOC201", "E402", "SLF001"]
 "**/api_server.py" = ["E402", "PLR0915", "PLC0415"]
-"**/routers/*.py" = ["PLC0415", "F401", "E402"]
-"**/routes/*.py" = ["PLC0415", "F401", "E402"]
+"**/routers/*.py" = ["PLC0415", "E402"]
+"**/routes/*.py" = ["PLC0415", "E402"]
 
 [tool.ruff.format]
 quote-style = "double"
@@ -137,26 +182,26 @@ line-ending = "auto"
 
 [tool.ruff.lint.isort]
 known-first-party = ["AFO", "afo_soul_engine", "trinity_os", "sixXon"]
-combine-as-imports = true     # as imports 결합 (美: 우아함)
-lines-after-imports = 2       # import 후 2줄 공백
+combine-as-imports = true
+lines-after-imports = 2
 
 [tool.ruff.lint.pylint]
-max-args = 10          # 함수 인자 상한 (기본 5)
-max-branches = 15      # 분기 상한 (기본 12)
-max-statements = 60    # 문장 상한 (기본 50)
+max-args = 10
+max-branches = 15
+max-statements = 60
 
 [tool.ruff.lint.pydocstyle]
-convention = "google"  # Google 문서화 스타일 (眞: 일관성)
+convention = "google"
 
 [tool.ruff.lint.flake8-bugbear]
 extend-immutable-calls = ["fastapi.Depends", "fastapi.Query", "pydantic.Field"]
 
 [tool.ruff.lint.flake8-bandit]
-check-typed-exception = true  # typed exception 검사 (善: 보안 강화)
-hardcoded-tmp-directory-extend = ["/app/tmp", "/var/run/app"]  # Docker 환경 안전
+check-typed-exception = true
+hardcoded-tmp-directory-extend = ["/app/tmp", "/var/run/app"]
 
 [tool.ruff.lint.mccabe]
-max-complexity = 15    # 복잡도 상한 (기본 10)
+max-complexity = 15
 
 [tool.ruff.lint.flake8-type-checking]
 runtime-evaluated-base-classes = ["pydantic.BaseModel", "sqlalchemy.orm.DeclarativeBase"]
@@ -167,37 +212,45 @@ runtime-evaluated-decorators = [
 ]
 
 [tool.ruff.lint.flake8-annotations]
-suppress-none-returning = true  # None 반환 함수 타입 힌트 완화
+suppress-none-returning = true
 
 [tool.ruff.lint.flake8-unused-arguments]
-ignore-variadic-names = true    # *args, **kwargs 무시
+ignore-variadic-names = true
 
 [tool.ruff.lint.pyupgrade]
-keep-runtime-typing = true      # Pydantic v1 호환 유지 (眞: 안전)
+keep-runtime-typing = true
 
 [tool.mypy]
+[tool.memory]n
+# 메모리 최적화 설정n
+gc_threshold = 700n
+malloc_trim = truen
+jemalloc = true
 python_version = "3.12"
 warn_return_any = true
 warn_unused_configs = true
-ignore_missing_imports = true
-mypy_path = "packages/afo-core:packages/trinity-os:/Users/brnestrm/AFO_Kingdom"
+mypy_path = "packages/afo-core:packages/trinity-os:/Users/brnestrm/AFO_Kingdom:typings"
 explicit_package_bases = true
-namespace_packages = true  # 패키지 이름 인식 문제 해결
-plugins = ["pydantic.mypy"]  # Pydantic v2 타입 검사 (眞: 안전)
+namespace_packages = true
+plugins = ["pydantic.mypy"]
 exclude = [
-    "packages/trinity-os/tests",  # 중복 모듈 충돌 방지 (Phase 10: 범주 A 해결)
-    "tests",                      # 루트 레벨 tests 중복 방지 (Phase 10: 범주 A 해결)
-    "conftest.py",                # 루트 레벨 conftest 중복 방지 (Phase 10: 범주 A 해결)
+    "packages/trinity-os/tests",
+    "tests",
+    "conftest.py",
 ]
 
-# Phase 3: 엄격 모드 전환 (3-6개월 목표)
-check_untyped_defs = true        # Phase 3 활성화: 타입 힌트 없는 함수 검사
-disallow_untyped_defs = false    # Phase 4에서 true로 전환 예정
-strict_optional = true           # Optional 엄격 검사
-warn_redundant_casts = true      # 불필요한 캐스트 경고
-warn_unreachable = true          # 도달 불가능 코드 경고
-warn_unused_ignores = true       # 미사용 ignore 경고
-strict_equality = true           # 엄격한 동등성 검사
+check_untyped_defs = true
+disallow_untyped_defs = true
+strict_optional = true
+warn_redundant_casts = true
+warn_unreachable = true
+strict_equality = true
+disallow_any_generics = true
+disallow_untyped_calls = true
+disallow_incomplete_defs = true
+ignore_missing_imports = true
+warn_unused_ignores = false
+follow_imports = "skip"
 
 [[tool.mypy.overrides]]
 module = ["services.trinity_score_monitor"]
@@ -215,8 +268,15 @@ warn_required_dynamic_aliases = true
 [tool.pytest.ini_options]
 testpaths = ["packages/*/tests"]
 asyncio_mode = "auto"
-addopts = "-v --no-cov"  # Watchdog 크래시 방지 (커버리지 비활성화)
-# Ignore tests with broken imports (legacy AFO.xxx paths)
+addopts = "-v --cov=packages/afo-core --cov-report=term-missing --cov-report=xml --cov-report=html --cov-fail-under=85"
 norecursedirs = [".git", "__pycache__", ".venv", "node_modules"]
 filterwarnings = ["ignore::DeprecationWarning"]
-timeout = 300  # 5분 타임아웃 (Watchdog 안정성 향상)
+timeout = 300
+
+[tool.uv.workspace]
+members = [
+    "packages/afo-core",
+]
+
+[tool.uv.sources]
+afo-core = { workspace = true, editable = true }

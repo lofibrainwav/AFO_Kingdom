@@ -15,8 +15,7 @@ class VisionResult:
 
 
 class VisionVerifier:
-    """
-    The Eyes of the Kingdom.
+    """The Eyes of the Kingdom.
     Uses Playwright to visually verify GenUI outputs.
     """
 
@@ -29,9 +28,7 @@ class VisionVerifier:
         os.makedirs(self.screenshot_dir, exist_ok=True)
 
     async def verify_url(self, url: str, name: str) -> VisionResult:
-        """
-        Visits a URL, takes a screenshot, and checks for console errors.
-        """
+        """Visits a URL, takes a screenshot, and checks for console errors."""
         async with async_playwright() as p:
             logger.info(f"👁️ VisionVerifier observing: {url}")
             browser = await p.chromium.launch()

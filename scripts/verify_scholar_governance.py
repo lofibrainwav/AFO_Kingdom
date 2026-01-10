@@ -5,10 +5,11 @@ import sys
 import unittest
 from unittest.mock import MagicMock, patch
 
+
 # Path setup is critical for imports from packages
 sys.path.append(os.path.join(pathlib.Path.cwd(), "packages/afo-core"))
 
-from AFO.config.antigravity import antigravity
+from AFO.config import antigravity
 from AFO.scholars.jaryong import JaryongScholar
 
 
@@ -30,7 +31,7 @@ class TestScholarGovernance(unittest.TestCase):
 
         return async_magic()
 
-    @patch.object(antigravity, "get_feature_flag")
+    @patch.object(antigravity, "check_governance")
     def test_scholar_blocked_flag(self, mock_flag):
         """Test blocking when flag is False"""
         print("\n🧪 Testing Scholar Blocked by Flag...")
@@ -43,19 +44,17 @@ class TestScholarGovernance(unittest.TestCase):
         assert "Governance Denied" in result
         print("✅ Correctly BLOCKED by Flag.")
 
-    @patch.object(antigravity, "get_feature_flag")
+    @patch.object(antigravity, "check_governance")
     def test_scholar_allowed_flag(self, mock_flag):
         """Test allowing when flag is True"""
         print("\n🧪 Testing Scholar Allowed by Flag...")
         mock_flag.return_value = True
 
         # Mock successful API response
-        self.mock_api.generate_with_context.return_value = self._get_async_mock(
-            {
-                "success": True,
-                "content": "Analysis Complete",
-            }
-        )
+        self.mock_api.generate_with_context.return_value = self._get_async_mock({
+            "success": True,
+            "content": "Analysis Complete",
+        })
 
         # Action
         result = asyncio.run(self.jaryong.verify_logic("print('hello')"))
@@ -65,14 +64,14 @@ class TestScholarGovernance(unittest.TestCase):
         assert "Analysis Complete" in result
         print("✅ Correctly ALLOWED by Flag.")
 
-    @patch.object(antigravity, "get_feature_flag")
+    @patch.object(antigravity, "check_governance")
     def test_scholar_risk_brake(self, mock_flag):
         """Test Risk Brake on dangerous code"""
         print("\n🧪 Testing Scholar Blocked by Risk Brake (eval)...")
         mock_flag.return_value = True
 
         # 'eval(' triggers local risk brake in jaryong.py
-        dangerous_code = "eval('os.system(\"rm -rf /\")')"
+        dangerous_code = "eval('__import__(\"subprocess\").run([\"echo\",\"blocked\"], check=False)')"
 
         # Action
         result = asyncio.run(self.jaryong.verify_logic(dangerous_code))

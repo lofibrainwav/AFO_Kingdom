@@ -4,8 +4,7 @@
 # 이 파일은 AFO 왕국의 眞善美孝 철학을 구현합니다
 
 #!/usr/bin/env python3
-"""
-제갈량 책사 제안: ConversationalRetrievalChain 통합
+"""제갈량 책사 제안: ConversationalRetrievalChain 통합
 프롬프트 템플릿 + 메모리 + 벡터 검색 통합 (대화형 RAG)
 """
 

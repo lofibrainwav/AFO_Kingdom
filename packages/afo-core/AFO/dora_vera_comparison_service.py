@@ -18,10 +18,10 @@ class DoRAVeRAComparisonService:
 
     def __init__(self, model_name: str = "llama3.1-8b"):
         self.model_name = model_name
-        self.base_model = None
-        self.dora_model = None
-        self.vera_model = None
-        self.qlora_adalora_model = None  # For comparison
+        self.base_model: Any = None
+        self.dora_model: Any = None
+        self.vera_model: Any = None
+        self.qlora_adalora_model: Any = None  # For comparison
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     def load_base_model(self) -> dict[str, Any]:
@@ -43,10 +43,10 @@ class DoRAVeRAComparisonService:
         if torch.cuda.is_available():
             gpu_memory = torch.cuda.memory_allocated() / 1024**3
 
-        print(".2f")
-        print(".1f")
+        print(f"Base model loaded in {load_time:.2f}s")
+        print(f"Memory delta: {memory_delta:.1f}MB")
         if torch.cuda.is_available():
-            print(".2f")
+            print(f"GPU memory: {gpu_memory:.2f}GB")
 
         return {
             "load_time": load_time,
@@ -84,8 +84,8 @@ class DoRAVeRAComparisonService:
         total_params = sum(p.numel() for p in self.dora_model.parameters())
         efficiency = 100 * trainable_params / total_params
 
-        print(".2f")
-        print(".1f")
+        print(f"Algorithm applied in {apply_time:.2f}s")
+        print(f"Memory delta: {memory_delta:.1f}MB")
         print(f"Trainable params: {trainable_params:,} ({efficiency:.2f}%)")
 
         return {
@@ -124,8 +124,8 @@ class DoRAVeRAComparisonService:
         total_params = sum(p.numel() for p in self.vera_model.parameters())
         efficiency = 100 * trainable_params / total_params
 
-        print(".2f")
-        print(".1f")
+        print(f"Algorithm applied in {apply_time:.2f}s")
+        print(f"Memory delta: {memory_delta:.1f}MB")
         print(f"Trainable params: {trainable_params:,} ({efficiency:.2f}%)")
 
         return {

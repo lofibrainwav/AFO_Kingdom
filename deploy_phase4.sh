@@ -1,7 +1,8 @@
+#!/usr/bin/env bash
 set -euo pipefail
 
 DEPLOY_HOST="bb-ai-mcp"
-DEPLOY_DIR="~/AFO_Kingdom"
+DEPLOY_DIR="$HOME/AFO_Kingdom"
 
 echo "=== 1) RSYNC to $DEPLOY_HOST ==="
 rsync -az --delete \

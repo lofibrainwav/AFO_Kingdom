@@ -1,7 +1,6 @@
 # Trinity Score: 90.0 (Established by Chancellor)
 #!/usr/bin/env python3
-"""
-🎵 AFO Kingdom - MIDI REMI+ 토크나이저
+"""🎵 AFO Kingdom - MIDI REMI+ 토크나이저
 
 프로페셔널 뮤지션을 위한 MIDI 토큰화 도구:
 - REMI+ (멀티트랙 + 박자 변화)
@@ -25,16 +24,15 @@ except ImportError:
 
 
 class AFOMidiTokenizer:
-    """
-    🎵 AFO Kingdom MIDI 토크나이저
+    """🎵 AFO Kingdom MIDI 토크나이저
 
     형님의 프로페셔널 뮤직 프로덕션을 위한 REMI+ 구현
     """
 
     def __init__(self, use_remi_plus: bool = True):
-        """
-        Args:
-            use_remi_plus: True면 멀티트랙/박자변화 지원
+        """Args:
+        use_remi_plus: True면 멀티트랙/박자변화 지원
+
         """
         if not MIDI_AVAILABLE:
             raise ImportError("MIDI 라이브러리 필요: pip install miditok mido")
@@ -65,14 +63,14 @@ class AFOMidiTokenizer:
         print(f"   Vocab Size: {len(self.tokenizer)}")
 
     def tokenize(self, midi_path: str) -> dict:
-        """
-        MIDI → REMI+ 토큰 변환
+        """MIDI → REMI+ 토큰 변환
 
         Args:
             midi_path: MIDI 파일 경로
 
         Returns:
             Dict with tokens and metadata
+
         """
         print(f"🎹 토큰화 중: {midi_path}")
 
@@ -93,8 +91,7 @@ class AFOMidiTokenizer:
         return result
 
     def detokenize(self, tokens: list, output_path: str) -> str:
-        """
-        REMI+ 토큰 → MIDI 변환
+        """REMI+ 토큰 → MIDI 변환
 
         Args:
             tokens: 토큰 리스트
@@ -102,6 +99,7 @@ class AFOMidiTokenizer:
 
         Returns:
             저장된 파일 경로
+
         """
         print("🎵 디토큰화 중...")
 
@@ -112,14 +110,14 @@ class AFOMidiTokenizer:
         return output_path
 
     def analyze(self, midi_path: str) -> dict:
-        """
-        MIDI 파일 분석 (형님의 라이브러리 연결용)
+        """MIDI 파일 분석 (형님의 라이브러리 연결용)
 
         Args:
             midi_path: MIDI 파일 경로
 
         Returns:
             분석 결과 (BPM, 키, 트랙 등)
+
         """
         print(f"🔍 MIDI 분석 중: {midi_path}")
 
