@@ -6,9 +6,8 @@ from typing import Any
 
 import httpx
 
+from AFO.base import BaseLLMProvider
 from AFO.llm_router import LLMConfig
-
-from .base import BaseLLMProvider
 
 logger = logging.getLogger(__name__)
 

@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Julie CPA Prophet Prediction Engine - 미래 지출 예측
+"""Julie CPA Prophet Prediction Engine - 미래 지출 예측
 
 Phase 14: LinearRegression → Prophet 업그레이드
 Facebook Prophet 기반 정밀 시계열 예측
@@ -63,8 +62,7 @@ KINGDOM_EVENTS = [
 
 
 def get_historical_data(category: str | None = None) -> pd.DataFrame:
-    """
-    과거 지출 데이터 조회
+    """과거 지출 데이터 조회
 
     실제로는 DB에서 가져오지만, 현재는 Mock 데이터 반환
     """
@@ -101,8 +99,7 @@ def predict_with_prophet(
     weekly_seasonality: bool = False,
     use_advanced_tuning: bool = True,  # Phase 14-10: 고급 튜닝 활성화
 ) -> dict:
-    """
-    Prophet 기반 미래 예측
+    """Prophet 기반 미래 예측
 
     Args:
         historical_data: 과거 데이터 (ds, y 컬럼 필수)
@@ -115,6 +112,7 @@ def predict_with_prophet(
 
     Returns:
         예측 결과 딕셔너리
+
     """
     if not PROPHET_AVAILABLE:
         return _fallback_linear_prediction(historical_data, periods)
@@ -220,9 +218,7 @@ def predict_with_prophet(
 
 
 def _fallback_linear_prediction(df: pd.DataFrame, periods: int) -> dict:
-    """
-    Prophet 없을 때 LinearRegression 폴백
-    """
+    """Prophet 없을 때 LinearRegression 폴백"""
     from sklearn.linear_model import LinearRegression
 
     # 간단한 선형 회귀
@@ -274,8 +270,7 @@ def _fallback_linear_prediction(df: pd.DataFrame, periods: int) -> dict:
 
 
 def _generate_advice(predictions: list, historical: pd.DataFrame) -> str:
-    """
-    예측 결과 기반 조언 생성
+    """예측 결과 기반 조언 생성
 
     善 (Goodness): 형님에게 유익한 조언
     """
@@ -310,16 +305,13 @@ def _generate_advice(predictions: list, historical: pd.DataFrame) -> str:
 
 
 def predict_category_spend(category: str, periods: int = 3) -> dict:
-    """
-    카테고리별 지출 예측
-    """
+    """카테고리별 지출 예측"""
     df = get_historical_data(category)
     return predict_with_prophet(df, periods=periods)
 
 
 def get_kingdom_forecast(periods: int = 3) -> dict:
-    """
-    왕국 전체 지출 예측 (메인 API)
+    """왕국 전체 지출 예측 (메인 API)
 
     眞 (Truth): 정확한 예측
     孝 (Serenity): 형님 안심을 위한 명확한 결과

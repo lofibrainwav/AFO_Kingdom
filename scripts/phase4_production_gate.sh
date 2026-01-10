@@ -1,4 +1,4 @@
-
+#!/usr/bin/env bash
 set -euo pipefail
 
 BASE="${AFO_BASE_URL:-http://localhost:8010}"

@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Health Check Configuration (眞 - Truth)
+"""Health Check Configuration (眞 - Truth)
 건강 체크 설정 - 하드코딩 제거
 
 야전교범 원칙: 가정 금지 - 모든 설정은 명시적으로 정의

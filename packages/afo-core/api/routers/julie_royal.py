@@ -16,8 +16,7 @@ julie_service = JulieService()
 
 @router.get("/status")
 async def get_status() -> dict[str, Any]:
-    """
-    Legacy-compatible Status Endpoint.
+    """Legacy-compatible Status Endpoint.
     Used by: AICPA Julie Frontend (Port 3000)
     """
     return await julie_service.get_royal_status()
@@ -25,8 +24,7 @@ async def get_status() -> dict[str, Any]:
 
 @router.get("/dashboard")
 async def get_dashboard() -> dict[str, Any]:
-    """
-    [GenUI Support]
+    """[GenUI Support]
     Full Financial Dashboard Data (Health, Alerts, Tx).
     """
     return await julie_service.get_financial_dashboard()
@@ -39,8 +37,7 @@ class TaxCalcRequest(BaseModel):
 
 @router.post("/calculate-tax")
 async def calculate_tax(request: TaxCalcRequest) -> dict[str, Any]:
-    """
-    [Operation Gwanggaeto]
+    """[Operation Gwanggaeto]
     Performs real-time tax simulation (Federal + CA + QBI).
     Source: JuliePerplexity Report (2025 Rules).
     """
@@ -58,8 +55,7 @@ class TransactionRequest(BaseModel):
 
 @router.post("/transaction")
 async def process_transaction(request: TransactionRequest) -> dict[str, Any]:
-    """
-    [Action Endpoint]
+    """[Action Endpoint]
     Trigger a financial transaction (or simulation).
     Emits thoughts to the Neural Stream (ToT).
     """
@@ -78,9 +74,7 @@ async def process_transaction(request: TransactionRequest) -> dict[str, Any]:
 
 @router.post("/transaction/approve")
 async def approve_transaction(tx_id: str) -> dict[str, Any]:
-    """
-    [T26] Transaction Approval Action
-    """
+    """[T26] Transaction Approval Action"""
     # In Phase 2, this would trigger actual bank transfer or DB update.
     # For now, we simulate approval.
     return {

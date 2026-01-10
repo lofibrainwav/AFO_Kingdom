@@ -6,9 +6,8 @@ Google Gemini Provider for AFO Kingdom
 import logging
 from typing import Any
 
+from AFO.base import BaseLLMProvider
 from AFO.llm_router import LLMConfig
-
-from .base import BaseLLMProvider
 
 try:
     from AFO.llms.gemini_api import gemini_api

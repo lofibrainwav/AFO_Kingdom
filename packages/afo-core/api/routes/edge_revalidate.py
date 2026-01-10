@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Edge Revalidation API Routes
+"""Edge Revalidation API Routes
 
 眞 (Truth): Type-safe ISR revalidation
 善 (Goodness): Rate-limited with proper error handling
@@ -66,8 +65,7 @@ class RevalidateStatusResponse(BaseModel):
 async def trigger_vercel_revalidate(
     fragment_key: str, path: str | None = None
 ) -> tuple[bool, int, str]:
-    """
-    Trigger Vercel ISR revalidation via webhook
+    """Trigger Vercel ISR revalidation via webhook
 
     Returns: (success, status_code, message)
     """
@@ -118,8 +116,7 @@ async def trigger_revalidation(
     background_tasks: BackgroundTasks,
     x_api_key: str | None = Header(None, alias="x-api-key"),
 ):
-    """
-    Trigger ISR revalidation for a specific fragment
+    """Trigger ISR revalidation for a specific fragment
 
     제갈량의 전략: 필요한 것만 갱신하여 효율 극대화
     """
@@ -141,9 +138,7 @@ async def trigger_revalidation(
 
 @router.get("/revalidate/status", response_model=RevalidateStatusResponse)
 async def get_revalidation_status():
-    """
-    Check revalidation system configuration status
-    """
+    """Check revalidation system configuration status"""
     revalidate_url = os.getenv("REVALIDATE_URL")
     revalidate_secret = os.getenv("REVALIDATE_SECRET")
 
@@ -162,8 +157,7 @@ async def batch_revalidate(
     fragment_keys: list[str],
     background_tasks: BackgroundTasks,
 ):
-    """
-    Batch revalidation for multiple fragments
+    """Batch revalidation for multiple fragments
 
     사마의의 안정성: 순차 처리로 rate limit 회피
     """

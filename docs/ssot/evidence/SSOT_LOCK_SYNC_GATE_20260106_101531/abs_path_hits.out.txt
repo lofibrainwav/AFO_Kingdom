@@ -1,0 +1,105 @@
+docs/_templates/scripts/post_template.js:178:            const projectRoot = this.app.vault.adapter.basePath || '/Users/brnestrm/AFO_Kingdom';
+docs/raycast_mcp_config.json:7:        "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/servers/obsidian_mcp.py"
+docs/raycast_mcp_config.json:10:        "WORKSPACE_ROOT": "/Users/brnestrm/AFO_Kingdom",
+docs/raycast_mcp_config.json:11:        "PYTHONPATH": "/Users/brnestrm/AFO_Kingdom/packages/afo-core:/Users/brnestrm/AFO_Kingdom/packages/trinity-os",
+docs/reports/html/kingdom_dashboard.js:1311:        args: ['/Users/brnestrm/AFO_Kingdom'],
+docs/reports/html/kingdom_dashboard.js:1352:        args: ['-u', '/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/servers/afo_ultimate_mcp_server.py'],
+docs/reports/html/kingdom_dashboard.js:1353:        env: { WORKSPACE_ROOT: '/Users/brnestrm/AFO_Kingdom' },
+docs/reports/html/kingdom_dashboard.js:1362:        args: ['-u', '/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/servers/afo_skills_mcp.py'],
+docs/reports/html/kingdom_dashboard.js:1372:        args: ['-u', '/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/servers/obsidian_mcp.py'],
+docs/reports/html/kingdom_dashboard.js:1373:        env: { WORKSPACE_ROOT: '/Users/brnestrm/AFO_Kingdom' },
+docs/reports/html/kingdom_dashboard.js:4106:- **명령어**: \`npx -y @modelcontextprotocol/server-filesystem /Users/brnestrm/AFO_Kingdom\`
+fix_environment.sh:7:export WORKSPACE_ROOT="/Users/brnestrm/AFO_Kingdom"
+fix_environment.sh:39:      "Bash(cd /Users/brnestrm/AFO_Kingdom && *)",
+fix_environment.sh:40:      "Bash(export PYTHONPATH=/Users/brnestrm/AFO_Kingdom/packages/afo-core:/Users/brnestrm/AFO_Kingdom/packages/trinity-os && python3 *)",
+kingdom_dashboard.js:1311:        args: ['/Users/brnestrm/AFO_Kingdom'],
+kingdom_dashboard.js:1352:        args: ['-u', '/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/servers/afo_ultimate_mcp_server.py'],
+kingdom_dashboard.js:1353:        env: { WORKSPACE_ROOT: '/Users/brnestrm/AFO_Kingdom' },
+kingdom_dashboard.js:1362:        args: ['-u', '/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/servers/afo_skills_mcp.py'],
+kingdom_dashboard.js:1372:        args: ['-u', '/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/servers/obsidian_mcp.py'],
+kingdom_dashboard.js:1373:        env: { WORKSPACE_ROOT: '/Users/brnestrm/AFO_Kingdom' },
+kingdom_dashboard.js:4106:- **명령어**: \`npx -y @modelcontextprotocol/server-filesystem /Users/brnestrm/AFO_Kingdom\`
+packages/afo-core/docker-compose.yml:256:      context: /Users/brnestrm/AFO_Kingdom/packages/afo-core
+packages/afo-core/scholars/libraries/obsidian_bridge.py:27:                # /Users/brnestrm/AFO_Kingdom/packages/afo-core/AFO/scholars/libraries/obsidian_bridge.py
+packages/afo-core/scholars/libraries/obsidian_bridge.py:37:                    self.vault_path = Path("/Users/brnestrm/AFO_Kingdom/docs")
+packages/afo-core/scholars/libraries/obsidian_bridge.py:39:                self.vault_path = Path("/Users/brnestrm/AFO_Kingdom/docs")
+packages/afo-core/tests/test_filial_gate_tier_a.py:22:    script_path = Path("/Users/brnestrm/AFO_Kingdom/packages/afo-core/scripts/filial_hard_lock.sh")
+packages/afo-core/tests/test_filial_gate_tier_a.py:37:    script_path = Path("/Users/brnestrm/AFO_Kingdom/packages/afo-core/scripts/filial_hard_lock.sh")
+packages/dashboard/lighthouse-reports/manifest.json:5:    "htmlPath": "/Users/brnestrm/AFO_Kingdom/packages/dashboard/lighthouse-reports/-2025_12_23_17_08_32-report.html",
+packages/dashboard/lighthouse-reports/manifest.json:6:    "jsonPath": "/Users/brnestrm/AFO_Kingdom/packages/dashboard/lighthouse-reports/-2025_12_23_17_08_32-report.json",
+packages/dashboard/lighthouse-reports/manifest.json:17:    "htmlPath": "/Users/brnestrm/AFO_Kingdom/packages/dashboard/lighthouse-reports/-2025_12_23_17_08_50-report.html",
+packages/dashboard/lighthouse-reports/manifest.json:18:    "jsonPath": "/Users/brnestrm/AFO_Kingdom/packages/dashboard/lighthouse-reports/-2025_12_23_17_08_50-report.json",
+packages/dashboard/lighthouse-reports/manifest.json:29:    "htmlPath": "/Users/brnestrm/AFO_Kingdom/packages/dashboard/lighthouse-reports/docs_manual-2025_12_23_17_09_07-report.html",
+packages/dashboard/lighthouse-reports/manifest.json:30:    "jsonPath": "/Users/brnestrm/AFO_Kingdom/packages/dashboard/lighthouse-reports/docs_manual-2025_12_23_17_09_07-report.json",
+packages/dashboard/lighthouse-reports/manifest.json:41:    "htmlPath": "/Users/brnestrm/AFO_Kingdom/packages/dashboard/lighthouse-reports/docs_manual-2025_12_23_17_09_28-report.html",
+packages/dashboard/lighthouse-reports/manifest.json:42:    "jsonPath": "/Users/brnestrm/AFO_Kingdom/packages/dashboard/lighthouse-reports/docs_manual-2025_12_23_17_09_28-report.json",
+packages/dashboard/lighthouse-reports/manifest.json:53:    "htmlPath": "/Users/brnestrm/AFO_Kingdom/packages/dashboard/lighthouse-reports/sandbox_TrinityScoreWidget-2025_12_23_17_09_38-report.html",
+packages/dashboard/lighthouse-reports/manifest.json:54:    "jsonPath": "/Users/brnestrm/AFO_Kingdom/packages/dashboard/lighthouse-reports/sandbox_TrinityScoreWidget-2025_12_23_17_09_38-report.json",
+packages/dashboard/lighthouse-reports/manifest.json:65:    "htmlPath": "/Users/brnestrm/AFO_Kingdom/packages/dashboard/lighthouse-reports/sandbox_TrinityScoreWidget-2025_12_23_17_09_48-report.html",
+packages/dashboard/lighthouse-reports/manifest.json:66:    "jsonPath": "/Users/brnestrm/AFO_Kingdom/packages/dashboard/lighthouse-reports/sandbox_TrinityScoreWidget-2025_12_23_17_09_48-report.json",
+packages/dashboard/lighthouse-reports/manifest.json:77:    "htmlPath": "/Users/brnestrm/AFO_Kingdom/packages/dashboard/lighthouse-reports/-2025_12_23_17_08_13-report.html",
+packages/dashboard/lighthouse-reports/manifest.json:78:    "jsonPath": "/Users/brnestrm/AFO_Kingdom/packages/dashboard/lighthouse-reports/-2025_12_23_17_08_13-report.json",
+packages/dashboard/lighthouse-reports/manifest.json:89:    "htmlPath": "/Users/brnestrm/AFO_Kingdom/packages/dashboard/lighthouse-reports/docs_manual-2025_12_23_17_09_17-report.html",
+packages/dashboard/lighthouse-reports/manifest.json:90:    "jsonPath": "/Users/brnestrm/AFO_Kingdom/packages/dashboard/lighthouse-reports/docs_manual-2025_12_23_17_09_17-report.json",
+packages/dashboard/lighthouse-reports/manifest.json:101:    "htmlPath": "/Users/brnestrm/AFO_Kingdom/packages/dashboard/lighthouse-reports/sandbox_TrinityScoreWidget-2025_12_23_17_09_58-report.html",
+packages/dashboard/lighthouse-reports/manifest.json:102:    "jsonPath": "/Users/brnestrm/AFO_Kingdom/packages/dashboard/lighthouse-reports/sandbox_TrinityScoreWidget-2025_12_23_17_09_58-report.json",
+packages/dashboard/public/legacy/kingdom_dashboard.js:1311:        args: ['/Users/brnestrm/AFO_Kingdom'],
+packages/dashboard/public/legacy/kingdom_dashboard.js:1352:        args: ['-u', '/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/servers/afo_ultimate_mcp_server.py'],
+packages/dashboard/public/legacy/kingdom_dashboard.js:1353:        env: { WORKSPACE_ROOT: '/Users/brnestrm/AFO_Kingdom' },
+packages/dashboard/public/legacy/kingdom_dashboard.js:1362:        args: ['-u', '/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/servers/afo_skills_mcp.py'],
+packages/dashboard/public/legacy/kingdom_dashboard.js:1372:        args: ['-u', '/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/servers/obsidian_mcp.py'],
+packages/dashboard/public/legacy/kingdom_dashboard.js:1373:        env: { WORKSPACE_ROOT: '/Users/brnestrm/AFO_Kingdom' },
+packages/dashboard/public/legacy/kingdom_dashboard.js:4106:- **명령어**: \`npx -y @modelcontextprotocol/server-filesystem /Users/brnestrm/AFO_Kingdom\`
+pyproject.toml:205:mypy_path = "packages/afo-core:packages/trinity-os:/Users/brnestrm/AFO_Kingdom"
+scripts/archive/debug_julie_import.py:5:sys.path.append("/Users/brnestrm/AFO_Kingdom/packages/afo-core")
+scripts/archive/debug_router_loading.py:13:LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
+scripts/archive/test_direct_import.py:19:LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
+scripts/archive/test_router_registration.py:19:LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
+scripts/archive/test_router_registration_at_runtime.py:19:LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
+scripts/archive/test_yeongdeok_education.py:6:sys.path.append("/Users/brnestrm/AFO_Kingdom/packages/afo-core")
+scripts/archive/test_yeongdeok_tools.py:6:sys.path.append("/Users/brnestrm/AFO_Kingdom/packages/afo-core")
+scripts/archive/verify_phase_0_1.py:7:    sys.path.append("/Users/brnestrm/AFO_Kingdom/packages/afo-core")
+scripts/archive/verify_phase_0_1.py:31:agents_md_path = "/Users/brnestrm/AFO_Kingdom/AGENTS.md"
+scripts/auto_verification_complete.py:13:LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
+scripts/check_registered_routes.py:16:LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
+scripts/check_server_startup_logs.py:13:LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
+scripts/check_sqlmodel_dependency.py:13:LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
+scripts/comprehensive_system_check.py:13:LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
+scripts/context7_sequential_analysis.py:13:LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
+scripts/continuous_health_check.py:19:LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
+scripts/final_complete_verification.py:13:LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
+scripts/final_router_verification.py:13:LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
+scripts/final_sequential_verification.py:13:LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
+scripts/final_sqlmodel_verification.py:13:LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
+scripts/final_verification.py:14:LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
+scripts/generate_sbom_simple.py:23:        logging.FileHandler("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log"),
+scripts/pre_restart_verification.py:13:LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
+scripts/restart_and_verify.py:15:LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
+scripts/sequential_analysis_chancellor.py:13:LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
+scripts/start_server_with_logging.py:12:LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
+scripts/step_by_step_problem_analysis.py:13:LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
+scripts/verify_deployment_security.sh:100:cd /Users/brnestrm/AFO_Kingdom
+scripts/verify_integrity_lock.py:5:sys.path.insert(0, "/Users/brnestrm/AFO_Kingdom/packages/afo-core")
+scripts/verify_project_genesis.py:8:sys.path.append("/Users/brnestrm/AFO_Kingdom/packages/afo-core")
+scripts/verify_project_genesis.py:46:    bridge_path = "/Users/brnestrm/AFO_Kingdom/docs"
+scripts/verify_project_genesis_fast.py:7:sys.path.append("/Users/brnestrm/AFO_Kingdom/packages/afo-core")
+scripts/verify_project_genesis_fast.py:38:    bridge_path = "/Users/brnestrm/AFO_Kingdom/docs"
+scripts/verify_royal_lock_evidence.sh:4:cd /Users/brnestrm/AFO_Kingdom
+scripts/verify_samahwi_serenity.py:7:sys.path.append("/Users/brnestrm/AFO_Kingdom/packages/afo-core")
+scripts/verify_server_restart.py:14:LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
+seal_antigravity.sh:2:cd /Users/brnestrm/AFO_Kingdom
+test_audio.py:3:sys.path.insert(0, '/Users/brnestrm/AFO_Kingdom/packages/afo-core')
+test_audio.py:12:    audio_path = "/Users/brnestrm/AFO_Kingdom/data/test_audio/test_tone.wav"
+test_multimodal_integration.py:6:sys.path.insert(0, '/Users/brnestrm/AFO_Kingdom/packages/afo-core')
+test_multimodal_integration.py:24:    image_path = "/Users/brnestrm/AFO_Kingdom/data/test_images/test_vision.png"
+test_multimodal_integration.py:33:    audio_path = "/Users/brnestrm/AFO_Kingdom/data/test_audio/test_tone.wav"
+test_video_rag.py:6:sys.path.insert(0, '/Users/brnestrm/AFO_Kingdom/packages/afo-core')
+test_video_rag.py:22:    video_path = "/Users/brnestrm/AFO_Kingdom/data/test_video/test_video.mp4"
+test_vision.py:3:sys.path.insert(0, '/Users/brnestrm/AFO_Kingdom/packages/afo-core')
+test_vision.py:11:    image_path = "/Users/brnestrm/AFO_Kingdom/data/test_images/test_vision.png"
+tools/mlx_optimization/retry_on_fail.sh:4:cd /Users/brnestrm/AFO_Kingdom/tools/mlx_optimization
+tools/mlx_optimization/retry_on_fail.sh:22:cd /Users/brnestrm/AFO_Kingdom/tools/mlx_optimization
+tools/mlx_optimization/run_lora_tmux.sh:5:ROOT="/Users/brnestrm/AFO_Kingdom"
+tools/mlx_optimization/tail_logs.sh:3:tail -n 200 -f /Users/brnestrm/AFO_Kingdom/artifacts/ticket019_lora_train.log
+tools/mlx_optimization/ticket019_env_repair.sh:4:cd /Users/brnestrm/AFO_Kingdom/tools/mlx_optimization
+tools/mlx_optimization/ticket019_env_repair.sh:12:  echo "git_sha=$(cd /Users/brnestrm/AFO_Kingdom && git rev-parse --short HEAD 2>/dev/null || true)"

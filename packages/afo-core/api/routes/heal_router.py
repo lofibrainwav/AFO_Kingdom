@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Heal Router - System Recovery Operations
+"""Heal Router - System Recovery Operations
 眞 (Truth): Validates recovery commands
 善 (Goodness): Safe execution of system repairs
 """
@@ -25,8 +24,7 @@ class HealResponse(BaseModel):
 
 @router.post("/heal", response_model=HealResponse)
 async def heal_kingdom() -> HealResponse:
-    """
-    Triggers system recovery protocols.
+    """Triggers system recovery protocols.
     Currently attempts to restart core Docker services.
     """
     logger.info("🚑 Heal Protocol Initiated by Commander")

@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-SSOT Router - The Digital Compass of AFO Kingdom.
+"""SSOT Router - The Digital Compass of AFO Kingdom.
 Displays the exact alignment of the 5 Pillars (眞·善·美·孝·永).
 """
 
@@ -34,11 +33,11 @@ class SSOTData(BaseModel):
 
 @router.get("", response_model=SSOTData)
 async def get_ssot_status() -> SSOTData:
-    """
-    Get SSOT (Single Source of Truth) status showing the alignment of 5 Pillars.
+    """Get SSOT (Single Source of Truth) status showing the alignment of 5 Pillars.
 
     Returns:
         SSOTData containing trinity scores, pillar details, and compliance status
+
     """
     # 1. Get Live Metrics from Manager
     metrics = trinity_manager.get_current_metrics()

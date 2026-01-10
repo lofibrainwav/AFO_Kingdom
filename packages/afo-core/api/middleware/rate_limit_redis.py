@@ -31,8 +31,7 @@ def _enabled() -> bool:
 
 
 def create_redis_limiter() -> Limiter:
-    """
-    Create Redis-backed rate limiter using slowapi.
+    """Create Redis-backed rate limiter using slowapi.
 
     External references (2025):
     - slowapi PyPI: https://pypi.org/project/slowapi/
@@ -59,8 +58,7 @@ def create_redis_limiter() -> Limiter:
 
 
 def create_rate_limit_middleware(limiter: Limiter):
-    """
-    Create FastAPI middleware from slowapi limiter.
+    """Create FastAPI middleware from slowapi limiter.
 
     For now, return None to disable rate limiting middleware.
     TODO: Implement proper FastAPI middleware integration.

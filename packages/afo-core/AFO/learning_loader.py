@@ -126,7 +126,7 @@ class LearningLoader:
 
         return self.profile
 
-    def _validate_profile(self, data: dict[str, Any]) -> list[str]:
+    def _validate_profile(self, data: Any) -> list[str]:
         """Validate learning profile structure."""
         errors = []
 

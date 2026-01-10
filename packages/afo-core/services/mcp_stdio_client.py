@@ -26,12 +26,13 @@ class MCPServerConfig:
 @dataclass
 class MCPProcessSession:
     """MCP server process session with connection reuse."""
+
     config: MCPServerConfig
     process: subprocess.Popen | None = None
     initialized: bool = False
     last_used: float = 0.0
     request_id: int = 1
-    lock: threading.Lock = None
+    lock: threading.Lock | None = None
 
     def __post_init__(self):
         if self.lock is None:

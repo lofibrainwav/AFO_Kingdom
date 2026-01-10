@@ -12,7 +12,7 @@ from typing import Any
 
 from fastapi import APIRouter, HTTPException
 
-from .models import API_PROVIDERS
+from AFO.models import API_PROVIDERS
 
 # Create router
 billing_router = APIRouter(prefix="/billing", tags=["Wallet Billing"])

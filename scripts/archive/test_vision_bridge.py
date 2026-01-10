@@ -3,6 +3,7 @@ import os
 import pathlib
 import sys
 
+
 # Add package root to path
 sys.path.append(os.path.join(pathlib.Path.cwd(), "packages/afo-core"))
 
@@ -14,9 +15,7 @@ async def main():
     print("👁️ Connecting Vision Bridge to Royal Dashboard (Port 3000)...")
 
     # Verify Dashboard Layout
-    result = await verifier.verify_url(
-        "http://localhost:3000", "dashboard_layout_restoration"
-    )
+    result = await verifier.verify_url("http://localhost:3000", "dashboard_layout_restoration")
 
     if result.passed:
         print(f"✅ Vision Check Passed! Screenshot saved to: {result.screenshot_path}")

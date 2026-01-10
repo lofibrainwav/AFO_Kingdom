@@ -6,6 +6,7 @@ Debug script to check router registration in AFO Kingdom API Server
 import sys
 from pathlib import Path
 
+
 # Add project root to path
 project_root = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(project_root))
@@ -134,9 +135,7 @@ def test_app_registration():
         # Check all routes containing 'skills'
         print("📋 All routes containing 'skills':")
         all_skills_routes = [
-            route.path
-            for route in app.routes
-            if hasattr(route, "path") and "skills" in route.path.lower()
+            route.path for route in app.routes if hasattr(route, "path") and "skills" in route.path.lower()
         ]
         if all_skills_routes:
             for route in all_skills_routes:

@@ -112,6 +112,7 @@ find . -name "*wallet*" -type f
 ### 4. API Wallet에 PostgreSQL 연결
 
 ```python
+import os
 import psycopg2
 from api_wallet import APIWallet
 
@@ -121,7 +122,7 @@ conn = psycopg2.connect(
     port=15432,
     database="postgres",
     user="postgres",
-    password="postgres"  # 실제 비밀번호로 변경
+    password=os.getenv("POSTGRES_PASSWORD", "")  # 환경변수 필수
 )
 
 # API Wallet 초기화 (DB 연결)

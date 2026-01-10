@@ -9,9 +9,7 @@ except ImportError:
 
 
 class VaultKMS:
-    """
-    HashiCorp Vault KMS implementation for API Wallet.
-    """
+    """HashiCorp Vault KMS implementation for API Wallet."""
 
     def __init__(self):
         self.url = os.getenv("VAULT_ADDR")

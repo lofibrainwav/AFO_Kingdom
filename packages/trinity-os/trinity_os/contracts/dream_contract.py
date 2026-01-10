@@ -1,5 +1,4 @@
-"""
-Dream Contract System
+"""Dream Contract System
 眞善美孝永 - Safe and Efficient Dream Execution Contracts
 
 Provides legal and technical guarantees for human dream AI execution.
@@ -7,11 +6,9 @@ Provides legal and technical guarantees for human dream AI execution.
 
 from dataclasses import dataclass
 from datetime import UTC, datetime
-from typing import Any, Literal
+from typing import Any, Literal, Mapping, cast
 
-ContractStatus = Literal[
-    "DRAFT", "NEGOTIATED", "ACTIVE", "EXECUTING", "COMPLETED", "TERMINATED"
-]
+ContractStatus = Literal["DRAFT", "NEGOTIATED", "ACTIVE", "EXECUTING", "COMPLETED", "TERMINATED"]
 
 
 @dataclass
@@ -63,13 +60,13 @@ class DreamContractManager:
 
         guarantees = DreamGuarantee(
             min_trinity_score={
-                "truth": guarantee_params.get("truth", 80.0),
-                "goodness": guarantee_params.get("goodness", 80.0),
-                "beauty": guarantee_params.get("beauty", 70.0),
-                "serenity": guarantee_params.get("serenity", 80.0),
-                "eternity": guarantee_params.get("eternity", 70.0),
+                "truth": cast(Mapping[str, Any], guarantee_params).get("truth", 80.0),
+                "goodness": cast(Mapping[str, Any], guarantee_params).get("goodness", 80.0),
+                "beauty": cast(Mapping[str, Any], guarantee_params).get("beauty", 70.0),
+                "serenity": cast(Mapping[str, Any], guarantee_params).get("serenity", 80.0),
+                "eternity": cast(Mapping[str, Any], guarantee_params).get("eternity", 70.0),
             },
-            max_risk_threshold=guarantee_params.get("risk_threshold", 30.0),
+            max_risk_threshold=cast(Mapping[str, Any], guarantee_params).get("risk_threshold", 30.0),
             max_execution_time=60,
             rollback_capability=True,
             bridge_logging=True,
@@ -105,13 +102,11 @@ class DreamContractManager:
         for pillar, required_score in contract.guarantees.min_trinity_score.items():
             current_score = trinity_score.get(pillar, 0)
             if current_score < required_score:
-                violations.append(f"{pillar}: {current_score}/{required_score}")
+                cast(list[Any], violations).append(f"{pillar}: {current_score}/{required_score}")
 
         # Check risk threshold
         if risk_score > contract.guarantees.max_risk_threshold:
-            violations.append(
-                f"risk: {risk_score}/{contract.guarantees.max_risk_threshold}"
-            )
+            cast(list[Any], violations).append(f"risk: {risk_score}/{contract.guarantees.max_risk_threshold}")
 
         if violations:
             contract.status = "TERMINATED"
@@ -142,7 +137,7 @@ def create_dream_contract_manager(
 ) -> str:
     """Convenience function to create and return contract ID"""
     dream_id = f"dream_safe_{len(contract_manager.contracts)}"
-    return contract_manager.create_contract(
+    return cast(Any, contract_manager).create_contract(
         dream_id=dream_id,
         human_party=human_party,
         dream_description=dream_description,

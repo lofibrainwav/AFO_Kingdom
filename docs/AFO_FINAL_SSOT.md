@@ -4,13 +4,20 @@
 
 ## 🏛️ 핵심 헌법 & 철학 (Constitution & Philosophy)
 
-- **최고 헌법**: [TRINITY_CONSTITUTION_SUPREME.md](file://<LOCAL_WORKSPACE>/AFO_Kingdom/packages/trinity-os/TRINITY_CONSTITUTION.md)
+- **최고 헌법**: packages/trinity-os/TRINITY_CONSTITUTION.md
 - **5대 기둥 (眞善美孝永)**:
   - **眞 (Truth 35%)**: 기술적 확실성 & 아키텍처 ([Zhuge Liang])
   - **善 (Goodness 35%)**: 윤리·안정성 & 리스크 게이트 ([Sima Yi])
   - **美 (Beauty 20%)**: 단순함·우아함 & UX ([Zhou Yu])
   - **孝 (Serenity 8%)**: 평온 수호 & 연속성 (승상)
   - **永 (Eternity 2%)**: 영속성 & 레거시 유지 (승상)
+
+### 헌법 준수 검증 (Constitution Compliance) [Policy]
+**SSOT 요구사항**: 모든 시스템 구성 요소는 이 헌법을 참조해야 함
+- **참조 확인**: 각 컴포넌트는 헌법 조항을 인용
+- **준수 검증**: Trinity Score 계산 시 헌법 준수도 평가
+- **위반 처리**: 헌법 위반 시 자동 경고 및 수정 요구
+- **Evidence**: `scripts/verify_ssot_compliance.sh`, `packages/trinity-os/check_system.sh`
 
 ## 🧠 책사 시스템 (The Strategists)
 
@@ -30,8 +37,8 @@
 
 ## 🛠️ 운영 매뉴얼 (Operations)
 
-- **[야전교범]**: [AFO_ROYAL_LIBRARY.md](file://<LOCAL_WORKSPACE>/AFO_Kingdom/docs/AFO_ROYAL_LIBRARY.md)
-- **[시스템 상태]**: [AFO_KINGDOM_MAIN.md](file://<LOCAL_WORKSPACE>/AFO_Kingdom/docs/AFO_KINGDOM_MAIN.md)
+- **[야전교범]**: docs/AFO_ROYAL_LIBRARY.md
+- **[시스템 상태]**: docs/AFO_KINGDOM_MAIN.md
 - **[복구 매뉴얼]**: `scripts/reboot_kingdom.sh`
 
 

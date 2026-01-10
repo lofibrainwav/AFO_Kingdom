@@ -1,13 +1,12 @@
 # Trinity Score: 90.0 (Established by Chancellor)
 import logging
 
+from AFO.anthropic import AnthropicProvider
+from AFO.base import BaseLLMProvider
+from AFO.google import GoogleProvider
 from AFO.llm_router import LLMProvider
-
-from .anthropic import AnthropicProvider
-from .base import BaseLLMProvider
-from .google import GoogleProvider
-from .ollama import OllamaProvider
-from .openai import OpenAIProvider
+from AFO.ollama import OllamaProvider
+from AFO.openai import OpenAIProvider
 
 logger = logging.getLogger(__name__)
 

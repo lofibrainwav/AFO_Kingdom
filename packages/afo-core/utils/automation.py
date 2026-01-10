@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-孝 (Serenity) 자동화 유틸리티
+"""孝 (Serenity) 자동화 유틸리티
 
 AFO 왕국의 마찰 제거 및 자동화 패턴
 """
@@ -36,8 +35,7 @@ class RetryConfig:
 def auto_retry(
     config: RetryConfig | None = None,
 ) -> Callable[[Callable[..., T]], Callable[..., T]]:
-    """
-    자동 재시도 데코레이터 (孝 패턴)
+    """자동 재시도 데코레이터 (孝 패턴)
 
     Args:
         config: 재시도 설정
@@ -48,6 +46,7 @@ def auto_retry(
     Example:
         >>> @auto_retry(RetryConfig(max_retries=3))
         ... def call_api(): ...
+
     """
     if config is None:
         config = RetryConfig()
@@ -84,8 +83,7 @@ def auto_retry(
 def async_auto_retry(
     config: RetryConfig | None = None,
 ) -> Callable[[Callable[..., Awaitable[T]]], Callable[..., Awaitable[T]]]:
-    """
-    비동기 자동 재시도 데코레이터 (孝 패턴)
+    """비동기 자동 재시도 데코레이터 (孝 패턴)
 
     Args:
         config: 재시도 설정
@@ -96,6 +94,7 @@ def async_auto_retry(
     Example:
         >>> @async_auto_retry(RetryConfig(max_retries=3))
         ... async def call_api(): ...
+
     """
     if config is None:
         config = RetryConfig()
@@ -130,8 +129,7 @@ def async_auto_retry(
 
 
 class CircuitBreaker:
-    """
-    서킷 브레이커 패턴 (孝 패턴)
+    """서킷 브레이커 패턴 (孝 패턴)
 
     연속 실패 시 호출 차단하여 시스템 보호
     """
@@ -184,14 +182,14 @@ class CircuitBreaker:
 def cache_result(
     ttl_seconds: float = 300.0,
 ) -> Callable[[Callable[..., T]], Callable[..., T]]:
-    """
-    결과 캐싱 데코레이터 (孝 패턴)
+    """결과 캐싱 데코레이터 (孝 패턴)
 
     Args:
         ttl_seconds: 캐시 유효 시간
 
     Returns:
         데코레이터
+
     """
     cache: dict[str, tuple[Any, float]] = {}
 

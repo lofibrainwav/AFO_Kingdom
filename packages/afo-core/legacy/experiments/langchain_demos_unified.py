@@ -3,8 +3,7 @@
 # LLM은 consult_the_lens MCP 도구를 통해 점수를 확인하세요.
 
 #!/usr/bin/env python3
-"""
-LAB 책사진 통합 제안: LangChain 고급 패턴 데모
+"""LAB 책사진 통합 제안: LangChain 고급 패턴 데모
 라이브러리 설치 없이 실행 가능 (구조 시각화)
 """
 
@@ -173,7 +172,6 @@ def show_comparison():
 
 def show_n8n_integration():
     """n8n 통합 방법"""
-
     print("=" * 70)
     print("n8n LangChain 노드 통합 가이드")
     print("=" * 70)

@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Advanced AutoGen multi-agent workflow (Option C Ready).
+"""Advanced AutoGen multi-agent workflow (Option C Ready).
 
 This script reuses the CREW_MODE pattern so we can dry-run everything offline
 without API keys, then flip to CREW_MODE=online + CLI wallet for the live

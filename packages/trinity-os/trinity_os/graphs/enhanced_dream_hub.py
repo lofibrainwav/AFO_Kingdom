@@ -1,5 +1,4 @@
-"""
-Enhanced Dream Hub Engine
+"""Enhanced Dream Hub Engine
 眞善美孝永 - Complete Human Dream AI Execution System
 
 Integrates:
@@ -11,7 +10,7 @@ Integrates:
 
 import operator
 from datetime import UTC, datetime
-from typing import Annotated, Any, Literal, TypedDict
+from typing import Annotated, Any, Literal, Mapping, TypedDict, cast
 
 from langchain_core.messages import AIMessage, BaseMessage, HumanMessage
 from langgraph.checkpoint.memory import MemorySaver
@@ -42,8 +41,7 @@ def dream_initiator(state: EnhancedAgentState) -> dict[str, Any]:
     last_message = state["messages"][-1]
 
     # Create dream contract
-    dream_id = create_dream_contract(last_message.content)
-
+    dream_id=cast(str, create_dream_contract(cast(Any, last_message.content)))
     return {
         "dream_id": dream_id,
         "dream_status": "INITIATED",
@@ -53,7 +51,7 @@ def dream_initiator(state: EnhancedAgentState) -> dict[str, Any]:
                 "event": "DREAM_INITIATED",
                 "dream_id": dream_id,
                 "timestamp": datetime.now(UTC).isoformat(),
-                "human_input": last_message.content,
+                "human_input": cast(Any, last_message).content,
             }
         ],
     }
@@ -96,18 +94,14 @@ def dream_executor(state: EnhancedAgentState) -> dict[str, Any]:
     # Simulate safe execution (no actual external calls)
     execution_results = []
     for i, step in enumerate(current_plan):
-        execution_results.append(f"Executed step {i + 1}: {step}")
+        cast(list[Any], execution_results).append(f"Executed step {i + 1}: {step}")
 
     # Progress to next phase
     next_phase = "REVIEW"
 
     return {
         "current_phase": next_phase,
-        "messages": [
-            AIMessage(
-                content=f"Dream execution completed: {len(execution_results)} steps"
-            )
-        ],
+        "messages": [AIMessage(content=f"Dream execution completed: {len(execution_results)} steps")],
         "audit_history": execution_results,
     }
 
@@ -181,10 +175,10 @@ def build_enhanced_dream_hub():
     graph = StateGraph(EnhancedAgentState)
 
     # Add all nodes
-    graph.add_node("dream_initiator", dream_initiator)
-    graph.add_node("dream_planner", dream_planner)
-    graph.add_node("dream_executor", dream_executor)
-    graph.add_node("dream_reviewer", dream_reviewer)
+    cast(Any, graph).add_node("dream_initiator", dream_initiator)
+    cast(Any, graph).add_node("dream_planner", dream_planner)
+    cast(Any, graph).add_node("dream_executor", dream_executor)
+    cast(Any, graph).add_node("dream_reviewer", dream_reviewer)
 
     # Define flow
     graph.set_entry_point("dream_initiator")
@@ -205,18 +199,15 @@ def build_enhanced_dream_hub():
 
     # Persistence
     checkpointer = MemorySaver()
-    return graph.compile(checkpointer=checkpointer)
+    return cast(Any, graph).compile(checkpointer=checkpointer)
 
 
 # Global Enhanced Dream Hub instance
 enhanced_dream_hub = build_enhanced_dream_hub()
 
 
-def run_enhanced_dream_hub(
-    human_dream: str, thread_id: str = "default"
-) -> dict[str, Any]:
-    """
-    Execute human dream through Enhanced Dream Hub
+def run_enhanced_dream_hub(human_dream: str, thread_id: str = "default") -> dict[str, Any]:
+    """Execute human dream through Enhanced Dream Hub
 
     Args:
         human_dream: Human's creative dream/input
@@ -224,6 +215,7 @@ def run_enhanced_dream_hub(
 
     Returns:
         Complete dream execution result with Bridge logs
+
     """
     initial_state = {
         "messages": [HumanMessage(content=human_dream)],
@@ -240,15 +232,13 @@ def run_enhanced_dream_hub(
     config = {"configurable": {"thread_id": thread_id}}
 
     try:
-        final_state = enhanced_dream_hub.invoke(initial_state, config=config)
+        final_state = enhanced_dream_hub.invoke(cast(Any, initial_state), config=cast(Any, config))
 
         # Extract final result
         result = {
             "status": "COMPLETED",
             "dream_id": final_state.get("dream_id", ""),
-            "final_message": (
-                final_state["messages"][-1].content if final_state["messages"] else ""
-            ),
+            "final_message": (final_state["messages"][-1].content if final_state["messages"] else ""),
             "trinity_score": final_state.get("trinity_score", {}),
             "risk_score": final_state.get("risk_score", 0.0),
             "audit_history": final_state.get("audit_history", []),
@@ -262,7 +252,7 @@ def run_enhanced_dream_hub(
         return {
             "status": "ERROR",
             "error": str(e),
-            "dream_id": initial_state.get("dream_id", ""),
+            "dream_id": cast(Mapping[str, Any], initial_state).get("dream_id", ""),
         }
 
 

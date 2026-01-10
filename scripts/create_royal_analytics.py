@@ -3,6 +3,7 @@ import os
 import pathlib
 import sys
 
+
 # Add package root to path
 sys.path.append(os.path.join(pathlib.Path.cwd(), "packages/afo-core"))
 
@@ -34,10 +35,10 @@ async def main():
 
     if result["success"]:
         print("✅ Creation Successful!")
-        print(f"   Path: {result["path"]}")
-        print(f"   Trinity Score: {result["trinity_score"]}")
+        print(f"   Path: {result['path']}")
+        print(f"   Trinity Score: {result['trinity_score']}")
     else:
-        print(f"❌ Creation Failed: {result.get("reason")}")
+        print(f"❌ Creation Failed: {result.get('reason')}")
         sys.exit(1)
 
 

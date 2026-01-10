@@ -8,13 +8,12 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
+
 # #region agent log
 LOG_PATH = Path("/Users/brnestrm/AFO_Kingdom/.cursor/debug.log")
 
 
-def log_debug(
-    location: str, message: str, data: dict | None = None, hypothesis_id: str = "A"
-) -> None:
+def log_debug(location: str, message: str, data: dict | None = None, hypothesis_id: str = "A") -> None:
     """Debug logging to NDJSON file"""
     try:
         log_entry = {
@@ -78,8 +77,8 @@ def sequential_thinking_analysis():
     ]
 
     for step in steps:
-        print(f"\nStep {step["step"]}: {step["title"]}")
-        print(f"   작업: {step["action"]}")
+        print(f"\nStep {step['step']}: {step['title']}")
+        print(f"   작업: {step['action']}")
 
     return steps
 
@@ -207,9 +206,7 @@ def identify_potential_issues():
 
     # 1. 라우터 prefix 일관성 확인
     print("\n1. 라우터 Prefix 일관성 확인")
-    router_files = list(
-        (project_root / "packages" / "afo-core" / "api" / "routers").glob("*.py")
-    )
+    router_files = list((project_root / "packages" / "afo-core" / "api" / "routers").glob("*.py"))
     prefix_issues = []
     for router_file in router_files:
         try:
@@ -219,10 +216,7 @@ def identify_potential_issues():
                 if 'prefix="/api/' in content or 'prefix="/' in content:
                     # prefix가 있는 경우
                     pass
-                elif (
-                    "APIRouter(" in content
-                    and "prefix" not in content.split("APIRouter(")[1].split(")")[0]
-                ):
+                elif "APIRouter(" in content and "prefix" not in content.split("APIRouter(")[1].split(")")[0]:
                     # prefix가 없는 경우
                     router_name = router_file.stem
                     if router_name not in {"__init__", "health", "root"}:
@@ -249,9 +243,7 @@ def identify_potential_issues():
     try:
         from AFO.api.routers.chancellor_router import router as cr
 
-        print(
-            f"   ✅ Chancellor 라우터 import 성공 (prefix: {getattr(cr, "prefix", "N/A")})"
-        )
+        print(f"   ✅ Chancellor 라우터 import 성공 (prefix: {getattr(cr, 'prefix', 'N/A')})")
     except Exception as e:
         print(f"   ❌ Chancellor 라우터 import 실패: {e}")
         issues.append({"type": "import_error", "router": "chancellor", "error": str(e)})
@@ -303,7 +295,7 @@ def main():
     if issues:
         print(f"\n⚠️  발견된 문제점: {len(issues)}개")
         for issue in issues:
-            print(f"   - {issue["type"]}: {issue}")
+            print(f"   - {issue['type']}: {issue}")
 
     # #region agent log
     log_debug(

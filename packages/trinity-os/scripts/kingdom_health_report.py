@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-AFO 왕국 통합 건강 리포트 생성기 (Unified Health Report)
+"""AFO 왕국 통합 건강 리포트 생성기 (Unified Health Report)
 
 眞善美孝 철학 기반 모든 모니터링 결과 통합
 - check_11_organs.py: 오장육부 건강 체크
@@ -103,12 +102,7 @@ class HealthReportGenerator:
             result = subprocess.run(
                 [
                     "python3",
-                    str(
-                        AFO_ROOT
-                        / "scripts"
-                        / "verification"
-                        / "verify_kingdom_status.py"
-                    ),
+                    str(AFO_ROOT / "scripts" / "verification" / "verify_kingdom_status.py"),
                 ],
                 capture_output=True,
                 text=True,
@@ -198,10 +192,7 @@ class HealthReportGenerator:
 
         # 5. Eternity (永): 지속 가능성, 레거시 계승
         # 모든 시스템이 정상이면 Eternity 높음
-        all_success = all(
-            report.get("status") in ["success", "problems_found"]
-            for report in self.reports.values()
-        )
+        all_success = all(report.get("status") in ["success", "problems_found"] for report in self.reports.values())
         trinity["eternity"] = 0.95 if all_success else 0.7
 
         # 소수점 2자리로 반올림
@@ -255,9 +246,7 @@ class HealthReportGenerator:
             "summary": self._generate_summary(),
         }
 
-    def _get_recommendation(
-        self, trinity: dict[str, float], overall_score: float, balance_gap: float
-    ) -> str:
+    def _get_recommendation(self, trinity: dict[str, float], overall_score: float, balance_gap: float) -> str:
         """권장사항 생성"""
         if overall_score >= 0.9 and balance_gap < 0.3:
             return "🎉 완벽한 상태! 모든 시스템 정상 작동 중"
@@ -298,9 +287,7 @@ class HealthReportGenerator:
             problem_data = self.reports["problem_detector"].get("data", {})
             if problem_data:
                 summary["problem_count"] = problem_data.get("total_problems", 0)
-                summary["critical_issues"] = problem_data.get("summary", {}).get(
-                    "critical", 0
-                )
+                summary["critical_issues"] = problem_data.get("summary", {}).get("critical", 0)
 
         return summary
 

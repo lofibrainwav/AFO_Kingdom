@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-AFO Julie CPA - Budget API Router
+"""AFO Julie CPA - Budget API Router
 Phase 12 Extension: 실시간 예산 추적 및 리스크 알림
 
 "금고 안전! Julie CPA가 왕국 부를 지켜요" 🛡️💰
@@ -20,8 +19,7 @@ logger = logging.getLogger(__name__)
 
 
 def calculate_risk_score(total_remaining: int, total_allocated: int) -> tuple[float, str]:
-    """
-    SSOT 연동 리스크 점수 계산
+    """SSOT 연동 리스크 점수 계산
 
     善 (Goodness): 예산 잔여율에 따른 리스크 평가
     - 잔여율 > 30%: safe (risk 0-5)
@@ -57,11 +55,11 @@ def generate_summary(risk_level: str, utilization_rate: float) -> str:
 
 @router.get("", response_model=BudgetSummary)
 async def get_budget_summary() -> BudgetSummary:
-    """
-    예산 현황 조회
+    """예산 현황 조회
 
     Returns:
         BudgetSummary: 전체 예산 현황 및 리스크 점수
+
     """
     total_allocated = sum(b.allocated for b in MOCK_BUDGETS)
     total_spent = sum(b.spent for b in MOCK_BUDGETS)
@@ -85,8 +83,7 @@ async def get_budget_summary() -> BudgetSummary:
 
 @router.get("/category/{category_name}")
 async def get_category_budget(category_name: str) -> BudgetSummary:
-    """
-    특정 카테고리 예산 조회
+    """특정 카테고리 예산 조회
 
     Args:
         category_name: 조회할 카테고리 이름
@@ -96,6 +93,7 @@ async def get_category_budget(category_name: str) -> BudgetSummary:
 
     Raises:
         HTTPException: 카테고리를 찾을 수 없는 경우 404
+
     """
     for budget in MOCK_BUDGETS:
         if budget.category.lower() == category_name.lower():
@@ -128,8 +126,7 @@ class SpendRequest(BaseModel):
 
 @router.post("/spend")
 async def record_spending(request: SpendRequest) -> dict[str, Any]:
-    """
-    지출 기록 (DRY_RUN 기본)
+    """지출 기록 (DRY_RUN 기본)
 
     善 (Goodness): 안전 우선 - dry_run=True가 기본값
 
@@ -138,12 +135,21 @@ async def record_spending(request: SpendRequest) -> dict[str, Any]:
 
     Returns:
         dict: 지출 기록 결과
+
     """
     for budget in MOCK_BUDGETS:
         if budget.category.lower() == request.category.lower():
             # 타입 안전한 변환: int()에 object 타입을 직접 전달하지 않음
             amount_value = request.amount
-            amount_int = int(amount_value) if isinstance(amount_value, (int, float, str)) else 0
+            if isinstance(amount_value, (int, float)):
+                amount_int: int = int(amount_value)
+            elif isinstance(amount_value, str):
+                try:
+                    amount_int = int(amount_value)
+                except ValueError:
+                    amount_int = 0
+            else:
+                amount_int = 0
             new_spent = budget.spent + amount_int
             new_remaining = budget.allocated - new_spent
 
@@ -185,13 +191,13 @@ async def record_spending(request: SpendRequest) -> dict[str, Any]:
 
 @router.get("/risk-alert")
 async def get_risk_alerts() -> dict[str, Any]:
-    """
-    리스크 알림 조회
+    """리스크 알림 조회
 
     SSOT 연동: 위험 카테고리만 반환
 
     Returns:
         dict: 리스크 알림 목록 및 요약
+
     """
     alerts = []
 
@@ -228,8 +234,7 @@ async def get_risk_alerts() -> dict[str, Any]:
 
 @router.get("/suggestions")
 async def get_budget_suggestions() -> dict[str, Any]:
-    """
-    Julie CPA의 스마트 제안
+    """Julie CPA의 스마트 제안
 
     룰 기반 알고리즘으로 예산 최적화 제안 생성
     - 지출율 50% 이상: 절감 제안
@@ -238,6 +243,7 @@ async def get_budget_suggestions() -> dict[str, Any]:
 
     Returns:
         dict: 예산 제안 목록 및 잠재 절감액
+
     """
     total_allocated = sum(b.allocated for b in MOCK_BUDGETS)
     total_spent = sum(b.spent for b in MOCK_BUDGETS)
@@ -339,8 +345,7 @@ MOCK_HISTORY = [
 
 
 def predict_next_month_spending(history: list[dict[str, Any]]) -> dict[str, Any]:
-    """
-    간단 선형회귀로 다음 달 지출 예측
+    """간단 선형회귀로 다음 달 지출 예측
 
     sklearn 없이 구현 (순수 Python)
     y = mx + b (Linear Regression)
@@ -396,8 +401,7 @@ def predict_next_month_spending(history: list[dict[str, Any]]) -> dict[str, Any]
 
 @router.get("/prediction")
 async def get_budget_prediction() -> dict[str, Any]:
-    """
-    Julie CPA의 미래 예측
+    """Julie CPA의 미래 예측
 
     LinearRegression으로 다음 달 지출 예측
     - 6개월 과거 데이터 기반
@@ -406,10 +410,14 @@ async def get_budget_prediction() -> dict[str, Any]:
 
     Returns:
         dict: 예측 결과 및 조언
+
     """
     prediction = predict_next_month_spending(MOCK_HISTORY)
 
-    current_spending = int(cast("Any", MOCK_HISTORY[-1]["spent"]))
+    current_spending_raw = MOCK_HISTORY[-1]["spent"]
+    current_spending: int = (
+        int(current_spending_raw) if isinstance(current_spending_raw, (int, float)) else 0
+    )
     predicted_val = prediction.get("predicted_spending", 0)
     predicted: int = (
         int(predicted_val) if isinstance(predicted_val, (int, float)) else current_spending
@@ -463,8 +471,7 @@ async def get_budget_prediction() -> dict[str, Any]:
 
 @router.get("/forecast")
 async def get_budget_forecast(periods: int = 3) -> dict[str, Any]:
-    """
-    Prophet 기반 미래 예산 예측
+    """Prophet 기반 미래 예산 예측
 
     Phase 14: LinearRegression → Prophet 업그레이드
     - 시계열 패턴 자동 학습
@@ -479,6 +486,7 @@ async def get_budget_forecast(periods: int = 3) -> dict[str, Any]:
 
     Returns:
         dict: 예측 결과 및 요약
+
     """
     try:
         from AFO.julie_cpa.prophet_engine import get_kingdom_forecast
@@ -513,8 +521,7 @@ async def get_budget_forecast(periods: int = 3) -> dict[str, Any]:
 
 @router.get("/forecast-hybrid")
 async def get_hybrid_budget_forecast(periods: int = 3) -> dict[str, Any]:
-    """
-    Prophet + auto_arima 하이브리드 예측
+    """Prophet + auto_arima 하이브리드 예측
 
     Phase 14 완전체: 99%+ 정확도
     - Prophet 기본 예측 (추세 + 계절성)
@@ -527,6 +534,7 @@ async def get_hybrid_budget_forecast(periods: int = 3) -> dict[str, Any]:
 
     Returns:
         dict: 하이브리드 예측 결과
+
     """
     try:
         from AFO.julie_cpa.hybrid_engine import get_hybrid_forecast
@@ -559,8 +567,7 @@ async def get_hybrid_budget_forecast(periods: int = 3) -> dict[str, Any]:
 
 @router.get("/consult-grok")
 async def consult_grok_advisor(periods: int = 3) -> dict[str, Any]:
-    """
-    Phase 15: The Grok Singularity - 외부 지능(xAI) 자문
+    """Phase 15: The Grok Singularity - 외부 지능(xAI) 자문
 
     왕국의 예산 예측 데이터를 바탕으로 Grok에게 거시경제적 조언을 구합니다.
     - 智 (Wisdom): 외부 데이터와 내부 데이터의 융합
@@ -570,6 +577,7 @@ async def consult_grok_advisor(periods: int = 3) -> dict[str, Any]:
 
     Returns:
         dict: Grok 분석 결과 및 예측 요약
+
     """
     try:
         from AFO.julie_cpa.grok_engine import consult_grok

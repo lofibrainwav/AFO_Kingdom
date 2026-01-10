@@ -30,8 +30,7 @@ class SerenityCreateResponse(BaseModel):
 
 @router.post("/create", response_model=SerenityCreateResponse)
 async def create_ui(request: SerenityCreateRequest) -> SerenityCreateResponse:
-    """
-    [Project Serenity] Autonomous UI Creation Engine
+    """[Project Serenity] Autonomous UI Creation Engine
     Triggers the GenUI-Playwright-Trinity loop to generate a verified component.
     """
     try:

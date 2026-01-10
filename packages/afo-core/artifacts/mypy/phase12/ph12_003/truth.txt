@@ -1,3 +1,0 @@
-AFO/api/routes/wallet/session.py: note: In function "extract_wallet_session":
-AFO/api/routes/wallet/session.py:145: error: Argument "mapping" to "hset" of "HashCommands" has incompatible type "dict[str, str]"; expected "Mapping[str | bytes, bytes | float | int | str]"  [arg-type]
-Found 88 errors in 38 files (checked 249 source files)

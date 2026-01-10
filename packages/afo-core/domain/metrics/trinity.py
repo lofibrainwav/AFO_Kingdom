@@ -1,5 +1,4 @@
-# Trinity Score: 90.0 (Established by Chancellor)
-# !/usr/bin/env python3
+#!/usr/bin/env python3
 """
 AFO Trinity Metrics Calculator
 
@@ -24,14 +23,14 @@ from AFO.domain.metrics.trinity_ssot import TrinityWeights
 
 @dataclass(frozen=True)
 class TrinityInputs:
-    """
-    眞善美孝 4기둥 입력값 (0.0 ~ 1.0)
+    """眞善美孝 4기둥 입력값 (0.0 ~ 1.0)
 
     Attributes:
         truth: 眞 (Truth) - 기술적 확실성
         goodness: 善 (Goodness) - 인간 중심, 윤리·안정성
         beauty: 美 (Beauty) - 단순함·우아함
         filial_serenity: 孝 (Filial Serenity) - 평온 수호, 연속성
+
     """
 
     truth: float
@@ -65,7 +64,6 @@ class TrinityInputs:
             )
         except Exception:
             return TrinityInputs(0, 0, 0, 0)
-            return TrinityInputs(0, 0, 0, 0)
 
     @classmethod
     def from_100_scale(
@@ -85,8 +83,7 @@ class TrinityInputs:
 
 @dataclass
 class TrinityMetrics:
-    """
-    眞善美孝永 5기둥 메트릭 계산 결과 (SSOT: TRINITY_OS_PERSONAS.yaml)
+    """眞善美孝永 5기둥 메트릭 계산 결과 (SSOT: TRINITY_OS_PERSONAS.yaml)
 
     Attributes:
         truth: 眞 점수 (35% 가중치)
@@ -98,6 +95,7 @@ class TrinityMetrics:
         trinity_score: Trinity Score = 가중 합 (0.35×眞 + 0.35×善 + 0.20×美 + 0.08×孝 + 0.02×永)
         balance_delta: ΔTrinity = Max - Min
         balance_status: 균형 상태 ("balanced" | "warning" | "imbalanced")
+
     """
 
     # SSOT 가중치 (TRINITY_OS_PERSONAS.yaml -> trinity_ssot.py)

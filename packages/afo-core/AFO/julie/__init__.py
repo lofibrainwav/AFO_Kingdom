@@ -14,6 +14,8 @@ Provides enterprise-grade tax calculation services with:
 SSOT Integration: IRS/FTB official guidelines with real-time sync (TICKET-033)
 """
 
+from AFO.config.runtime import JulieConfig, load_julie_config
+
 from .ai_agents import AssociateAgent, AuditorAgent, JulieAgentOrchestrator, ManagerAgent
 from .depreciation import (
     DepInput,
@@ -41,7 +43,13 @@ __all__ = [
     "log_associate_action",
     "log_auditor_action",
     "log_manager_action",
+    "JulieConfig",
+    "julie_config",
 ]
+
+
+julie_config = load_julie_config()
+
 
 __version__ = "1.0.0"
 __author__ = "AFO Kingdom Chancellor"

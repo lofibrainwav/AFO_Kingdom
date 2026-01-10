@@ -1,0 +1,13 @@
+# added_by=ssot_lock_sync_gate ts=20260106_101232
+# added_by=ssot_lock_sync_gate ts=20260106_101251
+^docs/ssot/allowlists/untracked_allowlist_regex.txt$
+^health_gate_rules.txt$
+^scripts/antigravity_health.sh$
+^scripts/ssot_lock_sync_gate.sh$
+
+# added_by=ssot_lock_sync_gate ts=20260106_101631
+# added_by=ssot_lock_sync_gate ts=20260106_101654
+^health_gate_rules.txt$
+^scripts/antigravity_health.sh$
+^scripts/ssot_lock_sync_gate.sh$
+
