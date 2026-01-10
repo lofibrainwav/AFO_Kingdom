@@ -4,6 +4,7 @@ import builtins
 import contextlib
 import os
 import time
+from pathlib import Path
 from typing import Any
 
 # Assuming PlaywrightBridgeMCP is available in the path or imports
@@ -26,7 +27,11 @@ class GenUIOrchestrator:
     3. Verifies via Vision (Playwright Screenshot)
     """
 
-    def __init__(self, workspace_root: str = "/Users/brnestrm/AFO_Kingdom"):
+    def __init__(self, workspace_root: str | None = None):
+        # Dynamic calculation if not provided
+        if workspace_root is None:
+            # This file is at packages/afo-core/AFO/genui/genui_orchestrator.py (4 parents up)
+            workspace_root = str(Path(__file__).resolve().parents[4])
         self.workspace_root = workspace_root
         self.sandbox_path = os.path.join(workspace_root, "packages/dashboard/src/app/genui")
         os.makedirs(self.sandbox_path, exist_ok=True)

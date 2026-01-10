@@ -1,0 +1,74 @@
+name: Shellcheck Gate
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '**/*.sh'
+      - 'afo'
+  push:
+    branches: [main]
+    paths:
+      - '**/*.sh'
+      - 'afo'
+
+jobs:
+  shellcheck:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Install Shellcheck
+        run: sudo apt-get install -y shellcheck
+      
+      - name: Run Shellcheck
+        run: |
+          set -euo pipefail
+          
+          echo "🔍 Running Shellcheck on all scripts..."
+          
+          # Find all shell scripts (exclude legacy/quarantine/vendored scripts)
+          SCRIPTS=$(find . -name "*.sh" -not -path "*/.venv/*" -not -path "*/node_modules/*" -not -path "*/_local_quarantine/*" -not -name "hetzner-*.sh" -not -name "vagrant-*.sh" -type f)
+          
+          # Add afo CLI
+          if [[ -f ./afo ]]; then
+            SCRIPTS="$SCRIPTS ./afo"
+          fi
+          
+          FAILED=0
+          for script in $SCRIPTS; do
+            echo "Checking: $script"
+            if shellcheck -x --severity=error "$script"; then
+              echo "  ✅ PASS"
+            else
+              echo "  ❌ FAIL"
+              FAILED=1
+            fi
+          done
+          
+          if [[ "$FAILED" -eq 1 ]]; then
+            echo ""
+            echo "❌ Shellcheck found issues. Please fix before merging."
+            exit 1
+          fi
+          
+          echo ""
+          echo "✅ All shell scripts passed Shellcheck!"
+      
+      - name: Alert on Failure
+        if: failure()
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          MESSAGE="❌ Shellcheck FAILED - Script quality issues detected"
+          if [[ -n "${SLACK_WEBHOOK_URL:-}" ]]; then
+            curl -sS -X POST -H 'Content-type: application/json' \
+              --data "{\"text\": \"$MESSAGE\"}" \
+              "$SLACK_WEBHOOK_URL" || true
+          fi
+          echo "$MESSAGE"

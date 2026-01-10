@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Circuit Breaker Pattern for AFO Kingdom
+"""Circuit Breaker Pattern for AFO Kingdom
 Prevents cascading failures by temporarily blocking calls to failing services.
 
 States:
@@ -50,8 +49,7 @@ class CircuitStats:
 
 
 class CircuitBreaker:
-    """
-    Circuit Breaker implementation for async functions.
+    """Circuit Breaker implementation for async functions.
 
     Usage:
         circuit = CircuitBreaker(

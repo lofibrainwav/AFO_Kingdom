@@ -161,18 +161,19 @@ def determine_rag_mode(request_headers: dict[str, str] | None = None) -> dict[st
     4. GRADUAL ENV (AFO_RAG_ROLLOUT_*)
     5. 기본값: SHADOW_ONLY
     """
+    # Normalize headers to lowercase for case-insensitive lookup
+    headers = {k.lower(): v for k, v in (request_headers or {}).items()}
 
     # 1. Kill Switch (최우선)
     if os.getenv("AFO_RAG_KILL_SWITCH", "0") == "1":
         return {"mode": "killed", "applied": False, "reason": "kill_switch_active"}
 
     # 2. 강제 헤더 (X-AFO-RAG: 1/0)
-    if request_headers:
-        rag_header = request_headers.get("x-afo-rag")
-        if rag_header == "1":
-            return {"mode": "forced_on", "applied": True, "reason": "header_forced"}
-        elif rag_header == "0":
-            return {"mode": "forced_off", "applied": False, "reason": "header_forced"}
+    rag_header = headers.get("x-afo-rag")
+    if rag_header == "1":
+        return {"mode": "forced_on", "applied": True, "reason": "header_forced"}
+    elif rag_header == "0":
+        return {"mode": "forced_off", "applied": False, "reason": "header_forced"}
 
     # 3. Flag ENV
     if os.getenv("AFO_RAG_FLAG_ENABLED", "0") == "1":
@@ -207,14 +208,16 @@ def get_bucket_seed(headers: dict[str, str] | None) -> str:
     2. X-Request-ID
     3. remote_addr + user_agent (실제 구현시)
     """
-    if headers:
-        # 1순위: X-AFO-CLIENT-ID
-        if "x-afo-client-id" in headers:
-            return headers["x-afo-client-id"]
+    # Normalize headers to lowercase for case-insensitive lookup
+    normalized = {k.lower(): v for k, v in (headers or {}).items()}
 
-        # 2순위: X-Request-ID
-        if "x-request-id" in headers:
-            return headers["x-request-id"]
+    # 1순위: X-AFO-CLIENT-ID
+    if "x-afo-client-id" in normalized:
+        return normalized["x-afo-client-id"]
+
+    # 2순위: X-Request-ID
+    if "x-request-id" in normalized:
+        return normalized["x-request-id"]
 
     # 3순위: 기본 seed (실제 구현시 IP + User-Agent 사용)
     return "default_seed"
@@ -222,11 +225,13 @@ def get_bucket_seed(headers: dict[str, str] | None) -> str:
 
 def get_bucket_seed_source(headers: dict[str, str] | None) -> str:
     """버킷팅 seed 출처 반환"""
-    if headers:
-        if "x-afo-client-id" in headers:
-            return "client_id"
-        if "x-request-id" in headers:
-            return "request_id"
+    # Normalize headers to lowercase for case-insensitive lookup
+    normalized = {k.lower(): v for k, v in (headers or {}).items()}
+
+    if "x-afo-client-id" in normalized:
+        return "client_id"
+    if "x-request-id" in normalized:
+        return "request_id"
 
     return "default"
 

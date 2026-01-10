@@ -62,7 +62,7 @@ services:
     <<: *common-security
 
   qdrant:
-    image: qdrant/qdrant:v1.7.4
+    image: qdrant/qdrant:v1.13.0
     container_name: afo-qdrant
     # user: "1000:1000"                # 善: non-root (Temporarily disabled for macOS permissions)
     ports:

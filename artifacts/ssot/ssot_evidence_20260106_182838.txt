@@ -1,0 +1,32 @@
+=== SSOT EVIDENCE PACK (as-of ) ===
+
+[1] conflict markers scan
+.github/workflows/ci.yml:44:<<<<<<< HEAD
+.github/workflows/ci.yml:57:=======
+.github/workflows/ci.yml:71:>>>>>>> wip/ph20-01-post-work
+.github/workflows/ci.yml:125:<<<<<<< HEAD
+.github/workflows/ci.yml:131:=======
+.github/workflows/ci.yml:134:>>>>>>> wip/ph20-01-post-work
+.gitignore:77:<<<<<<< HEAD
+.gitignore:89:=======
+.gitignore:97:>>>>>>> wip/ph20-01-post-work
+artifacts/ci/pytest_report.txt:1:============================= test session starts ==============================
+artifacts/ci/pytest_report.txt:52:================= 306 passed, 4 skipped, 4 deselected in 4.75s =================
+artifacts/ci/sbom_log.txt:1:================================================================================
+artifacts/ci/sbom_log.txt:3:================================================================================
+artifacts/ci/sbom_log.txt:11:================================================================================
+artifacts/wallet_vault_intel/20251228_170154.pytest_wallet.txt:3:============================= test session starts ==============================
+artifacts/wallet_vault_intel/20251228_170154.pytest_wallet.txt:15:=============================== warnings summary ===============================
+artifacts/wallet_vault_intel/20251228_170154.pytest_wallet.txt:22:============================== 1 warning in 0.07s ==============================
+artifacts/wallet_vault_intel/20251228_170346.pytest_wallet.txt:3:============================= test session starts ==============================
+artifacts/wallet_vault_intel/20251228_170346.pytest_wallet.txt:15:=============================== warnings summary ===============================
+artifacts/wallet_vault_intel/20251228_170346.pytest_wallet.txt:22:============================== 1 warning in 0.07s ==============================
+docs/ssot/evidence/OLLAMA_FINAL_GREEN_20260106_095442.txt:2:============================================================
+docs/ssot/evidence/OLLAMA_FINAL_GREEN_20260106_095442.txt:32:============================================================
+packages/afo-core/AFO/rag/__init__.py:4:========================
+scripts/t21_rag_streaming_optimization.py:4:===============================================================
+scripts/t21_simple_streaming_test.py:4:===============================================
+scripts/t22_legacy_code_cleanup.py:4:==========================================================
+scripts/trivy_security_scan.sh:14:================================
+
+[2] pyproject.toml parse

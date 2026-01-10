@@ -77,25 +77,15 @@ def score_changed_files(files: list[str]) -> tuple[int, list[Signal]]:
             signals.append(Signal("core_keyword_touched", 15, f"Keyword hit in {f}"))
 
         if any(k in lower for k in TEST_KEYWORDS):
-            signals.append(
-                Signal(
-                    "tests_or_quality_changed", 6, f"Test/quality tooling touched: {f}"
-                )
-            )
+            signals.append(Signal("tests_or_quality_changed", 6, f"Test/quality tooling touched: {f}"))
 
     if workflow_touched:
-        signals.append(
-            Signal("workflow_changed", 18, "GitHub Actions workflows touched")
-        )
+        signals.append(Signal("workflow_changed", 18, "GitHub Actions workflows touched"))
 
     if high_hits:
-        signals.append(
-            Signal("high_risk_area", 22, f"High-risk area files={len(high_hits)}")
-        )
+        signals.append(Signal("high_risk_area", 22, f"High-risk area files={len(high_hits)}"))
     if med_hits and not high_hits:
-        signals.append(
-            Signal("medium_risk_area", 10, f"Medium-risk area files={len(med_hits)}")
-        )
+        signals.append(Signal("medium_risk_area", 10, f"Medium-risk area files={len(med_hits)}"))
 
     keyword_signals = [s for s in signals if s.name == "core_keyword_touched"]
     if len(keyword_signals) > 3:
@@ -118,9 +108,7 @@ def main() -> int:
     payload = {
         "risk_score": score,
         "changed_files_count": len(files),
-        "top_signals": [
-            {"name": s.name, "score": s.score, "reason": s.reason} for s in signals[:10]
-        ],
+        "top_signals": [{"name": s.name, "score": s.score, "reason": s.reason} for s in signals[:10]],
     }
     print(json.dumps(payload, ensure_ascii=False))
     return 0

@@ -1,7 +1,6 @@
 # Trinity Score: 90.0 (Established by Chancellor)
 class HybridGraphRAG:
-    """
-    [Skill-019] Hybrid GraphRAG Capability
+    """[Skill-019] Hybrid GraphRAG Capability
     Provides Context7 Knowledge Graph access to Scholars.
     Mock implementation for initial deployment.
     """
@@ -15,8 +14,7 @@ class HybridGraphRAG:
         }
 
     async def query(self, query_text: str) -> list[str]:
-        """
-        Simulate RAG retrieval.
+        """Simulate RAG retrieval.
         Real implementation would talk to Neo4j/VectorDB.
         """
         results = []

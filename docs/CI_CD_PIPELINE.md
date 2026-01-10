@@ -12,25 +12,33 @@
 
 ---
 
-## 워크플로우 구조
+## 워크플로우 구조 (2026-01-09 업데이트)
 
 ### `.github/workflows/ci.yml`
+
+#### CI/CD 플레이크 방지 봉인 완료 (SSOT-LOCKED)
+- **uv run → python -m**: pyproject.toml 의존성 제한 문제 해결
+- **nohup 백그라운드**: CI 환경 프로세스 안정화
+- **sleep 15**: 서버 완전 준비까지 대기
+- **Trinity Score 검증**: 眞善美孝永 5기둥 기반 검증
 
 ```mermaid
 flowchart TD
     A[Push/PR] --> B[Checkout]
-    B --> C[Python 3.12 Setup + Cache]
-    C --> D[Install Dependencies]
-    D --> E[Trivy Security Scan]
-    E --> F[Snyk Vulnerability Scan]
-    F --> G[SARIF Upload to Security Tab]
-    G --> H[Snyk Monitor - main only]
-    H --> I[Ruff Lint]
-    I --> J[Ruff Format Check]
-    J --> K[MyPy --strict]
-    K --> L[pytest --cov]
-    L --> M[Codecov Upload]
-    M --> N[眞善美孝永 Scorecard]
+    B --> C[Python 3.12 + uv Cache]
+    C --> D[uv sync --frozen]
+    D --> E[Pyright 타입 체크]
+    E --> F[Generate Evidence]
+    F --> G[Ruff Lint]
+    G --> H[Ruff Format Check]
+    H --> I[Pyright Strict]
+    I --> J[Start API Server<br/>python -m uvicorn + nohup]
+    J --> K[Health Check<br/>/api/health/comprehensive]
+    K --> L[pytest 병렬 실행]
+    L --> M[Stop Server + Cleanup]
+    M --> N[SBOM 생성]
+    N --> O[Codecov 업로드]
+    O --> P[SSOT Trinity Text Guard]
 ```
 
 ---

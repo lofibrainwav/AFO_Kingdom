@@ -1,7 +1,8 @@
 import sys
 
+
 # Add package root to path
-sys.path.append("/Users/brnestrm/AFO_Kingdom/packages/afo-core")
+sys.path.append(str(Path(__file__).parent.parent / "packages" / "afo-core"))
 
 try:
     print("Attempting to import Julie Royal Router...")

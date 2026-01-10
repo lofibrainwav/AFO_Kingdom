@@ -1,0 +1,5 @@
+A	docs/ssot/RUFF_RULES_PLAYBOOK.md
+A	docs/ssot/SEJONG_MIDDLEWAY_VIBE_PROTOCOL.md
+A	docs/ssot/SSOT_LOCK_SYNC_GATE.md
+A	docs/ssot/allowlists/untracked_allowlist_regex.txt
+A	docs/ssot/sejong_middleway_vibe_config.yaml

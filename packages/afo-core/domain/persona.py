@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Persona Domain Model
+"""Persona Domain Model
 TRINITY-OS Personas 시스템 - Family Hub OS Phase 1 핵심
 PDF 페이지 4: "TRINITY-OS의 페르소나(Personas) 시스템" + 페이지 3: 로그 브릿지
 """
@@ -25,8 +24,7 @@ class PersonaType(str, Enum):
 
 
 class Persona(BaseModel):
-    """
-    형님의 각 역할을 디지털로 구현한 페르소나 모델 (眞善美孝永)
+    """형님의 각 역할을 디지털로 구현한 페르소나 모델 (眞善美孝永)
 
     PDF 페이지 4: "TRINITY-OS의 페르소나(Personas) 시스템"
     PDF 페이지 3: 로그 브릿지 연계
@@ -52,8 +50,7 @@ class Persona(BaseModel):
     )
 
     def switch_to(self) -> None:
-        """
-        페르소나 전환 - TRINITY-OS와 실시간 동기화
+        """페르소나 전환 - TRINITY-OS와 실시간 동기화
 
         PDF 페이지 3: 로그 브릿지
         """

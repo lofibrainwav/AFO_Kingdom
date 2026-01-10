@@ -1,5 +1,12 @@
-import argparse, hashlib, json, os, re, subprocess, sys
+import argparse
+import hashlib
+import json
+import os
+import re
+import subprocess
+import sys
 from pathlib import Path
+
 
 REQ = {
     "T25": {
@@ -29,8 +36,10 @@ REQ = {
 AUTO_BEGIN = "<!--AUTO:BEGIN-->"
 AUTO_END = "<!--AUTO:END-->"
 
+
 def sh(*args: str) -> str:
     return subprocess.check_output(args, text=True).strip()
+
 
 def sha256_file(p: Path) -> str:
     h = hashlib.sha256()
@@ -39,15 +48,19 @@ def sha256_file(p: Path) -> str:
             h.update(chunk)
     return h.hexdigest()
 
+
 def parse_report(report: Path) -> dict:
     txt = report.read_text(encoding="utf-8")
+
     def get_line(prefix: str) -> str:
-        m = re.search(rf"^{re.escape(prefix)}\s*(.*)$", txt, flags=re.M)
-        return (m.group(1).strip() if m else "")
+        m = re.search(rf"^{re.escape(prefix)}\s*(.*)$", txt, flags=re.MULTILINE)
+        return m.group(1).strip() if m else ""
+
     status = get_line("Status:")
     ts = get_line("Capture Timestamp:")
     ev = get_line("Evidence Directory:")
     return {"status": status, "ts": ts, "evidence": ev, "text": txt}
+
 
 def write_report_header(report: Path, status: str, ts: str, evidence: str):
     lines = report.read_text(encoding="utf-8").splitlines()
@@ -63,14 +76,16 @@ def write_report_header(report: Path, status: str, ts: str, evidence: str):
             out.append(line)
     report.write_text("\n".join(out) + "\n", encoding="utf-8")
 
+
 def replace_auto(report: Path, auto: str):
     txt = report.read_text(encoding="utf-8")
     a = txt.find(AUTO_BEGIN)
     b = txt.find(AUTO_END)
     if a == -1 or b == -1 or b < a:
         return
-    new_txt = txt[:a+len(AUTO_BEGIN)] + "\n\n" + auto + "\n\n" + txt[b:]
+    new_txt = txt[: a + len(AUTO_BEGIN)] + "\n\n" + auto + "\n\n" + txt[b:]
     report.write_text(new_txt, encoding="utf-8")
+
 
 def seal(ticket: str, slug: str, ts: str):
     ticket = ticket.upper().strip()
@@ -82,7 +97,7 @@ def seal(ticket: str, slug: str, ts: str):
     if not report.exists():
         raise SystemExit(f"Missing report: {report}")
 
-    ev_dir = Path(f"artifacts/{ticket.lower().replace('t','t')}/{ts}")
+    ev_dir = Path(f"artifacts/{ticket.lower().replace('t', 't')}/{ts}")
     if not ev_dir.exists():
         raise SystemExit(f"Missing evidence dir: {ev_dir}")
 
@@ -119,7 +134,7 @@ def seal(ticket: str, slug: str, ts: str):
     done = False
     if functional_green:
         if ticket == "T25":
-            done = (bandit_exit == 0)
+            done = bandit_exit == 0
         else:
             done = True
     if done:
@@ -166,7 +181,7 @@ def seal(ticket: str, slug: str, ts: str):
         f"- exitcode: {bandit_exit}" if bandit_exit is not None else "- not provided",
         "",
         "### Seal",
-        f"- seal.json: { (ev_dir / 'seal.json').as_posix() }",
+        f"- seal.json: {(ev_dir / 'seal.json').as_posix()}",
     ])
 
     replace_auto(report, auto)
@@ -174,8 +189,9 @@ def seal(ticket: str, slug: str, ts: str):
 
     print(f"SEALED_REPORT={report}")
     print(f"EVIDENCE_DIR={ev_dir}")
-    print(f"SEAL={ev_dir/'seal.json'}")
+    print(f"SEAL={ev_dir / 'seal.json'}")
     print(f"STATUS={status}")
+
 
 def gate():
     # 1) staged changed files
@@ -227,6 +243,7 @@ def gate():
                 return 1
     return 0
 
+
 def main():
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -243,6 +260,7 @@ def main():
         seal(args.ticket, args.slug, args.ts)
     else:
         raise SystemExit(gate())
+
 
 if __name__ == "__main__":
     main()

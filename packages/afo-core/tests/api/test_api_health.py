@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Test API Health Endpoints
+"""Test API Health Endpoints
 테스트 커버리지 향상 Phase 1
 """
 
@@ -61,13 +60,13 @@ class TestHealthEndpoint:
             assert 0 <= data["health_percentage"] <= 100
 
     def test_organs_present(self, client: TestClient) -> None:
-        """organs 필드가 있는지 테스트"""
+        """Organs 필드가 있는지 테스트"""
         response = client.get("/health")
         data = response.json()
         assert "organs" in data
 
     def test_decision_field(self, client: TestClient) -> None:
-        """decision 필드가 AUTO_RUN 또는 ASK인지 테스트"""
+        """Decision 필드가 AUTO_RUN 또는 ASK인지 테스트"""
         response = client.get("/health")
         data = response.json()
         if "decision" in data:

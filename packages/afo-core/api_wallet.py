@@ -23,7 +23,7 @@ import json
 import os
 from datetime import datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, Dict, Optional
 
 # Phase 8.3.3: Vault KMS 통합
 try:
@@ -83,7 +83,7 @@ if not CRYPTO_AVAILABLE:
             # Generate a fake 44-character key
             return base64.b64encode(b"mock_encryption_key_32_bytes_lo").decode().encode()
 
-    Fernet = MockFernet  # type: ignore
+    Fernet = MockFernet
 
 
 class APIWallet:
@@ -310,6 +310,7 @@ class APIWallet:
         read_only: bool = True,
         service: str = "",
         description: str = "",
+        scopes: list[str] | None = None,
     ) -> int:
         """
         Add a new API key to wallet

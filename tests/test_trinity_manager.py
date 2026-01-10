@@ -5,6 +5,7 @@ import sys
 
 import pytest
 
+
 # Ensure AFO package is importable
 sys.path.append(
     pathlib.Path(

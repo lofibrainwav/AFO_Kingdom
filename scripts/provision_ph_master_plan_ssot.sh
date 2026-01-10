@@ -6,7 +6,7 @@ VAULT="$ROOT/config/obsidian/vault"
 SRC="$VAULT/src"
 PH="$VAULT/ph"
 PH_MOC="$VAULT/_moc/ph"
-PH_MAP="$PH_MOC/PH_MAP.md"
+# PH_MAP="$PH_MOC/PH_MAP.md" (unused in bash)
 
 mkdir -p "$SRC" "$PH" "$PH_MOC"
 

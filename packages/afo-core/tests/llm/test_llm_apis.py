@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Tests for llms/ modules (Claude, Gemini, OpenAI APIs)
+"""Tests for llms/ modules (Claude, Gemini, OpenAI APIs)
 LLM API 테스트
 """
 

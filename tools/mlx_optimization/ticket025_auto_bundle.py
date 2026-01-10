@@ -1,4 +1,5 @@
 import os
+import subprocess
 import time
 
 from watchdog.events import FileSystemEventHandler
@@ -15,7 +16,7 @@ class ReleaseHandler(FileSystemEventHandler):
             print(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] New release detected: {src_path}")
             print("Rebuilding bundle...")
             # 기존 ticket024_build_dashboard_bundle.py 호출
-            result = os.system("python tools/mlx_optimization/ticket024_build_dashboard_bundle.py")
+            result = subprocess.run(["python", "tools/mlx_optimization/ticket024_build_dashboard_bundle.py"], check=False).returncode
             if result == 0:
                 print("Bundle updated successfully! Dashboard SSOT synced.")
             else:

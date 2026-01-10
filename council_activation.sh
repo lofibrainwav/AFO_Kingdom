@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 set -euo pipefail
 
 cd "$(git rev-parse --show-toplevel)"
@@ -5,12 +6,20 @@ cd "$(git rev-parse --show-toplevel)"
 RUNNER=""
 if command -v poetry >/dev/null 2>&1 && grep -q "^\[tool\.poetry\]" pyproject.toml 2>/dev/null; then
   RUNNER="poetry run"
+elif [ -f "packages/afo-core/.venv/bin/python" ]; then
+  RUNNER="packages/afo-core/.venv/bin/python"
+elif [ -f ".venv/bin/python" ]; then
+  RUNNER=".venv/bin/python"
 fi
 
 echo "=== Phase 4 / Action 1: Council Activation (Discovery) ==="
 
 echo "=== 0) Python runner ==="
-$RUNNER python -V
+if [[ "$RUNNER" == *"python"* ]]; then
+  $RUNNER -V
+else
+  $RUNNER python -V
+fi
 
 echo "=== 1) Find council/strategists definitions (search) ==="
 if command -v rg >/dev/null 2>&1; then
@@ -40,10 +49,18 @@ echo "✅ smoke: $SMOKE"
 echo "✅ philosophy: $PHILO"
 [ -n "$FULL" ] && echo "✅ full-stack: $FULL" || true
 
-$RUNNER python "$SMOKE"
-$RUNNER python "$PHILO"
-if [ -n "$FULL" ]; then
-  $RUNNER python "$FULL"
+if [[ "$RUNNER" == *"python"* ]]; then
+  $RUNNER "$SMOKE"
+  $RUNNER "$PHILO"
+  if [ -n "$FULL" ]; then
+    $RUNNER "$FULL"
+  fi
+else
+  $RUNNER python "$SMOKE"
+  $RUNNER python "$PHILO"
+  if [ -n "$FULL" ]; then
+    $RUNNER python "$FULL"
+  fi
 fi
 
 echo "=== 3) Proof-of-life demo: skills API execute (best-effort, no guessing lock-in) ==="
@@ -125,7 +142,11 @@ if __name__ == "__main__":
   raise SystemExit(main())
 PY
 
-$RUNNER python scripts/demo_mcp_execute.py || true
+if [[ "$RUNNER" == *"python"* ]]; then
+  $RUNNER scripts/demo_mcp_execute.py || true
+else
+  $RUNNER python scripts/demo_mcp_execute.py || true
+fi
 
 echo "=== RESULT ==="
 echo "✅ Phase 4 / Action 1 executed: smoke + philosophy + demo attempted"

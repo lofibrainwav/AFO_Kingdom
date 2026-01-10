@@ -4,6 +4,7 @@ import sys
 
 from langchain_core.messages import AIMessage
 
+
 # Add package root to path
 sys.path.append(pathlib.Path("packages/afo-core").resolve())
 

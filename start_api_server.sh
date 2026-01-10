@@ -16,4 +16,8 @@ fi
 export PYTHONPATH="$(pwd):$PYTHONPATH"
 
 # API 서버 시작
-python3 api_server.py
+if [ -f "../../.venv/bin/python" ]; then
+    ../../.venv/bin/python api_server.py
+else
+    python3 api_server.py
+fi

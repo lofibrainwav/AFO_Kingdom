@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Family Router
+"""Family Router
 美 (Beauty): 모듈화 + 일관 네이밍
 PDF 페이지 2: 모듈화 + 일관 네이밍
 Phase 2: Family Hub OS - 데이터 영속성 + CRUD
@@ -78,8 +77,7 @@ def calculate_happiness_impact(activity_type: str) -> float:
 
 @router.get("/")
 async def get_family_hub_status() -> dict[str, Any]:
-    """
-    Family Hub 상태 종합 조회 (Frontend: fetchFamilyStatus)
+    """Family Hub 상태 종합 조회 (Frontend: fetchFamilyStatus)
     Returns: FamilyHubResponse structure
     """
     data = load_family_data()
@@ -157,8 +155,7 @@ async def update_member(member: dict[str, Any]) -> dict[str, Any]:
 async def log_activity(
     activity: dict[str, Any], background_tasks: BackgroundTasks
 ) -> dict[str, Any]:
-    """
-    새로운 활동 로그 기록 (孝: Serenity - 기록을 통한 안심)
+    """새로운 활동 로그 기록 (孝: Serenity - 기록을 통한 안심)
     활동에 따라 행복 지수가 변동됨.
     """
     data = load_family_data()
@@ -205,8 +202,7 @@ async def get_timeline() -> dict[str, Any]:
 
 @router.get("/happiness")
 async def get_family_happiness() -> dict[str, Any]:
-    """
-    가족 행복 지표 조회 (美: Beauty)
+    """가족 행복 지표 조회 (美: Beauty)
     데이터 기반의 실제 행복 지수 반환
     """
     data = load_family_data()

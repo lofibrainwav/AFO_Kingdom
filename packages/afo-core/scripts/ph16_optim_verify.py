@@ -18,13 +18,13 @@ SOUL_ENGINE_URL = "http://localhost:8010"
 POSTGRES_DOCKER = "afo-postgres"
 
 
-def print_header(title):
+def print_header(title: str) -> None:
     print(f"\n{'=' * 60}")
     print(f" {title}")
     print(f"{'=' * 60}")
 
 
-async def check_infrastructure():
+async def check_infrastructure() -> None:
     print_header("眞 (Truth) - Infrastructure & Processes")
 
     # 1. Gunicorn Worker Count
@@ -49,7 +49,7 @@ async def check_infrastructure():
         print("❌ PostgreSQL pgvector Extension: Not Found")
 
 
-async def test_streaming_rag():
+async def test_streaming_rag() -> None:
     print_header("美 (Beauty) - Real-time Streaming Experience")
     print("Sending streamed RAG request to /api/query/stream...")
 
@@ -85,7 +85,7 @@ async def test_streaming_rag():
         print(f"❌ Streaming Failed: {e}")
 
 
-def benchmark_similarity():
+def benchmark_similarity() -> None:
     print_header("善 (Goodness) - SQL Similarity Benchmark (Simulated)")
     print("Comparing Python-level Cosine vs SQL-native Vector distance...")
 
@@ -96,7 +96,7 @@ def benchmark_similarity():
     print("✅ Improvement: ~10x-50x better scalability.")
 
 
-async def main():
+async def main() -> None:
     print("AFO Kingdom Optimization Verification Toolkit v1.0")
     print(f"Timestamp: {datetime.now().isoformat()}")
 

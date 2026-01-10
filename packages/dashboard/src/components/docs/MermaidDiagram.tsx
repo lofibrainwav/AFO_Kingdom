@@ -1,5 +1,6 @@
 "use client";
 
+import DOMPurify from "isomorphic-dompurify";
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 
@@ -80,14 +81,14 @@ export function MermaidDiagram({
         // 동적 임포트로 Mermaid 로드
         const mermaid = (await import("mermaid")).default;
 
-        // Mermaid 초기화
+        // Mermaid 초기화 (Phase 15 Security Seal: securityLevel "strict")
         mermaid.initialize({
           startOnLoad: false,
           theme: "default",
-          securityLevel: "loose",
+          securityLevel: "strict", // XSS 방지: loose → strict
           flowchart: {
             useMaxWidth: true,
-            htmlLabels: true,
+            htmlLabels: false, // XSS 방지: HTML 레이블 비활성화
           },
         });
 
@@ -96,8 +97,9 @@ export function MermaidDiagram({
         const element = containerRef.current;
         if (!element) return;
 
-        // 컨테이너 준비
-        element.innerHTML = `<div class="mermaid" id="${id}">${code}</div>`;
+        // XSS 방지: 코드 새니타이징 후 컨테이너 준비
+        const sanitizedCode = DOMPurify.sanitize(code, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
+        element.innerHTML = `<div class="mermaid" id="${id}">${sanitizedCode}</div>`;
 
         // 렌더링
         await mermaid.run({

@@ -7,6 +7,7 @@ SSOT 언어 정책이 모든 LLM 호출에 적용되는지 확인
 import sys
 from pathlib import Path
 
+
 # 프로젝트 루트를 Python 경로에 추가
 project_root = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(project_root / "packages" / "afo-core"))
@@ -52,17 +53,13 @@ def verify_language_policy():
 
         # 언어 강제 로직 확인
         has_language_policy = "Output language: Korean" in content
-        has_antigravity_import = (
-            "from AFO.config.antigravity import antigravity" in content
-        )
+        has_antigravity_import = "from AFO.config.antigravity import antigravity" in content
         has_language_check = "REPORT_LANGUAGE" in content
 
         print("\n2. llm_router.py 언어 강제 로직:")
-        print(
-            f"   {"✅" if has_language_policy else "❌"} 'Output language: Korean' 포함"
-        )
-        print(f"   {"✅" if has_antigravity_import else "❌"} antigravity import")
-        print(f"   {"✅" if has_language_check else "❌"} REPORT_LANGUAGE 체크")
+        print(f"   {'✅' if has_language_policy else '❌'} 'Output language: Korean' 포함")
+        print(f"   {'✅' if has_antigravity_import else '❌'} antigravity import")
+        print(f"   {'✅' if has_language_check else '❌'} REPORT_LANGUAGE 체크")
 
         if not (has_language_policy and has_antigravity_import and has_language_check):
             print("   ⚠️  경고: 언어 강제 로직이 완전하지 않습니다!")
@@ -74,9 +71,7 @@ def verify_language_policy():
 
     # 3. Protocol Officer 통합 확인
     try:
-        protocol_officer_path = (
-            project_root / "packages" / "afo-core" / "services" / "protocol_officer.py"
-        )
+        protocol_officer_path = project_root / "packages" / "afo-core" / "services" / "protocol_officer.py"
         if not protocol_officer_path.exists():
             print("\n3. Protocol Officer 확인:")
             print(f"   ❌ 파일을 찾을 수 없습니다: {protocol_officer_path}")
@@ -88,12 +83,8 @@ def verify_language_policy():
         has_korean_suffix = "영(永)을 이룹시다" in content
 
         print("\n3. Protocol Officer 통합:")
-        print(
-            f"   {"✅" if has_commander_format else "❌"} Commander 형식 (형님! 승상입니다)"
-        )
-        print(
-            f"   {"✅" if has_korean_suffix else "❌"} 한국어 suffix (영(永)을 이룹시다)"
-        )
+        print(f"   {'✅' if has_commander_format else '❌'} Commander 형식 (형님! 승상입니다)")
+        print(f"   {'✅' if has_korean_suffix else '❌'} 한국어 suffix (영(永)을 이룹시다)")
 
         if not (has_commander_format and has_korean_suffix):
             print("   ⚠️  경고: Protocol Officer 한국어 형식이 완전하지 않습니다!")

@@ -19,21 +19,24 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-"""VERSION: FINAL_TRUTH_1"""
+VERSION = "FINAL_TRUTH_1"
+
+# Import vision and audio services
+logger = logging.getLogger(__name__)
 
 # Import vision and audio services
 try:
+    # Option A (AFO 패키지 내부인 경우 권장)
     from services.audio_service import get_audio_service
     from services.vision_service import get_vision_service
+    # Option B (정말 top-level `services`가 따로 있을 때만)
+    # from services.audio_service import get_audio_service
+    # from services.vision_service import get_vision_service
 
     _SERVICES_AVAILABLE = True
 except ImportError:
     _SERVICES_AVAILABLE = False
-    logger = logging.getLogger(__name__)
     logger.warning("Vision/Audio services not available - using fallback mode")
-
-# 로깅 설정
-logger = logging.getLogger(__name__)
 
 # Strangler Fig: 메모리 관리 추가 (善: Goodness 안전성)
 _memory_config = {
@@ -72,8 +75,7 @@ class MultimodalDocument:
 
 
 class MultimodalRAGEngine:
-    """
-    Multimodal RAG Engine supporting text, images, and other media.
+    """Multimodal RAG Engine supporting text, images, and other media.
     Strangler Fig: 메모리 관리 및 자동 정리 기능 추가
 
     ENHANCED: Integrated with VisionService and AudioService
@@ -99,8 +101,7 @@ class MultimodalRAGEngine:
     def _estimate_document_memory(
         self, content: str, content_type: str, metadata: dict[str, Any]
     ) -> float:
-        """
-        문서의 메모리 사용량 추정 (MB)
+        """문서의 메모리 사용량 추정 (MB)
 
         Args:
             content: 문서 내용
@@ -109,6 +110,7 @@ class MultimodalRAGEngine:
 
         Returns:
             예상 메모리 사용량 (MB)
+
         """
         try:
             # 기본 텍스트 크기
@@ -137,14 +139,14 @@ class MultimodalRAGEngine:
             return 1.0  # 기본 1MB 추정
 
     def _cleanup_old_documents(self, required_space_mb: float) -> int:
-        """
-        오래된 문서 정리 (LRU 기반)
+        """오래된 문서 정리 (LRU 기반)
 
         Args:
             required_space_mb: 필요한 공간 (MB)
 
         Returns:
             정리된 문서 수
+
         """
         if not _memory_config["lru_enabled"]:
             return 0
@@ -152,16 +154,16 @@ class MultimodalRAGEngine:
         try:
             # 접근 시간으로 정렬 (오래된 것부터)
             docs_with_times = []
-            for i, doc in enumerate(self.documents):
+            for doc in self.documents:
                 access_time = self._last_access_times.get(id(doc), doc.created_at or 0)
-                docs_with_times.append((access_time, i, doc))
+                docs_with_times.append((access_time, doc))
 
             docs_with_times.sort(key=lambda x: x[0])  # 접근 시간 오름차순
 
             cleaned = 0
             freed_space = 0.0
 
-            for _, index, doc in docs_with_times:
+            for _, doc in docs_with_times:
                 if freed_space >= required_space_mb:
                     break
 
@@ -171,7 +173,10 @@ class MultimodalRAGEngine:
                 )
 
                 # 문서 제거
-                self.documents.pop(index - cleaned)  # 인덱스 조정
+                try:
+                    self.documents.remove(doc)
+                except ValueError:
+                    continue
                 self._current_memory_mb -= doc_memory
                 freed_space += doc_memory
                 cleaned += 1
@@ -202,8 +207,7 @@ class MultimodalRAGEngine:
         content_type: str = "text",
         metadata: dict[str, Any] | None = None,
     ) -> bool:
-        """
-        문서를 RAG 인덱스에 추가 (Strangler Fig 메모리 관리 적용)
+        """문서를 RAG 인덱스에 추가 (Strangler Fig 메모리 관리 적용)
 
         Args:
             content: 문서 내용
@@ -212,6 +216,7 @@ class MultimodalRAGEngine:
 
         Returns:
             추가 성공 여부
+
         """
         try:
             with _memory_lock:
@@ -329,7 +334,7 @@ class MultimodalRAGEngine:
                 metadata=metadata,
             )
         except Exception as e:
-            logger.error(f"Failed to add image: {e}")
+            logger.error("Failed to add image: %s", str(e))
             return False
 
     def add_audio(self, audio_path: str, description: str = "", transcribe: bool = True) -> bool:
@@ -381,7 +386,7 @@ class MultimodalRAGEngine:
                 metadata=metadata,
             )
         except Exception as e:
-            logger.error(f"Failed to add audio: {e}")
+            logger.error("Failed to add audio: %s", str(e))
             return False
 
     def search(
@@ -454,9 +459,7 @@ class MultimodalRAGEngine:
             return {"error": str(e)}
 
     def get_stats(self) -> dict[str, Any]:
-        """
-        엔진 통계 및 메모리 상태 반환 (Strangler Fig 메모리 모니터링)
-        """
+        """엔진 통계 및 메모리 상태 반환 (Strangler Fig 메모리 모니터링)"""
         try:
             type_counts: dict[str, int] = {}
             for doc in self.documents:
@@ -488,11 +491,11 @@ class MultimodalRAGEngine:
             return {"total_documents": 0, "error": "stats collection failed"}
 
     def _get_health_status(self) -> str:
-        """
-        엔진 건강 상태 평가
+        """엔진 건강 상태 평가
 
         Returns:
             건강 상태 문자열
+
         """
         try:
             doc_util = len(self.documents) / _memory_config["max_documents"]

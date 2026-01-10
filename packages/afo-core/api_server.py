@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-AFO Kingdom API Server (아름다운 코드 적용)
+"""AFO Kingdom API Server (아름다운 코드 적용)
 FastAPI 기반 AFO 왕국 Soul Engine API 서버
 
 이 파일은 AFO 왕국의 眞善美孝 철학을 구현합니다.
@@ -43,7 +42,6 @@ def _patch_typing_inspection_if_needed() -> None:
     This patch is safe and idempotent; it only rewrites the installed file when the
     buggy snippet is detected.
     """
-
     spec = importlib.util.find_spec("typing_inspection.typing_objects")
     if not spec or not spec.origin:
         return
@@ -91,6 +89,8 @@ from AFO.api.router_manager import setup_routers
 
 if TYPE_CHECKING:
     from fastapi import FastAPI
+from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
+from starlette.responses import Response
 
 # Configure logging
 logging.basicConfig(
@@ -100,8 +100,7 @@ logger = logging.getLogger(__name__)
 
 
 class AFOServer:
-    """
-    AFO Kingdom API Server Manager
+    """AFO Kingdom API Server Manager
 
     아름다운 코드 원칙을 준수하는 API 서버 관리 클래스.
     Trinity Score 기반 품질 관리를 통해 안정성과 확장성을 보장.
@@ -109,6 +108,7 @@ class AFOServer:
     Attributes:
         app: FastAPI 애플리케이션 인스턴스
         limiter: Rate limiting 인스턴스
+
     """
 
     def __init__(self) -> None:
@@ -211,6 +211,7 @@ class AFOServer:
 
         Returns:
             Configured FastAPI application
+
         """
         app = get_app_config()
         logger.info("FastAPI application created")
@@ -233,6 +234,24 @@ class AFOServer:
         except Exception as e:
             logger.warning(f"Multimodal Router registration failed: {e}")
 
+        # RAG Router 등록
+        try:
+            from AFO.api.routers.rag_query import router as rag_router
+
+            app.include_router(rag_router, prefix="/api")
+            logger.info("RAG Router registered successfully")
+        except Exception as e:
+            logger.warning(f"RAG Router registration failed: {e}")
+
+        # Auth Router 등록 (ACL 관리용)
+        try:
+            from AFO.api.routes.auth import router as auth_router
+
+            app.include_router(auth_router)
+            logger.info("Auth Router registered successfully")
+        except Exception as e:
+            logger.warning(f"Auth Router registration failed: {e}")
+
         return app
 
     def _create_limiter(self) -> Limiter:
@@ -240,6 +259,7 @@ class AFOServer:
 
         Returns:
             Configured rate limiter
+
         """
         limiter = Limiter(key_func=get_remote_address)
         logger.info("Rate limiter configured")
@@ -256,6 +276,31 @@ class AFOServer:
             RateLimitExceeded, cast("ExceptionHandler", _rate_limit_exceeded_handler)
         )
 
+        # Metrics 미들웨어 추가 (가장 먼저)
+        try:
+            from AFO.api.middleware.metrics import MetricsMiddleware
+
+            self.app.add_middleware(MetricsMiddleware)
+        except ImportError:
+            logger.warning("⚠️ MetricsMiddleware not available")
+
+        # ACL 미들웨어 추가 (rate limit 다음에)
+        try:
+            from AFO.api.middleware.authz import APIKeyAuthMiddleware
+
+            self.app.add_middleware(APIKeyAuthMiddleware)
+        except ImportError:
+            logger.warning("⚠️ APIKeyAuthMiddleware not available")
+
+        # ACL 초기화 (기본 엔드포인트 등록)
+        try:
+            from AFO.api.auth.api_key_acl import DEFAULT_ENDPOINT_SCOPES, acl
+
+            for path, method, scopes in DEFAULT_ENDPOINT_SCOPES:
+                acl.add_endpoint_scope(path, method, scopes)
+        except ImportError:
+            logger.warning("⚠️ API Key ACL not available")
+
         @self.app.on_event("startup")
         async def start_super_agent() -> None:
             """Start the Debugging Super Agent in the background."""
@@ -268,6 +313,17 @@ class AFOServer:
             task = asyncio.create_task(self.healing_agent.start())
             self._background_tasks.add(task)
             task.add_done_callback(self._background_tasks.discard)
+
+        @self.app.on_event("shutdown")
+        async def persist_acl_keys() -> None:
+            """서버 종료 시 ACL 키 영속 저장"""
+            try:
+                from AFO.api.auth.api_key_acl import acl
+
+                acl.persist_all_keys()
+                logger.info("✅ ACL keys persisted on shutdown")
+            except Exception as e:
+                logger.warning(f"⚠️  ACL persistence failed on shutdown: {e}")
 
         @self.app.post("/api/debug/agent/simulate", tags=["Debugging Agent"])
         async def trigger_simulation(
@@ -291,6 +347,10 @@ class AFOServer:
                 "agent_name": self.healing_agent.name,
                 "current_entropy": self.healing_agent.state.entropy,
             }
+
+        @self.app.get("/metrics")
+        async def metrics():
+            return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)
 
         logger.info("Application configured with security measures")
 
@@ -327,6 +387,7 @@ class AFOServer:
         Args:
             host: Server host address
             port: Server port number
+
         """
         logger.info(f"🚀 Starting AFO Kingdom API Server on {host}:{port}")
         uvicorn.run(self.app, host=host, port=port)

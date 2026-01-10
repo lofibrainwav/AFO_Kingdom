@@ -7,8 +7,7 @@ from AFO.julie_cpa.config import julie_config
 
 
 class FinancialConnector:
-    """
-    [Three Kingdoms #14 & #21]
+    """[Three Kingdoms #14 & #21]
     Resilient Connector for External Financial APIs (Mocked).
     Implements Retry (Three Visits) and Circuit Breaker (Bitter Meat).
     """
@@ -19,8 +18,7 @@ class FinancialConnector:
         self._threshold = julie_config.MAX_RETRIES
 
     async def fetch_bank_data(self, account_id: str) -> dict[str, Any]:
-        """
-        [Three Kingdoms #14: Three Visits]
+        """[Three Kingdoms #14: Three Visits]
         Retries up to 3 times before giving up.
         """
         if self._circuit_open:
@@ -60,8 +58,7 @@ class FinancialConnector:
         }
 
     async def fetch_dashboard_data(self, account_id: str) -> dict[str, Any]:
-        """
-        [Dynamic Simulation Layer]
+        """[Dynamic Simulation Layer]
         Fetches consolidated dashboard data.
         In Phase 2, this simulates a real aggregator response.
         """
@@ -74,8 +71,7 @@ class FinancialConnector:
         return self._simulate_financial_data(account_id)
 
     def _simulate_financial_data(self, account_id: str) -> dict[str, Any]:
-        """
-        Generates realistic-looking financial data for the dashboard.
+        """Generates realistic-looking financial data for the dashboard.
         Simulates:
         - Monthly Spending (Randomized around base)
         - Budget Remaining

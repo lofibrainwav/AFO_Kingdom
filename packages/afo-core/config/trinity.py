@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Trinity Configuration (Single Source of Truth)
+"""Trinity Configuration (Single Source of Truth)
 
 Defines the 5 Pillars of the AFO Kingdom and their weights.
 This is the absolute reference for all scoring and governance logic.

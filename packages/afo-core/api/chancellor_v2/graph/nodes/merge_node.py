@@ -8,19 +8,18 @@ if TYPE_CHECKING:
     from api.chancellor_v2.graph.state import GraphState
 
 
-def merge_node(state: GraphState) -> GraphState:
-    """Synthesize results from TRUTH, GOODNESS, and BEAUTY nodes.
+async def merge_node(state: GraphState) -> GraphState:
+    """Aggregate all strategist evaluations and make a final decision.
 
     SSOT Contract: Return DecisionResult, never bare boolean.
 
     Args:
         state: Current graph state
-
     Returns:
         Updated graph state with DecisionResult evaluation
     """
-    from afo.learning_loader import get_learning_profile
-    from afo.trinity_config import BASE_CONFIG, apply_learning_profile
+    from AFO.learning_loader import get_learning_profile
+    from AFO.trinity_config import BASE_CONFIG, apply_learning_profile
 
     from ..decision_result import DecisionResult
 
@@ -57,7 +56,6 @@ def merge_node(state: GraphState) -> GraphState:
     # SSOT validation: All 5 pillars must be present for valid Trinity Score
     pillars_present = {"truth", "goodness", "beauty"}
     if not pillars_present.issubset(pillar_scores.keys()):
-        missing_pillars = pillars_present - set(pillar_scores.keys())
         trinity_score = 0  # Force 0 if pillars missing
 
     # Risk Score (currently using goodness_score as proxy, can be enhanced)

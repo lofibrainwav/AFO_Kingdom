@@ -16,13 +16,13 @@ from typing import Any
 import httpx
 
 try:
-    from .mcp_error_handler import MCPErrorHandler, mcp_tool_call_with_retry
+    from AFO.mcp_error_handler import MCPErrorHandler, mcp_tool_call_with_retry
 
     ERROR_HANDLER_AVAILABLE = True
 except ImportError:
     ERROR_HANDLER_AVAILABLE = False
 
-    from .advanced_retry import with_condition_retry
+    from AFO.advanced_retry import with_condition_retry
 
     ADVANCED_RETRY_AVAILABLE = True
 except ImportError:

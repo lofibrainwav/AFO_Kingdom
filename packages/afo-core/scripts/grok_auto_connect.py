@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Grok Auto Connect - The Chrome Link
+"""Grok Auto Connect - The Chrome Link
 Phase 15: The Grok Singularity
 
 Description:

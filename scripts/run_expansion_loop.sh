@@ -92,8 +92,9 @@ generate_and_execute_ticket() {
     local ticket_title="$1"
     local ticket_number="$2"
 
-    # PH-SE-02 Contract: 티켓 ID 규칙
-    local ticket_id="PH-SE-$PHASE-$(printf "%03d" "$ticket_number")"
+        # PH-SE-02 Contract: 티켓 ID 규칙
+        local ticket_id
+        ticket_id="PH-SE-$PHASE-$(printf "%03d" "$ticket_number")"
 
     log "🎫 Generating ticket: $ticket_id - $ticket_title"
 

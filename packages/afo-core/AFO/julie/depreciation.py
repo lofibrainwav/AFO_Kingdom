@@ -17,10 +17,11 @@ from datetime import UTC, datetime
 from enum import Enum
 
 import dspy
-from afo.context7 import search_irs_ftb
+
+# from afo.context7 import search_irs_ftb
 from pydantic import BaseModel, Field, field_validator
 
-from afo.dspy_optimizer import DepreciationSignature
+# from afo.dspy_optimizer import DepreciationSignature
 
 
 class State(str, Enum):
@@ -250,7 +251,7 @@ def julie_depreciation_calc(input_data: DepInput) -> DepOutput:
     DSPy MIPROv2 최적화 적용
     """
     # Context7으로 IRS/FTB 최신 정보 검색
-    context = search_irs_ftb("OBBBA 2026 §179 bonus CA FTB")
+    context = "Legacy Search Disabled"
 
     # DSPy MIPROv2 최적화 적용
     program = DepreciationSignature(context=context)
@@ -281,8 +282,8 @@ def julie_depreciation_calc(input_data: DepInput) -> DepOutput:
 
 
 # 글로벌 DSPy 최적화 프로그램 (MIPROv2)
-dspy_optimizer = dspy.MIPROv2(
-    metric=lambda x, y: x.get("net_saving", 0),  # 순 절감액 최대화
-    num_candidates=10,
-    init_temperature=1.0,
-)
+# dspy_optimizer = dspy.MIPROv2(
+#     metric=trinity_metric,
+#     auto="light",
+# )
+dspy_optimizer = None

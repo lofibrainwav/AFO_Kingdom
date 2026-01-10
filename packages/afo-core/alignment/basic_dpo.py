@@ -19,15 +19,14 @@ def run_basic_dpo(
     data_path: str = "preference_data.json",
     output_dir: str = "./afo_dpo_results",
 ):
-    """
-    Executes Basic DPO Training with Full Configuration.
+    """Executes Basic DPO Training with Full Configuration.
 
     Args:
         model_name: HuggingFace model ID (Default: gpt2 for testing)
         data_path: Path to preference dataset (JSON format with 'prompt', 'chosen', 'rejected')
         output_dir: Directory to save the aligned model
-    """
 
+    """
     logger.info(f"🚀 [DPO] Initializing Basic DPO for model: {model_name}")
 
     # 1. Load Model & Tokenizer

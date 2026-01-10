@@ -1,0 +1,83 @@
+{
+  // 🎯 Pyright 타입 체킹 회귀 방지 기준선 (2026-01-07 봉인)
+  // TOTAL_DIAGNOSTICS: 442개 고정 (초기 582개에서 24.1% 감소)
+  // UnknownVariableType: 48개 고정
+  // UnknownMemberType: 35개 고정
+  // CI Gate: 진단 수 442개 초과 시 실패 (또는 경고)
+  "exclude": [
+    "**/.git/**",
+    "**/.venv*/**",
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/site-packages/**",
+    "**/*.metallib",
+    "**/*.dylib",
+    "**/*.so",
+    "**/*.a",
+    "**/libtorch*/**",
+    "packages/trinity-os/tests",
+    "packages/afo-core/tests",
+    "packages/afo-core/legacy",
+    "packages/afo-core/scripts",
+    "packages/afo-core/tigers",
+    "packages/afo-core/verify_*.py",
+    "packages/afo-core/strategists",
+    "packages/afo-core/stubs.py",
+    "packages/afo-core/julie_cpa",
+    "packages/afo-core/docs",
+    "tests"
+  ],
+  "executionEnvironments": [
+    {
+      "root": "packages/afo-core/AFO",
+      "extraPaths": [
+        "packages/afo-core",
+        "packages/trinity-os"
+      ]
+    },
+    {
+      "root": "packages/afo-core",
+      "extraPaths": [
+        "packages/afo-core",
+        "packages/trinity-os"
+      ]
+    },
+    {
+      "root": "packages/trinity-os",
+      "extraPaths": [
+        "packages/afo-core",
+        "packages/trinity-os"
+      ]
+    }
+  ],
+  "include": [
+    "packages/afo-core/AFO",
+    "packages/afo-core/utils"
+  ],
+  "pythonVersion": "3.12",
+  "reportMissingImports": "none",
+  "reportMissingTypeStubs": "none",
+  "reportAttributeAccessIssue": "none",
+  "reportArgumentType": "none",
+  "reportGeneralTypeIssues": "none",
+  "reportCallIssue": "none",
+  "reportOptionalMemberAccess": "none",
+  "reportInvalidTypeVarUse": "none",
+  "reportOptionalCall": "none",
+  "reportInvalidTypeForm": "none",
+  "reportTypedDictNotRequiredAccess": "none",
+  "reportReturnType": "none",
+  "reportMissingModuleSource": "none",
+  "reportAssignmentType": "none",
+  "reportUnusedExpression": "none",
+  "reportUnboundVariable": "none",
+  "reportOperatorIssue": "none",
+  "reportRedeclaration": "none",
+  "reportOptionalContextManager": "none",
+  "reportUnsupportedDunderAll": "none",
+  "stubPath": "typings",
+  "typeCheckingMode": "basic",
+  "venv": ".venv",
+  "venvPath": "."
+}

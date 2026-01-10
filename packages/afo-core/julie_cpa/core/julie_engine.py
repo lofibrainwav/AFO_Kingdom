@@ -62,8 +62,7 @@ class AdjustBudgetCommand(FinancialCommand):
 
 
 class JulieCPA:
-    """
-    Julie CPA AutoMate - 의(義)의 기술
+    """Julie CPA AutoMate - 의(義)의 기술
     재정적 자유와 절대적 정확성을 위한 자동 회계·세무 엔진
     """
 

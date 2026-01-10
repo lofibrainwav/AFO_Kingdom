@@ -12,6 +12,7 @@ import time
 from pathlib import Path
 from typing import Any
 
+
 # 테스트할 MCP 서버 목록
 MCP_SERVERS = [
     {
@@ -38,9 +39,9 @@ SKILLS_TO_TEST = [
 
 def test_mcp_server(server_config: dict[str, Any]) -> dict[str, Any]:
     """MCP 서버의 모든 도구를 테스트하고 Trinity Score 반환 여부 확인"""
-    print(f"\n{"=" * 70}")
-    print(f"🔍 Testing: {server_config["name"]}")
-    print(f"{"=" * 70}")
+    print(f"\n{'=' * 70}")
+    print(f"🔍 Testing: {server_config['name']}")
+    print(f"{'=' * 70}")
 
     server_path = Path(server_config["path"])
     if not server_path.exists():
@@ -105,9 +106,7 @@ def test_mcp_server(server_config: dict[str, Any]) -> dict[str, Any]:
         process.stdin.write(json.dumps(list_req) + "\n")
         process.stdin.flush()
         list_response = json.loads(process.stdout.readline())
-        available_tools = [
-            t["name"] for t in list_response.get("result", {}).get("tools", [])
-        ]
+        available_tools = [t["name"] for t in list_response.get("result", {}).get("tools", [])]
 
         print(f"📋 Available tools: {available_tools}")
 
@@ -115,14 +114,12 @@ def test_mcp_server(server_config: dict[str, Any]) -> dict[str, Any]:
         for tool_name in server_config["tools"]:
             if tool_name not in available_tools:
                 print(f"  ⚠️  {tool_name}: Not available in server")
-                results["tool_results"].append(
-                    {
-                        "tool": tool_name,
-                        "status": "skipped",
-                        "reason": "Not available",
-                        "trinity_score": None,
-                    }
-                )
+                results["tool_results"].append({
+                    "tool": tool_name,
+                    "status": "skipped",
+                    "reason": "Not available",
+                    "trinity_score": None,
+                })
                 continue
 
             results["tools_tested"] += 1
@@ -160,13 +157,11 @@ def test_mcp_server(server_config: dict[str, Any]) -> dict[str, Any]:
             response_line = process.stdout.readline()
             if not response_line:
                 print("    ❌ No response")
-                results["tool_results"].append(
-                    {
-                        "tool": tool_name,
-                        "status": "error",
-                        "trinity_score": None,
-                    }
-                )
+                results["tool_results"].append({
+                    "tool": tool_name,
+                    "status": "error",
+                    "trinity_score": None,
+                })
                 continue
 
             try:
@@ -178,39 +173,29 @@ def test_mcp_server(server_config: dict[str, Any]) -> dict[str, Any]:
                 has_trinity_score = trinity_score is not None
 
                 if has_trinity_score:
-                    print(
-                        f"    ✅ Trinity Score: {trinity_score.get("trinity_score", 0):.2%}"
-                    )
-                    print(
-                        f"       Balance: {trinity_score.get("balance_status", "unknown")}"
-                    )
+                    print(f"    ✅ Trinity Score: {trinity_score.get('trinity_score', 0):.2%}")
+                    print(f"       Balance: {trinity_score.get('balance_status', 'unknown')}")
                     results["tools_passed"] += 1
-                    results["tool_results"].append(
-                        {
-                            "tool": tool_name,
-                            "status": "passed",
-                            "trinity_score": trinity_score,
-                        }
-                    )
+                    results["tool_results"].append({
+                        "tool": tool_name,
+                        "status": "passed",
+                        "trinity_score": trinity_score,
+                    })
                 else:
                     print("    ❌ No Trinity Score in response")
-                    results["tool_results"].append(
-                        {
-                            "tool": tool_name,
-                            "status": "failed",
-                            "trinity_score": None,
-                        }
-                    )
+                    results["tool_results"].append({
+                        "tool": tool_name,
+                        "status": "failed",
+                        "trinity_score": None,
+                    })
 
             except json.JSONDecodeError as e:
                 print(f"    ❌ Invalid JSON response: {e}")
-                results["tool_results"].append(
-                    {
-                        "tool": tool_name,
-                        "status": "error",
-                        "trinity_score": None,
-                    }
-                )
+                results["tool_results"].append({
+                    "tool": tool_name,
+                    "status": "error",
+                    "trinity_score": None,
+                })
 
     except Exception as e:
         results["status"] = "error"
@@ -228,9 +213,9 @@ def test_mcp_server(server_config: dict[str, Any]) -> dict[str, Any]:
 
 def test_skills_registry() -> dict[str, Any]:
     """Skills Registry의 스킬들이 Trinity Score를 반환하는지 테스트"""
-    print(f"\n{"=" * 70}")
+    print(f"\n{'=' * 70}")
     print("🔍 Testing: Skills Registry")
-    print(f"{"=" * 70}")
+    print(f"{'=' * 70}")
 
     try:
         import sys
@@ -258,31 +243,25 @@ def test_skills_registry() -> dict[str, Any]:
 
             # Check if skill has philosophy_scores
             if skill.philosophy_scores:
-                print(
-                    f"    ✅ Has Philosophy Scores: {skill.philosophy_scores.summary}"
-                )
+                print(f"    ✅ Has Philosophy Scores: {skill.philosophy_scores.summary}")
                 results["tools_passed"] += 1
-                results["tool_results"].append(
-                    {
-                        "tool": skill.skill_id,
-                        "status": "passed",
-                        "philosophy_scores": {
-                            "truth": skill.philosophy_scores.truth,
-                            "goodness": skill.philosophy_scores.goodness,
-                            "beauty": skill.philosophy_scores.beauty,
-                            "serenity": skill.philosophy_scores.serenity,
-                        },
-                    }
-                )
+                results["tool_results"].append({
+                    "tool": skill.skill_id,
+                    "status": "passed",
+                    "philosophy_scores": {
+                        "truth": skill.philosophy_scores.truth,
+                        "goodness": skill.philosophy_scores.goodness,
+                        "beauty": skill.philosophy_scores.beauty,
+                        "serenity": skill.philosophy_scores.serenity,
+                    },
+                })
             else:
                 print("    ❌ No Philosophy Scores")
-                results["tool_results"].append(
-                    {
-                        "tool": skill.skill_id,
-                        "status": "failed",
-                        "philosophy_scores": None,
-                    }
-                )
+                results["tool_results"].append({
+                    "tool": skill.skill_id,
+                    "status": "failed",
+                    "philosophy_scores": None,
+                })
 
         return results
 
@@ -314,9 +293,9 @@ def main():
     all_results.append(skills_result)
 
     # 3. 결과 요약
-    print(f"\n{"=" * 70}")
+    print(f"\n{'=' * 70}")
     print("📊 테스트 결과 요약")
-    print(f"{"=" * 70}")
+    print(f"{'=' * 70}")
 
     total_tested = 0
     total_passed = 0
@@ -330,22 +309,16 @@ def main():
         total_tested += tested
         total_passed += passed
 
-        status_icon = (
-            "✅"
-            if status == "success" and passed == tested
-            else "⚠️" if status == "success" else "❌"
-        )
+        status_icon = "✅" if status == "success" and passed == tested else "⚠️" if status == "success" else "❌"
         print(f"\n{status_icon} {server_name}")
         print(f"   테스트: {tested}개, 통과: {passed}개")
 
         if status == "error":
-            print(f"   에러: {result.get("message", "Unknown error")}")
+            print(f"   에러: {result.get('message', 'Unknown error')}")
 
-    print(f"\n{"=" * 70}")
-    print(
-        f"전체: {total_tested}개 도구 중 {total_passed}개 통과 ({total_passed / total_tested * 100:.1f}%)"
-    )
-    print(f"{"=" * 70}")
+    print(f"\n{'=' * 70}")
+    print(f"전체: {total_tested}개 도구 중 {total_passed}개 통과 ({total_passed / total_tested * 100:.1f}%)")
+    print(f"{'=' * 70}")
 
     # 결과를 JSON 파일로 저장
     output_file = Path("test_results_trinity_score.json")
@@ -356,9 +329,7 @@ def main():
                 "summary": {
                     "total_tested": total_tested,
                     "total_passed": total_passed,
-                    "pass_rate": (
-                        total_passed / total_tested * 100 if total_tested > 0 else 0
-                    ),
+                    "pass_rate": (total_passed / total_tested * 100 if total_tested > 0 else 0),
                 },
                 "results": all_results,
             },

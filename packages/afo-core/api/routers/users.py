@@ -113,7 +113,11 @@ async def create_user(request: UserCreateRequest) -> dict[str, Any]:
     if AUTH_UTILS_AVAILABLE:
         hashed_password = hash_password(request.password)
     else:
-        hashed_password = f"hashed_{hash(request.password)}"
+        # Phase 15 Security Seal: hash() 취약점 제거 - 안전한 해시 없이 사용자 생성 거부
+        raise HTTPException(
+            status_code=503,
+            detail="인증 시스템 초기화 중입니다. 잠시 후 다시 시도해주세요.",
+        )
 
     # DB에 저장 (가능한 경우)
     if DB_AVAILABLE:

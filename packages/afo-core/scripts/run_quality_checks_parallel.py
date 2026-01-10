@@ -1,7 +1,6 @@
 # Trinity Score: 90.0 (Established by Chancellor)
 #!/usr/bin/env python3
-"""
-AFO 왕국 코드 품질 체크 스크립트 (병렬 실행 - Python 버전)
+"""AFO 왕국 코드 품질 체크 스크립트 (병렬 실행 - Python 버전)
 ruff, pytest, mypy 병렬 실행
 """
 
@@ -19,11 +18,11 @@ NC = "\033[0m"  # No Color
 
 
 async def run_command(name: str, command: list[str], description: str) -> tuple[str, bool, str]:
-    """
-    명령 실행 (비동기)
+    """명령 실행 (비동기)
 
     Returns:
         (name, success, output)
+
     """
     print(f"{BLUE}📋 [병렬] {description} 시작...{NC}")
 

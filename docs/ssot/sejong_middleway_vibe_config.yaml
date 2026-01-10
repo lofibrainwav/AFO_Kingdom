@@ -1,0 +1,35 @@
+version: 1
+protocol: SEJONG_MIDDLEWAY_VIBE
+
+pipeline:
+  - ABSORB_STATE
+  - MIDDLEWAY_ROUTER
+  - RENDER
+
+gates:
+  truth_minimum_gate:
+    policy: fail_closed
+    requires:
+      - evidence_or_repro
+      - no_hallucination_claims
+
+renderers:
+  SEJONG_RENDER:
+    style: "한국어 쉬움, 1문장=1생각, 행동 1~3개"
+  DEV_RENDER:
+    style: "명령/커맨드/경로/검증 중심, 간결"
+  VIBE_DOC_RENDER:
+    style: "비유/리듬/이모지 허용, 이해 우선 (문서에만)"
+
+routing:
+  risk_high_or_external:
+    prefer: [DEV_RENDER, SEJONG_RENDER]
+    pillars_weight: { truth: 0.4, goodness: 0.3, serenity: 0.2, beauty: 0.1 }
+  learning_or_onboarding:
+    prefer: [SEJONG_RENDER, VIBE_DOC_RENDER]
+    pillars_weight: { truth: 0.25, goodness: 0.2, serenity: 0.3, beauty: 0.25 }
+
+output_rules:
+  code_and_gates: "cold_precise"
+  docs_and_explanations: "warm_simple_vibey"
+  language_is_renderer: true

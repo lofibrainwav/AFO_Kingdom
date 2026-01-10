@@ -1,0 +1,4 @@
+docs/ssot/allowlists/untracked_allowlist_regex.txt
+health_gate_rules.txt
+scripts/antigravity_health.sh
+scripts/ssot_lock_sync_gate.sh
