@@ -15,8 +15,8 @@ from typing import Any
 
 logger = logging.getLogger(__name__)
 
-# Local Ollama endpoint (accessible from Docker via host.docker.internal)
-OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://host.docker.internal:11434")
+# Local Ollama endpoint (accessible from Docker via host.docker.internal, localhost for local dev)
+OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://localhost:11434")
 
 
 class VisionService:

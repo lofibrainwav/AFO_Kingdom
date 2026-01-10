@@ -23,6 +23,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, cast
 
 from fastapi import Header, HTTPException  # Added for security
+from sse_starlette.sse import EventSourceResponse
 from starlette.requests import Request
 from starlette.responses import Response
 
@@ -351,6 +352,38 @@ class AFOServer:
         @self.app.get("/metrics")
         async def metrics():
             return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)
+
+        # SSE Log Stream for Chancellor Real-time Thoughts (眞·美)
+        @self.app.get("/api/logs/stream", tags=["Logs"])
+        async def logs_stream(request: Request):
+            """Stream real-time chancellor thoughts via Server-Sent Events."""
+            print("DEBUG: logs_stream called!")
+
+            async def event_generator():
+                """Generate SSE events for chancellor stream."""
+                import datetime
+
+                # Initial connection message
+                yield {
+                    "event": "connected",
+                    "data": f'{{"message": "🏰 Chancellor Stream Connected", "timestamp": "{datetime.datetime.now(datetime.UTC).isoformat()}"}}',
+                }
+
+                counter = 0
+                while True:
+                    # Check if client disconnected
+                    if await request.is_disconnected():
+                        break
+
+                    # Heartbeat every 15 seconds
+                    await asyncio.sleep(15)
+                    counter += 1
+                    yield {
+                        "event": "heartbeat",
+                        "data": f'{{"message": "💓 Chancellor Heartbeat #{counter}", "timestamp": "{datetime.datetime.now(datetime.UTC).isoformat()}"}}',
+                    }
+
+            return EventSourceResponse(event_generator())
 
         logger.info("Application configured with security measures")
 

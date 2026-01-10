@@ -8,39 +8,86 @@ if TYPE_CHECKING:
     from api.chancellor_v2.graph.state import GraphState
 
 
-def eternity_node(state: GraphState) -> GraphState:
+async def eternity_node(state: GraphState) -> GraphState:
     """Evaluate persistence, documentation, and reproducibility aspects.
 
     永 (Eternity) - 영속성, 기록 보존, 재현 가능성 (2% 가중치)
-
-    Args:
-        state: Current graph state
-
-    Returns:
-        Updated graph state with eternity evaluation
+    Scholar: Yeongdeok (Ollama / Local Scholar)
     """
     skill_id = state.plan.get("skill_id", "")
     query = state.plan.get("query", "")
 
-    # Evaluate documentation quality
-    documentation_score = _evaluate_documentation_quality(query)
-
-    # Evaluate reproducibility
+    # 1. Heuristic Evaluation
+    documentation_quality_score = _evaluate_documentation_quality(query)
     reproducibility_score = _evaluate_reproducibility(skill_id)
+    persistence_guarantees_score = _evaluate_persistence_guarantees(state)
+    heuristic_score = (
+        documentation_quality_score * 0.4
+        + reproducibility_score * 0.3
+        + persistence_guarantees_score * 0.3
+    )
 
-    # Evaluate persistence guarantees
-    persistence_score = _evaluate_persistence_guarantees(state)
+    # 2. Scholar Assessment (Yeongdeok)
+    import json
 
-    # Overall eternity score (평균)
-    eternity_score = (documentation_score + reproducibility_score + persistence_score) / 3.0
+    from llm_router import llm_router
+
+    prompt = f"""
+    You are Yeongdeok (永), the Eternity Strategist of the AFO Kingdom.
+    Analyze the following execution plan for persistence, reproducibility, and documentation.
+
+    Plan:
+    - Skill: {skill_id}
+    - Query: {query}
+    - Command: {state.input.get("command", "")}
+
+    Guidelines:
+    - Evaluate if the results of this plan will be persisted correctly.
+    - Assess if the execution is reproducible.
+    - Check if documentation requirements are met.
+
+    Provide your assessment in JSON:
+    {{
+      "score": float (0.0 to 1.0),
+      "reasoning": string,
+      "issues": list[string]
+    }}
+    """
+
+    scholar_score = heuristic_score
+    reasoning = "Heuristic assessment based on persistence and documentation indicators."
+    issues = []
+    assessment_mode = "Heuristic (Fallback)"
+    scholar_model = "None"
+
+    try:
+        response = await llm_router.execute_with_routing(
+            prompt, context={"provider": "ollama", "quality_tier": "standard"}
+        )
+        if response and response.get("response"):
+            try:
+                text = (
+                    response["response"].strip().replace("```json", "").replace("```", "").strip()
+                )
+                data = json.loads(text)
+                scholar_score = data.get("score", heuristic_score)
+                reasoning = data.get("reasoning", reasoning)
+                issues = data.get("issues", [])
+                assessment_mode = "LLM (Scholar)"
+                scholar_model = response.get("model", "Ollama/Yeongdeok")
+            except:
+                pass
+    except Exception as e:
+        state.errors.append(f"Yeongdeok (ETERNITY) assessment failed: {e}")
+
+    # Combine: 30% Heuristic + 70% Scholar
+    final_score = (heuristic_score * 0.3) + (scholar_score * 0.7)
 
     evaluation = {
-        "skill_id": skill_id,
-        "documentation_score": documentation_score,
-        "reproducibility_score": reproducibility_score,
-        "persistence_score": persistence_score,
-        "eternity_score": eternity_score,
-        "issues": [],
+        "score": round(final_score, 3),
+        "reasoning": reasoning,
+        "issues": issues,
+        "metadata": {"mode": assessment_mode, "scholar": "Yeongdeok (永)", "model": scholar_model},
     }
 
     # Store evaluation results

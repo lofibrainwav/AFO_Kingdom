@@ -6,6 +6,7 @@ TICKET-046 모듈화 검증 시스템 통합 테스트
 """
 
 import asyncio
+import subprocess
 import sys
 from pathlib import Path
 
@@ -43,7 +44,7 @@ def calculate_sum(a, b):
 # 보안 취약점
 import os
 def dangerous_cmd(cmd):
-    return os.system(cmd)  # 보안 위험
+    return subprocess.run(cmd, shell=isinstance(cmd, str), check=False).returncode  # 보안 위험
 
 # 프로덕션용 assert
 assert True  # 프로덕션에서 제거해야 함

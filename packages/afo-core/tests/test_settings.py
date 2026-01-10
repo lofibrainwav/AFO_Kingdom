@@ -12,7 +12,8 @@ def test_get_settings():
     assert settings is not None
     assert hasattr(settings, "POSTGRES_HOST")
     assert hasattr(settings, "REDIS_URL")
-    assert hasattr(settings, "QDRANT_URL")
+    assert hasattr(settings, "VECTOR_DB")
+    assert hasattr(settings, "LANCEDB_PATH")
 
 
 def test_settings_defaults():

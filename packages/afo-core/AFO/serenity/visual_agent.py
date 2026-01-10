@@ -108,7 +108,9 @@ class VisualAgent:
             logger.error(f"Brain analysis failed: {e}")
             return VisualPlan(goal=goal, actions=[], stop=True, summary=f"Analysis error: {e!s}")
 
-    async def execute_action(self, action: VisualAction, screenshot_data: dict[str, Any]) -> dict[str, Any]:
+    async def execute_action(
+        self, action: VisualAction, screenshot_data: dict[str, Any]
+    ) -> dict[str, Any]:
         """Hand (Playwright): Execute single validated action"""
         try:
             # Denormalize bbox for screen coordinates

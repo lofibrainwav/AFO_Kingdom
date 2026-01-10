@@ -23,7 +23,6 @@ PACKAGE_MAPPING = {
     "web3.py": "web3",
     "suno-api": "suno",  # sunoai 패키지는 import 시 suno
     "sentence-transformers": "sentence_transformers",
-    "hcloud": "hcloud",
     "eth-account": "eth_account",
     "ai-analysis": None,  # 내부 모듈
     "react": None,  # 프론트엔드

@@ -1,0 +1,111 @@
+ D .claude/settings.local.json.backup
+ M .github/workflows/ci.yml
+ D .qdrant-initialized
+ D artifacts/ci/mypy_regressions.txt
+ D artifacts/ci/pyright_regressions.txt
+ D artifacts/experiments/003/20251227_122201/post_api_education_sse.log
+ D artifacts/experiments/003/20251227_122201/pre_api_education_sse.log
+ D artifacts/experiments/003/20251227_122201/pre_api_grok_stream.log
+ D artifacts/experiments/003/20251227_122201/pre_api_matrix-stream.log
+ D artifacts/experiments/003/20251227_122201/pre_api_stream_mcp_thoughts.log
+ D artifacts/experiments/003/20251227_122201/pre_api_system_logs_stream.log
+ D artifacts/experiments/004_repair_20251227_122906/loc_auth_health.txt
+ D artifacts/experiments/005/20251227_124632/fault_sse_silent/headers.txt
+ D artifacts/ph20/status/20251227-213054/compose_ps.txt
+ D artifacts/ph20/status_followup/20251227-213257/compose_ps.txt
+ D artifacts/ph20/status_followup/20251227-213257/logs_soul_engine.txt
+ D artifacts/phase6_skills_20251229_101930.json
+ D artifacts/t25/20251225-2053/skills_body.json
+ D artifacts/t25/20251225-2054/skills_body.json
+ D "docs/[2025-12-28-18:55:14]-\360\237\216\257-Prioritizing-next-ticket...\n[2025-12-28-18:55:14]-\360\237\223\210-Priority:-Kingdom-expansion\nPH-SE-04:-Feature-Auto-Generator.md"
+ D "docs/[2025-12-28-18:55:22]-\360\237\216\257-Prioritizing-next-ticket...\n[2025-12-28-18:55:22]-\360\237\223\210-Priority:-Kingdom-expansion\nPH-SE-04:-Feature-Auto-Generator.md"
+ D docs/ssot/evidence/ABS_PATH_FIX_20260106_102345/patched_files.txt
+ D docs/ssot/evidence/ABS_PATH_FIX_20260106_102345/todo_manual_fix.txt
+ D docs/ssot/evidence/ABS_PATH_FIX_20260106_102403/patched_files.txt
+ D docs/ssot/evidence/ABS_PATH_FIX_20260106_102403/todo_manual_fix.txt
+ D docs/ssot/evidence/ABS_PATH_FIX_20260106_102423/patched_files.txt
+ D docs/ssot/evidence/ABS_PATH_FIX_20260106_102423/todo_manual_fix.txt
+ D docs/ssot/evidence/ABS_PATH_FIX_20260106_102500/patched_files.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_100720/abs_path_hits.err.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_100720/git_diff_staged.err.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_100720/git_diff_staged.out.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_100720/git_diff_unstaged.err.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_100720/git_status_sb.err.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_100720/ruff_version.err.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_101216/abs_path_hits.err.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_101216/git_diff_staged.err.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_101216/git_diff_staged.out.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_101216/git_diff_unstaged.err.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_101216/git_status_sb.err.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_101216/ruff_version.err.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_101232/abs_path_hits.err.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_101232/git_diff_staged.err.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_101232/git_diff_staged.out.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_101232/git_diff_unstaged.err.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_101232/git_status_sb.err.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_101232/ruff_version.err.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_101251/abs_path_hits.err.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_101251/allowlist_git_add.err.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_101251/allowlist_git_add.out.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_101251/git_diff_staged.err.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_101251/git_diff_staged.out.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_101251/git_diff_unstaged.err.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_101251/git_status_sb.err.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_101251/ruff_version.err.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_101317/abs_path_hits.err.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_101317/git_diff_staged.err.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_101317/git_diff_unstaged.err.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_101317/git_status_sb.err.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_101317/ruff_version.err.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_101531/abs_path_hits.err.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_101531/git_diff_staged.err.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_101531/git_diff_unstaged.err.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_101531/git_status_sb.err.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_101531/ruff_version.err.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_101631/abs_path_hits.err.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_101631/git_diff_staged.err.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_101631/git_diff_unstaged.err.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_101631/git_status_sb.err.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_101631/ruff_version.err.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_101654/abs_path_hits.err.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_101654/allowlist_git_add.err.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_101654/allowlist_git_add.out.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_101654/git_diff_staged.err.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_101654/git_diff_unstaged.err.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_101654/git_status_sb.err.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_101654/ruff_version.err.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_102516/abs_path_hits.err.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_102516/git_diff_staged.err.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_102516/git_diff_unstaged.err.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_102516/git_status_sb.err.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_102516/ruff_version.err.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_103611/abs_path_hits.err.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_103611/git_diff_staged.err.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_103611/git_diff_unstaged.err.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_103611/git_status_sb.err.txt
+ D docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_103611/ruff_version.err.txt
+ D packages/afo-core/AFO/julie_cpa/__init__.py
+ D packages/afo-core/AFO/julie_cpa/__init__.py.bak.20251229_223742
+ D packages/afo-core/AFO/julie_cpa/api/__init__.py
+ D packages/afo-core/AFO/julie_cpa/services/__init__.py
+ D packages/afo-core/afo_soul_engine/observability/__init__.py
+ D packages/afo-core/api/guards/__init__.py
+ D packages/afo-core/services/contracts/__init__.py
+ D packages/dashboard/public/sounds/jade_bell.mp3
+ D packages/packages/dashboard/src/components/genui/KingdomMessageBoard.tsx
+ D packages/trinity-os/trinity_os/servers/__init__.py
+ D pyproject.toml.backup
+ M scripts/ssot_scorecard_snapshot.sh
+ D tools/__init__.py
+ M tools/dgm/upstream
+ D typings/mlx/__init__.pyi
+?? WARP.md
+?? cleanup_p0_p1.py
+?? docs/ssot/evidence/PH22_PRECOMMIT_20260108_132747-0800/
+?? packages/afo-core/AFO/self_expansion/
+?? packages/afo-core/config/reflexion.yml
+?? packages/afo-core/tests/test_reflexion_contract.py
+?? packages/afo-core/tests/test_reflexion_runner_dry.py
+?? run_cleanup.sh
+?? scripts/reflexion_run.py
+?? scripts/verify_sse_metrics.py

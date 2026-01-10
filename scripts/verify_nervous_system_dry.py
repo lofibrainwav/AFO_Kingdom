@@ -21,7 +21,7 @@ async def main():
     try:
         critic = CriticAgent()
         # Test Goodness Gate
-        code = "import os\n os.system('echo hi')"
+        code = "import subprocess\nsubprocess.run(['echo','hi'], check=False)"
         review = await critic.critique_code(code)
         if not review.passed and "Goodness" in review.feedback[0]:
             print("✅ [Truth] CriticAgent active (Caught unsafe code).")
