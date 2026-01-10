@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Phase 3: API 엔드포인트 통합 테스트
+"""Phase 3: API 엔드포인트 통합 테스트
 眞善美孝永 5기둥 철학에 의거한 API 통합 테스트
 
 이 테스트는 다음 API 엔드포인트들의 통합 동작을 검증합니다:
@@ -47,6 +46,7 @@ class TestHealthEndpointsIntegration:
         assert "version" in data
         assert data["name"] == "AFO Kingdom Soul Engine API"
 
+    @pytest.mark.slow
     def test_comprehensive_health_endpoint(self, api_client: TestClient) -> None:
         """종합 건강 체크 엔드포인트 테스트"""
         response = api_client.get("/api/health/comprehensive")

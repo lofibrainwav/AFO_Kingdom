@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Council Router for AFO Kingdom (Phase 23)
+"""Council Router for AFO Kingdom (Phase 23)
 Multi-Model Intelligence - 지혜의 의회 (Council of Minds)
 Routes queries to multiple LLMs and cross-validates responses.
 """
@@ -98,9 +97,7 @@ def synthesize_consensus(responses: list[StrategistResponse]) -> str:
 
 @router.post("/deliberate", response_model=CouncilResponse)
 async def deliberate(query: CouncilQuery) -> CouncilResponse:
-    """
-    Send query to the Council of Minds for multi-model deliberation.
-    """
+    """Send query to the Council of Minds for multi-model deliberation."""
     logger.info(f"🧠 Council Deliberation Requested: {query.query}")
 
     # Query all strategists in parallel

@@ -14,7 +14,7 @@ from typing import Any
 
 from fastapi import APIRouter, HTTPException
 
-from ...services.automated_debugging_system import run_automated_debugging
+from AFO.services.automated_debugging_system import run_automated_debugging
 
 router = APIRouter(prefix="/api/debugging", tags=["Automated Debugging"])
 
@@ -64,7 +64,7 @@ async def get_debugging_status() -> dict[str, Any]:
         시스템 상태
     """
     try:
-        from ...services.automated_debugging_system import AutomatedDebuggingSystem
+        from AFO.services.automated_debugging_system import AutomatedDebuggingSystem
 
         system = AutomatedDebuggingSystem()
 
@@ -100,7 +100,7 @@ async def get_debugging_history(limit: int = 10) -> dict[str, Any]:
     try:
         import json
 
-        from ...services.automated_debugging_system import AutomatedDebuggingSystem
+        from AFO.services.automated_debugging_system import AutomatedDebuggingSystem
 
         system = AutomatedDebuggingSystem()
 

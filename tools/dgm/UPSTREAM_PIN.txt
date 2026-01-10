@@ -1,0 +1,4 @@
+UPSTREAM_URL=https://github.com/jennyzzt/dgm
+PINNED_COMMIT=a565fd2
+VENDORED_AT=2026-01-08
+NOTE=tools/dgm/upstream is vendorized (not a submodule). Remove nested .git. Keep license/notice files if present upstream.

@@ -1,0 +1,14 @@
+AS_OF=20260106_101216
+GIT_ROOT=/Users/brnestrm/AFO_Kingdom
+ABS_PATH_PATTERN=/Users/brnestrm/AFO_Kingdom
+RUFF_TARGET=.
+ALLOW_AHEAD=false
+ALLOWLIST_FILE=
+APPLY_ALLOWLIST=false
+ALLOWLIST_OUTFILE=docs/ssot/allowlists/untracked_allowlist_regex.txt
+
+RUFF=FAIL (version_rc=0, check_rc=1)
+ABS_PATH=FAIL (hits=105)
+GIT=FAIL (unstaged=9, staged=0, bad_untracked=3, ahead_or_behind=yes)
+
+EVIDENCE_DIR=/Users/brnestrm/AFO_Kingdom/docs/ssot/evidence/SSOT_LOCK_SYNC_GATE_20260106_101216

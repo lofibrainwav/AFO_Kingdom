@@ -14,6 +14,7 @@ DRY_RUN 자동 트리거 스크립트
 import subprocess
 import sys
 
+
 # 고위험 패턴 정의
 HIGH_RISK_PATTERNS = [
     # 외부 API
@@ -75,14 +76,12 @@ def detect_high_risk_changes() -> list[dict]:
 
         for pattern, description in HIGH_RISK_PATTERNS:
             if pattern.lower() in diff.lower():
-                risks.append(
-                    {
-                        "file": file_path,
-                        "pattern": pattern,
-                        "description": description,
-                        "recommendation": "DRY_RUN 필수",
-                    }
-                )
+                risks.append({
+                    "file": file_path,
+                    "pattern": pattern,
+                    "description": description,
+                    "recommendation": "DRY_RUN 필수",
+                })
 
     return risks
 
@@ -100,10 +99,10 @@ def main():
     print("=" * 50)
 
     for risk in risks:
-        print(f"\n📁 파일: {risk["file"]}")
-        print(f"   패턴: {risk["pattern"]}")
-        print(f"   설명: {risk["description"]}")
-        print(f"   권장: {risk["recommendation"]}")
+        print(f"\n📁 파일: {risk['file']}")
+        print(f"   패턴: {risk['pattern']}")
+        print(f"   설명: {risk['description']}")
+        print(f"   권장: {risk['recommendation']}")
 
     print("\n" + "=" * 50)
     print("🏃 DRY_RUN 모드 활성화 필요!")

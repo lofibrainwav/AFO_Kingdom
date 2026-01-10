@@ -39,17 +39,29 @@ def analyze_risk(directory: str) -> float:
                 "build",
                 "site-packages",
                 "lib",
+                "dgm",  # DGM upstream test data
+                "quarantine",  # Quarantined files
+                "red_team",  # Intentional adversarial patterns
             }
         ]
 
-        if any(
-            ex in root
-            for ex in ["node_modules", ".git", "__pycache__", "venv", ".venv", ".next"]
-        ):
+        # Skip known false positive paths
+        skip_patterns = [
+            "node_modules", ".git", "__pycache__", "venv", ".venv", ".next",
+            "tools/dgm",  # DGM upstream test fixtures
+            "/quarantine/",  # Quarantined/deprecated code
+            "/red_team/",  # Intentional security test patterns
+            "docs/ssot/evidence",  # Historical evidence snapshots
+        ]
+        if any(ex in root for ex in skip_patterns):
             continue
 
         for file in files:
             if not file.endswith((".py", ".js", ".ts", ".tsx", ".sh")):
+                continue
+
+            # Skip security detection files (intentional patterns)
+            if file in ("security_agent.py", "constitutional_ai.py"):
                 continue
 
             path = os.path.join(root, file)
@@ -105,13 +117,7 @@ def main():
     serenity = 100.0
     eternity = 100.0
 
-    trinity_score = (
-        (truth * 0.35)
-        + (goodness * 0.35)
-        + (beauty * 0.20)
-        + (serenity * 0.08)
-        + (eternity * 0.02)
-    )
+    trinity_score = (truth * 0.35) + (goodness * 0.35) + (beauty * 0.20) + (serenity * 0.08) + (eternity * 0.02)
 
     print("\n📊 [Scorecard]")
     print(f"   - 眞 (Truth): {truth}")

@@ -1,6 +1,6 @@
+from typing import cast
 #!/usr/bin/env python3
-"""
-AFO Skills Registry MCP Server
+"""AFO Skills Registry MCP Server
 Skills Registry의 모든 스킬을 MCP 도구로 제공하는 서버
 """
 
@@ -9,9 +9,7 @@ import os
 import sys
 
 # 프로젝트 루트를 Python 경로에 추가
-project_root = os.path.dirname(
-    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-)
+project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
@@ -21,8 +19,7 @@ if afo_core_path not in sys.path:
     sys.path.insert(0, afo_core_path)
 
 try:
-    from AFO.services.mcp_tool_trinity_evaluator import \
-        mcp_tool_trinity_evaluator
+    from AFO.services.mcp_tool_trinity_evaluator import mcp_tool_trinity_evaluator
     from afo_skills_registry import register_core_skills
 
     SKILLS_REGISTRY_AVAILABLE = True
@@ -32,8 +29,7 @@ except ImportError:
 
 
 class AfoSkillsRegistryMCP:
-    """
-    AFO Skills Registry MCP Server
+    """AFO Skills Registry MCP Server
     Skills Registry의 모든 스킬을 MCP 도구로 제공
     """
 
@@ -141,8 +137,7 @@ class AfoSkillsRegistryMCP:
                             if mcp_tool_trinity_evaluator:
                                 trinity_eval = mcp_tool_trinity_evaluator.evaluate_execution_result(
                                     tool_name,
-                                    execution_result,
-                                    execution_time_ms,
+                                    cast(str, execution_result),                                    execution_time_ms,
                                     False,
                                 )
                                 trinity_score = trinity_eval.get("combined_scores", {})

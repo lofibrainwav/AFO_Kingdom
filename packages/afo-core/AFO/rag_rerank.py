@@ -55,7 +55,7 @@ async def rerank(query: str, docs: list[Any]) -> tuple[list[Any], RerankResult]:
     async def _run() -> list[Any]:
         try:
             # Lazy import: enabled 체크 후에만 import (cold start 최적화)
-            from sentence_transformers import CrossEncoder  # type: ignore
+            from sentence_transformers import CrossEncoder
         except Exception:
             return docs[: _top_k()]
 

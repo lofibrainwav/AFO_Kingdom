@@ -49,9 +49,7 @@ class FinanceDashboardResponse(BaseModel):
 async def get_finance_dashboard(
     julie: JulieService = Depends(get_julie_service),
 ) -> FinanceDashboardResponse:
-    """
-    Get the Financial Guardian Dashboard data.
-    """
+    """Get the Financial Guardian Dashboard data."""
     try:
         dashboard_data = await julie.get_financial_dashboard()
         return FinanceDashboardResponse(**dashboard_data)
@@ -64,9 +62,7 @@ async def get_finance_dashboard(
 async def dry_run_transaction(
     tx: TransactionRequest, julie: JulieService = Depends(get_julie_service)
 ) -> DryRunResponse:
-    """
-    Simulate a transaction to check against Friction (Warfare Deception).
-    """
+    """Simulate a transaction to check against Friction (Warfare Deception)."""
     try:
         # Convert Pydantic model to dict
         request_data = tx.dict()

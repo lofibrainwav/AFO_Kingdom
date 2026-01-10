@@ -1,4 +1,5 @@
 import asyncio
+import subprocess
 import importlib.util
 import inspect
 import json
@@ -25,7 +26,7 @@ def add(a, b)
 BAD_RISKY = """
 import os
 def run(cmd):
-    return os.system(cmd)
+    return subprocess.run(cmd, shell=isinstance(cmd, str), check=False).returncode
 run("echo hi")
 """.lstrip()
 

@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-MlxSage Adapter for AFO Kingdom
+"""MlxSage Adapter for AFO Kingdom
 Integrates Apple's MLX framework for native optimization of DeepSeek-R1 (Jwaja)
 """
 
@@ -12,8 +11,7 @@ logger = logging.getLogger("afo.scholars.mlx")
 
 
 class MlxSage:
-    """
-    [MLX Sage] Generic MLX Adapter for AFO Kingdom
+    """[MLX Sage] Generic MLX Adapter for AFO Kingdom
     Supports dynamic loading of models (Jwaja, Samahwi, etc.) on Apple Silicon.
     Philosophy: 眞(Truth) & 善(Goodness) via Native Performance
     """
@@ -71,9 +69,7 @@ class MlxSage:
         max_tokens: int = 4096,
         temp: float = 0.6,
     ) -> Any:
-        """
-        Generates response using MLX
-        """
+        """Generates response using MLX"""
         if not self._is_loaded:
             self.load_model()
 

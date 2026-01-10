@@ -3,9 +3,7 @@ from pydantic_settings import BaseSettings
 
 
 class JulieConfig(BaseSettings):
-    """
-    Julie CPA Configuration.
-    """
+    """Julie CPA Configuration."""
 
     MIN_TX_ID_LENGTH: int = 5
     MIN_DESC_LENGTH: int = 3

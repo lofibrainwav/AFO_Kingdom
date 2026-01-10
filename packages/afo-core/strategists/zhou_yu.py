@@ -1,7 +1,7 @@
 # Trinity Score: 90.0 (Established by Chancellor)
 from typing import Any
 
-from .base import log_action, robust_execute
+from AFO.base import log_action, robust_execute
 
 
 def optimize(query_data: dict[str, Any]) -> float:

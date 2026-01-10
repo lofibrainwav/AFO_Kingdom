@@ -1,0 +1,43 @@
+=== SSOT EVIDENCE PACK (as-of 2026-01-06_182908) ===
+
+[1] conflict markers scan
+artifacts/ci/pytest_report.txt:1:============================= test session starts ==============================
+artifacts/ci/pytest_report.txt:52:================= 306 passed, 4 skipped, 4 deselected in 4.75s =================
+artifacts/ci/sbom_log.txt:1:================================================================================
+artifacts/ci/sbom_log.txt:3:================================================================================
+artifacts/ci/sbom_log.txt:11:================================================================================
+artifacts/wallet_vault_intel/20251228_170154.pytest_wallet.txt:3:============================= test session starts ==============================
+artifacts/wallet_vault_intel/20251228_170154.pytest_wallet.txt:15:=============================== warnings summary ===============================
+artifacts/wallet_vault_intel/20251228_170154.pytest_wallet.txt:22:============================== 1 warning in 0.07s ==============================
+artifacts/wallet_vault_intel/20251228_170346.pytest_wallet.txt:3:============================= test session starts ==============================
+artifacts/wallet_vault_intel/20251228_170346.pytest_wallet.txt:15:=============================== warnings summary ===============================
+artifacts/wallet_vault_intel/20251228_170346.pytest_wallet.txt:22:============================== 1 warning in 0.07s ==============================
+docs/ssot/evidence/OLLAMA_FINAL_GREEN_20260106_095442.txt:2:============================================================
+docs/ssot/evidence/OLLAMA_FINAL_GREEN_20260106_095442.txt:32:============================================================
+packages/afo-core/AFO/rag/__init__.py:4:========================
+scripts/t21_rag_streaming_optimization.py:4:===============================================================
+scripts/t21_simple_streaming_test.py:4:===============================================
+scripts/t22_legacy_code_cleanup.py:4:==========================================================
+scripts/trivy_security_scan.sh:14:================================
+
+[2] pyproject.toml parse
+pyproject.toml parse: OK (has required sections)
+
+[3] ruff version
+ruff 0.14.4
+
+[4] ruff gate (exit code matters)
+ruff(gate) exit=1: FAIL
+
+[5] kingdom gate script
+kingdom gate script: EXISTS (executable)
+
+[6] recent commits
+fccb4dfb fix: SSOT 충돌 마커 제거 (HEAD 버전 채택)
+349cdef3 fix: TICKET-143 conflict marker cleanup complete
+06cda107 fix: SSOT Seal complete - context7_mcp.py restored
+b64cf0a7 fix: SSOT Seal - final conflict markers cleanup
+b33947ac fix: Final Reality Gate cleanup - conflict markers and uv run ruff
+f02e2f5d fix: Reality Gate compliance - SSOT Seal
+36456906 feat: LangGraph AsyncPostgresSaver + Dependabot AIOHTTP upgrade
+45a637af feat: 2026 Vector Security + AI Guardrails implementation

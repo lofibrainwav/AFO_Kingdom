@@ -1,23 +1,19 @@
 from __future__ import annotations
+from trinity_os.core.risk_score import get_current_risk_score
 
 import argparse
 import json
 import os
 
 from trinity_os.adapters.afo_ultimate_mcp_deps_v1 import build_deps_v1
-from trinity_os.graphs.trinity_toolflow_graph_v1 import (
-    build_trinity_toolflow_graph, run_trinity_toolflow)
+from trinity_os.graphs.trinity_toolflow_graph_v1 import build_trinity_toolflow_graph, run_trinity_toolflow
 
 
 def main() -> int:
     ap = argparse.ArgumentParser(description="TRINITY Toolflow v1 Runner")
     ap.add_argument("prompt", type=str, help="User prompt")
-    ap.add_argument(
-        "--query", type=str, default="", help="Optional search query override"
-    )
-    ap.add_argument(
-        "--top-k", type=int, default=5, help="Number of candidates to fetch"
-    )
+    ap.add_argument("--query", type=str, default="", help="Optional search query override")
+    ap.add_argument("--top-k", type=int, default=5, help="Number of candidates to fetch")
     ap.add_argument(
         "--risk-score",
         type=float,
@@ -44,7 +40,6 @@ def main() -> int:
     disable_auto_risk = os.environ.get("TRINITY_TOOLFLOW_DISABLE_AUTO_RISK") == "1"
     if args.risk_score is None and not disable_auto_risk:
         try:
-            from tools.guardian_sentinel import get_current_risk_score
 
             args.risk_score = float(get_current_risk_score())
         except Exception:

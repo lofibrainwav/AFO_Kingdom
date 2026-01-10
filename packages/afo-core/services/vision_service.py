@@ -15,8 +15,8 @@ from typing import Any
 
 logger = logging.getLogger(__name__)
 
-# Local Ollama endpoint (accessible from Docker via host.docker.internal)
-OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://host.docker.internal:11434")
+# Local Ollama endpoint (accessible from Docker via host.docker.internal, localhost for local dev)
+OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://localhost:11434")
 
 
 class VisionService:
@@ -39,7 +39,9 @@ class VisionService:
             import ollama
 
             models = ollama.list()
-            logger.info(f"Connected to Ollama at {OLLAMA_HOST}, models: {len(models.get('models', []))}")
+            logger.info(
+                f"Connected to Ollama at {OLLAMA_HOST}, models: {len(models.get('models', []))}"
+            )
             return True
         except Exception as e:
             logger.warning(f"Ollama not available at {OLLAMA_HOST}: {e}")

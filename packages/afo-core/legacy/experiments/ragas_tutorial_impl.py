@@ -4,8 +4,7 @@
 # LLM은 consult_the_lens MCP 도구를 통해 점수를 확인하세요.
 
 #!/usr/bin/env python3
-"""
-Ragas 라이브러리 튜토리얼 구현
+"""Ragas 라이브러리 튜토리얼 구현
 승상(제갈량)의 지혜: RAG 평가 튜토리얼
 
 **목표**: Ragas로 RAG 시스템의 faithfulness(신뢰성) 평가
@@ -48,8 +47,7 @@ else:
 
 
 class RagasTutorial:
-    """
-    Ragas 튜토리얼 클래스
+    """Ragas 튜토리얼 클래스
 
     **승상의 4대 전략**:
     1. 손자병법 (효율성): 설치로 자원 25% 절감
@@ -64,8 +62,7 @@ class RagasTutorial:
         self.results = None
 
     def prepare_sample_data(self) -> list[dict[str, Any]]:
-        """
-        Step 1: 샘플 데이터 준비
+        """Step 1: 샘플 데이터 준비
 
         RAG 평가에 필요한 데이터:
         - question: 질문
@@ -75,6 +72,7 @@ class RagasTutorial:
 
         Returns:
             샘플 데이터 리스트
+
         """
         sample_data = [
             {
@@ -121,8 +119,7 @@ class RagasTutorial:
         return sample_data
 
     def create_dataset(self, data: list[dict[str, Any]]) -> Dataset:
-        """
-        Step 2: Hugging Face Dataset 생성
+        """Step 2: Hugging Face Dataset 생성
 
         Ragas는 Hugging Face의 Dataset 형식을 사용합니다.
 
@@ -131,6 +128,7 @@ class RagasTutorial:
 
         Returns:
             Dataset 객체
+
         """
         dataset = Dataset.from_list(data)
         self.dataset = dataset
@@ -140,8 +138,7 @@ class RagasTutorial:
         return dataset
 
     def evaluate_faithfulness(self, dataset: Dataset) -> dict[str, Any]:
-        """
-        Step 3: Faithfulness 평가
+        """Step 3: Faithfulness 평가
 
         Faithfulness (신뢰성): 생성된 답변이 제공된 맥락에 얼마나 충실한지 측정
         - 범위: 0.0 (환각 많음) ~ 1.0 (완전 충실)
@@ -152,6 +149,7 @@ class RagasTutorial:
 
         Returns:
             평가 결과 딕셔너리
+
         """
         if MOCK_MODE:
             print("⚠️  Running in MOCK mode (no OpenAI API)")
@@ -191,14 +189,14 @@ class RagasTutorial:
             }
 
     def run_tutorial(self) -> dict[str, Any]:
-        """
-        전체 튜토리얼 실행
+        """전체 튜토리얼 실행
 
         **승상의 네 개의 거울**:
         입력(질문) → [설치] → [데이터] → [평가] → [결과]
 
         Returns:
             최종 결과 딕셔너리
+
         """
         print("\n" + "=" * 70)
         print("🎯 Ragas Tutorial - Faithfulness Evaluation")
@@ -228,8 +226,7 @@ class RagasTutorial:
 
 
 def demo_ragas_tutorial():
-    """
-    Ragas 튜토리얼 데모
+    """Ragas 튜토리얼 데모
 
     초등학생 설명:
     "로봇이 RAG 결과를 숫자(0.85)로 재서 더 좋게 만드는 놀이"

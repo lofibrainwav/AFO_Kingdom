@@ -1,9 +1,0 @@
-HTTP/1.1 405 Method Not Allowed
-date: Fri, 26 Dec 2025 05:16:38 GMT
-server: uvicorn
-allow: POST
-content-length: 31
-content-type: application/json
-x-response-time: 0.63ms
-x-trace-id: trc_592014e6c841
-

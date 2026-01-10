@@ -46,7 +46,7 @@
 - Port: `15432` (환경 변수: `POSTGRES_PORT`)
 - Database: `postgres` (환경 변수: `POSTGRES_DB`)
 - User: `postgres` (환경 변수: `POSTGRES_USER`)
-- Password: `postgres` (환경 변수: `POSTGRES_PASSWORD`)
+- Password: `$POSTGRES_PASSWORD` (환경 변수 필수)
 
 ---
 
@@ -69,7 +69,7 @@ export POSTGRES_HOST="localhost"
 export POSTGRES_PORT="15432"
 export POSTGRES_DB="postgres"
 export POSTGRES_USER="postgres"
-export POSTGRES_PASSWORD="postgres"
+export POSTGRES_PASSWORD="<YOUR_SECURE_PASSWORD>"
 ```
 
 ---
@@ -101,6 +101,7 @@ SELECT name, service FROM api_keys WHERE service ILIKE '%openai%';
 ### Python으로 확인
 
 ```python
+import os
 from api_wallet import APIWallet
 import psycopg2
 
@@ -109,7 +110,7 @@ conn = psycopg2.connect(
     port=15432,
     database="postgres",
     user="postgres",
-    password="postgres"
+    password=os.getenv("POSTGRES_PASSWORD", "")
 )
 
 wallet = APIWallet(db_connection=conn)

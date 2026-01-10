@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Personas Router
+"""Personas Router
 Phase 2: Family Hub OS - 페르소나 API
 TRINITY-OS 페르소나 시스템 통합
 """
@@ -43,11 +42,11 @@ router = APIRouter(prefix="/api/personas", tags=["Personas"])
 
 @router.get("/health")
 async def personas_health() -> dict[str, Any]:
-    """
-    페르소나 시스템 건강 상태 체크
+    """페르소나 시스템 건강 상태 체크
 
     Returns:
         페르소나 시스템 상태
+
     """
     return {
         "status": "healthy",
@@ -125,11 +124,11 @@ DEFAULT_PERSONAS: dict[str, dict[str, Any]] = {
 
 @router.get("/current")
 async def get_current_persona_endpoint() -> dict[str, Any]:
-    """
-    현재 활성화된 페르소나 조회
+    """현재 활성화된 페르소나 조회
 
     Returns:
         현재 페르소나 정보
+
     """
     if PERSONA_SERVICE_AVAILABLE:
         try:
@@ -150,11 +149,11 @@ async def get_current_persona_endpoint() -> dict[str, Any]:
 
 @router.get("")
 async def list_personas() -> dict[str, Any]:
-    """
-    모든 페르소나 목록 조회
+    """모든 페르소나 목록 조회
 
     Returns:
         페르소나 목록
+
     """
     if not PERSONA_MODELS_AVAILABLE:
         # Fallback: 기본 페르소나 반환
@@ -218,8 +217,7 @@ async def list_personas() -> dict[str, Any]:
 
 @router.get("/{persona_id}")
 async def get_persona(persona_id: str) -> dict[str, Any]:
-    """
-    특정 페르소나 정보 조회
+    """특정 페르소나 정보 조회
 
     Args:
         persona_id: 페르소나 ID
@@ -229,6 +227,7 @@ async def get_persona(persona_id: str) -> dict[str, Any]:
 
     Raises:
         HTTPException: 페르소나를 찾을 수 없을 때
+
     """
     if persona_id not in DEFAULT_PERSONAS:
         raise HTTPException(status_code=404, detail=f"페르소나를 찾을 수 없습니다: {persona_id}")
@@ -253,8 +252,7 @@ async def get_persona(persona_id: str) -> dict[str, Any]:
 
 @router.post("/switch")
 async def switch_persona(request: PersonaSwitchRequest) -> dict[str, Any]:
-    """
-    페르소나 전환 (眞善美孝永: 맥락 기반 응답)
+    """페르소나 전환 (眞善美孝永: 맥락 기반 응답)
 
     Args:
         request: 페르소나 전환 요청
@@ -264,6 +262,7 @@ async def switch_persona(request: PersonaSwitchRequest) -> dict[str, Any]:
 
     Raises:
         HTTPException: 페르소나를 찾을 수 없을 때
+
     """
     if request.persona_id not in DEFAULT_PERSONAS:
         raise HTTPException(
@@ -362,8 +361,7 @@ async def switch_persona(request: PersonaSwitchRequest) -> dict[str, Any]:
 
 @router.get("/{persona_id}/trinity-score")
 async def get_persona_trinity_score(persona_id: str) -> dict[str, Any]:
-    """
-    페르소나별 Trinity Score 조회
+    """페르소나별 Trinity Score 조회
 
     Args:
         persona_id: 페르소나 ID
@@ -373,6 +371,7 @@ async def get_persona_trinity_score(persona_id: str) -> dict[str, Any]:
 
     Raises:
         HTTPException: 페르소나를 찾을 수 없을 때
+
     """
     if persona_id not in DEFAULT_PERSONAS:
         raise HTTPException(status_code=404, detail=f"페르소나를 찾을 수 없습니다: {persona_id}")

@@ -33,7 +33,7 @@ try:
 
     TRINITY_EVALUATOR_AVAILABLE = True
 except ImportError:
-    mcp_tool_trinity_evaluator = None  # type: ignore
+    mcp_tool_trinity_evaluator = None
     TRINITY_EVALUATOR_AVAILABLE = False
 
 # Import skill registry components for runtime
@@ -50,13 +50,13 @@ try:
 
     SKILL_REGISTRY_AVAILABLE = True
 except ImportError:
-    SkillRegistry = None  # type: ignore
-    SkillFilterParams = None  # type: ignore
-    SkillCategory = None  # type: ignore
-    ExecutionMode = None  # type: ignore
-    SkillStatus = None  # type: ignore
-    RegistryPhilosophyScores = None  # type: ignore
-    register_core_skills = None  # type: ignore
+    SkillRegistry = None
+    SkillFilterParams = None
+    SkillCategory = None
+    ExecutionMode = None
+    SkillStatus = None
+    RegistryPhilosophyScores = None
+    register_core_skills = None
     SKILL_REGISTRY_AVAILABLE = False
 
 # Import types for type checking only

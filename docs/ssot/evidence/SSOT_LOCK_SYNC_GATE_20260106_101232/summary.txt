@@ -1,0 +1,11 @@
+AS_OF=20260106_101232
+GIT_ROOT=/Users/brnestrm/AFO_Kingdom
+ABS_PATH_PATTERN=/Users/brnestrm/AFO_Kingdom
+RUFF_TARGET=.
+ALLOW_AHEAD=false
+ALLOWLIST_FILE=
+APPLY_ALLOWLIST=true
+ALLOWLIST_OUTFILE=docs/ssot/allowlists/untracked_allowlist_regex.txt
+
+RUFF=FAIL (version_rc=0, check_rc=1)
+ABS_PATH=FAIL (hits=105)

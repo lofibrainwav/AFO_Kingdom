@@ -11,6 +11,7 @@ import json
 import sys
 from pathlib import Path
 
+
 # 프로젝트 루트 추가
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root / "packages" / "afo-core"))
@@ -87,12 +88,12 @@ async def main():
 
         print("\n🏆 Trinity Score:")
         trinity = report.trinity_score
-        print(f"  • Overall: {trinity.get("overall", 0)}/100")
-        print(f"  • Truth: {trinity.get("truth", 0)}/100")
-        print(f"  • Goodness: {trinity.get("goodness", 0)}/100")
-        print(f"  • Beauty: {trinity.get("beauty", 0)}/100")
-        print(f"  • Serenity: {trinity.get("serenity", 0)}/100")
-        print(f"  • Eternity: {trinity.get("eternity", 0)}/100")
+        print(f"  • Overall: {trinity.get('overall', 0)}/100")
+        print(f"  • Truth: {trinity.get('truth', 0)}/100")
+        print(f"  • Goodness: {trinity.get('goodness', 0)}/100")
+        print(f"  • Beauty: {trinity.get('beauty', 0)}/100")
+        print(f"  • Serenity: {trinity.get('serenity', 0)}/100")
+        print(f"  • Eternity: {trinity.get('eternity', 0)}/100")
 
         if report.recommendations:
             print("\n💡 권장사항:")

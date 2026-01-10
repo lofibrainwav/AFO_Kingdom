@@ -20,6 +20,13 @@ from fastapi.responses import RedirectResponse, StreamingResponse
 
 # Optional SSE import
 try:
+    from AFO.utils.metrics import sse_open_connections, update_sse_health_metrics
+
+    METRICS_AVAILABLE = True
+except ImportError:
+    METRICS_AVAILABLE = False
+
+try:
     from sse_starlette.sse import EventSourceResponse
 
     SSE_AVAILABLE = True
@@ -219,7 +226,10 @@ async def get_kingdom_status() -> dict[str, Any]:
     """
     import psutil
 
+    from AFO.config.settings import get_settings
     from AFO.services.health_service import get_comprehensive_health
+
+    settings = get_settings()
 
     # 1. Get Truthful Health Data
     health_data = await get_comprehensive_health()
@@ -298,6 +308,10 @@ async def get_kingdom_status() -> dict[str, Any]:
         "organs": dashboard_organs,  # Dashboard format
         "entropy": int(cpu_percent),
         "timestamp": datetime.now().isoformat(),
+        # Phase 23: Dashboard Hardening (Always Exposed Vitals)
+        "head_sha": os.getenv("GIT_COMMIT_SHA", "unknown")[:7],
+        "chancellor_v2_enabled": settings.CHANCELLOR_V2_ENABLED,
+        "canary_status": "V2 (Canary)" if settings.CHANCELLOR_V2_ENABLED else "V1 (Stable)",
         # Include original health data for debugging
         "raw_health": health_data,
     }
@@ -331,6 +345,9 @@ async def _sse_log_generator(request: Request):
     Generate SSE events from Redis Pub/Sub messages with File Fallback.
     Trinity Score: 善 (Goodness) - Failover mechanism for high availability.
     """
+    if METRICS_AVAILABLE:
+        sse_open_connections.inc()
+
     redis_available = False
     pubsub = None
 
@@ -414,6 +431,9 @@ async def _sse_log_generator(request: Request):
         logger.error(f"[SSE] File Fallback failed: {e}")
         error_msg = {"message": f"Critical Stream Failure: {e}", "level": "ERROR"}
         yield f"data: {json.dumps(error_msg)}\n\n"
+    finally:
+        if METRICS_AVAILABLE:
+            sse_open_connections.dec()
 
 
 # SSOT Canonical Path: /api/logs/stream

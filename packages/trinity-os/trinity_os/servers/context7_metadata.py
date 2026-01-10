@@ -3,7 +3,7 @@ from __future__ import annotations
 from collections.abc import Iterable
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 
 @dataclass(frozen=True)
@@ -25,6 +25,7 @@ def _iter_meta_objects(obj: Any) -> Iterable[dict[str, Any]]:
     """
     if isinstance(obj, list):
         for x in obj:
+            x: Any = cast(Any, x)
             yield from _iter_meta_objects(x)
         return
 
@@ -44,6 +45,7 @@ def _iter_meta_objects(obj: Any) -> Iterable[dict[str, Any]]:
             return
 
         for v in obj.values():
+            v = cast(Any, v)
             yield from _iter_meta_objects(v)
         return
 
@@ -97,17 +99,17 @@ def load_context7_metadata(repo_root: Path) -> dict[str, Context7Meta]:
 
         category = str(m.get("category", "Uncategorized")).strip() or "Uncategorized"
         description = str(m.get("description", "")).strip()
-        tags_raw = m.get("tags", [])
+        tags_raw: Any = m.get("tags", [])
         tags: tuple[str, ...]
         if isinstance(tags_raw, list):
-            tags = tuple(str(t).strip() for t in tags_raw if str(t).strip())
+            tags: Any = tuple(str(t).strip() for t in tags_raw if str(t).strip())
         else:
             tags = tuple(x for x in (str(tags_raw).strip(),) if x)
 
-        keywords_raw = m.get("keywords", [])
+        keywords_raw: Any = m.get("keywords", [])
         keywords: tuple[str, ...]
         if isinstance(keywords_raw, list):
-            keywords = tuple(str(t).strip() for t in keywords_raw if str(t).strip())
+            keywords: Any = tuple(str(t).strip() for t in keywords_raw if str(t).strip())
         else:
             keywords = tuple(x for x in (str(keywords_raw).strip(),) if x)
 

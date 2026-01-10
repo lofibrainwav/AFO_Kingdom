@@ -3,20 +3,16 @@ import os
 import pathlib
 import sys
 
+
 # Setup path
-sys.path.append(
-    pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages")).resolve()
-)
-sys.path.append(
-    pathlib.Path(
-        os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")
-    ).resolve()
-)
+sys.path.append(pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages")).resolve())
+sys.path.append(pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")).resolve())
 
 import contextlib
 
 from config.friction_calibrator import friction_calibrator
 from services.trinity_calculator import trinity_calculator
+
 
 with contextlib.suppress(ImportError):
     pass
@@ -36,9 +32,7 @@ async def verify_loop():
     print(f"🔹 Baseline Trinity Score: {trinity_baseline}")
 
     if friction_baseline.score < 90:
-        print(
-            "⚠️ Note: Baseline friction present. Check environment (e.g., prod using env mode)."
-        )
+        print("⚠️ Note: Baseline friction present. Check environment (e.g., prod using env mode).")
 
     # 2. Induce Financial Friction (Simulate Float usage hack)
     # We can't easily change the type of self.monthly_spending dynamically without being messy,
@@ -51,9 +45,7 @@ async def verify_loop():
     if abs(raw_scores[3] - expected_serenity) < 0.001:
         print("✅ Integration Verified: Trinity calls FrictionCalibrator correctly.")
     else:
-        print(
-            f"❌ Integration Fail: Trinity Serenity ({raw_scores[3]}) != Friction Score ({expected_serenity})"
-        )
+        print(f"❌ Integration Fail: Trinity Serenity ({raw_scores[3]}) != Friction Score ({expected_serenity})")
 
     # 3. Simulate High Friction Scenario (Mocking internally if possible, or just asserting logic)
     # For verification script, proving the link is sufficient.

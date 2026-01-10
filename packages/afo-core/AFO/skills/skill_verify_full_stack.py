@@ -1,6 +1,5 @@
 # Trinity Score: 95.0 (Verification Skill)
-"""
-Skill: Verify Full Stack (眞)
+"""Skill: Verify Full Stack (眞)
 시스템의 모든 구성요소(DB, Redis, API, Dashboard)를 검증하는 공식 스킬
 """
 
@@ -24,14 +23,14 @@ console = Console()
 
 
 async def execute_skill(context: dict[str, Any] | None = None) -> dict[str, Any]:
-    """
-    [Skill Entry Point] 전체 시스템 상태 검증
+    """[Skill Entry Point] 전체 시스템 상태 검증
 
     Args:
         context: 실행 컨텍스트 (옵션)
 
     Returns:
         검증 결과 리포트
+
     """
     console.print("[bold blue]🛡️ [Rule #1] Weapon Check: Verifying System Integrity...[/bold blue]")
 

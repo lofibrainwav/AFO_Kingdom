@@ -3,8 +3,7 @@ from abc import ABC, abstractmethod
 
 
 class Skill(ABC):
-    """
-    Abstract Product: Skill Interface (5 Pillars)
+    """Abstract Product: Skill Interface (5 Pillars)
     All skills must implement execute()
     """
 
@@ -36,8 +35,7 @@ class SkillFactory(ABC):
 
 
 class AFO_SkillFactory(SkillFactory):
-    """
-    Concrete Creator: Manages AFO Kingdom Skills
+    """Concrete Creator: Manages AFO Kingdom Skills
     [Factory Pattern Benefit]:
     - Decoupling: Client doesn't need to know specific Skill classes.
     - Extensibility: Add new skills to _skills map without changing client code.

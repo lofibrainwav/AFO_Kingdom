@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-AFO Kingdom Rate Limit Policy Configuration (Phase 2.6)
+"""AFO Kingdom Rate Limit Policy Configuration (Phase 2.6)
 
 Defines the Redis Down Policy (Hybrid Strategy) to balance security (Fail-Closed)
 and availability (Fail-Open) based on the 5 Pillars philosophy.
@@ -10,8 +9,7 @@ from typing import Final
 
 
 class RedisDownPolicy:
-    """
-    Policy definitions for handling Redis downtime.
+    """Policy definitions for handling Redis downtime.
 
     Strategies:
     - FAIL_OPEN: Allow requests (or use in-memory fallback) when Redis is down.

@@ -1,0 +1,97 @@
+{
+  "timeline_state": {
+    "title": "AFO Kingdom Victory Theme",
+    "sections": [
+      {
+        "start": 0,
+        "end": 3,
+        "text": "Epic orchestral introduction",
+        "music_directive": "slow_heroic_build"
+      },
+      {
+        "start": 3,
+        "end": 6,
+        "text": "Intense battle climax",
+        "music_directive": "powerful_orchestral_climax"
+      },
+      {
+        "start": 6,
+        "end": 9,
+        "text": "Triumphant victory fanfare",
+        "music_directive": "triumphant_brass_fanfare"
+      }
+    ],
+    "music": {
+      "style": "epic_orchestral_cinematic",
+      "mood": "heroic_triumphant",
+      "tempo": "dramatic"
+    }
+  },
+  "suno_result": {
+    "error": "Suno pipeline not available",
+    "success": false
+  },
+  "opensource_result": {
+    "error": "Music router not available",
+    "success": false
+  },
+  "suno_metrics": {
+    "sample_rate": 0,
+    "bit_rate": 0,
+    "duration": 0.0,
+    "channels": 0,
+    "file_size_bytes": 0,
+    "clarity_score": 0.0,
+    "dynamics_score": 0.0,
+    "harmony_score": 0.0,
+    "rhythm_score": 0.0,
+    "overall_quality": 0.0,
+    "instrumentation_score": 0.0,
+    "genre_confidence": {},
+    "mood_confidence": {}
+  },
+  "opensource_metrics": {
+    "sample_rate": 0,
+    "bit_rate": 0,
+    "duration": 0.0,
+    "channels": 0,
+    "file_size_bytes": 0,
+    "clarity_score": 0.0,
+    "dynamics_score": 0.0,
+    "harmony_score": 0.0,
+    "rhythm_score": 0.0,
+    "overall_quality": 0.0,
+    "instrumentation_score": 0.0,
+    "genre_confidence": {},
+    "mood_confidence": {}
+  },
+  "suno_performance": {
+    "generation_time_seconds": 1.1920928955078125e-06,
+    "memory_usage_mb": 0,
+    "cpu_usage_percent": 0.0,
+    "network_requests": 0,
+    "api_calls": 0,
+    "retries": 0,
+    "errors": []
+  },
+  "opensource_performance": {
+    "generation_time_seconds": 0.0,
+    "memory_usage_mb": 0,
+    "cpu_usage_percent": 0.0,
+    "network_requests": 0,
+    "api_calls": 0,
+    "retries": 0,
+    "errors": []
+  },
+  "quality_difference": 0.0,
+  "speed_difference": -1.1920928955078125e-06,
+  "style_similarity": 0.5,
+  "suno_strengths": [],
+  "opensource_strengths": [
+    "로컬 실행으로 인한 프라이버시",
+    "무료 사용"
+  ],
+  "improvement_opportunities": [],
+  "timestamp": "2026-01-06T14:34:09.990352",
+  "version": "1.0.0"
+}

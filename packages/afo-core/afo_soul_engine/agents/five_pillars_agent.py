@@ -22,8 +22,7 @@ logger = logging.getLogger(__name__)
 
 
 class FivePillarsAgent:
-    """
-    5기둥(Pillars) 평가 에이전트 (Refactored & Optimized)
+    """5기둥(Pillars) 평가 에이전트 (Refactored & Optimized)
     uses Gemini 1.5 Flash for rapid evaluation, falling back to heuristics if needed.
     Phase 5: REST API 기반으로 마이그레이션 (google.generativeai deprecation 대응)
     """
@@ -38,8 +37,7 @@ class FivePillarsAgent:
             logger.debug("⚠️ FivePillarsAgent: Gemini API not available, using heuristics only")
 
     async def evaluate_five_pillars(self, data: dict[str, Any]) -> dict[str, Any]:
-        """
-        Analyze input data to calculate 5 Pillars scores.
+        """Analyze input data to calculate 5 Pillars scores.
         Async method to allow non-blocking LLM calls.
         """
         input_text = str(data.get("input", "") or data.get("text", "") or json.dumps(data))

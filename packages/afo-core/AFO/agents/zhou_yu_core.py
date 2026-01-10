@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Zhou Yu Agent Core (Phase 16-3)
+"""Zhou Yu Agent Core (Phase 16-3)
 The Esthetic Guardian of AFO Kingdom.
 Philosophy:
 - 美 (Beauty): Ensures standard Glassmorphism and Tailwind tokens.
@@ -36,8 +35,7 @@ class ZhouYuAgent:
         return "Zhou Yu is watching. (No refactoring triggered)"
 
     async def _tool_refactor_widget(self, relative_path: str) -> str:
-        """
-        Phase 16-3: Refactor Tool
+        """Phase 16-3: Refactor Tool
         Analyzes code -> Applies Linting -> Injects Beauty.
         """
         project_root = os.getcwd()

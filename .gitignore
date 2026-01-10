@@ -63,6 +63,8 @@ debug_token.txt
 # Runtime files
 .api_server_pid
 *.pid
+server.pid
+server.log
 
 # Terraform
 terraform/.terraform/
@@ -74,14 +76,26 @@ terraform/*.tfvars
 # AFO build/test artifacts
 artifacts/
 packages/**/artifacts/
-*.report.*.json
-queue_report.*.md
+.venv-dspy/
+.venv-dspy/
+.venv-dspy/
+tools/mlx_optimization/.venv/
 
-# Julie CPA / Local Data (PII SEALED)
-inbox/fin/
-artifacts/fin/
-scripts/_local_quarantine/
-!.env.afo.example/packages/afo-core/artifacts/ph19_security/
+.venv-dspy/
+tools/mlx_optimization/.venv/
 
-# AFO runtime seals (local evidence only)
-artifacts/trinity_seals/
+.bruin.yml
+.env.antigravity
+
+
+
+# Music generation virtual environment
+venv_afo_music/
+venv_musicgen/
+!artifacts/ssot/
+!artifacts/ssot/*
+!artifacts/ssot/
+!artifacts/ssot/**
+# MyPy cache directories (may contain sensitive path information)
+.mypy_cache/
+**/.mypy_cache/
