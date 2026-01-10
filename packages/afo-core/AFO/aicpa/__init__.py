@@ -3,14 +3,14 @@
 AICPA Module - 에이전트 군단
 """
 
-from .report_generator import (
+from AFO.aicpa.report_generator import (
     generate_email_draft,
     generate_quickbooks_csv,
     generate_strategy_report,
     generate_turbotax_csv,
 )
-from .service import AICPAService, get_aicpa_service
-from .tax_engine import (
+from AFO.service import AICPAService, get_aicpa_service
+from AFO.tax_engine import (
     FilingStatus,
     TaxInput,
     TaxResult,

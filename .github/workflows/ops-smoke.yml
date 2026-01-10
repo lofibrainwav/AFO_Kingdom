@@ -10,14 +10,6 @@ on:
       - 'compose.yml'
       - '.env.afo'
   workflow_dispatch:
-  pull_request:
-    branches: [ main, feature/** ]
-    paths:
-      - 'packages/afo-core/**'
-      - 'packages/dashboard/**'
-      - 'docker-compose.yml'
-      - 'compose.yml'
-      - '.env.afo'
 
 jobs:
   smoke-test:

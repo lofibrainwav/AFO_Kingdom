@@ -34,7 +34,7 @@ class GeminiAPIWrapper:
             try:
                 # Try relative import first
                 try:
-                    from ..api_wallet import create_wallet
+                    from AFO.api_wallet import create_wallet
                 except ImportError:
                     from AFO.api_wallet import create_wallet
 

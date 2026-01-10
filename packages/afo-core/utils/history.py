@@ -12,8 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 class Historian:
-    """
-    Historian (영(永)): The Keeper of Records.
+    """Historian (영(永)): The Keeper of Records.
     Ensures that every decision and action of the Royal Council is recorded for posterity.
     """
 
@@ -24,9 +23,7 @@ class Historian:
         status: str,
         metadata: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
-        """
-        Records a major event/decision to the Chronicles.
-        """
+        """Records a major event/decision to the Chronicles."""
         if metadata is None:
             metadata = {}
 
@@ -65,11 +62,11 @@ class Historian:
 
     @staticmethod
     def log_chronicle(content: str) -> None:
-        """
-        Logs a free-form chronicle entry.
+        """Logs a free-form chronicle entry.
 
         Args:
             content: Chronicle content to log
+
         """
         logger.info(f"📜 [Historian] {content}")
 
@@ -77,8 +74,7 @@ class Historian:
     def log_preference(
         query: str, rejected: str, chosen: str, critique: str = ""
     ) -> dict[str, Any]:
-        """
-        [RLAIF] Records 'Chosen' vs 'Rejected' responses based on 헌법(Constitution).
+        """[RLAIF] Records 'Chosen' vs 'Rejected' responses based on 헌법(Constitution).
         Used for future model alignment and moral fine-tuning.
         """
         preference_entry = {

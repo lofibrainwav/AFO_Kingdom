@@ -1,9 +1,10 @@
 import pathlib
 import sys
 
+
 # Check AntiGravity Configuration
 try:
-    sys.path.append("/Users/brnestrm/AFO_Kingdom/packages/afo-core")
+    sys.path.append(str(Path(__file__).parent.parent / "packages" / "afo-core"))
     from config.antigravity import antigravity
 
     # 1. Check DRY_RUN_DEFAULT
@@ -14,9 +15,7 @@ try:
     # 2. Check LOG_LEVEL
     expected_log_level = "DEBUG" if antigravity.ENVIRONMENT == "dev" else "INFO"
     if expected_log_level != antigravity.LOG_LEVEL:
-        print(
-            f"❌ FAIL: LOG_LEVEL mismatch. Got {antigravity.LOG_LEVEL}, expected {expected_log_level}"
-        )
+        print(f"❌ FAIL: LOG_LEVEL mismatch. Got {antigravity.LOG_LEVEL}, expected {expected_log_level}")
         sys.exit(1)
 
     print("✅ AntiGravity Config Checked: Safe Mode Active")
@@ -29,7 +28,7 @@ except Exception as e:
     sys.exit(1)
 
 # Check AGENTS.md
-agents_md_path = "/Users/brnestrm/AFO_Kingdom/AGENTS.md"
+agents_md_path = str(Path(__file__).parent.parent) + "/AGENTS.md"
 if not pathlib.Path(agents_md_path).exists():
     print("❌ FAIL: AGENTS.md not found")
     sys.exit(1)

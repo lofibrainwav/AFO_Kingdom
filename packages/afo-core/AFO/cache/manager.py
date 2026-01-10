@@ -10,7 +10,7 @@ import logging
 import time
 from typing import Any
 
-from .backends import MemoryBackend, RedisBackend
+from AFO.backends import MemoryBackend, RedisBackend
 
 logger = logging.getLogger(__name__)
 
@@ -58,7 +58,7 @@ class CacheMetrics:
         """Get current metrics with uptime"""
         metrics = self.metrics.copy()
         metrics["uptime_seconds"] = time.time() - self._start_time
-        return metrics  # type: ignore[no-any-return]
+        return metrics
 
     def reset(self):
         """Reset metrics (for testing)"""
@@ -133,7 +133,7 @@ class MultiLevelCache:
 
     def get_metrics(self) -> dict[str, Any]:
         """Get cache performance metrics"""
-        return self.metrics.get_metrics()  # type: ignore[no-any-return]
+        return self.metrics.get_metrics()
 
 
 # Singleton Instance

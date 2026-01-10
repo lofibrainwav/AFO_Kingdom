@@ -4,8 +4,7 @@ from pydantic_settings import BaseSettings
 
 
 class JulieConfig(BaseSettings):
-    """
-    [The Prince #31: Maintain the State]
+    """[The Prince #31: Maintain the State]
     Centralized Configuration for Julie CPA.
     Eliminates Hardcoding (Sun Tzu #1: Laying Plans).
     """

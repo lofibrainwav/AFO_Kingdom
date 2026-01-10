@@ -11,7 +11,7 @@ test:
 	cd packages/afo-core && pytest -q -m "not integration and not external" --ignore=tests/test_scholars.py
 
 sbom:
-	python3 scripts/generate_sbom.py
+	cd scripts && poetry run python generate_sbom.py || python3 generate_sbom.py
 	mkdir -p artifacts
 	mv sbom artifacts/ 2>/dev/null || true
 

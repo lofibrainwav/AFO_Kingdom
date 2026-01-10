@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-AFO 왕국 정신 통합 시스템 (Spirit Integration)
+"""AFO 왕국 정신 통합 시스템 (Spirit Integration)
 
 眞善美孝永 철학 통합
 - 모든 작업에 Trinity Score 계산
@@ -14,7 +13,7 @@ import json
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 # AFO 루트 디렉토리
 AFO_ROOT = Path(__file__).resolve().parent.parent
@@ -27,8 +26,7 @@ def calculate_trinity_score_5pillars(
     serenity: float = 0.98,
     forever: float = 0.991,
 ) -> dict[str, Any]:
-    """
-    5기둥 Trinity Score 계산 공식 (승상 확정, 2025-12-04)
+    """5기둥 Trinity Score 계산 공식 (승상 확정, 2025-12-04)
 
     공식:
         Trinity Score = 0.35 × 眞 + 0.35 × 善 + 0.20 × 美 + 0.08 × 孝 + 0.02 × 永
@@ -104,10 +102,10 @@ class SpiritIntegration:
 
         for path in self.constitution_paths:
             if path.exists():
-                constitution_data["files_found"].append(str(path))
+                cast(list[Any], constitution_data["files_found"]).append(str(path))
                 constitution_data["total_size"] += path.stat().st_size
             else:
-                constitution_data["files_missing"].append(str(path))
+                cast(list[Any], constitution_data["files_missing"]).append(str(path))
 
         return constitution_data
 
@@ -120,7 +118,6 @@ class SpiritIntegration:
         beauty_score: float | None = None,
     ) -> dict[str, Any]:
         """작업 평가 (眞善美孝永 점수 계산)"""
-
         # 眞(Truth): 문제 감지 정확도, 해결 검증
         if truth_score is None:
             # operation_data에서 추론
@@ -165,8 +162,7 @@ class SpiritIntegration:
         trinity_result = calculate_trinity_score_5pillars(
             truth=truth_score,
             goodness=goodness_score,
-            beauty=beauty_score,
-            serenity=serenity_score,
+            beauty=cast(float, beauty_score),            serenity=serenity_score,
             forever=eternity_score,
         )
 
@@ -190,9 +186,7 @@ class SpiritIntegration:
 
         return evaluation
 
-    def verify_phase_completion(
-        self, phase_name: str, phase_result: dict[str, Any]
-    ) -> dict[str, Any]:
+    def verify_phase_completion(self, phase_name: str, phase_result: dict[str, Any]) -> dict[str, Any]:
         """Phase 완료 후 Trinity Score 검증"""
         # Phase 결과에서 점수 추출
         truth = phase_result.get("truth_score", 0.95)
@@ -209,16 +203,13 @@ class SpiritIntegration:
 
         # Baseline과 비교
         if self.baseline_scores:
-            score_dropped = evaluation["trinity_result"][
-                "total_score"
-            ] < self.baseline_scores.get("total_score", 0.9)
+            score_dropped = evaluation["trinity_result"]["total_score"] < self.baseline_scores.get("total_score", 0.9)
             if score_dropped:
                 evaluation["warning"] = "Trinity Score 하락 감지 - 롤백 권장"
                 evaluation["baseline_comparison"] = {
                     "baseline": self.baseline_scores["total_score"],
                     "current": evaluation["trinity_result"]["total_score"],
-                    "delta": evaluation["trinity_result"]["total_score"]
-                    - self.baseline_scores["total_score"],
+                    "delta": evaluation["trinity_result"]["total_score"] - self.baseline_scores["total_score"],
                 }
 
         return evaluation
@@ -259,7 +250,7 @@ class SpiritIntegration:
             current = current_scores.get(pillar, 0)
             baseline = baseline_scores.get(pillar, 0)
             if current < baseline:
-                drops.append(
+                cast(list[Any], drops).append(
                     {
                         "pillar": pillar,
                         "baseline": baseline,
@@ -270,15 +261,13 @@ class SpiritIntegration:
 
         # 가장 큰 하락 찾기
         if drops:
-            biggest_drop = max(drops, key=lambda x: x["drop"])
+            biggest_drop: Any = max(drops, key=lambda x: x["drop"])
             return {
                 "status": "score_dropped",
                 "delta": delta,
                 "biggest_drop": biggest_drop,
                 "all_drops": drops,
-                "recommendation": self._get_recovery_recommendation(
-                    biggest_drop["pillar"]
-                ),
+                "recommendation": self._get_recovery_recommendation(biggest_drop["pillar"]),
             }
 
         return {"status": "unknown", "delta": delta}
@@ -316,24 +305,11 @@ class SpiritIntegration:
         if self.operation_history:
             recent_operations = self.operation_history[-5:]  # 최근 5개
             avg_scores = {
-                "truth": sum(op["trinity_scores"]["truth"] for op in recent_operations)
-                / len(recent_operations),
-                "goodness": sum(
-                    op["trinity_scores"]["goodness"] for op in recent_operations
-                )
-                / len(recent_operations),
-                "beauty": sum(
-                    op["trinity_scores"]["beauty"] for op in recent_operations
-                )
-                / len(recent_operations),
-                "serenity": sum(
-                    op["trinity_scores"]["serenity"] for op in recent_operations
-                )
-                / len(recent_operations),
-                "eternity": sum(
-                    op["trinity_scores"]["eternity"] for op in recent_operations
-                )
-                / len(recent_operations),
+                "truth": sum(op["trinity_scores"]["truth"] for op in recent_operations) / len(recent_operations),
+                "goodness": sum(op["trinity_scores"]["goodness"] for op in recent_operations) / len(recent_operations),
+                "beauty": sum(op["trinity_scores"]["beauty"] for op in recent_operations) / len(recent_operations),
+                "serenity": sum(op["trinity_scores"]["serenity"] for op in recent_operations) / len(recent_operations),
+                "eternity": sum(op["trinity_scores"]["eternity"] for op in recent_operations) / len(recent_operations),
             }
             avg_trinity = calculate_trinity_score_5pillars(**avg_scores)
         else:
@@ -347,12 +323,8 @@ class SpiritIntegration:
             "average_scores": avg_scores,
             "average_trinity": avg_trinity,
             "operation_count": len(self.operation_history),
-            "recent_operations": (
-                self.operation_history[-3:] if self.operation_history else []
-            ),
-            "spirit_maintained": (
-                avg_trinity["total_score"] >= 0.9 if avg_trinity else False
-            ),
+            "recent_operations": (self.operation_history[-3:] if self.operation_history else []),
+            "spirit_maintained": (avg_trinity["total_score"] >= 0.9 if avg_trinity else False),
         }
 
 

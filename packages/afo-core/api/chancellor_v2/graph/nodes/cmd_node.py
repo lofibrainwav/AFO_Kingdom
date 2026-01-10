@@ -8,14 +8,15 @@ if TYPE_CHECKING:
     from api.chancellor_v2.graph.state import GraphState
 
 
-def cmd_node(state: GraphState) -> GraphState:
-    """Process command reception and initial validation.
+async def cmd_node(state: GraphState) -> GraphState:
+    """Read command from input and initialize state.
+    lidation.
 
-    Args:
-        state: Current graph state
+        Args:
+            state: Current graph state
 
-    Returns:
-        Updated graph state
+        Returns:
+            Updated graph state
     """
     # Basic command validation
     if not state.input or not isinstance(state.input, dict):

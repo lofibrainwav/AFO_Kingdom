@@ -5,14 +5,12 @@ from strategists.base import log_action, robust_execute
 
 
 def log(action: str, details: dict | None = None) -> str:
-    """
-    Huang Zhong (Eternity): Evolution Logging
+    """Huang Zhong (Eternity): Evolution Logging
 
     [Eternity Philosophy]:
     - History: Records actions with timestamps for persistence.
     - Resilience: Log failure does not stop the system.
     """
-
     if details is None:
         details = {}
 

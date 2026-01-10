@@ -1,4 +1,4 @@
-
+#!/usr/bin/env bash
 set -euo pipefail
 
 : "${AFO_IMAGE_REF:?AFO_IMAGE_REF is required (e.g., ghcr.io/<owner>/afo-core-soul-engine:<tag>)}"
@@ -22,6 +22,7 @@ docker run -d \
   "${AFO_IMAGE_REF}" >/dev/null
 
 echo "--- wait health (api/health/comprehensive) ---"
+# shellcheck disable=SC2034
 for i in $(seq 1 60); do
   if curl -sf "http://127.0.0.1:${AFO_PORT}/api/health/comprehensive" >/dev/null; then
     break
@@ -29,10 +30,14 @@ for i in $(seq 1 60); do
   sleep 2
 done
 
+TMP_PAYLOAD=$(mktemp)
+
 echo "--- verify health payload keys ---"
-curl -sfL --retry 5 --retry-delay 2 --max-time 20 "http://127.0.0.1:${AFO_PORT}/api/health/comprehensive" | python3 - <<'PY'
+curl -sfL --retry 5 --retry-delay 2 --max-time 20 "http://127.0.0.1:${AFO_PORT}/api/health/comprehensive" > "$TMP_PAYLOAD"
+python3 - "$TMP_PAYLOAD" <<'PY'
 import json,sys
-d=json.load(sys.stdin)
+with open(sys.argv[1], 'r') as f:
+    d=json.load(f)
 keys=set(d.keys())
 need_any=[{"organs_v2"},{"organs"},{"organs_v2","organs"}]
 ok=any(n.issubset(keys) or any(k in keys for k in n) for n in need_any)
@@ -42,9 +47,11 @@ print("OK: health keys present")
 PY
 
 echo "--- verify openapi paths contain core endpoints (best-effort) ---"
-curl -sf "http://127.0.0.1:${AFO_PORT}/openapi.json" | python3 - <<'PY'
+curl -sf "http://127.0.0.1:${AFO_PORT}/openapi.json" > "$TMP_PAYLOAD"
+python3 - "$TMP_PAYLOAD" <<'PY'
 import json,sys
-d=json.load(sys.stdin)
+with open(sys.argv[1], 'r') as f:
+    d=json.load(f)
 paths=d.get("paths",{})
 s=" ".join(paths.keys())
 must=["/api/skills","/api/health"]
@@ -55,9 +62,11 @@ print(f"OK: openapi paths count={len(paths)}")
 PY
 
 echo "--- verify skills list count ---"
-curl -sf "http://127.0.0.1:${AFO_PORT}/api/skills" | python3 - <<'PY'
+curl -sf "http://127.0.0.1:${AFO_PORT}/api/skills" > "$TMP_PAYLOAD"
+python3 - "$TMP_PAYLOAD" <<'PY'
 import json,sys
-d=json.load(sys.stdin)
+with open(sys.argv[1], 'r') as f:
+    d=json.load(f)
 skills=d.get("skills", d if isinstance(d,list) else None)
 if isinstance(skills,list):
   n=len(skills)
@@ -68,4 +77,5 @@ else:
   raise SystemExit("unexpected skills payload shape")
 PY
 
+rm -f "$TMP_PAYLOAD"
 echo "=== REMOTE MCP SWEEP: PASS ==="

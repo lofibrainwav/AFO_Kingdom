@@ -177,9 +177,7 @@ class AutomatedScorecard:
                 mypy_path = self.project_dir.parent  # Go up to packages/afo-core
 
             # Use absolute path for venv (script may run from different cwd)
-            script_dir = Path(
-                __file__
-            ).parent.parent  # Go up from scripts/ to repo root
+            script_dir = Path(__file__).parent.parent  # Go up from scripts/ to repo root
             venv_activate = script_dir / ".venv" / "bin" / "activate"
 
             if venv_activate.exists():
@@ -288,9 +286,7 @@ class AutomatedScorecard:
                 continue
             content = path.read_text(encoding="utf-8", errors="ignore")
             total_lines += len(content.splitlines())
-            func_count += sum(
-                1 for n in ast.walk(tree) if isinstance(n, ast.FunctionDef)
-            )
+            func_count += sum(1 for n in ast.walk(tree) if isinstance(n, ast.FunctionDef))
 
         if func_count == 0:
             return 20
@@ -331,9 +327,7 @@ class AutomatedScorecard:
             tree = self._parse_file(path)
             if not tree:
                 continue
-            func_count += sum(
-                1 for n in ast.walk(tree) if isinstance(n, ast.FunctionDef)
-            )
+            func_count += sum(1 for n in ast.walk(tree) if isinstance(n, ast.FunctionDef))
             class_count += sum(1 for n in ast.walk(tree) if isinstance(n, ast.ClassDef))
 
         # 함수와 클래스가 적절히 있으면 좋음
@@ -406,7 +400,7 @@ def main():
     print("🏰 AFO 왕국 자동 스코어카드")
     print("眞善美孝永 (Truth·Goodness·Beauty·Serenity·Eternity)")
     print("=" * 60)
-    print(f"총점: {results["total"]}/{results["max"]}")
+    print(f"총점: {results['total']}/{results['max']}")
     print()
 
     pillar_names = {

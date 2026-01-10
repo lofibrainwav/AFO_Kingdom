@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Phase 3: 핵심 서비스 통합 테스트
+"""Phase 3: 핵심 서비스 통합 테스트
 眞善美孝永 5기둥 철학에 의거한 통합 테스트
 
 이 테스트는 다음 서비스들의 통합 동작을 검증합니다:

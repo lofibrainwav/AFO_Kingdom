@@ -34,7 +34,7 @@ poetry install                   # Alternative: Poetry
 make lint                        # Ruff lint (packages/afo-core)
 make type-check                  # Pyright type check
 make test                        # Unit tests (excludes integration/external)
-make check                       # Lint + type-check + test combined
+make check                       # Full 4-gate CI: Pyright → Ruff → pytest → SBOM
 
 # Run server
 cd packages/afo-core && uvicorn api.api_server:app --reload --port 8010
@@ -58,8 +58,17 @@ Note: `predev`/`prebuild` scripts auto-generate widgets and fragments from HTML 
 ### Pre-push Validation
 
 ```bash
-make pre-push                    # Full validation: lint + type-check + test
+make pre-push                    # Runs make check (4-gate CI protocol)
 ```
+
+**CI Lock Protocol** (`scripts/ci_lock_protocol.sh`):
+
+1. **Pyright** (眞 Truth) - Type check with baseline regression detection
+2. **Ruff** (美 Beauty) - Lint + format check
+3. **pytest** (善 Goodness) - Unit tests (excludes integration/external)
+4. **SBOM** (永 Eternity) - Security seal generation
+
+The Pyright gate uses a baseline file (`artifacts/ci/pyright_baseline.txt`). New errors are blocked; existing baseline errors are tolerated.
 
 ### Single Test
 
@@ -91,7 +100,7 @@ cd packages/afo-core && pytest tests/test_file.py::test_function -v
 - Pydantic models for validation
 - FastAPI dependency injection
 - LangGraph for Chancellor workflow
-- Ruff for linting (target py312, line-length 100)
+- Ruff for linting (target py312, line-length 120)
 
 ### TypeScript/React
 
@@ -123,6 +132,7 @@ cd packages/afo-core && pytest tests/test_file.py::test_function -v
 | n8n | 5678 | Automation |
 
 **Start minimal dev stack**:
+
 ```bash
 cd packages/afo-core && docker-compose up -d postgres redis qdrant
 ```
@@ -139,6 +149,7 @@ Zilong (Claude Code) acts as the **Sword** (眞 - Technical Truth) in the AFO Ki
 ## 3 Strategists (Chancellor Graph Decision Makers)
 
 Zilong must recognize and align with the specialized roles of the Trinity:
+
 - **Zhuge Liang (諸葛亮) - 眞 Sword** ⚔️: Architecture, strategy, and technical certainty.
 - **Sima Yi (司馬懿) - 善 Shield** 🛡️: Ethics, stability, risk assessment, and gatekeeping.
 - **Zhou Yu (周瑜) - 美 Bridge** 🌉: Narrative, UX, communication, and cognitive load reduction.

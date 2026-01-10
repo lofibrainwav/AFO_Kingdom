@@ -14,10 +14,8 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-def verify_node(state: GraphState) -> GraphState:
-    """Verify execution results.
-
-    Checks:
+async def verify_node(state: GraphState) -> GraphState:
+    """Verify execution results against expected outcomes.
     1. No errors accumulated during execution
     2. EXECUTE status is "success" or "skip"
     3. All 3 strategists (TRUTH, GOODNESS, BEAUTY) produced output

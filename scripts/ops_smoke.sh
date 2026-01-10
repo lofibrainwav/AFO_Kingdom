@@ -95,28 +95,28 @@ TOTAL_CHECKS=0
 
 # 1. Health Checks (HTTP 200 expected)
 echo "🏥 Health Checks:"
-check_service "8010 API" "$BASE_URL/api/health" "200" && ((TOTAL_CHECKS++)) || ((FAILURES++))
-check_service "8001 Health" "http://localhost:8001/health" "200" && ((TOTAL_CHECKS++)) || ((FAILURES++))
-check_service "3000 Dashboard" "http://localhost:3000/" "200" && ((TOTAL_CHECKS++)) || ((FAILURES++))
+if check_service "8010 API" "$BASE_URL/api/health" "200"; then ((TOTAL_CHECKS++)); else ((FAILURES++)); fi
+if check_service "8001 Health" "http://localhost:8001/health" "200"; then ((TOTAL_CHECKS++)); else ((FAILURES++)); fi
+if check_service "3000 Dashboard" "http://localhost:3000/" "200"; then ((TOTAL_CHECKS++)); else ((FAILURES++)); fi
 echo
 
 # 2. Security Checks
 echo "🔒 Security Checks:"
 if [[ -n "$AFO_INTERNAL_SECRET" ]]; then
     # Full security check when secret is available
-    check_security "/api/revalidate/status" "unauthorized" "401" && ((TOTAL_CHECKS++)) || ((FAILURES++))
-    check_security "/api/revalidate/status" "wrong secret" "401" && ((TOTAL_CHECKS++)) || ((FAILURES++))
-    check_security "/api/revalidate/status" "correct secret" "200" && ((TOTAL_CHECKS++)) || ((FAILURES++))
+    if check_security "/api/revalidate/status" "unauthorized" "401"; then ((TOTAL_CHECKS++)); else ((FAILURES++)); fi
+    if check_security "/api/revalidate/status" "wrong secret" "401"; then ((TOTAL_CHECKS++)); else ((FAILURES++)); fi
+    if check_security "/api/revalidate/status" "correct secret" "200"; then ((TOTAL_CHECKS++)); else ((FAILURES++)); fi
 else
     echo -e "${YELLOW}⚠️  AFO_INTERNAL_SECRET not set - skipping auth checks${NC}"
     # Minimal check: endpoint should not crash
-    check_security "/api/revalidate/status" "endpoint accessible" "401" && ((TOTAL_CHECKS++)) || ((FAILURES++))
+    if check_security "/api/revalidate/status" "endpoint accessible" "401"; then ((TOTAL_CHECKS++)); else ((FAILURES++)); fi
 fi
 echo
 
 # 3. SSE Stream Check
 echo "📡 SSE Stream Check:"
-check_sse && ((TOTAL_CHECKS++)) || ((FAILURES++))
+if check_sse; then ((TOTAL_CHECKS++)); else ((FAILURES++)); fi
 echo
 
 # 4. Container Status (if docker available)

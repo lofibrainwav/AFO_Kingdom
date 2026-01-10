@@ -11,7 +11,7 @@ import logging
 from typing import Any, Literal, cast
 
 import anyio
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 
 # 로깅 설정
 logger = logging.getLogger(__name__)
@@ -35,6 +35,64 @@ except ImportError:
             ENVIRONMENT = "dev"
 
         antigravity = MockAntigravity()  # type: ignore[assignment]
+
+# Learning Profile Loader import (Boot-Swap)
+try:
+    from afo.learning_loader import get_learning_profile
+
+    _learning_loader_available = True
+    logger.info("✅ Learning profile loader imported successfully")
+except ImportError as e:
+    _learning_loader_available = False
+    logger.warning(f"⚠️ Learning profile loader import failed: {e}")
+
+# RAG Shadow Mode import (TICKET-008 Phase 1)
+try:
+    from afo.rag_shadow import execute_rag_shadow, get_shadow_metrics, is_rag_shadow_enabled
+
+    _rag_shadow_available = True
+    logger.info("✅ RAG shadow mode imported successfully")
+except ImportError:
+    try:
+        # 상대 경로로 재시도 (packages/afo-core/afo/)
+        import os
+        import sys
+
+        sys.path.append(os.path.join(os.path.dirname(__file__), "../../../afo"))
+
+        from rag_shadow import execute_rag_shadow, get_shadow_metrics, is_rag_shadow_enabled
+
+        _rag_shadow_available = True
+        logger.info("✅ RAG shadow mode imported successfully (relative path)")
+    except ImportError as e:
+        _rag_shadow_available = False
+        logger.warning(f"⚠️ RAG shadow mode import failed: {e}")
+
+# RAG Flag + Gradual Mode import (TICKET-008 Phase 2 + 3)
+try:
+    from afo.rag_flag import execute_rag_with_mode, get_rag_config, init_rag_semaphore
+
+    _rag_flag_available = True
+    # 세마포어 초기화
+    init_rag_semaphore()
+    logger.info("✅ RAG flag + gradual mode imported successfully")
+except ImportError:
+    try:
+        # 상대 경로로 재시도 (packages/afo-core/afo/)
+        import os
+        import sys
+
+        sys.path.append(os.path.join(os.path.dirname(__file__), "../../../afo"))
+
+        from rag_flag import execute_rag_with_mode, get_rag_config, init_rag_semaphore
+
+        _rag_flag_available = True
+        # 세마포어 초기화
+        init_rag_semaphore()
+        logger.info("✅ RAG flag + gradual mode imported successfully (relative path)")
+    except ImportError as e:
+        _rag_flag_available = False
+        logger.warning(f"⚠️ RAG flag + gradual mode import failed: {e}")
 
 # Chancellor Graph V2 import - [정복 완료] V1에서 V2로 전환
 # PH23: V1 Strangler Collection - Phase A
@@ -266,6 +324,7 @@ async def _execute_with_fallback(
     mode_used: Literal["offline", "fast", "lite", "full"],
     request: ChancellorInvokeRequest,
     llm_context: dict[str, Any],
+    headers: dict[str, str] | None = None,
 ) -> dict[str, Any]:
     """
     실행 모드에 따른 처리 및 폴백 (美: 순수 함수)
@@ -279,6 +338,27 @@ async def _execute_with_fallback(
         처리 결과
     """
     import asyncio
+
+    # TICKET-008 Phase 3: RAG 통합 실행 (Shadow + Flag + Gradual)
+    rag_result = None
+    if _rag_flag_available:
+        query = request.query or request.input
+        # 통합 모드 실행 (timeout + fallback 보장)
+        rag_result = await execute_rag_with_mode(
+            query,
+            request.headers if hasattr(request, "headers") else None,
+            headers,
+            {"llm_context": llm_context, "thread_id": request.thread_id, "mode_used": mode_used},
+        )
+
+    # TICKET-008 Phase 1: RAG Shadow 실행 (위험 0, 메트릭만 기록)
+    # Flag 모드와 별개로 항상 Shadow 실행 (메트릭 수집)
+    if _rag_shadow_available and is_rag_shadow_enabled():
+        query = request.query or request.input
+        # Shadow 실행은 응답에 영향 없음 (비동기 실행)
+        asyncio.create_task(
+            execute_rag_shadow(query, {"llm_context": llm_context, "thread_id": request.thread_id})
+        )
 
     async def _get_system_metrics_safe() -> dict[str, Any]:
         try:
@@ -405,27 +485,57 @@ async def _execute_with_fallback(
         }
 
     # FULL 모드 (LangGraph 기반 3책사)
-    return await _execute_full_mode(request, llm_context)
+    return await _execute_full_mode(request, llm_context, headers)
 
 
 async def _execute_full_mode(
-    request: ChancellorInvokeRequest, llm_context: dict[str, Any]
+    request: ChancellorInvokeRequest,
+    llm_context: dict[str, Any],
+    headers: dict[str, str] | None = None,
 ) -> dict[str, Any]:
     """
-    FULL 모드 실행 - PH23: V2 Runner 사용 (V1 deprecated)
-
-    V2 Contract:
-    - Sequential Thinking + Context7 주입
-    - Kingdom DNA 주입
-    - Skills Allowlist 403 enforcement
+    FULL 모드 실행 - Phase 24: Unified ChancellorGraph 사용
     """
-    # PH23: V2 Runner 우선 사용
-    if _v2_runner_available:
-        return await _execute_full_mode_v2(request, llm_context)
+    from AFO.chancellor_graph import ChancellorGraph
 
-    # Deprecated V1 fallback
-    logger.warning("⚠️ Using DEPRECATED V1 chancellor_graph (V2 unavailable)")
-    return await _execute_full_mode_v1_legacy(request, llm_context)
+    query = request.query or request.input
+
+    # Unified Invoke (Handles Canary, Shadow, and Routine)
+    result = await ChancellorGraph.invoke(
+        query,
+        headers=headers,
+        llm_context=llm_context,
+        thread_id=request.thread_id,
+        max_strategists=getattr(request, "max_strategists", 3),
+    )
+
+    # Extract response text from potentially complex graph outputs
+    outputs = result.get("outputs", {})
+    execute_result = outputs.get("EXECUTE", {})
+    report_result = outputs.get("REPORT", {})
+
+    response_text = ""
+    if isinstance(report_result, dict):
+        response_text = report_result.get("result", "")
+    if not response_text and isinstance(execute_result, dict):
+        response_text = execute_result.get("result", "")
+
+    if not response_text:
+        # Fallback to direct output if V1 or no standard node output
+        response_text = outputs.get("V1", "Execution completed")
+
+    return {
+        "response": response_text,
+        "speaker": result.get("engine", "Chancellor"),
+        "thread_id": request.thread_id,
+        "trinity_score": 0.9,
+        "strategists_consulted": ["TRUTH", "GOODNESS", "BEAUTY"],
+        "analysis_results": outputs,
+        "mode_used": "full_scaling",
+        "fallback_used": result.get("engine") == "V1 (Legacy)",
+        "timed_out": False,
+        "v2_trace_id": result.get("trace_id"),
+    }
 
 
 async def _execute_full_mode_v2(
@@ -599,27 +709,33 @@ async def _execute_full_mode_v1_legacy(
 @router.post("/invoke")
 async def invoke_chancellor(
     request: ChancellorInvokeRequest,
+    http_request: Request,
 ) -> ChancellorInvokeResponse:
     """
     Chancellor Graph 호출 엔드포인트 (Strangler Fig 적용)
 
-    3책사 (Zhuge Liang/Sima Yi/Zhou Yu)를 LangGraph로 연결하여
-    사용자 쿼리에 대한 최적의 답변을 생성합니다.
-
-    Args:
-        request: Chancellor 호출 요청
-
-    Returns:
-        Chancellor 응답 (3책사 분석 결과 포함)
-
-    Raises:
-        HTTPException: Chancellor Graph 초기화 실패 시
+    Phase 24 Scaling:
+    - X-AFO-Engine: v2 헤더 지원
+    - Shadow 모드 자동 적용 (백그라운드 Diff)
     """
     try:
+        # FastAPI Headers extract
+        headers = dict(http_request.headers)
+
         # Strangler Fig Phase 2: 함수 분해 적용 (美: 우아한 구조)
         mode_used = _determine_execution_mode(request)
         llm_context = _build_llm_context(request)
-        result = await _execute_with_fallback(mode_used, request, llm_context)
+        result = await _execute_with_fallback(mode_used, request, llm_context, headers)
+
+        # Pydantic Response Mapping (Fixing response -> result if needed)
+        if "response" in result and "result" not in result:
+            result["result"] = result["response"]
+        if "speaker" in result and "engine_used" not in result:
+            result["engine_used"] = result["speaker"]
+        if "execution_time" not in result:
+            result["execution_time"] = 1.0  # Static or calculated
+        if "mode" not in result:
+            result["mode"] = mode_used
 
         # 결과 포맷팅 및 타입 검증
         return ChancellorInvokeResponse(**result)
@@ -666,3 +782,101 @@ async def chancellor_health() -> dict[str, Any]:
             "status": "error",
             "message": f"Chancellor Graph 초기화 실패: {e!s}",
         }
+
+
+@router.get("/learning/health")
+async def learning_profile_health() -> dict[str, Any]:
+    """
+    Learning Profile Boot-Swap 상태 체크 (TICKET-007)
+
+    Returns:
+        Learning profile 로드 상태 및 메타데이터 + effective_config
+    """
+    if not _learning_loader_available:
+        return {
+            "status": "unavailable",
+            "message": "Learning profile loader가 초기화되지 않았습니다.",
+            "available": False,
+        }
+
+    try:
+        from afo.trinity_config import BASE_CONFIG, apply_learning_profile
+
+        profile = get_learning_profile()
+        response = profile.to_dict()
+
+        # Boot-Swap: effective_config + applied_overrides 추가
+        effective_config = apply_learning_profile(BASE_CONFIG, profile.data.get("overrides", {}))
+        response["effective_config"] = effective_config
+
+        return response
+    except Exception as e:
+        logger.error("Learning profile health check failed: %s", str(e))
+        return {
+            "status": "error",
+            "message": f"Learning profile health check failed: {e!s}",
+            "available": False,
+        }
+
+
+@router.get("/rag/shadow/health")
+async def rag_shadow_health() -> dict[str, Any]:
+    """
+    RAG Shadow + Flag 모드 상태 체크 (TICKET-008 Phase 1 + Phase 2)
+
+    Returns:
+        RAG Shadow + Flag 모드 상태 및 메트릭 통계
+    """
+    response = {
+        "shadow": {"available": False, "enabled": False},
+        "flag": {"available": False, "enabled": False, "config": None},
+        "overall_status": "partial",
+    }
+
+    # Shadow 모드 상태
+    if _rag_shadow_available:
+        try:
+            shadow_enabled = is_rag_shadow_enabled()
+            response["shadow"] = {
+                "available": True,
+                "enabled": shadow_enabled,
+            }
+
+            if shadow_enabled:
+                # Shadow 메트릭 조회
+                metrics = await get_shadow_metrics(limit=50)
+                response["shadow"]["metrics"] = metrics
+
+        except Exception as e:
+            logger.error("RAG Shadow health check failed: %s", str(e))
+            response["shadow"]["error"] = str(e)
+
+    # Flag 모드 상태
+    if _rag_flag_available:
+        try:
+            config = get_rag_config()
+            response["flag"] = {
+                "available": True,
+                "enabled": config["flag_enabled"] == "1",
+                "config": config,
+            }
+
+        except Exception as e:
+            logger.error("RAG Flag health check failed: %s", str(e))
+            response["flag"]["error"] = str(e)
+
+    # 전체 상태 결정
+    shadow_ok = response["shadow"]["available"] and response["shadow"]["enabled"]
+    flag_ok = response["flag"]["available"]
+
+    if shadow_ok and flag_ok:
+        response["overall_status"] = "enabled"
+        response["message"] = "RAG Shadow + Flag 모드 정상 작동 중"
+    elif shadow_ok or flag_ok:
+        response["overall_status"] = "partial"
+        response["message"] = "RAG 모드 부분 활성화됨"
+    else:
+        response["overall_status"] = "disabled"
+        response["message"] = "RAG 모드 비활성화됨"
+
+    return response

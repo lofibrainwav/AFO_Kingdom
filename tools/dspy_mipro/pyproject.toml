@@ -1,0 +1,14 @@
+[tool.poetry]
+name = "dspy-mipro"
+version = "0.1.0"
+description = "DSPy MIPROv2 격리 환경"
+authors = ["AFO Kingdom <afo@kingdom.dev>"]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+dspy-ai = "^3.0.4"
+optuna = "^3.5.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

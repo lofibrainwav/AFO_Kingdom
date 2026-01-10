@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Bangtong (Codex) - The Implementation Scholar (Implementation & Prototyping)
+"""Bangtong (Codex) - The Implementation Scholar (Implementation & Prototyping)
 
 Identity:
 - Name: Bangtong (Pang Tong)
@@ -26,8 +25,7 @@ logger = logging.getLogger(__name__)
 
 
 class BangtongScholar:
-    """
-    방통 (Bangtong) - 구현 및 프로토타이핑 담당 학자
+    """방통 (Bangtong) - 구현 및 프로토타이핑 담당 학자
     Codex CLI 기반의 코딩 전문가 (정기구독)
     """
 
@@ -49,9 +47,7 @@ class BangtongScholar:
         self.model = "codex-cli"  # CLI 모드 사용
 
     async def implement(self, request: str, context: dict[str, Any] | None = None) -> str:
-        """
-        요구사항을 코드로 구현
-        """
+        """요구사항을 코드로 구현"""
         context_prompt = ""
         if context:
             context_prompt = f"\n[Context]\n{context}"
@@ -80,9 +76,7 @@ class BangtongScholar:
             return f"구현 실패: {error}"
 
     async def review_implementation(self, code: str) -> str:
-        """
-        구현 코드 리뷰 및 최적화 제안
-        """
+        """구현 코드 리뷰 및 최적화 제안"""
         messages = [
             {"role": "system", "content": self.SYSTEM_PROMPT},
             {

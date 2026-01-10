@@ -1,7 +1,6 @@
 # Trinity Score: 90.0 (Established by Chancellor)
 # mypy: ignore-errors
-"""
-Conftest for API Wallet tests.
+"""Conftest for API Wallet tests.
 Ensures proper module isolation between tests that manipulate sys.modules.
 """
 
@@ -15,8 +14,7 @@ _original_modules = {}
 
 @pytest.fixture(autouse=True)
 def isolate_api_wallet_module() -> None:
-    """
-    Autouse fixture that cleans up api_wallet module state before and after each test.
+    """Autouse fixture that cleans up api_wallet module state before and after each test.
     This prevents test pollution when tests reload the module with different configurations.
     """
     # Store modules we might need to restore

@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Prometheus Metrics Middleware for AFO Kingdom API
+"""Prometheus Metrics Middleware for AFO Kingdom API
 
 Provides comprehensive monitoring metrics including:
 - HTTP request/response metrics

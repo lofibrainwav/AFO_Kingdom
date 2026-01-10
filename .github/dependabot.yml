@@ -1,51 +1,53 @@
+# Dependabot 설정 (AFO Kingdom Phase 4-C)
+# 의존성 취약점 자동 탐지 및 PR 생성
+
 version: 2
 updates:
+  # Python Poetry 의존성
+  - package-ecosystem: "pip"
+    directory: "/packages/afo-core"
+    schedule:
+      interval: "daily"
+      time: "04:00"
+      timezone: "America/Los_Angeles"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "security"
+      - "auto-update"
+    reviewers:
+      - "lofibrainwav"
+    commit-message:
+      prefix: "chore(deps)"
+      include: "scope"
+    ignore:
+      # Major 업데이트 수동 검토
+      - dependency-name: "torch"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "transformers"
+        update-types: ["version-update:semver-major"]
+
+  # Next.js Dashboard 의존성
+  - package-ecosystem: "npm"
+    directory: "/packages/dashboard"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "05:00"
+      timezone: "America/Los_Angeles"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "frontend"
+    commit-message:
+      prefix: "chore(deps-dashboard)"
+
+  # GitHub Actions 버전
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 5
-    rebase-strategy: "auto"
-    groups:
-      gha-minor-patch:
-        patterns:
-          - "*"
-        update-types:
-          - "minor"
-          - "patch"
-
-  - package-ecosystem: "npm"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-    open-pull-requests-limit: 5
-    rebase-strategy: "auto"
-    groups:
-      npm-minor-patch:
-        patterns:
-          - "*"
-        update-types:
-          - "minor"
-          - "patch"
-    ignore:
-      - dependency-name: "*"
-        update-types:
-          - "version-update:semver-major"
-
-  - package-ecosystem: "pip"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-    open-pull-requests-limit: 5
-    rebase-strategy: "auto"
-    groups:
-      py-minor-patch:
-        patterns:
-          - "*"
-        update-types:
-          - "minor"
-          - "patch"
-    ignore:
-      - dependency-name: "*"
-        update-types:
-          - "version-update:semver-major"
+    labels:
+      - "ci"
+      - "github-actions"

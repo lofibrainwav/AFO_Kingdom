@@ -3,8 +3,14 @@
 import React from 'react';
 import { useApi } from '@/hooks/useApi';
 
+interface KingdomStatus {
+  buildVersion?: string;
+  backendStatus?: string;
+  generatedAt?: string;
+}
+
 export const SystemFingerprintFooter = () => {
-  const { data } = useApi('/api/kingdom-status');
+  const { data } = useApi<KingdomStatus>('/api/kingdom-status');
 
   const buildVersion = data?.buildVersion || '---';
   const backendStatus = data?.backendStatus || '---';

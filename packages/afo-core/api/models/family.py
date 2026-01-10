@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Family Hub OS Models
+"""Family Hub OS Models
 眞 (Truth): Pydantic 기반 타입 안전성 확보
 """
 
@@ -10,8 +9,7 @@ from pydantic import BaseModel, Field
 
 
 class FamilyMember(BaseModel):
-    """
-    가족 구성원 모델
+    """가족 구성원 모델
     美 (Beauty): 명확한 역할 정의
     """
 
@@ -24,8 +22,7 @@ class FamilyMember(BaseModel):
 
 
 class Activity(BaseModel):
-    """
-    활동 로그 모델
+    """활동 로그 모델
     善 (Goodness): 기록을 통한 이해와 배려
     """
 
@@ -40,8 +37,7 @@ class Activity(BaseModel):
 
 
 class FamilyHubSystem(BaseModel):
-    """
-    Family Hub 시스템 상태 모델
+    """Family Hub 시스템 상태 모델
     孝 (Serenity): 가족 전체의 평온함 수치화
     """
 

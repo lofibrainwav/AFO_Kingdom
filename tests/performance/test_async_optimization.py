@@ -7,6 +7,7 @@ import sys
 import pytest
 from httpx import ASGITransport, AsyncClient
 
+
 # Ensure AFO package is importable
 sys.path.append(
     pathlib.Path(
@@ -14,7 +15,7 @@ sys.path.append(
     ).resolve()
 )
 
-from AFO.api_server import app
+from AFO..api_server import import app
 
 
 @pytest.mark.asyncio

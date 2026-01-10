@@ -1,0 +1,654 @@
+{
+    "version": "1.1.407",
+    "time": "1767765620444",
+    "generalDiagnostics": [
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/scripts/kingdom_spirit_integration.py",
+            "severity": "error",
+            "message": "Operator \">=\" not supported for \"None\"",
+            "range": {
+                "start": {
+                    "line": 155,
+                    "character": 60
+                },
+                "end": {
+                    "line": 155,
+                    "character": 72
+                }
+            },
+            "rule": "reportOptionalOperand"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "\"verify_fact\" is unknown import symbol",
+            "range": {
+                "start": {
+                    "line": 1136,
+                    "character": 56
+                },
+                "end": {
+                    "line": 1136,
+                    "character": 67
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Argument of type \"dict[str, str]\" cannot be assigned to parameter \"user_prompt\" of type \"str\" in function \"run_trinity_toolflow\"",
+            "range": {
+                "start": {
+                    "line": 1243,
+                    "character": 63
+                },
+                "end": {
+                    "line": 1243,
+                    "character": 77
+                }
+            },
+            "rule": "reportArgumentType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Argument of type \"dict[str, Unknown] | dict[str, Any] | FlowState\" cannot be assigned to parameter \"final_card\" of type \"dict[str, Any]\" in function \"_print_three_lines\"\n  Type \"dict[str, Unknown] | dict[str, Any] | FlowState\" is not assignable to type \"dict[str, Any]\"\n    \"FlowState\" is not assignable to \"dict[str, Any]\"",
+            "range": {
+                "start": {
+                    "line": 1338,
+                    "character": 27
+                },
+                "end": {
+                    "line": 1338,
+                    "character": 96
+                }
+            },
+            "rule": "reportArgumentType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/cli/sixxon.py",
+            "severity": "error",
+            "message": "Code is too complex to analyze; reduce complexity by refactoring into subroutines or reducing conditional code paths",
+            "range": {
+                "start": {
+                    "line": 1388,
+                    "character": 4
+                },
+                "end": {
+                    "line": 1388,
+                    "character": 8
+                }
+            },
+            "rule": "reportGeneralTypeIssues"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/graphs/enhanced_dream_hub.py",
+            "severity": "error",
+            "message": "Argument of type \"str | list[str | dict[Unknown, Unknown]]\" cannot be assigned to parameter \"human_input\" of type \"str\" in function \"create_dream_contract\"\n  Type \"str | list[str | dict[Unknown, Unknown]]\" is not assignable to type \"str\"\n    \"list[str | dict[Unknown, Unknown]]\" is not assignable to \"str\"",
+            "range": {
+                "start": {
+                    "line": 43,
+                    "character": 45
+                },
+                "end": {
+                    "line": 43,
+                    "character": 65
+                }
+            },
+            "rule": "reportArgumentType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/graphs/enhanced_dream_hub.py",
+            "severity": "error",
+            "message": "Argument of type \"dict[str, Unknown]\" cannot be assigned to parameter \"input\" of type \"EnhancedAgentState | Command[Unknown] | None\" in function \"invoke\"\n  Type \"dict[str, Unknown]\" is not assignable to type \"EnhancedAgentState | Command[Unknown] | None\"\n    \"dict[str, Unknown]\" is not assignable to \"EnhancedAgentState\"\n    \"dict[str, Unknown]\" is not assignable to \"Command[Unknown]\"\n    \"dict[str, Unknown]\" is not assignable to \"None\"",
+            "range": {
+                "start": {
+                    "line": 234,
+                    "character": 48
+                },
+                "end": {
+                    "line": 234,
+                    "character": 61
+                }
+            },
+            "rule": "reportArgumentType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/graphs/enhanced_dream_hub.py",
+            "severity": "error",
+            "message": "Argument of type \"dict[str, dict[str, str]]\" cannot be assigned to parameter \"config\" of type \"RunnableConfig | None\" in function \"invoke\"\n  Type \"dict[str, dict[str, str]]\" is not assignable to type \"RunnableConfig | None\"\n    \"dict[str, dict[str, str]]\" is not assignable to \"RunnableConfig\"\n    \"dict[str, dict[str, str]]\" is not assignable to \"None\"",
+            "range": {
+                "start": {
+                    "line": 234,
+                    "character": 70
+                },
+                "end": {
+                    "line": 234,
+                    "character": 76
+                }
+            },
+            "rule": "reportArgumentType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/graphs/trinity_hybrid_workflow.py",
+            "severity": "error",
+            "message": "No overloads for \"cast\" match the provided arguments\n  Argument types: (UnionType, dict[str, Any] | Any, dict[str, dict[str, str]])",
+            "range": {
+                "start": {
+                    "line": 129,
+                    "character": 16
+                },
+                "end": {
+                    "line": 129,
+                    "character": 74
+                }
+            },
+            "rule": "reportCallIssue"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/graphs/trinity_hybrid_workflow.py",
+            "severity": "error",
+            "message": "Argument of type \"dict[str, Unknown]\" cannot be assigned to parameter \"input\" of type \"AgentState | Command[Unknown] | None\" in function \"invoke\"\n  Type \"dict[str, Unknown]\" is not assignable to type \"AgentState | Command[Unknown] | None\"\n    \"dict[str, Unknown]\" is not assignable to \"AgentState\"\n    \"dict[str, Unknown]\" is not assignable to \"Command[Unknown]\"\n    \"dict[str, Unknown]\" is not assignable to \"None\"",
+            "range": {
+                "start": {
+                    "line": 129,
+                    "character": 44
+                },
+                "end": {
+                    "line": 129,
+                    "character": 57
+                }
+            },
+            "rule": "reportArgumentType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/graphs/trinity_toolflow_graph_v1.py",
+            "severity": "error",
+            "message": "\"NodeInputT\" is not defined",
+            "range": {
+                "start": {
+                    "line": 19,
+                    "character": 23
+                },
+                "end": {
+                    "line": 19,
+                    "character": 33
+                }
+            },
+            "rule": "reportUndefinedVariable"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/graphs/trinity_toolflow_graph_v1.py",
+            "severity": "error",
+            "message": "Argument of type \"(s: NodeInputT@add_node) -> FlowState\" cannot be assigned to parameter \"action\" of type \"StateNode[NodeInputT@add_node, None]\" in function \"add_node\"\n  Type \"(s: NodeInputT@add_node) -> FlowState\" is not assignable to type \"StateNode[NodeInputT@add_node, None]\"\n    \"FunctionType\" is not assignable to \"Runnable[NodeInputT@add_node, Any]\"\n    Type \"(s: NodeInputT@add_node) -> FlowState\" is not assignable to type \"(state: NodeInputT@add_node) -> Any\"\n      Parameter name mismatch: \"state\" versus \"s\"\n    Type \"(s: NodeInputT@add_node) -> FlowState\" is not assignable to type \"(state: NodeInputT@add_node, config: RunnableConfig) -> Any\"\n      Function accepts too many positional parameters; expected 1 but received 2\n        Parameter name mismatch: \"state\" versus \"s\"\n    Type \"(s: NodeInputT@add_node) -> FlowState\" is not assignable to type \"(state: NodeInputT@add_node, *, config: RunnableConfig, store: BaseStore) -> Any\"\n  ...",
+            "range": {
+                "start": {
+                    "line": 258,
+                    "character": 34
+                },
+                "end": {
+                    "line": 258,
+                    "character": 86
+                }
+            },
+            "rule": "reportArgumentType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/graphs/trinity_toolflow_graph_v1.py",
+            "severity": "error",
+            "message": "Argument of type \"(s: NodeInputT@add_node) -> FlowState\" cannot be assigned to parameter \"action\" of type \"StateNode[NodeInputT@add_node, None]\" in function \"add_node\"\n  Type \"(s: NodeInputT@add_node) -> FlowState\" is not assignable to type \"StateNode[NodeInputT@add_node, None]\"\n    \"FunctionType\" is not assignable to \"Runnable[NodeInputT@add_node, Any]\"\n    Type \"(s: NodeInputT@add_node) -> FlowState\" is not assignable to type \"(state: NodeInputT@add_node) -> Any\"\n      Parameter name mismatch: \"state\" versus \"s\"\n    Type \"(s: NodeInputT@add_node) -> FlowState\" is not assignable to type \"(state: NodeInputT@add_node, config: RunnableConfig) -> Any\"\n      Function accepts too many positional parameters; expected 1 but received 2\n        Parameter name mismatch: \"state\" versus \"s\"\n    Type \"(s: NodeInputT@add_node) -> FlowState\" is not assignable to type \"(state: NodeInputT@add_node, *, config: RunnableConfig, store: BaseStore) -> Any\"\n  ...",
+            "range": {
+                "start": {
+                    "line": 259,
+                    "character": 29
+                },
+                "end": {
+                    "line": 259,
+                    "character": 76
+                }
+            },
+            "rule": "reportArgumentType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/graphs/trinity_toolflow_graph_v1.py",
+            "severity": "error",
+            "message": "Argument of type \"(s: NodeInputT@add_node) -> FlowState\" cannot be assigned to parameter \"action\" of type \"StateNode[NodeInputT@add_node, None]\" in function \"add_node\"\n  Type \"(s: NodeInputT@add_node) -> FlowState\" is not assignable to type \"StateNode[NodeInputT@add_node, None]\"\n    \"FunctionType\" is not assignable to \"Runnable[NodeInputT@add_node, Any]\"\n    Type \"(s: NodeInputT@add_node) -> FlowState\" is not assignable to type \"(state: NodeInputT@add_node) -> Any\"\n      Parameter name mismatch: \"state\" versus \"s\"\n    Type \"(s: NodeInputT@add_node) -> FlowState\" is not assignable to type \"(state: NodeInputT@add_node, config: RunnableConfig) -> Any\"\n      Function accepts too many positional parameters; expected 1 but received 2\n        Parameter name mismatch: \"state\" versus \"s\"\n    Type \"(s: NodeInputT@add_node) -> FlowState\" is not assignable to type \"(state: NodeInputT@add_node, *, config: RunnableConfig, store: BaseStore) -> Any\"\n  ...",
+            "range": {
+                "start": {
+                    "line": 260,
+                    "character": 31
+                },
+                "end": {
+                    "line": 260,
+                    "character": 80
+                }
+            },
+            "rule": "reportArgumentType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/graphs/trinity_toolflow_graph_v1.py",
+            "severity": "error",
+            "message": "Argument of type \"(s: NodeInputT@add_node) -> FlowState\" cannot be assigned to parameter \"action\" of type \"StateNode[NodeInputT@add_node, None]\" in function \"add_node\"\n  Type \"(s: NodeInputT@add_node) -> FlowState\" is not assignable to type \"StateNode[NodeInputT@add_node, None]\"\n    \"FunctionType\" is not assignable to \"Runnable[NodeInputT@add_node, Any]\"\n    Type \"(s: NodeInputT@add_node) -> FlowState\" is not assignable to type \"(state: NodeInputT@add_node) -> Any\"\n      Parameter name mismatch: \"state\" versus \"s\"\n    Type \"(s: NodeInputT@add_node) -> FlowState\" is not assignable to type \"(state: NodeInputT@add_node, config: RunnableConfig) -> Any\"\n      Function accepts too many positional parameters; expected 1 but received 2\n        Parameter name mismatch: \"state\" versus \"s\"\n    Type \"(s: NodeInputT@add_node) -> FlowState\" is not assignable to type \"(state: NodeInputT@add_node, *, config: RunnableConfig, store: BaseStore) -> Any\"\n  ...",
+            "range": {
+                "start": {
+                    "line": 261,
+                    "character": 36
+                },
+                "end": {
+                    "line": 261,
+                    "character": 90
+                }
+            },
+            "rule": "reportArgumentType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/graphs/trinity_toolflow_graph_v1.py",
+            "severity": "error",
+            "message": "Argument of type \"(s: NodeInputT@add_node) -> FlowState\" cannot be assigned to parameter \"action\" of type \"StateNode[NodeInputT@add_node, None]\" in function \"add_node\"\n  Type \"(s: NodeInputT@add_node) -> FlowState\" is not assignable to type \"StateNode[NodeInputT@add_node, None]\"\n    \"FunctionType\" is not assignable to \"Runnable[NodeInputT@add_node, Any]\"\n    Type \"(s: NodeInputT@add_node) -> FlowState\" is not assignable to type \"(state: NodeInputT@add_node) -> Any\"\n      Parameter name mismatch: \"state\" versus \"s\"\n    Type \"(s: NodeInputT@add_node) -> FlowState\" is not assignable to type \"(state: NodeInputT@add_node, config: RunnableConfig) -> Any\"\n      Function accepts too many positional parameters; expected 1 but received 2\n        Parameter name mismatch: \"state\" versus \"s\"\n    Type \"(s: NodeInputT@add_node) -> FlowState\" is not assignable to type \"(state: NodeInputT@add_node, *, config: RunnableConfig, store: BaseStore) -> Any\"\n  ...",
+            "range": {
+                "start": {
+                    "line": 262,
+                    "character": 30
+                },
+                "end": {
+                    "line": 262,
+                    "character": 78
+                }
+            },
+            "rule": "reportArgumentType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/graphs/trinity_toolflow_graph_v1.py",
+            "severity": "error",
+            "message": "Argument of type \"(s: NodeInputT@add_node) -> FlowState\" cannot be assigned to parameter \"action\" of type \"StateNode[NodeInputT@add_node, None]\" in function \"add_node\"\n  Type \"(s: NodeInputT@add_node) -> FlowState\" is not assignable to type \"StateNode[NodeInputT@add_node, None]\"\n    \"FunctionType\" is not assignable to \"Runnable[NodeInputT@add_node, Any]\"\n    Type \"(s: NodeInputT@add_node) -> FlowState\" is not assignable to type \"(state: NodeInputT@add_node) -> Any\"\n      Parameter name mismatch: \"state\" versus \"s\"\n    Type \"(s: NodeInputT@add_node) -> FlowState\" is not assignable to type \"(state: NodeInputT@add_node, config: RunnableConfig) -> Any\"\n      Function accepts too many positional parameters; expected 1 but received 2\n        Parameter name mismatch: \"state\" versus \"s\"\n    Type \"(s: NodeInputT@add_node) -> FlowState\" is not assignable to type \"(state: NodeInputT@add_node, *, config: RunnableConfig, store: BaseStore) -> Any\"\n  ...",
+            "range": {
+                "start": {
+                    "line": 263,
+                    "character": 30
+                },
+                "end": {
+                    "line": 263,
+                    "character": 78
+                }
+            },
+            "rule": "reportArgumentType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/graphs/trinity_toolflow_graph_v1.py",
+            "severity": "error",
+            "message": "Argument of type \"(s: NodeInputT@add_node) -> FlowState\" cannot be assigned to parameter \"action\" of type \"StateNode[NodeInputT@add_node, None]\" in function \"add_node\"\n  Type \"(s: NodeInputT@add_node) -> FlowState\" is not assignable to type \"StateNode[NodeInputT@add_node, None]\"\n    \"FunctionType\" is not assignable to \"Runnable[NodeInputT@add_node, Any]\"\n    Type \"(s: NodeInputT@add_node) -> FlowState\" is not assignable to type \"(state: NodeInputT@add_node) -> Any\"\n      Parameter name mismatch: \"state\" versus \"s\"\n    Type \"(s: NodeInputT@add_node) -> FlowState\" is not assignable to type \"(state: NodeInputT@add_node, config: RunnableConfig) -> Any\"\n      Function accepts too many positional parameters; expected 1 but received 2\n        Parameter name mismatch: \"state\" versus \"s\"\n    Type \"(s: NodeInputT@add_node) -> FlowState\" is not assignable to type \"(state: NodeInputT@add_node, *, config: RunnableConfig, store: BaseStore) -> Any\"\n  ...",
+            "range": {
+                "start": {
+                    "line": 264,
+                    "character": 26
+                },
+                "end": {
+                    "line": 264,
+                    "character": 70
+                }
+            },
+            "rule": "reportArgumentType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/graphs/trinity_toolflow_graph_v1.py",
+            "severity": "error",
+            "message": "Argument of type \"(s: NodeInputT@add_node) -> FlowState\" cannot be assigned to parameter \"action\" of type \"StateNode[NodeInputT@add_node, None]\" in function \"add_node\"\n  Type \"(s: NodeInputT@add_node) -> FlowState\" is not assignable to type \"StateNode[NodeInputT@add_node, None]\"\n    \"FunctionType\" is not assignable to \"Runnable[NodeInputT@add_node, Any]\"\n    Type \"(s: NodeInputT@add_node) -> FlowState\" is not assignable to type \"(state: NodeInputT@add_node) -> Any\"\n      Parameter name mismatch: \"state\" versus \"s\"\n    Type \"(s: NodeInputT@add_node) -> FlowState\" is not assignable to type \"(state: NodeInputT@add_node, config: RunnableConfig) -> Any\"\n      Function accepts too many positional parameters; expected 1 but received 2\n        Parameter name mismatch: \"state\" versus \"s\"\n    Type \"(s: NodeInputT@add_node) -> FlowState\" is not assignable to type \"(state: NodeInputT@add_node, *, config: RunnableConfig, store: BaseStore) -> Any\"\n  ...",
+            "range": {
+                "start": {
+                    "line": 265,
+                    "character": 34
+                },
+                "end": {
+                    "line": 265,
+                    "character": 86
+                }
+            },
+            "rule": "reportArgumentType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/graphs/trinity_toolflow_graph_v1.py",
+            "severity": "error",
+            "message": "Argument of type \"(s: NodeInputT@add_node) -> FlowState\" cannot be assigned to parameter \"action\" of type \"StateNode[NodeInputT@add_node, None]\" in function \"add_node\"\n  Type \"(s: NodeInputT@add_node) -> FlowState\" is not assignable to type \"StateNode[NodeInputT@add_node, None]\"\n    \"FunctionType\" is not assignable to \"Runnable[NodeInputT@add_node, Any]\"\n    Type \"(s: NodeInputT@add_node) -> FlowState\" is not assignable to type \"(state: NodeInputT@add_node) -> Any\"\n      Parameter name mismatch: \"state\" versus \"s\"\n    Type \"(s: NodeInputT@add_node) -> FlowState\" is not assignable to type \"(state: NodeInputT@add_node, config: RunnableConfig) -> Any\"\n      Function accepts too many positional parameters; expected 1 but received 2\n        Parameter name mismatch: \"state\" versus \"s\"\n    Type \"(s: NodeInputT@add_node) -> FlowState\" is not assignable to type \"(state: NodeInputT@add_node, *, config: RunnableConfig, store: BaseStore) -> Any\"\n  ...",
+            "range": {
+                "start": {
+                    "line": 266,
+                    "character": 42
+                },
+                "end": {
+                    "line": 266,
+                    "character": 102
+                }
+            },
+            "rule": "reportArgumentType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/graphs/trinity_toolflow_graph_v1.py",
+            "severity": "error",
+            "message": "Argument of type \"(s: NodeInputT@add_node) -> FlowState\" cannot be assigned to parameter \"action\" of type \"StateNode[NodeInputT@add_node, None]\" in function \"add_node\"\n  Type \"(s: NodeInputT@add_node) -> FlowState\" is not assignable to type \"StateNode[NodeInputT@add_node, None]\"\n    \"FunctionType\" is not assignable to \"Runnable[NodeInputT@add_node, Any]\"\n    Type \"(s: NodeInputT@add_node) -> FlowState\" is not assignable to type \"(state: NodeInputT@add_node) -> Any\"\n      Parameter name mismatch: \"state\" versus \"s\"\n    Type \"(s: NodeInputT@add_node) -> FlowState\" is not assignable to type \"(state: NodeInputT@add_node, config: RunnableConfig) -> Any\"\n      Function accepts too many positional parameters; expected 1 but received 2\n        Parameter name mismatch: \"state\" versus \"s\"\n    Type \"(s: NodeInputT@add_node) -> FlowState\" is not assignable to type \"(state: NodeInputT@add_node, *, config: RunnableConfig, store: BaseStore) -> Any\"\n  ...",
+            "range": {
+                "start": {
+                    "line": 267,
+                    "character": 31
+                },
+                "end": {
+                    "line": 267,
+                    "character": 80
+                }
+            },
+            "rule": "reportArgumentType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/servers/afo_skills_mcp.py",
+            "severity": "warning",
+            "message": "Import \"cupy\" could not be resolved from source",
+            "range": {
+                "start": {
+                    "line": 6,
+                    "character": 11
+                },
+                "end": {
+                    "line": 6,
+                    "character": 15
+                }
+            },
+            "rule": "reportMissingModuleSource"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/servers/afo_skills_mcp.py",
+            "severity": "error",
+            "message": "\"sum\" is not a known attribute of module \"cupy\"",
+            "range": {
+                "start": {
+                    "line": 32,
+                    "character": 28
+                },
+                "end": {
+                    "line": 32,
+                    "character": 31
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/servers/obsidian_mcp.py",
+            "severity": "error",
+            "message": "Expression of type \"None\" cannot be assigned to parameter of type \"dict[str, Any]\"\n  \"None\" is not assignable to \"dict[str, Any]\"",
+            "range": {
+                "start": {
+                    "line": 125,
+                    "character": 76
+                },
+                "end": {
+                    "line": 125,
+                    "character": 80
+                }
+            },
+            "rule": "reportArgumentType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/servers/obsidian_mcp.py",
+            "severity": "error",
+            "message": "Expression of type \"None\" cannot be assigned to parameter of type \"dict[str, str]\"\n  \"None\" is not assignable to \"dict[str, str]\"",
+            "range": {
+                "start": {
+                    "line": 208,
+                    "character": 89
+                },
+                "end": {
+                    "line": 208,
+                    "character": 93
+                }
+            },
+            "rule": "reportArgumentType"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/servers/obsidian_mcp.py",
+            "severity": "error",
+            "message": "Argument missing for parameter \"query\"",
+            "range": {
+                "start": {
+                    "line": 299,
+                    "character": 21
+                },
+                "end": {
+                    "line": 299,
+                    "character": 56
+                }
+            },
+            "rule": "reportCallIssue"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/servers/obsidian_mcp.py",
+            "severity": "error",
+            "message": "\"retrieve_context\" is not a known attribute of \"None\"",
+            "range": {
+                "start": {
+                    "line": 299,
+                    "character": 33
+                },
+                "end": {
+                    "line": 299,
+                    "character": 49
+                }
+            },
+            "rule": "reportOptionalMemberAccess"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/servers/playwright_bridge_mcp.py",
+            "severity": "error",
+            "message": "\"goto\" is not a known attribute of \"None\"",
+            "range": {
+                "start": {
+                    "line": 31,
+                    "character": 22
+                },
+                "end": {
+                    "line": 31,
+                    "character": 26
+                }
+            },
+            "rule": "reportOptionalMemberAccess"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/servers/playwright_bridge_mcp.py",
+            "severity": "error",
+            "message": "\"title\" is not a known attribute of \"None\"",
+            "range": {
+                "start": {
+                    "line": 32,
+                    "character": 30
+                },
+                "end": {
+                    "line": 32,
+                    "character": 35
+                }
+            },
+            "rule": "reportOptionalMemberAccess"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/servers/playwright_bridge_mcp.py",
+            "severity": "error",
+            "message": "\"screenshot\" is not a known attribute of \"None\"",
+            "range": {
+                "start": {
+                    "line": 50,
+                    "character": 22
+                },
+                "end": {
+                    "line": 50,
+                    "character": 32
+                }
+            },
+            "rule": "reportOptionalMemberAccess"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/servers/playwright_bridge_mcp.py",
+            "severity": "error",
+            "message": "\"click\" is not a known attribute of \"None\"",
+            "range": {
+                "start": {
+                    "line": 64,
+                    "character": 22
+                },
+                "end": {
+                    "line": 64,
+                    "character": 27
+                }
+            },
+            "rule": "reportOptionalMemberAccess"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/servers/playwright_bridge_mcp.py",
+            "severity": "error",
+            "message": "\"fill\" is not a known attribute of \"None\"",
+            "range": {
+                "start": {
+                    "line": 74,
+                    "character": 22
+                },
+                "end": {
+                    "line": 74,
+                    "character": 26
+                }
+            },
+            "rule": "reportOptionalMemberAccess"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/servers/playwright_bridge_mcp.py",
+            "severity": "error",
+            "message": "\"content\" is not a known attribute of \"None\"",
+            "range": {
+                "start": {
+                    "line": 85,
+                    "character": 36
+                },
+                "end": {
+                    "line": 85,
+                    "character": 43
+                }
+            },
+            "rule": "reportOptionalMemberAccess"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/servers/playwright_bridge_mcp.py",
+            "severity": "error",
+            "message": "\"inner_text\" is not a known attribute of \"None\"",
+            "range": {
+                "start": {
+                    "line": 86,
+                    "character": 33
+                },
+                "end": {
+                    "line": 86,
+                    "character": 43
+                }
+            },
+            "rule": "reportOptionalMemberAccess"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/servers/playwright_bridge_mcp.py",
+            "severity": "error",
+            "message": "\"inner_text\" is not a known attribute of \"None\"",
+            "range": {
+                "start": {
+                    "line": 94,
+                    "character": 32
+                },
+                "end": {
+                    "line": 94,
+                    "character": 42
+                }
+            },
+            "rule": "reportOptionalMemberAccess"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/servers/trinity_score_mcp.py",
+            "severity": "warning",
+            "message": "Import \"cupy\" could not be resolved from source",
+            "range": {
+                "start": {
+                    "line": 16,
+                    "character": 19
+                },
+                "end": {
+                    "line": 16,
+                    "character": 23
+                }
+            },
+            "rule": "reportMissingModuleSource"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/servers/trinity_score_mcp.py",
+            "severity": "error",
+            "message": "\"array\" is not a known attribute of \"None\"",
+            "range": {
+                "start": {
+                    "line": 60,
+                    "character": 24
+                },
+                "end": {
+                    "line": 60,
+                    "character": 29
+                }
+            },
+            "rule": "reportOptionalMemberAccess"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/servers/trinity_score_mcp.py",
+            "severity": "error",
+            "message": "\"array\" is not a known attribute of \"None\"",
+            "range": {
+                "start": {
+                    "line": 61,
+                    "character": 24
+                },
+                "end": {
+                    "line": 61,
+                    "character": 29
+                }
+            },
+            "rule": "reportOptionalMemberAccess"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/servers/trinity_score_mcp.py",
+            "severity": "error",
+            "message": "\"sum\" is not a known attribute of \"None\"",
+            "range": {
+                "start": {
+                    "line": 62,
+                    "character": 25
+                },
+                "end": {
+                    "line": 62,
+                    "character": 28
+                }
+            },
+            "rule": "reportOptionalMemberAccess"
+        },
+        {
+            "file": "/Users/brnestrm/AFO_Kingdom/packages/trinity-os/trinity_os/servers/trinity_score_mcp.py",
+            "severity": "error",
+            "message": "\"sum\" is not a known attribute of module \"cupy\"",
+            "range": {
+                "start": {
+                    "line": 62,
+                    "character": 25
+                },
+                "end": {
+                    "line": 62,
+                    "character": 28
+                }
+            },
+            "rule": "reportAttributeAccessIssue"
+        }
+    ],
+    "summary": {
+        "filesAnalyzed": 36,
+        "errorCount": 38,
+        "warningCount": 2,
+        "informationCount": 0,
+        "timeInSec": 1.394
+    }
+}
+

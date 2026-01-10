@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Yeongdeok Complete - AFO Kingdom Memory System (Phase 2.5)
+"""Yeongdeok Complete - AFO Kingdom Memory System (Phase 2.5)
 Named after 영덕 (Yeongdeok), the Kingdom's archivist sage.
 Provides comprehensive memory management and context persistence.
 """
@@ -29,8 +28,7 @@ class MemoryEntry:
 
 
 class YeongdeokComplete:
-    """
-    The Complete Memory System (영덕 완성)
+    """The Complete Memory System (영덕 완성)
 
     A unified memory management system for the AFO Kingdom that handles:
     - Short-term conversation memory
@@ -233,8 +231,7 @@ class YeongdeokComplete:
             return {"error": "export failed"}
 
     async def close_eyes(self) -> None:
-        """
-        Graceful shutdown of the memory system.
+        """Graceful shutdown of the memory system.
 
         Trinity Score: 孝 (Serenity) - 마찰 없는 클린업
         """

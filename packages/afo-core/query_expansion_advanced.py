@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Query Expansion Advanced for AFO Kingdom (Phase 2.3)
+"""Query Expansion Advanced for AFO Kingdom (Phase 2.3)
 Expands user queries to improve RAG retrieval.
 """
 
@@ -9,8 +8,7 @@ from typing import Any
 
 
 class QueryExpander:
-    """
-    Advanced Query Expander for RAG systems.
+    """Advanced Query Expander for RAG systems.
     Generates expanded queries for better document retrieval.
     """
 
@@ -30,14 +28,14 @@ class QueryExpander:
         }
 
     def expand(self, query: str) -> list[str]:
-        """
-        Expand a query into multiple variations.
+        """Expand a query into multiple variations.
 
         Args:
             query: Original user query
 
         Returns:
             List of expanded queries
+
         """
         expanded = [query]  # Always include original
 
@@ -64,8 +62,7 @@ class QueryExpander:
         return expanded[: self.expansion_factor + 1]
 
     def expand_with_context(self, query: str, context: dict[str, Any]) -> list[str]:
-        """
-        Expand query using conversation context.
+        """Expand query using conversation context.
 
         Args:
             query: Original query
@@ -73,6 +70,7 @@ class QueryExpander:
 
         Returns:
             Context-aware expanded queries
+
         """
         expanded = self.expand(query)
 

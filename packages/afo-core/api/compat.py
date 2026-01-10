@@ -546,7 +546,8 @@ def _safe_import_router(module_path: str, attr: str = "router") -> Any | None:
     try:
         module = __import__(module_path, fromlist=[attr])
         return getattr(module, attr, None)
-    except Exception:
+    except Exception as e:
+        logging.getLogger(__name__).warning(f"Safe import failed for {module_path}: {e}")
         return None
 
 
@@ -594,11 +595,16 @@ ssot_router = _safe_import_router("AFO.api.routers.ssot")
 strangler_router = _safe_import_router("AFO.api.routers.compat")
 streams_router = _safe_import_router("AFO.api.routes.streams")
 # system_health_router is imported above
+tax_router = _safe_import_router("api.routes.tax")
 trinity_policy_router = _safe_import_router("AFO.api.routes.trinity_policy")
 trinity_sbt_router = _safe_import_router("AFO.api.routes.trinity_sbt")
 users_router = _safe_import_router("AFO.api.routers.users")
 voice_router = _safe_import_router("AFO.api.routers.voice")
 wallet_router = _safe_import_router("AFO.api.routes.wallet", "wallet_router")
+evolution_router = _safe_import_router("AFO.api.routers.evolution_router")
+decree_router = _safe_import_router("AFO.api.routers.decree_router")
+external_router = _safe_import_router("AFO.api.routers.external_router")
+public_sandbox_router = _safe_import_router("AFO.api.routers.public_sandbox_router")
 
 # Edge Revalidate Router (Phase 6)
 edge_revalidate_router: APIRouter | None
@@ -606,6 +612,10 @@ try:
     from api.routes.edge_revalidate import router as edge_revalidate_router
 except ImportError:
     edge_revalidate_router = None
+
+
+# Julie CPA Router (TICKET-042)
+julie_router = _safe_import_router("api.routes.julie")
 
 
 # Trinity metrics class (더미)

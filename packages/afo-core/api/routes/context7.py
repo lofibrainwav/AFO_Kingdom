@@ -1,6 +1,5 @@
 # Trinity Score: 95.0 (New Context7 API)
-"""
-AFO Context7 Router (Self-Awareness Knowledge Base)
+"""AFO Context7 Router (Self-Awareness Knowledge Base)
 
 Context7 지식 베이스를 외부로 노출하는 API 라우터.
 眞善美孝 철학을 준수하며, Context7MCP를 통해 지식 검색을 제공합니다.
@@ -29,8 +28,7 @@ async def search_context7(
     q: str = Query(..., description="Search query for Context7 knowledge base"),
     limit: int = Query(5, description="Maximum number of results", ge=1, le=20),
 ) -> dict[str, Any]:
-    """
-    Search Context7 knowledge base.
+    """Search Context7 knowledge base.
 
     Trinity Score: 眞 (Truth) - 정확한 지식 검색 제공
     """
@@ -49,11 +47,11 @@ async def search_context7(
 
         # Create instance and search
         context7 = Context7MCP()
-        results = context7.retrieve_context(q)
+        results: Any = context7.retrieve_context(q)
 
         # Format results
         formatted_results: list[dict[str, Any]] = []
-        if hasattr(results, "get") and "results" in results:
+        if isinstance(results, dict) and "results" in results:
             # If results is dict with 'results' key
             raw_results = results.get("results", [])
         elif isinstance(results, list):
@@ -88,8 +86,7 @@ async def search_context7(
 
 @router.get("/health")
 async def context7_health() -> dict[str, Any]:
-    """
-    Check Context7 health status.
+    """Check Context7 health status.
 
     Trinity Score: 善 (Goodness) - 시스템 건강 모니터링
     """
