@@ -63,7 +63,7 @@ jobs:
           echo "report=artifacts/drift_$(date +%Y%m%d)/report.md" >> $GITHUB_OUTPUT
       
       - name: Upload Report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: drift-report-${{ github.run_id }}
           path: artifacts/drift_*/
@@ -71,7 +71,7 @@ jobs:
       
       - name: Alert on Drift
         if: steps.git.outputs.status == 'DRIFT'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             github.rest.issues.create({
