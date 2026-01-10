@@ -178,8 +178,23 @@ def build_organs_final(
     ok, ms, t = _tcp_probe(ollama_host, ollama_port, timeout_tcp_s)
     organs["舌_Ollama"] = _mk(ok, ms, t, "tcp", 95, 20, "Connected", "Disconnected")
 
-    ok, ms, t = _tcp_probe(qdrant_host, qdrant_port, timeout_tcp_s)
-    organs["肺_Qdrant"] = _mk(ok, ms, t, "tcp", 94, 20, "Connected", "Disconnected")
+    # 벡터 DB 건강도 체크 (환경변수 기반)
+    vector_db_type = os.getenv("VECTOR_DB", "qdrant").lower()
+
+    if vector_db_type == "lancedb":
+        # LanceDB: 파일 기반 체크
+        lancedb_path = os.getenv("LANCEDB_PATH", "./data/lancedb")
+        lancedb_table = os.path.join(lancedb_path, "afokingdom_knowledge.lance")
+        lancedb_ok = os.path.exists(lancedb_table)
+
+        organs["肺_Vector_DB"] = _mk(
+            lancedb_ok, 0, f"file:{lancedb_table}", "file",
+            94, 20, "LanceDB Connected", "LanceDB Disconnected"
+        )
+    else:
+        # Qdrant: TCP 기반 체크 (기존 호환성)
+        ok, ms, t = _tcp_probe(qdrant_host, qdrant_port, timeout_tcp_s)
+        organs["肺_Vector_DB"] = _mk(ok, ms, t, "tcp", 94, 20, "Qdrant Connected", "Qdrant Disconnected")
 
     # Dashboard: Defaults to localhost, fallback to docker hostname if needed
     dash_host = os.getenv("DASHBOARD_HOST", "localhost")
@@ -298,7 +313,7 @@ def build_organs_final(
         "肝_PostgreSQL",
         "腦_Soul_Engine",
         "舌_Ollama",
-        "肺_Qdrant",
+        "肺_Vector_DB",
         "眼_Dashboard",
         "腎_MCP",
         "耳_Observability",

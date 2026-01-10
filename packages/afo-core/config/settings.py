@@ -76,9 +76,14 @@ class AFOSettings(BaseSettings):
     REDIS_PORT: int = Field(default=6379, description="Redis 포트")
 
     # ============================================================================
-    # Qdrant Settings
+    # Vector Store Settings (LanceDB)
     # ============================================================================
-    QDRANT_URL: str = Field(default="http://localhost:6333", description="Qdrant 벡터 DB URL")
+    VECTOR_DB: str = Field(default="lancedb", description="벡터 DB 타입 (lancedb, qdrant, chroma)")
+    LANCEDB_PATH: str = Field(default="./data/lancedb", description="LanceDB 데이터베이스 경로")
+    EMBED_DIM: str = Field(default="dynamic", description="임베딩 차원 (dynamic=자동 감지, 숫자=고정값)")
+    VISION_MODEL: str = Field(default="qwen3-vl", description="비전 모델 (qwen3-vl 등)")
+    EMBED_MODEL: str = Field(default="embeddinggemma", description="임베딩 모델 (embeddinggemma 등)")
+    BUILD_VECTOR_INDEX: str = Field(default="0", description="벡터 인덱스 생성 여부 (0=생성안함, 1=생성)")
 
     # ============================================================================
     # Ollama Settings

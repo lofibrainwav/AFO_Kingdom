@@ -282,57 +282,31 @@ def query_graph_context(entities: list[str], limit: int = 5) -> list[dict[str, A
 
 def query_qdrant(embedding: list[float], top_k: int, qdrant_client: Any) -> list[dict[str, Any]]:
     """
-    眞 (Truth): Qdrant 벡터 검색 (Brain Organ)
+    眞 (Truth): 통합 벡터 검색 (Brain Organ) - 환경변수 기반 어댑터 사용
+
+    환경변수 VECTOR_DB에 따라 자동으로 적절한 벡터 스토어 선택:
+    - VECTOR_DB=lancedb: LanceDB 사용
+    - VECTOR_DB=chroma: Chroma 사용
+    - 그 외: Qdrant 사용 (기존 호환성 유지)
 
     Args:
         embedding: 검색할 벡터
         top_k: 반환할 상위 항목 수
-        qdrant_client: Qdrant 클라이언트
+        qdrant_client: 기존 호환성을 위한 Qdrant 클라이언트 (사용되지 않음)
 
     Returns:
         list[dict]: 검색 결과 리스트
     """
-    if qdrant_client is None or not embedding:
+    if not embedding:
         return []
 
     try:
-        from AFO.config.settings import get_settings
+        # 환경변수 기반 벡터 스토어 선택
+        from AFO.utils.vector_store import query_vector_store
+        return query_vector_store(embedding, top_k)
 
-        settings = get_settings()
-        collection_name = "afokingdom_knowledge"  # Default collection
-    except Exception:
-        collection_name = "afokingdom_knowledge"
-
-    try:
-        # 1. Search in Qdrant
-        search_result = qdrant_client.search(
-            collection_name=collection_name,
-            query_vector=embedding,
-            limit=top_k,
-            with_payload=True,
-        )
-
-        # 2. Format results
-        rows: list[dict[str, Any]] = []
-        for hit in search_result:
-            payload = hit.payload or {}
-            content = payload.get("content") or ""
-            if not content:
-                continue
-
-            rows.append(
-                {
-                    "id": str(hit.id),
-                    "content": content,
-                    "score": float(hit.score),
-                    "source": payload.get("source") or "qdrant",
-                    "metadata": payload,
-                }
-            )
-
-        return rows
     except Exception as exc:
-        print(f"[Hybrid RAG] Qdrant 검색 실패 (컬렉션이 없거나 연결 실패): {exc}")
+        print(f"[Hybrid RAG] 벡터 검색 실패: {exc}")
         return []
 
 
