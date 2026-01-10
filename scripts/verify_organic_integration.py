@@ -3,6 +3,7 @@ import importlib
 import sys
 from pathlib import Path
 
+
 # Add package root to path
 sys.path.append(str(Path(__file__).parent.parent / "packages" / "afo-core"))
 
@@ -21,9 +22,7 @@ async def verify_all_dependencies():
         "langchain": lambda: importlib.import_module("langchain"),
         "langgraph": lambda: importlib.import_module("langgraph"),
         "ragas": lambda: importlib.import_module("ragas"),
-        "sentence_transformers": lambda: importlib.import_module(
-            "sentence_transformers"
-        ),
+        "sentence_transformers": lambda: importlib.import_module("sentence_transformers"),
         "suno": lambda: importlib.import_module("suno"),
         # --- Data & Math ---
         "numpy": lambda: importlib.import_module("numpy"),
@@ -32,7 +31,6 @@ async def verify_all_dependencies():
         "sympy": lambda: importlib.import_module("sympy"),
         # --- Infrastructure ---
         "boto3": lambda: importlib.import_module("boto3"),
-        "hcloud": lambda: importlib.import_module("hcloud"),
         "docker": lambda: importlib.import_module("docker"),
         "git": lambda: importlib.import_module("git"),
         "kafka": lambda: importlib.import_module("kafka"),
@@ -71,9 +69,7 @@ async def verify_all_dependencies():
         "transcript_mcp": "Verified (Alias to 'mcp')",
     }
 
-    print(
-        f"📋 Scheduled Checks: {len(checks)} Python Packages, {len(custom_checks)} Custom Items"
-    )
+    print(f"📋 Scheduled Checks: {len(checks)} Python Packages, {len(custom_checks)} Custom Items")
     print("-" * 60)
 
     # Execute Python Checks

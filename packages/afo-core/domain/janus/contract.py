@@ -14,8 +14,7 @@ class BBox(BaseModel):
 
 
 class VisualAction(BaseModel):
-    """
-    Step 1: Action Contract (SSOT)
+    """Step 1: Action Contract (SSOT)
     Defines the strict schema for Visual Agent actions.
     """
 

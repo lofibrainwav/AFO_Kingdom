@@ -4,7 +4,7 @@ AFO Development Settings
 Phase 2-5: 환경별 설정 분리 - Development 환경
 """
 
-from .settings import AFOSettings
+from AFO.settings import AFOSettings
 
 
 class AFOSettingsDev(AFOSettings):

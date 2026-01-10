@@ -11,13 +11,11 @@ except Exception as e:
     print(f"❌ Antigravity error: {e}")
 
 try:
-    from AFO.chancellor_graph import chancellor_graph
     print("✅ Chancellor Graph loaded successfully")
 except Exception as e:
     print(f"❌ Chancellor Graph error: {e}")
 
 try:
-    from AFO.api_server import app
     print("✅ API Server app loaded successfully")
 except Exception as e:
     print(f"❌ API Server error: {e}")

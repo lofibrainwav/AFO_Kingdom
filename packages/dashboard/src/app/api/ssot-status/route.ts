@@ -3,11 +3,12 @@ import { NextResponse } from "next/server";
 export async function GET() {
 
   try {
-    // Fetch live data from Soul Engine
-    const coreRes = await fetch("http://localhost:8010/health", { cache: "no-store" });
+    // Fetch live data from Soul Engine (Comprehensive SSOT)
+    // T21: Upgraded to use /comprehensive endpoint for 11-Organs SSOT
+    const coreRes = await fetch("http://localhost:8010/api/health/comprehensive", { cache: "no-store" });
     if (coreRes.ok) {
       const coreData = await coreRes.json();
-      const trinity = coreData.trinity || {};
+      const trinity = coreData.trinity_breakdown || coreData.breakdown || {};
       
       return NextResponse.json({
         status: "ok",
@@ -16,17 +17,17 @@ export async function GET() {
           truth: trinity.truth ?? 1.0,
           goodness: trinity.goodness ?? 1.0,
           beauty: trinity.beauty ?? 1.0,
-          serenity: trinity.serenity_core ?? 1.0,
+          serenity: trinity.filial_serenity ?? 1.0,
           eternity: trinity.eternity ?? 1.0,
-          total: trinity.trinity_score ?? 1.0,
+          total: coreData.trinity_score ?? 1.0,
         },
-        risk: Math.round((1 - (trinity.trinity_score ?? 1.0)) * 100) / 100,
+        risk: Math.round((1 - (coreData.trinity_score ?? 1.0)) * 100) / 100,
         services: {
           online: coreData.healthy_organs ?? 0,
-          total: coreData.total_organs ?? 4,
+          total: coreData.total_organs ?? 11, // Updated to 11 Organs
         },
         git: {
-          clean: true, // Simplified for brevity as we are focusing on health
+          clean: true,
         },
         timestamp: new Date().toISOString(),
       });

@@ -2644,7 +2644,7 @@ vault write -field=certificate afo-root/root/generate/internal \
 ```bash
 # 1. 비밀키 암호화 백업 (AES-256-GCM 추천)
 openssl enc -aes-256-gcm -salt -in afo-root-private-key.pem \
-    -out afo-root-private-key.enc -pass pass:AFO_Strong_Passphrase_2025
+    -out afo-root-private-key.enc -pass pass:${AFO_PASSPHRASE}
 
 # 2. YubiHSM 또는 USB에 복사 → Vault에서 삭제
 rm afo-root-private-key.pem  # Vault 내부에서도 삭제 (안전)
@@ -2709,7 +2709,7 @@ vault write -field=csr afo-cosign-int/intermediate/generate/internal \
 # 오프라인 환경 (air-gapped 머신 또는 YubiHSM 복원)
 # Root private key 복호화 (이전 백업에서)
 openssl enc -d -aes-256-gcm -in afo-root-private-key.enc \
-    -out afo-root-private-key.pem -pass pass:AFO_Strong_Passphrase_2025
+    -out afo-root-private-key.pem -pass pass:${AFO_PASSPHRASE}
 
 # Root CA로 Intermediate CSR 서명
 vault write -format=json -field=certificate afo-root/root/sign-intermediate \

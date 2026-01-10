@@ -106,7 +106,7 @@ class RedisCacheService:
                 if isinstance(max_memory_mb_val, (int, float, str))
                 else 512.0
             )
-            max_memory_bytes: int = int(max_memory_mb * 1024 * 1024)
+            max_memory_bytes: int = int(max_memory_mb * 1024 * 1024)  # type: ignore[arg-type]
             self.redis_client.config_set("maxmemory", str(max_memory_bytes))
             self.redis_client.config_set("maxmemory-policy", "allkeys-lru")
 

@@ -4,14 +4,13 @@ Context7 MCP Module
 지식 그래프 기반 컨텍스트 검색 및 주입을 위한 MCP 도구
 """
 
+import json
 import logging
-import re
+from typing import Any, Dict, List, Mapping, Set, cast
 from pathlib import Path
-from typing import Any
-
+import re
 
 logger = logging.getLogger(__name__)
-
 
 class Context7MCP:
     """
@@ -20,105 +19,63 @@ class Context7MCP:
     """
 
     def __init__(self):
-        self.knowledge_base: list[dict[str, Any]] = []
-        self.knowledge_index: dict[str, set[int]] = {}
+        self.knowledge_base: List[Dict[str, Any]] = []
+        self.knowledge_index: Dict[str, Set[int]] = {}
         self._load_knowledge_base()
 
     def _load_knowledge_base(self) -> None:
-        """지식 베이스 로드 (Metadata JSON 기반 동적 로딩)"""
+        """지식 베이스 로드"""
         try:
+            # AFO 왕국의 핵심 문서들 로드 - 절대 경로로 찾기
             import os
+            # trinity-os 폴더에서 AFO_Kingdom 루트까지 올라감
+            base_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..', '..'))
 
-            # Repo Root 찾기 (trinity-os 위치 기준)
-            base_path = os.path.abspath(
-                os.path.join(os.path.dirname(__file__), "..", "..", "..", "..")
-            )
-            repo_root = Path(base_path)
-
-            # 1. Metadata Load
-            # Import local helper (Serenity)
-            try:
-                from context7_metadata import inject_meta_header, load_context7_metadata
-            except ImportError:
-                # Fallback for when running from different CWD
-                try:
-                    from trinity_os.servers.context7_metadata import (
-                        inject_meta_header,
-                        load_context7_metadata,
-                    )
-                except ImportError:
-                    logger.error("Failed to import context7_metadata helper")
-                    raise
-
-            meta_map = load_context7_metadata(repo_root)
-
-            # Default fallback files if metadata invalid ensuring Eternity
-            files_to_load = list(meta_map.keys())
-            if not files_to_load:
-                logger.warning("Metadata empty/missing. Falling back to default list.")
-                files_to_load = [
-                    "AGENTS.md",
-                    "docs/AFO_ROYAL_LIBRARY.md",
-                    "docs/MCP_TOOLS_COMPLETE_DEFINITION.md",
-                    "docs/SKILLS_REGISTRY_REFERENCE.md",
-                ]
+            knowledge_sources = [
+                os.path.join(base_path, "AGENTS.md"),
+                os.path.join(base_path, "docs/AFO_ROYAL_LIBRARY.md"),
+                os.path.join(base_path, "docs/AFO_CHANCELLOR_GRAPH_SPEC.md"),
+                os.path.join(base_path, "docs/AFO_EVOLUTION_LOG.md"),
+                os.path.join(base_path, "docs/AFO_FRONTEND_ARCH.md"),
+                os.path.join(base_path, "docs/CURSOR_MCP_SETUP.md")
+            ]
 
             loaded_count = 0
-            for rel_path in files_to_load:
-                full_path = repo_root / rel_path
-                if full_path.exists():
-                    try:
-                        content = full_path.read_text(encoding="utf-8", errors="replace")
-                        meta = meta_map.get(rel_path)
+            for source in knowledge_sources:
+                if self._load_document(source):
+                    loaded_count += 1
 
-                        doc_id = f"doc_{len(self.knowledge_base)}"
-                        doc_type = "document"
-                        title = full_path.name
+            logger.info(f"Loaded {loaded_count} out of {len(knowledge_sources)} knowledge sources")
 
-                        if meta:
-                            # Inject Header (Truth & Richness)
-                            content = inject_meta_header(meta, content)
-                            # Update Attributes from Metadata
-                            doc_type = meta.type
-                            title = (
-                                meta.description[:50] if meta.description else full_path.name
-                            )  # Use description start as title if available
-
-                        self.knowledge_base.append({
-                            "id": doc_id,
-                            "type": doc_type,
-                            "source": str(rel_path),
-                            "content": content,
-                            "title": title,
-                            "keywords": self._extract_keywords(content),
-                            "metadata": {
-                                "category": meta.category if meta else None,
-                                "tags": meta.tags if meta else [],
-                                "description": meta.description if meta else None,
-                                "keywords": meta.keywords if meta else [],
-                            },
-                        })
-                        loaded_count += 1
-                    except Exception as e:
-                        logger.warning("Failed to read %s: %s", rel_path, e)
-                else:
-                    logger.warning("File not found: %s", rel_path)
-
-            logger.info("Loaded %s items via Metadata Driven Loading", loaded_count)
-
-            # 2. Add Core Knowledge (In-Memory)
+            # 추가 지식 항목들
             self._add_core_knowledge()
 
-            # 3. Build Index
+            # 색인 구축
             self._build_index()
             logger.info(f"Knowledge base initialized with {len(self.knowledge_base)} items")
 
         except Exception as e:
-            logger.error("Failed to load knowledge base: %s", e)
+            logger.error(f"Failed to load knowledge base: {e}")
             raise
 
     def _load_document(self, filepath: str) -> None:
-        """Deprecated: Logic moved to _load_knowledge_base"""
+        """문서 파일 로드"""
+        try:
+            path = Path(filepath)
+            if path.exists():
+                content = path.read_text(encoding='utf-8')
+                self.knowledge_base.append({
+                    "id": f"doc_{len(self.knowledge_base)}",
+                    "type": "document",
+                    "source": filepath,
+                    "content": content,
+                    "title": path.name,
+                    "keywords": self._extract_keywords(content)
+                })
+            else:
+                logger.warning(f"Document not found: {filepath}")
+        except Exception as e:
+            logger.error(f"Failed to load document {filepath}: {e}")
 
     def _add_core_knowledge(self) -> None:
         """핵심 지식 항목들 추가"""
@@ -135,7 +92,7 @@ class Context7MCP:
                 - 孝 (Serenity): 평온·연속성, 인지 부하 최소화
                 - 永 (Eternity): 재현 가능성, 문서화, 버전·결정 기록
                 """,
-                "keywords": ["trinity", "철학", "5기둥", "眞善美孝永", "philosophy"],
+                "keywords": ["trinity", "철학", "5기둥", "眞善美孝永", "philosophy"]
             },
             {
                 "id": "mcp_ecosystem",
@@ -148,69 +105,20 @@ class Context7MCP:
                 - 도구 기반 확장성
                 - 안전한 실행 환경
                 """,
-                "keywords": ["mcp", "model context protocol", "json-rpc", "cursor", "ecosystem"],
+                "keywords": ["mcp", "model context protocol", "json-rpc", "cursor", "ecosystem"]
             },
             {
                 "id": "skills_registry",
                 "type": "technical",
-                "title": "Skills Registry 시스템 (19개 스킬 체계)",
+                "title": "Skills Registry 시스템",
                 "content": """
-                AFO Skills Registry 상세 사양:
-                - 총 19개 스킬, 9개 카테고리로 분류
-                - Strategic Command: skill_005_strategy_engine, skill_010_family_persona
-                - RAG Systems: skill_002_ultimate_rag, skill_013_obsidian_librarian
-                - Workflow Automation: 3개 스킬 (task_breakdown, orchestrator, expand_loop)
-                - Health Monitoring: 3개 스킬 (system_health, trinity_monitor, error_detector)
-                - Memory Management: skill_009_memory_optimizer
-                - Analysis Evaluation: 4개 스킬 (code_quality, security_scan, performance_eval, user_experience)
-                - Integration: 3개 스킬 (api_integration, data_pipeline, notification_system)
-                - Metacognition: skill_019_self_learning
-                - 각 스킬별 Trinity Score 평가 (眞善美孝永)
-                - 실행 모드: SYNC, ASYNC, STREAMING, BACKGROUND
-                - DRY_RUN 모드 및 안전 게이트 지원
+                AFO Skills Registry:
+                - 31개 지능적 기능 제공
+                - Trinity Score 기반 실행
+                - DRY_RUN 모드 지원
+                - 실시간 상태 모니터링
                 """,
-                "keywords": [
-                    "skills",
-                    "registry",
-                    "trinity",
-                    "dry_run",
-                    "실행",
-                    "19개",
-                    "카테고리",
-                    "strategic",
-                    "rag",
-                    "workflow",
-                    "monitoring",
-                    "memory",
-                    "analysis",
-                    "integration",
-                    "metacognition",
-                ],
-            },
-            {
-                "id": "mcp_protocol",
-                "type": "technical",
-                "title": "MCP Protocol (Model Context Protocol)",
-                "content": """
-                Model Context Protocol (MCP) 사양:
-                - JSON-RPC 2.0 over STDIO 기반 통신 프로토콜
-                - AI 모델과 도구 사이의 표준화된 인터페이스
-                - 도구 호출, 결과 반환, 에러 처리 표준화
-                - 안전한 샌드박스 환경에서 도구 실행
-                - Cursor IDE, Claude Desktop 등 지원
-                - AFO 왕국: 14개 핵심 도구 + 확장 가능성
-                """,
-                "keywords": [
-                    "mcp",
-                    "protocol",
-                    "json-rpc",
-                    "stdio",
-                    "cursor",
-                    "model context protocol",
-                    "도구",
-                    "tools",
-                    "interface",
-                ],
+                "keywords": ["skills", "registry", "trinity", "dry_run", "실행"]
             },
             {
                 "id": "sequential_thinking",
@@ -223,74 +131,30 @@ class Context7MCP:
                 - 사고 과정 기록 및 분석
                 - Trinity Score 기반 품질 관리
                 """,
-                "keywords": ["sequential", "thinking", "단계별", "추론", "methodology"],
-            },
+                "keywords": ["sequential", "thinking", "단계별", "추론", "methodology"]
+            }
         ]
 
         self.knowledge_base.extend(core_knowledge)
 
-    def _extract_keywords(self, content: str) -> list[str]:
+    def _extract_keywords(self, content: str) -> List[str]:
         """콘텐츠에서 키워드 추출 (개선된 버전)"""
-        keywords = set()
+        keywords: set[Any] = set()
 
         # 기본 키워드 리스트 (AFO 왕국 관련 추가)
         base_keywords = [
             # 기존 키워드들
-            "trinity",
-            "mcp",
-            "skills",
-            "api",
-            "backend",
-            "frontend",
-            "database",
-            "redis",
-            "postgresql",
-            "docker",
-            "kubernetes",
-            "monitoring",
-            "metrics",
-            "logging",
-            "security",
-            "auth",
-            "cache",
-            "session",
-            "router",
-            "middleware",
-            "validation",
-            "error",
-            "handling",
-            "async",
-            "concurrency",
-            "performance",
-            "testing",
-            "ci",
-            "cd",
-            "deployment",
-            "scaling",
+            "trinity", "mcp", "skills", "api", "backend", "frontend",
+            "database", "redis", "postgresql", "docker", "kubernetes",
+            "monitoring", "metrics", "logging", "security", "auth",
+            "cache", "session", "router", "middleware", "validation",
+            "error", "handling", "async", "concurrency", "performance",
+            "testing", "ci", "cd", "deployment", "scaling",
             # AFO 왕국 관련 키워드 추가
-            "afo",
-            "kingdom",
-            "philosophy",
-            "眞",
-            "善",
-            "美",
-            "孝",
-            "永",
-            "truth",
-            "goodness",
-            "beauty",
-            "serenity",
-            "eternity",
-            "chancellor",
-            "agents",
-            "cursor",
-            "claude",
-            "codex",
-            "grok",
-            "sequential",
-            "thinking",
-            "context7",
-            "orchestration",
+            "afo", "kingdom", "philosophy", "眞", "善", "美", "孝", "永",
+            "truth", "goodness", "beauty", "serenity", "eternity",
+            "chancellor", "agents", "cursor", "claude", "codex", "grok",
+            "sequential", "thinking", "context7", "orchestration"
         ]
 
         content_lower = content.lower()
@@ -298,67 +162,28 @@ class Context7MCP:
         # 기본 키워드 매칭
         for keyword in base_keywords:
             if keyword in content_lower:
-                keywords.add(keyword)
+                cast(Any, keywords).add(keyword)
 
         # 동적 키워드 추출 - 단어 단위로 분리
-        words = re.findall(r"\b\w+\b", content_lower)
-        significant_words = [
-            word
-            for word in words
-            if len(word) > 3
-            and word
-            not in {
-                "that",
-                "with",
-                "have",
-                "this",
-                "will",
-                "your",
-                "from",
-                "they",
-                "know",
-                "want",
-                "been",
-                "good",
-                "much",
-                "some",
-                "time",
-                "very",
-                "when",
-                "come",
-                "here",
-                "just",
-                "like",
-                "long",
-                "make",
-                "many",
-                "over",
-                "such",
-                "take",
-                "than",
-                "them",
-                "well",
-                "were",
-                "what",
-                "where",
-                "which",
-                "while",
-                "who",
-                "why",
-                "would",
-            }
-        ]
+        words = re.findall(r'\b\w+\b', content_lower)
+        significant_words = [word for word in words if len(word) > 3 and word not in {
+            'that', 'with', 'have', 'this', 'will', 'your', 'from', 'they', 'know',
+            'want', 'been', 'good', 'much', 'some', 'time', 'very', 'when', 'come',
+            'here', 'just', 'like', 'long', 'make', 'many', 'over', 'such', 'take',
+            'than', 'them', 'well', 'were', 'what', 'when', 'where', 'which', 'while',
+            'who', 'why', 'would'
+        }]
 
         # 의미 있는 단어들 추가 (최대 10개)
         for word in significant_words[:10]:
             if len(word) >= 4:  # 4글자 이상만
-                keywords.add(word)
+                cast(Any, keywords).add(word)
 
         # 기존 패턴 추출 유지
         patterns = [
-            r"#+\s*([^\n]+)",  # 헤더들
-            r"\*\*([^*]+)\*\*",  # 볼드 텍스트
-            r"`([^`]+)`",  # 코드
+            r'#+\s*([^\n]+)',  # 헤더들
+            r'\*\*([^*]+)\*\*',  # 볼드 텍스트
+            r'`([^`]+)`',  # 코드
         ]
 
         for pattern in patterns:
@@ -366,7 +191,7 @@ class Context7MCP:
             for match in matches[:5]:  # 최대 5개로 줄임
                 clean_match = match.strip().lower()
                 if len(clean_match) > 2:
-                    keywords.add(clean_match)
+                    cast(Any, keywords).add(clean_match)
 
         return list(keywords)
 
@@ -381,7 +206,7 @@ class Context7MCP:
                     self.knowledge_index[keyword] = set()
                 self.knowledge_index[keyword].add(idx)
 
-    def retrieve_context(self, query: str, domain: str = "general") -> dict[str, Any]:
+    def retrieve_context(self, query: str, domain: str = "general") -> Dict[str, Any]:
         """
         쿼리에 기반한 컨텍스트 검색
 
@@ -392,6 +217,7 @@ class Context7MCP:
         Returns:
             관련 컨텍스트들
         """
+
         # 쿼리 분석
         query_keywords = self._extract_keywords(query)
         query_lower = query.lower()
@@ -419,29 +245,27 @@ class Context7MCP:
 
         # 도메인 필터링
         if domain != "general":
-            filtered_scores = {}
+            filtered_scores: Any = {}
             for idx, score in scores.items():
-                item = self.knowledge_base[idx]
+                item: Any = self.knowledge_base[idx]
                 if item.get("type") == domain:
                     filtered_scores[idx] = score
             scores = filtered_scores
 
         # 상위 결과 추출 (최대 5개)
-        sorted_docs = sorted(scores.items(), key=lambda x: x[1], reverse=True)[:5]
+        sorted_docs: Any = sorted(scores.items(), key=lambda x: x[1], reverse=True)[:5]
 
-        results = []
+        results: Any = []
         for doc_idx, score in sorted_docs:
-            item = self.knowledge_base[doc_idx]
-            results.append({
+            item: Any = self.knowledge_base[doc_idx]
+            cast(list[Any], results).append({
                 "id": item["id"],
                 "title": item["title"],
                 "type": item["type"],
                 "relevance_score": score,
-                "preview": item["content"][:200] + "..."
-                if len(item["content"]) > 200
-                else item["content"],
+                "preview": item["content"][:200] + "..." if len(item["content"]) > 200 else item["content"],
                 "source": item.get("source", "knowledge_base"),
-                "keywords": item.get("keywords", []),
+                "keywords": item.get("keywords", [])
             })
 
         # Trinity Score 평가
@@ -457,11 +281,11 @@ class Context7MCP:
                 "truth_impact": truth_impact,
                 "serenity_impact": serenity_impact,
                 "search_method": "keyword_matching",
-                "knowledge_base_size": len(self.knowledge_base),
-            },
+                "knowledge_base_size": len(self.knowledge_base)
+            }
         }
 
-    def add_knowledge(self, knowledge_item: dict[str, Any]) -> str:
+    def add_knowledge(self, knowledge_item: Dict[str, Any]) -> str:
         """새로운 지식 항목 추가"""
         knowledge_item["id"] = f"custom_{len(self.knowledge_base)}"
         knowledge_item["keywords"] = self._extract_keywords(
@@ -475,21 +299,21 @@ class Context7MCP:
 
         return knowledge_item["id"]
 
-    def get_knowledge_stats(self) -> dict[str, Any]:
+    def get_knowledge_stats(self) -> Dict[str, Any]:
         """지식 베이스 통계 반환"""
         types = {}
         sources = {}
 
         for item in self.knowledge_base:
             item_type = item.get("type", "unknown")
-            types[item_type] = types.get(item_type, 0) + 1
+            types[item_type] = cast(Mapping[str, Any], types).get(item_type, 0) + 1
 
             source = item.get("source", "unknown")
-            sources[source] = sources.get(source, 0) + 1
+            sources[source] = cast(Mapping[str, Any], sources).get(source, 0) + 1
 
         return {
             "total_items": len(self.knowledge_base),
             "types": types,
             "sources": sources,
-            "indexed_keywords": len(self.knowledge_index),
+            "indexed_keywords": len(self.knowledge_index)
         }

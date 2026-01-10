@@ -9,6 +9,6 @@ SSOT Sources:
 
 from .calculator import TaxCalculator
 from .loader import TaxParameterLoader
-from .validator import TaxValidator
+from .validator import validate_tax_params_2025
 
-__all__ = ["TaxCalculator", "TaxParameterLoader", "TaxValidator"]
+__all__ = ["TaxCalculator", "TaxParameterLoader", "validate_tax_params_2025"]

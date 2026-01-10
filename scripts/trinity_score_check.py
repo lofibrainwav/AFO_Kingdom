@@ -9,6 +9,7 @@ import os
 import sys
 from pathlib import Path
 
+
 # Trinity Score 가중치
 TRINITY_WEIGHTS = {
     "truth": 0.35,  # 기술적 정확성
@@ -75,11 +76,7 @@ class TrinityScoreChecker:
             # 제외 디렉토리 필터링
             dirs[:] = [d for d in dirs if d not in exclude_dirs]
 
-            python_files.extend(
-                Path(root) / filename
-                for filename in filenames
-                if filename.endswith(".py")
-            )
+            python_files.extend(Path(root) / filename for filename in filenames if filename.endswith(".py"))
 
         return python_files
 
@@ -99,24 +96,16 @@ class TrinityScoreChecker:
                 tree = ast.parse(content)
 
                 # 함수 수집
-                functions = [
-                    node for node in ast.walk(tree) if isinstance(node, ast.FunctionDef)
-                ]
+                functions = [node for node in ast.walk(tree) if isinstance(node, ast.FunctionDef)]
                 total_functions += len(functions)
-                typed_functions += len(
-                    [fn for fn in functions if fn.returns is not None]
-                )
+                typed_functions += len([fn for fn in functions if fn.returns is not None])
 
             except Exception:
-                self.results["truth"]["details"].append(
-                    f"파일 분석 실패: {file_path.name}"
-                )
+                self.results["truth"]["details"].append(f"파일 분석 실패: {file_path.name}")
                 continue
 
         # 타입 커버리지 계산
-        type_coverage = (
-            (typed_functions / total_functions * 100) if total_functions > 0 else 0
-        )
+        type_coverage = (typed_functions / total_functions * 100) if total_functions > 0 else 0
 
         # MyPy 오류 확인 (간단한 검증)
         try:
@@ -135,13 +124,7 @@ class TrinityScoreChecker:
                 timeout=10,
                 check=False,
             )
-            mypy_errors = len(
-                [
-                    line
-                    for line in result.stdout.split("\n")
-                    if line.strip() and "error:" in line
-                ]
-            )
+            mypy_errors = len([line for line in result.stdout.split("\n") if line.strip() and "error:" in line])
         except Exception:
             mypy_errors = 0  # MyPy가 없으면 0으로 처리
 
@@ -180,22 +163,16 @@ class TrinityScoreChecker:
             except Exception:
                 continue
 
-        error_handling_score = (
-            (files_with_error_handling / total_files * 100) if total_files > 0 else 0
-        )
+        error_handling_score = (files_with_error_handling / total_files * 100) if total_files > 0 else 0
 
         # 테스트 파일 존재 확인
         test_files = []
         for _root, _dirs, filenames in os.walk(self.project_root):
             test_files.extend(
-                filename
-                for filename in filenames
-                if filename.startswith("test_") and filename.endswith(".py")
+                filename for filename in filenames if filename.startswith("test_") and filename.endswith(".py")
             )
 
-        test_ratio = len(test_files) / max(
-            1, total_files // 10
-        )  # 파일당 0.1개 테스트 파일 기준
+        test_ratio = len(test_files) / max(1, total_files // 10)  # 파일당 0.1개 테스트 파일 기준
         test_coverage_score = min(100, test_ratio * 100)
 
         # 종합 점수
@@ -234,9 +211,7 @@ class TrinityScoreChecker:
                 continue
 
         if total_analyzed > 0:
-            complexity_score = max(
-                0, 100 - (high_complexity_files / total_analyzed) * 50
-            )
+            complexity_score = max(0, 100 - (high_complexity_files / total_analyzed) * 50)
 
         # 모듈화 분석
         packages_dir = self.project_root / "packages"
@@ -291,7 +266,7 @@ class TrinityScoreChecker:
         self.results["serenity"]["details"] = [
             f"자동화 도구 점수: {automation_score:.1f}",
             f"유지보수성 점수: {maintenance_score:.1f}",
-            f"문서화 상태: {"양호" if docs_score >= 50 else "개선 필요"}",
+            f"문서화 상태: {'양호' if docs_score >= 50 else '개선 필요'}",
         ]
 
     def _analyze_eternity(self, files: list[Path]) -> None:
@@ -334,17 +309,12 @@ class TrinityScoreChecker:
 
     def _calculate_overall_score(self) -> None:
         """종합 Trinity Score 계산"""
-        self.overall_score = sum(
-            self.results[pillar]["score"] * weight
-            for pillar, weight in TRINITY_WEIGHTS.items()
-        )
+        self.overall_score = sum(self.results[pillar]["score"] * weight for pillar, weight in TRINITY_WEIGHTS.items())
 
     def _get_results(self) -> dict:
         """결과 반환"""
         return {
-            "timestamp": (
-                Path(__file__).stat().st_mtime if Path(__file__).exists() else 0
-            ),
+            "timestamp": (Path(__file__).stat().st_mtime if Path(__file__).exists() else 0),
             "pillars": self.results,
             "overall_score": round(self.overall_score, 1),
             "grade": self._get_grade(),
@@ -383,8 +353,8 @@ def main():
         results = checker.analyze_codebase()
 
         print("\n📊 Trinity Score 결과:")
-        print(f"종합 점수: {results["overall_score"]:.1f}/100")
-        print(f"등급: {results["grade"]}")
+        print(f"종합 점수: {results['overall_score']:.1f}/100")
+        print(f"등급: {results['grade']}")
 
         print("\n🔍 세부 점수:")
         for pillar, data in results["pillars"].items():
@@ -395,19 +365,15 @@ def main():
                 "serenity": "孝 (Serenity)",
                 "eternity": "永 (Eternity)",
             }
-            print(f"  {pillar_names[pillar]}: {data["score"]:.1f}")
+            print(f"  {pillar_names[pillar]}: {data['score']:.1f}")
             for detail in data["details"][:2]:  # 주요 정보만 표시
                 print(f"    • {detail}")
 
         # 요구사항 검증
         if results["requirements_met"]:
-            print(
-                f"\n✅ 최소 요구사항 충족 (Trinity Score {MIN_REQUIREMENTS["trinity_score"]}점 이상)"
-            )
+            print(f"\n✅ 최소 요구사항 충족 (Trinity Score {MIN_REQUIREMENTS['trinity_score']}점 이상)")
             return 0
-        print(
-            f"\n❌ 최소 요구사항 미충족 (Trinity Score {MIN_REQUIREMENTS["trinity_score"]}점 필요)"
-        )
+        print(f"\n❌ 최소 요구사항 미충족 (Trinity Score {MIN_REQUIREMENTS['trinity_score']}점 필요)")
         print("코드 품질 개선이 필요합니다.")
         return 1
 

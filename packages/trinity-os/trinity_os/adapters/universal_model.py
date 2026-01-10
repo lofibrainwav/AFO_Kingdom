@@ -1,5 +1,4 @@
-"""
-Universal Model Adapter Interface (Eternity Pillar)
+"""Universal Model Adapter Interface (Eternity Pillar)
 Part of the "100% Score" Strategy.
 
 Purpose:
@@ -14,8 +13,7 @@ from typing import Any, Protocol, runtime_checkable
 
 @runtime_checkable
 class UniversalModelInterface(Protocol):
-    """
-    The Eternity Contract:
+    """The Eternity Contract:
     Any model that implements this interface can be plug-and-played into Trinity OS.
     """
 

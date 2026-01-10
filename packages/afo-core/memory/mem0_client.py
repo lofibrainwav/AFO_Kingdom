@@ -32,14 +32,12 @@ class AFO_MemoryClient:
             config: Mem0 설정 (backend, API key 등)
         """
         self.config = config or {
-            # 로컬 백엔드 설정 (OpenAI API 키 없이 사용)
+            # 로컬 백엔드 설정 (LanceDB 사용)
             "vector_store": {
-                "provider": "qdrant",
+                "provider": "lancedb",
                 "config": {
                     "collection_name": "afo_memory",
-                    "host": None,  # 로컬 모드
-                    "port": None,
-                    "path": ":memory:",  # 인메모리 Qdrant
+                    "uri": "./data/lancedb/afo_memory.lance",  # LanceDB 파일 경로
                 },
             },
             "llm": {
@@ -62,7 +60,7 @@ class AFO_MemoryClient:
             print(f"Mem0 initialization failed: {e}. Using mock mode.")
             self.memory = None
             self.initialized = False
-            self.mock_memories = {}
+            self.mock_memories: dict[str, list[dict[str, Any]]] = {}
         self.performance_stats = {
             "add_calls": 0,
             "search_calls": 0,
@@ -245,12 +243,17 @@ class AFO_MemoryClient:
         Returns:
             Dict: 성능 통계
         """
-        stats = self.performance_stats.copy()
+        stats: dict[str, Any] = self.performance_stats.copy()
+
+        # 타입 보장: 초기값이 0으로 설정되어 있는지 확인
+        add_calls = stats.get("add_calls", 0) or 0
+        search_calls = stats.get("search_calls", 0) or 0
+        total_latency_ms = stats.get("total_latency_ms", 0) or 0
 
         # 평균 latency 계산
-        total_calls = stats["add_calls"] + stats["search_calls"]
+        total_calls = add_calls + search_calls
         if total_calls > 0:
-            stats["avg_latency_ms"] = stats["total_latency_ms"] / total_calls
+            stats["avg_latency_ms"] = total_latency_ms / total_calls
         else:
             stats["avg_latency_ms"] = 0
 
@@ -304,4 +307,5 @@ def get_memory_client(config: dict[str, Any] | None = None) -> AFO_MemoryClient:
     if _default_client is None:
         _default_client = AFO_MemoryClient(config)
 
+    return _default_client
     return _default_client

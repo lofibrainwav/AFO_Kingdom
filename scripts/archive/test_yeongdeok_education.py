@@ -1,8 +1,9 @@
 import asyncio
 import sys
 
+
 # Set PYTHONPATH
-sys.path.append("/Users/brnestrm/AFO_Kingdom/packages/afo-core")
+sys.path.append(str(Path(__file__).parent.parent / "packages" / "afo-core"))
 
 from AFO.scholars.yeongdeok import yeongdeok
 

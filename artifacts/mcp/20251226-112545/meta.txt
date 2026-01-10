@@ -1,8 +1,0 @@
-ticket=MCP
-ts=20251226-112545
-root=/Users/brnestrm/AFO_Kingdom
-python=/Users/brnestrm/AFO_Kingdom/.venv-mcp/bin/python
-AFO_API_BASE_URL=http://127.0.0.1:8010
-DASH_URL=http://127.0.0.1:3000
-git_head=821993ae56772bbc7f6e7f68e4952b3c4ee80036
-git_branch=main

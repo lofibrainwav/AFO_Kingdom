@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Error Handling Utilities (야전교범 원칙 준수)
+"""Error Handling Utilities (야전교범 원칙 준수)
 眞善美孝永 철학에 기반한 에러 핸들링 패턴
 
 眞 (Truth): 정확한 에러 타입 및 메시지
@@ -87,8 +86,7 @@ def handle_errors(
     reraise: bool = False,
     error_type: type[AFOError] = AFOError,
 ) -> Callable[[Callable[P, T]], Callable[P, T | Any]]:
-    """
-    에러 핸들링 데코레이터 (眞善美孝永 철학)
+    """에러 핸들링 데코레이터 (眞善美孝永 철학)
 
     Args:
         default_return: 에러 발생 시 기본 반환값
@@ -98,6 +96,7 @@ def handle_errors(
 
     Returns:
         데코레이터 함수
+
     """
 
     def decorator(func: Callable[P, T]) -> Callable[P, T | Any]:
@@ -135,8 +134,7 @@ async def handle_async_errors(
     reraise: bool = False,
     error_type: type[AFOError] = AFOError,
 ) -> Callable[[Callable[P, Any]], Callable[P, Any]]:
-    """
-    비동기 에러 핸들링 데코레이터 (眞善美孝永 철학)
+    """비동기 에러 핸들링 데코레이터 (眞善美孝永 철학)
 
     Args:
         default_return: 에러 발생 시 기본 반환값
@@ -146,6 +144,7 @@ async def handle_async_errors(
 
     Returns:
         데코레이터 함수
+
     """
 
     def decorator(func: Callable[P, Any]) -> Callable[P, Any]:
@@ -182,8 +181,7 @@ def safe_execute(
     default: Any = None,
     log_error: bool = True,
 ) -> Callable[..., T | Any]:
-    """
-    안전한 함수 실행 (善 - Goodness)
+    """안전한 함수 실행 (善 - Goodness)
 
     Args:
         func: 실행할 함수
@@ -192,6 +190,7 @@ def safe_execute(
 
     Returns:
         래핑된 함수
+
     """
 
     @wraps(func)
@@ -209,11 +208,11 @@ def safe_execute(
 async def safe_execute_async(
     func: Callable[P, Any], *args: P.args, **kwargs: P.kwargs
 ) -> tuple[Any | None, Exception | None]:
-    """
-    안전한 비동기 함수 실행 (善 - Goodness)
+    """안전한 비동기 함수 실행 (善 - Goodness)
 
     Returns:
         (result, error) 튜플
+
     """
     try:
         result = await func(*args, **kwargs)
@@ -229,8 +228,7 @@ def validate_input(
     validator: Callable[[Any], bool],
     error_message: str | None = None,
 ) -> Any:
-    """
-    입력값 검증 (善 - Goodness)
+    """입력값 검증 (善 - Goodness)
 
     Args:
         value: 검증할 값
@@ -243,6 +241,7 @@ def validate_input(
 
     Raises:
         ValidationError: 검증 실패 시
+
     """
     if not validator(value):
         message = error_message or f"Validation failed for {name}: {value}"
@@ -252,8 +251,7 @@ def validate_input(
 
 
 def require_not_none(value: Any, name: str) -> Any:
-    """
-    None 값 검증 (善 - Goodness)
+    """None 값 검증 (善 - Goodness)
 
     Args:
         value: 검증할 값
@@ -264,6 +262,7 @@ def require_not_none(value: Any, name: str) -> Any:
 
     Raises:
         ValidationError: 값이 None인 경우
+
     """
     if value is None:
         raise ValidationError(f"{name} cannot be None", error_code="NONE_VALUE")
@@ -272,8 +271,7 @@ def require_not_none(value: Any, name: str) -> Any:
 
 
 def log_and_return_error(error: AFOError, context: str | None = None) -> dict[str, Any]:
-    """
-    에러 로깅 및 응답 생성 (善 - Goodness)
+    """에러 로깅 및 응답 생성 (善 - Goodness)
 
     Args:
         error: 발생한 에러
@@ -281,6 +279,7 @@ def log_and_return_error(error: AFOError, context: str | None = None) -> dict[st
 
     Returns:
         에러 응답 딕셔너리
+
     """
     error_context = context or "unknown"
     logger.error(

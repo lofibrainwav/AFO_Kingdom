@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-AFO 왕국 자동 복구 메커니즘 (Auto Recovery)
+"""AFO 왕국 자동 복구 메커니즘 (Auto Recovery)
 
 眞善美孝 철학 기반 자동 복구 시스템
 - 문제 해결 실패 시 자동 재시도 (최대 3회)
@@ -14,7 +13,7 @@ import sys
 import time
 from datetime import datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 # AFO 루트 디렉토리
 AFO_ROOT = Path(__file__).resolve().parent.parent
@@ -67,7 +66,7 @@ class AutoRecovery:
                     "stderr": proc_result.stderr[:500],
                     "success": proc_result.returncode == 0,
                 }
-                result["attempts"].append(attempt_result)
+                cast(list[Any], result["attempts"]).append(attempt_result)
 
                 if proc_result.returncode == 0:
                     result["status"] = "success"
@@ -87,7 +86,7 @@ class AutoRecovery:
                     "stderr": "Timeout expired",
                     "success": False,
                 }
-                result["attempts"].append(attempt_result)
+                cast(list[Any], result["attempts"]).append(attempt_result)
 
                 if attempt < self.max_retries:
                     time.sleep(self.retry_delay)
@@ -100,7 +99,7 @@ class AutoRecovery:
                     "stderr": str(e),
                     "success": False,
                 }
-                result["attempts"].append(attempt_result)
+                cast(list[Any], result["attempts"]).append(attempt_result)
 
                 if attempt < self.max_retries:
                     time.sleep(self.retry_delay)
@@ -140,7 +139,7 @@ class AutoRecovery:
 
     def analyze_failure(self, result: dict[str, Any]) -> dict[str, Any]:
         """실패 원인 분석"""
-        analysis = {
+        analysis: Any = {
             "failure_type": "unknown",
             "possible_causes": [],
             "recommendations": [],
@@ -259,9 +258,7 @@ class AutoRecovery:
     def generate_recovery_report(self) -> dict[str, Any]:
         """복구 리포트 생성"""
         successful = sum(
-            1
-            for log in self.recovery_log
-            if log.get("status") in ["success", "recovered_with_alternative"]
+            1 for log in self.recovery_log if log.get("status") in ["success", "recovered_with_alternative"]
         )
         failed = sum(1 for log in self.recovery_log if log.get("status") == "failed")
         recovered = sum(1 for log in self.recovery_log if log.get("recovered", False))
@@ -272,11 +269,7 @@ class AutoRecovery:
             "successful": successful,
             "failed": failed,
             "recovered": recovered,
-            "recovery_rate": (
-                round(recovered / len(self.recovery_log) * 100, 2)
-                if self.recovery_log
-                else 0
-            ),
+            "recovery_rate": (round(recovered / len(self.recovery_log) * 100, 2) if self.recovery_log else 0),
             "operations": self.recovery_log,
             "recommendation": self._get_recommendation(successful, failed),
         }

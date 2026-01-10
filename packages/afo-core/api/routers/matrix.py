@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Matrix Router (The Gateway)
+"""Matrix Router (The Gateway)
 Phase 10: Real-time Thought Stream
 """
 
@@ -18,8 +17,7 @@ logger = logging.getLogger("afo.api.matrix")
 
 @router.get("/matrix-stream")
 async def matrix_feed(request: Request) -> Any:
-    """
-    SSE Endpoint for The Matrix Stream.
+    """SSE Endpoint for The Matrix Stream.
     Broadcasts AI thoughts with Pillar Classification.
     """
     logger.info(f"🕶️ Matrix Stream Connected: {request.client.host}")  # type: ignore
@@ -30,8 +28,7 @@ async def matrix_feed(request: Request) -> Any:
 # Endpoint for pushing thoughts (simulating internal monologues)
 @router.post("/matrix-stream/emit")
 async def emit_thought(payload: dict[str, str]) -> dict[str, str]:
-    """
-    Internal endpoint to push thoughts to the stream.
+    """Internal endpoint to push thoughts to the stream.
     Payload: {"text": "thinking...", "level": "info"}
     """
     text = payload.get("text", "")

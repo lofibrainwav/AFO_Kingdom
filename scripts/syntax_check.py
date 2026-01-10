@@ -20,11 +20,7 @@ def main():
         "build",
         "dist",
     }
-    project_files = [
-        f
-        for f in python_files
-        if not any(excluded in f.parts for excluded in exclude_dirs)
-    ]
+    project_files = [f for f in python_files if not any(excluded in f.parts for excluded in exclude_dirs)]
 
     print(f"AFO 왕국 Syntax 검증: {len(project_files)}개 파일 검사 중...")
 

@@ -28,11 +28,17 @@ try:
     from AFO.llms.claude_api import claude_api
     from AFO.llms.cli_wrapper import CLIWrapper
     from AFO.llms.openai_api import openai_api
+    from services.ollama_service import ollama_service
 
     API_WRAPPERS_AVAILABLE = True
 except ImportError as e:
     API_WRAPPERS_AVAILABLE = False
-    logging.warning(f"⚠️ API wrappers not available: {e}")
+    # Try local import if package structure differs
+    try:
+        from services.ollama_service import ollama_service
+    except ImportError:
+        ollama_service = None  # type: ignore
+    logging.warning(f"⚠️ API wrappers or OllamaService not fully available: {e}")
 
 logger = logging.getLogger(__name__)
 
@@ -736,6 +742,18 @@ class LLMRouter:
             (context or {}).get("ollama_num_ctx", getattr(config, "context_window", 4096))
         )
         num_threads = (context or {}).get("ollama_num_thread")
+
+        # Phase 23: Robust Switching Protocol
+        settings = get_settings()
+        # Combined condition per SIM102
+        if (
+            settings.OLLAMA_SWITCHING_PROTOCOL_ENABLED
+            and ollama_service
+            and not await ollama_service.ensure_model(model)
+        ):
+            logger.error(f"❌ Failed to ensure model {model} via protocol")
+            # Fallback to current model if switch failed?
+            model = ollama_service.active_model
 
         try:
             async with httpx.AsyncClient(timeout=httpx.Timeout(timeout_seconds)) as client:

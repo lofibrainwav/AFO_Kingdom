@@ -7,6 +7,7 @@ import os
 import sys
 from pathlib import Path
 
+
 # Add project root to path
 project_root = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(project_root))
@@ -36,15 +37,11 @@ def test_minimal_app():
             print("✅ Skills router registered manually")
 
             # Check registered routes
-            skills_routes = [
-                r
-                for r in app.routes
-                if hasattr(r, "path") and "skills" in r.path.lower()
-            ]
+            skills_routes = [r for r in app.routes if hasattr(r, "path") and "skills" in r.path.lower()]
             print(f"📊 Skills routes: {len(skills_routes)}")
 
             for route in skills_routes:
-                print(f"   - {route.path} ({list(getattr(route, "methods", set()))})")
+                print(f"   - {route.path} ({list(getattr(route, 'methods', set()))})")
 
             return len(skills_routes) > 0
         print("❌ Skills router is None")
@@ -85,9 +82,7 @@ def test_full_setup():
         print("✅ Routers setup")
 
         # Check skills routes
-        skills_routes = [
-            r for r in app.routes if hasattr(r, "path") and "skills" in r.path.lower()
-        ]
+        skills_routes = [r for r in app.routes if hasattr(r, "path") and "skills" in r.path.lower()]
         print(f"📊 Skills routes after full setup: {len(skills_routes)}")
 
         for route in skills_routes:
@@ -116,8 +111,8 @@ if __name__ == "__main__":
     print("\n" + "=" * 50)
     print("📊 RESULTS")
     print("=" * 50)
-    print(f"Minimal test: {"✅ PASS" if minimal_success else "❌ FAIL"}")
-    print(f"Full setup: {"✅ PASS" if full_success else "❌ FAIL"}")
+    print(f"Minimal test: {'✅ PASS' if minimal_success else '❌ FAIL'}")
+    print(f"Full setup: {'✅ PASS' if full_success else '❌ FAIL'}")
 
     if minimal_success and not full_success:
         print("\n🔍 ISSUE: Skills router works manually but fails in full setup")

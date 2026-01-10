@@ -89,6 +89,6 @@ async def test_health_response_decision_field():
 
     # decision field must exist
     assert "decision" in health, "decision field missing from health report"
-    assert health["decision"] in ["AUTO_RUN", "ASK"], f"Invalid decision: {health['decision']}"
+    assert health["decision"] in ["AUTO_RUN", "ASK_COMMANDER", "TRY_AGAIN"], f"Invalid decision: {health['decision']}"
 
     print(f"Decision: {health['decision']}")

@@ -1,6 +1,7 @@
 import sys
 from pathlib import Path
 
+
 # Add packages/afo-core to path just like api_server.py
 _AFO_ROOT = str(Path(__file__).resolve().parent.parent / "packages" / "afo-core")
 if _AFO_ROOT not in sys.path:

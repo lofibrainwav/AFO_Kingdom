@@ -1,3 +1,5 @@
+⚠️  cyclonedx-python-lib not available: cannot import name 'get_instance' from 'cyclonedx.output' (/Users/brnestrm/AFO_Kingdom/.venv/lib/python3.12/site-packages/cyclonedx/output/__init__.py)
+   Install with: pip install cyclonedx-python-lib
 ================================================================================
 🏰 AFO Kingdom - SBOM (Software Bill of Materials) 생성 (CLI Mode)
 ================================================================================

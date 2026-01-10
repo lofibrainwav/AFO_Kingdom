@@ -11,7 +11,7 @@ import asyncio
 import logging
 from typing import Any, Optional
 
-from ..cache.manager import cache_manager
+from AFO.cache.manager import cache_manager
 
 
 # Node configuration class for Phase 7A
@@ -98,6 +98,12 @@ class PersonaChancellorGraph(ChancellorGraph):
             self.nodes["observe"].focus_areas = ["metrics", "data", "trends"]
             self.nodes["analyze"].analysis_depth = "quantitative"
             self.nodes["deliberate"].decision_style = "data_driven"
+
+        elif persona_type == "growth":
+            # 성장/교육 페르소나 (Jayden): 지지적이고 정성적인 루틴
+            self.nodes["observe"].focus_areas = ["habits", "emotions", "learning"]
+            self.nodes["analyze"].analysis_depth = "qualitative"
+            self.nodes["deliberate"].decision_style = "supportive"
 
     async def make_decision(self, situation: dict[str, Any]) -> dict[str, Any]:
         """
@@ -247,6 +253,20 @@ class MultiPersonaChancellor:
                 "description": "Data-driven analyst focused on metrics and optimization",
                 "expertise_areas": ["metrics", "data", "analysis", "optimization"],
                 "decision_style": "data_driven",
+                "risk_tolerance": "medium",
+            },
+            "julie": {
+                "type": "analyst",
+                "description": "Julie (CPA/Risk): Expert in document accuracy, financial logic, and strategic risk assessment",
+                "expertise_areas": ["risk", "compliance", "finance", "audit", "accuracy"],
+                "decision_style": "precise",
+                "risk_tolerance": "low",
+            },
+            "jayden": {
+                "type": "growth",
+                "description": "Jayden (Growth/Routine): Focused on education, habit formation, and emotional stability",
+                "expertise_areas": ["education", "habits", "psychology", "learning", "routine"],
+                "decision_style": "supportive",
                 "risk_tolerance": "medium",
             },
         }

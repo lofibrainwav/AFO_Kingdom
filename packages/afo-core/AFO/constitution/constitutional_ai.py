@@ -1,6 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""
-Constitutional AI for AFO Kingdom (Phase 17)
+"""Constitutional AI for AFO Kingdom (Phase 17)
 "The Goodness Constitution" - 선(善)의 헌법
 PDF 핵심 철학 구현 25/25: Constitutional AI 원칙 주입
 """
@@ -14,8 +13,7 @@ logger = logging.getLogger("AFO.Constitution")
 
 
 class AFOConstitution:
-    """
-    Constitutional AI: 선(善) 최우선 헌법
+    """Constitutional AI: 선(善) 최우선 헌법
     All actions must align with these 5 Principles.
     """
 
@@ -40,8 +38,7 @@ class AFOConstitution:
 
     @classmethod
     def evaluate_compliance(cls, query: str, proposed_action: str) -> tuple[bool, str]:
-        """
-        Evaluate if a query or action complies with the Constitution.
+        """Evaluate if a query or action complies with the Constitution.
         Returns (is_compliant, reason).
         """
         query_lower = query.lower()
@@ -75,8 +72,7 @@ class AFOConstitution:
 
     @classmethod
     async def critique_and_revise(cls, query: str, response: str) -> tuple[str, str, str]:
-        """
-        [CAI] Self-Critique and Revision Loop (Anthropic Style).
+        """[CAI] Self-Critique and Revision Loop (Anthropic Style).
         Returns (critique, revised_response, type).
         """
         principles_str = "\n".join(cls.PRINCIPLES)

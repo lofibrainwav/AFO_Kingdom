@@ -89,17 +89,39 @@ class YeongdeokScholar:
 
     def _check_mlx_availability(self) -> bool:
         """
-        Check if MLX is importable and functional.
+        Enhanced MLX availability check for Phase 2-3 optimization.
         Returns True if MLX is available (Apple Silicon), False otherwise (Docker/Linux).
-        This prevents repetitive try/except overhead on every call.
+        Prevents repetitive try/except overhead on every call.
         """
+        # Phase 2-3: Environment-based pre-check for better performance
+        import platform
+
+        system = platform.system().lower()
+
+        # Quick platform check: MLX only works on macOS with Apple Silicon
+        if system != "darwin":
+            logger.info("ℹ️ [Yeongdeok] Non-macOS environment detected. Skipping MLX check.")
+            return False
+
         try:
+            # Simple functional check with timeout
+            import time
+
             import mlx.core as mx
 
-            # Simple functional check
+            start_time = time.time()
             _ = mx.array([1])
+            check_time = time.time() - start_time
+
+            if check_time > 1.0:  # Slow initialization might indicate issues
+                logger.warning(
+                    f"⚠️ [Yeongdeok] MLX initialization slow ({check_time:.2f}s). May impact performance."
+                )
+                return True  # Still available but warn
+
             logger.info("✅ [Yeongdeok] MLX Acceleration Available (Apple Silicon Native)")
             return True
+
         except ImportError:
             logger.info("ℹ️ [Yeongdeok] MLX Not Found (Running in Docker/Linux Standard Mode)")
             return False
@@ -165,9 +187,16 @@ class YeongdeokScholar:
             # Map string type to Enum if needed, or assume caller provides compatible string/enum
             # Here we assume sage_type is valid for logging/logic
 
+            # Enhanced prompt validation for Phase 2-2 fix
+            validated_prompt = (
+                query.strip()
+                if query and query.strip()
+                else "Please provide a brief response confirming system connectivity."
+            )
+
             req = SageRequest(
                 sage=sage_type,
-                prompt=query,
+                prompt=validated_prompt,
                 temperature=temperature,
                 system_context="Standard Protocol",
             )

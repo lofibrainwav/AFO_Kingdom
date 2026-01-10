@@ -1,2 +1,0 @@
-COMMAND   PID     USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME
-node    14498 brnestrm   13u  IPv6 0xe6d4e5b4bcc0af7a      0t0  TCP *:3000 (LISTEN)
