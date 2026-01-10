@@ -110,6 +110,20 @@ async def calculate_five_pillars_from_system() -> dict[str, float]:
         }
 
 
+@router.get("/config", summary="5기둥 설정 조회 (SSOT)")
+async def get_pillars_config() -> dict[str, Any]:
+    """5기둥 설정 조회 (Frontend 동적 설정용)
+
+    Trinity Score: 眞 (Truth) - SSOT(compat.py)에서 정의된 기둥 설정 반환
+    """
+    try:
+        from api.compat import html_facade
+        return html_facade.get_philosophy_data()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"설정 조회 실패: {e!s}") from e
+
+
+
 @router.get("/current", response_model=FivePillarsResponse, summary="현재 5기둥 점수 조회")
 async def get_current_pillars() -> FivePillarsResponse:
     """현재 5기둥 점수 조회

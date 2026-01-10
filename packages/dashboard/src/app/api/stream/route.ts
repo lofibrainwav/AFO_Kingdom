@@ -8,7 +8,7 @@ function getEnv(name: string, fallback?: string): string {
 }
 
 export async function GET(request: Request) {
-  const backendBase = getEnv("BACKEND_BASE_URL", "http://127.0.0.1:8010");
+  const backendBase = getEnv("BACKEND_BASE_URL", "http://127.0.0.1:8000");
   const ssePath = getEnv("CHANCELLOR_SSE_PATH", "/api/stream/mcp/thoughts");
   const target = new URL(ssePath, backendBase).toString();
 

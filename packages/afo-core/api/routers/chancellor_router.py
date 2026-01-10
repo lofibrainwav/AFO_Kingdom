@@ -100,10 +100,10 @@ _v2_runner_available = False
 _chancellor_import_error: str | None = None
 
 try:
-    from api.chancellor_v2.graph.nodes.execute_node import execute_node
-    from api.chancellor_v2.graph.nodes.verify_node import verify_node
-    from api.chancellor_v2.graph.runner import run_v2
-    from api.chancellor_v2.graph.state import GraphState
+    from AFO.api.chancellor_v2.graph.nodes.execute_node import execute_node
+    from AFO.api.chancellor_v2.graph.nodes.verify_node import verify_node
+    from AFO.api.chancellor_v2.graph.runner import run_v2
+    from AFO.api.chancellor_v2.graph.state import GraphState
 
     _v2_runner_available = True
     logger.info("✅ Chancellor V2 runner loaded successfully")
@@ -542,9 +542,9 @@ async def _execute_full_mode_v2(
     request: ChancellorInvokeRequest, llm_context: dict[str, Any]
 ) -> dict[str, Any]:
     """V2 Runner execution with MCP Contract enforcement."""
-    from api.chancellor_v2.graph.nodes.execute_node import execute_node
-    from api.chancellor_v2.graph.nodes.verify_node import verify_node
-    from api.chancellor_v2.graph.runner import run_v2
+    from AFO.api.chancellor_v2.graph.nodes.execute_node import execute_node
+    from AFO.api.chancellor_v2.graph.nodes.verify_node import verify_node
+    from AFO.api.chancellor_v2.graph.runner import run_v2
 
     # Build V2 input payload
     input_payload = {

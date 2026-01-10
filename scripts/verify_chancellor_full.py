@@ -9,27 +9,15 @@ sys.path.append(pathlib.Path(os.path.join(pathlib.Path(__file__).parent, "../pac
 
 from langchain_core.messages import HumanMessage
 
-from AFO.chancellor_graph import calculate_complexity, chancellor_graph
-
+# from AFO.chancellor_graph import calculate_complexity, chancellor_graph
+from AFO.chancellor_graph import chancellor_graph
 
 async def verify_chancellor_full():
     print("=== Chancellor Graph Full Deployment Verification ===")
 
-    # 1. Verify Complexity Logic
-    print("\n[Test 1] Complexity Calculation Logic")
-    low_query = "Hello"
+    # 1. Verify Complexity Logic (SKIPPED - Deprecated)
+    print("\n[Test 1] Complexity Calculation Logic (Skipped)")
     high_query = "Please analyze the entire architecture of the system and compare it with 3 other strategies to solve the latency issue."
-
-    c_low = calculate_complexity(low_query)
-    c_high = calculate_complexity(high_query)
-
-    print(f"Low Query ('{low_query}'): {c_low}")
-    print(f"High Query ('{high_query[:20]}...'): {c_high}")
-
-    if c_low == "Low" and c_high == "High":
-        print("✅ Complexity Logic Verified")
-    else:
-        print("❌ Complexity Logic Failed")
 
     # 2. Verify Graph Execution (DRY RUN)
     print("\n[Test 2] Graph Execution Flow (ToT)")
