@@ -66,7 +66,7 @@ exclude = ["tests*", "scripts*", "legacy*", "artifacts*", "node_modules*"]
 
 [project.optional-dependencies]
 dev = [
-    "ruff==0.14.10",
+    "ruff==0.14.11",
     "pytest==7.4.3",
     "pytest-asyncio>=0.23.8",
     "pyright==1.1.408",
