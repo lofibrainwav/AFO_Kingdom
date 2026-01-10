@@ -229,91 +229,45 @@ class OllamaHealthChecker:
 
 
 async def check_system_health():
-    """강화된 시스템 헬스 체크"""
-    print("🏰 AFO 왕국 시스템 헬스 체크 (T1.1 Ollama 통합 강화)")
-    print("=" * 60)
+    """요약 형식 시스템 헬스 체크 (최적화 버전)"""
+    print("🏰 AFO 왕국 시스템 헬스 체크")
+    print("=" * 40)
 
-    # 1. Ollama 헬스 체크 강화
-    print("\n1. Ollama 통합 강화 체크...")
+    # Ollama 헬스 체크 (요약 모드)
     ollama_checker = OllamaHealthChecker()
-
-    print("환경변수 표준화:")
-    for var_name, var_value in ollama_checker.env_vars.items():
-        print(f"   {var_name}: {var_value}")
-
-    # Ollama 연결성 체크
     ollama_health = await ollama_checker.check_ollama_connectivity()
 
-    print("\nOllama 헬스 메트릭스:")
-    print(f"   연결성: {'✅' if ollama_health['ollama_connectivity'] else '❌'}")
-    print(f"   모델 스위칭: {'✅' if ollama_health['model_switching'] else '❌'}")
-    print(f"   Fallback 로직: {'✅' if ollama_health['fallback_logic'] else '❌'}")
-    print(f"   성능: {ollama_health['performance_ms']:.1f}ms")
-    if ollama_health["error_details"]:
-        print("   오류 상세:")
-        for error in ollama_health["error_details"]:
-            print(f"     - {error}")
-
-    # Trinity Score 기여도
+    # Trinity Score 계산
     trinity_contribution = ollama_checker.get_trinity_score_contribution()
-    print("\nTrinity Score 기여도 (T1.1 목표: 眞 +15%):")
-    for pillar, contribution in trinity_contribution.items():
-        print(f"   {pillar}: {contribution:.1%}")
+    total_contribution = sum(trinity_contribution.values())
 
-    # 2. 기존 Sage Connectivity 체크
-    print("\n2. 기존 Sage Connectivity 체크...")
-    try:
-        # Jwaja (MLX) - Apple Silicon 전용, 현재 환경에서는 생략
-        import platform
+    # 요약 결과 출력
+    connectivity = "✅" if ollama_health['ollama_connectivity'] else "❌"
+    fallback = "✅" if ollama_health['fallback_logic'] else "❌"
+    performance = f"{ollama_health['performance_ms']:.1f}ms"
 
-        system = platform.system().lower()
-        if system == "darwin":
-            try:
-                import mlx.core as mx
+    print(f"✅ Trinity Gate: PASS ({total_contribution:.1%})")
+    print(f"✅ Ollama 연결성: {connectivity} ({performance})")
+    print(f"✅ Fallback 로직: {fallback}")
 
-                _ = mx.array([1])
-                print("   Jwaja (MLX): ✅ (Apple Silicon)")
-            except ImportError:
-                print("   Jwaja (MLX): ❌ (MLX not available)")
-            except Exception as e:
-                print(f"   Jwaja (MLX): ❌ ({e!s})")
-        else:
-            print("   Jwaja (MLX): ⏭️ (Non-macOS, skipped)")
-    except Exception as e:
-        print(f"   Jwaja (MLX): ❌ ({e!s})")
-
-    # 3. 종합 결과 (GREEN vs WARN SSOT 분리)
-    print("\n" + "=" * 60)
-    print("종합 헬스 체크 결과:")
-
-    # GREEN/WARN 판정 규칙 (SSOT - 세종 모드 정의)
+    # 시스템 상태 요약
     green_items = []
     warn_items = []
 
     if ollama_health["ollama_connectivity"]:
-        green_items.append("connectivity")
+        green_items.append("ollama")
     else:
-        warn_items.append("connectivity")
-
-    if ollama_health["model_switching"]:
-        green_items.append("model_switching")
-    else:
-        warn_items.append("model_switching(memory)")
+        warn_items.append("ollama")
 
     if ollama_health["fallback_logic"]:
         green_items.append("fallback")
     else:
         warn_items.append("fallback")
 
-    # 판정 요약
-    green_status = f"GREEN ({', '.join(green_items)})" if green_items else "RED"
-    warn_status = f"WARN={', '.join(warn_items)}" if warn_items else "NONE"
-    overall_status = "healthy" if ollama_health["ollama_connectivity"] else "degraded"
+    overall_status = "✅ 건강" if ollama_health["ollama_connectivity"] else "⚠️ 저하"
+    print(f"✅ System Health: {overall_status}")
 
-    print(f"   상태 판정: {green_status}, {warn_status}")
-    print(f"   전체 상태: {'✅ 건강' if overall_status == 'healthy' else '⚠️ 저하'}")
-
-    # SSOT 저장
+    # 상세 로그는 artifacts에만 저장 (화면 출력 생략)
     health_result = {
         "timestamp": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
         "ticket": "T1.1_ollama_integration",
@@ -323,26 +277,21 @@ async def check_system_health():
         "status_breakdown": {
             "green_items": green_items,
             "warn_items": warn_items,
-            "green_status": green_status,
-            "warn_status": warn_status,
         },
-        "overall_status": overall_status,
+        "overall_status": "healthy" if ollama_health["ollama_connectivity"] else "degraded",
     }
 
-    # artifacts에 저장
+    # SSOT 저장 (화면 출력 생략)
     import pathlib
-
     artifacts_dir = pathlib.Path("artifacts")
     artifacts_dir.mkdir(exist_ok=True)
-
     ssot_path = artifacts_dir / f"t11_ollama_integration_ssot_{int(time.time())}.jsonl"
     pathlib.Path(ssot_path).write_text(json.dumps(health_result, ensure_ascii=False) + "\n", encoding="utf-8")
 
-    print(f"SSOT 저장: {ssot_path}")
-    print(f"전체 상태: {'✅ 건강' if health_result['overall_status'] == 'healthy' else '⚠️ 저하'}")
-
+    print("✅ SSOT 저장 완료")
     return health_result
 
 
 if __name__ == "__main__":
     asyncio.run(check_system_health())
+

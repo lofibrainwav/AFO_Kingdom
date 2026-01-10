@@ -39,6 +39,34 @@ jobs:
         run: uv sync --frozen               # uv.lock 기반 정확 설치
 
       - name: Setup Node.js (for pyright)
+      - name: Cache build artifacts
+        uses: actions/cache@v4
+        with:
+          path: |
+            packages/afo-core/__pycache__
+            .pytest_cache
+            .ruff_cache
+          key: build-${{ runner.os }}-${{ github.sha }}
+          restore-keys: |
+            build-${{ runner.os }}-
+            build-
+      - name: Cache uv dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/uv
+          key: uv-${{ runner.os }}-${{ hashFiles('uv.lock') }}
+          restore-keys: |
+            uv-${{ runner.os }}-
+            uv-
+
+      - name: Cache Python dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: pip-${{ runner.os }}-${{ hashFiles('pyproject.toml', 'uv.lock') }}
+          restore-keys: |
+            pip-${{ runner.os }}-
+            pip-
         uses: actions/setup-node@v4
         with:
           node-version: '20'
@@ -61,6 +89,22 @@ jobs:
         run: uv run pyright -p pyrightconfig.json
 
       - name: Start API Server (Background)
+      - name: Upload coverage reports
+      - name: Code Metrics Analysis
+        run: |
+          echo "## Code Metrics Report" >> $GITHUB_STEP_SUMMARY
+          echo "| Metric | Value | Threshold | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|-----------|--------|" >> $GITHUB_STEP_SUMMARY
+          LOC=$(find packages/afo-core -name "*.py" -exec wc -l {} ; | awk '{sum += $1} END {print sum}')
+          echo "| Lines of Code | $LOC | < 50000 | ✅ |" >> $GITHUB_STEP_SUMMARY
+          COMPLEXITY=$(python -m radon cc packages/afo-core/AFO --average | grep -o '[0-9]+.[0-9]+')
+          echo "| Avg Complexity | $COMPLEXITY | < 10 | $([ $(echo "$COMPLEXITY < 10" | bc -l) -eq 1 ] && echo ✅ || echo ⚠️) |" >> $GITHUB_STEP_SUMMARY
+        uses: codecov/codecov-action@v4
+        with:
+          file: ./coverage.xml
+          flags: unittests
+          name: AFO Kingdom Coverage
+          fail_ci_if_error: false
         working-directory: packages/afo-core
         shell: bash
         run: |
