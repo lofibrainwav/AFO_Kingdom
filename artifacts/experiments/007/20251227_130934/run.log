@@ -1,6 +1,0 @@
-== EXP_007 Rollback Drill ==
-time: 2025-12-27T13:09:34-08:00
-root: /Users/brnestrm/AFO_Kingdom
-
-ERROR: AFO_INTERNAL_SECRET is not set in this shell.
-Set it first: export AFO_INTERNAL_SECRET='...'
