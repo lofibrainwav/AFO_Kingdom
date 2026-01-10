@@ -3,7 +3,7 @@ import type { NextConfig } from "next";
 // Environment-aware Soul Engine URL
 // - Local dev: Use localhost (Next.js process runs on host machine)
 // - Docker build: Use container DNS (SOUL_ENGINE_URL env var or Docker name)
-const soulEngineUrl = process.env.SOUL_ENGINE_URL || "http://localhost:8010";
+const soulEngineUrl = process.env.BACKEND_BASE_URL || "http://127.0.0.1:8010";
 
 const nextConfig: NextConfig = {
   /* config options here */
@@ -22,23 +22,6 @@ const nextConfig: NextConfig = {
     ],
   },
   
-  // Turbopack 설정 (Next.js 16 기본 활성화, webpack과 충돌 방지)
-  // turbopack: {}, // Removed due to workspace root ambiguity in Turbopack
-  
-  // 번들 최적화
-  /* 
-  webpack: (config, { isServer }) => {
-    // Tree-shaking 최적화 (Next.js 16 기본 최적화와 충돌 가능성으로 주석 처리)
-    config.optimization = {
-      ...config.optimization,
-      usedExports: true,
-      sideEffects: false,
-    };
-    
-    return config;
-  },
-  */
-  
   // 이미지 최적화
   images: {
     formats: ["image/avif", "image/webp"],
@@ -48,33 +31,10 @@ const nextConfig: NextConfig = {
   
   async rewrites() {
     return [
-      // Health check proxy for smoke tests
       {
-        source: "/api/health",
-        destination: `${soulEngineUrl}/api/health`,
+        source: "/api/:path*",
+        destination: `${soulEngineUrl}/:path*`, // Generic Proxy to Backend
       },
-      // SSE Stream Proxy - SSOT: /api/logs/stream
-      {
-        source: "/api/logs/stream",
-        destination: `${soulEngineUrl}/api/logs/stream`,  // SSOT canonical path
-      },
-      // Legacy Path 1 (Internal Forwarding)
-      {
-        source: "/api/stream/logs",
-        destination: `${soulEngineUrl}/api/logs/stream`,
-      },
-      // Legacy Path 2 (Internal Forwarding)
-      {
-        source: "/api/system/logs/stream",
-        destination: `${soulEngineUrl}/api/logs/stream`,
-      },
-      // Generic proxy (after specific routes)
-      {
-        source: "/api/proxy/:path*",
-        destination: `${soulEngineUrl}/:path*`, // Proxy to Soul Engine
-      },
-      // Legacy HTML은 public/legacy/로 직접 서빙 (8000 포트 불필요)
-      // Next.js는 public/legacy/*를 자동으로 /legacy/*로 서빙합니다.
     ];
   },
 };

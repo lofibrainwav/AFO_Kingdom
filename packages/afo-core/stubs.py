@@ -6,59 +6,59 @@ This file provides minimal type stubs to resolve Pyright import issues
 # Stub modules that may not exist but are referenced
 class AFO:
     @staticmethod
-    def config():
+    def config() -> None:
         return None
 
     @staticmethod
-    def antigravity():
+    def antigravity() -> None:
         return None
 
     @staticmethod
-    def api_wallet():
+    def api_wallet() -> None:
         return None
 
     @staticmethod
-    def llm_router():
+    def llm_router() -> None:
         return None
 
     @staticmethod
-    def input_server():
+    def input_server() -> None:
         return None
 
     @staticmethod
-    def afo_skills_registry():
+    def afo_skills_registry() -> None:
         return None
 
     @staticmethod
-    def api_server():
+    def api_server() -> None:
         return None
 
     @staticmethod
-    def chancellor_graph():
+    def chancellor_graph() -> None:
         return None
 
     @staticmethod
-    def kms():
+    def kms() -> None:
         return None
 
     @staticmethod
-    def scholars():
+    def scholars() -> None:
         return None
 
     @staticmethod
-    def services():
+    def services() -> None:
         return None
 
     @staticmethod
-    def utils():
+    def utils() -> None:
         return None
 
     @staticmethod
-    def llms():
+    def llms() -> None:
         return None
 
     @staticmethod
-    def domain():
+    def domain() -> None:
         return None
 
 
