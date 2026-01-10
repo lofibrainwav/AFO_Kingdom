@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback, useMemo } from "react";
+import { TrinityRadar } from "./TrinityRadar";
 
 // Breakdown Interface - now supports null for loading states
 export interface TrinityBreakdown {
@@ -9,6 +10,8 @@ export interface TrinityBreakdown {
   beauty: number | null;
   filial_serenity: number | null;
   eternity: number | null;
+  iccls_score?: number | null;  // ICCLS: Inter-Component Consistency Level Score
+  sentiment_score?: number | null;  // Optional sentiment 0.0-1.0
 }
 
 interface TrinityGlowCardProps {
@@ -16,6 +19,7 @@ interface TrinityGlowCardProps {
   riskScore: number | null; // 0.0 - 1.0, null = loading
   breakdown?: TrinityBreakdown;
   children?: React.ReactNode;
+  showRadar?: boolean; // Show TrinityRadar visualization
 }
 
 /**
@@ -32,6 +36,7 @@ export function TrinityGlowCard({
   riskScore,
   breakdown,
   children,
+  showRadar = false,
 }: TrinityGlowCardProps) {
   const [pulseScale, setPulseScale] = useState(1);
 
@@ -85,6 +90,13 @@ export function TrinityGlowCard({
       {/* Content */}
       <div className="relative z-10">{children}</div>
 
+      {/* Trinity Radar Visualization */}
+      {showRadar && breakdown && (
+        <div className="flex justify-center mt-4">
+          <TrinityRadar breakdown={breakdown} size={200} />
+        </div>
+      )}
+
       {/* Breakdown Display */}
       {breakdown && (
         <div className="flex justify-between mt-4 border-t border-white/10 pt-2 text-xs text-gray-300">
@@ -114,6 +126,34 @@ export function TrinityGlowCard({
           </div>
         </div>
       )}
+
+      {/* ICCLS + Sentiment Status (Always Visible) */}
+      <div className="flex justify-between mt-2 text-xs border-t border-white/10 pt-2">
+        <div className="flex items-center gap-1 text-gray-400">
+          <span>🔗</span>
+          <span>
+            ICCLS:{" "}
+            {breakdown?.iccls_score != null
+              ? `${(breakdown.iccls_score * 100).toFixed(1)}%`
+              : "---"}
+          </span>
+        </div>
+        <div className="flex items-center gap-1 text-gray-400">
+          <span>
+            {breakdown?.sentiment_score != null && breakdown.sentiment_score > 0.6
+              ? "🟢"
+              : breakdown?.sentiment_score != null && breakdown.sentiment_score > 0.4
+                ? "🟡"
+                : "🔴"}
+          </span>
+          <span>
+            Sentiment:{" "}
+            {breakdown?.sentiment_score != null
+              ? `${(breakdown.sentiment_score * 100).toFixed(0)}%`
+              : "---"}
+          </span>
+        </div>
+      </div>
 
       {/* Score Display (Summary) */}
       {!breakdown && (

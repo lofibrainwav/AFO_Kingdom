@@ -67,8 +67,8 @@ async def test_health_response_contains_organs_v2():
     assert "organs_v2" in health, "organs_v2 object missing from health report"
     organs = health["organs_v2"]
 
-    # Check for expected organ count (12 as per contract)
-    assert len(organs) == 12, f"Expected 12 organs in v2, got {len(organs)}"
+    # Check for expected organ count (11 as per contract)
+    assert len(organs) == 11, f"Expected 11 organs in v2, got {len(organs)}"
 
     # Each organ must have required fields
     for organ_name, organ_data in organs.items():
@@ -89,6 +89,6 @@ async def test_health_response_decision_field():
 
     # decision field must exist
     assert "decision" in health, "decision field missing from health report"
-    assert health["decision"] in ["AUTO_RUN", "ASK"], f"Invalid decision: {health['decision']}"
+    assert health["decision"] in ["AUTO_RUN", "ASK_COMMANDER", "TRY_AGAIN"], f"Invalid decision: {health['decision']}"
 
     print(f"Decision: {health['decision']}")

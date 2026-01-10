@@ -45,7 +45,7 @@ if not _jwt_secret:
         "개발용 임시 키를 사용합니다. 프로덕션에서는 반드시 설정하세요.",
         stacklevel=2,
     )
-    _jwt_secret = "dev-only-insecure-key-do-not-use-in-production"
+    _jwt_secret = "dev-only-insecure-key-do-not-use-in-production"  # noqa: S105
 
 JWT_SECRET_KEY = _jwt_secret
 JWT_ALGORITHM = "HS256"

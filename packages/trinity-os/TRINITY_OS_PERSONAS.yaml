@@ -1,5 +1,5 @@
 version: 3
-last_updated: "2025-12-21"
+last_updated: "2026-01-08"
 source_of_truth: true
 
 # =============================================================================
@@ -62,6 +62,14 @@ principles:
     - principle: "속도보다 정확성"
       source: "손자병법"
       description: "빠르게 망가뜨리는 것보다, 천천히 제대로"
+
+  # SSOT Restoration Order v1.5 (Council-Sealed)
+  ssot_protocol:
+    current_order: "SSOT Restoration Order v1.5 (Council-Sealed)"
+    evidence_rules:
+      - "HTTP verification must use GET requests"
+      - "Dashboard must return HTTP 200 OK"
+      - "Soul Engine 405 is accepted as Alive (Method Protected)"
 
 # =============================================================================
 #                              페르소나 정의
@@ -145,7 +153,7 @@ infrastructure:
     dashboard: 3000
     ollama: 11434
     redis: 6379
-    postgresql: 15432
+    postgresql: 5432
     grafana: 3100
     prometheus: 9090
 

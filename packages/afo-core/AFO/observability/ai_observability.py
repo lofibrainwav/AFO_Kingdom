@@ -1,5 +1,5 @@
 # Trinity Score: 90.0 (Established by Chancellor)
-"""OpenTelemetry AI Observability Module (TICKET-086)
+"""OpenTelemetry AI Observability Module (TICKET-099)
 Real-time monitoring and performance tracking for AFO Kingdom agents.
 
 Features:
@@ -14,13 +14,16 @@ Philosophy:
 - 美 (Beauty): Clear, actionable dashboards and alerts
 """
 
+import inspect
 import logging
 import time
+from collections.abc import Callable, Generator
 from contextlib import contextmanager
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
+from functools import wraps
 from pathlib import Path
-from typing import Any, Generator
+from typing import Any, ParamSpec, TypeVar, cast
 
 logger = logging.getLogger(__name__)
 
@@ -36,8 +39,8 @@ class Span:
     start_time: float
     end_time: float | None = None
     status: str = "OK"
-    attributes: dict[str, Any] = field(default_factory=dict)
-    events: list[dict[str, Any]] = field(default_factory=list)
+    attributes: dict[str, Any] = field(default_factory=lambda: {})
+    events: list[dict[str, Any]] = field(default_factory=lambda: [])
 
     @property
     def duration_ms(self) -> float | None:
@@ -53,7 +56,7 @@ class Metric:
     name: str
     value: float
     unit: str
-    labels: dict[str, str] = field(default_factory=dict)
+    labels: dict[str, str] = field(default_factory=lambda: {})
     timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
 
 
@@ -101,7 +104,7 @@ class AIObservability:
 
     @contextmanager
     def trace(
-        self, operation_name: str, parent_span_id: str | None = None, **attributes
+        self, operation_name: str, parent_span_id: str | None = None, **attributes: Any
     ) -> Generator[Span, None, None]:
         """Context manager for tracing an operation.
 
@@ -140,7 +143,6 @@ class AIObservability:
             del self._active_spans[span_id]
             self._completed_spans.append(span)
 
-            # Record latency metric
             if span.duration_ms:
                 self.record_metric(
                     name=f"{operation_name}.latency",
@@ -155,13 +157,15 @@ class AIObservability:
             # Check compliance
             self._check_compliance(span)
 
-    def record_metric(self, name: str, value: float, unit: str = "count", **labels) -> None:
+    def record_metric(
+        self, name: str, value: float, unit: str = "count", labels: dict[str, str] | None = None
+    ) -> None:
         """Record a metric data point."""
         metric = Metric(
             name=name,
             value=value,
             unit=unit,
-            labels=labels,
+            labels=labels or {},
         )
         self._metrics.append(metric)
 
@@ -294,27 +298,31 @@ class AIObservability:
 observability = AIObservability()
 
 
+P = ParamSpec("P")
+R = TypeVar("R")
+
+
 # Convenience decorator for tracing functions
-def traced(operation_name: str = None, **default_attributes):
+def traced(
+    operation_name: str | None = None, **default_attributes: Any
+) -> Callable[[Callable[P, R]], Callable[P, R]]:
     """Decorator to automatically trace a function."""
 
-    def decorator(func):
+    def decorator(func: Callable[P, R]) -> Callable[P, R]:
         op_name = operation_name or func.__name__
 
-        async def async_wrapper(*args, **kwargs):
-            with observability.trace(op_name, **default_attributes) as span:
-                result = await func(*args, **kwargs)
-                return result
+        @wraps(func)
+        async def async_wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
+            with observability.trace(op_name, **default_attributes):
+                return await func(*args, **kwargs)  # type: ignore[return-value]
 
-        def sync_wrapper(*args, **kwargs):
-            with observability.trace(op_name, **default_attributes) as span:
-                result = func(*args, **kwargs)
-                return result
+        @wraps(func)
+        def sync_wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
+            with observability.trace(op_name, **default_attributes):
+                return func(*args, **kwargs)
 
-        import asyncio
-
-        if asyncio.iscoroutinefunction(func):
-            return async_wrapper
+        if inspect.iscoroutinefunction(func):
+            return async_wrapper  # type: ignore
         return sync_wrapper
 
     return decorator

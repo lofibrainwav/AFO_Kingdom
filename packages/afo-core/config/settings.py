@@ -40,7 +40,7 @@ class AFOSettings(BaseSettings):
     julie: JulieConfig = Field(default_factory=lambda: julie_config)
 
     model_config = SettingsConfigDict(
-        env_file=os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env"),
+        env_file=os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), ".env"),
         env_file_encoding="utf-8",
         extra="ignore",
         case_sensitive=False,
@@ -76,16 +76,21 @@ class AFOSettings(BaseSettings):
     REDIS_PORT: int = Field(default=6379, description="Redis 포트")
 
     # ============================================================================
-    # Qdrant Settings
+    # Vector Store Settings (LanceDB)
     # ============================================================================
-    QDRANT_URL: str = Field(default="http://localhost:6333", description="Qdrant 벡터 DB URL")
+    VECTOR_DB: str = Field(default="lancedb", description="벡터 DB 타입 (lancedb, qdrant, chroma)")
+    LANCEDB_PATH: str = Field(default="./data/lancedb", description="LanceDB 데이터베이스 경로")
+    EMBED_DIM: str = Field(default="dynamic", description="임베딩 차원 (dynamic=자동 감지, 숫자=고정값)")
+    VISION_MODEL: str = Field(default="qwen3-vl", description="비전 모델 (qwen3-vl 등)")
+    EMBED_MODEL: str = Field(default="embeddinggemma", description="임베딩 모델 (embeddinggemma 등)")
+    BUILD_VECTOR_INDEX: str = Field(default="0", description="벡터 인덱스 생성 여부 (0=생성안함, 1=생성)")
 
     # ============================================================================
     # Ollama Settings
     # NOTE: Defaults use host.docker.internal for Mac Docker. Override via env vars as needed.
     # ============================================================================
     OLLAMA_BASE_URL: str = Field(
-        default="http://host.docker.internal:11434", description="Ollama LLM 서버 URL"
+        default="http://localhost:11434", description="Ollama LLM 서버 URL"
     )
     OLLAMA_MODEL: str = Field(default="qwen3-vl:8b", description="Ollama 기본 모델")
 
@@ -113,9 +118,7 @@ class AFOSettings(BaseSettings):
     # API Keys
     # Phase 15 Security Seal: 하드코딩된 시크릿 제거
     # ============================================================================
-    API_YUNGDEOK: str = Field(
-        default="", description="영덕 API 키 (환경변수 API_YUNGDEOK로 설정)"
-    )
+    API_YUNGDEOK: str = Field(default="", description="영덕 API 키 (환경변수 API_YUNGDEOK로 설정)")
     OPENAI_API_KEY: str | None = Field(default=None, description="OpenAI API 키")
     ANTHROPIC_API_KEY: str | None = Field(default=None, description="Anthropic (Claude) API 키")
     GEMINI_API_KEY: str | None = Field(default=None, description="Google Gemini API 키")
@@ -162,8 +165,19 @@ class AFOSettings(BaseSettings):
         default=None, description="AFO Soul Engine 홈 디렉토리 경로"
     )
     BASE_DIR: str = Field(
-        default=os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))),
+        default=os.path.dirname(
+            os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+        ),
         description="프로젝트 루트 디렉토리",
+    )
+    ARTIFACTS_DIR: str = Field(
+        default=os.path.join(
+            os.path.dirname(
+                os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+            ),
+            "artifacts",
+        ),
+        description="아티팩트 및 증거 저장 디렉토리",
     )
 
     # ============================================================================
@@ -178,6 +192,23 @@ class AFOSettings(BaseSettings):
     CHANCELLOR_MAX_MEMORY_ITEMS: int = Field(
         default=10, description="Chancellor 메모리 요약 트리거 임계값"
     )
+
+    # ============================================================================
+    # Phase 23: Operation Hardening & Canary
+    # ============================================================================
+    CHANCELLOR_V2_ENABLED: bool = Field(
+        default=False, description="Chancellor Graph V2 활성화 (Canary)"
+    )
+    CHANCELLOR_V2_SHADOW_ENABLED: bool = Field(
+        default=False, description="Chancellor Graph V2 Shadow 모드 활성화"
+    )
+    CHANCELLOR_V2_DIFF_SAMPLING_RATE: float = Field(
+        default=0.1, description="Shadow 모드 Diff 샘플링 비율 (0.0~1.0)"
+    )
+    OLLAMA_SWITCHING_PROTOCOL_ENABLED: bool = Field(
+        default=True, description="Ollama 3단계 스위칭 프로토콜 활성화"
+    )
+    VAULT_STRICT_AUDIT: bool = Field(default=True, description="Vault 접근 감사 로그 활성화")
 
     # ============================================================================
     # Helper Methods
@@ -267,7 +298,7 @@ def get_settings(env: str | None = None) -> AFOSettings:
             sys.path.insert(0, trinity_os_path)
             print(f"✅ Context7 trinity-os 경로 추가: {trinity_os_path}", file=sys.stderr)
         elif not os.path.exists(trinity_os_path):
-            print(f"⚠️ Context7 trinity-os 경로 없음: {trinity_os_path}", file=sys.stderr)
+            print(f"ℹ️ Context7 trinity-os 경로 없음: {trinity_os_path}", file=sys.stderr)
         else:
             print(f"✅ Context7 trinity-os 경로 이미 추가됨: {trinity_os_path}", file=sys.stderr)
 

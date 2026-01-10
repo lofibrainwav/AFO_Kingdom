@@ -1,5 +1,5 @@
 # Trinity Score: 91.0 (Established by Chancellor)
-"""Agentic RAG Enhancement Module (TICKET-087)
+"""Agentic RAG Enhancement Module (TICKET-100)
 Advanced RAG with agent reasoning for improved retrieval accuracy.
 
 LangGraph Agentic RAG Patterns:
@@ -40,7 +40,7 @@ class RetrievedDocument:
     content: str
     source: str
     relevance_score: float
-    metadata: dict[str, Any] = field(default_factory=dict)
+    metadata: dict[str, Any] = field(default_factory=lambda: {})
 
 
 @dataclass
@@ -109,6 +109,7 @@ class AgenticRAG:
 
         logger.info(f"[{self.name}] Processing query: {user_query[:100]}...")
         decision_path.append(f"Received query: {user_query[:50]}...")
+        relevant_docs: list[RetrievedDocument] = []
 
         # Step 1: Analyze and potentially rewrite query
         analyzed_query, reasoning = await self._analyze_query(user_query)
@@ -229,7 +230,7 @@ class AgenticRAG:
         Returns:
             List of documents that meet relevance threshold
         """
-        relevant = []
+        relevant: list[RetrievedDocument] = []
 
         for doc in documents:
             # In production, would use cross-encoder or LLM for grading
@@ -243,7 +244,8 @@ class AgenticRAG:
             if doc.relevance_score >= self.thresholds["relevance_min"]:
                 relevant.append(doc)
 
-        return sorted(relevant, key=lambda d: d.relevance_score, reverse=True)
+        relevant.sort(key=lambda d: d.relevance_score, reverse=True)
+        return relevant
 
     def _decide_action(
         self, docs: list[RetrievedDocument], avg_relevance: float
@@ -377,6 +379,6 @@ class AgenticRAG:
 agentic_rag = AgenticRAG()
 
 
-async def query(user_query: str, **context) -> AgenticRAGResult:
+async def query(user_query: str, **context: Any) -> AgenticRAGResult:
     """Convenience function for agentic RAG query."""
     return await agentic_rag.query(user_query, context)

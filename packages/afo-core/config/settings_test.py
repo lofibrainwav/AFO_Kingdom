@@ -31,7 +31,8 @@ class AFOSettingsTest(AFOSettings):
 
     # Test 환경 서비스 URL (Mock 서버 또는 테스트용)
     OLLAMA_BASE_URL: str = "http://localhost:11435"  # 테스트용 포트
-    QDRANT_URL: str = "http://localhost:6334"  # 테스트용 포트
+    VECTOR_DB: str = "lancedb"  # 테스트용 벡터 DB
+    LANCEDB_PATH: str = "./data/test_lancedb"  # 테스트용 LanceDB 경로
     N8N_URL: str = "http://localhost:5679"  # 테스트용 포트
     API_WALLET_URL: str = "http://localhost:8001"  # 테스트용 포트
     MCP_SERVER_URL: str = "http://localhost:8788"  # 테스트용 포트

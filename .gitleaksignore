@@ -24,3 +24,4 @@ packages/afo-core/k8s/monitoring/alertmanager-config.yaml
 
 # Public scripts
 purge_dns.sh
+packages/afo-core/scripts/ph19_security_sweep.sh

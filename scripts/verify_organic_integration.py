@@ -31,7 +31,6 @@ async def verify_all_dependencies():
         "sympy": lambda: importlib.import_module("sympy"),
         # --- Infrastructure ---
         "boto3": lambda: importlib.import_module("boto3"),
-        "hcloud": lambda: importlib.import_module("hcloud"),
         "docker": lambda: importlib.import_module("docker"),
         "git": lambda: importlib.import_module("git"),
         "kafka": lambda: importlib.import_module("kafka"),

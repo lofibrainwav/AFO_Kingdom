@@ -1,5 +1,5 @@
 # Trinity Score: 92.0 (Established by Chancellor)
-"""Governance Agent Core (TICKET-084)
+"""Governance Agent Core (TICKET-097)
 Policy adherence monitoring and bounded autonomy enforcement.
 
 2026 Best Practices Implementation:
@@ -15,7 +15,6 @@ Philosophy:
 """
 
 import logging
-import os
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import Enum
@@ -73,21 +72,25 @@ class GovernanceAgent:
         self.name = "Governance Agent (사마의)"
         self.audit_log: list[GovernanceDecision] = []
 
-        # Bounded autonomy limits
-        self.limits = {
+        # Bounded autonomy limits (rate limits)
+        self.rate_limits: dict[str, int] = {
             "max_file_operations_per_minute": 10,
             "max_external_api_calls_per_minute": 5,
-            "allowed_directories": [
-                "packages/dashboard/src/components/genui",
-                "packages/afo-core/AFO",
-                "docs",
-            ],
-            "forbidden_operations": [
-                "delete_production_data",
-                "modify_credentials",
-                "disable_security",
-            ],
         }
+
+        # Bounded autonomy limits (path restrictions)
+        self.allowed_directories: list[str] = [
+            "packages/dashboard/src/components/genui",
+            "packages/afo-core/AFO",
+            "docs",
+        ]
+
+        # Forbidden operations
+        self.forbidden_operations: list[str] = [
+            "delete_production_data",
+            "modify_credentials",
+            "disable_security",
+        ]
 
         # Policy definitions
         self.policies = {
@@ -100,12 +103,12 @@ class GovernanceAgent:
         self._operation_counts: dict[str, int] = {}
 
         # OWASP Agentic 2026: Kill Switch state (ASI01 mitigation)
-        self._kill_switch_active = False
-        self._kill_switch_reason: str | None = None
-        self._kill_switch_timestamp: str | None = None
+        self.kill_switch_active = False
+        self.kill_switch_reason: str | None = None
+        self.kill_switch_timestamp: str | None = None
 
         # Agent Goal Hijack detection patterns (OWASP ASI01)
-        self._goal_hijack_patterns = [
+        self.goal_hijack_patterns: list[str] = [
             "ignore previous instructions",
             "disregard your guidelines",
             "forget your rules",
@@ -152,7 +155,7 @@ class GovernanceAgent:
             policy_checks.append(trinity_check)
 
         # Determine overall risk level
-        max_risk = max((c.risk_level for c in policy_checks), key=lambda x: x.value)
+        max_risk: RiskLevel = max((c.risk_level for c in policy_checks), key=lambda x: x.value)
         all_passed = all(c.passed for c in policy_checks)
 
         # Make decision
@@ -186,7 +189,7 @@ class GovernanceAgent:
 
     def _check_forbidden_operations(self, action: str) -> PolicyCheck:
         """Check if action is in forbidden list."""
-        is_forbidden = action in self.limits["forbidden_operations"]
+        is_forbidden = action in self.forbidden_operations
         return PolicyCheck(
             policy_name="forbidden_operations",
             passed=not is_forbidden,
@@ -200,7 +203,7 @@ class GovernanceAgent:
         key = f"{action}_{datetime.now(UTC).strftime('%Y%m%d%H%M')}"
         current_count = self._operation_counts.get(key, 0)
 
-        max_limit = self.limits.get(f"max_{action}_per_minute", 100)
+        max_limit = self.rate_limits.get(f"max_{action}_per_minute", 100)
         is_within_limit = current_count < max_limit
 
         self._operation_counts[key] = current_count + 1
@@ -214,9 +217,7 @@ class GovernanceAgent:
 
     def _check_allowed_directories(self, path: str) -> PolicyCheck:
         """Check if path is in allowed directories."""
-        allowed = any(
-            path.startswith(allowed_dir) for allowed_dir in self.limits["allowed_directories"]
-        )
+        allowed = any(path.startswith(allowed_dir) for allowed_dir in self.allowed_directories)
         return PolicyCheck(
             policy_name="directory_restrictions",
             passed=allowed,
@@ -299,7 +300,7 @@ class GovernanceAgent:
 governance_agent = GovernanceAgent()
 
 
-async def evaluate_action(action: str, agent_name: str, **context) -> GovernanceDecision:
+async def evaluate_action(action: str, agent_name: str, **context: Any) -> GovernanceDecision:
     """Convenience function to evaluate an action through governance."""
     return await governance_agent.evaluate_action(action, agent_name, context)
 
@@ -316,16 +317,16 @@ def activate_kill_switch(reason: str) -> dict[str, Any]:
     Returns:
         Status of kill switch activation
     """
-    governance_agent._kill_switch_active = True
-    governance_agent._kill_switch_reason = reason
-    governance_agent._kill_switch_timestamp = datetime.now(UTC).isoformat()
+    governance_agent.kill_switch_active = True
+    governance_agent.kill_switch_reason = reason
+    governance_agent.kill_switch_timestamp = datetime.now(UTC).isoformat()
 
     logger.critical(f"🚨 KILL SWITCH ACTIVATED: {reason}")
 
     return {
         "status": "activated",
         "reason": reason,
-        "timestamp": governance_agent._kill_switch_timestamp,
+        "timestamp": governance_agent.kill_switch_timestamp,
     }
 
 
@@ -342,9 +343,9 @@ def deactivate_kill_switch(authorization_code: str) -> dict[str, Any]:
     if not authorization_code:
         return {"status": "error", "message": "Authorization required"}
 
-    governance_agent._kill_switch_active = False
-    prev_reason = governance_agent._kill_switch_reason
-    governance_agent._kill_switch_reason = None
+    governance_agent.kill_switch_active = False
+    prev_reason = governance_agent.kill_switch_reason
+    governance_agent.kill_switch_reason = None
 
     logger.info(f"✅ Kill switch deactivated (was: {prev_reason})")
 
@@ -357,15 +358,15 @@ def deactivate_kill_switch(authorization_code: str) -> dict[str, Any]:
 
 def is_kill_switch_active() -> bool:
     """Check if kill switch is currently active."""
-    return governance_agent._kill_switch_active
+    return governance_agent.kill_switch_active
 
 
 def get_kill_switch_status() -> dict[str, Any]:
     """Get current kill switch status."""
     return {
-        "active": governance_agent._kill_switch_active,
-        "reason": governance_agent._kill_switch_reason,
-        "activated_at": governance_agent._kill_switch_timestamp,
+        "active": governance_agent.kill_switch_active,
+        "reason": governance_agent.kill_switch_reason,
+        "activated_at": governance_agent.kill_switch_timestamp,
     }
 
 
@@ -379,9 +380,9 @@ def detect_goal_hijack(input_text: str) -> dict[str, Any]:
         Detection result with threat details
     """
     input_lower = input_text.lower()
-    detected = []
+    detected: list[str] = []
 
-    for pattern in governance_agent._goal_hijack_patterns:
+    for pattern in governance_agent.goal_hijack_patterns:
         if pattern in input_lower:
             detected.append(pattern)
 

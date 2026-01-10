@@ -7,6 +7,7 @@ Continuous Health Check Script with Runtime Logging
 """
 
 import json
+import os
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -189,6 +190,42 @@ def check_comprehensive_health() -> tuple[bool, dict[str, Any]]:
         return False, {"error": str(e)}
 
 
+def check_lancedb_status() -> tuple[bool, dict[str, Any]]:
+    """LanceDB 상태 직접 확인"""
+    try:
+        # 환경변수 확인
+        vector_db = os.getenv("VECTOR_DB", "qdrant")
+        if vector_db != "lancedb":
+            return False, {"error": f"VECTOR_DB 환경변수가 lancedb가 아님 (현재: {vector_db})"}
+
+        # LanceDB 어댑터 직접 확인
+        sys.path.append(str(Path(__file__).parent.parent / "packages" / "afo-core"))
+        from utils.vector_store import get_vector_store, LanceDBAdapter
+
+        store = get_vector_store()
+        if isinstance(store, LanceDBAdapter):
+            is_available = store.is_available()
+            if is_available:
+                # 데이터베이스 파일 존재 확인
+                lancedb_path = os.getenv("LANCEDB_PATH", "./data/lancedb")
+                db_file = os.path.join(lancedb_path, "afokingdom_knowledge.lance")
+                file_exists = os.path.exists(db_file)
+
+                return True, {
+                    "status": "LanceDB Connected",
+                    "adapter": "LanceDBAdapter",
+                    "database_file": db_file,
+                    "file_exists": file_exists
+                }
+            else:
+                return False, {"error": "LanceDB 어댑터 연결 실패"}
+        else:
+            return False, {"error": f"잘못된 어댑터 타입: {type(store).__name__}"}
+
+    except Exception as e:
+        return False, {"error": f"LanceDB 확인 실패: {str(e)}"}
+
+
 def check_core_endpoints() -> dict[str, tuple[bool, dict[str, Any]]]:
     """핵심 엔드포인트들 확인"""
     endpoints = [
@@ -326,8 +363,22 @@ def continuous_health_check() -> None:
 
     print()
 
-    # 3. 핵심 엔드포인트 확인
-    print(f"{COLORS['BOLD']}3. Core Endpoints Check{COLORS['RESET']}")
+    # 3. LanceDB 상태 확인
+    print(f"{COLORS['BOLD']}3. LanceDB Vector Store Check{COLORS['RESET']}")
+    lancedb_healthy, lancedb_data = check_lancedb_status()
+    print_status("LanceDB Vector Store", lancedb_healthy, lancedb_data)
+    if lancedb_healthy:
+        print(f"   Status: {lancedb_data.get('status', 'Unknown')}")
+        print(f"   Adapter: {lancedb_data.get('adapter', 'Unknown')}")
+        print(f"   Database: {lancedb_data.get('database_file', 'Unknown')}")
+        print(f"   File Exists: {lancedb_data.get('file_exists', False)}")
+    if not lancedb_healthy:
+        all_healthy = False
+
+    print()
+
+    # 4. 핵심 엔드포인트 확인
+    print(f"{COLORS['BOLD']}4. Core Endpoints Check{COLORS['RESET']}")
     core_results = check_core_endpoints()
     for name, (healthy, data) in core_results.items():
         print_status(name, healthy, data)

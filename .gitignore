@@ -63,6 +63,8 @@ debug_token.txt
 # Runtime files
 .api_server_pid
 *.pid
+server.pid
+server.log
 
 # Terraform
 terraform/.terraform/
@@ -85,7 +87,7 @@ tools/mlx_optimization/.venv/
 .bruin.yml
 .env.antigravity
 
-tools/dgm/upstream
+
 
 # Music generation virtual environment
 venv_afo_music/
@@ -94,3 +96,6 @@ venv_musicgen/
 !artifacts/ssot/*
 !artifacts/ssot/
 !artifacts/ssot/**
+# MyPy cache directories (may contain sensitive path information)
+.mypy_cache/
+**/.mypy_cache/

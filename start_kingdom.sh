@@ -30,7 +30,13 @@ fi
 
 echo "   -> Starting FastAPI server..."
 echo "   -> Backend will be available at: http://localhost:8010"
-uvicorn api_server:app --reload --port 8010 &
+if command -v poetry >/dev/null 2>&1; then
+  poetry run uvicorn api_server:app --reload --port 8010 &
+elif [ -f ".venv/bin/uvicorn" ]; then
+  .venv/bin/uvicorn api_server:app --reload --port 8010 &
+else
+  uvicorn api_server:app --reload --port 8010 &
+fi
 BACKEND_PID=$!
 
 echo "✅ Backend Services Initiated (PID: $BACKEND_PID)."
