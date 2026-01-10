@@ -181,7 +181,7 @@ class ChancellorGraph:
 
             # 2. Shadow Path (PH24)
             # Combined condition per SIM102: shadow enabled AND random sampling
-            if shadow_enabled and random.random() < settings.CHANCELLOR_V2_DIFF_SAMPLING_RATE:
+            if shadow_enabled and random.random() <= settings.CHANCELLOR_V2_DIFF_SAMPLING_RATE:
                 asyncio.create_task(ChancellorGraph._run_shadow_diff(command, result, **kwargs))
 
             return result
@@ -191,7 +191,7 @@ class ChancellorGraph:
         """Execute V2 in background and save diff evidence."""
         try:
             input_payload = {"command": command, **kwargs}
-            v2_result = ChancellorGraph.run_v2(input_payload)
+            v2_result = await ChancellorGraph.run_v2(input_payload)
 
             # Prepare diff Evidence
             diff_entry = {

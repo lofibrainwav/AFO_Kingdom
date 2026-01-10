@@ -124,14 +124,70 @@ def build_organs_final(
             repo_root = parent
             break
 
-    # 2. Config & Env
+    # 2. Config & Env + Infra Mode Detection (메타인지 최적화)
+    def detect_infra_mode() -> str:
+        """인프라 모드 자동 감지 (메타인지 기반)"""
+        # 1. 명시적 설정 우선
+        infra_mode = os.getenv("INFRA_MODE")
+        if infra_mode:
+            return infra_mode
+
+        # 2. Docker 환경 감지
+        if os.path.exists("/.dockerenv") or os.getenv("DOCKER_CONTAINER"):
+            return "docker"
+
+        # 3. 로컬 서비스 연결성으로 감지
+        try:
+            import socket
+            with socket.create_connection(("localhost", 6379), timeout=0.1):
+                return "local"
+        except:
+            pass
+
+        # 4. 아무것도 없으면 minimal 모드
+        return "minimal"
+
+    infra_mode = detect_infra_mode()
+    print(f"🔧 Infra Mode Detected: {infra_mode}", flush=True)
+
+    # 모드별 기본 설정
+    mode_configs = {
+        "local": {
+            "redis_host": "localhost",
+            "postgres_host": "localhost",
+            "timeout_tcp_s": 0.2,
+            "skip_if_missing": False,
+        },
+        "docker": {
+            "redis_host": "afo-redis",
+            "postgres_host": "afo-postgres",
+            "timeout_tcp_s": 0.35,
+            "skip_if_missing": False,
+        },
+        "minimal": {
+            "redis_host": "localhost",
+            "postgres_host": "localhost",
+            "timeout_tcp_s": 0.1,
+            "skip_if_missing": True,  # 연결 실패해도 organ 점수 유지
+        },
+        "hybrid": {
+            "redis_host": "afo-redis",  # Docker 우선
+            "postgres_host": "localhost",  # 로컬 우선
+            "timeout_tcp_s": 0.25,
+            "skip_if_missing": False,
+        }
+    }
+
+    mode_config = mode_configs.get(infra_mode, mode_configs["minimal"])
+    timeout_tcp_s = mode_config["timeout_tcp_s"]
+
     try:
         from config.settings import get_settings
 
         settings = get_settings()
-        redis_host = redis_host or settings.REDIS_HOST or os.getenv("REDIS_HOST", "afo-redis")
+        redis_host = redis_host or settings.REDIS_HOST or os.getenv("REDIS_HOST", mode_config["redis_host"])
         postgres_host = (
-            postgres_host or settings.POSTGRES_HOST or os.getenv("POSTGRES_HOST", "afo-postgres")
+            postgres_host or settings.POSTGRES_HOST or os.getenv("POSTGRES_HOST", mode_config["postgres_host"])
         )
         qdrant_host = qdrant_host or os.getenv("QDRANT_HOST", "afo-qdrant")
         # Extract hostname from OLLAMA_BASE_URL if available
@@ -141,8 +197,8 @@ def build_organs_final(
         else:
             ollama_host = ollama_host or os.getenv("OLLAMA_HOST", "afo-ollama")
     except ImportError:
-        redis_host = redis_host or os.getenv("REDIS_HOST", "afo-redis")
-        postgres_host = postgres_host or os.getenv("POSTGRES_HOST", "afo-postgres")
+        redis_host = redis_host or os.getenv("REDIS_HOST", mode_config["redis_host"])
+        postgres_host = postgres_host or os.getenv("POSTGRES_HOST", mode_config["postgres_host"])
         qdrant_host = qdrant_host or os.getenv("QDRANT_HOST", "afo-qdrant")
         ollama_host = ollama_host or os.getenv("OLLAMA_HOST", "afo-ollama")
 

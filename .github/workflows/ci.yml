@@ -109,10 +109,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          nohup python -m uvicorn api_server:app --host 127.0.0.1 --port 8010 > "$GITHUB_WORKSPACE/server.log" 2>&1 &
+          cd packages/afo-core
+          nohup python -m uvicorn api.api_server:app --host 127.0.0.1 --port 8010 > "$GITHUB_WORKSPACE/server.log" 2>&1 &
           echo $! > "$GITHUB_WORKSPACE/server.pid"
           # CI 환경에서 서버 시작 안정화 대기
-          sleep 15
+          sleep 20
 
       - name: Check Server Startup (Debug)
         shell: bash
