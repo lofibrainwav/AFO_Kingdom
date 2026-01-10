@@ -164,7 +164,7 @@ jobs:
         run: python scripts/ci_trinity_text_guard.py
 
       - name: Upload Coverage
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           file: ./packages/afo-core/coverage.xml
 
