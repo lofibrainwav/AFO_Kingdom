@@ -19,6 +19,14 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Security Gate - Gitleaks Scan (Fail Loud)
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          config-path: .gitleaks.toml
+          fail-on-error: true
+
       - name: uv 설치 및 환경 설정
         uses: astral-sh/setup-uv@v7
         with:
