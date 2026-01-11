@@ -43,6 +43,8 @@
 | Phase | Title | Theme | 핵심 | 커밋 |
 |-------|-------|-------|------|------|
 | 0 | Genesis | 초심 설정 | 승상 시스템 탄생 | `39b30eb` |
+| 30 | Great Audit | 정도(正道) 봉인 | 왕국 근간 대특검 완수 및 그림자 모드 해제 | `PH30-DONE` |
+| 31 | Expansion | 확장의 시대 | MIPROv2, Janus 전면 전개 | `EXP-START` |
 | 1 | Security Hardening | 善의 방패 | GitHub Actions 강화 | - |
 | 2 | CI/CD Stabilization | 眞의 기반 | 290 테스트 통과 | `c6c067f`, `353e4cc`, `1ff0ad9` |
 | 3 | MCP Ecosystem | 孝의 연결 | Context7 + Sequential Thinking | `d856bcb` |

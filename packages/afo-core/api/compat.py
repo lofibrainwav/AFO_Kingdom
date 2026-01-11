@@ -731,3 +731,4 @@ class ChancellorInvokeResponse(BaseModel):
     execution_time: float
     mode: str
     metadata: dict[str, str] | None = None
+    analysis_results: dict[str, Any] | None = None  # PH30 Expansion: 노드 분석 결과 포함

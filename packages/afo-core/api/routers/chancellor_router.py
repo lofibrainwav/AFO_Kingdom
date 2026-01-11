@@ -584,12 +584,15 @@ async def _execute_full_mode_v2(
 
         return _fn
 
+    from AFO.chancellor_graph import mipro_node
+
     nodes = {
         "CMD": ok_node("CMD"),
         "PARSE": ok_node("PARSE"),
         "TRUTH": ok_node("TRUTH"),
         "GOODNESS": ok_node("GOODNESS"),
         "BEAUTY": ok_node("BEAUTY"),
+        "MIPRO": mipro_node,  # PH30 Expansion: MIPRO 최적화 노드 추가
         "MERGE": ok_node("MERGE"),
         "EXECUTE": execute_node,
         "VERIFY": verify_node,

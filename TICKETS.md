@@ -1,8 +1,8 @@
 # 🎯 AFO 왕국 티켓 보드 (SSOT)
 
 **프로젝트 목표**: AFO Kingdom 자율 운영 시스템 완성
-**최종 업데이트**: 2026-01-08
-**Trinity Score**: 91.0% ✅ (목표: 90%+)
+**최종 업데이트**: 2026-01-10
+**Trinity Score**: 95.2% ✅ (목표: 90%+)
 **HEAD**: `40a21587`
 
 ## 📋 Phase 3-17 완료 티켓
@@ -37,10 +37,8 @@
 | TICKET-093 | Phase 17: Debt Gate | 17 | `c44bf7cd` | `ssot-phase17-debt-*` | Ruff Baseline Monitoring, snapshot tool |
 | TICKET-097 | Governance Agent 구현 | 18 | `7e75c152` | `ssot-phase18-governance-*` | governance_agent.py |
 | TICKET-098 | Security Agent 구현 | 19 | `7e75c152` | `ssot-phase19-security-*` | security_agent.py |
-| TICKET-099 | OpenTelemetry AI Observability | 20 | `7e75c152` | `ssot-phase20-otel-*` | ai_observability.py |
-| TICKET-100 | Agentic RAG Enhancement | 21 | `7e75c152` | `ssot-phase21-rag-*` | agentic_rag.py |
-
-
+| TICKET-100 | OpenTelemetry AI Observability | 20 | `7e75c152` | `ssot-phase20-otel-*` | ai_observability.py |
+| TICKET-101 | Agentic RAG Enhancement | 21 | `7e75c152" | `ssot-phase21-rag-*` | agentic_rag.py |
 
 ---
 
@@ -49,17 +47,6 @@
 | ID | 제목 | Phase | Priority | Status | Evidence |
 |---|------|-------|----------|--------|----------|
 | TICKET-096 | Phase 22 Cleanup & Restoration | 22 | MEDIUM | ✅ 완료 | UPSTREAM_PIN.txt / jade_bell.mp3 |
-
-
-## TICKET-096 — Phase 22 Cleanup & Strategic Restoration
-
-- Phase: 22 (유지보수)
-- Priority: MEDIUM
-- Type: Maintenance
-- Status: ✅ 완료 (2026-01-08)
-- Evidence: tools/dgm/upstream restoration, jade_bell.mp3 recovery
-- Goal: PR 준비를 위한 불필요 파일 정리 및 핵심 유산(DGM)의 전략적 보존.
-
 
 ---
 
@@ -74,34 +61,27 @@
 | TICKET-099 | Metadata & Evidence Pack | 24 | `LOCKED` | ✅ 완료 | council_runs/*.jsonl |
 | TICKET-100 | Final SSOT Seal & Walkthrough | 24 | `LOCKED` | ✅ 완료 | walkthrough.md |
 
+---
 
-## TICKET-094 — Chancellor V2 Integration (Shadow/Canary)
+## Phase 29 — The Great Modularization (Structural Hardening)
 
-- Phase: 23 (운영 최적화)
-- Status: ✅ 완료 (2026-01-08)
-- Evidence: Shadow mode verified, Canary header routing active.
+| ID | 제목 | Phase | Priority | Status | Evidence |
+|---|------|-------|----------|--------|----------|
+| TICKET-101 | Skill Registry Modularization | 29 | `CRITICAL` | ✅ 완료 | `domain/skills/` |
+| TICKET-102 | LLM Router Modularization | 29 | `CRITICAL` | ✅ 완료 | `infrastructure/llm/` |
+| TICKET-103 | API Wallet Modularization | 29 | `CRITICAL` | ✅ 완료 | `domain/wallet/` |
 
+## TICKET-101 — Skill Registry Modularization
+- Phase: 29 (구조 강화)
+- Status: ✅ 완료 (2026-01-10)
+- Evidence: ~1,400 lines debulked into maintainable `domain/skills` package.
 
-## TICKET-095 — Vault Manager Implementation (Zero Trust Security)
+## TICKET-102 — LLM Router Modularization
+- Phase: 29 (인프라 강화)
+- Status: ✅ 완료 (2026-01-10)
+- Evidence: ~1,000 lines extracted into `infrastructure/llm`.
 
-- Phase: 23 (보안 강화)
-- Status: ✅ 완료 (2026-01-08)
-- Evidence: Policy-based access & strict audit logging implemented.
-
-## Phase 24 — Council of Minds (Intellectual Revolution)
-
-
-## TICKET-098 — Council of Minds (Async Parallel Assessment)
-
-- Phase: 24 (지능 고도화)
-- Status: ✅ 완료 (2026-01-08)
-- Evidence: Multi-LLM (Zilong/Pangtong/Lushun/Yeongdeok) parallel assessment flow verified.
-
-
-## TICKET-099 — Metadata & Evidence Pack Persistence
-
-- Phase: 24 (SSOT 강화)
-- Status: ✅ 완료 (2026-01-08)
-- Evidence: Metadata standard (Mode/Scholar/Model) and `.jsonl` runs persistence.
-
-
+## TICKET-103 — API Wallet Modularization
+- Phase: 29 (보안/저장소 강화)
+- Status: ✅ 완료 (2026-01-10)
+- Evidence: ~900 lines refactored into `domain/wallet` with Pydantic models.

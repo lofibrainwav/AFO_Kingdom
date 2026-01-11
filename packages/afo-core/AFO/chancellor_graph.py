@@ -167,7 +167,8 @@ class ChancellorGraph:
         headers = headers or {}
 
         # Phase 24: Advanced Routing (Canary Override)
-        force_v2 = headers.get("X-AFO-Engine", "").lower() == "v2"
+        # FastAPI headers in dict form are lowercase
+        force_v2 = headers.get("x-afo-engine", "").lower() == "v2" or headers.get("X-AFO-Engine", "").lower() == "v2"
         v2_enabled = settings.CHANCELLOR_V2_ENABLED or force_v2
         shadow_enabled = settings.CHANCELLOR_V2_SHADOW_ENABLED and not v2_enabled
 
