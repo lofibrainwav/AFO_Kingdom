@@ -99,6 +99,14 @@ jobs:
         with:
           version: 9
 
+      - name: "pnpm 캐시 설정 (성능 최적화)"
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/share/pnpm/store
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('packages/dashboard/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+
       - name: "Dashboard 의존성 설치"
         working-directory: packages/dashboard
         run: pnpm install --frozen-lockfile
