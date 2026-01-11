@@ -35,7 +35,8 @@ except ImportError:
 # Trinity Score Evaluator
 try:
     sys.path.insert(0, str(project_root / "packages" / "afo-core"))
-    from AFO.services.mcp_tool_trinity_evaluator import mcp_tool_trinity_evaluator
+    from AFO.services.mcp_tool_trinity_evaluator import \
+        mcp_tool_trinity_evaluator
 except ImportError:
     mcp_tool_trinity_evaluator = None
 

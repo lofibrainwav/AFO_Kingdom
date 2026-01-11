@@ -1,7 +1,8 @@
 from typing import Any, Mapping, cast
 
 # mypy: ignore-errors
-from playwright.sync_api import sync_playwright  # pyright: ignore[reportMissingImports]
+from playwright.sync_api import \
+    sync_playwright  # pyright: ignore[reportMissingImports]
 
 
 def _as_mapping(x: object) -> Mapping[str, Any]:

@@ -8,12 +8,10 @@ sys.path.append(
 )
 
 try:
-    from afo_core.commands.trinity_command import (
-        AnalyzeCommand,
-        ChancellorInvoker,
-        DeployCommand,
-        TigerGenerals,
-    )
+    from afo_core.commands.trinity_command import (AnalyzeCommand,
+                                                   ChancellorInvoker,
+                                                   DeployCommand,
+                                                   TigerGenerals)
 except ImportError:
     # Adjust path if running from root relative to packages
     sys.path.append(
@@ -21,12 +19,8 @@ except ImportError:
             os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")
         ).resolve()
     )
-    from commands.trinity_command import (
-        AnalyzeCommand,
-        ChancellorInvoker,
-        DeployCommand,
-        TigerGenerals,
-    )
+    from commands.trinity_command import (AnalyzeCommand, ChancellorInvoker,
+                                          DeployCommand, TigerGenerals)
 
 
 def demonstrate_command_pattern():

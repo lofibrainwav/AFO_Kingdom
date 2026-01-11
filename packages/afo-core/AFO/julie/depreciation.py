@@ -17,7 +17,6 @@ from datetime import UTC, datetime
 from enum import Enum
 
 import dspy
-
 # from afo.context7 import search_irs_ftb
 from pydantic import BaseModel, Field, field_validator
 

@@ -6,7 +6,6 @@
 import hashlib
 import json
 import os
-
 # AFO 루트 디렉토리
 import sys
 import time

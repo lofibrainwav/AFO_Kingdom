@@ -16,24 +16,12 @@ SSOT Integration: IRS/FTB official guidelines with real-time sync (TICKET-033)
 
 from AFO.config.runtime import JulieConfig, load_julie_config
 
-from .ai_agents import (
-    AssociateAgent,
-    AuditorAgent,
-    JulieAgentOrchestrator,
-    ManagerAgent,
-)
-from .depreciation import (
-    DepInput,
-    DepOutput,
-    DepreciationCalculator,
-    julie_depreciation_calc,
-)
-from .julie_logs import (
-    julie_log_manager,
-    log_associate_action,
-    log_auditor_action,
-    log_manager_action,
-)
+from .ai_agents import (AssociateAgent, AuditorAgent, JulieAgentOrchestrator,
+                        ManagerAgent)
+from .depreciation import (DepInput, DepOutput, DepreciationCalculator,
+                           julie_depreciation_calc)
+from .julie_logs import (julie_log_manager, log_associate_action,
+                         log_auditor_action, log_manager_action)
 
 __all__ = [
     "AssociateAgent",

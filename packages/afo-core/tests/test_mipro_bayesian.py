@@ -1,7 +1,6 @@
 import os
 
 import pytest
-
 # Import from AFO package
 from AFO.mipro_optimizer import MiproOptimizer
 from AFO.trinity_metric_wrapper import TrinityMetricWrapper

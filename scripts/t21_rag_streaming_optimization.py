@@ -8,7 +8,6 @@ Phase 2 Critical: T2.1 RAG 스트리밍 최적화
 
 import asyncio
 import json
-
 # Add the packages directory to Python path
 import sys
 import time
@@ -16,7 +15,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "packages" / "afo-core"))
 
-from afo.rag.llamaindex_streaming_rag import get_streaming_rag_health, stream_rag_query
+from afo.rag.llamaindex_streaming_rag import (get_streaming_rag_health,
+                                              stream_rag_query)
 
 
 async def test_streaming_rag():

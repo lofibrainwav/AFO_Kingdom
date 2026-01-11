@@ -14,12 +14,8 @@ logger = logging.getLogger(__name__)
 
 # 기존 메트릭 시스템 사용 (중복 방지)
 try:
-    from utils.metrics import (
-        PROMETHEUS_AVAILABLE,
-        get_or_create_metric,
-        trinity_score,
-        trinity_score_total,
-    )
+    from utils.metrics import (PROMETHEUS_AVAILABLE, get_or_create_metric,
+                               trinity_score, trinity_score_total)
 
     METRICS_AVAILABLE = PROMETHEUS_AVAILABLE
     logger.info("Using existing metrics system for Trinity Score monitoring")

@@ -48,11 +48,8 @@ except ImportError as e:
 
 # RAG Shadow Mode import (TICKET-008 Phase 1)
 try:
-    from afo.rag_shadow import (
-        execute_rag_shadow,
-        get_shadow_metrics,
-        is_rag_shadow_enabled,
-    )
+    from afo.rag_shadow import (execute_rag_shadow, get_shadow_metrics,
+                                is_rag_shadow_enabled)
 
     _rag_shadow_available = True
     logger.info("✅ RAG shadow mode imported successfully")
@@ -64,11 +61,8 @@ except ImportError:
 
         sys.path.append(os.path.join(os.path.dirname(__file__), "../../../afo"))
 
-        from rag_shadow import (
-            execute_rag_shadow,
-            get_shadow_metrics,
-            is_rag_shadow_enabled,
-        )
+        from rag_shadow import (execute_rag_shadow, get_shadow_metrics,
+                                is_rag_shadow_enabled)
 
         _rag_shadow_available = True
         logger.info("✅ RAG shadow mode imported successfully (relative path)")
@@ -78,7 +72,8 @@ except ImportError:
 
 # RAG Flag + Gradual Mode import (TICKET-008 Phase 2 + 3)
 try:
-    from afo.rag_flag import execute_rag_with_mode, get_rag_config, init_rag_semaphore
+    from afo.rag_flag import (execute_rag_with_mode, get_rag_config,
+                              init_rag_semaphore)
 
     _rag_flag_available = True
     # 세마포어 초기화
@@ -92,7 +87,8 @@ except ImportError:
 
         sys.path.append(os.path.join(os.path.dirname(__file__), "../../../afo"))
 
-        from rag_flag import execute_rag_with_mode, get_rag_config, init_rag_semaphore
+        from rag_flag import (execute_rag_with_mode, get_rag_config,
+                              init_rag_semaphore)
 
         _rag_flag_available = True
         # 세마포어 초기화

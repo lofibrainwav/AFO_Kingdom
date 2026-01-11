@@ -5,33 +5,24 @@ import os
 import subprocess
 
 import docker
-from llm import create_client, extract_json_between_markers, get_response_from_llm
+from llm import (create_client, extract_json_between_markers,
+                 get_response_from_llm)
 from polyglot.harness import harness as polyglot_harness
 from prompts.diagnose_improvement_prompt import get_diagnose_improvement_prompt
-from prompts.self_improvement_prompt import (
-    get_diagnose_prompt_polyglot,
-    get_diagnose_prompt_swe,
-    get_problem_description_prompt,
-)
+from prompts.self_improvement_prompt import (get_diagnose_prompt_polyglot,
+                                             get_diagnose_prompt_swe,
+                                             get_problem_description_prompt)
 from prompts.testrepo_prompt import get_test_description
 from swe_bench.harness import harness
 from swe_bench.report import make_report
 from utils.common_utils import load_json_file
-from utils.docker_utils import (
-    build_dgm_container,
-    cleanup_container,
-    copy_from_container,
-    copy_to_container,
-    log_container_output,
-    remove_existing_container,
-    safe_log,
-    setup_logger,
-)
-from utils.evo_utils import (
-    get_all_performance,
-    get_model_patch_paths,
-    is_compiled_self_improve,
-)
+from utils.docker_utils import (build_dgm_container, cleanup_container,
+                                copy_from_container, copy_to_container,
+                                log_container_output,
+                                remove_existing_container, safe_log,
+                                setup_logger)
+from utils.evo_utils import (get_all_performance, get_model_patch_paths,
+                             is_compiled_self_improve)
 
 dataset = None
 diagnose_model = "o1-2024-12-17"

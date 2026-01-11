@@ -1,12 +1,8 @@
 import pytest
 from AFO.domain.metrics.trinity import TrinityMetrics, calculate_trinity
-from AFO.domain.metrics.trinity_ssot import (
-    WEIGHT_BEAUTY,
-    WEIGHT_ETERNITY,
-    WEIGHT_GOODNESS,
-    WEIGHT_SERENITY,
-    WEIGHT_TRUTH,
-)
+from AFO.domain.metrics.trinity_ssot import (WEIGHT_BEAUTY, WEIGHT_ETERNITY,
+                                             WEIGHT_GOODNESS, WEIGHT_SERENITY,
+                                             WEIGHT_TRUTH)
 
 
 def test_trinity_weight_sum():

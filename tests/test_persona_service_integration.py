@@ -11,7 +11,6 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 from AFO.domain.persona import PersonaType
-
 # AFO 왕국 모듈 임포트
 from AFO.services.persona_service import PersonaService, persona_service
 

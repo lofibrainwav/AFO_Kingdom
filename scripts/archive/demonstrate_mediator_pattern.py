@@ -8,11 +8,9 @@ sys.path.append(
 )
 
 try:
-    from afo_core.mediators.chancellor_mediator import (
-        ChancellorMediator,
-        StrategistSquad,
-        TigerGeneralsUnit,
-    )
+    from afo_core.mediators.chancellor_mediator import (ChancellorMediator,
+                                                        StrategistSquad,
+                                                        TigerGeneralsUnit)
 except ImportError:
     # Adjust path if running from root relative to packages
     sys.path.append(
@@ -20,11 +18,9 @@ except ImportError:
             os.path.join(pathlib.Path(__file__).parent, "../packages/afo-core")
         ).resolve()
     )
-    from mediators.chancellor_mediator import (
-        ChancellorMediator,
-        StrategistSquad,
-        TigerGeneralsUnit,
-    )
+    from mediators.chancellor_mediator import (ChancellorMediator,
+                                               StrategistSquad,
+                                               TigerGeneralsUnit)
 
 
 def demonstrate_mediator_pattern():

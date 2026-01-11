@@ -8,12 +8,10 @@ import re
 from dataclasses import dataclass
 from typing import Union, cast
 
-from polyglot.constants import MAP_REPO_TO_INSTALL, MAP_REPO_VERSION_TO_SPECS, USE_X86
-from polyglot.dockerfiles import (
-    get_dockerfile_base,
-    get_dockerfile_env,
-    get_dockerfile_instance,
-)
+from polyglot.constants import (MAP_REPO_TO_INSTALL, MAP_REPO_VERSION_TO_SPECS,
+                                USE_X86)
+from polyglot.dockerfiles import (get_dockerfile_base, get_dockerfile_env,
+                                  get_dockerfile_instance)
 from swebench.harness.utils import get_environment_yml, get_requirements
 
 DIFF_MODIFIED_FILE_REGEX = r"--- a/(.*)"

@@ -20,7 +20,8 @@ from fastapi.responses import RedirectResponse, StreamingResponse
 
 # Optional SSE import
 try:
-    from AFO.utils.metrics import sse_open_connections, update_sse_health_metrics
+    from AFO.utils.metrics import (sse_open_connections,
+                                   update_sse_health_metrics)
 
     METRICS_AVAILABLE = True
 except ImportError:

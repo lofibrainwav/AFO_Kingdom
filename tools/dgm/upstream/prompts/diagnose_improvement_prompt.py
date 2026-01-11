@@ -1,8 +1,6 @@
-from prompts.self_improvement_prompt import (
-    find_selfimprove_eval_logs,
-    get_current_code,
-    process_selfimprove_eval_logs,
-)
+from prompts.self_improvement_prompt import (find_selfimprove_eval_logs,
+                                             get_current_code,
+                                             process_selfimprove_eval_logs)
 from utils.common_utils import read_file
 
 diagnose_improvement_system_message = """Here is the relevant code for the LLM Coding agent with the model patch applied.

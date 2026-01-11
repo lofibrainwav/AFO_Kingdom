@@ -105,4 +105,5 @@ repos:
       - id: pyright
         name: Pyright (core strict)
         args: [--project=pyproject.toml]
-        files: ^packages/afo-core/AFO/(domain/metrics|models)/.*\.py$
+        files: ^packages/afo-core/.*\.py$
+        exclude: ^(packages/afo-core/tests/|packages/afo-core/legacy/|packages/afo-core/__pycache__/|packages/afo-core/api_wallet.py)$

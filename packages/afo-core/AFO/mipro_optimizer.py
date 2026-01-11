@@ -4,7 +4,8 @@ import os
 from dataclasses import dataclass
 
 from AFO.bayesian_tuner import BayesianTuner, TuningCandidate
-from AFO.trinity_metric_wrapper import TrinityMetricResult, TrinityMetricWrapper
+from AFO.trinity_metric_wrapper import (TrinityMetricResult,
+                                        TrinityMetricWrapper)
 
 
 @dataclass(frozen=True)

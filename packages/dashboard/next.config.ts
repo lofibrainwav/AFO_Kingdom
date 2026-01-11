@@ -8,7 +8,12 @@ const soulEngineUrl = process.env.BACKEND_BASE_URL || "http://127.0.0.1:8010";
 const nextConfig: NextConfig = {
   /* config options here */
   output: "standalone",
-  
+
+  // Turbopack 워크스페이스 루트 명시적 설정 (다중 lockfile 경고 해결)
+  turbopack: {
+    root: process.cwd(),
+  },
+
   // 성능 최적화 설정
   experimental: {
     // Note: Turbopack은 dev 명령어에 --turbo 플래그가 없으면 자동으로 webpack 사용

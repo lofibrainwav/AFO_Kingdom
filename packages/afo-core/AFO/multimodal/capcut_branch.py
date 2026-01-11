@@ -30,12 +30,8 @@ class CapCutBranch:
             bool: MoviePy 사용 가능 여부
         """
         try:
-            from moviepy import (
-                ColorClip,
-                CompositeVideoClip,
-                ImageClip,
-                concatenate_videoclips,
-            )
+            from moviepy import (ColorClip, CompositeVideoClip, ImageClip,
+                                 concatenate_videoclips)
 
             logger.info("MoviePy 라이브러리 사용 가능")
             return True
@@ -116,12 +112,8 @@ class CapCutBranch:
             }
 
         try:
-            from moviepy import (
-                CompositeVideoClip,
-                TextClip,
-                VideoFileClip,
-                concatenate_videoclips,
-            )
+            from moviepy import (CompositeVideoClip, TextClip, VideoFileClip,
+                                 concatenate_videoclips)
 
             # 입력 비디오 로드
             if not Path(input_video).exists():

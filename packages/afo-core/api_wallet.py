@@ -21,24 +21,12 @@ if package_root not in sys.path:
 
 # Import from core domain package (Strangler Fig)
 try:
-    from domain.wallet import (
-        APIWallet,
-        Fernet,
-        KeyMetadata,
-        MockFernet,
-        WalletSummary,
-        get_cipher,
-    )
+    from domain.wallet import (APIWallet, Fernet, KeyMetadata, MockFernet,
+                               WalletSummary, get_cipher)
 except ImportError:
     # Fallback for different execution contexts
-    from AFO.domain.wallet import (
-        APIWallet,
-        Fernet,
-        KeyMetadata,
-        MockFernet,
-        WalletSummary,
-        get_cipher,
-    )
+    from AFO.domain.wallet import (APIWallet, Fernet, KeyMetadata, MockFernet,
+                                   WalletSummary, get_cipher)
 
 # ============================================================================
 # Global Wallet Instance

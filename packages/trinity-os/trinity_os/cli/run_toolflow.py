@@ -7,9 +7,7 @@ import os
 from trinity_os.adapters.afo_ultimate_mcp_deps_v1 import build_deps_v1
 from trinity_os.core.risk_score import get_current_risk_score
 from trinity_os.graphs.trinity_toolflow_graph_v1 import (
-    build_trinity_toolflow_graph,
-    run_trinity_toolflow,
-)
+    build_trinity_toolflow_graph, run_trinity_toolflow)
 
 
 def main() -> int:
