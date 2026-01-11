@@ -29,7 +29,7 @@ def _get_mcp_server_url() -> str | None:
 
         settings = get_settings()
         return cast(
-            str | None, getattr(settings, "MCP_SERVER_URL", os.getenv("MCP_SERVER_URL"))
+            "str | None", getattr(settings, "MCP_SERVER_URL", os.getenv("MCP_SERVER_URL"))
         )
     except Exception:  # nosec
         return os.getenv("MCP_SERVER_URL")
@@ -89,7 +89,7 @@ def register_core_skills() -> SkillRegistry:
             truth=95, goodness=90, beauty=92, serenity=88
         ),
         mcp_config=MCPConfig(
-            mcp_server_url=cast(str, _get_mcp_server_url()),
+            mcp_server_url=cast("str", _get_mcp_server_url()),
             capabilities=["transcript_extraction"],
         ),
         documentation_url="https://github.com/lofibrainwav/AFO/blob/main/docs/skills/youtube-spec-gen.md",

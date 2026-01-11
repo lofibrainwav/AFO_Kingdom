@@ -8,7 +8,7 @@
 ## 📋 Phase 3-17 완료 티켓
 
 | ID | 제목 | Phase | Commit | Seal Tag | Evidence |
-|---|------|-------|--------|----------|----------|
+| --- | --- | --- | --- | --- | --- |
 | TICKET-060 | SSOT Auto-Seal | 3 | `78199e99` | `ssot-phase3-autonomy-*` | `scripts/ssot_seal.sh` |
 | TICKET-061 | Trinity Gate | 3 | `ddd236e7` | `ssot-phase3-autonomy-*` | `.github/workflows/trinity-gate.yml` |
 | TICKET-062 | Release Rail | 3 | `38961df8` | `ssot-phase3-autonomy-*` | `.github/workflows/release.yml` |
@@ -38,7 +38,7 @@
 | TICKET-097 | Governance Agent 구현 | 18 | `7e75c152` | `ssot-phase18-governance-*` | governance_agent.py |
 | TICKET-098 | Security Agent 구현 | 19 | `7e75c152` | `ssot-phase19-security-*` | security_agent.py |
 | TICKET-100 | OpenTelemetry AI Observability | 20 | `7e75c152` | `ssot-phase20-otel-*` | ai_observability.py |
-| TICKET-101 | Agentic RAG Enhancement | 21 | `7e75c152" | `ssot-phase21-rag-*` | agentic_rag.py |
+| TICKET-101 | Agentic RAG Enhancement | 21 | `7e75c152` | `ssot-phase21-rag-*` | agentic_rag.py |
 
 ---
 
@@ -72,16 +72,19 @@
 | TICKET-103 | API Wallet Modularization | 29 | `CRITICAL` | ✅ 완료 | `domain/wallet/` |
 
 ## TICKET-101 — Skill Registry Modularization
+
 - Phase: 29 (구조 강화)
 - Status: ✅ 완료 (2026-01-10)
 - Evidence: ~1,400 lines debulked into maintainable `domain/skills` package.
 
 ## TICKET-102 — LLM Router Modularization
+
 - Phase: 29 (인프라 강화)
 - Status: ✅ 완료 (2026-01-10)
 - Evidence: ~1,000 lines extracted into `infrastructure/llm`.
 
 ## TICKET-103 — API Wallet Modularization
+
 - Phase: 29 (보안/저장소 강화)
 - Status: ✅ 완료 (2026-01-10)
 - Evidence: ~900 lines refactored into `domain/wallet` with Pydantic models.
