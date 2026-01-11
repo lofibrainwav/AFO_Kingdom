@@ -94,5 +94,15 @@ repos:
 # 5. afo-syntax-check: AFO 전용 syntax 검증
 # 6. trinity-score-check: Trinity Score 기반 품질 검증
 # 7. bandit: 보안 취약점 검사
+# 8. pyright: 고속 타입 검증 (코어 strict)
 #
 # 커밋 시 자동으로 실행되어 코드 품질을 보장합니다.
+
+  # Pyright Type Checker (Phase 28 - Core Strict)
+  - repo: https://github.com/fsouza/mirrors-pyright
+    rev: v1.1.408
+    hooks:
+      - id: pyright
+        name: Pyright (core strict)
+        args: [--project=pyproject.toml]
+        files: ^packages/afo-core/AFO/(domain/metrics|models)/.*\.py$

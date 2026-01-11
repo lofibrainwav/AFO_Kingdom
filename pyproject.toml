@@ -116,3 +116,27 @@ addopts = "-v --cov=packages/afo-core --cov-report=term-missing --cov-report=xml
 norecursedirs = [".git", "__pycache__", ".venv", "node_modules"]
 filterwarnings = ["ignore::DeprecationWarning"]
 timeout = 300
+
+# ============================================================================
+# Pyright Configuration (Phase 28 - Primary Type Checker)
+# ============================================================================
+[tool.pyright]
+include = ["packages/afo-core"]
+exclude = [
+    "**/__pycache__",
+    "**/artifacts/**",
+    "**/migrations/**",
+    "**/tests/**",
+    "**/legacy/**",
+]
+pythonVersion = "3.12"
+typeCheckingMode = "basic"
+useLibraryCodeForTypes = true
+reportMissingTypeStubs = "none"
+reportMissingImports = true
+
+# Core paths use strict mode via executionEnvironments
+executionEnvironments = [
+    { root = "packages/afo-core/AFO/domain/metrics", typeCheckingMode = "strict" },
+    { root = "packages/afo-core/AFO/models", typeCheckingMode = "strict" },
+]
