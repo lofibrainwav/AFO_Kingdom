@@ -10,15 +10,8 @@ from __future__ import annotations
 import os
 from typing import cast
 
-from .models import (
-    AFOSkillCard,
-    ExecutionMode,
-    MCPConfig,
-    PhilosophyScore,
-    SkillCategory,
-    SkillIOSchema,
-    SkillParameter,
-)
+from .models import (AFOSkillCard, ExecutionMode, MCPConfig, PhilosophyScore,
+                     SkillCategory, SkillIOSchema, SkillParameter)
 from .registry import SkillRegistry
 
 
@@ -29,7 +22,8 @@ def _get_mcp_server_url() -> str | None:
 
         settings = get_settings()
         return cast(
-            "str | None", getattr(settings, "MCP_SERVER_URL", os.getenv("MCP_SERVER_URL"))
+            "str | None",
+            getattr(settings, "MCP_SERVER_URL", os.getenv("MCP_SERVER_URL")),
         )
     except Exception:  # nosec
         return os.getenv("MCP_SERVER_URL")

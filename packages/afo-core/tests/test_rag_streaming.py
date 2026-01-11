@@ -2,7 +2,6 @@ import asyncio
 import json
 
 import pytest
-
 # DSPy 문제回避를 위해 직접 app 생성
 from AFO.api.config import get_app_config
 from httpx import ASGITransport, AsyncClient

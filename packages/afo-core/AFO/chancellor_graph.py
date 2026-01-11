@@ -14,7 +14,6 @@ import time
 from typing import Any
 
 from AFO.api.chancellor_v2.graph import nodes
-
 # Import Chancellor Graph V2 components
 from AFO.api.chancellor_v2.graph.runner import run_v2 as run_chancellor_v2
 from AFO.config.settings import get_settings
@@ -168,7 +167,10 @@ class ChancellorGraph:
 
         # Phase 24: Advanced Routing (Canary Override)
         # FastAPI headers in dict form are lowercase
-        force_v2 = headers.get("x-afo-engine", "").lower() == "v2" or headers.get("X-AFO-Engine", "").lower() == "v2"
+        force_v2 = (
+            headers.get("x-afo-engine", "").lower() == "v2"
+            or headers.get("X-AFO-Engine", "").lower() == "v2"
+        )
         v2_enabled = settings.CHANCELLOR_V2_ENABLED or force_v2
         shadow_enabled = settings.CHANCELLOR_V2_SHADOW_ENABLED and not v2_enabled
 

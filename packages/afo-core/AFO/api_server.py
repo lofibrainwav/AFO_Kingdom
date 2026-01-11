@@ -79,12 +79,10 @@ def _patch_typing_inspection_if_needed() -> None:
 _patch_typing_inspection_if_needed()
 
 import uvicorn
-
 # AFO Kingdom imports (clear and organized)
 from AFO.api.config import get_app_config, get_server_config
 from AFO.api.middleware import setup_middleware
 from AFO.api.router_manager import setup_routers
-
 # Core FastAPI imports with type hints
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
@@ -173,10 +171,10 @@ class AFOServer:
         try:
             # Local imports to prevent ModuleNotFoundError if dependencies are missing
             from opentelemetry import trace
-            from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import (
-                OTLPSpanExporter,
-            )
-            from opentelemetry.instrumentation.logging import LoggingInstrumentor
+            from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import \
+                OTLPSpanExporter
+            from opentelemetry.instrumentation.logging import \
+                LoggingInstrumentor
             from opentelemetry.sdk.resources import Resource
             from opentelemetry.sdk.trace import TracerProvider
             from opentelemetry.sdk.trace.export import BatchSpanProcessor
@@ -228,7 +226,8 @@ class AFOServer:
 
         # Chancellor Router 직접 등록
         try:
-            from AFO.api.routers.chancellor_router import router as chancellor_router
+            from AFO.api.routers.chancellor_router import \
+                router as chancellor_router
 
             app.include_router(chancellor_router)
             logger.info("Chancellor Router registered successfully")
@@ -412,7 +411,8 @@ class AFOServer:
 
             # Instrument FastAPI app with OpenTelemetry
             try:
-                from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+                from opentelemetry.instrumentation.fastapi import \
+                    FastAPIInstrumentor
 
                 FastAPIInstrumentor.instrument_app(self.app)
                 logger.info("OpenTelemetry FastAPI instrumentation applied")

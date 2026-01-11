@@ -7,23 +7,15 @@ AFO Soul Engine Utilities
 
 from __future__ import annotations
 
-from AFO.exponential_backoff import (
-    BackoffStrategies,
-    ExponentialBackoff,
-    retry_with_exponential_backoff,
-)
+from AFO.exponential_backoff import (BackoffStrategies, ExponentialBackoff,
+                                     retry_with_exponential_backoff)
 
 # Circuit Breaker (Phase 5: Monitoring)
 try:
-    from AFO.circuit_breaker import (
-        CircuitBreaker,
-        CircuitBreakerOpenError,
-        CircuitState,
-        get_all_circuit_statuses,
-        ollama_circuit,
-        qdrant_circuit,
-        redis_circuit,
-    )
+    from AFO.circuit_breaker import (CircuitBreaker, CircuitBreakerOpenError,
+                                     CircuitState, get_all_circuit_statuses,
+                                     ollama_circuit, qdrant_circuit,
+                                     redis_circuit)
 
     CIRCUIT_BREAKER_AVAILABLE = True
     # Only add to __all__ if successfully imported
@@ -49,16 +41,10 @@ except ImportError:
 
 # Prometheus Metrics (Phase 5: Monitoring)
 try:
-    from AFO.metrics import (
-        MetricsMiddleware,
-        create_metrics_router,
-        get_metrics_response,
-        track_llm_call,
-        track_ollama_call,
-        update_circuit_breaker_metrics,
-        update_organ_health,
-        update_trinity_scores,
-    )
+    from AFO.metrics import (MetricsMiddleware, create_metrics_router,
+                             get_metrics_response, track_llm_call,
+                             track_ollama_call, update_circuit_breaker_metrics,
+                             update_organ_health, update_trinity_scores)
 
     METRICS_AVAILABLE = True
     # Only add to __all__ if successfully imported

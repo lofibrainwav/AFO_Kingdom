@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from .beauty_node import beauty_node
-
 # Node exports
 from .cmd_node import cmd_node
 from .eternity_node import eternity_node

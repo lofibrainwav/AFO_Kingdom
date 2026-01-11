@@ -13,11 +13,8 @@ from starlette.requests import Request
 from starlette.responses import Response
 
 try:
-    from AFO.api.middleware.prometheus import (
-        ACTIVE_CONNECTIONS,
-        REQUEST_COUNT,
-        REQUEST_LATENCY,
-    )
+    from AFO.api.middleware.prometheus import (ACTIVE_CONNECTIONS,
+                                               REQUEST_COUNT, REQUEST_LATENCY)
 
     PROMETHEUS_AVAILABLE = True
 except ImportError:

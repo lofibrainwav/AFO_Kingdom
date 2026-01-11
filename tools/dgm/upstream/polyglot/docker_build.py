@@ -11,14 +11,13 @@ from pathlib import Path
 
 import docker
 import docker.errors
-from polyglot.constants import (
-    BASE_IMAGE_BUILD_DIR,
-    ENV_IMAGE_BUILD_DIR,
-    INSTANCE_IMAGE_BUILD_DIR,
-    MAP_REPO_VERSION_TO_SPECS,
-)
-from polyglot.docker_utils import cleanup_container, find_dependent_images, remove_image
-from polyglot.test_spec import TestSpec, get_test_specs_from_dataset, make_test_spec
+from polyglot.constants import (BASE_IMAGE_BUILD_DIR, ENV_IMAGE_BUILD_DIR,
+                                INSTANCE_IMAGE_BUILD_DIR,
+                                MAP_REPO_VERSION_TO_SPECS)
+from polyglot.docker_utils import (cleanup_container, find_dependent_images,
+                                   remove_image)
+from polyglot.test_spec import (TestSpec, get_test_specs_from_dataset,
+                                make_test_spec)
 from tqdm import tqdm
 
 ansi_escape = re.compile(r"\x1B\[[0-?]*[ -/]*[@-~]")

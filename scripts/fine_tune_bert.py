@@ -40,14 +40,9 @@ try:
     from sklearn.metrics import accuracy_score
     from sklearn.model_selection import train_test_split
     from torch.utils.data import DataLoader, Dataset
-
     # Try importing transformers but handle failure gracefully
-    from transformers import (
-        AdamW,
-        BertForSequenceClassification,
-        BertTokenizer,
-        get_linear_schedule_with_warmup,
-    )
+    from transformers import (AdamW, BertForSequenceClassification,
+                              BertTokenizer, get_linear_schedule_with_warmup)
 
     print("✅ ML Libraries Detected. Initiating Real Training...")
 

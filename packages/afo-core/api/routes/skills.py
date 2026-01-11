@@ -20,13 +20,9 @@ from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from typing import Annotated, Any, cast
 
-from AFO.afo_skills_registry import (
-    AFOSkillCard,
-    SkillExecutionResult,
-    SkillFilterParams,
-    SkillRegistry,
-    register_core_skills,
-)
+from AFO.afo_skills_registry import (AFOSkillCard, SkillExecutionResult,
+                                     SkillFilterParams, SkillRegistry,
+                                     register_core_skills)
 from fastapi import APIRouter, Body, Depends, HTTPException, Query
 
 # Configure logging

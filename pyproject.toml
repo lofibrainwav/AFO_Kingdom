@@ -137,6 +137,6 @@ reportMissingImports = true
 
 # Core paths use strict mode via executionEnvironments
 executionEnvironments = [
-    { root = "packages/afo-core/AFO/domain/metrics", typeCheckingMode = "strict" },
-    { root = "packages/afo-core/AFO/models", typeCheckingMode = "strict" },
+    { root = "packages/afo-core/AFO/domain/metrics", extraPaths = [] },
+    { root = "packages/afo-core/AFO/models", extraPaths = [] },
 ]

@@ -20,24 +20,13 @@ if package_root not in sys.path:
 
 # Import from core infrastructure package (Strangler Fig)
 try:
-    from infrastructure.llm import (
-        LLMConfig,
-        LLMProvider,
-        LLMRouter,
-        QualityTier,
-        RoutingDecision,
-        call_llm,
-    )
+    from infrastructure.llm import (LLMConfig, LLMProvider, LLMRouter,
+                                    QualityTier, RoutingDecision, call_llm)
 except ImportError:
     # Fallback for different execution contexts
-    from AFO.infrastructure.llm import (  # type: ignore
-        LLMConfig,
-        LLMProvider,
-        LLMRouter,
-        QualityTier,
-        RoutingDecision,
-        call_llm,
-    )
+    from AFO.infrastructure.llm import LLMProvider  # type: ignore
+    from AFO.infrastructure.llm import (LLMConfig, LLMRouter, QualityTier,
+                                        RoutingDecision, call_llm)
 
 # ============================================================================
 # Global Router Instance

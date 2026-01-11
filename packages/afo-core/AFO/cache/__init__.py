@@ -11,14 +11,9 @@ from typing import Any
 from AFO.backends import MemoryBackend, RedisBackend
 from AFO.manager import MultiLevelCache, cache_manager
 from AFO.predictive import PredictiveCacheManager, predictive_manager
-from AFO.query_cache import (
-    CacheInvalidator,
-    QueryCache,
-    cache_query,
-    cache_system_data,
-    cache_user_data,
-    invalidate_cache,
-)
+from AFO.query_cache import (CacheInvalidator, QueryCache, cache_query,
+                             cache_system_data, cache_user_data,
+                             invalidate_cache)
 
 
 def get_cache_metrics() -> dict[str, Any]:

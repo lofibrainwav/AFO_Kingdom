@@ -17,17 +17,13 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent / "packages" / "afo-c
 
 try:
     from afo.qlora_adalora_hybrid_service import (
-        QLoRAAdaLoRAHybridService,
-        initialize_hybrid_qlora_adalora,
-    )
+        QLoRAAdaLoRAHybridService, initialize_hybrid_qlora_adalora)
 except ImportError as e:
     print(f"Import error: {e}")
     print("Trying alternative import...")
     try:
         from packages.afo_core.afo.qlora_adalora_hybrid_service import (
-            QLoRAAdaLoRAHybridService,
-            initialize_hybrid_qlora_adalora,
-        )
+            QLoRAAdaLoRAHybridService, initialize_hybrid_qlora_adalora)
     except ImportError as e2:
         print(f"Alternative import failed: {e2}")
         sys.exit(1)

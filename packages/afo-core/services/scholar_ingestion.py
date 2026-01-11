@@ -7,7 +7,6 @@ import os
 try:
     from AFO.services.hybrid_rag import query_graph_context, query_qdrant
     from neo4j import GraphDatabase
-
     # We need UPSERT methods which might not be in hybrid_rag yet.
     # So we will implement direct clients here for ingestion,
     # and later refactor common logic if needed.

@@ -2,15 +2,11 @@
 import asyncio
 from typing import Any
 
-from AFO.services.hybrid_rag import (
-    HybridRAG,
-    generate_answer_async,
-    generate_answer_stream_async,
-    generate_hyde_query_async,
-    get_embedding_async,
-    query_graph_context,
-    query_qdrant_async,
-)
+from AFO.services.hybrid_rag import (HybridRAG, generate_answer_async,
+                                     generate_answer_stream_async,
+                                     generate_hyde_query_async,
+                                     get_embedding_async, query_graph_context,
+                                     query_qdrant_async)
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel

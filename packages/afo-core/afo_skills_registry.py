@@ -19,38 +19,21 @@ if package_root not in sys.path:
 
 # Import from core domain package (Strangler Fig)
 try:
-    from domain.skills import (
-        AFOSkillCard,
-        ExecutionMode,
-        MCPConfig,
-        PhilosophyScore,
-        SkillCategory,
-        SkillExecutionRequest,
-        SkillExecutionResult,
-        SkillFilterParams,
-        SkillIOSchema,
-        SkillParameter,
-        SkillRegistry,
-        SkillStatus,
-        register_core_skills,
-    )
+    from domain.skills import (AFOSkillCard, ExecutionMode, MCPConfig,
+                               PhilosophyScore, SkillCategory,
+                               SkillExecutionRequest, SkillExecutionResult,
+                               SkillFilterParams, SkillIOSchema,
+                               SkillParameter, SkillRegistry, SkillStatus,
+                               register_core_skills)
 except ImportError:
     # Fallback for different execution contexts
-    from AFO.domain.skills import (  # type: ignore
-        AFOSkillCard,
-        ExecutionMode,
-        MCPConfig,
-        PhilosophyScore,
-        SkillCategory,
-        SkillExecutionRequest,
-        SkillExecutionResult,
-        SkillFilterParams,
-        SkillIOSchema,
-        SkillParameter,
-        SkillRegistry,
-        SkillStatus,
-        register_core_skills,
-    )
+    from AFO.domain.skills import ExecutionMode  # type: ignore
+    from AFO.domain.skills import (AFOSkillCard, MCPConfig, PhilosophyScore,
+                                   SkillCategory, SkillExecutionRequest,
+                                   SkillExecutionResult, SkillFilterParams,
+                                   SkillIOSchema, SkillParameter,
+                                   SkillRegistry, SkillStatus,
+                                   register_core_skills)
 
 # ============================================================================
 # Global Registry Instance
