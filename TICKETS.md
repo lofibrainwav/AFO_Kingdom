@@ -45,7 +45,7 @@
 ## Phase 22 — Cleanup & Strategic Restoration
 
 | ID | 제목 | Phase | Priority | Status | Evidence |
-|---|------|-------|----------|--------|----------|
+| --- | --- | --- | --- | --- | --- |
 | TICKET-096 | Phase 22 Cleanup & Restoration | 22 | MEDIUM | ✅ 완료 | UPSTREAM_PIN.txt / jade_bell.mp3 |
 
 ---
@@ -53,7 +53,7 @@
 ## Phase 23 — Operation Hardening (WIP)
 
 | ID | 제목 | Phase | Priority | Status | Evidence |
-|---|------|-------|----------|--------|----------|
+| --- | --- | --- | --- | --- | --- |
 | TICKET-094 | Chancellor V2 Integration | 23 | `LOCKED` | ✅ 완료 | PH22_03_V2_CUTOVER_SSOT.md |
 | TICKET-095 | Vault Manager Implementation | 23 | `LOCKED` | ✅ 완료 | vault_manager.py |
 | TICKET-097 | Shadow & Canary Tuning | 24 | `LOCKED` | ✅ 완료 | shadowing_results.json |
@@ -66,7 +66,7 @@
 ## Phase 29 — The Great Modularization (Structural Hardening)
 
 | ID | 제목 | Phase | Priority | Status | Evidence |
-|---|------|-------|----------|--------|----------|
+| --- | --- | --- | --- | --- | --- |
 | TICKET-101 | Skill Registry Modularization | 29 | `CRITICAL` | ✅ 완료 | `domain/skills/` |
 | TICKET-102 | LLM Router Modularization | 29 | `CRITICAL` | ✅ 완료 | `infrastructure/llm/` |
 | TICKET-103 | API Wallet Modularization | 29 | `CRITICAL` | ✅ 완료 | `domain/wallet/` |
