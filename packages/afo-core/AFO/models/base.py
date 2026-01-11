@@ -1,7 +1,9 @@
 from functools import lru_cache
+from typing import Annotated, Any
+
 from pydantic import BaseModel, ConfigDict, field_validator, model_validator
-from typing import Any, Annotated
 from pydantic.functional_validators import AfterValidator
+
 
 @lru_cache(maxsize=1024)
 def positive_non_zero(v: float | int) -> float | int:

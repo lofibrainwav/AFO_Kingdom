@@ -10,7 +10,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Any, Generic, TypeVar
+from typing import Any, TypeVar
 
 # 제네릭 타입 변수
 T = TypeVar("T")
@@ -18,7 +18,7 @@ TKey = TypeVar("TKey")
 TResult = TypeVar("TResult")
 
 
-class IService(ABC, Generic[T]):
+class IService[T](ABC):
     """서비스 인터페이스 프로토콜
 
     모든 서비스 클래스가 구현해야 하는 공통 인터페이스입니다.
@@ -50,7 +50,7 @@ class IService(ABC, Generic[T]):
         ...
 
 
-class IRepository(ABC, Generic[T, TKey]):
+class IRepository[T, TKey](ABC):
     """리포지토리 인터페이스 프로토콜
 
     데이터 액세스 계층의 표준 인터페이스입니다.
@@ -92,7 +92,7 @@ class IRepository(ABC, Generic[T, TKey]):
         ...
 
 
-class IValidator(ABC, Generic[T]):
+class IValidator[T](ABC):
     """검증 인터페이스 프로토콜
 
     데이터 검증 로직의 표준 인터페이스입니다.
@@ -150,7 +150,7 @@ class ILogger(ABC):
         ...
 
 
-class ICache(ABC, Generic[T]):
+class ICache[T](ABC):
     """캐시 인터페이스 프로토콜"""
 
     @abstractmethod
@@ -209,7 +209,7 @@ class IConfig(ABC):
 
 
 # 추상 기본 클래스 구현 (ABC)
-class BaseService(ABC, Generic[T, TKey]):
+class BaseService[T, TKey](ABC):
     """기본 서비스 추상 클래스
 
     IService 프로토콜의 기본 구현을 제공합니다.
@@ -254,7 +254,7 @@ class BaseService(ABC, Generic[T, TKey]):
             return False
 
 
-class BaseValidator(ABC, Generic[T]):
+class BaseValidator[T](ABC):
     """기본 검증 추상 클래스
 
     IValidator 프로토콜의 기본 구현을 제공합니다.
@@ -269,7 +269,7 @@ class BaseValidator(ABC, Generic[T]):
         ...
 
 
-class BaseRepository(ABC, Generic[T, TKey]):
+class BaseRepository[T, TKey](ABC):
     """기본 리포지토리 추상 클래스
 
     IRepository 프로토콜의 기본 구현을 제공합니다.

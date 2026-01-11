@@ -10,7 +10,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Any, Generic, TypeVar
+from typing import Any, TypeVar
 
 from fastapi import HTTPException
 from pydantic import BaseModel
@@ -23,7 +23,7 @@ T = TypeVar("T")
 U = TypeVar("U")
 
 
-class APIResponse(BaseModel, Generic[T]):
+class APIResponse[T](BaseModel):
     """제네릭 API 응답 모델
 
     모든 API 엔드포인트에서 일관된 응답 형식을 제공합니다.
@@ -36,7 +36,7 @@ class APIResponse(BaseModel, Generic[T]):
     metadata: dict[str, Any] | None = None
 
 
-class PaginatedResponse(BaseModel, Generic[T]):
+class PaginatedResponse[T](BaseModel):
     """제네릭 페이지네이션 응답 모델
 
     목록 조회 API에서 일관된 페이지네이션 형식을 제공합니다.
@@ -50,7 +50,7 @@ class PaginatedResponse(BaseModel, Generic[T]):
     has_prev: bool
 
 
-class APIResult(BaseModel, Generic[T]):
+class APIResult[T](BaseModel):
     """API 작업 결과 래퍼
 
     성공/실패 상태를 명확히 표현합니다.
