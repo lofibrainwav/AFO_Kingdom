@@ -44,7 +44,7 @@
 | Phase | Title                       | Theme         | 핵심                                     | 커밋           |
 | ----- | --------------------------- | ------------- | ---------------------------------------- | -------------- |
 | 0     | Genesis                     | 초심 설정     | 승상 시스템 탄생                         | `39b30eb`      |
-| 30    | Great Audit                 | 정도(正道) 봉인 | 왕국 근간 대특검 완수 및 그림자 모드 해제 | `PH30-DONE`    |
+| 30    | Great Audit                 | 정도(正道) 봉인     | 왕국 근간 대특검 완수 및 그림자 모드 해제 | `PH30-DONE`    |
 | 31    | Expansion                   | 확장의 시대   | MIPROv2, Janus 전면 전개                 | `EXP-START`    |
 | 1     | Security Hardening          | 善의 방패     | GitHub Actions 강화                      | -              |
 | 2     | CI/CD Stabilization         | 眞의 기반     | 290 테스트 통과                          | `c6c067f`...   |
@@ -60,8 +60,8 @@
 | 12-ext| Budget Tracking             | 善의 예산     | Budget Tracking System                   | `27cee9c`      |
 | 12-3/4| Smart Guardian              | 善의 예측     | Smart Guardian + Predictive Guardian     | `81acb46`      |
 | 23-26 | Council of Minds            | 永의 의회     | Council of Minds, Voice Interface        | `0e374d7`      |
-| 23    | Hardening & Canary          | 眞/善의 보루 | 3-step Protocol, Zero Zero Trust Vault   | -              |
-| 24    | Council of Minds            | 永/眞의 지능 | Async Parallel Multi-LLM Assessment      | -              |
+| 23    | Hardening & Canary          | 眞/善의 보루  | 3-step Protocol, Zero Zero Trust Vault   | -              |
+| 24    | Council of Minds            | 永/眞의 지능  | Async Parallel Multi-LLM Assessment      | -              |
 
 ### 현재 상태
 
