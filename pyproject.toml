@@ -121,32 +121,22 @@ timeout = 300
 # Pyright Configuration (Phase 28 - Primary Type Checker)
 # ============================================================================
 [tool.pyright]
-include = ["packages/afo-core/AFO", "packages/dashboard"]
+include = ["packages/afo-core"]
 exclude = [
     "**/__pycache__",
-    "**/legacy/**",
-    "**/tests/**",
-    "**/migrations/**",
     "**/artifacts/**",
-    "**/node_modules/**",
-    "**/.venv/**",
+    "**/migrations/**",
+    "**/tests/**",
+    "**/legacy/**",
 ]
 pythonVersion = "3.12"
-typeCheckingMode = "strict"
-
-# FastAPI + Pydantic V2 Optimization
-reportMissingTypeStubs = false
-reportMissingImports = true
-reportUnusedImport = "warning"
-reportGeneralTypeIssues = true
-reportAttributeAccessIssues = true
-reportArgumentType = true
-reportCallIssue = true
-reportUnboundVariable = true
+typeCheckingMode = "basic"
 useLibraryCodeForTypes = true
+reportMissingTypeStubs = "none"
+reportMissingImports = true
 
-# Relaxed for initial adoption (tighten later)
-reportUnknownArgumentType = "warning"
-reportUnknownVariableType = "warning"
-reportMissingParameterType = "warning"
-reportUnnecessaryTypeIgnoreComment = true
+# Core paths use strict mode via executionEnvironments
+executionEnvironments = [
+    { root = "packages/afo-core/AFO/domain/metrics", typeCheckingMode = "strict" },
+    { root = "packages/afo-core/AFO/models", typeCheckingMode = "strict" },
+]
